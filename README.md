@@ -2,4 +2,6 @@ edx-proctoring [![Build Status](https://travis-ci.org/edx/edx-proctoring.svg?bra
 
 ========================
 
-This is the Exam Proctoring subsytem for the Open edX platform. This is a work in progress at this point in time.
+This is the Exam Proctoring subsytem for the Open edX platform.
+
+This is a work in progress at this point in time.
