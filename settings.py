@@ -20,9 +20,11 @@ SECRET_KEY='SHHHHHH'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '{}/db/edx_proctoring.db'.format(TEST_ROOT)
+        'NAME': os.path.join(BASE_DIR, 'edx_proctoring.db'),
     },
 }
+
+SITE_ID = 1
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -30,11 +32,17 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'rest_framework',
     'edx_proctoring',
     'django_nose',
     'south',
 )
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.6/howto/static-files/
+
+STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': (
