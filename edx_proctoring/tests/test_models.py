@@ -28,7 +28,8 @@ class ProctoredExamModelTests(LoggedInTestCase):
         proctored_exam = ProctoredExam.objects.create(
             course_id='test_course',
             content_id='test_content',
-            external_id='123aXqe3'
+            external_id='123aXqe3',
+            time_limit_mins=90
         )
         ProctoredExamStudentAllowance.objects.create(
             user_id=1,
@@ -38,7 +39,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
         )
         # No entry in the History table on creation of the Allowance entry.
         proctored_exam_student_history = ProctoredExamStudentAllowanceHistory.objects.filter(user_id=1)
-        self.assertEqual(len(proctored_exam_student_history), 1)
+        self.assertEqual(len(proctored_exam_student_history), 0)
 
         # Update the allowance object twice
         ProctoredExamStudentAllowance.objects.filter(
@@ -63,7 +64,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
 
         # 2 new entries are created in the History table.
         proctored_exam_student_history = ProctoredExamStudentAllowanceHistory.objects.filter(user_id=1)
-        self.assertEqual(len(proctored_exam_student_history), 3)
+        self.assertEqual(len(proctored_exam_student_history), 2)
 
         # also check with save() method
 
@@ -72,4 +73,4 @@ class ProctoredExamModelTests(LoggedInTestCase):
         allowance.save()
 
         proctored_exam_student_history = ProctoredExamStudentAllowanceHistory.objects.filter(user_id=1)
-        self.assertEqual(len(proctored_exam_student_history), 4)
+        self.assertEqual(len(proctored_exam_student_history), 3)

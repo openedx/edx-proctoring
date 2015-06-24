@@ -21,6 +21,15 @@ class ProctoredExam(models.Model):
     # This will be a integration specific ID - say to SoftwareSecure.
     external_id = models.TextField(null=True, db_index=True)
 
+    # Time limit (in minutes) that a student can finish this exam
+    time_limit_mins = models.IntegerField()
+
+    # Whether this exam actually is proctored or not
+    is_proctored = models.BooleanField()
+
+    # This will be a integration specific ID - say to SoftwareSecure.
+    is_active = models.BooleanField()
+
 
 class ProctoredExamStudentAttempt(models.Model):
     """
@@ -92,22 +101,25 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
 
 # Hook up the custom POST_UPDATE_SIGNAL signal to record updations in the ProctoredExamStudentAllowanceHistory table.
 @receiver(post_save, sender=ProctoredExamStudentAllowance)
-def archive_allowance_updations(sender, **kwargs):  # pylint: disable=unused-argument
+def archive_allowance_updations(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
     """
     Archiving all changes made to the Student Allowance.
     Will only archive on update, and not on new entries created.
     """
 
-    _make_archive_copy(kwargs['instance'])
+    if not created:
+        _make_archive_copy(instance)
 
 
-def _make_archive_copy(updated_obj):
+def _make_archive_copy(item):
     """
     Make a clone and populate in the History table
     """
 
-    archive_object = ProctoredExamStudentAllowanceHistory()
-    updated_obj_dict = updated_obj.__dict__
-    updated_obj_dict.pop('id')
-    archive_object.__dict__.update(updated_obj_dict)
+    archive_object = ProctoredExamStudentAllowanceHistory(
+        user_id=item.user_id,
+        proctored_exam=item.proctored_exam,
+        key=item.key,
+        value=item.value
+    )
     archive_object.save()

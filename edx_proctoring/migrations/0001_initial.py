@@ -14,6 +14,9 @@ class Migration(SchemaMigration):
             ('course_id', self.gf('django.db.models.fields.CharField')(max_length=255, db_index=True)),
             ('content_id', self.gf('django.db.models.fields.CharField')(max_length=255, db_index=True)),
             ('external_id', self.gf('django.db.models.fields.TextField')(null=True, db_index=True)),
+            ('time_limit_mins', self.gf('django.db.models.fields.IntegerField')()),
+            ('is_proctored', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal('edx_proctoring', ['ProctoredExam'])
 
@@ -73,7 +76,10 @@ class Migration(SchemaMigration):
             'content_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'}),
             'course_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'}),
             'external_id': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_index': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_proctored': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'time_limit_mins': ('django.db.models.fields.IntegerField', [], {})
         },
         'edx_proctoring.proctoredexamstudentallowance': {
             'Meta': {'object_name': 'ProctoredExamStudentAllowance'},
