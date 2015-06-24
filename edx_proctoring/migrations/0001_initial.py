@@ -20,10 +20,11 @@ class Migration(SchemaMigration):
         # Adding model 'ProctoredExamStudentAttempt'
         db.create_table('edx_proctoring_proctoredexamstudentattempt', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user_id', self.gf('django.db.models.fields.IntegerField')()),
+            ('user_id', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
             ('proctored_exam', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['edx_proctoring.ProctoredExam'])),
             ('started_at', self.gf('django.db.models.fields.DateTimeField')(null=True)),
             ('completed_at', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+            ('external_id', self.gf('django.db.models.fields.TextField')(null=True, db_index=True)),
         ))
         db.send_create_signal('edx_proctoring', ['ProctoredExamStudentAttempt'])
 
@@ -97,10 +98,11 @@ class Migration(SchemaMigration):
         'edx_proctoring.proctoredexamstudentattempt': {
             'Meta': {'object_name': 'ProctoredExamStudentAttempt'},
             'completed_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'external_id': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_index': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'proctored_exam': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['edx_proctoring.ProctoredExam']"}),
             'started_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'user_id': ('django.db.models.fields.IntegerField', [], {})
+            'user_id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'})
         }
     }
 

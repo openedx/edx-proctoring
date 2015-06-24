@@ -2,10 +2,9 @@
 Data models for the proctoring subsystem
 """
 from django.db import models
-from django.dispatch import Signal, receiver
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
-
-POST_UPDATE_SIGNAL = Signal()
 
 
 class ProctoredExam(models.Model):
@@ -28,13 +27,16 @@ class ProctoredExamStudentAttempt(models.Model):
     Information about the Student Attempt on a
     Proctored Exam.
     """
-    user_id = models.IntegerField()
+    user_id = models.IntegerField(db_index=True)
 
-    proctored_exam = models.ForeignKey(ProctoredExam)
+    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
 
     # started/completed date times
     started_at = models.DateTimeField(null=True)
     completed_at = models.DateTimeField(null=True)
+
+    # This will be a integration specific ID - say to SoftwareSecure.
+    external_id = models.TextField(null=True, db_index=True)
 
 
 class QuerySetWithUpdateSignal(models.query.QuerySet):
@@ -43,8 +45,9 @@ class QuerySetWithUpdateSignal(models.query.QuerySet):
     every time the object is updated.
     """
     def update(self, **kwargs):
+        print 'here'
         super(QuerySetWithUpdateSignal, self).update(**kwargs)
-        POST_UPDATE_SIGNAL.send(sender=self.model, updated_obj=self.get())
+        _make_archive_copy(self.get())
 
 
 class ProctoredExamStudentAllowanceManager(models.Manager):
@@ -72,21 +75,6 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
     value = models.CharField(max_length=255)
 
 
-# Hook up the custom POST_UPDATE_SIGNAL signal to record updations in the ProctoredExamStudentAllowanceHistory table.
-@receiver(POST_UPDATE_SIGNAL, sender=ProctoredExamStudentAllowance)
-def archive_allowance_updations(sender, updated_obj, **kwargs):  # pylint: disable=unused-argument
-    """
-    Archiving all changes made to the Student Allowance.
-    Will only archive on updation, and not on new entries created.
-    """
-
-    archive_object = ProctoredExamStudentAllowanceHistory()
-    updated_obj_dict = updated_obj.__dict__
-    updated_obj_dict.pop('id')
-    archive_object.__dict__.update(updated_obj_dict)
-    archive_object.save()
-
-
 class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     """
     This should be the same schema as ProctoredExamStudentAllowance
@@ -100,3 +88,26 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     key = models.CharField(max_length=255)
 
     value = models.CharField(max_length=255)
+
+
+# Hook up the custom POST_UPDATE_SIGNAL signal to record updations in the ProctoredExamStudentAllowanceHistory table.
+@receiver(post_save, sender=ProctoredExamStudentAllowance)
+def archive_allowance_updations(sender, **kwargs):  # pylint: disable=unused-argument
+    """
+    Archiving all changes made to the Student Allowance.
+    Will only archive on update, and not on new entries created.
+    """
+
+    _make_archive_copy(kwargs['instance'])
+
+
+def _make_archive_copy(updated_obj):
+    """
+    Make a clone and populate in the History table
+    """
+
+    archive_object = ProctoredExamStudentAllowanceHistory()
+    updated_obj_dict = updated_obj.__dict__
+    updated_obj_dict.pop('id')
+    archive_object.__dict__.update(updated_obj_dict)
+    archive_object.save()
