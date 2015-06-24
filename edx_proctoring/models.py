@@ -48,14 +48,13 @@ class ProctoredExamStudentAttempt(models.Model):
     external_id = models.TextField(null=True, db_index=True)
 
 
-class QuerySetWithUpdateSignal(models.query.QuerySet):
+class QuerySetWithUpdateOverride(models.query.QuerySet):
     """
     Custom QuerySet class to send the POST_UPDATE_SIGNAL
     every time the object is updated.
     """
     def update(self, **kwargs):
-        print 'here'
-        super(QuerySetWithUpdateSignal, self).update(**kwargs)
+        super(QuerySetWithUpdateOverride, self).update(**kwargs)
         _make_archive_copy(self.get())
 
 
@@ -65,7 +64,7 @@ class ProctoredExamStudentAllowanceManager(models.Manager):
     to enable the POST_UPDATE_SIGNAL
     """
     def get_query_set(self):
-        return QuerySetWithUpdateSignal(self.model, using=self._db)
+        return QuerySetWithUpdateOverride(self.model, using=self._db)
 
 
 class ProctoredExamStudentAllowance(TimeStampedModel):
