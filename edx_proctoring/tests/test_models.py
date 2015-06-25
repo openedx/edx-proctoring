@@ -28,6 +28,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
         proctored_exam = ProctoredExam.objects.create(
             course_id='test_course',
             content_id='test_content',
+            exam_name='Test Exam',
             external_id='123aXqe3',
             time_limit_mins=90
         )
@@ -74,3 +75,32 @@ class ProctoredExamModelTests(LoggedInTestCase):
 
         proctored_exam_student_history = ProctoredExamStudentAllowanceHistory.objects.filter(user_id=1)
         self.assertEqual(len(proctored_exam_student_history), 3)
+
+    def test_delete_proctored_exam_student_allowance_history(self):  # pylint: disable=invalid-name
+        """
+        Test to delete the proctored Exam Student Allowance object.
+        Upon first save, a new entry is _not_ created in the History table
+        However, a new entry in the History table is created every time the Student Allowance entry is updated.
+        """
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='test_course',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        allowance = ProctoredExamStudentAllowance.objects.create(
+            user_id=1,
+            proctored_exam=proctored_exam,
+            key='allowance_key',
+            value='20 minutes'
+        )
+
+        # No entry in the History table on creation of the Allowance entry.
+        proctored_exam_student_history = ProctoredExamStudentAllowanceHistory.objects.filter(user_id=1)
+        self.assertEqual(len(proctored_exam_student_history), 0)
+
+        allowance.delete()
+
+        proctored_exam_student_history = ProctoredExamStudentAllowanceHistory.objects.filter(user_id=1)
+        self.assertEqual(len(proctored_exam_student_history), 1)
