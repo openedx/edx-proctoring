@@ -217,9 +217,9 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         try:
             exam_attempt_id = stop_exam_attempt(
                 exam_id=request.DATA.get('exam_id', ""),
-                user=request.DATA.get('user_id', "")
+                user_id=request.DATA.get('user_id', "")
             )
-            return Response()
+            return Response({"exam_attempt_id": exam_attempt_id})
 
         except Exception:
             return Response(

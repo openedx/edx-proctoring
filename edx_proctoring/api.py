@@ -36,7 +36,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
         is_proctored=is_proctored,
         is_active=is_active
     )
-    return proctored_exam
+    return proctored_exam.id
 
 
 def update_exam(exam_id, exam_name=None, time_limit_mins=None,
@@ -62,7 +62,7 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
     if is_active is not None:
         proctored_exam.is_active = is_active
     proctored_exam.save()
-    return proctored_exam
+    return proctored_exam.id
 
 
 def get_exam_by_id(exam_id):
@@ -118,7 +118,7 @@ def start_exam_attempt(exam_id, user_id, external_id):
     if exam_attempt_obj is None:
         raise StudentExamAttemptAlreadyExistException
     else:
-        return exam_attempt_obj
+        return exam_attempt_obj.id
 
 
 def stop_exam_attempt(exam_id, user_id):
@@ -131,7 +131,7 @@ def stop_exam_attempt(exam_id, user_id):
     else:
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()
-        return exam_attempt_obj
+        return exam_attempt_obj.id
 
 
 def get_active_exams_for_user(user_id, course_id=None):
