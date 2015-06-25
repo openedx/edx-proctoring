@@ -43,18 +43,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
 
     def _create_student_exam_attempt_entry(self):
-        proctored_exam = self._create_proctored_exam()
+        proctored_exam_id = self._create_proctored_exam()
         return ProctoredExamStudentAttempt.objects.create(
-            proctored_exam=proctored_exam,
+            proctored_exam_id=proctored_exam_id,
             user_id=self.user_id,
             external_id=self.external_id,
             started_at=datetime.now(pytz.UTC)
         )
 
     def _add_allowance_for_user(self):
-        proctored_exam = self._create_proctored_exam()
+        proctored_exam_id = self._create_proctored_exam()
         return ProctoredExamStudentAllowance.objects.create(
-            proctored_exam=proctored_exam, user_id=self.user_id, key=self.key, value=self.value
+            proctored_exam_id=proctored_exam_id, user_id=self.user_id, key=self.key, value=self.value
         )
 
     def test_create_exam(self):
@@ -85,14 +85,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         test update the existing proctored exam
         """
-        proctored_exam = self._create_proctored_exam()
-        update_proctored_exam = update_exam(
-            proctored_exam.id, exam_name='Updated Exam Name', time_limit_mins=30,
+        proctored_exam_id = self._create_proctored_exam()
+        updated_proctored_exam_id = update_exam(
+            proctored_exam_id, exam_name='Updated Exam Name', time_limit_mins=30,
             is_proctored=True, external_id='external_id', is_active=True
         )
 
         # only those fields were updated, whose
         # values are passed.
+        self.assertEqual(proctored_exam_id, updated_proctored_exam_id)
+
+        update_proctored_exam = ProctoredExam.objects.get(id=updated_proctored_exam_id)
+
         self.assertEqual(update_proctored_exam.exam_name, 'Updated Exam Name')
         self.assertEqual(update_proctored_exam.time_limit_mins, 30)
         self.assertEqual(update_proctored_exam.course_id, 'test_course')
@@ -111,8 +115,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         test to get the exam by the exam_id and
         then compare their values.
         """
-        proctored_exam = self._create_proctored_exam()
-        proctored_exam = get_exam_by_id(proctored_exam.id)
+        proctored_exam_id = self._create_proctored_exam()
+        proctored_exam = get_exam_by_id(proctored_exam_id)
         self.assertEqual(proctored_exam['course_id'], self.course_id)
         self.assertEqual(proctored_exam['content_id'], self.content_id)
         self.assertEqual(proctored_exam['exam_name'], self.exam_name)
@@ -135,17 +139,17 @@ class ProctoredExamApiTests(LoggedInTestCase):
             get_exam_by_content_id('teasd', 'tewasda')
 
     def test_add_allowance_for_user(self):
-        proctored_exam = self._create_proctored_exam()
-        add_allowance_for_user(proctored_exam, self.user_id, self.key, self.value)
+        proctored_exam_id = self._create_proctored_exam()
+        add_allowance_for_user(proctored_exam_id, self.user_id, self.key, self.value)
 
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
-            proctored_exam.id, self.user_id, self.key
+            proctored_exam_id, self.user_id, self.key
         )
         self.assertIsNotNone(student_allowance)
 
     def test_allowance_for_user_already_exists(self):
         student_allowance = self._add_allowance_for_user()
-        add_allowance_for_user(student_allowance.proctored_exam, self.user_id, self.key, 'new_value')
+        add_allowance_for_user(student_allowance.proctored_exam.id, self.user_id, self.key, 'new_value')
 
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
             student_allowance.proctored_exam.id, self.user_id, self.key
@@ -154,10 +158,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(student_allowance.value, 'new_value')
 
     def test_get_allowance_for_user_does_not_exist(self):
-        proctored_exam = self._create_proctored_exam()
+        proctored_exam_id = self._create_proctored_exam()
 
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
-            proctored_exam.id, self.user_id, self.key
+            proctored_exam_id, self.user_id, self.key
         )
         self.assertIsNone(student_allowance)
 
@@ -168,8 +172,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(len(ProctoredExamStudentAllowance.objects.filter()), 0)
 
     def test_student_exam_attempt_entry_already_exists(self):
-        proctored_exam = self._create_proctored_exam()
-        start_exam_attempt(proctored_exam, self.user_id, self.external_id)
+        proctored_exam_id = self._create_proctored_exam()
+        start_exam_attempt(proctored_exam_id, self.user_id, self.external_id)
         self.assertIsNotNone(start_exam_attempt)
 
     def test_create_student_exam_attempt_entry(self):
@@ -180,8 +184,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
     def test_stop_exam_attempt(self):
         proctored_exam_student_attempt = self._create_student_exam_attempt_entry()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
-        proctored_exam_student_attempt = stop_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id)
-        self.assertIsNotNone(proctored_exam_student_attempt.completed_at)
+        proctored_exam_student_attempt_id = stop_exam_attempt(
+            proctored_exam_student_attempt.proctored_exam, self.user_id
+        )
+        self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_student_attempt_id)
 
     def test_stop_invalid_exam_attempt_raises_exception(self):
         proctored_exam = self._create_proctored_exam()

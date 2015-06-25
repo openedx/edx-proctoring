@@ -4,7 +4,6 @@ Proctored Exams HTTP-based API endpoints
 
 import logging
 from django.db import IntegrityError
-from django.db.models import Model
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -90,9 +89,9 @@ class ProctoredExamView(AuthenticatedAPIView):
                 content_id=request.DATA.get('content_id', ""),
                 exam_name=request.DATA.get('exam_name', ""),
                 time_limit_mins=request.DATA.get('time_limit_mins', ""),
-                is_proctored=True if request.DATA.get('is_proctored', "False").lower()=='true' else False,
+                is_proctored=True if request.DATA.get('is_proctored', "False").lower() == 'true' else False,
                 external_id=request.DATA.get('external_id', ""),
-                is_active=True if request.DATA.get('is_active', "").lower()=='true' else False,
+                is_active=True if request.DATA.get('is_active', "").lower() == 'true' else False,
             )
             return Response({'exam_id': exam_id})
         except IntegrityError:
@@ -111,12 +110,12 @@ class ProctoredExamView(AuthenticatedAPIView):
                 exam_id=request.DATA.get('exam_id', ""),
                 exam_name=request.DATA.get('exam_name', ""),
                 time_limit_mins=request.DATA.get('time_limit_mins', ""),
-                is_proctored=True if request.DATA.get('is_proctored', "False").lower()=='true' else False,
+                is_proctored=True if request.DATA.get('is_proctored', "False").lower() == 'true' else False,
                 external_id=request.DATA.get('external_id', ""),
-                is_active=True if request.DATA.get('is_active', "").lower()=='true' else False,
+                is_active=True if request.DATA.get('is_active', "").lower() == 'true' else False,
             )
             return Response({'exam_id': exam_id})
-        except Model.DoesNotExist:
+        except:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": "The exam_id does not exist."}
@@ -141,7 +140,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                     data=get_exam_by_id(exam_id),
                     status=status.HTTP_200_OK
                 )
-            except Model.DoesNotExist:
+            except Exception:
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
                     data={"detail": "The exam_id does not exist."}
@@ -152,7 +151,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                     data=get_exam_by_content_id(course_id, content_id),
                     status=status.HTTP_200_OK
                 )
-            except Model.DoesNotExist:
+            except Exception:
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
                     data={"detail": "The exam with course_id, content_id does not exist."}
@@ -209,7 +208,6 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 data={"detail": "Exam already started."}
             )
 
-
     def put(self, request):
         """
         HTTP POST handler. To stop an exam.
@@ -249,7 +247,6 @@ class ExamAllowanceView(AuthenticatedAPIView):
                 data={"detail": "Could not add Allowance."}
             )
 
-
     def delete(self, request):
         """
         HTTP DELETE handler. Removes Allowance.
@@ -265,6 +262,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": "Could not remove Allowance."}
             )
+
 
 class ActiveExamsForUserView(AuthenticatedAPIView):
     """

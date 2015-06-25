@@ -45,6 +45,6 @@ class ProctoredExamsApiTests(LoggedInTestCase):
         """
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.status')
+            reverse('edx_proctoring.proctored_exam.attempt')
         )
         self.assertEqual(response.status_code, 200)

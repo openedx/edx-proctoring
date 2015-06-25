@@ -96,7 +96,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         """
         if cls.get_student_exam_attempt(exam_id, user_id) is None:
             return cls.objects.create(
-                proctored_exam=exam_id,
+                proctored_exam_id=exam_id,
                 user_id=user_id,
                 external_id=external_id,
                 started_at=datetime.now(pytz.UTC)
@@ -111,7 +111,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         else Returns None.
         """
         try:
-            exam_attempt_obj = cls.objects.get(proctored_exam=exam_id, user_id=user_id)
+            exam_attempt_obj = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id)
         except cls.DoesNotExist:
             exam_attempt_obj = None
         return exam_attempt_obj
@@ -161,7 +161,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         Returns an allowance for a user within a given exam
         """
         try:
-            student_allowance = cls.objects.get(proctored_exam=exam_id, user_id=user_id, key=key)
+            student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
         except cls.DoesNotExist:
             student_allowance = None
         return student_allowance
@@ -172,11 +172,11 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         Add or (Update) an allowance for a user within a given exam
         """
         try:
-            student_allowance = cls.objects.get(proctored_exam=exam_id, user_id=user_id, key=key)
+            student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
             student_allowance.value = value
             student_allowance.save()
         except cls.DoesNotExist:
-            cls.objects.create(proctored_exam=exam_id, user_id=user_id, key=key, value=value)
+            cls.objects.create(proctored_exam_id=exam_id, user_id=user_id, key=key, value=value)
 
 
 class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
