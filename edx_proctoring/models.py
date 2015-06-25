@@ -2,12 +2,12 @@
 Data models for the proctoring subsystem
 """
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
 
 
-class ProctoredExam(models.Model):
+class ProctoredExam(TimeStampedModel):
     """
     Information about the Proctored Exam.
     """
@@ -21,6 +21,9 @@ class ProctoredExam(models.Model):
     # This will be a integration specific ID - say to SoftwareSecure.
     external_id = models.TextField(null=True, db_index=True)
 
+    # This is the display name of the course
+    exam_name = models.TextField()
+
     # Time limit (in minutes) that a student can finish this exam
     time_limit_mins = models.IntegerField()
 
@@ -30,8 +33,12 @@ class ProctoredExam(models.Model):
     # This will be a integration specific ID - say to SoftwareSecure.
     is_active = models.BooleanField()
 
+    class Meta:
+        """ Meta class for this Django model """
+        unique_together = (('course_id', 'content_id'),)
 
-class ProctoredExamStudentAttempt(models.Model):
+
+class ProctoredExamStudentAttempt(TimeStampedModel):
     """
     Information about the Student Attempt on a
     Proctored Exam.
@@ -46,6 +53,14 @@ class ProctoredExamStudentAttempt(models.Model):
 
     # This will be a integration specific ID - say to SoftwareSecure.
     external_id = models.TextField(null=True, db_index=True)
+
+    # what is the status of this attempt
+    status = models.CharField(max_length=64)
+
+    @property
+    def is_active(self):
+        """ returns boolean if this attempt is considered active """
+        return self.started_at and not self.completed_at
 
 
 class QuerySetWithUpdateOverride(models.query.QuerySet):
@@ -82,12 +97,19 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
     value = models.CharField(max_length=255)
 
+    class Meta:
+        """ Meta class for this Django model """
+        unique_together = (('user_id', 'proctored_exam', 'key'),)
+
 
 class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     """
     This should be the same schema as ProctoredExamStudentAllowance
     but will record (for audit history) all entries that have been updated.
     """
+
+    # what was the original id of the allowance
+    allowance_id = models.IntegerField()
 
     user_id = models.IntegerField()
 
@@ -100,7 +122,7 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
 
 # Hook up the custom POST_UPDATE_SIGNAL signal to record updations in the ProctoredExamStudentAllowanceHistory table.
 @receiver(post_save, sender=ProctoredExamStudentAllowance)
-def archive_allowance_updations(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
+def on_allowance_saved(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
     """
     Archiving all changes made to the Student Allowance.
     Will only archive on update, and not on new entries created.
@@ -110,12 +132,22 @@ def archive_allowance_updations(sender, instance, created, **kwargs):  # pylint:
         _make_archive_copy(instance)
 
 
+@receiver(pre_delete, sender=ProctoredExamStudentAllowance)
+def on_allowance_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    Archive the allowance when the item is about to be deleted
+    """
+
+    _make_archive_copy(instance)
+
+
 def _make_archive_copy(item):
     """
     Make a clone and populate in the History table
     """
 
     archive_object = ProctoredExamStudentAllowanceHistory(
+        allowance_id=item.id,
         user_id=item.user_id,
         proctored_exam=item.proctored_exam,
         key=item.key,
