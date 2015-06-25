@@ -6,6 +6,14 @@
 In-Proc API (aka Library) for the edx_proctoring subsystem. This is not to be confused with a HTTP REST
 API which is in the views.py file, per edX coding standards
 """
+import pytz
+from datetime import datetime
+from edx_proctoring.exceptions import (
+    ProctoredExamAlreadyExist, ProctoredExamNotFoundException, StudentExamAttemptAlreadyExistException
+)
+from edx_proctoring.models import (
+    ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
+)
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins,
@@ -16,6 +24,19 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
 
     Returns: id (PK)
     """
+    if ProctoredExam.get_exam_by_content_id(course_id, content_id) is not None:
+        raise ProctoredExamAlreadyExist
+
+    proctored_exam = ProctoredExam.objects.create(
+        course_id=course_id,
+        content_id=content_id,
+        external_id=external_id,
+        exam_name=exam_name,
+        time_limit_mins=time_limit_mins,
+        is_proctored=is_proctored,
+        is_active=is_active
+    )
+    return proctored_exam
 
 
 def update_exam(exam_id, exam_name=None, time_limit_mins=None,
@@ -26,6 +47,22 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
 
     Returns: id
     """
+    proctored_exam = ProctoredExam.get_exam_by_id(exam_id)
+    if proctored_exam is None:
+        raise ProctoredExamNotFoundException
+
+    if exam_name is not None:
+        proctored_exam.exam_name = exam_name
+    if time_limit_mins is not None:
+        proctored_exam.time_limit_mins = time_limit_mins
+    if is_proctored is not None:
+        proctored_exam.is_proctored = is_proctored
+    if external_id is not None:
+        proctored_exam.external_id = external_id
+    if is_active is not None:
+        proctored_exam.is_active = is_active
+    proctored_exam.save()
+    return proctored_exam
 
 
 def get_exam_by_id(exam_id):
@@ -34,6 +71,11 @@ def get_exam_by_id(exam_id):
 
     Returns dictionary version of the Django ORM object
     """
+    proctored_exam = ProctoredExam.get_exam_by_id(exam_id)
+    if proctored_exam is None:
+        raise ProctoredExamNotFoundException
+
+    return proctored_exam.__dict__
 
 
 def get_exam_by_content_id(course_id, content_id):
@@ -42,18 +84,27 @@ def get_exam_by_content_id(course_id, content_id):
 
     Returns dictionary version of the Django ORM object
     """
+    proctored_exam = ProctoredExam.get_exam_by_content_id(course_id, content_id)
+    if proctored_exam is None:
+        raise ProctoredExamNotFoundException
+
+    return proctored_exam.__dict__
 
 
 def add_allowance_for_user(exam_id, user_id, key, value):
     """
     Adds (or updates) an allowance for a user within a given exam
     """
+    ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_id, key, value)
 
 
 def remove_allowance_for_user(exam_id, user_id, key):
     """
     Deletes an allowance for a user within a given exam.
     """
+    student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(exam_id, user_id, key)
+    if student_allowance is not None:
+        student_allowance.delete()
 
 
 def start_exam_attempt(exam_id, user_id, external_id):
@@ -63,12 +114,24 @@ def start_exam_attempt(exam_id, user_id, external_id):
 
     Returns: exam_attempt_id (PK)
     """
+    exam_attempt_obj = ProctoredExamStudentAttempt.start_exam_attempt(exam_id, user_id, external_id)
+    if exam_attempt_obj is None:
+        raise StudentExamAttemptAlreadyExistException
+    else:
+        return exam_attempt_obj
 
 
-def stop_exam_attempt(exam_id, user):
+def stop_exam_attempt(exam_id, user_id):
     """
     Marks the exam attempt as completed (sets the completed_at field and updates the record)
     """
+    exam_attempt_obj = ProctoredExamStudentAttempt.get_student_exam_attempt(exam_id, user_id)
+    if exam_attempt_obj is None:
+        raise StudentExamAttemptAlreadyExistException
+    else:
+        exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
+        exam_attempt_obj.save()
+        return exam_attempt_obj
 
 
 def get_active_exams_for_user(user_id, course_id=None):
