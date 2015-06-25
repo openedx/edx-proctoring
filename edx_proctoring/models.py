@@ -21,16 +21,16 @@ class ProctoredExam(TimeStampedModel):
     # This will be a integration specific ID - say to SoftwareSecure.
     external_id = models.TextField(null=True, db_index=True)
 
-    # This is the display name of the course
+    # This is the display name of the Exam (Midterm etc).
     exam_name = models.TextField()
 
-    # Time limit (in minutes) that a student can finish this exam
+    # Time limit (in minutes) that a student can finish this exam.
     time_limit_mins = models.IntegerField()
 
-    # Whether this exam actually is proctored or not
+    # Whether this exam actually is proctored or not.
     is_proctored = models.BooleanField()
 
-    # This will be a integration specific ID - say to SoftwareSecure.
+    # Whether this exam will be active.
     is_active = models.BooleanField()
 
     class Meta:
@@ -65,7 +65,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
 class QuerySetWithUpdateOverride(models.query.QuerySet):
     """
-    Custom QuerySet class to send the POST_UPDATE_SIGNAL
+    Custom QuerySet class to make an archive copy
     every time the object is updated.
     """
     def update(self, **kwargs):
@@ -76,7 +76,7 @@ class QuerySetWithUpdateOverride(models.query.QuerySet):
 class ProctoredExamStudentAllowanceManager(models.Manager):
     """
     Custom manager to override with the custom queryset
-    to enable the POST_UPDATE_SIGNAL
+    to enable archiving on Allowance updation.
     """
     def get_query_set(self):
         return QuerySetWithUpdateOverride(self.model, using=self._db)
@@ -120,7 +120,7 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     value = models.CharField(max_length=255)
 
 
-# Hook up the custom POST_UPDATE_SIGNAL signal to record updations in the ProctoredExamStudentAllowanceHistory table.
+# Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
 @receiver(post_save, sender=ProctoredExamStudentAllowance)
 def on_allowance_saved(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
     """
