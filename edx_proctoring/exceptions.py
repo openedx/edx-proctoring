@@ -20,8 +20,8 @@ class StudentExamAttemptAlreadyExistsException(Exception):
     Raised when trying to start an exam when an Exam Attempt already exists.
     """
 
+
 class StudentExamAttemptDoesNotExistsException(Exception):
     """
     Raised when trying to stop an exam attempt where the Exam Attempt doesn't exist.
     """
-
