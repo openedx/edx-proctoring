@@ -9,8 +9,8 @@ API which is in the views.py file, per edX coding standards
 import pytz
 from datetime import datetime
 from edx_proctoring.exceptions import (
-    ProctoredExamAlreadyExists, ProctoredExamNotFoundException, StudentExamAttemptAlreadyExistsException
-)
+    ProctoredExamAlreadyExists, ProctoredExamNotFoundException, StudentExamAttemptAlreadyExistsException,
+    StudentExamAttemptDoesNotExistsException)
 from edx_proctoring.models import (
     ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
 )
@@ -150,7 +150,7 @@ def stop_exam_attempt(exam_id, user_id):
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.get_student_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
-        raise StudentExamAttemptAlreadyExistsException
+        raise StudentExamAttemptDoesNotExistsException
     else:
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()

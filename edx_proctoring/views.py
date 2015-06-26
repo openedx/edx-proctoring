@@ -7,7 +7,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, start_exam_attempt, \
     stop_exam_attempt, add_allowance_for_user, remove_allowance_for_user, get_active_exams_for_user
-from edx_proctoring.exceptions import ProctoredExamNotFoundException, ProctoredExamAlreadyExists
+from edx_proctoring.exceptions import ProctoredExamNotFoundException, ProctoredExamAlreadyExists, \
+    StudentExamAttemptAlreadyExistsException, StudentExamAttemptDoesNotExistsException
 from edx_proctoring.serializers import ProctoredExamSerializer
 
 from .utils import AuthenticatedAPIView
@@ -115,13 +116,13 @@ class ProctoredExamView(AuthenticatedAPIView):
                 is_active=request.DATA.get('is_active', False),
             )
             return Response({'exam_id': exam_id})
-        except:
+        except ProctoredExamNotFoundException:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": "The exam_id does not exist."}
             )
 
-    def get(self, request, exam_id=None, course_id=None, content_id=None):
+    def get(self, request, exam_id=None, course_id=None, content_id=None):  # pylint: disable=unused-argument
         """
         HTTP GET handler.
             Scenarios:
@@ -198,10 +199,10 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             )
             return Response({'exam_attempt_id': exam_attempt_id})
 
-        except Exception:
+        except StudentExamAttemptAlreadyExistsException:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "Exam already started."}
+                data={"detail": "Error. Trying to start an exam that has already started."}
             )
 
     def put(self, request):
@@ -215,66 +216,57 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             )
             return Response({"exam_attempt_id": exam_attempt_id})
 
-        except Exception:
+        except StudentExamAttemptDoesNotExistsException:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "Exam Not in progress."}
+                data={"detail": "Error. Trying to stop an exam that is not in progress."}
             )
 
 
 class ExamAllowanceView(AuthenticatedAPIView):
     """
+    Endpoint for the ExamAlloawnce
+    /edx_proctoring/v1/proctored_exam/allowance
 
+    Supports:
+        HTTP PUT: Creates or Updates the allowance for a user.
+        HTTP DELETE: Removed an allowance for a user.
     """
     def put(self, request):
         """
         HTTP GET handler. Adds or updates Allowance
         """
-        try:
-            return Response(add_allowance_for_user(
-                exam_id=request.DATA.get('exam_id', ""),
-                user_id=request.DATA.get('user_id', ""),
-                key=request.DATA.get('key', ""),
-                value=request.DATA.get('value', "")
-            ))
-        except:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "Could not add Allowance."}
-            )
+        return Response(add_allowance_for_user(
+            exam_id=request.DATA.get('exam_id', ""),
+            user_id=request.DATA.get('user_id', ""),
+            key=request.DATA.get('key', ""),
+            value=request.DATA.get('value', "")
+        ))
 
     def delete(self, request):
         """
         HTTP DELETE handler. Removes Allowance.
         """
-        try:
-            return Response(remove_allowance_for_user(
-                exam_id=request.DATA.get('exam_id', ""),
-                user_id=request.DATA.get('user_id', ""),
-                key=request.DATA.get('key', "")
-            ))
-        except:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "Could not remove Allowance."}
-            )
+        return Response(remove_allowance_for_user(
+            exam_id=request.DATA.get('exam_id', ""),
+            user_id=request.DATA.get('user_id', ""),
+            key=request.DATA.get('key', "")
+        ))
 
 
 class ActiveExamsForUserView(AuthenticatedAPIView):
     """
+    Endpoint for the Active Exams for a user.
+    /edx_proctoring/v1/proctored_exam/active_exams_for_user
 
+    Supports:
+        HTTP GET: returns a list of active exams for the user
     """
     def get(self, request):
         """
         returns the get_active_exams_for_user
         """
-        try:
-            return Response(get_active_exams_for_user(
-                user_id=request.DATA.get('user_id', ""),
-                course_id=request.DATA.get('course_id', "")
-            ))
-        except:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "Error."}
-            )
+        return Response(get_active_exams_for_user(
+            user_id=request.DATA.get('user_id', ""),
+            course_id=request.DATA.get('course_id', "")
+        ))

@@ -3,12 +3,11 @@ All tests for the models.py
 """
 from datetime import datetime
 import pytz
-from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, add_allowance_for_user, \
-    remove_allowance_for_user, start_exam_attempt, stop_exam_attempt
+from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, \
+    add_allowance_for_user, remove_allowance_for_user, start_exam_attempt, stop_exam_attempt
 from edx_proctoring.exceptions import ProctoredExamAlreadyExists, ProctoredExamNotFoundException, \
     StudentExamAttemptAlreadyExistsException
-from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAllowanceHistory, \
-    ProctoredExamStudentAttempt
+from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
 
 from .utils import (
     LoggedInTestCase
@@ -35,6 +34,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.external_id = 'test_external_id'
 
     def _create_proctored_exam(self):
+        """
+        Calls the api's create_exam to create an exam object.
+        """
         return create_exam(
             course_id=self.course_id,
             content_id=self.content_id,
@@ -43,6 +45,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
 
     def _create_student_exam_attempt_entry(self):
+        """
+        Creates the ProctoredExamStudentAttempt object.
+        """
+
         proctored_exam_id = self._create_proctored_exam()
         return ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=proctored_exam_id,

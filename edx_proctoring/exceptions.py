@@ -5,20 +5,23 @@ Specialized exceptions for the Notification subsystem
 
 class ProctoredExamAlreadyExists(Exception):
     """
-    Generic exception when a look up fails. Since we are abstracting away the backends
-    we need to catch any native exceptions and re-throw as a generic exception
+    Raised when trying to create an Exam that already exists.
     """
 
 
 class ProctoredExamNotFoundException(Exception):
     """
-    Generic exception when a look up fails. Since we are abstracting away the backends
-    we need to catch any native exceptions and re-throw as a generic exception
+    Raised when a look up fails.
     """
 
 
 class StudentExamAttemptAlreadyExistsException(Exception):
     """
-    Generic exception when a look up fails. Since we are abstracting away the backends
-    we need to catch any native exceptions and re-throw as a generic exception
+    Raised when trying to start an exam when an Exam Attempt already exists.
     """
+
+class StudentExamAttemptDoesNotExistsException(Exception):
+    """
+    Raised when trying to stop an exam attempt where the Exam Attempt doesn't exist.
+    """
+
