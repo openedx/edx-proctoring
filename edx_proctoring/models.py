@@ -21,7 +21,7 @@ class ProctoredExam(TimeStampedModel):
     content_id = models.CharField(max_length=255, db_index=True)
 
     # This will be a integration specific ID - say to SoftwareSecure.
-    external_id = models.TextField(null=True, db_index=True)
+    external_id = models.CharField(max_length=255, null=True, db_index=True)
 
     # This is the display name of the Exam (Midterm etc).
     exam_name = models.TextField()
@@ -38,6 +38,7 @@ class ProctoredExam(TimeStampedModel):
     class Meta:
         """ Meta class for this Django model """
         unique_together = (('course_id', 'content_id'),)
+        db_table = 'proctoring_proctoredexam'
 
     @classmethod
     def get_exam_by_content_id(cls, course_id, content_id):
@@ -78,10 +79,14 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     completed_at = models.DateTimeField(null=True)
 
     # This will be a integration specific ID - say to SoftwareSecure.
-    external_id = models.TextField(null=True, db_index=True)
+    external_id = models.CharField(max_length=255, null=True, db_index=True)
 
     # what is the status of this attempt
     status = models.CharField(max_length=64)
+
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamstudentattempt'
 
     @property
     def is_active(self):
@@ -154,6 +159,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
     class Meta:
         """ Meta class for this Django model """
         unique_together = (('user_id', 'proctored_exam', 'key'),)
+        db_table = 'proctoring_proctoredexamstudentallowance'
 
     @classmethod
     def get_allowance_for_user(cls, exam_id, user_id, key):
@@ -195,6 +201,10 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     key = models.CharField(max_length=255)
 
     value = models.CharField(max_length=255)
+
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamstudentallowancehistory'
 
 
 # Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
