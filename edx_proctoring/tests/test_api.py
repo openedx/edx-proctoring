@@ -6,7 +6,7 @@ import pytz
 from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, \
     add_allowance_for_user, remove_allowance_for_user, start_exam_attempt, stop_exam_attempt
 from edx_proctoring.exceptions import ProctoredExamAlreadyExists, ProctoredExamNotFoundException, \
-    StudentExamAttemptAlreadyExistsException
+    StudentExamAttemptAlreadyExistsException, StudentExamAttemptDoesNotExistsException
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
 
 from .utils import (
@@ -44,7 +44,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             time_limit_mins=self.default_time_limit
         )
 
-    def _create_student_exam_attempt_entry(self):
+    def _create_student_exam_attempt(self):
         """
         Creates the ProctoredExamStudentAttempt object.
         """
@@ -58,6 +58,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
 
     def _add_allowance_for_user(self):
+        """
+        creates allowance for user.
+        """
         proctored_exam_id = self._create_proctored_exam()
         return ProctoredExamStudentAllowance.objects.create(
             proctored_exam_id=proctored_exam_id, user_id=self.user_id, key=self.key, value=self.value
@@ -70,10 +73,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
         proctored_exam = self._create_proctored_exam()
         self.assertIsNotNone(proctored_exam)
 
-    def test_create_already_existing_exam_throws_exception(self):
+    def test_create_duplicate_exam(self):
         """
         Test to create a proctored exam that has already exist in the
-        database and will throw an exception ProctoredExamAlreadyExist.
+        database and will throw an exception ProctoredExamAlreadyExists.
         """
         ProctoredExam.objects.create(
             course_id='test_course',
@@ -108,7 +111,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(update_proctored_exam.course_id, 'test_course')
         self.assertEqual(update_proctored_exam.content_id, 'test_content_id')
 
-    def test_update_non_existing_proctored_exam(self):
+    def test_update_non_existing_exam(self):
         """
         test to update the non-existing proctored exam
         which will throw the exception
@@ -145,6 +148,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
             get_exam_by_content_id('teasd', 'tewasda')
 
     def test_add_allowance_for_user(self):
+        """
+        Test to add allowance for user.
+        """
         proctored_exam_id = self._create_proctored_exam()
         add_allowance_for_user(proctored_exam_id, self.user_id, self.key, self.value)
 
@@ -153,7 +159,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIsNotNone(student_allowance)
 
-    def test_allowance_for_user_already_exists(self):
+    def test_update_existing_allowance(self):
+        """
+        Test updation to the allowance that already exists.
+        """
         student_allowance = self._add_allowance_for_user()
         add_allowance_for_user(student_allowance.proctored_exam.id, self.user_id, self.key, 'new_value')
 
@@ -163,7 +172,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIsNotNone(student_allowance)
         self.assertEqual(student_allowance.value, 'new_value')
 
-    def test_get_allowance_for_user_does_not_exist(self):
+    def test_get_non_existing_allowance(self):
+        """
+        Test to get an allowance which does not exist.
+        """
         proctored_exam_id = self._create_proctored_exam()
 
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
@@ -172,30 +184,46 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIsNone(student_allowance)
 
     def test_remove_allowance_for_user(self):
+        """
+        Test to remove an allowance for user.
+        """
         student_allowance = self._add_allowance_for_user()
         self.assertEqual(len(ProctoredExamStudentAllowance.objects.filter()), 1)
         remove_allowance_for_user(student_allowance.proctored_exam.id, self.user_id, self.key)
         self.assertEqual(len(ProctoredExamStudentAllowance.objects.filter()), 0)
 
-    def test_student_exam_attempt_entry_already_exists(self):
+    def test_start_an_exam_attempt(self):
+        """
+        Start an exam attempt.
+        """
         proctored_exam_id = self._create_proctored_exam()
-        start_exam_attempt(proctored_exam_id, self.user_id, self.external_id)
-        self.assertIsNotNone(start_exam_attempt)
+        attempt_id = start_exam_attempt(proctored_exam_id, self.user_id, self.external_id)
+        self.assertGreater(attempt_id, 0)
 
-    def test_create_student_exam_attempt_entry(self):
-        proctored_exam_student_attempt = self._create_student_exam_attempt_entry()
+    def test_restart_exam_attempt(self):
+        """
+        Start an exam attempt that has already been started.
+        Raises StudentExamAttemptAlreadyExistsException
+        """
+        proctored_exam_student_attempt = self._create_student_exam_attempt()
         with self.assertRaises(StudentExamAttemptAlreadyExistsException):
             start_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id, self.external_id)
 
     def test_stop_exam_attempt(self):
-        proctored_exam_student_attempt = self._create_student_exam_attempt_entry()
+        """
+        Stop an exam attempt.
+        """
+        proctored_exam_student_attempt = self._create_student_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
-        proctored_exam_student_attempt_id = stop_exam_attempt(
+        proctored_exam_attempt_id = stop_exam_attempt(
             proctored_exam_student_attempt.proctored_exam, self.user_id
         )
-        self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_student_attempt_id)
+        self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
-    def test_stop_invalid_exam_attempt_raises_exception(self):
+    def test_stop_a_non_started_exam(self):
+        """
+        Stop an exam attempt that had not started yet.
+        """
         proctored_exam = self._create_proctored_exam()
-        with self.assertRaises(StudentExamAttemptAlreadyExistsException):
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
             stop_exam_attempt(proctored_exam, self.user_id)

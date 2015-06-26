@@ -80,7 +80,6 @@ class ProctoredExamView(AuthenticatedAPIView):
         ?course_id=edX/DemoX/Demo_Course&content_id=123
         returns an existing exam object matching the course_id and the content_id
     """
-
     def post(self, request):
         """
         Http POST handler. Creates an exam.
