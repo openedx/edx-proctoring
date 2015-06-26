@@ -7,7 +7,10 @@ In-Proc API (aka Library) for the edx_proctoring subsystem. This is not to be co
 API which is in the views.py file, per edX coding standards
 """
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.template import Context, Template, loader
+from django.core.urlresolvers import reverse
+
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists, ProctoredExamNotFoundException, StudentExamAttemptAlreadyExistsException,
     StudentExamAttemptDoesNotExistsException)
@@ -131,6 +134,14 @@ def remove_allowance_for_user(exam_id, user_id, key):
         student_allowance.delete()
 
 
+def get_exam_attempt(exam_id, user_id):
+    """
+    Return an existing exam attempt for the given student
+    """
+    exam_attempt_obj = ProctoredExamStudentAttempt.get_student_exam_attempt(exam_id, user_id)
+    return exam_attempt_obj.__dict__ if exam_attempt_obj else None
+
+
 def start_exam_attempt(exam_id, user_id, external_id):
     """
     Signals the beginning of an exam attempt for a given
@@ -195,4 +206,58 @@ def get_active_exams_for_user(user_id, course_id=None):
             'attempt': active_exam_serialized_data,
             'allowances': allowance_serialized_data
         })
+
     return result
+
+
+def get_student_view(user_id, course_id, content_id, context):
+    """
+    Helper method that will return the view HTML related to the exam control
+    flow (i.e. entering, expired, completed, etc.) If there is no specific
+    content to display, then None will be returned and the caller should
+    render it's own view
+    """
+
+    has_started_exam = False
+    has_finished_exam = False
+    has_time_expired = False
+    student_view_template = None
+
+    exam_id = None
+    try:
+        exam = get_exam_by_content_id(course_id, content_id)
+        print '**** exam = {}'.format(exam)
+        exam_id = exam['id']
+    except Exception, ex:
+        print '*** exception = {}'.format(unicode(ex))
+        exam_id = create_exam(
+            course_id=course_id,
+            content_id=unicode(content_id),
+            exam_name=context['display_name'],
+            time_limit_mins=context['default_time_limit_mins']
+        )
+
+    attempt = get_exam_attempt(exam_id, user_id)
+    has_started_exam = attempt is not None
+    if attempt:
+        now_utc = datetime.now(pytz.UTC)
+        expires_at = attempt['started_at'] + timedelta(minutes=context['default_time_limit_mins'])
+        has_time_expired = now_utc > expires_at
+
+    if not has_started_exam:
+        student_view_template = 'proctoring/seq_timed_exam_entrance.html'
+    elif has_finished_exam:
+        student_view_template = 'proctoring/seq_timed_exam_completed.html'
+    elif has_time_expired:
+        student_view_template = 'proctoring/seq_timed_exam_expired.html'
+
+    if student_view_template:
+        template = loader.get_template(student_view_template)
+        django_context = Context(context)
+        django_context.update({
+            'exam_id': exam_id,
+            'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt'),
+        })
+        return template.render(django_context)
+
+    return None
