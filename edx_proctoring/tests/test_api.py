@@ -5,8 +5,8 @@ from datetime import datetime
 import pytz
 from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, add_allowance_for_user, \
     remove_allowance_for_user, start_exam_attempt, stop_exam_attempt
-from edx_proctoring.exceptions import ProctoredExamAlreadyExist, ProctoredExamNotFoundException, \
-    StudentExamAttemptAlreadyExistException
+from edx_proctoring.exceptions import ProctoredExamAlreadyExists, ProctoredExamNotFoundException, \
+    StudentExamAttemptAlreadyExistsException
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAllowanceHistory, \
     ProctoredExamStudentAttempt
 
@@ -78,7 +78,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             is_proctored=True,
             is_active=True
         )
-        with self.assertRaises(ProctoredExamAlreadyExist):
+        with self.assertRaises(ProctoredExamAlreadyExists):
             self._create_proctored_exam()
 
     def test_update_proctored_exam(self):
@@ -178,7 +178,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
     def test_create_student_exam_attempt_entry(self):
         proctored_exam_student_attempt = self._create_student_exam_attempt_entry()
-        with self.assertRaises(StudentExamAttemptAlreadyExistException):
+        with self.assertRaises(StudentExamAttemptAlreadyExistsException):
             start_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id, self.external_id)
 
     def test_stop_exam_attempt(self):
@@ -191,5 +191,5 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
     def test_stop_invalid_exam_attempt_raises_exception(self):
         proctored_exam = self._create_proctored_exam()
-        with self.assertRaises(StudentExamAttemptAlreadyExistException):
+        with self.assertRaises(StudentExamAttemptAlreadyExistsException):
             stop_exam_attempt(proctored_exam, self.user_id)

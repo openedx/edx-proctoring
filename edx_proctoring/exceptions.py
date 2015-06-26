@@ -3,7 +3,7 @@ Specialized exceptions for the Notification subsystem
 """
 
 
-class ProctoredExamAlreadyExist(Exception):
+class ProctoredExamAlreadyExists(Exception):
     """
     Generic exception when a look up fails. Since we are abstracting away the backends
     we need to catch any native exceptions and re-throw as a generic exception
@@ -17,7 +17,7 @@ class ProctoredExamNotFoundException(Exception):
     """
 
 
-class StudentExamAttemptAlreadyExistException(Exception):
+class StudentExamAttemptAlreadyExistsException(Exception):
     """
     Generic exception when a look up fails. Since we are abstracting away the backends
     we need to catch any native exceptions and re-throw as a generic exception

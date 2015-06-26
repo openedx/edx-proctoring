@@ -9,11 +9,12 @@ API which is in the views.py file, per edX coding standards
 import pytz
 from datetime import datetime
 from edx_proctoring.exceptions import (
-    ProctoredExamAlreadyExist, ProctoredExamNotFoundException, StudentExamAttemptAlreadyExistException
+    ProctoredExamAlreadyExists, ProctoredExamNotFoundException, StudentExamAttemptAlreadyExistsException
 )
 from edx_proctoring.models import (
     ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
 )
+from edx_proctoring.serializers import ProctoredExamSerializer
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins,
@@ -25,7 +26,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
     Returns: id (PK)
     """
     if ProctoredExam.get_exam_by_content_id(course_id, content_id) is not None:
-        raise ProctoredExamAlreadyExist
+        raise ProctoredExamAlreadyExists
 
     proctored_exam = ProctoredExam.objects.create(
         course_id=course_id,
@@ -70,12 +71,23 @@ def get_exam_by_id(exam_id):
     Looks up exam by the Primary Key. Raises exception if not found.
 
     Returns dictionary version of the Django ORM object
+    e.g.
+    {
+        "course_id": "edX/DemoX/Demo_Course",
+        "content_id": "123",
+        "external_id": "",
+        "exam_name": "Midterm",
+        "time_limit_mins": 90,
+        "is_proctored": true,
+        "is_active": true
+    }
     """
     proctored_exam = ProctoredExam.get_exam_by_id(exam_id)
     if proctored_exam is None:
         raise ProctoredExamNotFoundException
 
-    return proctored_exam.__dict__
+    serialized_exam_object = ProctoredExamSerializer(proctored_exam)
+    return serialized_exam_object.data
 
 
 def get_exam_by_content_id(course_id, content_id):
@@ -83,12 +95,23 @@ def get_exam_by_content_id(course_id, content_id):
     Looks up exam by the course_id/content_id pair. Raises exception if not found.
 
     Returns dictionary version of the Django ORM object
+    e.g.
+    {
+        "course_id": "edX/DemoX/Demo_Course",
+        "content_id": "123",
+        "external_id": "",
+        "exam_name": "Midterm",
+        "time_limit_mins": 90,
+        "is_proctored": true,
+        "is_active": true
+    }
     """
     proctored_exam = ProctoredExam.get_exam_by_content_id(course_id, content_id)
     if proctored_exam is None:
         raise ProctoredExamNotFoundException
 
-    return proctored_exam.__dict__
+    serialized_exam_object = ProctoredExamSerializer(proctored_exam)
+    return serialized_exam_object.data
 
 
 def add_allowance_for_user(exam_id, user_id, key, value):
@@ -116,7 +139,7 @@ def start_exam_attempt(exam_id, user_id, external_id):
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.start_exam_attempt(exam_id, user_id, external_id)
     if exam_attempt_obj is None:
-        raise StudentExamAttemptAlreadyExistException
+        raise StudentExamAttemptAlreadyExistsException
     else:
         return exam_attempt_obj.id
 
@@ -127,7 +150,7 @@ def stop_exam_attempt(exam_id, user_id):
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.get_student_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
-        raise StudentExamAttemptAlreadyExistException
+        raise StudentExamAttemptAlreadyExistsException
     else:
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()

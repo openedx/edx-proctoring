@@ -3,12 +3,12 @@ Proctored Exams HTTP-based API endpoints
 """
 
 import logging
-from django.db import IntegrityError
-
 from rest_framework import status
 from rest_framework.response import Response
 from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, start_exam_attempt, \
     stop_exam_attempt, add_allowance_for_user, remove_allowance_for_user, get_active_exams_for_user
+from edx_proctoring.exceptions import ProctoredExamNotFoundException, ProctoredExamAlreadyExists
+from edx_proctoring.serializers import ProctoredExamSerializer
 
 from .utils import AuthenticatedAPIView
 
@@ -31,10 +31,10 @@ class ProctoredExamView(AuthenticatedAPIView):
         "course_id": "edX/DemoX/Demo_Course",
         "content_id": 123,
         "exam_name": "Midterm",
-        "time_limit_mins": "90",
+        "time_limit_mins": 90,
         "is_proctored": true,
         "external_id": "",
-        "is_active": true,
+        "is_active": true
     }
 
     **POST data Parameters**
@@ -79,25 +79,25 @@ class ProctoredExamView(AuthenticatedAPIView):
         ?course_id=edX/DemoX/Demo_Course&content_id=123
         returns an existing exam object matching the course_id and the content_id
     """
+
     def post(self, request):
         """
         Http POST handler. Creates an exam.
         """
-        try:
-            exam_id = create_exam(
-                course_id=request.DATA.get('course_id', ""),
-                content_id=request.DATA.get('content_id', ""),
-                exam_name=request.DATA.get('exam_name', ""),
-                time_limit_mins=request.DATA.get('time_limit_mins', ""),
-                is_proctored=True if request.DATA.get('is_proctored', "False").lower() == 'true' else False,
-                external_id=request.DATA.get('external_id', ""),
-                is_active=True if request.DATA.get('is_active', "").lower() == 'true' else False,
-            )
-            return Response({'exam_id': exam_id})
-        except IntegrityError:
+        serializer = ProctoredExamSerializer(data=request.DATA)
+        if serializer.is_valid():
+            try:
+                exam_id = create_exam(**request.DATA)
+                return Response({'exam_id': exam_id})
+            except ProctoredExamAlreadyExists:
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST,
+                    data={"detail": "Error Trying to create a duplicate exam."}
+                )
+        else:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "Trying to create a duplicate exam."}
+                data=serializer.errors
             )
 
     def put(self, request):
@@ -110,9 +110,9 @@ class ProctoredExamView(AuthenticatedAPIView):
                 exam_id=request.DATA.get('exam_id', ""),
                 exam_name=request.DATA.get('exam_name', ""),
                 time_limit_mins=request.DATA.get('time_limit_mins', ""),
-                is_proctored=True if request.DATA.get('is_proctored', "False").lower() == 'true' else False,
+                is_proctored=request.DATA.get('is_proctored', False),
                 external_id=request.DATA.get('external_id', ""),
-                is_active=True if request.DATA.get('is_active', "").lower() == 'true' else False,
+                is_active=request.DATA.get('is_active', False),
             )
             return Response({'exam_id': exam_id})
         except:
@@ -121,7 +121,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                 data={"detail": "The exam_id does not exist."}
             )
 
-    def get(self, request):
+    def get(self, request, exam_id=None, course_id=None, content_id=None):
         """
         HTTP GET handler.
             Scenarios:
@@ -130,17 +130,13 @@ class ProctoredExamView(AuthenticatedAPIView):
 
         """
 
-        course_id = request.QUERY_PARAMS.get('course_id', None)
-        content_id = request.QUERY_PARAMS.get('content_id', None)
-        exam_id = request.QUERY_PARAMS.get('exam_id', None)
-
         if exam_id:
             try:
                 return Response(
                     data=get_exam_by_id(exam_id),
                     status=status.HTTP_200_OK
                 )
-            except Exception:
+            except ProctoredExamNotFoundException:
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
                     data={"detail": "The exam_id does not exist."}
@@ -151,7 +147,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                     data=get_exam_by_content_id(course_id, content_id),
                     status=status.HTTP_200_OK
                 )
-            except Exception:
+            except ProctoredExamNotFoundException:
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
                     data={"detail": "The exam with course_id, content_id does not exist."}

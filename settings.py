@@ -67,3 +67,5 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'edx_proctoring.urls'
+
+COURSE_ID_PATTERN = r'(?P<course_id>[^/+]+(/|\+)[^/+]+(/|\+)[^/]+)'
