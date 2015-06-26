@@ -87,6 +87,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'
+        verbose_name = 'proctored exam attempt'
 
     @property
     def is_active(self):
@@ -160,6 +161,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         """ Meta class for this Django model """
         unique_together = (('user_id', 'proctored_exam', 'key'),)
         db_table = 'proctoring_proctoredexamstudentallowance'
+        verbose_name = 'proctored allowance'
 
     @classmethod
     def get_allowance_for_user(cls, exam_id, user_id, key):
@@ -205,6 +207,7 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentallowancehistory'
+        verbose_name = 'proctored allowance history'
 
 
 # Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
