@@ -49,7 +49,7 @@ class ProctoredExam(TimeStampedModel):
         """
         try:
             proctored_exam = cls.objects.get(course_id=course_id, content_id=content_id)
-        except cls.DoesNotExist:
+        except cls.DoesNotExist:  # pylint: disable=no-member
             proctored_exam = None
         return proctored_exam
 
@@ -61,7 +61,7 @@ class ProctoredExam(TimeStampedModel):
         """
         try:
             proctored_exam = cls.objects.get(id=exam_id)
-        except cls.DoesNotExist:
+        except cls.DoesNotExist:  # pylint: disable=no-member
             proctored_exam = None
         return proctored_exam
 
@@ -119,7 +119,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         """
         try:
             exam_attempt_obj = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id)
-        except cls.DoesNotExist:
+        except cls.DoesNotExist:  # pylint: disable=no-member
             exam_attempt_obj = None
         return exam_attempt_obj
 
@@ -182,7 +182,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         """
         try:
             student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
-        except cls.DoesNotExist:
+        except cls.DoesNotExist:  # pylint: disable=no-member
             student_allowance = None
         return student_allowance
 
@@ -202,7 +202,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
             student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
             student_allowance.value = value
             student_allowance.save()
-        except cls.DoesNotExist:
+        except cls.DoesNotExist:  # pylint: disable=no-member
             cls.objects.create(proctored_exam_id=exam_id, user_id=user_id, key=key, value=value)
 
 

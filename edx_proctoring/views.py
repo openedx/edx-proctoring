@@ -101,7 +101,15 @@ class ProctoredExamView(AuthenticatedAPIView):
         serializer = ProctoredExamSerializer(data=request.DATA)
         if serializer.is_valid():
             try:
-                exam_id = create_exam(**request.DATA)
+                exam_id = create_exam(
+                    course_id=request.DATA.get('course_id', None),
+                    content_id=request.DATA.get('content_id', None),
+                    exam_name=request.DATA.get('exam_name', None),
+                    time_limit_mins=request.DATA.get('time_limit_mins', None),
+                    is_proctored=request.DATA.get('is_proctored', None),
+                    external_id=request.DATA.get('external_id', None),
+                    is_active=request.DATA.get('is_active', None)
+                )
                 return Response({'exam_id': exam_id})
             except ProctoredExamAlreadyExists:
                 return Response(

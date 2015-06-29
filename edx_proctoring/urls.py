@@ -16,13 +16,13 @@ urlpatterns = patterns(  # pylint: disable=invalid-name
     url(
         r'edx_proctoring/v1/proctored_exam/exam/exam_id/(?P<exam_id>\d+)$',
         views.ProctoredExamView.as_view(),
-        name='edx_proctoring.proctored_exam.exam'
+        name='edx_proctoring.proctored_exam.exam_by_id'
     ),
     url(
         r'edx_proctoring/v1/proctored_exam/exam/course_id/{}/content_id/(?P<content_id>\d+)$'.format(
             settings.COURSE_ID_PATTERN),
         views.ProctoredExamView.as_view(),
-        name='edx_proctoring.proctored_exam.exam'
+        name='edx_proctoring.proctored_exam.exam_by_content_id'
     ),
     url(
         r'edx_proctoring/v1/proctored_exam/attempt$',
