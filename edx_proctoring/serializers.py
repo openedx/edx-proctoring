@@ -21,7 +21,8 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
     """
     Serializer for the ProctoredExam Model.
     """
-    course_id = serializers.RegexField(settings.COURSE_ID_REGEX, required=True)
+    id = serializers.IntegerField(required=True)
+    course_id = serializers.CharField(required=True)
     content_id = serializers.CharField(required=True)
     external_id = serializers.CharField(required=True)
     exam_name = serializers.CharField(required=True)
@@ -37,7 +38,7 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
         model = ProctoredExam
 
         fields = (
-            "course_id", "content_id", "external_id", "exam_name",
+            "id", "course_id", "content_id", "external_id", "exam_name",
             "time_limit_mins", "is_proctored", "is_active"
         )
 
@@ -52,7 +53,7 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
         """
         model = ProctoredExamStudentAttempt
         fields = (
-            "created", "modified", "user_id", "started_at", "completed_at",
+            "id", "created", "modified", "user_id", "started_at", "completed_at",
             "external_id", "status"
         )
 
@@ -67,5 +68,5 @@ class ProctoredExamStudentAllowanceSerializer(serializers.ModelSerializer):
         """
         model = ProctoredExamStudentAllowance
         fields = (
-            "created", "modified", "user_id", "key", "value"
+            "id", "created", "modified", "user_id", "key", "value"
         )

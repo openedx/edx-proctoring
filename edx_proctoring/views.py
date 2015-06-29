@@ -3,11 +3,25 @@ Proctored Exams HTTP-based API endpoints
 """
 
 import logging
+import pytz
+from datetime import datetime, timedelta
+
 from django.utils.decorators import method_decorator
+from django.db import IntegrityError
+
 from rest_framework import status
 from rest_framework.response import Response
-from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, start_exam_attempt, \
-    stop_exam_attempt, add_allowance_for_user, remove_allowance_for_user, get_active_exams_for_user
+from edx_proctoring.api import (
+    create_exam,
+    update_exam,
+    get_exam_by_id,
+    get_exam_by_content_id,
+    start_exam_attempt,
+    stop_exam_attempt,
+    add_allowance_for_user,
+    remove_allowance_for_user,
+    get_active_exams_for_user
+)
 from edx_proctoring.exceptions import ProctoredExamNotFoundException, \
     StudentExamAttemptAlreadyExistsException, StudentExamAttemptDoesNotExistsException
 from edx_proctoring.serializers import ProctoredExamSerializer
@@ -187,22 +201,40 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         HTTP GET Handler. Returns the status of the exam attempt.
         """
 
-        response_dict = {
-            'in_timed_exam': True,
-            'is_proctored': True,
-            'exam_display_name': 'Midterm',
-            'exam_url_path': '',
-            'time_remaining_seconds': 45,
-            'low_threshold': 30,
-            'critically_low_threshold': 15,
-        }
+        exams = get_active_exams_for_user(request.user.id)
+
+        if exams:
+            exam = exams[0]
+
+            # need to adjust for allowances
+            expires_at = exam['attempt']['started_at'] + timedelta(minutes=exam['exam']['time_limit_mins'])
+            now_utc = datetime.now(pytz.UTC)
+
+            if expires_at > now_utc:
+                time_remaining_seconds = (expires_at - now_utc).seconds
+            else:
+                time_remaining_seconds = 0
+
+            response_dict = {
+                'in_timed_exam': True,
+                'is_proctored': True,
+                'exam_display_name': exam['exam']['exam_name'],
+                'exam_url_path': '',
+                'time_remaining_seconds': time_remaining_seconds,
+                'low_threshold': 30,
+                'critically_low_threshold': 15,
+            }
+        else:
+            response_dict = {
+                'in_timed_exam': False,
+                'is_proctored': False,
+            }
 
         return Response(
             data=response_dict,
             status=status.HTTP_200_OK
         )
 
-    @method_decorator(require_staff)
     def post(self, request):
         """
         HTTP POST handler. To start an exam.
@@ -210,7 +242,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         try:
             exam_attempt_id = start_exam_attempt(
                 exam_id=request.DATA.get('exam_id', None),
-                user_id=request.DATA.get('user_id', None),
+                user_id=request.user.id,
                 external_id=request.DATA.get('external_id', None)
             )
             return Response({'exam_attempt_id': exam_attempt_id})
@@ -221,7 +253,6 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 data={"detail": "Error. Trying to start an exam that has already started."}
             )
 
-    @method_decorator(require_staff)
     def put(self, request):
         """
         HTTP POST handler. To stop an exam.
@@ -229,7 +260,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         try:
             exam_attempt_id = stop_exam_attempt(
                 exam_id=request.DATA.get('exam_id', None),
-                user_id=request.DATA.get('user_id', None)
+                user_id=request.user.id
             )
             return Response({"exam_attempt_id": exam_attempt_id})
 
