@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, start_exam_attempt, \
     stop_exam_attempt, add_allowance_for_user, remove_allowance_for_user, get_active_exams_for_user
-from edx_proctoring.exceptions import ProctoredExamNotFoundException, ProctoredExamAlreadyExists, \
+from edx_proctoring.exceptions import ProctoredExamNotFoundException, \
     StudentExamAttemptAlreadyExistsException, StudentExamAttemptDoesNotExistsException
 from edx_proctoring.serializers import ProctoredExamSerializer
 
@@ -101,22 +101,16 @@ class ProctoredExamView(AuthenticatedAPIView):
         """
         serializer = ProctoredExamSerializer(data=request.DATA)
         if serializer.is_valid():
-            try:
-                exam_id = create_exam(
-                    course_id=request.DATA.get('course_id', None),
-                    content_id=request.DATA.get('content_id', None),
-                    exam_name=request.DATA.get('exam_name', None),
-                    time_limit_mins=request.DATA.get('time_limit_mins', None),
-                    is_proctored=request.DATA.get('is_proctored', None),
-                    external_id=request.DATA.get('external_id', None),
-                    is_active=request.DATA.get('is_active', None)
-                )
-                return Response({'exam_id': exam_id})
-            except ProctoredExamAlreadyExists:
-                return Response(
-                    status=status.HTTP_400_BAD_REQUEST,
-                    data={"detail": "Error Trying to create a duplicate exam."}
-                )
+            exam_id = create_exam(
+                course_id=request.DATA.get('course_id', None),
+                content_id=request.DATA.get('content_id', None),
+                exam_name=request.DATA.get('exam_name', None),
+                time_limit_mins=request.DATA.get('time_limit_mins', None),
+                is_proctored=request.DATA.get('is_proctored', None),
+                external_id=request.DATA.get('external_id', None),
+                is_active=request.DATA.get('is_active', None)
+            )
+            return Response({'exam_id': exam_id})
         else:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
@@ -131,12 +125,12 @@ class ProctoredExamView(AuthenticatedAPIView):
         """
         try:
             exam_id = update_exam(
-                exam_id=request.DATA.get('exam_id', ""),
-                exam_name=request.DATA.get('exam_name', ""),
-                time_limit_mins=request.DATA.get('time_limit_mins', ""),
-                is_proctored=request.DATA.get('is_proctored', False),
-                external_id=request.DATA.get('external_id', ""),
-                is_active=request.DATA.get('is_active', False),
+                exam_id=request.DATA.get('exam_id', None),
+                exam_name=request.DATA.get('exam_name', None),
+                time_limit_mins=request.DATA.get('time_limit_mins', None),
+                is_proctored=request.DATA.get('is_proctored', None),
+                external_id=request.DATA.get('external_id', None),
+                is_active=request.DATA.get('is_active', None),
             )
             return Response({'exam_id': exam_id})
         except ProctoredExamNotFoundException:
@@ -176,18 +170,16 @@ class ProctoredExamView(AuthenticatedAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                     data={"detail": "The exam with course_id, content_id does not exist."}
                 )
-        else:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "Bad input data."}
-            )
 
 
 class StudentProctoredExamAttempt(AuthenticatedAPIView):
     """
     Endpoint for the StudentProctoredExamAttempt
-    /edx_proctoring/v1/proctored_exam/exam
-
+    /edx_proctoring/v1/proctored_exam/attempt
+    Supports:
+        HTTP POST: Starts an exam attempt.
+        HTTP PUT: Stops an exam attempt.
+        HTTP GET: Returns the status of an exam attempt.
     """
 
     def get(self, request):  # pylint: disable=unused-argument
@@ -217,9 +209,9 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         """
         try:
             exam_attempt_id = start_exam_attempt(
-                exam_id=request.DATA.get('exam_id', ""),
-                user_id=request.DATA.get('user_id', ""),
-                external_id=request.DATA.get('external_id', "")
+                exam_id=request.DATA.get('exam_id', None),
+                user_id=request.DATA.get('user_id', None),
+                external_id=request.DATA.get('external_id', None)
             )
             return Response({'exam_attempt_id': exam_attempt_id})
 
@@ -269,7 +261,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
             value=request.DATA.get('value', "")
         ))
 
-    @require_staff
+    @method_decorator(require_staff)
     def delete(self, request):
         """
         HTTP DELETE handler. Removes Allowance.
