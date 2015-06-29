@@ -3,6 +3,7 @@ Proctored Exams HTTP-based API endpoints
 """
 
 import logging
+from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.response import Response
 from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, start_exam_attempt, \
@@ -19,7 +20,7 @@ LOG = logging.getLogger("edx_proctoring_views")
 def require_staff(func):
     """View decorator that requires that the user have staff permissions. """
     def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
-        if args[0].user.is_staff:
+        if request.user.is_staff:
             return func(request, *args, **kwargs)
         else:
             return Response(
@@ -93,7 +94,7 @@ class ProctoredExamView(AuthenticatedAPIView):
         ?course_id=edX/DemoX/Demo_Course&content_id=123
         returns an existing exam object matching the course_id and the content_id
     """
-    @require_staff
+    @method_decorator(require_staff)
     def post(self, request):
         """
         Http POST handler. Creates an exam.
@@ -122,7 +123,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                 data=serializer.errors
             )
 
-    @require_staff
+    @method_decorator(require_staff)
     def put(self, request):
         """
         HTTP PUT handler. To update an exam.
@@ -209,7 +210,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             status=status.HTTP_200_OK
         )
 
-    @require_staff
+    @method_decorator(require_staff)
     def post(self, request):
         """
         HTTP POST handler. To start an exam.
@@ -228,7 +229,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 data={"detail": "Error. Trying to start an exam that has already started."}
             )
 
-    @require_staff
+    @method_decorator(require_staff)
     def put(self, request):
         """
         HTTP POST handler. To stop an exam.
@@ -256,7 +257,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
         HTTP PUT: Creates or Updates the allowance for a user.
         HTTP DELETE: Removed an allowance for a user.
     """
-    @require_staff
+    @method_decorator(require_staff)
     def put(self, request):
         """
         HTTP GET handler. Adds or updates Allowance

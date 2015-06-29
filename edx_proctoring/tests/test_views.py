@@ -1,13 +1,16 @@
 """
 All tests for the proctored_exams.py
 """
+import json
 from django.test.client import Client
 from django.core.urlresolvers import reverse, NoReverseMatch
 from edx_proctoring.models import ProctoredExam
+from edx_proctoring.views import require_staff
 
 from .utils import (
     LoggedInTestCase
 )
+from mock import Mock
 
 from edx_proctoring.urls import urlpatterns
 
@@ -27,9 +30,7 @@ class ProctoredExamsApiTests(LoggedInTestCase):
         """
         Make sure we cannot access any API methods without being logged in
         """
-
         self.client = Client()  # use AnonymousUser on the API calls
-
         for urlpattern in urlpatterns:
             if hasattr(urlpattern, 'name'):
                 try:
@@ -49,11 +50,16 @@ class StudentProctoredExamAttempt(LoggedInTestCase):
     """
     Tests for StudentProctoredExamAttempt
     """
+    def setUp(self):
+        super(StudentProctoredExamAttempt, self).setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login_user(self.user)
+
     def test_get_exam_attempt(self):
         """
         Test Case for retrieving student proctored exam attempt status.
         """
-
         response = self.client.get(
             reverse('edx_proctoring.proctored_exam.attempt')
         )
@@ -64,6 +70,12 @@ class ProctoredExamViewTests(LoggedInTestCase):
     """
     Tests for the ProctoredExamView
     """
+    def setUp(self):
+        super(ProctoredExamViewTests, self).setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login_user(self.user)
+
     def test_create_exam(self):
         """
         Test the POST method of the exam endpoint to create an exam.
@@ -83,18 +95,20 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertGreater(response.data['exam_id'], 0)
+        response_data = json.loads(response.content)
+        self.assertGreater(response_data['exam_id'], 0)
 
         # Now lookup the exam by giving the exam_id returned and match the data.
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.exam_by_id', kwargs={'exam_id': response.data['exam_id']})
+            reverse('edx_proctoring.proctored_exam.exam_by_id', kwargs={'exam_id': response_data['exam_id']})
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['course_id'], exam_data['course_id'])
-        self.assertEqual(response.data['exam_name'], exam_data['exam_name'])
-        self.assertEqual(response.data['content_id'], exam_data['content_id'])
-        self.assertEqual(response.data['external_id'], exam_data['external_id'])
-        self.assertEqual(response.data['time_limit_mins'], exam_data['time_limit_mins'])
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['course_id'], exam_data['course_id'])
+        self.assertEqual(response_data['exam_name'], exam_data['exam_name'])
+        self.assertEqual(response_data['content_id'], exam_data['content_id'])
+        self.assertEqual(response_data['external_id'], exam_data['external_id'])
+        self.assertEqual(response_data['time_limit_mins'], exam_data['time_limit_mins'])
 
     def test_get_exam_by_id(self):
         """
@@ -113,8 +127,30 @@ class ProctoredExamViewTests(LoggedInTestCase):
             reverse('edx_proctoring.proctored_exam.exam_by_id', kwargs={'exam_id': proctored_exam.id})
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['course_id'], proctored_exam.course_id)
-        self.assertEqual(response.data['exam_name'], proctored_exam.exam_name)
-        self.assertEqual(response.data['content_id'], proctored_exam.content_id)
-        self.assertEqual(response.data['external_id'], proctored_exam.external_id)
-        self.assertEqual(response.data['time_limit_mins'], proctored_exam.time_limit_mins)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['course_id'], proctored_exam.course_id)
+        self.assertEqual(response_data['exam_name'], proctored_exam.exam_name)
+        self.assertEqual(response_data['content_id'], proctored_exam.content_id)
+        self.assertEqual(response_data['external_id'], proctored_exam.external_id)
+        self.assertEqual(response_data['time_limit_mins'], proctored_exam.time_limit_mins)
+
+    def test_decorator_staff_user(self):
+        """
+        Test assert require_staff before hitting any api url.
+        """
+        func = Mock()
+        decorated_func = require_staff(func)
+        request = self.mock_request()
+        response = decorated_func(request)
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(func.called)
+
+    def mock_request(self):
+        """
+        mock request
+        """
+        request = Mock()
+        self.user.is_staff = False
+        self.user.save()
+        request.user = self.user
+        return request
