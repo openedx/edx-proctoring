@@ -1,7 +1,10 @@
 """
 Data models for the proctoring subsystem
 """
+import pytz
+from datetime import datetime
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
@@ -19,23 +22,48 @@ class ProctoredExam(TimeStampedModel):
     content_id = models.CharField(max_length=255, db_index=True)
 
     # This will be a integration specific ID - say to SoftwareSecure.
-    external_id = models.TextField(null=True, db_index=True)
+    external_id = models.CharField(max_length=255, null=True, db_index=True)
 
-    # This is the display name of the course
+    # This is the display name of the Exam (Midterm etc).
     exam_name = models.TextField()
 
-    # Time limit (in minutes) that a student can finish this exam
+    # Time limit (in minutes) that a student can finish this exam.
     time_limit_mins = models.IntegerField()
 
-    # Whether this exam actually is proctored or not
+    # Whether this exam actually is proctored or not.
     is_proctored = models.BooleanField()
 
-    # This will be a integration specific ID - say to SoftwareSecure.
+    # Whether this exam will be active.
     is_active = models.BooleanField()
 
     class Meta:
         """ Meta class for this Django model """
         unique_together = (('course_id', 'content_id'),)
+        db_table = 'proctoring_proctoredexam'
+
+    @classmethod
+    def get_exam_by_content_id(cls, course_id, content_id):
+        """
+        Returns the Proctored Exam if found else returns None,
+        Given course_id and content_id
+        """
+        try:
+            proctored_exam = cls.objects.get(course_id=course_id, content_id=content_id)
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            proctored_exam = None
+        return proctored_exam
+
+    @classmethod
+    def get_exam_by_id(cls, exam_id):
+        """
+        Returns the Proctored Exam if found else returns None,
+        Given exam_id (PK)
+        """
+        try:
+            proctored_exam = cls.objects.get(id=exam_id)
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            proctored_exam = None
+        return proctored_exam
 
 
 class ProctoredExamStudentAttempt(TimeStampedModel):
@@ -52,20 +80,64 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     completed_at = models.DateTimeField(null=True)
 
     # This will be a integration specific ID - say to SoftwareSecure.
-    external_id = models.TextField(null=True, db_index=True)
+    external_id = models.CharField(max_length=255, null=True, db_index=True)
 
     # what is the status of this attempt
     status = models.CharField(max_length=64)
+
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamstudentattempt'
+        verbose_name = 'proctored exam attempt'
 
     @property
     def is_active(self):
         """ returns boolean if this attempt is considered active """
         return self.started_at and not self.completed_at
 
+    @classmethod
+    def start_exam_attempt(cls, exam_id, user_id, external_id):
+        """
+        create and return an exam attempt entry for a given
+        exam_id. If one already exists, then returns None.
+        """
+        if cls.get_student_exam_attempt(exam_id, user_id) is None:
+            return cls.objects.create(
+                proctored_exam_id=exam_id,
+                user_id=user_id,
+                external_id=external_id,
+                started_at=datetime.now(pytz.UTC)
+            )
+        else:
+            return None
+
+    @classmethod
+    def get_student_exam_attempt(cls, exam_id, user_id):
+        """
+        Returns the Student Exam Attempt object if found
+        else Returns None.
+        """
+        try:
+            exam_attempt_obj = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id)
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = None
+        return exam_attempt_obj
+
+    @classmethod
+    def get_active_student_exams(cls, user_id, course_id=None):
+        """
+        Returns the active student exams (user in-progress exams)
+        """
+        filtered_query = Q(user_id=user_id) & Q(started_at__isnull=False) & Q(completed_at__isnull=True)
+        if course_id is not None:
+            filtered_query = filtered_query & Q(proctored_exam__course_id=course_id)
+
+        return cls.objects.filter(filtered_query)
+
 
 class QuerySetWithUpdateOverride(models.query.QuerySet):
     """
-    Custom QuerySet class to send the POST_UPDATE_SIGNAL
+    Custom QuerySet class to make an archive copy
     every time the object is updated.
     """
     def update(self, **kwargs):
@@ -76,7 +148,7 @@ class QuerySetWithUpdateOverride(models.query.QuerySet):
 class ProctoredExamStudentAllowanceManager(models.Manager):
     """
     Custom manager to override with the custom queryset
-    to enable the POST_UPDATE_SIGNAL
+    to enable archiving on Allowance updation.
     """
     def get_query_set(self):
         return QuerySetWithUpdateOverride(self.model, using=self._db)
@@ -100,6 +172,38 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
     class Meta:
         """ Meta class for this Django model """
         unique_together = (('user_id', 'proctored_exam', 'key'),)
+        db_table = 'proctoring_proctoredexamstudentallowance'
+        verbose_name = 'proctored allowance'
+
+    @classmethod
+    def get_allowance_for_user(cls, exam_id, user_id, key):
+        """
+        Returns an allowance for a user within a given exam
+        """
+        try:
+            student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            student_allowance = None
+        return student_allowance
+
+    @classmethod
+    def get_allowances_for_user(cls, exam_id, user_id):
+        """
+        Returns an allowances for a user within a given exam
+        """
+        return cls.objects.filter(proctored_exam_id=exam_id, user_id=user_id)
+
+    @classmethod
+    def add_allowance_for_user(cls, exam_id, user_id, key, value):
+        """
+        Add or (Update) an allowance for a user within a given exam
+        """
+        try:
+            student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
+            student_allowance.value = value
+            student_allowance.save()
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            cls.objects.create(proctored_exam_id=exam_id, user_id=user_id, key=key, value=value)
 
 
 class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
@@ -119,8 +223,13 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
 
     value = models.CharField(max_length=255)
 
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamstudentallowancehistory'
+        verbose_name = 'proctored allowance history'
 
-# Hook up the custom POST_UPDATE_SIGNAL signal to record updations in the ProctoredExamStudentAllowanceHistory table.
+
+# Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
 @receiver(post_save, sender=ProctoredExamStudentAllowance)
 def on_allowance_saved(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
     """
