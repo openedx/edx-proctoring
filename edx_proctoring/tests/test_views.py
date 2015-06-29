@@ -2,9 +2,11 @@
 All tests for the proctored_exams.py
 """
 import json
+from datetime import datetime
 from django.test.client import Client
 from django.core.urlresolvers import reverse, NoReverseMatch
-from edx_proctoring.models import ProctoredExam
+import pytz
+from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
 from edx_proctoring.views import require_staff
 from django.contrib.auth.models import User
 
@@ -413,3 +415,181 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
         self.assertEqual(response_data['detail'], 'Error. Trying to start an exam that has already started.')
+
+    def test_stop_exam_attempt(self):
+        """
+        Start an exam (create an exam attempt)
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+        old_attempt_id = response_data['exam_attempt_id']
+
+        stop_attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id
+        }
+
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.attempt'),
+            stop_attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+    def test_stop_unstarted_attempt(self):
+        """
+        Start an exam (create an exam attempt)
+        """
+        # Create an exam.
+        attempt_data = {
+            'exam_id': 999999,
+            'user_id': self.student_taking_exam.id,
+            'external_id': "123456"
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.attempt'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['detail'], 'Error. Trying to stop an exam that is not in progress.')
+
+
+class TestExamAllowanceView(LoggedInTestCase):
+    """
+    Tests for the ExamAllowanceView
+    """
+    def setUp(self):
+        super(TestExamAllowanceView, self).setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login_user(self.user)
+        self.student_taking_exam = User()
+        self.student_taking_exam.save()
+
+    def test_add_allowance_for_user(self):
+        """
+        Add allowance for a user for an exam.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'key': 'a_key',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_remove_allowance_for_user(self):
+        """
+        Remove allowance for a user for an exam.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'key': 'a_key',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        allowance_data.pop('value')
+
+        response = self.client.delete(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class TestActiveExamsForUserView(LoggedInTestCase):
+    """
+    Tests for the ActiveExamsForUserView
+    """
+    def setUp(self):
+        super(TestActiveExamsForUserView, self).setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login_user(self.user)
+        self.student_taking_exam = User()
+        self.student_taking_exam.save()
+
+    def test_get_active_exams_for_user(self):
+        """
+        Test to get all the exams the user is currently taking.
+        """
+
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=proctored_exam.id,
+            user_id=self.student_taking_exam.id,
+            external_id='123aXqe3',
+            started_at=datetime.now(pytz.UTC)
+        )
+
+        ProctoredExamStudentAllowance.objects.create(
+            proctored_exam_id=proctored_exam.id,
+            user_id=self.student_taking_exam.id,
+            key='a_key',
+            value="30"
+        )
+
+        exams_query_data = {
+            'user_id': self.student_taking_exam.id,
+            'course_id': proctored_exam.course_id
+        }
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.active_exams_for_user'),
+            exams_query_data
+        )
+        self.assertEqual(response.status_code, 200)

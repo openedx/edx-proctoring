@@ -228,8 +228,8 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         """
         try:
             exam_attempt_id = stop_exam_attempt(
-                exam_id=request.DATA.get('exam_id', ""),
-                user_id=request.DATA.get('user_id', "")
+                exam_id=request.DATA.get('exam_id', None),
+                user_id=request.DATA.get('user_id', None)
             )
             return Response({"exam_attempt_id": exam_attempt_id})
 
@@ -255,10 +255,10 @@ class ExamAllowanceView(AuthenticatedAPIView):
         HTTP GET handler. Adds or updates Allowance
         """
         return Response(add_allowance_for_user(
-            exam_id=request.DATA.get('exam_id', ""),
-            user_id=request.DATA.get('user_id', ""),
-            key=request.DATA.get('key', ""),
-            value=request.DATA.get('value', "")
+            exam_id=request.DATA.get('exam_id', None),
+            user_id=request.DATA.get('user_id', None),
+            key=request.DATA.get('key', None),
+            value=request.DATA.get('value', None)
         ))
 
     @method_decorator(require_staff)
@@ -267,9 +267,9 @@ class ExamAllowanceView(AuthenticatedAPIView):
         HTTP DELETE handler. Removes Allowance.
         """
         return Response(remove_allowance_for_user(
-            exam_id=request.DATA.get('exam_id', ""),
-            user_id=request.DATA.get('user_id', ""),
-            key=request.DATA.get('key', "")
+            exam_id=request.DATA.get('exam_id', None),
+            user_id=request.DATA.get('user_id', None),
+            key=request.DATA.get('key', None)
         ))
 
 
@@ -286,6 +286,6 @@ class ActiveExamsForUserView(AuthenticatedAPIView):
         returns the get_active_exams_for_user
         """
         return Response(get_active_exams_for_user(
-            user_id=request.DATA.get('user_id', ""),
-            course_id=request.DATA.get('course_id', "")
+            user_id=request.DATA.get('user_id', None),
+            course_id=request.DATA.get('course_id', None)
         ))
