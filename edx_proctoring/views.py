@@ -7,7 +7,6 @@ import pytz
 from datetime import datetime, timedelta
 
 from django.utils.decorators import method_decorator
-from django.db import IntegrityError
 
 from rest_framework import status
 from rest_framework.response import Response

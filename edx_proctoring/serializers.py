@@ -1,5 +1,4 @@
 """Defines serializers used by the Proctoring API."""
-from django.conf import settings
 from rest_framework import serializers
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
 
@@ -21,7 +20,7 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
     """
     Serializer for the ProctoredExam Model.
     """
-    id = serializers.IntegerField(required=True)
+    id = serializers.IntegerField(required=False)
     course_id = serializers.CharField(required=True)
     content_id = serializers.CharField(required=True)
     external_id = serializers.CharField(required=True)

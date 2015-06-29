@@ -15,6 +15,7 @@ class TestProctoredExamSerializer(unittest.TestCase):
         Tests the boolean fields. Should cause a validation error in case a field is required.
         """
         data = {
+            'id': "123",
             'course_id': "a/b/c",
             'exam_name': "midterm1",
             'content_id': '123aXqe0',

@@ -8,7 +8,7 @@ API which is in the views.py file, per edX coding standards
 """
 import pytz
 from datetime import datetime, timedelta
-from django.template import Context, Template, loader
+from django.template import Context, loader
 from django.core.urlresolvers import reverse
 
 from edx_proctoring.exceptions import (
@@ -226,10 +226,8 @@ def get_student_view(user_id, course_id, content_id, context):
     exam_id = None
     try:
         exam = get_exam_by_content_id(course_id, content_id)
-        print '**** exam = {}'.format(exam)
         exam_id = exam['id']
-    except Exception, ex:
-        print '*** exception = {}'.format(unicode(ex))
+    except ProctoredExamNotFoundException:
         exam_id = create_exam(
             course_id=course_id,
             content_id=unicode(content_id),
