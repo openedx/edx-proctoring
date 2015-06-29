@@ -4,6 +4,7 @@ Data models for the proctoring subsystem
 import pytz
 from datetime import datetime
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
@@ -122,6 +123,17 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             exam_attempt_obj = None
         return exam_attempt_obj
 
+    @classmethod
+    def get_active_student_exams(cls, user_id, course_id=None):
+        """
+        Returns the active student exams (user in-progress exams)
+        """
+        filtered_query = Q(user_id=user_id) & Q(started_at__isnull=False) & Q(completed_at__isnull=True)
+        if course_id is not None:
+            filtered_query = filtered_query & Q(proctored_exam__course_id=course_id)
+
+        return cls.objects.filter(filtered_query)
+
 
 class QuerySetWithUpdateOverride(models.query.QuerySet):
     """
@@ -173,6 +185,13 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         except cls.DoesNotExist:
             student_allowance = None
         return student_allowance
+
+    @classmethod
+    def get_allowances_for_user(cls, exam_id, user_id):
+        """
+        Returns an allowances for a user within a given exam
+        """
+        return cls.objects.filter(proctored_exam_id=exam_id, user_id=user_id)
 
     @classmethod
     def add_allowance_for_user(cls, exam_id, user_id, key, value):

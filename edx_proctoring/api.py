@@ -14,7 +14,8 @@ from edx_proctoring.exceptions import (
 from edx_proctoring.models import (
     ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
 )
-from edx_proctoring.serializers import ProctoredExamSerializer
+from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer, \
+    ProctoredExamStudentAllowanceSerializer
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins,
@@ -176,3 +177,22 @@ def get_active_exams_for_user(user_id, course_id=None):
     }, {}, ...]
 
     """
+    result = []
+
+    student_active_exams = ProctoredExamStudentAttempt.get_active_student_exams(user_id, course_id)
+    for active_exam in student_active_exams:
+        # convert the django orm objects
+        # into the serialized form.
+        exam_serialized_data = ProctoredExamSerializer(active_exam.proctored_exam).data
+        active_exam_serialized_data = ProctoredExamStudentAttemptSerializer(active_exam).data
+        student_allowances = ProctoredExamStudentAllowance.get_allowances_for_user(
+            active_exam.proctored_exam.id, user_id
+        )
+        allowance_serialized_data = [ProctoredExamStudentAllowanceSerializer(allowance).data for allowance in
+                                     student_allowances]
+        result.append({
+            'exam': exam_serialized_data,
+            'attempt': active_exam_serialized_data,
+            'allowances': allowance_serialized_data
+        })
+    return result
