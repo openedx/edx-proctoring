@@ -1,6 +1,6 @@
 # Testing Packages
 coverage==3.7.1
-astroid==1.3.4
+astroid==1.3.6
 django_nose
 nose==1.3.3
 httpretty==0.8.0
