@@ -49,26 +49,6 @@ class ProctoredExamsApiTests(LoggedInTestCase):
                 self.assertEqual(response.status_code, 403)
 
 
-class StudentProctoredExamAttempt(LoggedInTestCase):
-    """
-    Tests for StudentProctoredExamAttempt
-    """
-    def setUp(self):
-        super(StudentProctoredExamAttempt, self).setUp()
-        self.user.is_staff = True
-        self.user.save()
-        self.client.login_user(self.user)
-
-    def test_get_exam_attempt(self):
-        """
-        Test Case for retrieving student proctored exam attempt status.
-        """
-        response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt')
-        )
-        self.assertEqual(response.status_code, 200)
-
-
 class ProctoredExamViewTests(LoggedInTestCase):
     """
     Tests for the ProctoredExamView
@@ -475,6 +455,81 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
         self.assertEqual(response_data['detail'], 'Error. Trying to stop an exam that is not in progress.')
+
+    def test_get_exam_attempt(self):
+        """
+        Test Case for retrieving student proctored exam attempt status.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt')
+        )
+        self.assertEqual(response.status_code, 200)
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt')
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_expired_exam_attempt(self):
+        """
+        Test to get the exam the time for which has finished.
+        """
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt')
+        )
+        self.assertEqual(response.status_code, 200)
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        ProctoredExamStudentAttempt.objects.filter(
+            proctored_exam_id=proctored_exam.id,
+            user_id=self.user.id,
+            external_id=proctored_exam.external_id,
+        ).update(
+            started_at=datetime.now(pytz.UTC).replace(year=2013)
+        )
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt')
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 class TestExamAllowanceView(LoggedInTestCase):

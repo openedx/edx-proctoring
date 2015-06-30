@@ -19,6 +19,7 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer, \
     ProctoredExamStudentAllowanceSerializer
+from edx_proctoring.utils import humanized_time
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins,
@@ -252,7 +253,9 @@ def get_student_view(user_id, course_id, content_id, context):
     if student_view_template:
         template = loader.get_template(student_view_template)
         django_context = Context(context)
+        total_time = humanized_time(context['default_time_limit_mins'])
         django_context.update({
+            'total_time': total_time,
             'exam_id': exam_id,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt'),
         })

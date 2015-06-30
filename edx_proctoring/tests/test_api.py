@@ -3,11 +3,29 @@ All tests for the models.py
 """
 from datetime import datetime
 import pytz
-from edx_proctoring.api import create_exam, update_exam, get_exam_by_id, get_exam_by_content_id, \
-    add_allowance_for_user, remove_allowance_for_user, start_exam_attempt, stop_exam_attempt, get_active_exams_for_user
-from edx_proctoring.exceptions import ProctoredExamAlreadyExists, ProctoredExamNotFoundException, \
-    StudentExamAttemptAlreadyExistsException, StudentExamAttemptDoesNotExistsException
-from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
+from edx_proctoring.api import (
+    create_exam,
+    update_exam,
+    get_exam_by_id,
+    get_exam_by_content_id,
+    add_allowance_for_user,
+    remove_allowance_for_user,
+    start_exam_attempt,
+    stop_exam_attempt,
+    get_active_exams_for_user,
+    get_exam_attempt
+)
+from edx_proctoring.exceptions import (
+    ProctoredExamAlreadyExists,
+    ProctoredExamNotFoundException,
+    StudentExamAttemptAlreadyExistsException,
+    StudentExamAttemptDoesNotExistsException
+)
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAttempt
+)
 
 from .utils import (
     LoggedInTestCase
@@ -175,6 +193,16 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         attempt_id = start_exam_attempt(self.proctored_exam_id, self.user_id, self.external_id)
         self.assertGreater(attempt_id, 0)
+
+    def test_get_exam_attempt(self):
+        """
+        Test to get the already made exam attempt.
+        """
+        self._create_student_exam_attempt()
+        exam_attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
+
+        self.assertEqual(exam_attempt['proctored_exam_id'], self.proctored_exam_id)
+        self.assertEqual(exam_attempt['user_id'], self.user_id)
 
     def test_restart_exam_attempt(self):
         """
