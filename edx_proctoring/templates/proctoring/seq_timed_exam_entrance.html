@@ -1,7 +1,25 @@
+{% load i18n %}
 <div class="sequence" data-exam-id="{{exam_id}}">
-    <div class="gated-sequence">
-        This is a timed exam. Would you like to <a class='start-timed-exam' data-ajax-url="{{enter_exam_endpoint}}">enter</a> it?
-    </div>
+  <h3>
+    {% blocktrans %}
+    {{ display_name }} is a Timed Exam ( {{total_time}} )
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% trans "This exam has a time limit associated with it." %}
+    <strong>
+      {% trans "In order to successfully pass this exam you will have to answer the following questions and problems in the time allotted." %}
+    </strong>
+    Once you proceed, you'll start both the exam and the total time {{total_time}} gives to you.
+  </p>
+  <div class="gated-sequence">
+    {% blocktrans %}
+      I'm ready! Start this timed exam.
+      <a class='start-timed-exam' data-ajax-url="{{enter_exam_endpoint}}">
+        <i class="fa fa-arrow-circle-right"></i>
+      </a>
+    {% endblocktrans %}
+  </div>
 </div>
 
 <script type="text/javascript">
@@ -13,7 +31,7 @@
       $.post(
         action_url,
         {
-          "exam_id": exam_id,
+          "exam_id": exam_id
         },
         function(data) {
           // reload the page, because we've unlocked it
