@@ -489,6 +489,48 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_get_expired_exam_attempt(self):
+        """
+        Test to get the exam the time for which has finished.
+        """
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt')
+        )
+        self.assertEqual(response.status_code, 200)
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        ProctoredExamStudentAttempt.objects.filter(
+            proctored_exam_id=proctored_exam.id,
+            user_id=self.user.id,
+            external_id=proctored_exam.external_id,
+        ).update(
+            started_at=datetime.now(pytz.UTC).replace(year=2013)
+        )
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt')
+        )
+        self.assertEqual(response.status_code, 200)
+
 
 class TestExamAllowanceView(LoggedInTestCase):
     """
