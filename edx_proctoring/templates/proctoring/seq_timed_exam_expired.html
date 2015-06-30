@@ -1,5 +1,7 @@
+{% load i18n %}
 <div class="sequence">
     <div class="gated-sequence">
-        You have run out of time!
+        {% trans "You have run out of time!" %}
     </div>
 </div>
+{% include 'proctoring/seq_timed_exam_footer.html' %}

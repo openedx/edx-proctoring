@@ -2,6 +2,7 @@
 Helpers for the HTTP APIs
 """
 
+from django.utils.translation import ugettext as _
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -33,25 +34,25 @@ def humanized_time(time_in_minutes):
     if hours == 0:
         hours_present = False
     elif hours == 1:
-        template = "{num_of_hours} Hour"
+        template = _("{num_of_hours} Hour")
         hours_present = True
     elif hours >= 2:
-        template = "{num_of_hours} Hours"
+        template = _("{num_of_hours} Hours")
         hours_present = True
 
     if minutes == 0:
         if not hours_present:
-            template = "{num_of_minutes} Minutes"
+            template = _("{num_of_minutes} Minutes")
     elif minutes == 1:
         if hours_present:
-            template += " and {num_of_minutes} Minute"
+            template += _(" and {num_of_minutes} Minute")
         else:
-            template += "{num_of_minutes} Minute"
+            template += _("{num_of_minutes} Minute")
     elif minutes >= 2:
         if hours_present:
-            template += " and {num_of_minutes} Minutes"
+            template += _(" and {num_of_minutes} Minutes")
         else:
-            template += "{num_of_minutes} Minutes"
+            template += _("{num_of_minutes} Minutes")
 
     human_time = template.format(num_of_hours=hours, num_of_minutes=minutes)
     return human_time
