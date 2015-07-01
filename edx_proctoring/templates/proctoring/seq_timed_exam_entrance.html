@@ -10,9 +10,8 @@
     <strong>
       {% trans "In order to successfully pass this exam you will have to answer the following questions and problems in the time allotted." %}
     </strong>
-    {% blocktrans %}
-    Once you proceed, you'll start both the exam and the {{total_time|lower}} given to you.
-    {% endblocktrans %}
+       ## Translators: The sentence would be like: ..both the exam and the _2 hours and 30 minutes_ given to you.
+    {% trans "Once you proceed, you'll start both the exam and the "%} {{total_time|lower}} {% trans " given to you." %}
   </p>
   <div class="gated-sequence">
     <a class='start-timed-exam' data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
