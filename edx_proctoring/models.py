@@ -85,6 +85,10 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # what is the status of this attempt
     status = models.CharField(max_length=64)
 
+    # if the user is attempting this as a proctored exam
+    # in case there is an option to opt-out
+    taking_as_proctored = models.BooleanField()
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'

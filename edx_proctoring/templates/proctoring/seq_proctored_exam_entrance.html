@@ -15,7 +15,7 @@
   </p>
   <div class="gated-sequence">
     <span><i class="fa fa-lock"></i></span>
-    <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
+    <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-choice="proctored">
       {% trans "Yes, take this exam as a proctored exam (and be eligible for credit)" %}
     </a>
     <p>
@@ -24,11 +24,11 @@
         of your exam. After successful installation, you will be <strong>guided through setting up your
         proctored session and begin the exam immediately </strong>afterwards.</p>
       {% endblocktrans %}
-    <i class="fa fa-arrow-circle-right"></i>
+    <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-choice="proctored"></i>
   </div>
   <div class="gated-sequence">
     <span><i class="fa fa-unlock"></i></span>
-    <a class="start-timed-exam">
+    <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-choice="unproctored">
       {% trans "No, take this exam as an open exam (and not be eligible for credit)" %}
     </a>
     <p>
@@ -37,7 +37,7 @@
         credit </strong>upon completing the exam or this course in general.
       {% endblocktrans %}
     </p>
-      <i class="fa fa-arrow-circle-right"></i>
+      <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-choice="unproctored"></i>
   </div>
 </div>
 {% include 'proctoring/seq_proctored_exam_footer.html' %}
@@ -47,13 +47,15 @@
     function(event) {
       var action_url = $(this).data('ajax-url');
       var exam_id = $(this).data('exam-id');
+      var choice = $(this).data('choice');
       if (typeof action_url === "undefined" ) {
         return false;
       }
       $.post(
         action_url,
         {
-          "exam_id": exam_id
+          "exam_id": exam_id,
+          "choice": choice
         },
         function(data) {
           // reload the page, because we've unlocked it
