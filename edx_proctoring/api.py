@@ -248,7 +248,7 @@ def get_student_view(user_id, course_id, content_id, context):
         has_time_expired = now_utc > expires_at
 
     if not has_started_exam:
-        # determine whether to show a timed exam only entrace screen
+        # determine whether to show a timed exam only entrance screen
         # or a screen regarding proctoring
         if is_proctored:
             student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
