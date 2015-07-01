@@ -222,18 +222,22 @@ def get_student_view(user_id, course_id, content_id, context):
     has_started_exam = False
     has_finished_exam = False
     has_time_expired = False
+    is_proctored = False
     student_view_template = None
 
     exam_id = None
     try:
         exam = get_exam_by_content_id(course_id, content_id)
         exam_id = exam['id']
+        is_proctored = exam['is_proctored']
     except ProctoredExamNotFoundException:
+        is_proctored = context.get('is_proctored', False)
         exam_id = create_exam(
             course_id=course_id,
             content_id=unicode(content_id),
             exam_name=context['display_name'],
-            time_limit_mins=context['default_time_limit_mins']
+            time_limit_mins=context['default_time_limit_mins'],
+            is_proctored=is_proctored
         )
 
     attempt = get_exam_attempt(exam_id, user_id)
@@ -244,7 +248,12 @@ def get_student_view(user_id, course_id, content_id, context):
         has_time_expired = now_utc > expires_at
 
     if not has_started_exam:
-        student_view_template = 'proctoring/seq_timed_exam_entrance.html'
+        # determine whether to show a timed exam only entrace screen
+        # or a screen regarding proctoring
+        if is_proctored:
+            student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
+        else:
+            student_view_template = 'proctoring/seq_timed_exam_entrance.html'
     elif has_finished_exam:
         student_view_template = 'proctoring/seq_timed_exam_completed.html'
     elif has_time_expired:
