@@ -16,9 +16,7 @@
   <div class="gated-sequence">
     <span><i class="fa fa-lock"></i></span>
     <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
-        {% blocktrans %}
-          Yes, take this exam as a proctored exam (and be eligible for credit)
-        {% endblocktrans %}
+      {% trans "Yes, take this exam as a proctored exam (and be eligible for credit)" %}
     </a>
     <p>
       {% blocktrans %}
@@ -31,7 +29,7 @@
   <div class="gated-sequence">
     <span><i class="fa fa-unlock"></i></span>
     <a class="start-timed-exam">
-      No, take this exam as an open exam (and not be eligible for credit)
+      {% trans "No, take this exam as an open exam (and not be eligible for credit)" %}
     </a>
     <p>
       {% blocktrans %}
