@@ -14,14 +14,15 @@ from edx_proctoring.api import (
     stop_exam_attempt,
     get_active_exams_for_user,
     get_exam_attempt,
-    create_exam_attempt,
-    get_student_view)
+    create_exam_attempt
+)
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
     StudentExamAttemptAlreadyExistsException,
     StudentExamAttemptDoesNotExistsException,
-    StudentExamAttemptedAlreadyStarted)
+    StudentExamAttemptedAlreadyStarted
+)
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
@@ -294,7 +295,3 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(len(student_active_exams), 2)
         self.assertEqual(len(student_active_exams[0]['allowances']), 2)
         self.assertEqual(len(student_active_exams[1]['allowances']), 0)
-
-    def test_get_student_view(self):
-        context = {'default_time_limit_mins': 90}
-        get_student_view(self.user_id, self.course_id, self.content_id, context)
