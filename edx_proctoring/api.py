@@ -289,8 +289,8 @@ def get_student_view(user_id, course_id, content_id, context):
         )
 
     attempt = get_exam_attempt(exam_id, user_id)
-    has_started_exam = attempt is not None
-    if attempt:
+    has_started_exam = attempt and attempt.get('started_at')
+    if has_started_exam:
         now_utc = datetime.now(pytz.UTC)
         expires_at = attempt['started_at'] + timedelta(minutes=context['default_time_limit_mins'])
         has_time_expired = now_utc > expires_at
@@ -299,7 +299,10 @@ def get_student_view(user_id, course_id, content_id, context):
         # determine whether to show a timed exam only entrance screen
         # or a screen regarding proctoring
         if is_proctored:
-            student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
+            if not attempt:
+                student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
+            else:
+                student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
     elif has_finished_exam:
