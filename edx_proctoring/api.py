@@ -303,6 +303,7 @@ def get_student_view(user_id, course_id, content_id, context):
                 student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
             else:
                 student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
+                context.update({'exam_code': '@asDASD@E2313213SDASD213123423WEWA'})
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
     elif has_finished_exam:
