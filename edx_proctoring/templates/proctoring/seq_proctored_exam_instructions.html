@@ -1,4 +1,41 @@
 {% load i18n %}
-<div class="sequence" data-exam-id="{{exam_id}}">
-How to launch the proctored exam content goes here
+<div class="sequence proctored-exam instructions" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      Awaiting Proctoring Installation & Set Up
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% blocktrans %}
+      you have chosen to take {{display_name}} as a proctored exam. You should be redirected to a new window
+      with installation and setup instructions. You can also <a href="#">open the installation</a>
+    {% endblocktrans %}
+  </p>
+  <div class="proctored-exam-message">
+    <h3>
+    {% blocktrans %}
+      Here is your unique exam code. You'll be asked for it during the setup.
+    {% endblocktrans %}
+    </h3>
+    <h1> {{exam_code}}</h1>
+    <p>
+      {% blocktrans %}
+        Please do not share this code. It can only be used once and it tied to your edX Account.
+      {% endblocktrans %}
+    </p>
+  </div>
 </div>
+<div class="footer-sequence border-b-0 padding-b-0">
+  <span> {% trans "Note: Once you complete your installation and set up, your timed exam will begin." %} </span>
+    <p>
+    {% blocktrans %}
+      Please be prepared to start the exam and follow all the guidelines of an edX proctored exam.
+    {% endblocktrans %}
+  </p>
+  <p class="proctored-exam-option">
+    {% blocktrans %}
+      Don't want to take this as a proctored exam? <a href="#">Take this as an open exam instead.</a>
+    {% endblocktrans %}
+  </p>
+</div>
+{% include 'proctoring/seq_proctored_exam_footer.html' %}

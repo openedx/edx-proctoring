@@ -149,7 +149,8 @@ def get_exam_attempt(exam_id, user_id):
     Return an existing exam attempt for the given student
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id)
-    return exam_attempt_obj.__dict__ if exam_attempt_obj else None
+    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
+    return serialized_attempt_obj.data if exam_attempt_obj else None
 
 
 def create_exam_attempt(exam_id, user_id, external_id):
@@ -303,6 +304,7 @@ def get_student_view(user_id, course_id, content_id, context):
                 student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
             else:
                 student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
+                context.update({'exam_code': '@asDASD@E2313213SDASD213123423WEWA'})
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
     elif has_finished_exam:

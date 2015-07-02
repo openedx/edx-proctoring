@@ -1,7 +1,31 @@
 {% load i18n %}
-<div class="sequence timed-exam expired">
-    <div class="gated-sequence">
-        {% trans "You have run out of time!" %}
-    </div>
+<div class="critical-time sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      You did not complete the exam in the allotted time
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% blocktrans %}
+      Since you did not submit your exam before the time allotted expired, your work cannot be
+      considered as an exam that is eligible for credit. Any work you've completed may still be counted for
+      partial credit towards your grade.
+    {% endblocktrans %}
+  </p>
+  <div class="proctored-exam-message">
+    <p>
+      {% blocktrans %}
+        Please see <a href="#">your progress in this course</a> for your general course credit worthiness.
+      {% endblocktrans %}
+    </p>
+  </div>
+</div>
+<div class="footer-sequence border-b-0 padding-b-0">
+  <span> {% trans "Is there anything i can do to make up/replace this session ?" %} </span>
+    <p>
+    {% blocktrans %}
+      text goes here.
+    {% endblocktrans %}
+  </p>
 </div>
 {% include 'proctoring/seq_timed_exam_footer.html' %}

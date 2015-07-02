@@ -1,6 +1,4 @@
 {% load i18n %}
-<div class="sequence" data-exam-id="{{exam_id}}">
-</div>
 <div class="sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
@@ -39,6 +37,14 @@
     </p>
       <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=false></i>
   </div>
+</div>
+<div class="footer-sequence">
+  <h4> {% trans "Why i am seeing these options?" %} </h4>
+    <p>
+    {% blocktrans %}
+      Text to be added here.
+    {% endblocktrans %}
+  </p>
 </div>
 {% include 'proctoring/seq_proctored_exam_footer.html' %}
 
