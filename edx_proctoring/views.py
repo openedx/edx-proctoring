@@ -19,10 +19,13 @@ from edx_proctoring.api import (
     stop_exam_attempt,
     add_allowance_for_user,
     remove_allowance_for_user,
-    get_active_exams_for_user
+    get_active_exams_for_user,
+    create_exam_attempt
 )
-from edx_proctoring.exceptions import ProctoredExamNotFoundException, \
-    StudentExamAttemptAlreadyExistsException, StudentExamAttemptDoesNotExistsException
+from edx_proctoring.exceptions import (
+    ProctoredBaseException,
+    ProctoredExamNotFoundException,
+)
 from edx_proctoring.serializers import ProctoredExamSerializer
 
 from .utils import AuthenticatedAPIView
@@ -236,20 +239,26 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
 
     def post(self, request):
         """
-        HTTP POST handler. To start an exam.
+        HTTP POST handler. To create an exam.
         """
+        start_immediately = request.DATA.get('start_clock', 'false').lower() == 'true'
+        exam_id = request.DATA.get('exam_id', None)
         try:
-            exam_attempt_id = start_exam_attempt(
-                exam_id=request.DATA.get('exam_id', None),
+            exam_attempt_id = create_exam_attempt(
+                exam_id=exam_id,
                 user_id=request.user.id,
-                external_id=request.DATA.get('external_id', None)
+                external_id=request.DATA.get('external_id', None),
             )
+
+            if start_immediately:
+                start_exam_attempt(exam_id, request.user.id)
+
             return Response({'exam_attempt_id': exam_attempt_id})
 
-        except StudentExamAttemptAlreadyExistsException:
+        except ProctoredBaseException, ex:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "Error. Trying to start an exam that has already started."}
+                data={"detail": str(ex)}
             )
 
     def put(self, request):
@@ -263,10 +272,10 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             )
             return Response({"exam_attempt_id": exam_attempt_id})
 
-        except StudentExamAttemptDoesNotExistsException:
+        except ProctoredBaseException, ex:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "Error. Trying to stop an exam that is not in progress."}
+                data={"detail": str(ex)}
             )
 
 

@@ -21,6 +21,10 @@
         },
         getFormattedRemainingTime: function () {
             var totalSeconds = this.getRemainingSeconds();
+            /* since we can have a small grace period, we can end in the negative numbers */
+            if (totalSeconds < 0)
+                totalSeconds = 0;
+
             var hours = parseInt(totalSeconds / 3600) % 24;
             var minutes = parseInt(totalSeconds / 60) % 60;
             var seconds = Math.floor(totalSeconds % 60);

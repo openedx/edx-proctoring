@@ -12,13 +12,22 @@ from django.template import Context, loader
 from django.core.urlresolvers import reverse
 
 from edx_proctoring.exceptions import (
-    ProctoredExamAlreadyExists, ProctoredExamNotFoundException, StudentExamAttemptAlreadyExistsException,
-    StudentExamAttemptDoesNotExistsException)
-from edx_proctoring.models import (
-    ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
+    ProctoredExamAlreadyExists,
+    ProctoredExamNotFoundException,
+    StudentExamAttemptAlreadyExistsException,
+    StudentExamAttemptDoesNotExistsException,
+    StudentExamAttemptedAlreadyStarted,
 )
-from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer, \
-    ProctoredExamStudentAllowanceSerializer
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAttempt,
+)
+from edx_proctoring.serializers import (
+    ProctoredExamSerializer,
+    ProctoredExamStudentAttemptSerializer,
+    ProctoredExamStudentAllowanceSerializer,
+)
 from edx_proctoring.utils import humanized_time
 
 
@@ -139,31 +148,65 @@ def get_exam_attempt(exam_id, user_id):
     """
     Return an existing exam attempt for the given student
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.get_student_exam_attempt(exam_id, user_id)
+    exam_attempt_obj = ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id)
     return exam_attempt_obj.__dict__ if exam_attempt_obj else None
 
 
-def start_exam_attempt(exam_id, user_id, external_id):
+def create_exam_attempt(exam_id, user_id, external_id):
+    """
+    Creates an exam attempt for user_id against exam_id. There should only be
+    one exam_attempt per user per exam. Multiple attempts by user will be archived
+    in a separate table
+    """
+    if ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id):
+        err_msg = (
+            'Cannot create new exam attempt for exam_id = {exam_id} and '
+            'user_id = {user_id} because it already exists!'
+        ).format(exam_id=exam_id, user_id=user_id)
+
+        raise StudentExamAttemptAlreadyExistsException(err_msg)
+
+    attempt = ProctoredExamStudentAttempt.create_exam_attempt(exam_id, user_id, external_id)
+    return attempt.id
+
+
+def start_exam_attempt(exam_id, user_id):
     """
     Signals the beginning of an exam attempt for a given
     exam_id. If one already exists, then an exception should be thrown.
 
     Returns: exam_attempt_id (PK)
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.start_exam_attempt(exam_id, user_id, external_id)
-    if exam_attempt_obj is None:
-        raise StudentExamAttemptAlreadyExistsException
-    else:
-        return exam_attempt_obj.id
+
+    existing_attempt = ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id)
+
+    if not existing_attempt:
+        err_msg = (
+            'Cannot start exam attempt for exam_id = {exam_id} '
+            'and user_id = {user_id} because it does not exist!'
+        ).format(exam_id=exam_id, user_id=user_id)
+
+        raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+    if existing_attempt.started_at:
+        # cannot restart an attempt
+        err_msg = (
+            'Cannot start exam attempt for exam_id = {exam_id} '
+            'and user_id = {user_id} because it has already started!'
+        ).format(exam_id=exam_id, user_id=user_id)
+
+        raise StudentExamAttemptedAlreadyStarted(err_msg)
+
+    existing_attempt.start_exam_attempt()
 
 
 def stop_exam_attempt(exam_id, user_id):
     """
     Marks the exam attempt as completed (sets the completed_at field and updates the record)
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.get_student_exam_attempt(exam_id, user_id)
+    exam_attempt_obj = ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
-        raise StudentExamAttemptDoesNotExistsException
+        raise StudentExamAttemptDoesNotExistsException('Error. Trying to stop an exam that is not in progress.')
     else:
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()
@@ -191,7 +234,7 @@ def get_active_exams_for_user(user_id, course_id=None):
     """
     result = []
 
-    student_active_exams = ProctoredExamStudentAttempt.get_active_student_exams(user_id, course_id)
+    student_active_exams = ProctoredExamStudentAttempt.get_active_student_attempts(user_id, course_id)
     for active_exam in student_active_exams:
         # convert the django orm objects
         # into the serialized form.
