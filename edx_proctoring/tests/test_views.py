@@ -486,6 +486,14 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+        ProctoredExamStudentAttempt.objects.filter(
+            proctored_exam_id=proctored_exam.id,
+            user_id=self.user.id,
+            external_id=proctored_exam.external_id,
+        ).update(
+            started_at=datetime.now(pytz.UTC)
+        )
+
         response = self.client.get(
             reverse('edx_proctoring.proctored_exam.attempt')
         )

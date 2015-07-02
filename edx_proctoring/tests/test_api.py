@@ -14,14 +14,14 @@ from edx_proctoring.api import (
     stop_exam_attempt,
     get_active_exams_for_user,
     get_exam_attempt,
-    create_exam_attempt
-)
+    create_exam_attempt,
+    get_student_view)
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
     StudentExamAttemptAlreadyExistsException,
-    StudentExamAttemptDoesNotExistsException
-)
+    StudentExamAttemptDoesNotExistsException,
+    StudentExamAttemptedAlreadyStarted)
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
@@ -64,7 +64,17 @@ class ProctoredExamApiTests(LoggedInTestCase):
             time_limit_mins=self.default_time_limit
         )
 
-    def _create_student_exam_attempt(self):
+    def _create_unstarted_exam_attempt(self):
+        """
+        Creates the ProctoredExamStudentAttempt object.
+        """
+        return ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=self.proctored_exam_id,
+            user_id=self.user_id,
+            external_id=self.external_id
+        )
+
+    def _create_started_exam_attempt(self):
         """
         Creates the ProctoredExamStudentAttempt object.
         """
@@ -195,30 +205,54 @@ class ProctoredExamApiTests(LoggedInTestCase):
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, '')
         self.assertGreater(attempt_id, 0)
 
+    def test_recreate_an_exam_attempt(self):
+        """
+        Start an exam attempt that has already been created.
+        Raises StudentExamAttemptAlreadyExistsException
+        """
+        proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
+        with self.assertRaises(StudentExamAttemptAlreadyExistsException):
+            create_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id, self.external_id)
+
     def test_get_exam_attempt(self):
         """
         Test to get the already made exam attempt.
         """
-        self._create_student_exam_attempt()
+        self._create_unstarted_exam_attempt()
         exam_attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
 
         self.assertEqual(exam_attempt['proctored_exam_id'], self.proctored_exam_id)
         self.assertEqual(exam_attempt['user_id'], self.user_id)
 
-    def test_restart_exam_attempt(self):
+    def test_start_uncreated_attempt(self):
         """
-        Start an exam attempt that has already been started.
-        Raises StudentExamAttemptAlreadyExistsException
+        Test to attempt starting an attempt which has not been created yet.
+        should raise an exception.
         """
-        proctored_exam_student_attempt = self._create_student_exam_attempt()
-        with self.assertRaises(StudentExamAttemptAlreadyExistsException):
-            create_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id, self.external_id)
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            start_exam_attempt(self.proctored_exam_id, self.user_id)
+
+    def test_start_a_created_attempt(self):
+        """
+        Test to attempt starting an attempt which has been created but not started.
+        """
+        self._create_unstarted_exam_attempt()
+        start_exam_attempt(self.proctored_exam_id, self.user_id)
+
+    def test_restart_a_started_attempt(self):
+        """
+        Test to attempt starting an attempt which has been created but not started.
+        """
+        self._create_unstarted_exam_attempt()
+        start_exam_attempt(self.proctored_exam_id, self.user_id)
+        with self.assertRaises(StudentExamAttemptedAlreadyStarted):
+            start_exam_attempt(self.proctored_exam_id, self.user_id)
 
     def test_stop_exam_attempt(self):
         """
         Stop an exam attempt.
         """
-        proctored_exam_student_attempt = self._create_student_exam_attempt()
+        proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = stop_exam_attempt(
             proctored_exam_student_attempt.proctored_exam, self.user_id
@@ -237,7 +271,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Test to get the all the active
         exams for the user.
         """
-        active_exam_attempt = self._create_student_exam_attempt()
+        active_exam_attempt = self._create_started_exam_attempt()
         self.assertEqual(active_exam_attempt.is_active, True)
         exam_id = create_exam(
             course_id=self.course_id,
@@ -260,3 +294,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(len(student_active_exams), 2)
         self.assertEqual(len(student_active_exams[0]['allowances']), 2)
         self.assertEqual(len(student_active_exams[1]['allowances']), 0)
+
+    def test_get_student_view(self):
+        context = {'default_time_limit_mins': 90}
+        get_student_view(self.user_id, self.course_id, self.content_id, context)

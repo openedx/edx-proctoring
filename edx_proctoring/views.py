@@ -239,7 +239,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
 
     def post(self, request):
         """
-        HTTP POST handler. To create an exam.
+        HTTP POST handler. To create an exam attempt.
         """
         start_immediately = request.DATA.get('start_clock', 'false').lower() == 'true'
         exam_id = request.DATA.get('exam_id', None)

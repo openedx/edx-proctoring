@@ -149,7 +149,8 @@ def get_exam_attempt(exam_id, user_id):
     Return an existing exam attempt for the given student
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id)
-    return exam_attempt_obj.__dict__ if exam_attempt_obj else None
+    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
+    return serialized_attempt_obj.data if exam_attempt_obj else None
 
 
 def create_exam_attempt(exam_id, user_id, external_id):

@@ -46,14 +46,16 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
     """
     Serializer for the ProctoredExamStudentAttempt Model.
     """
+    proctored_exam_id = serializers.IntegerField(source="proctored_exam_id")
     class Meta:
         """
         Meta Class
         """
         model = ProctoredExamStudentAttempt
+
         fields = (
             "id", "created", "modified", "user_id", "started_at", "completed_at",
-            "external_id", "status"
+            "external_id", "status", "proctored_exam_id"
         )
 
 
