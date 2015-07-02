@@ -17,7 +17,7 @@
             var currentTime = (new Date()).getTime();
             var lastFetched = this.get('lastFetched').getTime();
             var totalSeconds = this.get('time_remaining_seconds') - (currentTime - lastFetched) / 1000;
-            return (totalSeconds > 0) ? totalSeconds : 0;
+            return totalSeconds;
         },
         getFormattedRemainingTime: function () {
             var totalSeconds = this.getRemainingSeconds();

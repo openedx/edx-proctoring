@@ -166,7 +166,12 @@ def create_exam_attempt(exam_id, user_id, external_id):
 
         raise StudentExamAttemptAlreadyExistsException(err_msg)
 
-    attempt = ProctoredExamStudentAttempt.create_exam_attempt(exam_id, user_id, external_id)
+    attempt = ProctoredExamStudentAttempt.create_exam_attempt(
+        exam_id,
+        user_id,
+        '',  # student name is TBD
+        external_id
+    )
     return attempt.id
 
 

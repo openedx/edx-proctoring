@@ -89,6 +89,8 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # in case there is an option to opt-out
     taking_as_proctored = models.BooleanField()
 
+    student_name = models.CharField(max_length=255)
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'
@@ -100,7 +102,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         return self.started_at and not self.completed_at
 
     @classmethod
-    def create_exam_attempt(cls, exam_id, user_id, external_id):
+    def create_exam_attempt(cls, exam_id, user_id, student_name, external_id):
         """
         Create a new exam attempt entry for a given exam_id and
         user_id.
@@ -109,6 +111,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         return cls.objects.create(
             proctored_exam_id=exam_id,
             user_id=user_id,
+            student_name=student_name,
             external_id=external_id
         )
 
