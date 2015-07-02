@@ -85,6 +85,12 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # what is the status of this attempt
     status = models.CharField(max_length=64)
 
+    # if the user is attempting this as a proctored exam
+    # in case there is an option to opt-out
+    taking_as_proctored = models.BooleanField()
+
+    student_name = models.CharField(max_length=255)
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'
@@ -96,23 +102,29 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         return self.started_at and not self.completed_at
 
     @classmethod
-    def start_exam_attempt(cls, exam_id, user_id, external_id):
+    def create_exam_attempt(cls, exam_id, user_id, student_name, external_id):
         """
-        create and return an exam attempt entry for a given
-        exam_id. If one already exists, then returns None.
+        Create a new exam attempt entry for a given exam_id and
+        user_id.
         """
-        if cls.get_student_exam_attempt(exam_id, user_id) is None:
-            return cls.objects.create(
-                proctored_exam_id=exam_id,
-                user_id=user_id,
-                external_id=external_id,
-                started_at=datetime.now(pytz.UTC)
-            )
-        else:
-            return None
+
+        return cls.objects.create(
+            proctored_exam_id=exam_id,
+            user_id=user_id,
+            student_name=student_name,
+            external_id=external_id
+        )
+
+    def start_exam_attempt(self):
+        """
+        sets the model's state when an exam attempt has started
+        """
+
+        self.started_at = datetime.now(pytz.UTC)
+        self.save()
 
     @classmethod
-    def get_student_exam_attempt(cls, exam_id, user_id):
+    def get_exam_attempt(cls, exam_id, user_id):
         """
         Returns the Student Exam Attempt object if found
         else Returns None.
@@ -124,7 +136,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         return exam_attempt_obj
 
     @classmethod
-    def get_active_student_exams(cls, user_id, course_id=None):
+    def get_active_student_attempts(cls, user_id, course_id=None):
         """
         Returns the active student exams (user in-progress exams)
         """

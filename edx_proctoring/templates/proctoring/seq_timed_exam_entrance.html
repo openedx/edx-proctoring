@@ -10,9 +10,7 @@
     <strong>
       {% trans "In order to successfully pass this exam you will have to answer the following questions and problems in the time allotted." %}
     </strong>
-    {% blocktrans %}
-    Once you proceed, you'll start both the exam and the {{total_time|lower}} given to you.
-    {% endblocktrans %}
+    {% trans "Once you proceed, you'll start both the exam and the "%} {{total_time|lower}} {% trans " given to you." %}
   </p>
   <div class="gated-sequence">
     <a class='start-timed-exam' data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
@@ -34,7 +32,8 @@
       $.post(
         action_url,
         {
-          "exam_id": exam_id
+          "exam_id": exam_id,
+          "start_clock": true
         },
         function(data) {
           // reload the page, because we've unlocked it

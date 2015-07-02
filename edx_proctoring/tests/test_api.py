@@ -13,7 +13,8 @@ from edx_proctoring.api import (
     start_exam_attempt,
     stop_exam_attempt,
     get_active_exams_for_user,
-    get_exam_attempt
+    get_exam_attempt,
+    create_exam_attempt
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -187,11 +188,11 @@ class ProctoredExamApiTests(LoggedInTestCase):
         remove_allowance_for_user(student_allowance.proctored_exam.id, self.user_id, self.key)
         self.assertEqual(len(ProctoredExamStudentAllowance.objects.filter()), 0)
 
-    def test_start_an_exam_attempt(self):
+    def test_create_an_exam_attempt(self):
         """
         Start an exam attempt.
         """
-        attempt_id = start_exam_attempt(self.proctored_exam_id, self.user_id, self.external_id)
+        attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, '')
         self.assertGreater(attempt_id, 0)
 
     def test_get_exam_attempt(self):
@@ -211,7 +212,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         proctored_exam_student_attempt = self._create_student_exam_attempt()
         with self.assertRaises(StudentExamAttemptAlreadyExistsException):
-            start_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id, self.external_id)
+            create_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id, self.external_id)
 
     def test_stop_exam_attempt(self):
         """
@@ -244,10 +245,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
             exam_name='Final Test Exam',
             time_limit_mins=self.default_time_limit
         )
-        start_exam_attempt(
+        create_exam_attempt(
             exam_id=exam_id,
             user_id=self.user_id,
             external_id=self.external_id
+        )
+        start_exam_attempt(
+            exam_id=exam_id,
+            user_id=self.user_id,
         )
         add_allowance_for_user(self.proctored_exam_id, self.user_id, self.key, self.value)
         add_allowance_for_user(self.proctored_exam_id, self.user_id, 'new_key', 'new_value')

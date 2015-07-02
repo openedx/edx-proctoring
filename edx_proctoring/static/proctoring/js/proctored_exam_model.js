@@ -17,10 +17,14 @@
             var currentTime = (new Date()).getTime();
             var lastFetched = this.get('lastFetched').getTime();
             var totalSeconds = this.get('time_remaining_seconds') - (currentTime - lastFetched) / 1000;
-            return (totalSeconds > 0) ? totalSeconds : 0;
+            return totalSeconds;
         },
         getFormattedRemainingTime: function () {
             var totalSeconds = this.getRemainingSeconds();
+            /* since we can have a small grace period, we can end in the negative numbers */
+            if (totalSeconds < 0)
+                totalSeconds = 0;
+
             var hours = parseInt(totalSeconds / 3600) % 24;
             var minutes = parseInt(totalSeconds / 60) % 60;
             var seconds = Math.floor(totalSeconds % 60);

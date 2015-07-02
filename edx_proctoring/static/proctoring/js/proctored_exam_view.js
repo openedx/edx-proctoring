@@ -13,6 +13,8 @@ var edx = edx || {};
             this.templateId = options.proctored_template;
             this.template = null;
             this.timerId = null;
+            /* give an extra 5 seconds where the timer holds at 00:00 before page refreshes */
+            this.grace_period_secs = 5;
 
             var template_html = $(this.templateId).text();
             if (template_html !== null) {
@@ -47,7 +49,7 @@ var edx = edx || {};
             self.$el.find('div.exam-timer').removeClass("low-time warning critical");
             self.$el.find('div.exam-timer').addClass(self.model.getRemainingTimeState());
             self.$el.find('span#time_remaining_id b').html(self.model.getFormattedRemainingTime());
-            if (self.model.getRemainingSeconds() <= 0) {
+            if (self.model.getRemainingSeconds() <= -self.grace_period_secs) {
                 clearInterval(self.timerId); // stop the timer once the time finishes.
                 // refresh the page when the timer expired
                 location.reload();
