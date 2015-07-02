@@ -32,7 +32,8 @@
       $.post(
         action_url,
         {
-          "exam_id": exam_id
+          "exam_id": exam_id,
+          "start_clock": true
         },
         function(data) {
           // reload the page, because we've unlocked it

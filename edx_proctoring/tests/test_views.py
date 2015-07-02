@@ -350,8 +350,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'user_id': self.student_taking_exam.id,
-            'external_id': proctored_exam.external_id
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt'),
@@ -376,7 +376,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'user_id': self.student_taking_exam.id,
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
@@ -394,7 +393,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data['detail'], 'Error. Trying to start an exam that has already started.')
+        self.assertEqual(
+            response_data['detail'],
+            'Cannot create new exam attempt for exam_id = 1 and user_id = 1 because it already exists!'
+        )
 
     def test_stop_exam_attempt(self):
         """
