@@ -367,8 +367,11 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'default_time_limit_mins': 90
             }
         )
-        # TODO Not getting anything in this case. Will have to implement the testcase later.
-        # TODO No condition set for finished exam in the student view. Will have to test later.
+        # TO DO Not getting anything back in this call to get_student_view.
+        # Will have to implement the testcase later when functionality is implemented.
+
+    # TO DO No condition set for finished exam in the student view. Will have to test later.
+    # def test_getstudentview_finishedxam(self):
 
     def test_getstudentview_expiredxam(self):
         """
