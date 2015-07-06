@@ -64,7 +64,7 @@ class ProctoredExamView(AuthenticatedAPIView):
         "exam_name": "Midterm",
         "time_limit_mins": 90,
         "is_proctored": true,
-        "external_id": "",
+        "external_id": "12213DASAD",
         "is_active": true
     }
 
@@ -192,10 +192,48 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
     """
     Endpoint for the StudentProctoredExamAttempt
     /edx_proctoring/v1/proctored_exam/attempt
+
     Supports:
         HTTP POST: Starts an exam attempt.
         HTTP PUT: Stops an exam attempt.
         HTTP GET: Returns the status of an exam attempt.
+
+    HTTP POST
+    create an exam attempt.
+    Expected POST data: {
+        "exam_id": "1",
+        "external_id": "123",
+        "start_clock": "True" or "true"
+    }
+
+    **POST data Parameters**
+        * exam_id: The unique identifier for the course.
+        * external_id: This will be a integration specific ID - say to SoftwareSecure.
+        * start_clock: Whether to start the exam attempt immediately
+
+
+    **Response Values**
+        * {'exam_attempt_id': ##}, The exam_attempt_id of the created Proctored Exam Attempt.
+
+    **Exceptions**
+        * HTTP_400_BAD_REQUEST
+
+    HTTP PUT
+    Stops the existing exam attempt in progress
+    PUT data : {
+        "exam_id": 1
+    }
+
+    **PUT data Parameters**
+        * exam_id: The unique identifier for the proctored exam attempt.
+
+    **Response Values**
+        * {'exam_attempt_id': ##}, The exam_attempt_id of the Proctored Exam Attempt..
+
+
+    HTTP GET
+        ** Scenarios **
+        return the status of the exam attempt
     """
 
     def get(self, request):  # pylint: disable=unused-argument
@@ -281,12 +319,43 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
 
 class ExamAllowanceView(AuthenticatedAPIView):
     """
-    Endpoint for the ExamAlloawnce
+    Endpoint for the Exam Allowance
     /edx_proctoring/v1/proctored_exam/allowance
 
     Supports:
         HTTP PUT: Creates or Updates the allowance for a user.
         HTTP DELETE: Removed an allowance for a user.
+
+    HTTP PUT
+    Adds or updated the proctored exam allowance.
+    PUT data : {
+        "exam_id": 533,
+        "user_id": 1,
+        "key": 'extra_time',
+        "value": '10'
+    }
+
+    **PUT data Parameters**
+        * exam_id: The unique identifier for the course.
+        * user_id: The unique identifier for the student.
+        * key: key for the allowance entry
+        * value: value for the allowance entry.
+
+    **Response Values**
+        * returns Nothing. Add or update the allowance for the user proctored exam.
+
+    DELETE data : {
+        "exam_id": 533,
+        "user_id": 1,
+        "key": 'extra_time'
+    }
+    **DELETE data Parameters**
+        * exam_id: The unique identifier for the course.
+        * user_id: The unique identifier for the student.
+        * key: key for the user allowance.
+
+    **Response Values**
+        * returns Nothing. deletes the allowance for the user proctored exam.
     """
     @method_decorator(require_staff)
     def put(self, request):
