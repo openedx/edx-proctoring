@@ -42,3 +42,6 @@ class TestHumanizedTime(unittest.TestCase):
 
         human_time = humanized_time(180)
         self.assertEqual(human_time, "3 Hours")
+
+        human_time = humanized_time(-60)
+        self.assertEqual(human_time, "error")
