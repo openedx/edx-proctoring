@@ -15,22 +15,23 @@ from edx_proctoring.api import (
     get_active_exams_for_user,
     get_exam_attempt,
     create_exam_attempt,
-    get_student_view)
+    get_student_view,
+)
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
     StudentExamAttemptAlreadyExistsException,
     StudentExamAttemptDoesNotExistsException,
-    StudentExamAttemptedAlreadyStarted
+    StudentExamAttemptedAlreadyStarted,
 )
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
-    ProctoredExamStudentAttempt
+    ProctoredExamStudentAttempt,
 )
 
 from .utils import (
-    LoggedInTestCase
+    LoggedInTestCase,
 )
 
 
@@ -53,6 +54,12 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.value = 'Test Value'
         self.external_id = 'test_external_id'
         self.proctored_exam_id = self._create_proctored_exam()
+
+        # Messages for get_student_view
+        self.start_an_exam_msg = 'Would you like to take %s as a Proctored Exam?'
+        self.timed_exam_msg = '%s is a Timed Exam'
+        self.exam_time_expired_msg = 'you did not submit your exam before the time allotted expired'
+        self.chose_proctored_exam_msg = 'You\'ve chosen to take %s as a proctored exam'
 
     def _create_proctored_exam(self):
         """
@@ -201,7 +208,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
     def test_create_an_exam_attempt(self):
         """
-        Start an exam attempt.
+        Create an unstarted exam attempt.
         """
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, '')
         self.assertGreater(attempt_id, 0)
@@ -217,7 +224,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
     def test_get_exam_attempt(self):
         """
-        Test to get the already made exam attempt.
+        Test to get the existing exam attempt.
         """
         self._create_unstarted_exam_attempt()
         exam_attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
@@ -298,7 +305,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
     def test_get_student_view(self):
         """
-        Test for get_student_view
+        Test for get_student_view promting the user to take the exam
+        as a timed exam or a proctored exam.
         """
         rendered_response = get_student_view(
             user_id=self.user_id,
@@ -311,7 +319,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIn('data-exam-id="%d"' % self.proctored_exam_id, rendered_response)
-        self.assertIn('Would you Like to take %s as Proctored Exam?' % self.exam_name, rendered_response)
+        self.assertIn(self.start_an_exam_msg % self.exam_name, rendered_response)
 
     def test_getstudentview_timedexam(self):
         """
@@ -328,8 +336,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertNotIn('data-exam-id="%d"' % self.proctored_exam_id, rendered_response)
-        self.assertIn('%s is a Timed Exam' % self.exam_name, rendered_response)
-        self.assertNotIn('Would you Like to take %s as Proctored Exam?' % self.exam_name, rendered_response)
+        self.assertIn(self.timed_exam_msg % self.exam_name, rendered_response)
+        self.assertNotIn(self.start_an_exam_msg % self.exam_name, rendered_response)
 
     def test_getstudentview_unstartedxm(self):
         """
@@ -348,7 +356,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'default_time_limit_mins': 90
             }
         )
-        self.assertIn('you have chosen to take %s as a proctored exam' % self.exam_name, rendered_response)
+        self.assertIn(self.chose_proctored_exam_msg % self.exam_name, rendered_response)
 
     def test_getstudentview_startedxam(self):
         """
@@ -390,4 +398,4 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'default_time_limit_mins': 90
             }
         )
-        self.assertIn('you did not submit your exam before the time allotted expired', rendered_response)
+        self.assertIn(self.exam_time_expired_msg, rendered_response)
