@@ -175,7 +175,8 @@ class ProctoredExamView(AuthenticatedAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                     data={"detail": "The exam_id does not exist."}
                 )
-        elif course_id is not None and content_id is not None:
+        else:
+            # get by course_id & content_id
             try:
                 return Response(
                     data=get_exam_by_content_id(course_id, content_id),
