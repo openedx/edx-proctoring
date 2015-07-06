@@ -28,31 +28,33 @@ def humanized_time(time_in_minutes):
     hours = int(time_in_minutes / 60)
     minutes = time_in_minutes % 60
 
-    template = ""
-
     hours_present = False
     if hours == 0:
         hours_present = False
+        template = ""
     elif hours == 1:
         template = _("{num_of_hours} Hour")
         hours_present = True
     elif hours >= 2:
         template = _("{num_of_hours} Hours")
         hours_present = True
+    else:
+        template = "error"
 
-    if minutes == 0:
-        if not hours_present:
-            template = _("{num_of_minutes} Minutes")
-    elif minutes == 1:
-        if hours_present:
-            template += _(" and {num_of_minutes} Minute")
+    if template != "error":
+        if minutes == 0:
+            if not hours_present:
+                template = _("{num_of_minutes} Minutes")
+        elif minutes == 1:
+            if hours_present:
+                template += _(" and {num_of_minutes} Minute")
+            else:
+                template += _("{num_of_minutes} Minute")
         else:
-            template += _("{num_of_minutes} Minute")
-    elif minutes >= 2:
-        if hours_present:
-            template += _(" and {num_of_minutes} Minutes")
-        else:
-            template += _("{num_of_minutes} Minutes")
+            if hours_present:
+                template += _(" and {num_of_minutes} Minutes")
+            else:
+                template += _("{num_of_minutes} Minutes")
 
     human_time = template.format(num_of_hours=hours, num_of_minutes=minutes)
     return human_time

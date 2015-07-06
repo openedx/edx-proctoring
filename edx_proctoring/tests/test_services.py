@@ -23,3 +23,11 @@ class TestProctoringService(unittest.TestCase):
             attr = getattr(edx_proctoring_api, attr_name, None)
             if isinstance(attr, types.FunctionType) and not attr_name.startswith('_'):
                 self.assertTrue(hasattr(service, attr_name))
+
+    def test_singleton(self):
+        """
+        Test to make sure the ProctoringService is a singleton.
+        """
+        service1 = ProctoringService()
+        service2 = ProctoringService()
+        self.assertIs(service1, service2)
