@@ -8,10 +8,14 @@ var edx = edx || {};
 
     edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = Backbone.View.extend({
         initialize: function (options) {
-            this.$el = options.el;
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection();
-            this.course_id = options.course_id;
-            this.tempate_url = options.allowance_template_url;
+
+            /* unfortunately we have to make some assumptions about what is being set up in HTML */
+            this.$el = $('.special-allowance-container');
+            this.course_id = this.$el.data('course-id');
+
+            /* this should be moved to a 'data' attribute in HTML */
+            this.tempate_url = '/static/proctoring/templates/add-allowance.underscore';
             this.template = null;
 
             /* re-render if the model changes */
@@ -24,6 +28,21 @@ var edx = edx || {};
 
             this.collection.url = this.collection.url + '/' + this.course_id;
 
+        },
+        /*
+            This entry point is required for Instructor Dashboard
+            See setup_instructor_dashboard_sections() in
+            instructor_dashboard.coffee (in edx-platform)
+        */
+        constructor: function(section){
+            /* the Instructor Dashboard javascript expects this to be set up */
+            $(section).data('wrapper', this);
+
+            this.initialize({});
+        },
+        onClickTitle: function(){
+            // called when this is selected in the instructor dashboard
+            return;
         },
         loadTemplateData: function(){
             var self = this;
@@ -60,5 +79,4 @@ var edx = edx || {};
             }
         }
     });
-    this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView;
 }).call(this, Backbone, $, _);
