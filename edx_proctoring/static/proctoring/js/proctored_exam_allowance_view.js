@@ -11,7 +11,7 @@ var edx = edx || {};
             this.$el = options.el;
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection();
             this.course_id = options.course_id;
-            this.temPlateUrl = options.allowance_template_url;
+            this.tempate_url = options.allowance_template_url;
             this.template = null;
 
             /* re-render if the model changes */
@@ -27,7 +27,7 @@ var edx = edx || {};
         },
         loadTemplateData: function(){
             var self = this;
-            $.ajax({url: self.temPlateUrl, dataType: "html"})
+            $.ajax({url: self.tempate_url, dataType: "html"})
             .error(function(jqXHR, textStatus, errorThrown){
 
             })
