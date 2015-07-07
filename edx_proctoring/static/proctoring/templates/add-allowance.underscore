@@ -1,0 +1,5 @@
+<span class="tip"> <%- gettext("Add Allowance for User: ") %> <span>
+<a id="add-allowance" href="#"  class="add blue-button">+ <%- gettext("Add Allowance") %></a>
+</span>
+
+
