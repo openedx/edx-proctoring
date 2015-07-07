@@ -6,9 +6,11 @@ $(function() {
     });
     proctored_exam_view.render();
 
+    var container = $(".special-allowance-container");
+    var course_id = container.data('course-id');
     var proctored_exam_allowance_view = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView({
-        el: $(".special-allowance-container"),
+        el: container,
         allowance_template_url: '/static/proctoring/templates/add-allowance.underscore',
-        model: new ProctoredExamAllowanceModel()
+        course_id: course_id
     });
 });

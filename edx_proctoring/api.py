@@ -135,6 +135,14 @@ def add_allowance_for_user(exam_id, user_id, key, value):
     ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_id, key, value)
 
 
+def get_allowances_for_course(course_id):
+    """
+    Get all the allowances for the course.
+    """
+    student_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(course_id)
+    return [ProctoredExamStudentAllowanceSerializer(allowance).data for allowance in student_allowances]
+
+
 def remove_allowance_for_user(exam_id, user_id, key):
     """
     Deletes an allowance for a user within a given exam.

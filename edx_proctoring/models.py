@@ -201,6 +201,13 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         verbose_name = 'proctored allowance'
 
     @classmethod
+    def get_allowances_for_course(cls, course_id):
+        """
+        Returns all the allowances for a course.
+        """
+        return cls.objects.filter(proctored_exam__course_id=course_id)
+
+    @classmethod
     def get_allowance_for_user(cls, exam_id, user_id, key):
         """
         Returns an allowance for a user within a given exam

@@ -20,8 +20,8 @@ from edx_proctoring.api import (
     add_allowance_for_user,
     remove_allowance_for_user,
     get_active_exams_for_user,
-    create_exam_attempt
-)
+    create_exam_attempt,
+    get_allowances_for_course)
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
@@ -358,6 +358,14 @@ class ExamAllowanceView(AuthenticatedAPIView):
     **Response Values**
         * returns Nothing. deletes the allowance for the user proctored exam.
     """
+    def get(self, request, course_id):
+        """
+        HTTP GET handler. Get all allowances for a course.
+        """
+        return Response(get_allowances_for_course(
+            course_id=course_id
+        ))
+
     @method_decorator(require_staff)
     def put(self, request):
         """
