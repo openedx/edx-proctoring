@@ -43,8 +43,11 @@ class ProctoredExamsApiTests(LoggedInTestCase):
                     try:
                         response = self.client.get(reverse(urlpattern.name, args=[0]))
                     except NoReverseMatch:
-                        # some require 2 args.
-                        response = self.client.get(reverse(urlpattern.name, args=["0/0/0", 0]))
+                        try:
+                            response = self.client.get(reverse(urlpattern.name, args=["0/0/0"]))
+                        except NoReverseMatch:
+                            # some require 2 args.
+                            response = self.client.get(reverse(urlpattern.name, args=["0/0/0", 0]))
 
                 self.assertEqual(response.status_code, 403)
 
