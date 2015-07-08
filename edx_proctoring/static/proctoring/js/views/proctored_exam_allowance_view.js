@@ -15,15 +15,13 @@ var edx = edx || {};
             this.course_id = this.$el.data('course-id');
 
             /* this should be moved to a 'data' attribute in HTML */
-            this.tempate_url = '/static/proctoring/templates/add-allowance.underscore';
+            this.tempate_url = '/static/proctoring/templates/course_allowances.underscore';
             this.template = null;
             this.allowance_url = this.collection.url;
             /* re-render if the model changes */
             this.listenTo(this.collection, 'change', this.collectionChanged);
 
-            /* make the async call to the backend REST API */
-            /* after it loads, the listenTo event will file and */
-            /* will call into the rendering */
+            /* Load the static template for rendering. */
             this.loadTemplateData();
 
             this.collection.url = this.allowance_url + '/' + this.course_id;
@@ -31,10 +29,23 @@ var edx = edx || {};
         },
         events: {
             'click #add-allowance': 'showAddModal',
-            'click #remove_allowance': 'removeAllowance'
+            'click .remove_allowance': 'removeAllowance'
         },
-        showAddModal: function(){
-          alert('here');
+        getCSRFToken: function() {
+            var cookieValue = null;
+            var name='csrftoken';
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         },
         removeAllowance: function(event){
             var element = $(event.currentTarget);
@@ -55,9 +66,9 @@ var edx = edx || {};
                         'key': key
                     },
                     success: function () {
-                        // fetch the user preferences again.
-                        self.collection.url = self.notification_preferences_all;
-                        self.render();
+                        // fetch the allowances again.
+                        self.collection.url = self.allowance_url + '/' + self.course_id;
+                        self.hydrate();
                     }
                 }
             );
@@ -97,12 +108,11 @@ var edx = edx || {};
             /* we might - at some point - add a visual element to the */
             /* loading, like a spinner */
             var self = this;
-            self.collection.fetch().done(
-                function(){
+            self.collection.fetch({
+                success: function () {
                     self.render();
-                }).fail(function(){
-                    console.log('fail');
-                });
+                }
+            });
         },
         collectionChanged: function() {
             this.hydrate();
