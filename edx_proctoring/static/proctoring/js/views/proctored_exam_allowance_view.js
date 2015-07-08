@@ -123,6 +123,9 @@ var edx = edx || {};
                 this.$el.html(html);
                 this.$el.show();
             }
+        },
+        showAddModal: function() {
+            var add_allowance_view = new edx.instructor_dashboard.proctoring.AddAllowanceView();
         }
     });
 }).call(this, Backbone, $, _);

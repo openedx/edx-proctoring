@@ -1,0 +1,52 @@
+<div class='modal-header'>Add a new Allowance</div>
+<form>
+    <table class='compact'>
+        <tr>
+            <td>
+                <label>Proctored Exam</label>
+            </td>
+            <td>
+                <select name='exams'>
+                    <% _.each(proctored_exams, function(proctored_exam){ %>
+                    <option value="<%= proctored_exam.exam_name %>"><%= proctored_exam.exam_name %></option>
+                    <% }); %>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Allowance Type</label>
+            </td>
+            <td>
+                <select>
+                    <% _.each(allowance_types, function(allowance_type){ %>
+                    <option value="<%= allowance_type %>"><%= allowance_type %></option>
+                    <% }); %>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Value</label>
+            </td>
+            <td>
+                <input>
+                </input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Username or Email</label>
+            </td>
+            <td>
+                <input>
+                </input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input id='addNewAllowance' type='submit' value='Save' />
+            </td>
+        </tr>
+    </table>
+</form>
