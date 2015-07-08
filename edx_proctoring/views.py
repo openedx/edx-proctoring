@@ -358,13 +358,16 @@ class ExamAllowanceView(AuthenticatedAPIView):
     **Response Values**
         * returns Nothing. deletes the allowance for the user proctored exam.
     """
+    # @method_decorator(require_staff)
     def get(self, request, course_id):  # pylint: disable=unused-argument
         """
         HTTP GET handler. Get all allowances for a course.
         """
-        return Response(get_allowances_for_course(
+
+        result_set = get_allowances_for_course(
             course_id=course_id
-        ))
+        )
+        return Response(result_set)
 
     @method_decorator(require_staff)
     def put(self, request):

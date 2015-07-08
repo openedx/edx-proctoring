@@ -1,5 +1,41 @@
-<span class="tip"> <%- gettext("Add Allowance for User: ") %> <span>
-<a id="add-allowance" href="#"  class="add blue-button">+ <%- gettext("Add Allowance") %></a>
+<span class="tip"> <%- gettext("Add Allowance for User: ") %>
+    <span>
+        <a id="add-allowance" href="#"  class="add blue-button">+ <%- gettext("Add Allowance") %></a>
+    </span>
 </span>
+<div class="wrapper-content wrapper">
+   <section class="content">
+      <table class="allowance-table">
+         <thead>
+            <tr class="allowance-headings">
+               <th class="exam-name">Exam Name</th>
+               <th class="username">Username</th>
+               <th class="email">Email</th>
+               <th class="allowance-name">Allowance Name </th>
+               <th class="allowance-value">Allowance Value</th>
+               <th class="c_action">Actions</th>
+            </tr>
+         </thead>
+         <tbody>
+            <% _.each(proctored_exam_allowances, function(proctored_exam_allowance){ %>
+                <tr class="allowance-items">
+                    <td><%= proctored_exam_allowance.proctored_exam.exam_name %></td>
+                    <td> Dummy Username </td>
+                    <td>muhammad.shoaib@gmail.com</td>
+                    <td><%= proctored_exam_allowance.key %></td>
+                   <td><%= proctored_exam_allowance.value %></td>
+                   <td>
+                   <a data-exam-id="<%= proctored_exam_allowance.proctored_exam.id %>"
+                    data-key-name="<%= proctored_exam_allowance.key %>"
+                    data-user-id="<%= proctored_exam_allowance.user_id %>"
+                   class="remove_allowance" href="#">[x]</a>
+                   </td>
+                </tr>
+            <% }); %>
+
+         </tbody>
+      </table>
+   </section>
+</div>
 
 

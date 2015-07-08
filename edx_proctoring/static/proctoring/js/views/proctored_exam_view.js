@@ -4,7 +4,7 @@ var edx = edx || {};
     'use strict';
 
     edx.coursware = edx.coursware || {};
-    edx.coursware.proctored_exam = {};
+    edx.coursware.proctored_exam = edx.coursware.proctored_exam || {};
 
     edx.coursware.proctored_exam.ProctoredExamView = Backbone.View.extend({
         initialize: function (options) {
