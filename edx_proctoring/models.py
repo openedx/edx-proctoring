@@ -44,6 +44,14 @@ class ProctoredExam(TimeStampedModel):
         db_table = 'proctoring_proctoredexam'
 
     @classmethod
+    def get_exams_by_course_id(cls, course_id):
+        """
+        Returns the list of proctored exams
+        """
+
+        return cls.objects.filter(course_id=course_id)
+
+    @classmethod
     def get_exam_by_content_id(cls, course_id, content_id):
         """
         Returns the Proctored Exam if found else returns None,

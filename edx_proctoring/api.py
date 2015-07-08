@@ -104,6 +104,34 @@ def get_exam_by_id(exam_id):
     return serialized_exam_object.data
 
 
+def get_exams_by_course_id(course_id):
+    """
+    Looks up exam by the course_id. Raises exception if not found.
+
+    Returns a list containing dictionary version of the Django ORM object
+    e.g.
+    [{
+        "course_id": "edX/DemoX/Demo_Course",
+        "content_id": "123",
+        "external_id": "",
+        "exam_name": "Midterm",
+        "time_limit_mins": 90,
+        "is_proctored": true,
+        "is_active": true
+    },
+    {
+        ...: ...,
+        ...: ...
+
+    },
+    ..
+    ]
+    """
+    proctored_exams = ProctoredExam.get_exams_by_course_id(course_id)
+    serialized_proctored_exams = [ProctoredExamSerializer(proctored_exam).data for proctored_exam in proctored_exams]
+    return serialized_proctored_exams
+
+
 def get_exam_by_content_id(course_id, content_id):
     """
     Looks up exam by the course_id/content_id pair. Raises exception if not found.

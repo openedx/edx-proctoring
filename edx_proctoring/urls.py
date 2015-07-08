@@ -25,6 +25,12 @@ urlpatterns = patterns(  # pylint: disable=invalid-name
         name='edx_proctoring.proctored_exam.exam_by_content_id'
     ),
     url(
+        r'edx_proctoring/v1/proctored_exam/exam/course_id/{}$'.format(
+            settings.COURSE_ID_PATTERN),
+        views.ProctoredExamView.as_view(),
+        name='edx_proctoring.proctored_exam.exams_by_course_id'
+    ),
+    url(
         r'edx_proctoring/v1/proctored_exam/attempt$',
         views.StudentProctoredExamAttempt.as_view(),
         name='edx_proctoring.proctored_exam.attempt'

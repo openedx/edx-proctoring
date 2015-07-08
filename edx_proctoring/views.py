@@ -21,7 +21,7 @@ from edx_proctoring.api import (
     remove_allowance_for_user,
     get_active_exams_for_user,
     create_exam_attempt,
-    get_allowances_for_course)
+    get_allowances_for_course, get_exams_by_course_id)
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
@@ -176,17 +176,24 @@ class ProctoredExamView(AuthenticatedAPIView):
                     data={"detail": "The exam_id does not exist."}
                 )
         else:
-            # get by course_id & content_id
-            try:
-                return Response(
-                    data=get_exam_by_content_id(course_id, content_id),
-                    status=status.HTTP_200_OK
-                )
-            except ProctoredExamNotFoundException:
-                return Response(
-                    status=status.HTTP_400_BAD_REQUEST,
-                    data={"detail": "The exam with course_id, content_id does not exist."}
-                )
+            if course_id is not None:
+                if content_id is not None:
+                    # get by course_id & content_id
+                    try:
+                        return Response(
+                            data=get_exam_by_content_id(course_id, content_id),
+                            status=status.HTTP_200_OK
+                        )
+                    except ProctoredExamNotFoundException:
+                        return Response(
+                            status=status.HTTP_400_BAD_REQUEST,
+                            data={"detail": "The exam with course_id, content_id does not exist."}
+                        )
+                else:
+                    result_set = get_exams_by_course_id(
+                        course_id=course_id
+                    )
+                    return Response(result_set)
 
 
 class StudentProctoredExamAttempt(AuthenticatedAPIView):
