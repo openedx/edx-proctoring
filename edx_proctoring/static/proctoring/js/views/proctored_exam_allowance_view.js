@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function(Backbone, $, _) {
+(function (Backbone, $, _) {
     'use strict';
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -33,9 +33,9 @@ var edx = edx || {};
             'click #add-allowance': 'showAddModal',
             'click .remove_allowance': 'removeAllowance'
         },
-        getCSRFToken: function() {
+        getCSRFToken: function () {
             var cookieValue = null;
-            var name='csrftoken';
+            var name = 'csrftoken';
             if (document.cookie && document.cookie != '') {
                 var cookies = document.cookie.split(';');
                 for (var i = 0; i < cookies.length; i++) {
@@ -49,7 +49,7 @@ var edx = edx || {};
             }
             return cookieValue;
         },
-        removeAllowance: function(event){
+        removeAllowance: function (event) {
             var element = $(event.currentTarget);
             var userID = element.data('user-id');
             var examID = element.data('exam-id');
@@ -78,32 +78,32 @@ var edx = edx || {};
             event.preventDefault();
         },
         /*
-            This entry point is required for Instructor Dashboard
-            See setup_instructor_dashboard_sections() in
-            instructor_dashboard.coffee (in edx-platform)
-        */
-        constructor: function(section){
+         This entry point is required for Instructor Dashboard
+         See setup_instructor_dashboard_sections() in
+         instructor_dashboard.coffee (in edx-platform)
+         */
+        constructor: function (section) {
             /* the Instructor Dashboard javascript expects this to be set up */
             $(section).data('wrapper', this);
 
             this.initialize({});
         },
-        onClickTitle: function(){
+        onClickTitle: function () {
             // called when this is selected in the instructor dashboard
             return;
         },
-        loadTemplateData: function(){
+        loadTemplateData: function () {
             var self = this;
             $.ajax({url: self.tempate_url, dataType: "html"})
-            .error(function(jqXHR, textStatus, errorThrown){
+                .error(function (jqXHR, textStatus, errorThrown) {
 
-            })
-            .done(function(template_data) {
-                self.template  = _.template(template_data);
-                self.hydrate();
-            });
+                })
+                .done(function (template_data) {
+                    self.template = _.template(template_data);
+                    self.hydrate();
+                });
         },
-        hydrate: function() {
+        hydrate: function () {
             /* This function will load the bound collection */
 
             /* add and remove a class when we do the initial loading */
@@ -116,7 +116,7 @@ var edx = edx || {};
                 }
             });
         },
-        collectionChanged: function() {
+        collectionChanged: function () {
             this.hydrate();
         },
         render: function () {
@@ -126,7 +126,7 @@ var edx = edx || {};
                 this.$el.show();
             }
         },
-        showAddModal: function(event) {
+        showAddModal: function (event) {
             var self = this;
             self.proctoredExamCollection.fetch({
                 success: function () {

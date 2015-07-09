@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function(Backbone, $, _) {
+(function (Backbone, $, _) {
     'use strict';
 
     edx.coursware = edx.coursware || {};
@@ -22,14 +22,14 @@ var edx = edx || {};
                 this.template = _.template(template_html);
             }
             /* re-render if the model changes */
-            this.listenTo(this.model,'change', this.modelChanged);
+            this.listenTo(this.model, 'change', this.modelChanged);
 
             /* make the async call to the backend REST API */
             /* after it loads, the listenTo event will file and */
             /* will call into the rendering */
             this.model.fetch();
         },
-        modelChanged: function() {
+        modelChanged: function () {
             this.render();
         },
         render: function () {
