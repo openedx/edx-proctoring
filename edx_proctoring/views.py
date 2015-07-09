@@ -21,7 +21,9 @@ from edx_proctoring.api import (
     remove_allowance_for_user,
     get_active_exams_for_user,
     create_exam_attempt,
-    get_allowances_for_course, get_exams_by_course_id)
+    get_allowances_for_course,
+    get_all_exams_for_course
+)
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
@@ -190,7 +192,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                             data={"detail": "The exam with course_id, content_id does not exist."}
                         )
                 else:
-                    result_set = get_exams_by_course_id(
+                    result_set = get_all_exams_for_course(
                         course_id=course_id
                     )
                     return Response(result_set)

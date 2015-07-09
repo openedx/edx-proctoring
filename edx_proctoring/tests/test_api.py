@@ -16,7 +16,6 @@ from edx_proctoring.api import (
     get_exam_attempt,
     create_exam_attempt,
     get_student_view,
-    get_exams_by_course_id,
     get_allowances_for_course,
     get_all_exams_for_course
 )
@@ -119,15 +118,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         return ProctoredExamStudentAllowance.objects.create(
             proctored_exam_id=self.proctored_exam_id, user_id=self.user_id, key=self.key, value=self.value
         )
-
-    def test_get_exams_by_course_id(self):
-        """
-        Test to get the exams by course_id
-        """
-        proctored_exams = get_exams_by_course_id(self.course_id)
-        self.assertEqual(len(proctored_exams), 1)
-        self.assertEqual(proctored_exams[0]['exam_name'], self.exam_name)
-        self.assertEqual(proctored_exams[0]['course_id'], self.course_id)
 
     def test_create_duplicate_exam(self):
         """
