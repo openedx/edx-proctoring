@@ -17,7 +17,8 @@ var edx = edx || {};
             /* this should be moved to a 'data' attribute in HTML */
             this.tempate_url = '/static/proctoring/templates/course_allowances.underscore';
             this.template = null;
-            this.allowance_url = this.collection.url;
+            this.allowance_url = this.collection.url + 'allowance';
+            this.initial_url = this.collection.url;
             /* re-render if the model changes */
             this.listenTo(this.collection, 'change', this.collectionChanged);
 
@@ -25,7 +26,7 @@ var edx = edx || {};
             this.loadTemplateData();
 
             this.proctoredExamCollection.url = this.proctoredExamCollection.url + this.course_id;
-            this.collection.url = this.allowance_url + this.course_id + '/allowance';
+            this.collection.url = this.initial_url + this.course_id + '/allowance';
 
         },
         events: {
@@ -68,7 +69,7 @@ var edx = edx || {};
                     },
                     success: function () {
                         // fetch the allowances again.
-                        self.collection.url = self.allowance_url + self.course_id + '/allowance';
+                        self.collection.url = self.initial_url + self.course_id + '/allowance';
                         self.hydrate();
                     }
                 }
@@ -125,16 +126,19 @@ var edx = edx || {};
                 this.$el.show();
             }
         },
-        showAddModal: function() {
+        showAddModal: function(event) {
             var self = this;
             self.proctoredExamCollection.fetch({
                 success: function () {
                     var add_allowance_view = new edx.instructor_dashboard.proctoring.AddAllowanceView({
                         course_id: self.course_id,
-                        proctored_exams: self.proctoredExamCollection.toJSON()
+                        proctored_exams: self.proctoredExamCollection.toJSON(),
+                        proctored_exam_allowance_view: self
                     });
                 }
             });
+            event.stopPropagation();
+            event.preventDefault();
         }
     });
 }).call(this, Backbone, $, _);

@@ -10,10 +10,12 @@ var edx = edx || {};
 	{
 		name: "AddAllowanceView",
 		template: null,
-        model: edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel,
-        tempate_url: '/static/proctoring/templates/add-new-allowance.underscore',
+        template_url: '/static/proctoring/templates/add-new-allowance.underscore',
 		initialize: function(options) {
 			this.proctored_exams = options.proctored_exams;
+			this.proctored_exam_allowance_view = options.proctored_exam_allowance_view;
+			this.course_id = options.course_id;
+			this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel();
             _.bindAll( this, "render");
             this.loadTemplateData();
             //Backbone.Validation.bind( this,  {valid:this.hideError, invalid:this.showError});
@@ -23,7 +25,7 @@ var edx = edx || {};
 	    },
         loadTemplateData: function(){
             var self = this;
-            $.ajax({url: self.tempate_url, dataType: "html"})
+            $.ajax({url: self.template_url, dataType: "html"})
             .error(function(jqXHR, textStatus, errorThrown){
 
             })
@@ -38,7 +40,7 @@ var edx = edx || {};
             return {
                 proctored_exam: $("select#proctored_exam").val(),
                 allowance_type: $("select#allowance_type").val(),
-                value: $("#allowance_value").val(),
+                allowance_value: $("#allowance_value").val(),
 				user_info: $("#user_info").val()
             };
         },
@@ -70,30 +72,49 @@ var edx = edx || {};
 			{
 				event.preventDefault();
 				var values = this.getCurrentFormValues();
+				var self = this;
+				self.model.fetch(
+                {
+                    headers: {
+                        "X-CSRFToken": self.proctored_exam_allowance_view.getCSRFToken()
+                    },
+                    type: 'PUT',
+                    data: {
+                        'exam_id': values.proctored_exam,
+						'user_id': values.user_info,
+                        'key': values.allowance_type,
+                        'value': values.allowance_value
+                    },
+                    success: function () {
+                        // fetch the allowances again.
+						self.proctored_exam_allowance_view.collection.url = self.proctored_exam_allowance_view.initial_url + self.course_id + '/allowance';
+                        self.proctored_exam_allowance_view.hydrate();
+
+						self.hideModal();
+                    }
+                });
 
 //				if( this.model.set( this.getCurrentFormValues()))
 //				{
-					this.hideModal();
+
 //				}
 			},
 
-		render:
-			function()
-			{
-                var exams_data = [{'exam_name':'exam12'},{'exam_name':'exam22'},{'exam_name':'exam32'}];
-                var allowance_types = ['Additional time (minutes)'];
+		render: function() {
+			var allowance_types = ['Additional time (minutes)'];
 
-				$(this.el).html( this.template({
-                    proctored_exams: this.proctored_exams,
-                    allowance_types: allowance_types
-                }));
+			$(this.el).html( this.template({
+				proctored_exams: this.proctored_exams,
+				allowance_types: allowance_types
+			}));
 
-				this.$form = {
-					name: this.$("#name"),
-					email: this.$("#email"),
-					phone: this.$("#phone")
-				};
-				return this;
-			}
+			this.$form = {
+				proctored_exam: this.$("select#proctored_exam"),
+				allowance_type: this.$("select#allowance_type"),
+				allowance_value: this.$("#allowance_value"),
+				user_info: this.$("#user_info").val()
+			};
+			return this;
+		}
 	});
 }).call(this, Backbone, $, _);
