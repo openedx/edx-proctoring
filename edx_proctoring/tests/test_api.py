@@ -49,12 +49,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.default_time_limit = 21
         self.course_id = 'test_course'
         self.content_id = 'test_content_id'
+        self.disabled_content_id = 'test_disabled_content_id'
         self.exam_name = 'Test Exam'
         self.user_id = 1
         self.key = 'Test Key'
         self.value = 'Test Value'
         self.external_id = 'test_external_id'
         self.proctored_exam_id = self._create_proctored_exam()
+        self.disabled_exam_id = self._create_disabled_exam()
 
         # Messages for get_student_view
         self.start_an_exam_msg = 'Would you like to take %s as a Proctored Exam?'
@@ -71,6 +73,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
             content_id=self.content_id,
             exam_name=self.exam_name,
             time_limit_mins=self.default_time_limit
+        )
+
+    def _create_disabled_exam(self):
+        """
+        Calls the api's create_exam to create an exam object.
+        """
+        return create_exam(
+            course_id=self.course_id,
+            content_id=self.disabled_content_id,
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_active=False
         )
 
     def _create_unstarted_exam_attempt(self):
@@ -136,7 +150,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         which will throw the exception
         """
         with self.assertRaises(ProctoredExamNotFoundException):
-            update_exam(2, exam_name='Updated Exam Name', time_limit_mins=30)
+            update_exam(0, exam_name='Updated Exam Name', time_limit_mins=30)
 
     def test_get_proctored_exam(self):
         """
@@ -154,10 +168,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(proctored_exam['exam_name'], self.exam_name)
 
         exams = get_all_exams_for_course(self.course_id)
-        self.assertEqual(len(exams), 1)
-        self.assertEqual(exams[0]['course_id'], self.course_id)
-        self.assertEqual(exams[0]['content_id'], self.content_id)
-        self.assertEqual(exams[0]['exam_name'], self.exam_name)
+        self.assertEqual(len(exams), 2)
 
     def test_get_invalid_proctored_exam(self):
         """
@@ -166,7 +177,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
 
         with self.assertRaises(ProctoredExamNotFoundException):
-            get_exam_by_id(2)
+            get_exam_by_id(0)
 
         with self.assertRaises(ProctoredExamNotFoundException):
             get_exam_by_content_id('teasd', 'tewasda')
@@ -327,6 +338,24 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn('data-exam-id="%d"' % self.proctored_exam_id, rendered_response)
         self.assertIn(self.start_an_exam_msg % self.exam_name, rendered_response)
+
+    def test_get_disabled_student_view(self):
+        """
+        Assert that a disabled proctored exam will not override the
+        student_view
+        """
+        self.assertIsNone(
+            get_student_view(
+                user_id=self.user_id,
+                course_id=self.course_id,
+                content_id=self.disabled_content_id,
+                context={
+                    'is_proctored': True,
+                    'display_name': self.exam_name,
+                    'default_time_limit_mins': 90
+                }
+            )
+        )
 
     def test_getstudentview_timedexam(self):
         """
