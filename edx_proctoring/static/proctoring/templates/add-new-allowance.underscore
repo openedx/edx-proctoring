@@ -6,9 +6,9 @@
                 <label>Proctored Exam</label>
             </td>
             <td>
-                <select name='exams'>
+                <select id='proctored_exam'>
                     <% _.each(proctored_exams, function(proctored_exam){ %>
-                    <option value="<%= proctored_exam.exam_name %>"><%= proctored_exam.exam_name %></option>
+                    <option value="<%= proctored_exam.id %>"><%= proctored_exam.exam_name %></option>
                     <% }); %>
                 </select>
             </td>
@@ -18,7 +18,7 @@
                 <label>Allowance Type</label>
             </td>
             <td>
-                <select>
+                <select id="allowance_type">
                     <% _.each(allowance_types, function(allowance_type){ %>
                     <option value="<%= allowance_type %>"><%= allowance_type %></option>
                     <% }); %>
@@ -30,8 +30,7 @@
                 <label>Value</label>
             </td>
             <td>
-                <input>
-                </input>
+                <input type="text" id="allowance_value" />
             </td>
         </tr>
         <tr>
@@ -39,8 +38,7 @@
                 <label>Username or Email</label>
             </td>
             <td>
-                <input>
-                </input>
+                <input type="text" id="user_info" />
             </td>
         </tr>
         <tr>

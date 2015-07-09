@@ -12,10 +12,11 @@ var edx = edx || {};
 		template: null,
         model: edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel,
         tempate_url: '/static/proctoring/templates/add-new-allowance.underscore',
-		initialize: function() {
+		initialize: function(options) {
+			this.proctored_exams = options.proctored_exams;
             _.bindAll( this, "render");
             this.loadTemplateData();
-            // Backbone.Validation.bind( this,  {valid:this.hideError, invalid:this.showError});
+            //Backbone.Validation.bind( this,  {valid:this.hideError, invalid:this.showError});
         },
 		events: {
             "submit form": "addAllowance"
@@ -35,9 +36,10 @@ var edx = edx || {};
 
 		getCurrentFormValues: function() {
             return {
-                name: $("#name").val(),
-                email: $("#email").val(),
-                phone: $("#phone").val()
+                proctored_exam: $("select#proctored_exam").val(),
+                allowance_type: $("select#allowance_type").val(),
+                value: $("#allowance_value").val(),
+				user_info: $("#user_info").val()
             };
         },
 		hideError:
@@ -67,6 +69,7 @@ var edx = edx || {};
 			function( event)
 			{
 				event.preventDefault();
+				var values = this.getCurrentFormValues();
 
 //				if( this.model.set( this.getCurrentFormValues()))
 //				{
@@ -81,15 +84,15 @@ var edx = edx || {};
                 var allowance_types = ['Additional time (minutes)'];
 
 				$(this.el).html( this.template({
-                    proctored_exams: exams_data,
+                    proctored_exams: this.proctored_exams,
                     allowance_types: allowance_types
                 }));
 
 				this.$form = {
 					name: this.$("#name"),
 					email: this.$("#email"),
-					phone: this.$("#phone")}
-
+					phone: this.$("#phone")
+				};
 				return this;
 			}
 	});

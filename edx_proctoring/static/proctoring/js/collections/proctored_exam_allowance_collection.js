@@ -7,7 +7,7 @@ var edx = edx || {};
     edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection = Backbone.Collection.extend({
         /* model for a collection of ProctoredExamAllowance */
         model: edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel,
-        url: '/api/edx_proctoring/v1/proctored_exam/allowance'
+        url: '/api/edx_proctoring/v1/proctored_exam/'
     });
     this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection = edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection;
 }).call(this, Backbone);

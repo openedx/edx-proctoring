@@ -342,10 +342,11 @@ Backbone.ModalView =
                         $("<a href='#' id='modalCloseButton'>&#160;</a>")
                             .css({
 									"position":"absolute",
-									"top":"-10px",
-									"right":"-10px",
+									"top":"-8px",
+									"right":"-513px",
 									"width":"32px",
 									"height":"32px",
+                                    "z-index": "999999",
 									"background":"transparent url(" + view.options.closeImageUrl + ") top left no-repeat",
 									"text-decoration":"none"})
                             .appendTo( this.modalContainer)

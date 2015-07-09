@@ -9,7 +9,7 @@ var edx = edx || {};
     edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = Backbone.View.extend({
         initialize: function (options) {
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection();
-
+            this.proctoredExamCollection = new edx.instructor_dashboard.proctoring.ProctoredExamCollection();
             /* unfortunately we have to make some assumptions about what is being set up in HTML */
             this.setElement($('.special-allowance-container'));
             this.course_id = this.$el.data('course-id');
@@ -24,7 +24,8 @@ var edx = edx || {};
             /* Load the static template for rendering. */
             this.loadTemplateData();
 
-            this.collection.url = this.allowance_url + '/' + this.course_id;
+            this.proctoredExamCollection.url = this.proctoredExamCollection.url + this.course_id;
+            this.collection.url = this.allowance_url + this.course_id + '/allowance';
 
         },
         events: {
@@ -67,7 +68,7 @@ var edx = edx || {};
                     },
                     success: function () {
                         // fetch the allowances again.
-                        self.collection.url = self.allowance_url + '/' + self.course_id;
+                        self.collection.url = self.allowance_url + self.course_id + '/allowance';
                         self.hydrate();
                     }
                 }
@@ -125,7 +126,15 @@ var edx = edx || {};
             }
         },
         showAddModal: function() {
-            var add_allowance_view = new edx.instructor_dashboard.proctoring.AddAllowanceView();
+            var self = this;
+            self.proctoredExamCollection.fetch({
+                success: function () {
+                    var add_allowance_view = new edx.instructor_dashboard.proctoring.AddAllowanceView({
+                        course_id: self.course_id,
+                        proctored_exams: self.proctoredExamCollection.toJSON()
+                    });
+                }
+            });
         }
     });
 }).call(this, Backbone, $, _);
