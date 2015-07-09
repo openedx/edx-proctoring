@@ -94,7 +94,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         return ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=self.proctored_exam_id,
             user_id=self.user_id,
-            external_id=self.external_id
+            external_id=self.external_id,
+            allowed_time_limit_mins=10
         )
 
     def _create_started_exam_attempt(self, started_at=None):
@@ -105,7 +106,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             proctored_exam_id=self.proctored_exam_id,
             user_id=self.user_id,
             external_id=self.external_id,
-            started_at=started_at if started_at else datetime.now(pytz.UTC)
+            started_at=started_at if started_at else datetime.now(pytz.UTC),
+            allowed_time_limit_mins=10
         )
 
     def _add_allowance_for_user(self):

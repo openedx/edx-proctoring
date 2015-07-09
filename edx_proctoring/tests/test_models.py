@@ -47,7 +47,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
             user_id=1,
             proctored_exam=proctored_exam,
         ).update(
-            user_id=1,
+            user=1,
             proctored_exam=proctored_exam,
             key='allowance_key update 1',
             value='10 minutes'
@@ -57,7 +57,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
             user_id=1,
             proctored_exam=proctored_exam,
         ).update(
-            user_id=1,
+            user=1,
             proctored_exam=proctored_exam,
             key='allowance_key update 2',
             value='5 minutes'
