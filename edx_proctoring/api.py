@@ -219,6 +219,17 @@ def stop_exam_attempt(exam_id, user_id):
         return exam_attempt_obj.id
 
 
+def get_all_exams_for_course(course_id):
+    """
+    This method will return all exams for a course. This will return a list
+    of dictionaries, whose schema is the same as what is returned in
+    get_exam_by_id
+    """
+    exams = ProctoredExam.get_all_exams_for_course(course_id)
+
+    return [ProctoredExamSerializer(proctored_exam).data for proctored_exam in exams]
+
+
 def get_active_exams_for_user(user_id, course_id=None):
     """
     This method will return a list of active exams for the user,
@@ -277,9 +288,17 @@ def get_student_view(user_id, course_id, content_id, context):
     exam_id = None
     try:
         exam = get_exam_by_content_id(course_id, content_id)
+        if not exam['is_active']:
+            # Exam is no longer active
+            # Note, we don't hard delete exams since we need to retain
+            # data
+            return None
+
         exam_id = exam['id']
         is_proctored = exam['is_proctored']
     except ProctoredExamNotFoundException:
+        # This really shouldn't happen
+        # as Studio will be setting this up
         is_proctored = context.get('is_proctored', False)
         exam_id = create_exam(
             course_id=course_id,

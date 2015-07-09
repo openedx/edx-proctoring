@@ -65,6 +65,13 @@ class ProctoredExam(TimeStampedModel):
             proctored_exam = None
         return proctored_exam
 
+    @classmethod
+    def get_all_exams_for_course(cls, course_id):
+        """
+        Returns all exams for a give course
+        """
+        return cls.objects.filter(course_id=course_id)
+
 
 class ProctoredExamStudentAttempt(TimeStampedModel):
     """
