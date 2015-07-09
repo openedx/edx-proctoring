@@ -31,7 +31,7 @@ Backbone.ModalView =
             pressingEscapeClosesModal: true,
             css:
             {
-                "border": "2px solid #111",
+                "border": "1px solid #111",
                 "display": "block",
 			    "background-color": "#fff",
 			    "-webkit-box-shadow": "0px 0px 15px 4px rgba(0, 0, 0, 0.5)",
@@ -39,7 +39,8 @@ Backbone.ModalView =
 			    "box-shadow": "0px 0px 15px 4px rgba(0, 0, 0, 0.5)",
                 "-webkit-border-radius": "10px",
                 "-moz-border-radius": "10px",
-                "border-radius": "10px"
+                "border-radius": "6px",
+                "padding": "0px"
             }
 		},
 
@@ -268,6 +269,34 @@ Backbone.ModalView =
                     };
 
 				$el.css( this.options.css);
+                $el.find('.modal-header').css({
+                    "color": "#1580b0",
+                    "font-size": "20px",
+                    "font-weight": "600",
+                    "line-height": "normal",
+                    "padding": "10px 15px",
+                    "border-bottom": "1px solid #ccc"
+                });
+                $el.find('form').css({
+                    "padding": "15px"
+                });
+                $el.find('form table.compact td').css({
+                    "vertical-align": "middle",
+                    "padding": "4px 8px"
+                });
+                $el.find('form label').css({
+                    "display": "block",
+                    "font-size": "14px",
+                    "margin": 0
+                });
+                $el.find('form input[type="text"]').css({
+                    "height": "26px",
+                    "padding": "5px 8px"
+                });
+                $el.find('form input[type="submit"]').css({
+                    "margin-top": "10px",
+                    "padding": "2px 32px"
+                });
 
                 this.showModalBlanket();
                 this.keyup = _.bind( this.keyup, this);
@@ -342,8 +371,8 @@ Backbone.ModalView =
                         $("<a href='#' id='modalCloseButton'>&#160;</a>")
                             .css({
 									"position":"absolute",
-									"top":"-8px",
-									"right":"-513px",
+									"top": "-8px",
+                                    "right": "-495px",
 									"width":"32px",
 									"height":"32px",
                                     "z-index": "999999",

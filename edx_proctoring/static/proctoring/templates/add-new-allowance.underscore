@@ -42,6 +42,7 @@
             </td>
         </tr>
         <tr>
+            <td></td>
             <td>
                 <input id='addNewAllowance' type='submit' value='Save' />
             </td>

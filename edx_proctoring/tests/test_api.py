@@ -16,7 +16,9 @@ from edx_proctoring.api import (
     get_exam_attempt,
     create_exam_attempt,
     get_student_view,
-    get_all_exams_for_course,
+    get_exams_by_course_id,
+    get_allowances_for_course,
+    get_all_exams_for_course
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -118,6 +120,15 @@ class ProctoredExamApiTests(LoggedInTestCase):
             proctored_exam_id=self.proctored_exam_id, user_id=self.user_id, key=self.key, value=self.value
         )
 
+    def test_get_exams_by_course_id(self):
+        """
+        Test to get the exams by course_id
+        """
+        proctored_exams = get_exams_by_course_id(self.course_id)
+        self.assertEqual(len(proctored_exams), 1)
+        self.assertEqual(proctored_exams[0]['exam_name'], self.exam_name)
+        self.assertEqual(proctored_exams[0]['course_id'], self.course_id)
+
     def test_create_duplicate_exam(self):
         """
         Test to create a proctored exam that has already exist in the
@@ -207,6 +218,15 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIsNotNone(student_allowance)
         self.assertEqual(student_allowance.value, 'new_value')
+
+    def test_get_allowances_for_course(self):
+        """
+        Test to get all the allowances for a course.
+        """
+        allowance = self._add_allowance_for_user()
+        course_allowances = get_allowances_for_course(self.course_id)
+        self.assertEqual(len(course_allowances), 1)
+        self.assertEqual(course_allowances[0]['proctored_exam']['course_id'], allowance.proctored_exam.course_id)
 
     def test_get_non_existing_allowance(self):
         """

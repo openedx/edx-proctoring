@@ -276,6 +276,32 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.assertEqual(response_data['external_id'], proctored_exam.external_id)
         self.assertEqual(response_data['time_limit_mins'], proctored_exam.time_limit_mins)
 
+    def test_get_exam_by_course_id(self):
+        """
+        Tests the Get Exam by course id endpoint
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.exams_by_course_id', kwargs={
+                'course_id': proctored_exam.course_id
+            })
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data[0]['course_id'], proctored_exam.course_id)
+        self.assertEqual(response_data[0]['exam_name'], proctored_exam.exam_name)
+        self.assertEqual(response_data[0]['content_id'], proctored_exam.content_id)
+        self.assertEqual(response_data[0]['external_id'], proctored_exam.external_id)
+        self.assertEqual(response_data[0]['time_limit_mins'], proctored_exam.time_limit_mins)
+
     def test_get_exam_by_bad_content_id(self):
         """
         Tests the Get Exam by content id endpoint
@@ -612,6 +638,40 @@ class TestExamAllowanceView(LoggedInTestCase):
             allowance_data
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_get_allowances_for_course(self):
+        """
+        Remove allowance for a user for an exam.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'key': 'a_key',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(response_data[0]['proctored_exam']['course_id'], proctored_exam.course_id)
+        self.assertEqual(response_data[0]['key'], allowance_data['key'])
 
 
 class TestActiveExamsForUserView(LoggedInTestCase):
