@@ -16,6 +16,7 @@ from edx_proctoring.api import (
     get_exam_attempt,
     create_exam_attempt,
     get_student_view,
+    get_all_exams_for_course,
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -151,6 +152,12 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(proctored_exam['course_id'], self.course_id)
         self.assertEqual(proctored_exam['content_id'], self.content_id)
         self.assertEqual(proctored_exam['exam_name'], self.exam_name)
+
+        exams = get_all_exams_for_course(self.course_id)
+        self.assertEqual(len(exams), 1)
+        self.assertEqual(exams[0]['course_id'], self.course_id)
+        self.assertEqual(exams[0]['content_id'], self.content_id)
+        self.assertEqual(exams[0]['exam_name'], self.exam_name)
 
     def test_get_invalid_proctored_exam(self):
         """
