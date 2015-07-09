@@ -1,5 +1,6 @@
 """Defines serializers used by the Proctoring API."""
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
 
 
@@ -14,6 +15,21 @@ class StrictBooleanField(serializers.BooleanField):
         if value in ('false', 'f', 'False', '0'):
             return False
         return None
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+
+    """
+    class Meta:
+        """
+        Meta Class
+        """
+        model = User
+
+        fields = (
+            "id", "username", "email"
+        )
 
 
 class ProctoredExamSerializer(serializers.ModelSerializer):
@@ -42,6 +58,25 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
         )
 
 
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the User Model.
+    """
+    id = serializers.IntegerField(required=False)
+    username = serializers.CharField(required=True)
+    email = serializers.CharField(required=True)
+
+    class Meta:
+        """
+        Meta Class
+        """
+        model = User
+
+        fields = (
+            "id", "username", "email"
+        )
+
+
 class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
     """
     Serializer for the ProctoredExamStudentAttempt Model.
@@ -65,6 +100,7 @@ class ProctoredExamStudentAllowanceSerializer(serializers.ModelSerializer):
     Serializer for the ProctoredExamStudentAllowance Model.
     """
     proctored_exam = ProctoredExamSerializer()
+    user = serializers.SerializerMethodField('get_user')
 
     class Meta:
         """
@@ -74,3 +110,9 @@ class ProctoredExamStudentAllowanceSerializer(serializers.ModelSerializer):
         fields = (
             "id", "created", "modified", "user", "key", "value", "proctored_exam"
         )
+
+    def get_user(self, allowance_object):
+        """
+        returns the user object in a serialized form
+        """
+        return UserSerializer(User.objects.get(id=allowance_object.user_id)).data

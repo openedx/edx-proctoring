@@ -372,7 +372,6 @@ class ExamAllowanceView(AuthenticatedAPIView):
         """
         HTTP GET handler. Get all allowances for a course.
         """
-
         result_set = get_allowances_for_course(
             course_id=course_id
         )
