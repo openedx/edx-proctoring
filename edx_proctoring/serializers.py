@@ -17,21 +17,6 @@ class StrictBooleanField(serializers.BooleanField):
         return None
 
 
-class UserSerializer(serializers.ModelSerializer):
-    """
-
-    """
-    class Meta:
-        """
-        Meta Class
-        """
-        model = User
-
-        fields = (
-            "id", "username", "email"
-        )
-
-
 class ProctoredExamSerializer(serializers.ModelSerializer):
     """
     Serializer for the ProctoredExam Model.
