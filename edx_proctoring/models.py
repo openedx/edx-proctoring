@@ -89,6 +89,10 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     started_at = models.DateTimeField(null=True)
     completed_at = models.DateTimeField(null=True)
 
+    # this will be a unique string ID that the user
+    # will have to use when starting the proctored exam
+    attempt_code = models.CharField(max_length=255, null=True, db_index=True)
+
     # This will be a integration specific ID - say to SoftwareSecure.
     external_id = models.CharField(max_length=255, null=True, db_index=True)
 
@@ -101,6 +105,10 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # if the user is attempting this as a proctored exam
     # in case there is an option to opt-out
     taking_as_proctored = models.BooleanField()
+
+    # Whether this attampt is considered a sample attempt, e.g. to try out
+    # the proctoring software
+    is_sample_attempt = models.BooleanField()
 
     student_name = models.CharField(max_length=255)
 
@@ -115,7 +123,8 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         return self.started_at and not self.completed_at
 
     @classmethod
-    def create_exam_attempt(cls, exam_id, user_id, student_name, allowed_time_limit_mins, external_id):
+    def create_exam_attempt(cls, exam_id, user_id, student_name, allowed_time_limit_mins,
+                            attempt_code, taking_as_proctored, is_sample_attempt, external_id):
         """
         Create a new exam attempt entry for a given exam_id and
         user_id.
@@ -126,6 +135,9 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             user_id=user_id,
             student_name=student_name,
             allowed_time_limit_mins=allowed_time_limit_mins,
+            attempt_code=attempt_code,
+            taking_as_proctored=taking_as_proctored,
+            is_sample_attempt=is_sample_attempt,
             external_id=external_id
         )
 
@@ -133,7 +145,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         """
         sets the model's state when an exam attempt has started
         """
-
         self.started_at = datetime.now(pytz.UTC)
         self.save()
 
@@ -145,6 +156,29 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         """
         try:
             exam_attempt_obj = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id)
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = None
+        return exam_attempt_obj
+
+    @classmethod
+    def get_exam_attempt_by_id(cls, attempt_id):
+        """
+        Returns the Student Exam Attempt by the attempt_id else return None
+        """
+        try:
+            exam_attempt_obj = cls.objects.get(id=attempt_id)
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = None
+        return exam_attempt_obj
+
+    @classmethod
+    def get_exam_attempt_by_code(cls, attempt_code):
+        """
+        Returns the Student Exam Attempt object if found
+        else Returns None.
+        """
+        try:
+            exam_attempt_obj = cls.objects.get(attempt_code=attempt_code)
         except cls.DoesNotExist:  # pylint: disable=no-member
             exam_attempt_obj = None
         return exam_attempt_obj

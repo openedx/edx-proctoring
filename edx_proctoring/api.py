@@ -7,6 +7,7 @@ In-Proc API (aka Library) for the edx_proctoring subsystem. This is not to be co
 API which is in the views.py file, per edX coding standards
 """
 import pytz
+import uuid
 from datetime import datetime, timedelta
 from django.template import Context, loader
 from django.core.urlresolvers import reverse
@@ -29,6 +30,8 @@ from edx_proctoring.serializers import (
     ProctoredExamStudentAllowanceSerializer,
 )
 from edx_proctoring.utils import humanized_time
+
+from edx_proctoring.backends import get_backend_provider
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins,
@@ -161,7 +164,16 @@ def get_exam_attempt(exam_id, user_id):
     return serialized_attempt_obj.data if exam_attempt_obj else None
 
 
-def create_exam_attempt(exam_id, user_id, external_id):
+def get_exam_attempt_by_id(attempt_id):
+    """
+    Return an existing exam attempt for the given student
+    """
+    exam_attempt_obj = ProctoredExamStudentAttempt.get_exam_attempt_by_id(attempt_id)
+    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
+    return serialized_attempt_obj.data if exam_attempt_obj else None
+
+
+def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only be
     one exam_attempt per user per exam. Multiple attempts by user will be archived
@@ -177,14 +189,45 @@ def create_exam_attempt(exam_id, user_id, external_id):
 
     # for now the student is allowed the exam default
     exam = get_exam_by_id(exam_id)
-
     allowed_time_limit_mins = exam['time_limit_mins']
+
+    # add in the allowed additional time
+    allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
+        exam_id,
+        user_id,
+        "Additional time (minutes)"
+    )
+
+    if allowance:
+        allowance_extra_mins = int(allowance.value)
+        allowed_time_limit_mins += allowance_extra_mins
+
+    attempt_code = unicode(uuid.uuid4())
+
+    external_id = None
+    if taking_as_proctored:
+        callback_url = reverse(
+            'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+            args=[attempt_code]
+        )
+
+        # now call into the backend provider to register exam attempt
+        external_id = get_backend_provider().register_exam_attempt(
+            exam,
+            allowed_time_limit_mins,
+            attempt_code,
+            False,
+            callback_url
+        )
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,
         user_id,
         '',  # student name is TBD
         allowed_time_limit_mins,
+        attempt_code,
+        taking_as_proctored,
+        False,
         external_id
     )
     return attempt.id
@@ -208,12 +251,39 @@ def start_exam_attempt(exam_id, user_id):
 
         raise StudentExamAttemptDoesNotExistsException(err_msg)
 
+    _start_exam_attempt(existing_attempt)
+
+
+def start_exam_attempt_by_code(attempt_code):
+    """
+    Signals the beginning of an exam attempt when we only have
+    an attempt code
+    """
+
+    existing_attempt = ProctoredExamStudentAttempt.get_exam_attempt_by_code(attempt_code)
+
+    if not existing_attempt:
+        err_msg = (
+            'Cannot start exam attempt for attempt_code = {attempt_code} '
+            'because it does not exist!'
+        ).format(attempt_code=attempt_code)
+
+        raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+    _start_exam_attempt(existing_attempt)
+
+
+def _start_exam_attempt(existing_attempt):
+    """
+    Helper method
+    """
+
     if existing_attempt.started_at:
         # cannot restart an attempt
         err_msg = (
             'Cannot start exam attempt for exam_id = {exam_id} '
             'and user_id = {user_id} because it has already started!'
-        ).format(exam_id=exam_id, user_id=user_id)
+        ).format(exam_id=existing_attempt.proctored_exam.id, user_id=existing_attempt.user_id)
 
         raise StudentExamAttemptedAlreadyStarted(err_msg)
 
@@ -350,12 +420,13 @@ def get_student_view(user_id, course_id, content_id, context):
     if not has_started_exam:
         # determine whether to show a timed exam only entrance screen
         # or a screen regarding proctoring
+
         if is_proctored:
             if not attempt:
                 student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
             else:
                 student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
-                context.update({'exam_code': '@asDASD@E2313213SDASD213123423WEWA'})
+                context.update({'exam_code': attempt['attempt_code']})
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
     elif has_finished_exam:
@@ -370,7 +441,7 @@ def get_student_view(user_id, course_id, content_id, context):
         django_context.update({
             'total_time': total_time,
             'exam_id': exam_id,
-            'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt'),
+            'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
         })
         return template.render(django_context)
 

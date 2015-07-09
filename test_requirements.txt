@@ -15,3 +15,4 @@ sure==1.2.7
 ddt==0.8.0
 selenium>=2.45.0
 freezegun==0.3.1
+httmock==1.2.3

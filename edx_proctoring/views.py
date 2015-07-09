@@ -22,12 +22,16 @@ from edx_proctoring.api import (
     get_active_exams_for_user,
     create_exam_attempt,
     get_allowances_for_course,
-    get_all_exams_for_course
+    get_all_exams_for_course,
+    get_exam_attempt_by_id,
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
-    UserNotFoundException)
+    UserNotFoundException,
+    ProctoredExamPermissionDenied,
+    StudentExamAttemptDoesNotExistsException,
+)
 from edx_proctoring.serializers import ProctoredExamSerializer
 
 from .utils import AuthenticatedAPIView
@@ -208,6 +212,112 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         HTTP PUT: Stops an exam attempt.
         HTTP GET: Returns the status of an exam attempt.
 
+
+    HTTP PUT
+    Stops the existing exam attempt in progress
+    PUT data : {
+        ....
+    }
+
+    **PUT data Parameters**
+        * exam_id: The unique identifier for the proctored exam attempt.
+
+    **Response Values**
+        * {'exam_attempt_id': ##}, The exam_attempt_id of the Proctored Exam Attempt..
+
+
+    HTTP GET
+        ** Scenarios **
+        return the status of the exam attempt
+    """
+
+    def get(self, request, attempt_id):
+        """
+        HTTP GET Handler. Returns the status of the exam attempt.
+        """
+
+        try:
+            attempt = get_exam_attempt_by_id(attempt_id)
+
+            if not attempt:
+                err_msg = (
+                    'Attempted to access attempt_id {attempt_id} but '
+                    'it does not exist.'.format(
+                        attempt_id=attempt_id
+                    )
+                )
+                raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+            # make sure the the attempt belongs to the calling user_id
+            if attempt['user_id'] != request.user.id:
+                err_msg = (
+                    'Attempted to access attempt_id {attempt_id} but '
+                    'does not have access to it.'.format(
+                        attempt_id=attempt_id
+                    )
+                )
+                raise ProctoredExamPermissionDenied(err_msg)
+
+            return Response(
+                data=attempt,
+                status=status.HTTP_200_OK
+            )
+
+        except ProctoredBaseException, ex:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": str(ex)}
+            )
+
+    def put(self, request, attempt_id):
+        """
+        HTTP POST handler. To stop an exam.
+        """
+        try:
+            attempt = get_exam_attempt_by_id(attempt_id)
+
+            if not attempt:
+                err_msg = (
+                    'Attempted to access attempt_id {attempt_id} but '
+                    'it does not exist.'.format(
+                        attempt_id=attempt_id
+                    )
+                )
+                raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+            # make sure the the attempt belongs to the calling user_id
+            if attempt['user_id'] != request.user.id:
+                err_msg = (
+                    'Attempted to access attempt_id {attempt_id} but '
+                    'does not have access to it.'.format(
+                        attempt_id=attempt_id
+                    )
+                )
+                raise ProctoredExamPermissionDenied(err_msg)
+
+            exam_attempt_id = stop_exam_attempt(
+                exam_id=attempt['proctored_exam_id'],
+                user_id=request.user.id
+            )
+            return Response({"exam_attempt_id": exam_attempt_id})
+
+        except ProctoredBaseException, ex:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": str(ex)}
+            )
+
+
+class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
+    """
+    Endpoint for the StudentProctoredExamAttempt
+    /edx_proctoring/v1/proctored_exam/attempt
+
+    Supports:
+        HTTP POST: Starts an exam attempt.
+        HTTP PUT: Stops an exam attempt.
+        HTTP GET: Returns the status of an exam attempt.
+
     HTTP POST
     create an exam attempt.
     Expected POST data: {
@@ -246,7 +356,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         return the status of the exam attempt
     """
 
-    def get(self, request):  # pylint: disable=unused-argument
+    def get(self, request):
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
@@ -291,34 +401,18 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         """
         start_immediately = request.DATA.get('start_clock', 'false').lower() == 'true'
         exam_id = request.DATA.get('exam_id', None)
+        attempt_proctored = request.DATA.get('attempt_proctored', 'false').lower() == 'true'
         try:
             exam_attempt_id = create_exam_attempt(
                 exam_id=exam_id,
                 user_id=request.user.id,
-                external_id=request.DATA.get('external_id', None),
+                taking_as_proctored=attempt_proctored
             )
 
             if start_immediately:
                 start_exam_attempt(exam_id, request.user.id)
 
             return Response({'exam_attempt_id': exam_attempt_id})
-
-        except ProctoredBaseException, ex:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": str(ex)}
-            )
-
-    def put(self, request):
-        """
-        HTTP POST handler. To stop an exam.
-        """
-        try:
-            exam_attempt_id = stop_exam_attempt(
-                exam_id=request.DATA.get('exam_id', None),
-                user_id=request.user.id
-            )
-            return Response({"exam_attempt_id": exam_attempt_id})
 
         except ProctoredBaseException, ex:
             return Response(
