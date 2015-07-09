@@ -167,10 +167,16 @@ def create_exam_attempt(exam_id, user_id, external_id):
 
         raise StudentExamAttemptAlreadyExistsException(err_msg)
 
+    # for now the student is allowed the exam default
+    exam = get_exam_by_id(exam_id)
+
+    allowed_time_limit_mins = exam['time_limit_mins']
+
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,
         user_id,
         '',  # student name is TBD
+        allowed_time_limit_mins,
         external_id
     )
     return attempt.id
@@ -312,7 +318,7 @@ def get_student_view(user_id, course_id, content_id, context):
     has_started_exam = attempt and attempt.get('started_at')
     if has_started_exam:
         now_utc = datetime.now(pytz.UTC)
-        expires_at = attempt['started_at'] + timedelta(minutes=context['default_time_limit_mins'])
+        expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
         has_time_expired = now_utc > expires_at
 
     if not has_started_exam:

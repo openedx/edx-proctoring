@@ -639,7 +639,8 @@ class TestActiveExamsForUserView(LoggedInTestCase):
             proctored_exam_id=proctored_exam.id,
             user_id=self.student_taking_exam.id,
             external_id='123aXqe3',
-            started_at=datetime.now(pytz.UTC)
+            started_at=datetime.now(pytz.UTC),
+            allowed_time_limit_mins=90
         )
 
         ProctoredExamStudentAllowance.objects.create(

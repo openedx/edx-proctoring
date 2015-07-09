@@ -248,7 +248,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             exam = exams[0]
 
             # need to adjust for allowances
-            expires_at = exam['attempt']['started_at'] + timedelta(minutes=exam['exam']['time_limit_mins'])
+            expires_at = exam['attempt']['started_at'] + timedelta(minutes=exam['attempt']['allowed_time_limit_mins'])
             now_utc = datetime.now(pytz.UTC)
 
             if expires_at > now_utc:

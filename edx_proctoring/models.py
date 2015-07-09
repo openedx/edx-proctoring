@@ -9,6 +9,8 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
 
+from django.contrib.auth.models import User
+
 
 class ProctoredExam(TimeStampedModel):
     """
@@ -78,7 +80,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     Information about the Student Attempt on a
     Proctored Exam.
     """
-    user_id = models.IntegerField(db_index=True)
+    user = models.ForeignKey(User, db_index=True)
 
     proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
 
@@ -88,6 +90,9 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     # This will be a integration specific ID - say to SoftwareSecure.
     external_id = models.CharField(max_length=255, null=True, db_index=True)
+
+    # this is the time limit allowed to the student
+    allowed_time_limit_mins = models.IntegerField()
 
     # what is the status of this attempt
     status = models.CharField(max_length=64)
@@ -109,7 +114,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         return self.started_at and not self.completed_at
 
     @classmethod
-    def create_exam_attempt(cls, exam_id, user_id, student_name, external_id):
+    def create_exam_attempt(cls, exam_id, user_id, student_name, allowed_time_limit_mins, external_id):
         """
         Create a new exam attempt entry for a given exam_id and
         user_id.
@@ -119,6 +124,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             proctored_exam_id=exam_id,
             user_id=user_id,
             student_name=student_name,
+            allowed_time_limit_mins=allowed_time_limit_mins,
             external_id=external_id
         )
 
@@ -180,7 +186,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
     objects = ProctoredExamStudentAllowanceManager()
 
-    user_id = models.IntegerField()
+    user = models.ForeignKey(User)
 
     proctored_exam = models.ForeignKey(ProctoredExam)
 
@@ -190,7 +196,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
     class Meta:
         """ Meta class for this Django model """
-        unique_together = (('user_id', 'proctored_exam', 'key'),)
+        unique_together = (('user', 'proctored_exam', 'key'),)
         db_table = 'proctoring_proctoredexamstudentallowance'
         verbose_name = 'proctored allowance'
 
@@ -234,7 +240,7 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     # what was the original id of the allowance
     allowance_id = models.IntegerField()
 
-    user_id = models.IntegerField()
+    user = models.ForeignKey(User)
 
     proctored_exam = models.ForeignKey(ProctoredExam)
 
@@ -276,7 +282,7 @@ def _make_archive_copy(item):
 
     archive_object = ProctoredExamStudentAllowanceHistory(
         allowance_id=item.id,
-        user_id=item.user_id,
+        user=item.user,
         proctored_exam=item.proctored_exam,
         key=item.key,
         value=item.value
