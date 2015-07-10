@@ -85,7 +85,7 @@ class ProctoredExamStudentAllowanceSerializer(serializers.ModelSerializer):
     Serializer for the ProctoredExamStudentAllowance Model.
     """
     proctored_exam = ProctoredExamSerializer()
-    user = serializers.SerializerMethodField('get_user')
+    user = UserSerializer()
 
     class Meta:
         """
@@ -95,9 +95,3 @@ class ProctoredExamStudentAllowanceSerializer(serializers.ModelSerializer):
         fields = (
             "id", "created", "modified", "user", "key", "value", "proctored_exam"
         )
-
-    def get_user(self, allowance_object):
-        """
-        returns the user object in a serialized form
-        """
-        return UserSerializer(User.objects.get(id=allowance_object.user_id)).data

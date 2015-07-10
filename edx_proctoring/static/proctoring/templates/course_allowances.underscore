@@ -26,12 +26,17 @@
                     <td>
                     <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam_allowance.proctored_exam.exam_name }, true) %>
                     </td>
+                    <% if (proctored_exam_allowance.user){ %>
                     <td>
                      <%- interpolate(gettext(' %(username)s '), { username: proctored_exam_allowance.user.username }, true) %>
                      </td>
                     <td>
                     <%- interpolate(gettext(' %(email)s '), { email: proctored_exam_allowance.user.email }, true) %>
                     </td>
+                    <% }else{ %>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    <% } %>
                     <td>
                     <%- interpolate(gettext(' %(allowance_name)s '), { allowance_name: proctored_exam_allowance.key }, true) %>
                     </td>
