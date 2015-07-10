@@ -1,5 +1,6 @@
 """Defines serializers used by the Proctoring API."""
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
 
 
@@ -42,12 +43,31 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
         )
 
 
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the User Model.
+    """
+    id = serializers.IntegerField(required=False)
+    username = serializers.CharField(required=True)
+    email = serializers.CharField(required=True)
+
+    class Meta:
+        """
+        Meta Class
+        """
+        model = User
+
+        fields = (
+            "id", "username", "email"
+        )
+
+
 class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
     """
     Serializer for the ProctoredExamStudentAttempt Model.
     """
     proctored_exam_id = serializers.IntegerField(source="proctored_exam_id")
-    user_id = serializers.IntegerField(source='user_id')
+    user_id = serializers.IntegerField(required=False)
 
     class Meta:
         """
@@ -65,11 +85,14 @@ class ProctoredExamStudentAllowanceSerializer(serializers.ModelSerializer):
     """
     Serializer for the ProctoredExamStudentAllowance Model.
     """
+    proctored_exam = ProctoredExamSerializer()
+    user = UserSerializer()
+
     class Meta:
         """
         Meta Class
         """
         model = ProctoredExamStudentAllowance
         fields = (
-            "id", "created", "modified", "user", "key", "value"
+            "id", "created", "modified", "user", "key", "value", "proctored_exam"
         )

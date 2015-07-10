@@ -128,11 +128,19 @@ def get_exam_by_content_id(course_id, content_id):
     return serialized_exam_object.data
 
 
-def add_allowance_for_user(exam_id, user_id, key, value):
+def add_allowance_for_user(exam_id, user_info, key, value):
     """
     Adds (or updates) an allowance for a user within a given exam
     """
-    ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_id, key, value)
+    ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_info, key, value)
+
+
+def get_allowances_for_course(course_id):
+    """
+    Get all the allowances for the course.
+    """
+    student_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(course_id)
+    return [ProctoredExamStudentAllowanceSerializer(allowance).data for allowance in student_allowances]
 
 
 def remove_allowance_for_user(exam_id, user_id, key):
@@ -230,6 +238,24 @@ def get_all_exams_for_course(course_id):
     This method will return all exams for a course. This will return a list
     of dictionaries, whose schema is the same as what is returned in
     get_exam_by_id
+    Returns a list containing dictionary version of the Django ORM object
+    e.g.
+    [{
+        "course_id": "edX/DemoX/Demo_Course",
+        "content_id": "123",
+        "external_id": "",
+        "exam_name": "Midterm",
+        "time_limit_mins": 90,
+        "is_proctored": true,
+        "is_active": true
+    },
+    {
+        ...: ...,
+        ...: ...
+
+    },
+    ..
+    ]
     """
     exams = ProctoredExam.get_all_exams_for_course(course_id)
 

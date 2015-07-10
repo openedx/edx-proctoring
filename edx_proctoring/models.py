@@ -10,6 +10,7 @@ from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
 
 from django.contrib.auth.models import User
+from edx_proctoring.exceptions import UserNotFoundException
 
 
 class ProctoredExam(TimeStampedModel):
@@ -201,6 +202,13 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         verbose_name = 'proctored allowance'
 
     @classmethod
+    def get_allowances_for_course(cls, course_id):
+        """
+        Returns all the allowances for a course.
+        """
+        return cls.objects.filter(proctored_exam__course_id=course_id)
+
+    @classmethod
     def get_allowance_for_user(cls, exam_id, user_id, key):
         """
         Returns an allowance for a user within a given exam
@@ -219,16 +227,26 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         return cls.objects.filter(proctored_exam_id=exam_id, user_id=user_id)
 
     @classmethod
-    def add_allowance_for_user(cls, exam_id, user_id, key, value):
+    def add_allowance_for_user(cls, exam_id, user_info, key, value):
         """
         Add or (Update) an allowance for a user within a given exam
         """
+        users = User.objects.filter(username=user_info)
+        if not users.exists():
+            users = User.objects.filter(email=user_info)
+
+        if not users.exists():
+            err_msg = (
+                'Cannot find user against {user_info}'
+            ).format(user_info=user_info)
+            raise UserNotFoundException(err_msg)
+
         try:
-            student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
+            student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=users[0].id, key=key)
             student_allowance.value = value
             student_allowance.save()
         except cls.DoesNotExist:  # pylint: disable=no-member
-            cls.objects.create(proctored_exam_id=exam_id, user_id=user_id, key=key, value=value)
+            cls.objects.create(proctored_exam_id=exam_id, user_id=users[0].id, key=key, value=value)
 
 
 class ProctoredExamStudentAllowanceHistory(TimeStampedModel):

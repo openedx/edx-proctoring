@@ -37,3 +37,9 @@ class StudentExamAttemptedAlreadyStarted(ProctoredBaseException):
     """
     Raised when the same exam attempt is being started twice
     """
+
+
+class UserNotFoundException(ProctoredBaseException):
+    """
+    Raised when the user not found.
+    """

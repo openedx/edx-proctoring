@@ -20,12 +20,14 @@ from edx_proctoring.api import (
     add_allowance_for_user,
     remove_allowance_for_user,
     get_active_exams_for_user,
-    create_exam_attempt
+    create_exam_attempt,
+    get_allowances_for_course,
+    get_all_exams_for_course
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
-)
+    UserNotFoundException)
 from edx_proctoring.serializers import ProctoredExamSerializer
 
 from .utils import AuthenticatedAPIView
@@ -176,17 +178,24 @@ class ProctoredExamView(AuthenticatedAPIView):
                     data={"detail": "The exam_id does not exist."}
                 )
         else:
-            # get by course_id & content_id
-            try:
-                return Response(
-                    data=get_exam_by_content_id(course_id, content_id),
-                    status=status.HTTP_200_OK
-                )
-            except ProctoredExamNotFoundException:
-                return Response(
-                    status=status.HTTP_400_BAD_REQUEST,
-                    data={"detail": "The exam with course_id, content_id does not exist."}
-                )
+            if course_id is not None:
+                if content_id is not None:
+                    # get by course_id & content_id
+                    try:
+                        return Response(
+                            data=get_exam_by_content_id(course_id, content_id),
+                            status=status.HTTP_200_OK
+                        )
+                    except ProctoredExamNotFoundException:
+                        return Response(
+                            status=status.HTTP_400_BAD_REQUEST,
+                            data={"detail": "The exam with course_id, content_id does not exist."}
+                        )
+                else:
+                    result_set = get_all_exams_for_course(
+                        course_id=course_id
+                    )
+                    return Response(result_set)
 
 
 class StudentProctoredExamAttempt(AuthenticatedAPIView):
@@ -359,16 +368,33 @@ class ExamAllowanceView(AuthenticatedAPIView):
         * returns Nothing. deletes the allowance for the user proctored exam.
     """
     @method_decorator(require_staff)
+    def get(self, request, course_id):  # pylint: disable=unused-argument
+        """
+        HTTP GET handler. Get all allowances for a course.
+        """
+        result_set = get_allowances_for_course(
+            course_id=course_id
+        )
+        return Response(result_set)
+
+    @method_decorator(require_staff)
     def put(self, request):
         """
         HTTP GET handler. Adds or updates Allowance
         """
-        return Response(add_allowance_for_user(
-            exam_id=request.DATA.get('exam_id', None),
-            user_id=request.DATA.get('user_id', None),
-            key=request.DATA.get('key', None),
-            value=request.DATA.get('value', None)
-        ))
+        try:
+            return Response(add_allowance_for_user(
+                exam_id=request.DATA.get('exam_id', None),
+                user_info=request.DATA.get('user_info', None),
+                key=request.DATA.get('key', None),
+                value=request.DATA.get('value', None)
+            ))
+
+        except UserNotFoundException, ex:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": str(ex)}
+            )
 
     @method_decorator(require_staff)
     def delete(self, request):
