@@ -597,7 +597,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
         allowance_data = {
             'exam_id': proctored_exam.id,
-            'user_id': self.student_taking_exam.id,
+            'user_info': self.student_taking_exam.username,
             'key': 'a_key',
             'value': '30'
         }
@@ -606,6 +606,33 @@ class TestExamAllowanceView(LoggedInTestCase):
             allowance_data
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_add_invalid_allowance(self):
+        """
+        Add allowance for a invalid user_info.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_info': 'invalid_user',
+            'key': 'a_key',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(response_data['detail'], u"Cannot find user against invalid_user")
 
     def test_remove_allowance_for_user(self):
         """
@@ -621,7 +648,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
         allowance_data = {
             'exam_id': proctored_exam.id,
-            'user_id': self.student_taking_exam.id,
+            'user_info': self.student_taking_exam.email,
             'key': 'a_key',
             'value': '30'
         }
@@ -653,7 +680,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
         allowance_data = {
             'exam_id': proctored_exam.id,
-            'user_id': self.student_taking_exam.id,
+            'user_info': self.student_taking_exam.username,
             'key': 'a_key',
             'value': '30'
         }

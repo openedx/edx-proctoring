@@ -68,7 +68,13 @@ var edx = edx || {};
             $el.find('.error-message').css({
                 "color": "#ff0000",
                 "line-height": "normal",
+                "font-size": "14px"
+            });
+            $el.find('.error-response').css({
+                "color": "#ff0000",
+                "line-height": "normal",
                 "font-size": "14px",
+                "padding": "0px 10px 5px 7px"
             });
         },
         getCurrentFormValues: function () {
@@ -100,6 +106,8 @@ var edx = edx || {};
         },
         addAllowance: function (event) {
             event.preventDefault();
+            var error_response = $('.error-response');
+            error_response.html();
             var values = this.getCurrentFormValues();
             var formHasErrors = false;
 
@@ -123,16 +131,20 @@ var edx = edx || {};
                     type: 'PUT',
                     data: {
                         'exam_id': values.proctored_exam,
-                        'user_id': values.user_info,
+                        'user_info': values.user_info,
                         'key': values.allowance_type,
                         'value': values.allowance_value
                     },
                     success: function () {
                         // fetch the allowances again.
+                        error_response.html();
                         self.proctored_exam_allowance_view.collection.url = self.proctored_exam_allowance_view.initial_url + self.course_id + '/allowance';
                         self.proctored_exam_allowance_view.hydrate();
-
                         self.hideModal();
+                    },
+                    error: function(self, response, options) {
+                        var data = $.parseJSON(response.responseText);
+                        error_response.html(data.detail);
                     }
                 });
             }

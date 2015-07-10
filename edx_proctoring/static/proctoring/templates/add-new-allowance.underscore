@@ -1,5 +1,6 @@
 <div class='modal-header'>Add a new Allowance</div>
 <form>
+    <h3 class='error-response'><h3>
     <table class='compact'>
         <tr>
             <td>

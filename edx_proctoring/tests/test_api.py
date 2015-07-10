@@ -25,6 +25,7 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptAlreadyExistsException,
     StudentExamAttemptDoesNotExistsException,
     StudentExamAttemptedAlreadyStarted,
+    UserNotFoundException
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -189,19 +190,26 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         Test to add allowance for user.
         """
-        add_allowance_for_user(self.proctored_exam_id, self.user_id, self.key, self.value)
+        add_allowance_for_user(self.proctored_exam_id, self.user.username, self.key, self.value)
 
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
             self.proctored_exam_id, self.user_id, self.key
         )
         self.assertIsNotNone(student_allowance)
 
+    def test_add_invalid_allowance(self):
+        """
+        Test to add allowance for invalid user.
+        """
+        with self.assertRaises(UserNotFoundException):
+            add_allowance_for_user(self.proctored_exam_id, 'invalid_user', self.key, self.value)
+
     def test_update_existing_allowance(self):
         """
         Test updation to the allowance that already exists.
         """
         student_allowance = self._add_allowance_for_user()
-        add_allowance_for_user(student_allowance.proctored_exam.id, self.user_id, self.key, 'new_value')
+        add_allowance_for_user(student_allowance.proctored_exam.id, self.user.username, self.key, 'new_value')
 
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
             student_allowance.proctored_exam.id, self.user_id, self.key
@@ -326,8 +334,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             exam_id=exam_id,
             user_id=self.user_id,
         )
-        add_allowance_for_user(self.proctored_exam_id, self.user_id, self.key, self.value)
-        add_allowance_for_user(self.proctored_exam_id, self.user_id, 'new_key', 'new_value')
+        add_allowance_for_user(self.proctored_exam_id, self.user.username, self.key, self.value)
+        add_allowance_for_user(self.proctored_exam_id, self.user.username, 'new_key', 'new_value')
         student_active_exams = get_active_exams_for_user(self.user_id, self.course_id)
         self.assertEqual(len(student_active_exams), 2)
         self.assertEqual(len(student_active_exams[0]['allowances']), 2)

@@ -63,6 +63,6 @@ class LoggedInTestCase(TestCase):
         """
 
         self.client = TestClient()
-        self.user = User(username='tester')
+        self.user = User(username='tester', email='tester@test.com')
         self.user.save()
         self.client.login_user(self.user)

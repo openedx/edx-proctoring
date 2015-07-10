@@ -128,11 +128,11 @@ def get_exam_by_content_id(course_id, content_id):
     return serialized_exam_object.data
 
 
-def add_allowance_for_user(exam_id, user_id, key, value):
+def add_allowance_for_user(exam_id, user_info, key, value):
     """
     Adds (or updates) an allowance for a user within a given exam
     """
-    ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_id, key, value)
+    ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_info, key, value)
 
 
 def get_allowances_for_course(course_id):

@@ -27,7 +27,7 @@ from edx_proctoring.api import (
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
-)
+    UserNotFoundException)
 from edx_proctoring.serializers import ProctoredExamSerializer
 
 from .utils import AuthenticatedAPIView
@@ -382,12 +382,19 @@ class ExamAllowanceView(AuthenticatedAPIView):
         """
         HTTP GET handler. Adds or updates Allowance
         """
-        return Response(add_allowance_for_user(
-            exam_id=request.DATA.get('exam_id', None),
-            user_id=request.DATA.get('user_id', None),
-            key=request.DATA.get('key', None),
-            value=request.DATA.get('value', None)
-        ))
+        try:
+            return Response(add_allowance_for_user(
+                exam_id=request.DATA.get('exam_id', None),
+                user_info=request.DATA.get('user_info', None),
+                key=request.DATA.get('key', None),
+                value=request.DATA.get('value', None)
+            ))
+
+        except UserNotFoundException, ex:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": str(ex)}
+            )
 
     @method_decorator(require_staff)
     def delete(self, request):
