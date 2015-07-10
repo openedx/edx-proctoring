@@ -2,7 +2,6 @@
 A wrapper class around all methods exposed in api.py
 """
 
-from edx_proctoring import api as edx_proctoring_api
 import types
 
 
@@ -29,7 +28,7 @@ class ProctoringService(object):
         Class initializer, which just inspects the libraries and exposes the same functions
         as a direct pass through
         """
-
+        from edx_proctoring import api as edx_proctoring_api
         self._bind_to_module_functions(edx_proctoring_api)
 
     def _bind_to_module_functions(self, module):
