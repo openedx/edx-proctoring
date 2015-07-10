@@ -67,6 +67,7 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
     Serializer for the ProctoredExamStudentAttempt Model.
     """
     proctored_exam_id = serializers.IntegerField(source="proctored_exam_id")
+    user_id = serializers.IntegerField(required=False)
 
     class Meta:
         """
