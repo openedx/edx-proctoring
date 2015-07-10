@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function (Backbone, $, _) {
+(function (Backbone, $, _, gettext) {
     'use strict';
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -116,7 +116,7 @@ var edx = edx || {};
             $.each(values, function(key, value) {
                 if (value==="") {
                     formHasErrors = true;
-                    self.showError(self, key, "Required field");
+                    self.showError(self, key, gettext("Required field"));
                 }
                 else {
                     self.hideError(self, key);
@@ -144,7 +144,7 @@ var edx = edx || {};
                     },
                     error: function(self, response, options) {
                         var data = $.parseJSON(response.responseText);
-                        error_response.html(data.detail);
+                        error_response.html(gettext(data.detail));
                     }
                 });
             }
@@ -167,4 +167,4 @@ var edx = edx || {};
             return this;
         }
     });
-}).call(this, Backbone, $, _);
+}).call(this, Backbone, $, _, gettext);

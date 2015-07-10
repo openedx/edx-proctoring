@@ -1,34 +1,38 @@
-<div class='modal-header'>Add a new Allowance</div>
+<div class='modal-header'><%- gettext("Add a new Allowance") %></div>
 <form>
     <h3 class='error-response'><h3>
     <table class='compact'>
         <tr>
             <td>
-                <label>Proctored Exam</label>
+                <label><%- gettext("Proctored Exam") %></label>
             </td>
             <td>
                 <select id='proctored_exam'>
                     <% _.each(proctored_exams, function(proctored_exam){ %>
-                    <option value="<%= proctored_exam.id %>"><%= proctored_exam.exam_name %></option>
+                    <option value="<%= proctored_exam.id %>">
+                    <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam.exam_name }, true) %>
+                    </option>
                     <% }); %>
                 </select>
             </td>
         </tr>
         <tr>
             <td>
-                <label>Allowance Type</label>
+                <label><%- gettext("Allowance Type") %></label>
             </td>
             <td>
                 <select id="allowance_type">
                     <% _.each(allowance_types, function(allowance_type){ %>
-                    <option value="<%= allowance_type %>"><%= allowance_type %></option>
+                    <option value="<%= allowance_type %>">
+                    <%- interpolate(gettext(' %(allowance_type)s '), { allowance_type: allowance_type }, true) %>
+                    </option>
                     <% }); %>
                 </select>
             </td>
         </tr>
         <tr>
             <td>
-                <label>Value</label>
+                <label><%- gettext("Value") %></label>
             </td>
             <td>
                 <input type="text" id="allowance_value" />
@@ -36,7 +40,7 @@
         </tr>
         <tr>
             <td>
-                <label>Username or Email</label>
+                <label><%- gettext("Username or Email") %></label>
             </td>
             <td>
                 <input type="text" id="user_info" />

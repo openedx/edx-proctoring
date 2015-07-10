@@ -17,8 +17,8 @@ var edx = edx || {};
             /* this should be moved to a 'data' attribute in HTML */
             this.tempate_url = '/static/proctoring/templates/course_allowances.underscore';
             this.template = null;
-            this.allowance_url = this.collection.url + 'allowance';
             this.initial_url = this.collection.url;
+            this.allowance_url = this.initial_url + 'allowance';
             /* re-render if the model changes */
             this.listenTo(this.collection, 'change', this.collectionChanged);
 
