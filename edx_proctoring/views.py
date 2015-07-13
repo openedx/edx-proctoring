@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 
 from rest_framework import status
 from rest_framework.response import Response
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from edx_proctoring.api import (
     create_exam,
     update_exam,
@@ -24,6 +25,7 @@ from edx_proctoring.api import (
     get_allowances_for_course,
     get_all_exams_for_course,
     get_exam_attempt_by_id,
+    get_all_exam_attempts
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
@@ -360,6 +362,33 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
+        if course_id is not None:
+            exam_attempts = get_all_exam_attempts(course_id)
+            paginator = Paginator(exam_attempts, 1) # Show 1 attempts per page
+            page = request.GET.get('page')
+            try:
+                exam_attempts_page = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                exam_attempts_page = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                exam_attempts_page = paginator.page(paginator.num_pages)
+
+            data = {
+                'proctored_exam_attempts': exam_attempts_page.object_list,
+                'pagination_info': {
+                    'has_previous': exam_attempts_page.has_previous(),
+                    'has_next': exam_attempts_page.has_next(),
+                    'current_page': exam_attempts_page.number,
+                    'total_pages': exam_attempts_page.paginator.num_pages,
+                }
+            }
+            return Response(
+                data=data,
+                status=status.HTTP_200_OK
+            )
+
         exams = get_active_exams_for_user(request.user.id)
 
         if exams:
