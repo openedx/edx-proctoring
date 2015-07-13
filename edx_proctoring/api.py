@@ -442,6 +442,10 @@ def get_student_view(user_id, course_id, content_id, context):
             'total_time': total_time,
             'exam_id': exam_id,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            'exam_started_poll_url': reverse(
+                'edx_proctoring.proctored_exam.attempt',
+                args=[attempt['id']]
+            ) if attempt else ''
         })
         return template.render(django_context)
 
