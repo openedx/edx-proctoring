@@ -184,6 +184,14 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         return exam_attempt_obj
 
     @classmethod
+    def get_all_exam_attempts(cls, course_id):
+        """
+        Returns the Student Exam Attempts for the given course_id.
+        """
+
+        return cls.objects.filter(proctored_exam__course_id=course_id)
+
+    @classmethod
     def get_active_student_attempts(cls, user_id, course_id=None):
         """
         Returns the active student exams (user in-progress exams)

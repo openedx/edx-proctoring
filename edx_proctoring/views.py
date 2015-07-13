@@ -356,11 +356,10 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         return the status of the exam attempt
     """
 
-    def get(self, request):
+    def get(self, request, course_id=None):  # pylint: disable=unused-argument
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
-
         exams = get_active_exams_for_user(request.user.id)
 
         if exams:
