@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="sequence proctored-exam instructions" data-exam-id="{{exam_id}}">
+<div class="sequence proctored-exam instructions" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
   <h3>
     {% blocktrans %}
       Awaiting Proctoring Installation & Set Up
@@ -39,3 +39,23 @@
   </p>
 </div>
 {% include 'proctoring/seq_proctored_exam_footer.html' %}
+
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    setInterval(
+      poll_exam_started,
+      5000
+    );
+  });
+
+  function poll_exam_started() {
+    var url = $('.instructions').data('exam-started-poll-url')
+    $.ajax(url).success(function(data){
+      if (data.started_at !== null) {
+        location.reload()
+      }
+    });
+  }
+
+</script>

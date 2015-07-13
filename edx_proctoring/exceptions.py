@@ -43,3 +43,15 @@ class UserNotFoundException(ProctoredBaseException):
     """
     Raised when the user not found.
     """
+
+
+class BackendProvideCannotRegisterAttempt(ProctoredBaseException):
+    """
+    Raised when a back-end provider cannot register an attempt
+    """
+
+
+class ProctoredExamPermissionDenied(ProctoredBaseException):
+    """
+    Raised when the calling user does not have access to the requested object.
+    """

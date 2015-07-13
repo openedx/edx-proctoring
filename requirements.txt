@@ -3,4 +3,5 @@ django>=1.4.12,<=1.4.20
 django-model-utils==1.4.0
 South>=0.7.6
 djangorestframework>=2.3.5,<=2.3.14
-pytz==2012h
+pytz>=2012h
+pycrypto>=2.6

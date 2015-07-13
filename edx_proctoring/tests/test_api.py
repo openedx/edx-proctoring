@@ -3,6 +3,8 @@ All tests for the models.py
 """
 from datetime import datetime
 import pytz
+
+
 from edx_proctoring.api import (
     create_exam,
     update_exam,
@@ -11,13 +13,15 @@ from edx_proctoring.api import (
     add_allowance_for_user,
     remove_allowance_for_user,
     start_exam_attempt,
+    start_exam_attempt_by_code,
     stop_exam_attempt,
     get_active_exams_for_user,
     get_exam_attempt,
     create_exam_attempt,
     get_student_view,
     get_allowances_for_course,
-    get_all_exams_for_course
+    get_all_exams_for_course,
+    get_exam_attempt_by_id
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -53,7 +57,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.content_id = 'test_content_id'
         self.disabled_content_id = 'test_disabled_content_id'
         self.exam_name = 'Test Exam'
-        self.user_id = 1
+        self.user_id = self.user.id
         self.key = 'Test Key'
         self.value = 'Test Value'
         self.external_id = 'test_external_id'
@@ -248,8 +252,25 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         Create an unstarted exam attempt.
         """
-        attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, '')
+        attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
         self.assertGreater(attempt_id, 0)
+
+    def test_attempt_with_allowance(self):
+        """
+        Create an unstarted exam attempt with additional time.
+        """
+        allowed_extra_time = 10
+        add_allowance_for_user(
+            self.proctored_exam_id,
+            self.user.username,
+            "Additional time (minutes)",
+            str(allowed_extra_time)
+        )
+        attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
+        self.assertGreater(attempt_id, 0)
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['allowed_time_limit_mins'], self.default_time_limit + allowed_extra_time)
 
     def test_recreate_an_exam_attempt(self):
         """
@@ -258,7 +279,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         with self.assertRaises(StudentExamAttemptAlreadyExistsException):
-            create_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id, self.external_id)
+            create_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id)
 
     def test_get_exam_attempt(self):
         """
@@ -278,12 +299,22 @@ class ProctoredExamApiTests(LoggedInTestCase):
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
             start_exam_attempt(self.proctored_exam_id, self.user_id)
 
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            start_exam_attempt_by_code('foobar')
+
     def test_start_a_created_attempt(self):
         """
         Test to attempt starting an attempt which has been created but not started.
         """
         self._create_unstarted_exam_attempt()
         start_exam_attempt(self.proctored_exam_id, self.user_id)
+
+    def test_start_by_code(self):
+        """
+        Test to attempt starting an attempt which has been created but not started.
+        """
+        attempt = self._create_unstarted_exam_attempt()
+        start_exam_attempt_by_code(attempt.attempt_code)
 
     def test_restart_a_started_attempt(self):
         """
@@ -327,8 +358,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         create_exam_attempt(
             exam_id=exam_id,
-            user_id=self.user_id,
-            external_id=self.external_id
+            user_id=self.user_id
         )
         start_exam_attempt(
             exam_id=exam_id,

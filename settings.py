@@ -69,4 +69,9 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'edx_proctoring.urls'
 
 COURSE_ID_REGEX = r'[^/+]+(/|\+)[^/+]+(/|\+)[^/]+'
-COURSE_ID_PATTERN = r'(?P<course_id>%s)'%COURSE_ID_REGEX
+COURSE_ID_PATTERN = r'(?P<course_id>%s)' % COURSE_ID_REGEX
+
+PROCTORING_BACKEND_PROVIDER = {
+    "class": "edx_proctoring.backends.tests.test_backend.TestBackendProvider",
+    "options": {}
+}

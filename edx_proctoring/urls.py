@@ -1,7 +1,7 @@
 """
 URL mappings for edX Proctoring Server.
 """
-from edx_proctoring import views
+from edx_proctoring import views, callbacks
 from django.conf import settings
 
 from django.conf.urls import patterns, url, include
@@ -31,9 +31,14 @@ urlpatterns = patterns(  # pylint: disable=invalid-name
         name='edx_proctoring.proctored_exam.exams_by_course_id'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/attempt$',
+        r'edx_proctoring/v1/proctored_exam/attempt/(?P<attempt_id>\d+)$',
         views.StudentProctoredExamAttempt.as_view(),
         name='edx_proctoring.proctored_exam.attempt'
+    ),
+    url(
+        r'edx_proctoring/v1/proctored_exam/attempt$',
+        views.StudentProctoredExamAttemptCollection.as_view(),
+        name='edx_proctoring.proctored_exam.attempt.collection'
     ),
     url(
         r'edx_proctoring/v1/proctored_exam/{}/allowance$'.format(settings.COURSE_ID_PATTERN),
@@ -49,6 +54,11 @@ urlpatterns = patterns(  # pylint: disable=invalid-name
         r'edx_proctoring/v1/proctored_exam/active_exams_for_user$',
         views.ActiveExamsForUserView.as_view(),
         name='edx_proctoring.proctored_exam.active_exams_for_user'
+    ),
+    url(
+        r'edx_proctoring/proctoring_launch_callback/start_exam/(?P<attempt_code>[-\w]+)$',
+        callbacks.start_exam_callback,
+        name='edx_proctoring.anonymous.proctoring_launch_callback.start_exam'
     ),
     url(r'^', include('rest_framework.urls', namespace='rest_framework'))
 )

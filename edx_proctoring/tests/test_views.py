@@ -8,6 +8,9 @@ from django.core.urlresolvers import reverse, NoReverseMatch
 import pytz
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
 from edx_proctoring.views import require_staff
+from edx_proctoring.api import (
+    get_exam_attempt_by_id
+)
 from django.contrib.auth.models import User
 
 from .utils import (
@@ -35,7 +38,7 @@ class ProctoredExamsApiTests(LoggedInTestCase):
         """
         self.client = Client()  # use AnonymousUser on the API calls
         for urlpattern in urlpatterns:
-            if hasattr(urlpattern, 'name'):
+            if hasattr(urlpattern, 'name') and '.anonymous.' not in urlpattern.name:
                 try:
                     response = self.client.get(reverse(urlpattern.name))
                 except NoReverseMatch:
@@ -361,11 +364,13 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         super(TestStudentProctoredExamAttempt, self).setUp()
         self.user.is_staff = True
         self.user.save()
+        self.second_user = User(username='tester2', email='tester2@test.com')
+        self.second_user.save()
         self.client.login_user(self.user)
         self.student_taking_exam = User()
         self.student_taking_exam.save()
 
-    def test_start_exam_attempt(self):
+    def test_start_exam_create(self):
         """
         Start an exam (create an exam attempt)
         """
@@ -383,13 +388,92 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt'),
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
 
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertGreater(response_data['exam_attempt_id'], 0)
+
+    def test_attempt_readback(self):
+        """
+        Confirms that an attempt can be read
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        attempt_id = response_data['exam_attempt_id']
+        self.assertGreater(attempt_id, 0)
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['id'], attempt_id)
+        self.assertEqual(response_data['proctored_exam_id'], proctored_exam.id)
+        self.assertIsNotNone(response_data['started_at'])
+        self.assertIsNone(response_data['completed_at'])
+
+    def test_read_others_attempt(self):
+        """
+        Confirms that we cnanot read someone elses attempt
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        attempt_id = response_data['exam_attempt_id']
+        self.assertGreater(attempt_id, 0)
+
+        self.client.login_user(self.second_user)
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_read_non_existing_attempt(self):
+        """
+        Confirms that we cannot read a non-existing attempt
+        """
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[0])
+        )
+        self.assertEqual(response.status_code, 400)
 
     def test_restart_exam_attempt(self):
         """
@@ -408,7 +492,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt'),
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -417,7 +501,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertGreater(response_data['exam_attempt_id'], 0)
 
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt'),
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 400)
@@ -428,6 +512,42 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
     def test_stop_exam_attempt(self):
+        """
+        Stop an exam
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+        old_attempt_id = response_data['exam_attempt_id']
+
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            {}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+    def test_stop_others_attempt(self):
         """
         Start an exam (create an exam attempt)
         """
@@ -445,7 +565,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt'),
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -454,38 +574,27 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertGreater(response_data['exam_attempt_id'], 0)
         old_attempt_id = response_data['exam_attempt_id']
 
-        stop_attempt_data = {
-            'exam_id': proctored_exam.id,
-            'user_id': self.student_taking_exam.id
-        }
-
+        self.client.login_user(self.second_user)
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt'),
-            stop_attempt_data
+            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            {}
         )
 
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+        self.assertEqual(response.status_code, 400)
 
     def test_stop_unstarted_attempt(self):
         """
         Start an exam (create an exam attempt)
         """
-        # Create an exam.
-        attempt_data = {
-            'exam_id': 999999,
-            'user_id': self.student_taking_exam.id,
-            'external_id': "123456"
-        }
+
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt'),
-            attempt_data
+            reverse('edx_proctoring.proctored_exam.attempt', args=[0]),
+            {}
         )
 
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data['detail'], 'Error. Trying to stop an exam that is not in progress.')
+        self.assertEqual(response_data['detail'], 'Attempted to access attempt_id 0 but it does not exist.')
 
     def test_get_exam_attempt(self):
         """
@@ -500,33 +609,62 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             time_limit_mins=90
         )
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt')
+            reverse('edx_proctoring.proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertNotIn('exam_display_name', data)
 
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'user_id': self.student_taking_exam.id,
-            'external_id': proctored_exam.external_id
+            'user_id': self.user.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt'),
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
 
-        ProctoredExamStudentAttempt.objects.filter(
-            proctored_exam_id=proctored_exam.id,
-            user_id=self.user.id,
-            external_id=proctored_exam.external_id,
-        ).update(
-            started_at=datetime.now(pytz.UTC)
-        )
-
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt')
+            reverse('edx_proctoring.proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['exam_display_name'], 'Test Exam')
+
+    def test_get_expired_attempt(self):
+        """
+        Test Case for retrieving student proctored exam attempt status after it has expired
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=-90
+        )
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.user.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt.collection')
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['time_remaining_seconds'], 0)
 
     def test_get_expired_exam_attempt(self):
         """
@@ -542,7 +680,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             time_limit_mins=90
         )
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt')
+            reverse('edx_proctoring.proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
 
@@ -552,7 +690,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt'),
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
@@ -566,9 +704,68 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt')
+            reverse('edx_proctoring.proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_exam_callback(self):
+        """
+        Start an exam (create an exam attempt)
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        # create an attempt but don't start it
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': False,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+
+        self.assertTrue('exam_attempt_id' in response_data)
+
+        attempt_id = response_data['exam_attempt_id']
+
+        # exam should not have started
+        attempt = get_exam_attempt_by_id(attempt_id)
+        attempt_code = attempt['attempt_code']
+        self.assertIsNone(attempt['started_at'])
+
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                args=[attempt_code]
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertIsNotNone(attempt['started_at'])
+
+    def test_bad_exam_code_callback(self):
+        """
+        Assert that we get a 404 when doing a callback on an exam code that does not exist
+        """
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                args=['foo']
+            )
+        )
+        self.assertEqual(response.status_code, 404)
 
 
 class TestExamAllowanceView(LoggedInTestCase):
