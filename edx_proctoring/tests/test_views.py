@@ -755,6 +755,18 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['started_at'])
 
+    def test_bad_exam_code_callback(self):
+        """
+        Assert that we get a 404 when doing a callback on an exam code that does not exist
+        """
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                args=['foo']
+            )
+        )
+        self.assertEqual(response.status_code, 404)
+
 
 class TestExamAllowanceView(LoggedInTestCase):
     """
