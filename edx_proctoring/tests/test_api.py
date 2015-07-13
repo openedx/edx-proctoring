@@ -288,8 +288,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self._create_unstarted_exam_attempt()
         exam_attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
 
-        self.assertEqual(exam_attempt['proctored_exam_id'], self.proctored_exam_id)
-        self.assertEqual(exam_attempt['user_id'], self.user_id)
+        self.assertEqual(exam_attempt['proctored_exam']['id'], self.proctored_exam_id)
+        self.assertEqual(exam_attempt['user']['id'], self.user_id)
 
     def test_start_uncreated_attempt(self):
         """
