@@ -336,6 +336,14 @@ def get_all_exams_for_course(course_id):
     return [ProctoredExamSerializer(proctored_exam).data for proctored_exam in exams]
 
 
+def get_all_exam_attempts(course_id):
+    """
+    Returns all the exam attempts for the course id.
+    """
+    exam_attempts = ProctoredExamStudentAttempt.get_all_exam_attempts(course_id)
+    return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
+
+
 def get_active_exams_for_user(user_id, course_id=None):
     """
     This method will return a list of active exams for the user,
