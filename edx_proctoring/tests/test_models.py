@@ -114,6 +114,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
 
     def test_delete_proctored_exam_attempt(self):  # pylint: disable=invalid-name
         """
+        Deleting the proctored exam attempt creates an entry in the history table.
         """
         proctored_exam = ProctoredExam.objects.create(
             course_id='test_course',
@@ -137,7 +138,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
         self.assertEqual(len(attempt_history), 0)
 
-        attempt.delete()
+        attempt.delete_exam_attempt()
 
         attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
         self.assertEqual(len(attempt_history), 1)

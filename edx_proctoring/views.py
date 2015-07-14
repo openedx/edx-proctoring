@@ -311,7 +311,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             )
 
     @method_decorator(require_staff)
-    def delete(self, request, attempt_id):
+    def delete(self, request, attempt_id):  # pylint: disable=unused-argument
         """
         HTTP DELETE handler. Removes an exam attempt.
         """
@@ -335,7 +335,6 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": str(ex)}
             )
-
 
 
 class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):

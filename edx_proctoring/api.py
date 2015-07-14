@@ -302,6 +302,7 @@ def stop_exam_attempt(exam_id, user_id):
         exam_attempt_obj.save()
         return exam_attempt_obj.id
 
+
 def remove_exam_attempt_by_id(attempt_id):
     """
     Removes an exam attempt given the attempt id.
@@ -318,6 +319,7 @@ def remove_exam_attempt_by_id(attempt_id):
         raise StudentExamAttemptDoesNotExistsException(err_msg)
 
     existing_attempt.delete_exam_attempt()
+
 
 def get_all_exams_for_course(course_id):
     """

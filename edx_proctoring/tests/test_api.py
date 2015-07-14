@@ -21,8 +21,8 @@ from edx_proctoring.api import (
     get_student_view,
     get_allowances_for_course,
     get_all_exams_for_course,
-    get_exam_attempt_by_id
-)
+    get_exam_attempt_by_id,
+    remove_exam_attempt_by_id)
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
@@ -335,6 +335,19 @@ class ProctoredExamApiTests(LoggedInTestCase):
             proctored_exam_student_attempt.proctored_exam, self.user_id
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
+
+    def test_remove_exam_attempt(self):
+        """
+        Calling the api remove function removes the attempt.
+        """
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            remove_exam_attempt_by_id(9999)
+
+        proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
+        remove_exam_attempt_by_id(proctored_exam_student_attempt.id)
+
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            remove_exam_attempt_by_id(proctored_exam_student_attempt.id)
 
     def test_stop_a_non_started_exam(self):
         """
