@@ -433,6 +433,46 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertIsNotNone(response_data['started_at'])
         self.assertIsNone(response_data['completed_at'])
 
+    def test_remove_attempt(self):
+        """
+        Confirms that an attempt can be removed
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        response = self.client.delete(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[1])
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        attempt_id = response_data['exam_attempt_id']
+        self.assertGreater(attempt_id, 0)
+
+        response = self.client.delete(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+        )
+
+        self.assertEqual(response.status_code, 200)
+
     def test_read_others_attempt(self):
         """
         Confirms that we cnanot read someone elses attempt
