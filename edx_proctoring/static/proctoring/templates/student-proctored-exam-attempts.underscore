@@ -31,19 +31,23 @@
                     <% } %>
                     </td>
                     <td>
-                     <% if (proctored_exam_attempt.completed_at){ %>
+                    <% if (proctored_exam_attempt.completed_at){ %>
                         <%= proctored_exam_attempt.completed_at %> </td>
                     <% } else { %>
                         N/A
                     <% } %>
                     <td>
-                     <% if (proctored_exam_attempt.status){ %>
+                    <% if (proctored_exam_attempt.status){ %>
                         <%= proctored_exam_attempt.status %> </td>
                     <% } else { %>
                         N/A
                     <% } %>
                     <td>
+                    <% if (proctored_exam_attempt.status){ %>
                          <button type="button" class="remove-attempt blue-button" data-attempt-id="<%= proctored_exam_attempt.id %>" ><%- gettext("Remove") %></button>
+                    <% } else { %>
+                        N/A
+                    <% } %>
                     </td>
                 </tr>
             <% }); %>
