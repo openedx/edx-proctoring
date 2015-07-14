@@ -429,7 +429,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertEqual(response_data['id'], attempt_id)
-        self.assertEqual(response_data['proctored_exam_id'], proctored_exam.id)
+        self.assertEqual(response_data['proctored_exam']['id'], proctored_exam.id)
         self.assertIsNotNone(response_data['started_at'])
         self.assertIsNone(response_data['completed_at'])
 

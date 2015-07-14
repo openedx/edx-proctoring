@@ -251,7 +251,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 raise StudentExamAttemptDoesNotExistsException(err_msg)
 
             # make sure the the attempt belongs to the calling user_id
-            if attempt['user_id'] != request.user.id:
+            if attempt['user']['id'] != request.user.id:
                 err_msg = (
                     'Attempted to access attempt_id {attempt_id} but '
                     'does not have access to it.'.format(
@@ -288,7 +288,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 raise StudentExamAttemptDoesNotExistsException(err_msg)
 
             # make sure the the attempt belongs to the calling user_id
-            if attempt['user_id'] != request.user.id:
+            if attempt['user']['id'] != request.user.id:
                 err_msg = (
                     'Attempted to access attempt_id {attempt_id} but '
                     'does not have access to it.'.format(
@@ -298,7 +298,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 raise ProctoredExamPermissionDenied(err_msg)
 
             exam_attempt_id = stop_exam_attempt(
-                exam_id=attempt['proctored_exam_id'],
+                exam_id=attempt['proctored_exam']['id'],
                 user_id=request.user.id
             )
             return Response({"exam_attempt_id": exam_attempt_id})
@@ -364,7 +364,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         """
         if course_id is not None:
             exam_attempts = get_all_exam_attempts(course_id)
-            paginator = Paginator(exam_attempts, 1) # Show 1 attempts per page
+            paginator = Paginator(exam_attempts, 1)  # Show 1 attempts per page
             page = request.GET.get('page')
             try:
                 exam_attempts_page = paginator.page(page)

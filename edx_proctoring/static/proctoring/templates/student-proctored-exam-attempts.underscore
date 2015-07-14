@@ -3,34 +3,51 @@
 
       <table class="allowance-table">
          <thead>
-            <tr class="allowance-headings">
-               <th class="exam-name"><%- gettext("Exam Name") %></th>
+            <tr class="exam-attempt-headings">
                <th class="username"><%- gettext("Username") %></th>
-               <th class="email"><%- gettext("Email") %></th>
-               <th class="allowance-name"><%- gettext("Is Exam Completed") %> </th>
-               <th class="allowance-value"><%- gettext("Is Exam Completed in Time") %></th>
-               <th class="c_action"><%- gettext("Verification Status") %> </th>
+               <th class="attempt-exam-name"><%- gettext("Exam Name") %></th>
+               <th class="attempt-allowed-time"><%- gettext("Allowed Time for Student") %> </th>
+               <th class="attempt-started-at"><%- gettext("started At") %></th>
+               <th class="attempt-completed-at"><%- gettext("Completed At") %> </th>
+               <th class="attempt-status"><%- gettext("Status") %> </th>
+               <th class="attempt-action"><%- gettext("Action") %> </th>
             </tr>
          </thead>
          <tbody>
             <% _.each(proctored_exam_attempts, function(proctored_exam_attempt){ %>
                 <tr class="allowance-items">
                     <td>
-                    <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam_attempt.proctored_exam.exam_name }, true) %>
+                        <%- interpolate(gettext(' %(username)s '), { username: proctored_exam_attempt.user.username }, true) %>
                     </td>
                     <td>
-                     <%- interpolate(gettext(' %(username)s '), { username: proctored_exam_attempt.user.username }, true) %>
-                     </td>
+                        <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam_attempt.proctored_exam.exam_name }, true) %>
+                    </td>
+                    <td> <%= proctored_exam_attempt.allowed_time_limit_mins %></td>
                     <td>
-                    <%- interpolate(gettext(' %(email)s '), { email: proctored_exam_attempt.user.email }, true) %>
+                    <% if (proctored_exam_attempt.started_at){ %>
+                    <%= proctored_exam_attempt.started_at %>
+                    <% } else { %>
+                    N/A
+                    <% } %>
                     </td>
                     <td>
-                    True
+                     <% if (proctored_exam_attempt.completed_at){ %>
+                        <%= proctored_exam_attempt.completed_at %> </td>
+                    <% } else { %>
+                        N/A
+                    <% } %>
+                    <td>
+                     <% if (proctored_exam_attempt.status){ %>
+                        <%= proctored_exam_attempt.status %> </td>
+                    <% } else { %>
+                        N/A
+                    <% } %>
+                    <td>
+                     <% if (proctored_exam_attempt.status){ %>
+                     <% } else { %>
+                        N/A
+                    <% } %>
                     </td>
-                   <td>False</td>
-                   <td>
-                   True
-                   </td>
                 </tr>
             <% }); %>
          </tbody>

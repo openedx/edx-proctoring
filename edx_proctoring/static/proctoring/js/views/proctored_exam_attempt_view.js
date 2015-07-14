@@ -71,7 +71,7 @@ var edx = edx || {};
         },
         render: function () {
             if (this.template !== null) {
-                var html = this.template(this.collection.toJSON());
+                var html = this.template({proctored_exam_attempts: this.collection.toJSON()[0].proctored_exam_attempts});
                 this.$el.html(html);
                 this.$el.show();
             }
