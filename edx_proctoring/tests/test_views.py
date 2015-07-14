@@ -587,6 +587,36 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content)
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
+    def test_get_exam_attempts_in_a_course(self):
+        """
+        Test to get the exam attempts in a course.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt', kwargs={'course_id': proctored_exam.course_id})
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
+
     def test_stop_others_attempt(self):
         """
         Start an exam (create an exam attempt)

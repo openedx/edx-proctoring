@@ -5,6 +5,7 @@ Proctored Exams HTTP-based API endpoints
 import logging
 import pytz
 from datetime import datetime, timedelta
+from django.core.urlresolvers import reverse
 
 from django.utils.decorators import method_decorator
 from django.conf import settings
@@ -393,6 +394,8 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         """
         if course_id is not None:
             exam_attempts = get_all_exam_attempts(course_id)
+
+            # TODO have to change the default attempts per page
             paginator = Paginator(exam_attempts, 1)  # Show 1 attempts per page
             page = request.GET.get('page')
             try:
@@ -411,7 +414,9 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                     'has_next': exam_attempts_page.has_next(),
                     'current_page': exam_attempts_page.number,
                     'total_pages': exam_attempts_page.paginator.num_pages,
-                }
+                },
+                'attempt_url': reverse('edx_proctoring.proctored_exam.attempt', args=[course_id])
+
             }
             return Response(
                 data=data,

@@ -26,7 +26,17 @@ var edx = edx || {};
             this.loadTemplateData();
         },
         events: {
-            "click .remove-attempt": "onRemoveAttempt"
+            "click .remove-attempt": "onRemoveAttempt",
+            'click li > a.target-link': 'getPaginatedAttempts'
+            
+        },
+        getPaginatedAttempts: function(event) {
+            var target = $(event.currentTarget);
+            var url = target.data('target-url');
+            this.collection.url = url;
+            this.hydrate();
+            event.stopPropagation();
+            event.preventDefault();
         },
         getCSRFToken: function () {
             var cookieValue = null;
@@ -73,7 +83,11 @@ var edx = edx || {};
         },
         render: function () {
             if (this.template !== null) {
-                var html = this.template({proctored_exam_attempts: this.collection.toJSON()[0].proctored_exam_attempts});
+                var html = this.template({
+                    proctored_exam_attempts: this.collection.toJSON()[0].proctored_exam_attempts,
+                    pagination_info: this.collection.toJSON()[0].pagination_info,
+                    attempt_url: this.collection.toJSON()[0].attempt_url
+                });
                 this.$el.html(html);
                 this.$el.show();
             }
