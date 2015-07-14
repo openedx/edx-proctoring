@@ -11,10 +11,12 @@ var edx = edx || {};
             this.$el = options.el;
             this.collection = options.collection;
             this.tempate_url = options.template_url;
+            this.model = options.model;
             this.course_id = this.$el.data('course-id');
             this.template = null;
 
             this.initial_url = this.collection.url;
+            this.attempt_url = this.model.url;
             this.collection.url = this.initial_url + this.course_id;
 
             /* re-render if the model changes */
@@ -24,7 +26,7 @@ var edx = edx || {};
             this.loadTemplateData();
         },
         events: {
-
+            "click .remove-attempt": "onRemoveAttempt"
         },
         getCSRFToken: function () {
             var cookieValue = null;
@@ -75,6 +77,24 @@ var edx = edx || {};
                 this.$el.html(html);
                 this.$el.show();
             }
+        },
+        onRemoveAttempt: function (event) {
+            event.preventDefault();
+            var $target = $(event.currentTarget);
+            var attemptId = $target.data("attemptId");
+
+            var self = this;
+            self.model.url = this.attempt_url + attemptId;
+            self.model.fetch( {
+                headers: {
+                    "X-CSRFToken": this.getCSRFToken()
+                },
+                type: 'DELETE',
+                success: function () {
+                    // fetch the attempts again.
+                    self.hydrate();
+                }
+            });
         }
     });
     this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = edx.instructor_dashboard.proctoring.ProctoredExamAttemptView;

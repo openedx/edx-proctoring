@@ -202,6 +202,11 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
         return cls.objects.filter(filtered_query)
 
+    def delete_exam_attempt(self):
+        """
+        deletes the exam attempt object.
+        """
+        self.delete()
 
 class QuerySetWithUpdateOverride(models.query.QuerySet):
     """

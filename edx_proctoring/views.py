@@ -311,6 +311,36 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 data={"detail": str(ex)}
             )
 
+    @method_decorator(require_staff)
+    def delete(self, request, attempt_id):
+        """
+        HTTP DELETE handler. Removes an exam attempt.
+        """
+        try:
+            attempt = get_exam_attempt_by_id(attempt_id)
+
+            if not attempt:
+                err_msg = (
+                    'Attempted to access attempt_id {attempt_id} but '
+                    'it does not exist.'.format(
+                        attempt_id=attempt_id
+                    )
+                )
+                raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+            exam_attempt_id = stop_exam_attempt(
+                exam_id=attempt['proctored_exam']['id'],
+                user_id=request.user.id
+            )
+            return Response({"exam_attempt_id": exam_attempt_id})
+
+        except ProctoredBaseException, ex:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": str(ex)}
+            )
+
+
 
 class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
     """

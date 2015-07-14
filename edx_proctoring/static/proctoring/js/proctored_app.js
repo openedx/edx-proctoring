@@ -8,6 +8,7 @@ $(function() {
     var proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView({
         el: $('.student-proctored-exam-container'),
         template_url: '/static/proctoring/templates/student-proctored-exam-attempts.underscore',
-        collection: new edx.instructor_dashboard.proctoring.ProctoredExamAttemptCollection()
+        collection: new edx.instructor_dashboard.proctoring.ProctoredExamAttemptCollection(),
+        model: new edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel()
     });
 });

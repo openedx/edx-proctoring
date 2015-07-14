@@ -306,6 +306,22 @@ def stop_exam_attempt(exam_id, user_id):
         exam_attempt_obj.save()
         return exam_attempt_obj.id
 
+def remove_exam_attempt_by_code(attempt_code):
+    """
+    Removes an exam attempt given the attempt code.
+    """
+
+    existing_attempt = ProctoredExamStudentAttempt.get_exam_attempt_by_code(attempt_code)
+
+    if not existing_attempt:
+        err_msg = (
+            'Cannot remove attempt for attempt_code = {attempt_code} '
+            'because it does not exist!'
+        ).format(attempt_code=attempt_code)
+
+        raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+    existing_attempt.delete_exam_attempt()
 
 def get_all_exams_for_course(course_id):
     """
