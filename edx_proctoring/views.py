@@ -25,7 +25,8 @@ from edx_proctoring.api import (
     get_allowances_for_course,
     get_all_exams_for_course,
     get_exam_attempt_by_id,
-    get_all_exam_attempts
+    get_all_exam_attempts,
+    remove_exam_attempt_by_id,
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
@@ -326,11 +327,8 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 )
                 raise StudentExamAttemptDoesNotExistsException(err_msg)
 
-            exam_attempt_id = stop_exam_attempt(
-                exam_id=attempt['proctored_exam']['id'],
-                user_id=request.user.id
-            )
-            return Response({"exam_attempt_id": exam_attempt_id})
+            remove_exam_attempt_by_id(attempt_id)
+            return Response()
 
         except ProctoredBaseException, ex:
             return Response(
