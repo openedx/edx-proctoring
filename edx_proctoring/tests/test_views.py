@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """
 All tests for the proctored_exams.py
 """
@@ -587,7 +588,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content)
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
-    def test_get_exam_attempts_in_a_course(self):
+    def test_get_exam_attempts(self):
         """
         Test to get the exam attempts in a course.
         """

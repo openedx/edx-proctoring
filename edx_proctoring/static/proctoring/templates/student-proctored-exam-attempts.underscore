@@ -157,11 +157,11 @@
                         <% } %>
                         <td>
                          <% if (proctored_exam_attempt.status){ %>
-                         <td><button type="button" class="remove-attempt blue-button" data-attempt-id="<%= proctored_exam_attempt.id %>" ><%- gettext("Remove") %></button></td>
-                         <% } else { %>
+                            <a class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>
+                        </td>
+                        <% } else { %>
                             N/A
                         <% } %>
-                        </td>
                     </tr>
                 <% }); %>
             </tbody>
