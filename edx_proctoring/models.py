@@ -208,6 +208,68 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         """
         self.delete()
 
+
+class ProctoredExamStudentAttemptHistory(TimeStampedModel):
+    """
+    This should be the same schema as ProctoredExamStudentAttempt
+    but will record (for audit history) all entries that have been updated.
+    """
+
+    user = models.ForeignKey(User, db_index=True)
+
+    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
+
+    # started/completed date times
+    started_at = models.DateTimeField(null=True)
+    completed_at = models.DateTimeField(null=True)
+
+    # this will be a unique string ID that the user
+    # will have to use when starting the proctored exam
+    attempt_code = models.CharField(max_length=255, null=True, db_index=True)
+
+    # This will be a integration specific ID - say to SoftwareSecure.
+    external_id = models.CharField(max_length=255, null=True, db_index=True)
+
+    # this is the time limit allowed to the student
+    allowed_time_limit_mins = models.IntegerField()
+
+    # what is the status of this attempt
+    status = models.CharField(max_length=64)
+
+    # if the user is attempting this as a proctored exam
+    # in case there is an option to opt-out
+    taking_as_proctored = models.BooleanField()
+
+    # Whether this attampt is considered a sample attempt, e.g. to try out
+    # the proctoring software
+    is_sample_attempt = models.BooleanField()
+
+    student_name = models.CharField(max_length=255)
+
+
+@receiver(pre_delete, sender=ProctoredExamStudentAttempt)
+def on_attempt_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    Archive the exam attempt when the item is about to be deleted
+    Make a clone and populate in the History table
+    """
+
+    archive_object = ProctoredExamStudentAttemptHistory(
+        user=instance.user,
+        proctored_exam=instance.proctored_exam,
+        started_at=instance.started_at,
+        completed_at=instance.completed_at,
+        attempt_code=instance.attempt_code,
+        external_id=instance.external_id,
+        allowed_time_limit_mins=instance.allowed_time_limit_mins,
+        status=instance.status,
+        taking_as_proctored=instance.taking_as_proctored,
+        is_sample_attempt=instance.is_sample_attempt,
+        student_name=instance.student_name
+    )
+    archive_object.save()
+
+
 class QuerySetWithUpdateOverride(models.query.QuerySet):
     """
     Custom QuerySet class to make an archive copy
