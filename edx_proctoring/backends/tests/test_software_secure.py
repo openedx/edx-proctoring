@@ -55,6 +55,7 @@ def response_error(url, request):  # pylint: disable=unused-argument
             "exam_register_endpoint": "http://test",
             "organization": "edx",
             "exam_sponsor": "edX LMS",
+            "software_download_url": "http://example.com"
         }
     }
 )
@@ -77,6 +78,14 @@ class SoftwareSecureTests(TestCase):
 
         provider = get_backend_provider()
         self.assertIsNotNone(provider)
+
+    def test_get_software_download_url(self):
+        """
+        Makes sure we get the expected download url
+        """
+
+        provider = get_backend_provider()
+        self.assertEqual(provider.get_software_download_url(), 'http://example.com')
 
     def test_register_attempt(self):
         """

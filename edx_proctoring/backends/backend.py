@@ -36,3 +36,11 @@ class ProctoringBackendProvider(object):
         to establish a new proctored exam
         """
         raise NotImplementedError()
+
+    @abc.abstractmethod
+    def get_software_download_url(self):
+        """
+        Returns the URL that the user needs to go to in order to download
+        the corresponding desktop software
+        """
+        raise NotImplementedError()

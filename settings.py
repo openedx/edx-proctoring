@@ -25,6 +25,7 @@ DATABASES = {
 }
 
 SITE_ID = 1
+SITE_NAME = 'localhost:8000'
 
 INSTALLED_APPS = (
     'django.contrib.auth',

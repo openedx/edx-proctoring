@@ -30,3 +30,10 @@ class NullBackendProvider(ProctoringBackendProvider):
         to establish a new proctored exam
         """
         return None
+
+    def get_software_download_url(self):
+        """
+        Returns the URL that the user needs to go to in order to download
+        the corresponding desktop software
+        """
+        return None

@@ -26,7 +26,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     """
 
     def __init__(self, organization, exam_sponsor, exam_register_endpoint,
-                 secret_key_id, secret_key, crypto_key):
+                 secret_key_id, secret_key, crypto_key, software_download_url):
         """
         Class initializer
         """
@@ -38,6 +38,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.secret_key = secret_key
         self.crypto_key = crypto_key
         self.timeout = 10
+        self.software_download_url = software_download_url
 
     def register_exam_attempt(self, exam, time_limit_mins, attempt_code,
                               is_sample_attempt, callback_url):
@@ -91,6 +92,13 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         return None
 
+    def get_software_download_url(self):
+        """
+        Returns the URL that the user needs to go to in order to download
+        the corresponding desktop software
+        """
+        return self.software_download_url
+
     def _encrypt_password(self, key, pwd):
         """
         Encrypt the exam passwork with the given key
@@ -125,9 +133,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             "examName": exam['exam_name'],
             "ssiProduct": 'rp-now',
             # need to pass in a URL to the LMS?
-            "examUrl": (
-                'http://localhost:8000/{}'.format(callback_url)
-            ),
+            "examUrl": callback_url,
             "orgExtra": {
                 "examStartDate": start_time_str,
                 "examEndDate": end_time_str,
