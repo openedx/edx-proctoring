@@ -54,8 +54,7 @@ var edx = edx || {};
         },
         getPaginatedAttempts: function(event) {
             var target = $(event.currentTarget);
-            var url = target.data('target-url');
-            this.collection.url = url;
+            this.collection.url = target.data('target-url');
             this.hydrate();
             event.stopPropagation();
             event.preventDefault();

@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from edx_proctoring.exceptions import UserNotFoundException
 from django.db.models.base import ObjectDoesNotExist
 
+
 class ProctoredExam(TimeStampedModel):
     """
     Information about the Proctored Exam.
@@ -119,7 +120,6 @@ class ProctoredExamStudentAttemptManager(models.Manager):
 
         return self.filter(proctored_exam__course_id=course_id)
 
-
     def get_filtered_exam_attempts(self, course_id, search_by):
         """
         Returns the Student Exam Attempts for the given course_id filtered by search_by.
@@ -129,7 +129,6 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         )
 
         return self.filter(filtered_query)
-
 
     def get_active_student_attempts(self, user_id, course_id=None):
         """
