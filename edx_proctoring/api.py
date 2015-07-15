@@ -9,6 +9,7 @@ API which is in the views.py file, per edX coding standards
 import pytz
 import uuid
 from datetime import datetime, timedelta
+from django.conf import settings
 from django.template import Context, loader
 from django.core.urlresolvers import reverse
 
@@ -206,9 +207,12 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
 
     external_id = None
     if taking_as_proctored:
-        callback_url = reverse(
-            'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
-            args=[attempt_code]
+        callback_url = 'http://{hostname}{path}'.format(
+            hostname=settings.SITE_NAME,
+            path=reverse(
+                'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                args=[attempt_code]
+            )
         )
 
         # now call into the backend provider to register exam attempt
@@ -425,8 +429,12 @@ def get_student_view(user_id, course_id, content_id, context):
             if not attempt:
                 student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
             else:
+                provider = get_backend_provider()
                 student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
-                context.update({'exam_code': attempt['attempt_code']})
+                context.update({
+                    'exam_code': attempt['attempt_code'],
+                    'software_download_url': provider.get_software_download_url(),
+                })
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
     elif has_finished_exam:

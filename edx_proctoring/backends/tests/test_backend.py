@@ -33,6 +33,13 @@ class TestBackendProvider(ProctoringBackendProvider):
         """
         return None
 
+    def get_software_download_url(self):
+        """
+        Returns the URL that the user needs to go to in order to download
+        the corresponding desktop software
+        """
+        return None
+
 
 class PassthroughBackendProvider(ProctoringBackendProvider):
     """
@@ -72,6 +79,13 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
             attempt
         )
 
+    def get_software_download_url(self):
+        """
+        Returns the URL that the user needs to go to in order to download
+        the corresponding desktop software
+        """
+        return super(PassthroughBackendProvider, self).get_software_download_url()
+
 
 class TestBackends(TestCase):
     """
@@ -94,6 +108,9 @@ class TestBackends(TestCase):
         with self.assertRaises(NotImplementedError):
             provider.stop_exam_attempt(None, None)
 
+        with self.assertRaises(NotImplementedError):
+            provider.get_software_download_url()
+
     def test_null_provider(self):
         """
         Assert that the Null provider does nothing
@@ -104,3 +121,4 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.register_exam_attempt(None, None, None, None, None))
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
+        self.assertIsNone(provider.get_software_download_url())
