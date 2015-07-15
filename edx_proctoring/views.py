@@ -30,7 +30,7 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     get_all_exam_attempts,
     remove_exam_attempt_by_id,
-)
+    get_filtered_exam_attempts)
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
@@ -388,12 +388,17 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         return the status of the exam attempt
     """
 
-    def get(self, request, course_id=None):  # pylint: disable=unused-argument
+    def get(self, request, course_id=None, search_by=None):  # pylint: disable=unused-argument
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
         if course_id is not None:
-            exam_attempts = get_all_exam_attempts(course_id)
+            if search_by is not None:
+                exam_attempts = get_filtered_exam_attempts(course_id, search_by)
+                attempt_url = reverse('edx_proctoring.proctored_exam.attempt.search', args=[course_id, search_by])
+            else:
+                exam_attempts = get_all_exam_attempts(course_id)
+                attempt_url = reverse('edx_proctoring.proctored_exam.attempt', args=[course_id])
 
             # TODO have to change the default attempts per page
             paginator = Paginator(exam_attempts, 1)  # Show 1 attempts per page
@@ -415,7 +420,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                     'current_page': exam_attempts_page.number,
                     'total_pages': exam_attempts_page.paginator.num_pages,
                 },
-                'attempt_url': reverse('edx_proctoring.proctored_exam.attempt', args=[course_id])
+                'attempt_url': attempt_url
 
             }
             return Response(
