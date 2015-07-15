@@ -2,9 +2,13 @@
     <section class="content">
         <div class="top-header">
             <div class='search-attempts'>
-                <input type="text" id="search_attempt_id" placeholder="e.g johndoe or john.do@gmail.com" />
+                <input type="text" id="search_attempt_id" placeholder="e.g johndoe or john.do@gmail.com"
+                <% if (inSearchMode) { %>
+                    value="<%= searchText %>"
+                <%} %>
+                />
                 <span class="search"><i class="fa fa-search"></i></span>
-                <span><i class="fa fa-refresh"></i></i></span>
+                <span class="clear-search"><i class="fa fa-remove"></i></i></span>
             </div>
             <ul class="pagination">
                 <% if (!pagination_info.has_previous){ %>

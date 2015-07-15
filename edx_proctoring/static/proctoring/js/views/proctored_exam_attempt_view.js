@@ -18,8 +18,8 @@ var edx = edx || {};
             this.initial_url = this.collection.url;
             this.attempt_url = this.model.url;
             this.collection.url = this.initial_url + this.course_id;
-            this.inSearchMode = true;
-            this.searchString = "abc";
+            this.inSearchMode = false;
+            this.searchText = "";
 
             /* re-render if the model changes */
             this.listenTo(this.collection, 'change', this.collectionChanged);
@@ -30,20 +30,27 @@ var edx = edx || {};
         events: {
             "click .remove-attempt": "onRemoveAttempt",
             'click li > a.target-link': 'getPaginatedAttempts',
-            'click .search-attempts > span.search': 'searchAttempts'
-            
+            'click .search-attempts > span.search': 'searchAttempts',
+            'click .search-attempts > span.clear-search': 'clearSearch'
         },
         searchAttempts: function(event) {
             var searchText = $('#search_attempt_id').val();
-            debugger;
             if (searchText !== "") {
                 this.inSearchMode = true;
-                this.searchString = searchText;
+                this.searchText = searchText;
                 this.collection.url = this.initial_url + this.course_id + "/search/" + searchText;
                 this.hydrate();
                 event.stopPropagation();
                 event.preventDefault();
             }
+        },
+        clearSearch: function(event) {
+            this.inSearchMode = false;
+            this.searchText = "";
+            this.collection.url = this.initial_url + this.course_id;
+            this.hydrate();
+            event.stopPropagation();
+            event.preventDefault();
         },
         getPaginatedAttempts: function(event) {
             var target = $(event.currentTarget);
