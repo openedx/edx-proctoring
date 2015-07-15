@@ -27,8 +27,12 @@ var edx = edx || {};
         },
         events: {
             "click .remove-attempt": "onRemoveAttempt",
-            'click li > a.target-link': 'getPaginatedAttempts'
+            'click li > a.target-link': 'getPaginatedAttempts',
+            'click .search-attempts > span.search': 'searchAttempts'
             
+        },
+        searchAttempts: function(event){
+            alert('search');
         },
         getPaginatedAttempts: function(event) {
             var target = $(event.currentTarget);
