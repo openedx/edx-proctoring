@@ -18,6 +18,8 @@ var edx = edx || {};
             this.initial_url = this.collection.url;
             this.attempt_url = this.model.url;
             this.collection.url = this.initial_url + this.course_id;
+            this.inSearchMode = true;
+            this.searchString = "abc";
 
             /* re-render if the model changes */
             this.listenTo(this.collection, 'change', this.collectionChanged);
@@ -31,8 +33,17 @@ var edx = edx || {};
             'click .search-attempts > span.search': 'searchAttempts'
             
         },
-        searchAttempts: function(event){
-            alert('search');
+        searchAttempts: function(event) {
+            var searchText = $('#search_attempt_id').val();
+            debugger;
+            if (searchText !== "") {
+                this.inSearchMode = true;
+                this.searchString = searchText;
+                this.collection.url = this.initial_url + this.course_id + "/search/" + searchText;
+                this.hydrate();
+                event.stopPropagation();
+                event.preventDefault();
+            }
         },
         getPaginatedAttempts: function(event) {
             var target = $(event.currentTarget);
@@ -146,7 +157,9 @@ var edx = edx || {};
                 var html = this.template({
                     proctored_exam_attempts: proctored_attempts,
                     pagination_info: this.collection.toJSON()[0].pagination_info,
-                    attempt_url: this.collection.toJSON()[0].attempt_url
+                    attempt_url: this.collection.toJSON()[0].attempt_url,
+                    inSearchMode: this.inSearchMode,
+                    searchText: this.searchText
                 });
                 this.$el.html(html);
                 this.$el.show();
