@@ -42,6 +42,8 @@ from edx_proctoring.serializers import ProctoredExamSerializer
 
 from .utils import AuthenticatedAPIView
 
+ATTEMPTS_PER_PAGE = 1
+
 LOG = logging.getLogger("edx_proctoring_views")
 
 
@@ -400,8 +402,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 exam_attempts = get_all_exam_attempts(course_id)
                 attempt_url = reverse('edx_proctoring.proctored_exam.attempt', args=[course_id])
 
-            # TODO have to change the default attempts per page
-            paginator = Paginator(exam_attempts, 1)  # Show 1 attempts per page
+            paginator = Paginator(exam_attempts, ATTEMPTS_PER_PAGE)
             page = request.GET.get('page')
             try:
                 exam_attempts_page = paginator.page(page)

@@ -361,12 +361,14 @@ def get_all_exam_attempts(course_id):
     exam_attempts = ProctoredExamStudentAttempt.get_all_exam_attempts(course_id)
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
 
+
 def get_filtered_exam_attempts(course_id, search_by):
     """
     returns all exam attempts for a course id filtered by  the search_by string in user names and emails.
     """
     exam_attempts = ProctoredExamStudentAttempt.get_all_exam_attempts(course_id)
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
+
 
 def get_active_exams_for_user(user_id, course_id=None):
     """
