@@ -215,8 +215,6 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             )
         )
 
-        print '**** callback url = {}'.format(callback_url)
-
         # now call into the backend provider to register exam attempt
         external_id = get_backend_provider().register_exam_attempt(
             exam,
