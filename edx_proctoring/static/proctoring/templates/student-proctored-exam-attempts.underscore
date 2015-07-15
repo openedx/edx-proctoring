@@ -1,56 +1,5 @@
 <div class="wrapper-content wrapper">
     <section class="content">
-    <%
-     var humanized_time = function(time_in_minutes) {
-            var hours = parseInt(time_in_minutes / 60);
-            var minutes = time_in_minutes % 60;
-
-            var hours_present = false;
-            if (hours == 0) {
-                hours_present = false;
-                var template = ""
-            }
-
-            else if (hours == 1) {
-                template = hours + " Hour ";
-                hours_present = true;
-            }
-
-            else if (hours >= 2) {
-                console.log(hours);
-                template = hours + " Hours ";
-                hours_present = true
-            }
-            else {
-                template = "error";
-            }
-
-            if (template !== "error") {
-                if (minutes == 0) {
-                    if (!hours_present) {
-                        template = minutes + " Minutes";
-                    }
-                }
-                else if ( minutes == 1 ) {
-                    if (hours_present) {
-                        template = template + " and " +minutes + " Minute";
-                    }
-                    else {
-                        template = template + minutes + " Minute";
-                    }
-                }
-                else {
-                    if (hours_present) {
-                        template = template + " and " + minutes + " Minutes";
-                    }
-                    else {
-                        template = template + minutes + " Minutes";
-                    }
-                }
-            }
-            return template;
-        }
-    %>
         <div class="top-header">
             <div class='search-attempts'>
                 <input type="text" id="search_attempt_id" placeholder="e.g johndoe or john.do@gmail.com" />
@@ -143,7 +92,7 @@
                         <td>
                             <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam_attempt.proctored_exam.exam_name }, true) %>
                         </td>
-                        <td> <%= humanized_time(proctored_exam_attempt.allowed_time_limit_mins) %></td>
+                        <td> <%= proctored_exam_attempt.allowed_time_limit_mins %></td>
                         <td>
                         <% if (proctored_exam_attempt.started_at){ %>
                         <%= new Date(proctored_exam_attempt.started_at).toString("MMMM dd, yyyy HH:MM") %>
@@ -165,7 +114,7 @@
                         <% } %>
                         <td>
                          <% if (proctored_exam_attempt.status){ %>
-                            <a class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>
+                            <a href="#" class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>
                         </td>
                         <% } else { %>
                             N/A
