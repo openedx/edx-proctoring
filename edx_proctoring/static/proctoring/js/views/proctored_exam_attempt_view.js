@@ -102,66 +102,11 @@ var edx = edx || {};
         collectionChanged: function () {
             this.hydrate();
         },
-        humanized_time: function(time_in_minutes) {
-            var hours = parseInt(time_in_minutes / 60);
-            var minutes = time_in_minutes % 60;
-
-            var hours_present = false;
-            if (hours == 0) {
-                hours_present = false;
-                var template = ""
-            }
-
-            else if (hours == 1) {
-                template = hours + " Hour ";
-                hours_present = true;
-            }
-
-            else if (hours >= 2) {
-                console.log(hours);
-                template = hours + " Hours ";
-                hours_present = true
-            }
-            else {
-                template = "error";
-            }
-
-            if (template !== "error") {
-                if (minutes == 0) {
-                    if (!hours_present) {
-                        template = minutes + " Minutes";
-                    }
-                }
-                else if ( minutes == 1 ) {
-                    if (hours_present) {
-                        template = template + " and " +minutes + " Minute";
-                    }
-                    else {
-                        template = template + minutes + " Minute";
-                    }
-                }
-                else {
-                    if (hours_present) {
-                        template = template + " and " + minutes + " Minutes";
-                    }
-                    else {
-                        template = template + minutes + " Minutes";
-                    }
-                }
-            }
-            return template;
-        },
         render: function () {
             if (this.template !== null) {
-                var attempts = this.collection.toJSON()[0].proctored_exam_attempts;
-                var proctored_attempts = [];
                 var self = this;
-                $.each( attempts, function( index, attempt ){
-                    attempt.allowed_time_limit_mins = self.humanized_time(attempt.allowed_time_limit_mins);
-                    proctored_attempts.push(attempt);
-                });
                 var html = this.template({
-                    proctored_exam_attempts: proctored_attempts,
+                    proctored_exam_attempts: this.collection.toJSON()[0].proctored_exam_attempts,
                     pagination_info: this.collection.toJSON()[0].pagination_info,
                     attempt_url: this.collection.toJSON()[0].attempt_url,
                     inSearchMode: this.inSearchMode,

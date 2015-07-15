@@ -81,7 +81,7 @@
                     <th class="username"><%- gettext("Username") %></th>
                     <th class="exam-name"><%- gettext("Exam Name") %></th>
                     <th class="attempt-allowed-time"><%- gettext("Allowed Time for Student") %> </th>
-                    <th class="attempt-started-at"><%- gettext("started At") %></th>
+                    <th class="attempt-started-at"><%- gettext("Started At") %></th>
                     <th class="attempt-completed-at"><%- gettext("Completed At") %> </th>
                     <th class="attempt-status"><%- gettext("Status") %> </th>
                     <th class="c_action"><%- gettext("Action") %> </th>
@@ -97,20 +97,8 @@
                             <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam_attempt.proctored_exam.exam_name }, true) %>
                         </td>
                         <td> <%= proctored_exam_attempt.allowed_time_limit_mins %></td>
-                        <td>
-                        <% if (proctored_exam_attempt.started_at){ %>
-                        <%= new Date(proctored_exam_attempt.started_at).toString("MMMM dd, yyyy HH:MM") %>
-                        <% } else { %>
-                        N/A
-                        <% } %>
-                        </td>
-                        <td>
-                         <% if (proctored_exam_attempt.completed_at){ %>
-                            <%= new Date(proctored_exam_attempt.completed_at).toString("MMMM dd, yyyy HH:MM") %>
-                        <% } else { %>
-                            N/A
-                        <% } %>
-                        <td>
+                        <td> <%= proctored_exam_attempt.started_at %></td>
+                        <td> <%= proctored_exam_attempt.completed_at %></td>
                          <% if (proctored_exam_attempt.status){ %>
                             <%= proctored_exam_attempt.status %> </td>
                         <% } else { %>
