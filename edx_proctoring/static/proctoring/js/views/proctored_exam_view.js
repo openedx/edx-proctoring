@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function (Backbone, $, _) {
+(function (Backbone, $, _, gettext) {
     'use strict';
 
     edx.coursware = edx.coursware || {};
@@ -61,11 +61,11 @@ var edx = edx || {};
             return this;
         },
         unloadMessage: function  () {
-            return "As you are currently taking a proctored exam,\n" +
+            return gettext("As you are currently taking a proctored exam,\n" +
                 "you should not be navigation away from the exam.\n" +
                 "This may be considered as a violation of the \n" +
                 "proctored exam and you may be disqualified for \n" +
-                "credit eligibility in this course.\n";
+                "credit eligibility in this course.\n");
         },
         updateRemainingTime: function (self) {
             self.$el.find('div.exam-timer').removeClass("low-time warning critical");
@@ -80,4 +80,4 @@ var edx = edx || {};
         }
     });
     this.edx.coursware.proctored_exam.ProctoredExamView = edx.coursware.proctored_exam.ProctoredExamView;
-}).call(this, Backbone, $, _);
+}).call(this, Backbone, $, _, gettext);

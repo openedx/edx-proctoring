@@ -42,6 +42,8 @@
 
 <script type="text/javascript">
 
+  var _waiting_for_proctored_interval = null;
+
   $(document).ready(function(){
 
     var hasFlash = false;
@@ -85,7 +87,7 @@
       );
     }
 
-    setInterval(
+    _waiting_for_proctored_interval = setInterval(
       poll_exam_started,
       5000
     );
@@ -95,6 +97,9 @@
     var url = $('.instructions').data('exam-started-poll-url')
     $.ajax(url).success(function(data){
       if (data.started_at !== null) {
+        if (_waiting_for_proctored_interval != null) {
+          clearInterval(_waiting_for_proctored_interval)
+        }
         // Let the student know exam has started and clock is running.
         // this may or may not bring the browser window back to the
         // foreground (depending on browser as well as user settings)
