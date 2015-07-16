@@ -609,11 +609,16 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
-
+        url = reverse('edx_proctoring.proctored_exam.attempt', kwargs={'course_id': proctored_exam.course_id})
         self.assertEqual(response.status_code, 200)
-        response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', kwargs={'course_id': proctored_exam.course_id})
-        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
+
+        url = '{url}?page={invalid_page_no}'.format(url=url, invalid_page_no=9999)
+        # url with the invalid page # still gives us the first page result.
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
