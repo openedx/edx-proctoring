@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.template import Context, loader
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -446,9 +446,19 @@ def get_student_view(user_id, course_id, content_id, context):
         template = loader.get_template(student_view_template)
         django_context = Context(context)
         total_time = humanized_time(context['default_time_limit_mins'])
+        progress_page_url = ''
+        try:
+            progress_page_url = reverse(
+                'courseware.views.progress',
+                args=[course_id]
+            )
+        except NoReverseMatch:
+            pass
+
         django_context.update({
             'total_time': total_time,
             'exam_id': exam_id,
+            'progress_page_url': progress_page_url,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
             'exam_started_poll_url': reverse(
                 'edx_proctoring.proctored_exam.attempt',
