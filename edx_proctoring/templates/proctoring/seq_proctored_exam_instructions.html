@@ -17,29 +17,8 @@
       Here is your unique exam code. You'll be asked for it during the setup.
     {% endblocktrans %}
     </h3>
-    <h1> {{exam_code}}</h1>
-    <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
-            width="110"
-            height="14"
-            id="clippy" >
-    <param name="movie" value="/static/proctoring/clippy.swf"/>
-    <param name="allowScriptAccess" value="always" />
-    <param name="quality" value="high" />
-    <param name="scale" value="noscale" />
-    <param NAME="FlashVars" value="text={{exam_code}}">
-    <param name="bgcolor" value="#ffffff">
-    <embed src="/static/proctoring/clippy.swf"
-           width="110"
-           height="14"
-           name="clippy"
-           quality="high"
-           allowScriptAccess="always"
-           type="application/x-shockwave-flash"
-           pluginspage="http://www.macromedia.com/go/getflashplayer"
-           FlashVars="text={{exam_code}}"
-           bgcolor="#ffffff"
-    />
-    </object>
+    <h1> {{exam_code}}<span class='copy-to-clipboard'></span>
+    </h1>
     <p>
       {% blocktrans %}
         Please do not share this code. It can only be used once and it tied to your edX account.
@@ -65,6 +44,48 @@
 <script type="text/javascript">
 
   $(document).ready(function(){
+
+    var hasFlash = false;
+    try {
+      var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+      if (fo) {
+        hasFlash = true;
+      }
+    } catch (e) {
+      if (navigator.mimeTypes
+            && navigator.mimeTypes['application/x-shockwave-flash'] != undefined
+            && navigator.mimeTypes['application/x-shockwave-flash'].enabledPlugin) {
+        hasFlash = true;
+      }
+    }
+
+    if (hasFlash) {
+      $('.copy-to-clipboard').html(
+        '<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" \
+        width="110" \
+        height="14" \
+        id="clippy" > \
+          <param name="movie" value="/static/proctoring/clippy.swf"/> \
+          <param name="allowScriptAccess" value="always" /> \
+          <param name="quality" value="high" /> \
+          <param name="scale" value="noscale" /> \
+          <param NAME="FlashVars" value="text={{exam_code}}"> \
+          <param name="bgcolor" value="#F2F4F5"> \
+          <embed src="/static/proctoring/clippy.swf" \
+            width="110" \
+             height="14" \
+             name="clippy" \
+             quality="high" \
+            allowScriptAccess="always" \
+            type="application/x-shockwave-flash" \
+            pluginspage="http://www.macromedia.com/go/getflashplayer" \
+            FlashVars="text={{exam_code}}" \
+            bgcolor="#F2F4F5" \
+          /> \
+        </object>'
+      );
+    }
+
     setInterval(
       poll_exam_started,
       5000
