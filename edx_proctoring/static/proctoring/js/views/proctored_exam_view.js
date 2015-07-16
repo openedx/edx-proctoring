@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function (Backbone, $, _) {
+(function (Backbone, $, _, gettext) {
     'use strict';
 
     edx.coursware = edx.coursware || {};
@@ -37,9 +37,12 @@ var edx = edx || {};
         },
         modelChanged: function () {
             // if we are a proctored exam, then we need to alert user that he/she
-            // should not leave the exam
+            // should not be navigating around the courseware
+            var taking_as_proctored = this.model.get('taking_as_proctored');
+            var time_left = this.model.get('time_remaining_seconds') > 0;
+            var in_courseware = document.location.href.indexOf('/courses/' + this.model.get('course_id') + '/courseware/') > -1;
 
-            if (this.model.get('taking_as_proctored') && this.model.get('time_remaining_seconds') > 0) {
+            if ( taking_as_proctored && time_left && in_courseware){
                 $(window).bind('beforeunload', this.unloadMessage);
             } else {
                 // remove callback on unload event
@@ -61,11 +64,11 @@ var edx = edx || {};
             return this;
         },
         unloadMessage: function  () {
-            return "As you are currently taking a proctored exam,\n" +
+            return gettext("As you are currently taking a proctored exam,\n" +
                 "you should not be navigation away from the exam.\n" +
                 "This may be considered as a violation of the \n" +
                 "proctored exam and you may be disqualified for \n" +
-                "credit eligibility in this course.\n";
+                "credit eligibility in this course.\n");
         },
         updateRemainingTime: function (self) {
             self.$el.find('div.exam-timer').removeClass("low-time warning critical");
@@ -80,4 +83,4 @@ var edx = edx || {};
         }
     });
     this.edx.coursware.proctored_exam.ProctoredExamView = edx.coursware.proctored_exam.ProctoredExamView;
-}).call(this, Backbone, $, _);
+}).call(this, Backbone, $, _, gettext);

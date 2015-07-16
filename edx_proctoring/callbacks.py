@@ -5,10 +5,9 @@ Various callback paths
 from django.template import Context, loader
 from django.http import HttpResponse
 
-from edx_proctoring.exceptions import StudentExamAttemptDoesNotExistsException
-
 from edx_proctoring.api import (
-    start_exam_attempt_by_code,
+    get_exam_attempt_by_code,
+    mark_exam_attempt_as_ready,
 )
 
 
@@ -23,14 +22,14 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     as a query string parameter
     """
 
-    # start the exam!
-    try:
-        start_exam_attempt_by_code(attempt_code)
-    except StudentExamAttemptDoesNotExistsException:
+    attempt = get_exam_attempt_by_code(attempt_code)
+    if not attempt:
         return HttpResponse(
             content='That exam code is not valid',
             status=404
         )
+
+    mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
 
     template = loader.get_template('proctoring/proctoring_launch_callback.html')
 

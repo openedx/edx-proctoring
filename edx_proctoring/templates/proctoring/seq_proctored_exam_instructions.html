@@ -42,6 +42,8 @@
 
 <script type="text/javascript">
 
+  var _waiting_for_proctored_interval = null;
+
   $(document).ready(function(){
 
     var hasFlash = false;
@@ -85,7 +87,7 @@
       );
     }
 
-    setInterval(
+    _waiting_for_proctored_interval = setInterval(
       poll_exam_started,
       5000
     );
@@ -94,14 +96,28 @@
   function poll_exam_started() {
     var url = $('.instructions').data('exam-started-poll-url')
     $.ajax(url).success(function(data){
-      if (data.started_at !== null) {
-        // Let the student know exam has started and clock is running.
-        // this may or may not bring the browser window back to the
+      if (data.status === 'ready_to_start') {
+        if (_waiting_for_proctored_interval != null) {
+          clearInterval(_waiting_for_proctored_interval)
+        }
+        // Let the student know exam is ready to start.
+        // This alert may or may not bring the browser window back to the
         // foreground (depending on browser as well as user settings)
         alert('{% trans "Your proctored exam has started, please click OK to enter into your exam." %}')
 
-        // Reloading page will reflect the new state of the attempt
-        location.reload()
+        // after the user acknowledges the alert then we can start
+        // the exam and timer
+        $.ajax({
+          url: url,
+          type: 'PUT',
+          data: {
+            action: 'start'
+          },
+          success: function() {
+            // Reloading page will reflect the new state of the attempt
+            location.reload()
+          }
+        });
       }
     });
   }

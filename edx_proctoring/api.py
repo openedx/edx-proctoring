@@ -24,6 +24,7 @@ from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptStatus,
 )
 from edx_proctoring.serializers import (
     ProctoredExamSerializer,
@@ -182,6 +183,17 @@ def get_exam_attempt_by_id(attempt_id):
     return serialized_attempt_obj.data if exam_attempt_obj else None
 
 
+def get_exam_attempt_by_code(attempt_code):
+    """
+    Signals the beginning of an exam attempt when we only have
+    an attempt code
+    """
+
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
+    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
+    return serialized_attempt_obj.data if exam_attempt_obj else None
+
+
 def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only be
@@ -211,7 +223,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         allowance_extra_mins = int(allowance.value)
         allowed_time_limit_mins += allowance_extra_mins
 
-    attempt_code = unicode(uuid.uuid4())
+    attempt_code = unicode(uuid.uuid4()).upper()
 
     external_id = None
     if taking_as_proctored:
@@ -263,7 +275,7 @@ def start_exam_attempt(exam_id, user_id):
 
         raise StudentExamAttemptDoesNotExistsException(err_msg)
 
-    _start_exam_attempt(existing_attempt)
+    return _start_exam_attempt(existing_attempt)
 
 
 def start_exam_attempt_by_code(attempt_code):
@@ -282,7 +294,7 @@ def start_exam_attempt_by_code(attempt_code):
 
         raise StudentExamAttemptDoesNotExistsException(err_msg)
 
-    _start_exam_attempt(existing_attempt)
+    return _start_exam_attempt(existing_attempt)
 
 
 def _start_exam_attempt(existing_attempt):
@@ -301,6 +313,8 @@ def _start_exam_attempt(existing_attempt):
 
     existing_attempt.start_exam_attempt()
 
+    return existing_attempt.id
+
 
 def stop_exam_attempt(exam_id, user_id):
     """
@@ -308,9 +322,37 @@ def stop_exam_attempt(exam_id, user_id):
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
-        raise StudentExamAttemptDoesNotExistsException('Error. Trying to stop an exam that is not in progress.')
+        raise StudentExamAttemptDoesNotExistsException('Error. Trying to stop an exam that does not exist.')
     else:
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
+        exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.completed
+        exam_attempt_obj.save()
+        return exam_attempt_obj.id
+
+
+def mark_exam_attempt_timeout(exam_id, user_id):
+    """
+    Marks the exam attempt as timed_out
+    """
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    if exam_attempt_obj is None:
+        raise StudentExamAttemptDoesNotExistsException('Error. Trying to time out an exam that does not exist.')
+    else:
+        exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.timed_out
+        exam_attempt_obj.save()
+        return exam_attempt_obj.id
+
+
+def mark_exam_attempt_as_ready(exam_id, user_id):
+    """
+    Marks the exam attemp as ready to start
+    """
+
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    if exam_attempt_obj is None:
+        raise StudentExamAttemptDoesNotExistsException('Error. Trying to time out an exam that does not exist.')
+    else:
+        exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.ready_to_start
         exam_attempt_obj.save()
         return exam_attempt_obj.id
 
@@ -419,7 +461,7 @@ def get_active_exams_for_user(user_id, course_id=None):
     return result
 
 
-def get_student_view(user_id, course_id, content_id, context):
+def get_student_view(user_id, course_id, content_id, context):  # pylint: disable=too-many-branches
     """
     Helper method that will return the view HTML related to the exam control
     flow (i.e. entering, expired, completed, etc.) If there is no specific
@@ -463,6 +505,10 @@ def get_student_view(user_id, course_id, content_id, context):
         expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
         has_time_expired = now_utc > expires_at
 
+    # make sure the attempt has been marked as timed_out, if need be
+    if has_time_expired and attempt['status'] != ProctoredExamStudentAttemptStatus.timed_out:
+        mark_exam_attempt_timeout(exam_id, user_id)
+
     if not has_started_exam:
         # determine whether to show a timed exam only entrance screen
         # or a screen regarding proctoring
@@ -483,7 +529,6 @@ def get_student_view(user_id, course_id, content_id, context):
         student_view_template = 'proctoring/seq_timed_exam_completed.html'
     elif has_time_expired:
         student_view_template = 'proctoring/seq_timed_exam_expired.html'
-
     if student_view_template:
         template = loader.get_template(student_view_template)
         django_context = Context(context)

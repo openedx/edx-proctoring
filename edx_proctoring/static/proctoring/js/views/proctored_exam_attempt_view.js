@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function (Backbone, $, _) {
+(function (Backbone, $, _, gettext) {
     'use strict';
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -11,7 +11,7 @@ var edx = edx || {};
                 return new Date(date).toString('MMM dd, yyyy h:mmtt');
             }
             else {
-                return 'N/A';
+                return '---';
             }
 
         }
@@ -130,6 +130,11 @@ var edx = edx || {};
         },
         onRemoveAttempt: function (event) {
             event.preventDefault();
+
+            // confirm the user's intent
+            if (!confirm(gettext('Are you sure you wish to remove this student\'s exam attempt?'))) {
+                return;
+            }
             var $target = $(event.currentTarget);
             var attemptId = $target.data("attemptId");
 
@@ -148,4 +153,4 @@ var edx = edx || {};
         }
     });
     this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = edx.instructor_dashboard.proctoring.ProctoredExamAttemptView;
-}).call(this, Backbone, $, _);
+}).call(this, Backbone, $, _, gettext);
