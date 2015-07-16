@@ -41,7 +41,7 @@ from edx_proctoring.serializers import ProctoredExamSerializer
 
 from .utils import AuthenticatedAPIView
 
-ATTEMPTS_PER_PAGE = 3
+ATTEMPTS_PER_PAGE = 25
 
 LOG = logging.getLogger("edx_proctoring_views")
 
