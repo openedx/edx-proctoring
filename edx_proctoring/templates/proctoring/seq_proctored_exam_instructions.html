@@ -18,6 +18,28 @@
     {% endblocktrans %}
     </h3>
     <h1> {{exam_code}}</h1>
+    <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+            width="110"
+            height="14"
+            id="clippy" >
+    <param name="movie" value="/static/proctoring/clippy.swf"/>
+    <param name="allowScriptAccess" value="always" />
+    <param name="quality" value="high" />
+    <param name="scale" value="noscale" />
+    <param NAME="FlashVars" value="text={{exam_code}}">
+    <param name="bgcolor" value="#ffffff">
+    <embed src="/static/proctoring/clippy.swf"
+           width="110"
+           height="14"
+           name="clippy"
+           quality="high"
+           allowScriptAccess="always"
+           type="application/x-shockwave-flash"
+           pluginspage="http://www.macromedia.com/go/getflashplayer"
+           FlashVars="text={{exam_code}}"
+           bgcolor="#ffffff"
+    />
+    </object>
     <p>
       {% blocktrans %}
         Please do not share this code. It can only be used once and it tied to your edX account.
