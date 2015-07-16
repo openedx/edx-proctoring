@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 from django.utils.decorators import method_decorator
 from django.conf import settings
+from django.core.urlresolvers import reverse, NoReverseMatch
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -365,9 +366,10 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         exams = get_active_exams_for_user(request.user.id)
 
         if exams:
-            exam = exams[0]
+            exam_info = exams[0]
 
-            attempt = exam['attempt']
+            exam = exam_info['exam']
+            attempt = exam_info['attempt']
 
             # need to adjust for allowances
             expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
@@ -387,11 +389,22 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 critically_low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60
             )
 
+            exam_url_path = ''
+            try:
+                # resolve the LMS url, note we can't assume we're running in
+                # a same process as the LMS
+                exam_url_path = reverse(
+                    'courseware.views.jump_to',
+                    args=[exam['course_id'], exam['content_id']]
+                )
+            except NoReverseMatch:
+                pass
+
             response_dict = {
                 'in_timed_exam': True,
                 'taking_as_proctored': attempt['taking_as_proctored'],
-                'exam_display_name': exam['exam']['exam_name'],
-                'exam_url_path': '',
+                'exam_display_name': exam['exam_name'],
+                'exam_url_path': exam_url_path,
                 'time_remaining_seconds': time_remaining_seconds,
                 'low_threshold_sec': low_threshold,
                 'critically_low_threshold_sec': critically_low_threshold,
