@@ -2,6 +2,7 @@
 All tests for the models.py
 """
 from datetime import datetime
+from mock import patch
 import pytz
 
 
@@ -24,7 +25,9 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     remove_exam_attempt_by_id,
     get_all_exam_attempts,
-    get_filtered_exam_attempts)
+    get_filtered_exam_attempts,
+    is_feature_enabled,
+)
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
@@ -125,6 +128,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
         return ProctoredExamStudentAllowance.objects.create(
             proctored_exam_id=self.proctored_exam_id, user_id=self.user_id, key=self.key, value=self.value
         )
+
+    def test_feature_enabled(self):
+        """
+        Checks the is_feature_enabled method
+        """
+        self.assertFalse(is_feature_enabled())
+
+        with patch.dict('django.conf.settings.FEATURES', {'ENABLE_PROCTORED_EXAMS': False}):
+            self.assertFalse(is_feature_enabled())
+
+        with patch.dict('django.conf.settings.FEATURES', {'ENABLE_PROCTORED_EXAMS': True}):
+            self.assertTrue(is_feature_enabled())
 
     def test_create_duplicate_exam(self):
         """

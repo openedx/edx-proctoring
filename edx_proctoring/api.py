@@ -35,6 +35,14 @@ from edx_proctoring.utils import humanized_time
 from edx_proctoring.backends import get_backend_provider
 
 
+def is_feature_enabled():
+    """
+    Returns if this feature has been enabled in our FEATURE flags
+    """
+
+    return hasattr(settings, 'FEATURES') and settings.FEATURES.get('ENABLE_PROCTORED_EXAMS', False)
+
+
 def create_exam(course_id, content_id, exam_name, time_limit_mins,
                 is_proctored=True, external_id=None, is_active=True):
     """
