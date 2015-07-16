@@ -183,6 +183,17 @@ def get_exam_attempt_by_id(attempt_id):
     return serialized_attempt_obj.data if exam_attempt_obj else None
 
 
+def get_exam_attempt_by_code(attempt_code):
+    """
+    Signals the beginning of an exam attempt when we only have
+    an attempt code
+    """
+
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
+    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
+    return serialized_attempt_obj.data if exam_attempt_obj else None
+
+
 def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only be
@@ -264,7 +275,7 @@ def start_exam_attempt(exam_id, user_id):
 
         raise StudentExamAttemptDoesNotExistsException(err_msg)
 
-    _start_exam_attempt(existing_attempt)
+    return _start_exam_attempt(existing_attempt)
 
 
 def start_exam_attempt_by_code(attempt_code):
@@ -283,7 +294,7 @@ def start_exam_attempt_by_code(attempt_code):
 
         raise StudentExamAttemptDoesNotExistsException(err_msg)
 
-    _start_exam_attempt(existing_attempt)
+    return _start_exam_attempt(existing_attempt)
 
 
 def _start_exam_attempt(existing_attempt):
@@ -301,6 +312,8 @@ def _start_exam_attempt(existing_attempt):
         raise StudentExamAttemptedAlreadyStarted(err_msg)
 
     existing_attempt.start_exam_attempt()
+
+    return existing_attempt.id
 
 
 def stop_exam_attempt(exam_id, user_id):
@@ -326,6 +339,20 @@ def mark_exam_attempt_timeout(exam_id, user_id):
         raise StudentExamAttemptDoesNotExistsException('Error. Trying to time out an exam that does not exist.')
     else:
         exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.timed_out
+        exam_attempt_obj.save()
+        return exam_attempt_obj.id
+
+
+def mark_exam_attempt_as_ready(exam_id, user_id):
+    """
+    Marks the exam attemp as ready to start
+    """
+
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    if exam_attempt_obj is None:
+        raise StudentExamAttemptDoesNotExistsException('Error. Trying to time out an exam that does not exist.')
+    else:
+        exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.ready_to_start
         exam_attempt_obj.save()
         return exam_attempt_obj.id
 

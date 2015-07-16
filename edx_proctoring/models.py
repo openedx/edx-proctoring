@@ -151,37 +151,37 @@ class ProctoredExamStudentAttemptStatus(object):
     """
 
     # the student is eligible to decide if he/she wants to persue credit
-    eligible = 'Eligible'
+    eligible = 'eligible'
 
     # the attempt record has been created, but the exam has not yet
     # been started
-    created = 'Created'
+    created = 'created'
 
     # the attempt is ready to start but requires
     # user to acknowledge that he/she wants to start the exam
-    ready_to_start = 'Ready to start'
+    ready_to_start = 'ready_to_start'
 
     # the student has started the exam and is
     # in the process of completing the exam
-    started = 'Started'
+    started = 'started'
 
     # the exam has timed out
-    timed_out = 'Timed Out'
+    timed_out = 'timed_out'
 
     # the student has completed the exam
-    completed = 'Completed'
+    completed = 'completed'
 
     # the student has submitted the exam for proctoring review
-    submitted = 'Submitted'
+    submitted = 'submitted'
 
     # the exam has been verified and approved
-    verified = 'Verified'
+    verified = 'verified'
 
     # the exam has been rejected
-    rejected = 'Rejected'
+    rejected = 'rejected'
 
     # the exam is believed to be in error
-    error = 'Error'
+    error = 'error'
 
 
 class ProctoredExamStudentAttempt(TimeStampedModel):

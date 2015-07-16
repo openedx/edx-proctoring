@@ -37,9 +37,12 @@ var edx = edx || {};
         },
         modelChanged: function () {
             // if we are a proctored exam, then we need to alert user that he/she
-            // should not leave the exam
+            // should not be navigating around the courseware
+            var taking_as_proctored = this.model.get('taking_as_proctored');
+            var time_left = this.model.get('time_remaining_seconds') > 0;
+            var in_courseware = document.location.href.indexOf('/courses/' + this.model.get('course_id') + '/courseware/') > -1;
 
-            if (this.model.get('taking_as_proctored') && this.model.get('time_remaining_seconds') > 0) {
+            if ( taking_as_proctored && time_left && in_courseware){
                 $(window).bind('beforeunload', this.unloadMessage);
             } else {
                 // remove callback on unload event

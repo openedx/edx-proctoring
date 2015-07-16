@@ -302,10 +302,18 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 )
                 raise ProctoredExamPermissionDenied(err_msg)
 
-            exam_attempt_id = stop_exam_attempt(
-                exam_id=attempt['proctored_exam']['id'],
-                user_id=request.user.id
-            )
+            action = request.DATA.get('action')
+
+            if action == 'stop':
+                exam_attempt_id = stop_exam_attempt(
+                    exam_id=attempt['proctored_exam']['id'],
+                    user_id=request.user.id
+                )
+            elif action == 'start':
+                exam_attempt_id = start_exam_attempt(
+                    exam_id=attempt['proctored_exam']['id'],
+                    user_id=request.user.id
+                )
             return Response({"exam_attempt_id": exam_attempt_id})
 
         except ProctoredBaseException, ex:
@@ -473,6 +481,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 'time_remaining_seconds': time_remaining_seconds,
                 'low_threshold_sec': low_threshold,
                 'critically_low_threshold_sec': critically_low_threshold,
+                'course_id': exam['course_id'],
             }
         else:
             response_dict = {

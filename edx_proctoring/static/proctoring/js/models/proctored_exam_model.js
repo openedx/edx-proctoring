@@ -11,6 +11,7 @@
             time_remaining_seconds: 0,
             low_threshold_sec: 0,
             critically_low_threshold_sec: 0,
+            course_id: null,
             lastFetched: new Date()
         },
         getRemainingSeconds: function () {
