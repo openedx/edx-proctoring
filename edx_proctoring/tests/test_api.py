@@ -23,8 +23,8 @@ from edx_proctoring.api import (
     get_all_exams_for_course,
     get_exam_attempt_by_id,
     remove_exam_attempt_by_id,
-    get_all_exam_attempts
-)
+    get_all_exam_attempts,
+    get_filtered_exam_attempts)
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
@@ -385,6 +385,27 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(len(student_active_exams), 2)
         self.assertEqual(len(student_active_exams[0]['allowances']), 2)
         self.assertEqual(len(student_active_exams[1]['allowances']), 0)
+
+    def test_get_filtered_exam_attempts(self):
+        """
+        Test to get all the exams filtered by the course_id
+        and search type.
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        exam_id = create_exam(
+            course_id=self.course_id,
+            content_id='test_content_2',
+            exam_name='Final Test Exam',
+            time_limit_mins=self.default_time_limit
+        )
+        new_exam_attempt = create_exam_attempt(
+            exam_id=exam_id,
+            user_id=self.user_id
+        )
+        filtered_attempts = get_filtered_exam_attempts(self.course_id, self.user.username)
+        self.assertEqual(len(filtered_attempts), 2)
+        self.assertEqual(filtered_attempts[0]['id'], exam_attempt.id)
+        self.assertEqual(filtered_attempts[1]['id'], new_exam_attempt)
 
     def test_get_all_exam_attempts(self):
         """

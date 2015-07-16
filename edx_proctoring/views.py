@@ -5,7 +5,6 @@ Proctored Exams HTTP-based API endpoints
 import logging
 import pytz
 from datetime import datetime, timedelta
-from django.core.urlresolvers import reverse
 
 from django.utils.decorators import method_decorator
 from django.conf import settings

@@ -99,11 +99,13 @@
                         <td> <%= proctored_exam_attempt.allowed_time_limit_mins %></td>
                         <td> <%= proctored_exam_attempt.started_at %></td>
                         <td> <%= proctored_exam_attempt.completed_at %></td>
+                         <td>
                          <% if (proctored_exam_attempt.status){ %>
-                            <%= proctored_exam_attempt.status %> </td>
+                            <%= proctored_exam_attempt.status %>
                         <% } else { %>
                             N/A
                         <% } %>
+                        </td>
                         <td>
                          <% if (proctored_exam_attempt.status){ %>
                             <a href="#" class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>
