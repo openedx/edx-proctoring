@@ -17,8 +17,7 @@
       Here is your unique exam code. You'll be asked for it during the setup.
     {% endblocktrans %}
     </h3>
-    <h1> {{exam_code}}<span class='copy-to-clipboard'></span>
-    </h1>
+    <h2> {{exam_code}}<span class='copy-to-clipboard'></span></h2>
     <p>
       {% blocktrans %}
         Please do not share this code. It can only be used once and it tied to your edX account.
@@ -96,6 +95,12 @@
     var url = $('.instructions').data('exam-started-poll-url')
     $.ajax(url).success(function(data){
       if (data.started_at !== null) {
+        // Let the student know exam has started and clock is running.
+        // this may or may not bring the browser window back to the
+        // foreground (depending on browser as well as user settings)
+        alert('{% trans "Your proctored exam has started, please click OK to enter into your exam." %}')
+
+        // Reloading page will reflect the new state of the attempt
         location.reload()
       }
     });
