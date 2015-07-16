@@ -16,6 +16,7 @@ TRANSACTIONS_MANAGED = {}
 USE_TZ = True
 TIME_ZONE = {}
 SECRET_KEY='SHHHHHH'
+PLATFORM_NAME='Open edX'
 
 DATABASES = {
     'default': {
