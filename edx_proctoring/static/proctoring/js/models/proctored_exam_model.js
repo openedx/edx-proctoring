@@ -9,8 +9,8 @@
             exam_display_name: '',
             exam_url_path: '',
             time_remaining_seconds: 0,
-            low_threshold: 0,
-            critically_low_threshold: 0,
+            low_threshold_sec: 0,
+            critically_low_threshold_sec: 0,
             lastFetched: new Date()
         },
         getRemainingSeconds: function () {
@@ -35,10 +35,10 @@
         },
         getRemainingTimeState: function () {
             var totalSeconds = this.getRemainingSeconds();
-            if (totalSeconds > this.get('low_threshold')) {
+            if (totalSeconds > this.get('low_threshold_sec')) {
                 return "";
             }
-            else if (totalSeconds <= this.get('low_threshold') && totalSeconds > this.get('critically_low_threshold')) {
+            else if (totalSeconds <= this.get('low_threshold_sec') && totalSeconds > this.get('critically_low_threshold_sec')) {
                 return "low-time warning";
             }
             else {

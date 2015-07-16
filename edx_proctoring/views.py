@@ -7,6 +7,7 @@ import pytz
 from datetime import datetime, timedelta
 
 from django.utils.decorators import method_decorator
+from django.conf import settings
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -366,8 +367,10 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         if exams:
             exam = exams[0]
 
+            attempt = exam['attempt']
+
             # need to adjust for allowances
-            expires_at = exam['attempt']['started_at'] + timedelta(minutes=exam['attempt']['allowed_time_limit_mins'])
+            expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
             now_utc = datetime.now(pytz.UTC)
 
             if expires_at > now_utc:
@@ -375,14 +378,23 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
             else:
                 time_remaining_seconds = 0
 
+            proctoring_settings = getattr(settings, 'PROCTORING_SETTINGS', {})
+            low_threshold_pct = proctoring_settings.get('low_threshold_pct', .2)
+            critically_low_threshold_pct = proctoring_settings.get('critically_low_threshold_pct', .05)
+
+            low_threshold = int(low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60)
+            critically_low_threshold = int(
+                critically_low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60
+            )
+
             response_dict = {
                 'in_timed_exam': True,
-                'taking_as_proctored': exam['attempt']['taking_as_proctored'],
+                'taking_as_proctored': attempt['taking_as_proctored'],
                 'exam_display_name': exam['exam']['exam_name'],
                 'exam_url_path': '',
                 'time_remaining_seconds': time_remaining_seconds,
-                'low_threshold': 30,
-                'critically_low_threshold': 15,
+                'low_threshold_sec': low_threshold,
+                'critically_low_threshold_sec': critically_low_threshold,
             }
         else:
             response_dict = {
