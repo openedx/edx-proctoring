@@ -212,7 +212,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         allowance_extra_mins = int(allowance.value)
         allowed_time_limit_mins += allowance_extra_mins
 
-    attempt_code = unicode(uuid.uuid4().upper())
+    attempt_code = unicode(uuid.uuid4()).upper()
 
     external_id = None
     if taking_as_proctored:
