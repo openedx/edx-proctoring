@@ -3,8 +3,6 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
 
-DATETIME_FORMAT = "%b %d, %Y %I:%M %p"  # "MMMM dd, yyyy HH:MM"
-
 
 class StrictBooleanField(serializers.BooleanField):
     """

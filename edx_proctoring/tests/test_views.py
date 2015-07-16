@@ -385,7 +385,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'attempt_proctored': True,
+            'external_id': proctored_exam.external_id,
             'start_clock': True,
         }
         response = self.client.post(
@@ -411,7 +411,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'attempt_proctored': True,
+            'external_id': proctored_exam.external_id,
             'start_clock': True,
         }
         response = self.client.post(
@@ -455,7 +455,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'attempt_proctored': True,
+            'external_id': proctored_exam.external_id,
             'start_clock': True,
         }
         response = self.client.post(
@@ -488,7 +488,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'attempt_proctored': True,
+            'external_id': proctored_exam.external_id,
             'start_clock': True,
         }
         response = self.client.post(
@@ -530,8 +530,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'attempt_proctored': True,
-            'start_clock': False
+            'external_id': proctored_exam.external_id
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
@@ -567,8 +566,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'attempt_proctored': True,
-            'start_clock': False
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
@@ -603,8 +602,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'attempt_proctored': True,
-            'start_clock': False
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
@@ -634,7 +633,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt_data = {
             'exam_id': proctored_exam.id,
             'start_clock': False,
-            'attempt_proctored': True
+            'attempt_proctored': False
         }
         # create a exam attempt
         response = self.client.post(
@@ -680,8 +679,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'attempt_proctored': True,
-            'start_clock': False
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
@@ -736,8 +735,9 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'start_clock': True,
-            'attempts_proctored': True
+            'user_id': self.user.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
@@ -769,8 +769,9 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'start_clock': True,
-            'attempt_proctored': True
+            'user_id': self.user.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
@@ -805,8 +806,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'attempt_proctored': True,
-            'start_clock': True
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
@@ -842,8 +843,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # create an attempt but don't start it
         attempt_data = {
-            'attempt_proctored': True,
             'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
             'start_clock': False,
         }
         response = self.client.post(

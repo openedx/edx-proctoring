@@ -5,7 +5,17 @@ var edx = edx || {};
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
+    var viewHelper = {
+        getDateFormat: function(date) {
+            if (date) {
+                return new Date(date).toString('MMM dd, yyyy h:mmtt');
+            }
+            else {
+                return 'N/A';
+            }
 
+        }
+    };
     edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = Backbone.View.extend({
         initialize: function (options) {
             this.$el = options.el;
@@ -105,13 +115,15 @@ var edx = edx || {};
         render: function () {
             if (this.template !== null) {
                 var self = this;
-                var html = this.template({
+                var data = {
                     proctored_exam_attempts: this.collection.toJSON()[0].proctored_exam_attempts,
                     pagination_info: this.collection.toJSON()[0].pagination_info,
                     attempt_url: this.collection.toJSON()[0].attempt_url,
                     inSearchMode: this.inSearchMode,
                     searchText: this.searchText
-                });
+                };
+                _.extend(data, viewHelper);
+                var html = this.template(data);
                 this.$el.html(html);
                 this.$el.show();
             }
