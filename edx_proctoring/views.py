@@ -7,6 +7,8 @@ import pytz
 from datetime import datetime, timedelta
 
 from django.utils.decorators import method_decorator
+from django.conf import settings
+from django.core.urlresolvers import reverse, NoReverseMatch
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -364,10 +366,13 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         exams = get_active_exams_for_user(request.user.id)
 
         if exams:
-            exam = exams[0]
+            exam_info = exams[0]
+
+            exam = exam_info['exam']
+            attempt = exam_info['attempt']
 
             # need to adjust for allowances
-            expires_at = exam['attempt']['started_at'] + timedelta(minutes=exam['attempt']['allowed_time_limit_mins'])
+            expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
             now_utc = datetime.now(pytz.UTC)
 
             if expires_at > now_utc:
@@ -375,14 +380,34 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
             else:
                 time_remaining_seconds = 0
 
+            proctoring_settings = getattr(settings, 'PROCTORING_SETTINGS', {})
+            low_threshold_pct = proctoring_settings.get('low_threshold_pct', .2)
+            critically_low_threshold_pct = proctoring_settings.get('critically_low_threshold_pct', .05)
+
+            low_threshold = int(low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60)
+            critically_low_threshold = int(
+                critically_low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60
+            )
+
+            exam_url_path = ''
+            try:
+                # resolve the LMS url, note we can't assume we're running in
+                # a same process as the LMS
+                exam_url_path = reverse(
+                    'courseware.views.jump_to',
+                    args=[exam['course_id'], exam['content_id']]
+                )
+            except NoReverseMatch:
+                pass
+
             response_dict = {
                 'in_timed_exam': True,
-                'is_proctored': True,
-                'exam_display_name': exam['exam']['exam_name'],
-                'exam_url_path': '',
+                'taking_as_proctored': attempt['taking_as_proctored'],
+                'exam_display_name': exam['exam_name'],
+                'exam_url_path': exam_url_path,
                 'time_remaining_seconds': time_remaining_seconds,
-                'low_threshold': 30,
-                'critically_low_threshold': 15,
+                'low_threshold_sec': low_threshold,
+                'critically_low_threshold_sec': critically_low_threshold,
             }
         else:
             response_dict = {

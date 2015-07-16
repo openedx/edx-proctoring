@@ -633,6 +633,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['exam_display_name'], 'Test Exam')
+        self.assertEqual(data['low_threshold_sec'], 1080)
+        self.assertEqual(data['critically_low_threshold_sec'], 270)
 
     def test_get_expired_attempt(self):
         """
