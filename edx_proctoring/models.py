@@ -11,6 +11,7 @@ from model_utils.models import TimeStampedModel
 
 from django.contrib.auth.models import User
 from edx_proctoring.exceptions import UserNotFoundException
+from django.db.models.base import ObjectDoesNotExist
 
 
 class ProctoredExam(TimeStampedModel):
@@ -76,11 +77,77 @@ class ProctoredExam(TimeStampedModel):
         return cls.objects.filter(course_id=course_id)
 
 
+class ProctoredExamStudentAttemptManager(models.Manager):
+    """
+    Custom manager
+    """
+    def get_exam_attempt(self, exam_id, user_id):
+        """
+        Returns the Student Exam Attempt object if found
+        else Returns None.
+        """
+        try:
+            exam_attempt_obj = self.get(proctored_exam_id=exam_id, user_id=user_id)
+        except ObjectDoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = None
+        return exam_attempt_obj
+
+    def get_exam_attempt_by_id(self, attempt_id):
+        """
+        Returns the Student Exam Attempt by the attempt_id else return None
+        """
+        try:
+            exam_attempt_obj = self.get(id=attempt_id)
+        except ObjectDoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = None
+        return exam_attempt_obj
+
+    def get_exam_attempt_by_code(self, attempt_code):
+        """
+        Returns the Student Exam Attempt object if found
+        else Returns None.
+        """
+        try:
+            exam_attempt_obj = self.get(attempt_code=attempt_code)
+        except ObjectDoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = None
+        return exam_attempt_obj
+
+    def get_all_exam_attempts(self, course_id):
+        """
+        Returns the Student Exam Attempts for the given course_id.
+        """
+
+        return self.filter(proctored_exam__course_id=course_id)
+
+    def get_filtered_exam_attempts(self, course_id, search_by):
+        """
+        Returns the Student Exam Attempts for the given course_id filtered by search_by.
+        """
+        filtered_query = Q(proctored_exam__course_id=course_id) & (
+            Q(user__username__contains=search_by) | Q(user__email__contains=search_by)
+        )
+
+        return self.filter(filtered_query)
+
+    def get_active_student_attempts(self, user_id, course_id=None):
+        """
+        Returns the active student exams (user in-progress exams)
+        """
+        filtered_query = Q(user_id=user_id) & Q(started_at__isnull=False) & Q(completed_at__isnull=True)
+        if course_id is not None:
+            filtered_query = filtered_query & Q(proctored_exam__course_id=course_id)
+
+        return self.filter(filtered_query)
+
+
 class ProctoredExamStudentAttempt(TimeStampedModel):
     """
     Information about the Student Attempt on a
     Proctored Exam.
     """
+    objects = ProctoredExamStudentAttemptManager()
+
     user = models.ForeignKey(User, db_index=True)
 
     proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
@@ -148,51 +215,72 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         self.started_at = datetime.now(pytz.UTC)
         self.save()
 
-    @classmethod
-    def get_exam_attempt(cls, exam_id, user_id):
+    def delete_exam_attempt(self):
         """
-        Returns the Student Exam Attempt object if found
-        else Returns None.
+        deletes the exam attempt object.
         """
-        try:
-            exam_attempt_obj = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id)
-        except cls.DoesNotExist:  # pylint: disable=no-member
-            exam_attempt_obj = None
-        return exam_attempt_obj
+        self.delete()
 
-    @classmethod
-    def get_exam_attempt_by_id(cls, attempt_id):
-        """
-        Returns the Student Exam Attempt by the attempt_id else return None
-        """
-        try:
-            exam_attempt_obj = cls.objects.get(id=attempt_id)
-        except cls.DoesNotExist:  # pylint: disable=no-member
-            exam_attempt_obj = None
-        return exam_attempt_obj
 
-    @classmethod
-    def get_exam_attempt_by_code(cls, attempt_code):
-        """
-        Returns the Student Exam Attempt object if found
-        else Returns None.
-        """
-        try:
-            exam_attempt_obj = cls.objects.get(attempt_code=attempt_code)
-        except cls.DoesNotExist:  # pylint: disable=no-member
-            exam_attempt_obj = None
-        return exam_attempt_obj
+class ProctoredExamStudentAttemptHistory(TimeStampedModel):
+    """
+    This should be the same schema as ProctoredExamStudentAttempt
+    but will record (for audit history) all entries that have been updated.
+    """
 
-    @classmethod
-    def get_active_student_attempts(cls, user_id, course_id=None):
-        """
-        Returns the active student exams (user in-progress exams)
-        """
-        filtered_query = Q(user_id=user_id) & Q(started_at__isnull=False) & Q(completed_at__isnull=True)
-        if course_id is not None:
-            filtered_query = filtered_query & Q(proctored_exam__course_id=course_id)
+    user = models.ForeignKey(User, db_index=True)
 
-        return cls.objects.filter(filtered_query)
+    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
+
+    # started/completed date times
+    started_at = models.DateTimeField(null=True)
+    completed_at = models.DateTimeField(null=True)
+
+    # this will be a unique string ID that the user
+    # will have to use when starting the proctored exam
+    attempt_code = models.CharField(max_length=255, null=True, db_index=True)
+
+    # This will be a integration specific ID - say to SoftwareSecure.
+    external_id = models.CharField(max_length=255, null=True, db_index=True)
+
+    # this is the time limit allowed to the student
+    allowed_time_limit_mins = models.IntegerField()
+
+    # what is the status of this attempt
+    status = models.CharField(max_length=64)
+
+    # if the user is attempting this as a proctored exam
+    # in case there is an option to opt-out
+    taking_as_proctored = models.BooleanField()
+
+    # Whether this attampt is considered a sample attempt, e.g. to try out
+    # the proctoring software
+    is_sample_attempt = models.BooleanField()
+
+    student_name = models.CharField(max_length=255)
+
+
+@receiver(pre_delete, sender=ProctoredExamStudentAttempt)
+def on_attempt_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    Archive the exam attempt when the item is about to be deleted
+    Make a clone and populate in the History table
+    """
+
+    archive_object = ProctoredExamStudentAttemptHistory(
+        user=instance.user,
+        proctored_exam=instance.proctored_exam,
+        started_at=instance.started_at,
+        completed_at=instance.completed_at,
+        attempt_code=instance.attempt_code,
+        external_id=instance.external_id,
+        allowed_time_limit_mins=instance.allowed_time_limit_mins,
+        status=instance.status,
+        taking_as_proctored=instance.taking_as_proctored,
+        is_sample_attempt=instance.is_sample_attempt,
+        student_name=instance.student_name
+    )
+    archive_object.save()
 
 
 class QuerySetWithUpdateOverride(models.query.QuerySet):

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """
 All tests for the proctored_exams.py
 """
@@ -429,9 +430,49 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertEqual(response_data['id'], attempt_id)
-        self.assertEqual(response_data['proctored_exam_id'], proctored_exam.id)
+        self.assertEqual(response_data['proctored_exam']['id'], proctored_exam.id)
         self.assertIsNotNone(response_data['started_at'])
         self.assertIsNone(response_data['completed_at'])
+
+    def test_remove_attempt(self):
+        """
+        Confirms that an attempt can be removed
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        response = self.client.delete(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[1])
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        attempt_id = response_data['exam_attempt_id']
+        self.assertGreater(attempt_id, 0)
+
+        response = self.client.delete(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+        )
+
+        self.assertEqual(response.status_code, 200)
 
     def test_read_others_attempt(self):
         """
@@ -546,6 +587,88 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+    def test_get_exam_attempts(self):
+        """
+        Test to get the exam attempts in a course.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        url = reverse('edx_proctoring.proctored_exam.attempt', kwargs={'course_id': proctored_exam.course_id})
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
+
+        url = '{url}?page={invalid_page_no}'.format(url=url, invalid_page_no=9999)
+        # url with the invalid page # still gives us the first page result.
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
+
+    def test_get_filtered_exam_attempts(self):
+        """
+        Test to get the exam attempts in a course.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'start_clock': False,
+            'attempt_proctored': False
+        }
+        # create a exam attempt
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.login_user(self.second_user)
+        # create a new exam attempt for second student
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.login_user(self.user)
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.proctored_exam.attempt.search',
+                kwargs={
+                    'course_id': proctored_exam.course_id,
+                    'search_by': 'tester'
+                }
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 2)
 
     def test_stop_others_attempt(self):
         """

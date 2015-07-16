@@ -21,8 +21,10 @@ from edx_proctoring.api import (
     get_student_view,
     get_allowances_for_course,
     get_all_exams_for_course,
-    get_exam_attempt_by_id
-)
+    get_exam_attempt_by_id,
+    remove_exam_attempt_by_id,
+    get_all_exam_attempts,
+    get_filtered_exam_attempts)
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
@@ -288,8 +290,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self._create_unstarted_exam_attempt()
         exam_attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
 
-        self.assertEqual(exam_attempt['proctored_exam_id'], self.proctored_exam_id)
-        self.assertEqual(exam_attempt['user_id'], self.user_id)
+        self.assertEqual(exam_attempt['proctored_exam']['id'], self.proctored_exam_id)
+        self.assertEqual(exam_attempt['user']['id'], self.user_id)
 
     def test_start_uncreated_attempt(self):
         """
@@ -336,6 +338,19 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
+    def test_remove_exam_attempt(self):
+        """
+        Calling the api remove function removes the attempt.
+        """
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            remove_exam_attempt_by_id(9999)
+
+        proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
+        remove_exam_attempt_by_id(proctored_exam_student_attempt.id)
+
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            remove_exam_attempt_by_id(proctored_exam_student_attempt.id)
+
     def test_stop_a_non_started_exam(self):
         """
         Stop an exam attempt that had not started yet.
@@ -370,6 +385,47 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(len(student_active_exams), 2)
         self.assertEqual(len(student_active_exams[0]['allowances']), 2)
         self.assertEqual(len(student_active_exams[1]['allowances']), 0)
+
+    def test_get_filtered_exam_attempts(self):
+        """
+        Test to get all the exams filtered by the course_id
+        and search type.
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        exam_id = create_exam(
+            course_id=self.course_id,
+            content_id='test_content_2',
+            exam_name='Final Test Exam',
+            time_limit_mins=self.default_time_limit
+        )
+        new_exam_attempt = create_exam_attempt(
+            exam_id=exam_id,
+            user_id=self.user_id
+        )
+        filtered_attempts = get_filtered_exam_attempts(self.course_id, self.user.username)
+        self.assertEqual(len(filtered_attempts), 2)
+        self.assertEqual(filtered_attempts[0]['id'], exam_attempt.id)
+        self.assertEqual(filtered_attempts[1]['id'], new_exam_attempt)
+
+    def test_get_all_exam_attempts(self):
+        """
+        Test to get all the exam attempts.
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        exam_id = create_exam(
+            course_id=self.course_id,
+            content_id='test_content_2',
+            exam_name='Final Test Exam',
+            time_limit_mins=self.default_time_limit
+        )
+        updated_exam_attempt_id = create_exam_attempt(
+            exam_id=exam_id,
+            user_id=self.user_id
+        )
+        all_exams = get_all_exam_attempts(self.course_id)
+        self.assertEqual(len(all_exams), 2)
+        self.assertEqual(all_exams[0]['id'], exam_attempt.id)
+        self.assertEqual(all_exams[1]['id'], updated_exam_attempt_id)
 
     def test_get_student_view(self):
         """

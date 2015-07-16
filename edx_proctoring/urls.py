@@ -36,6 +36,17 @@ urlpatterns = patterns(  # pylint: disable=invalid-name
         name='edx_proctoring.proctored_exam.attempt'
     ),
     url(
+        r'edx_proctoring/v1/proctored_exam/attempt/course_id/{}$'.format(settings.COURSE_ID_PATTERN),
+        views.StudentProctoredExamAttemptCollection.as_view(),
+        name='edx_proctoring.proctored_exam.attempt'
+    ),
+    url(
+        r'edx_proctoring/v1/proctored_exam/attempt/course_id/{}/search/(?P<search_by>.+)$'.format(
+            settings.COURSE_ID_PATTERN),
+        views.StudentProctoredExamAttemptCollection.as_view(),
+        name='edx_proctoring.proctored_exam.attempt.search'
+    ),
+    url(
         r'edx_proctoring/v1/proctored_exam/attempt$',
         views.StudentProctoredExamAttemptCollection.as_view(),
         name='edx_proctoring.proctored_exam.attempt.collection'

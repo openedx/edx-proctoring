@@ -12,6 +12,7 @@ from django.core.urlresolvers import reverse, NoReverseMatch
 
 from rest_framework import status
 from rest_framework.response import Response
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from edx_proctoring.api import (
     create_exam,
     update_exam,
@@ -26,7 +27,9 @@ from edx_proctoring.api import (
     get_allowances_for_course,
     get_all_exams_for_course,
     get_exam_attempt_by_id,
-)
+    get_all_exam_attempts,
+    remove_exam_attempt_by_id,
+    get_filtered_exam_attempts)
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
@@ -37,6 +40,8 @@ from edx_proctoring.exceptions import (
 from edx_proctoring.serializers import ProctoredExamSerializer
 
 from .utils import AuthenticatedAPIView
+
+ATTEMPTS_PER_PAGE = 25
 
 LOG = logging.getLogger("edx_proctoring_views")
 
@@ -251,7 +256,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 raise StudentExamAttemptDoesNotExistsException(err_msg)
 
             # make sure the the attempt belongs to the calling user_id
-            if attempt['user_id'] != request.user.id:
+            if attempt['user']['id'] != request.user.id:
                 err_msg = (
                     'Attempted to access attempt_id {attempt_id} but '
                     'does not have access to it.'.format(
@@ -288,7 +293,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 raise StudentExamAttemptDoesNotExistsException(err_msg)
 
             # make sure the the attempt belongs to the calling user_id
-            if attempt['user_id'] != request.user.id:
+            if attempt['user']['id'] != request.user.id:
                 err_msg = (
                     'Attempted to access attempt_id {attempt_id} but '
                     'does not have access to it.'.format(
@@ -298,10 +303,36 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 raise ProctoredExamPermissionDenied(err_msg)
 
             exam_attempt_id = stop_exam_attempt(
-                exam_id=attempt['proctored_exam_id'],
+                exam_id=attempt['proctored_exam']['id'],
                 user_id=request.user.id
             )
             return Response({"exam_attempt_id": exam_attempt_id})
+
+        except ProctoredBaseException, ex:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": str(ex)}
+            )
+
+    @method_decorator(require_staff)
+    def delete(self, request, attempt_id):  # pylint: disable=unused-argument
+        """
+        HTTP DELETE handler. Removes an exam attempt.
+        """
+        try:
+            attempt = get_exam_attempt_by_id(attempt_id)
+
+            if not attempt:
+                err_msg = (
+                    'Attempted to access attempt_id {attempt_id} but '
+                    'it does not exist.'.format(
+                        attempt_id=attempt_id
+                    )
+                )
+                raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+            remove_exam_attempt_by_id(attempt_id)
+            return Response()
 
         except ProctoredBaseException, ex:
             return Response(
@@ -358,10 +389,44 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         return the status of the exam attempt
     """
 
-    def get(self, request):
+    def get(self, request, course_id=None, search_by=None):  # pylint: disable=unused-argument
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
+        if course_id is not None:
+            if search_by is not None:
+                exam_attempts = get_filtered_exam_attempts(course_id, search_by)
+                attempt_url = reverse('edx_proctoring.proctored_exam.attempt.search', args=[course_id, search_by])
+            else:
+                exam_attempts = get_all_exam_attempts(course_id)
+                attempt_url = reverse('edx_proctoring.proctored_exam.attempt', args=[course_id])
+
+            paginator = Paginator(exam_attempts, ATTEMPTS_PER_PAGE)
+            page = request.GET.get('page')
+            try:
+                exam_attempts_page = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                exam_attempts_page = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                exam_attempts_page = paginator.page(paginator.num_pages)
+
+            data = {
+                'proctored_exam_attempts': exam_attempts_page.object_list,
+                'pagination_info': {
+                    'has_previous': exam_attempts_page.has_previous(),
+                    'has_next': exam_attempts_page.has_next(),
+                    'current_page': exam_attempts_page.number,
+                    'total_pages': exam_attempts_page.paginator.num_pages,
+                },
+                'attempt_url': attempt_url
+
+            }
+            return Response(
+                data=data,
+                status=status.HTTP_200_OK
+            )
 
         exams = get_active_exams_for_user(request.user.id)
 

@@ -160,7 +160,7 @@ def get_exam_attempt(exam_id, user_id):
     """
     Return an existing exam attempt for the given student
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id)
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
     serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
     return serialized_attempt_obj.data if exam_attempt_obj else None
 
@@ -169,7 +169,7 @@ def get_exam_attempt_by_id(attempt_id):
     """
     Return an existing exam attempt for the given student
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.get_exam_attempt_by_id(attempt_id)
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
     serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
     return serialized_attempt_obj.data if exam_attempt_obj else None
 
@@ -180,7 +180,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     one exam_attempt per user per exam. Multiple attempts by user will be archived
     in a separate table
     """
-    if ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id):
+    if ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id):
         err_msg = (
             'Cannot create new exam attempt for exam_id = {exam_id} and '
             'user_id = {user_id} because it already exists!'
@@ -245,7 +245,7 @@ def start_exam_attempt(exam_id, user_id):
     Returns: exam_attempt_id (PK)
     """
 
-    existing_attempt = ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id)
+    existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
 
     if not existing_attempt:
         err_msg = (
@@ -264,7 +264,7 @@ def start_exam_attempt_by_code(attempt_code):
     an attempt code
     """
 
-    existing_attempt = ProctoredExamStudentAttempt.get_exam_attempt_by_code(attempt_code)
+    existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
 
     if not existing_attempt:
         err_msg = (
@@ -298,13 +298,31 @@ def stop_exam_attempt(exam_id, user_id):
     """
     Marks the exam attempt as completed (sets the completed_at field and updates the record)
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.get_exam_attempt(exam_id, user_id)
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
         raise StudentExamAttemptDoesNotExistsException('Error. Trying to stop an exam that is not in progress.')
     else:
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()
         return exam_attempt_obj.id
+
+
+def remove_exam_attempt_by_id(attempt_id):
+    """
+    Removes an exam attempt given the attempt id.
+    """
+
+    existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+
+    if not existing_attempt:
+        err_msg = (
+            'Cannot remove attempt for attempt_id = {attempt_id} '
+            'because it does not exist!'
+        ).format(attempt_id=attempt_id)
+
+        raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+    existing_attempt.delete_exam_attempt()
 
 
 def get_all_exams_for_course(course_id):
@@ -336,6 +354,22 @@ def get_all_exams_for_course(course_id):
     return [ProctoredExamSerializer(proctored_exam).data for proctored_exam in exams]
 
 
+def get_all_exam_attempts(course_id):
+    """
+    Returns all the exam attempts for the course id.
+    """
+    exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(course_id)
+    return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
+
+
+def get_filtered_exam_attempts(course_id, search_by):
+    """
+    returns all exam attempts for a course id filtered by  the search_by string in user names and emails.
+    """
+    exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(course_id, search_by)
+    return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
+
+
 def get_active_exams_for_user(user_id, course_id=None):
     """
     This method will return a list of active exams for the user,
@@ -357,7 +391,7 @@ def get_active_exams_for_user(user_id, course_id=None):
     """
     result = []
 
-    student_active_exams = ProctoredExamStudentAttempt.get_active_student_attempts(user_id, course_id)
+    student_active_exams = ProctoredExamStudentAttempt.objects.get_active_student_attempts(user_id, course_id)
     for active_exam in student_active_exams:
         # convert the django orm objects
         # into the serialized form.
