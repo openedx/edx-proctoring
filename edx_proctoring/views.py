@@ -377,7 +377,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
 
             response_dict = {
                 'in_timed_exam': True,
-                'is_proctored': True,
+                'taking_as_proctored': exam['attempt']['taking_as_proctored'],
                 'exam_display_name': exam['exam']['exam_name'],
                 'exam_url_path': '',
                 'time_remaining_seconds': time_remaining_seconds,

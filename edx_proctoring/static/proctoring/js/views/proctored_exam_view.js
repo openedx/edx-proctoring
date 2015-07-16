@@ -16,6 +16,10 @@ var edx = edx || {};
             /* give an extra 5 seconds where the timer holds at 00:00 before page refreshes */
             this.grace_period_secs = 5;
 
+            // we need to keep a copy here because the model will
+            // get destroyed before onbeforeunload is called
+            this.taking_as_proctored = false;
+
             var template_html = $(this.templateId).text();
             if (template_html !== null) {
                 /* don't assume this backbone view is running on a page with the underscore templates */
@@ -24,12 +28,24 @@ var edx = edx || {};
             /* re-render if the model changes */
             this.listenTo(this.model, 'change', this.modelChanged);
 
+            $(window).unbind('beforeunload', this.unloadMessage);
+
             /* make the async call to the backend REST API */
             /* after it loads, the listenTo event will file and */
             /* will call into the rendering */
             this.model.fetch();
         },
         modelChanged: function () {
+            // if we are a proctored exam, then we need to alert user that he/she
+            // should not leave the exam
+
+            if (this.model.get('taking_as_proctored') && this.model.get('time_remaining_seconds') > 0) {
+                $(window).bind('beforeunload', this.unloadMessage);
+            } else {
+                // remove callback on unload event
+                $(window).unbind('beforeunload', this.unloadMessage);
+            }
+
             this.render();
         },
         render: function () {
@@ -44,13 +60,20 @@ var edx = edx || {};
             }
             return this;
         },
-
+        unloadMessage: function  () {
+            return "As you are currently taking a proctored exam,\n" +
+                "you should not be navigation away from the exam.\n" +
+                "This may be considered as a violation of the \n" +
+                "proctored exam and you may be disqualified for \n" +
+                "credit eligibility in this course.\n";
+        },
         updateRemainingTime: function (self) {
             self.$el.find('div.exam-timer').removeClass("low-time warning critical");
             self.$el.find('div.exam-timer').addClass(self.model.getRemainingTimeState());
             self.$el.find('span#time_remaining_id b').html(self.model.getFormattedRemainingTime());
             if (self.model.getRemainingSeconds() <= -self.grace_period_secs) {
                 clearInterval(self.timerId); // stop the timer once the time finishes.
+                $(window).unbind('beforeunload', this.unloadMessage);
                 // refresh the page when the timer expired
                 location.reload();
             }

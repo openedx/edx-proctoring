@@ -5,7 +5,7 @@
 
         defaults: {
             in_timed_exam: false,
-            is_proctored: false,
+            taking_as_proctored: false,
             exam_display_name: '',
             exam_url_path: '',
             time_remaining_seconds: 0,
