@@ -141,6 +141,49 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         return self.filter(filtered_query)
 
 
+class ProctoredExamStudentAttemptStatus(object):
+    """
+    A class to enumerate the various status that an attempt can have
+
+    IMPORTANT: Since these values are stored in a database, they are system
+    constants and should not be language translated, since translations
+    might change over time.
+    """
+
+    # the student is eligible to decide if he/she wants to persue credit
+    eligible = 'Eligible'
+
+    # the attempt record has been created, but the exam has not yet
+    # been started
+    created = 'Created'
+
+    # the attempt is ready to start but requires
+    # user to acknowledge that he/she wants to start the exam
+    ready_to_start = 'Ready to start'
+
+    # the student has started the exam and is
+    # in the process of completing the exam
+    started = 'Started'
+
+    # the exam has timed out
+    timed_out = 'Timed Out'
+
+    # the student has completed the exam
+    completed = 'Completed'
+
+    # the student has submitted the exam for proctoring review
+    submitted = 'Submitted'
+
+    # the exam has been verified and approved
+    verified = 'Verified'
+
+    # the exam has been rejected
+    rejected = 'Rejected'
+
+    # the exam is believed to be in error
+    error = 'Error'
+
+
 class ProctoredExamStudentAttempt(TimeStampedModel):
     """
     Information about the Student Attempt on a
@@ -205,7 +248,8 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             attempt_code=attempt_code,
             taking_as_proctored=taking_as_proctored,
             is_sample_attempt=is_sample_attempt,
-            external_id=external_id
+            external_id=external_id,
+            status=ProctoredExamStudentAttemptStatus.created,
         )
 
     def start_exam_attempt(self):
@@ -213,6 +257,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         sets the model's state when an exam attempt has started
         """
         self.started_at = datetime.now(pytz.UTC)
+        self.status = ProctoredExamStudentAttemptStatus.started
         self.save()
 
     def delete_exam_attempt(self):

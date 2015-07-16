@@ -27,6 +27,7 @@ from edx_proctoring.api import (
     get_all_exam_attempts,
     get_filtered_exam_attempts,
     is_feature_enabled,
+    mark_exam_attempt_timeout,
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -372,6 +373,21 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
             stop_exam_attempt(self.proctored_exam_id, self.user_id)
+
+    def test_mark_exam_attempt_timeout(self):
+        """
+        Tests the mark exam as timed out
+        """
+
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            mark_exam_attempt_timeout(self.proctored_exam_id, self.user_id)
+
+        proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
+        self.assertIsNone(proctored_exam_student_attempt.completed_at)
+        proctored_exam_attempt_id = mark_exam_attempt_timeout(
+            proctored_exam_student_attempt.proctored_exam, self.user_id
+        )
+        self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
     def test_get_active_exams_for_user(self):
         """
