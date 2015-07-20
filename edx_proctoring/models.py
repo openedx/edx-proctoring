@@ -226,6 +226,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'
         verbose_name = 'proctored exam attempt'
+        unique_together = (('user', 'proctored_exam'),)
 
     @property
     def is_active(self):
