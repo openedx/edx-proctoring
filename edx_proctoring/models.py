@@ -304,6 +304,18 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
 
     student_name = models.CharField(max_length=255)
 
+    @classmethod
+    def get_exam_attempt_by_code(cls, attempt_code):
+        """
+        Returns the Student Exam Attempt object if found
+        else Returns None.
+        """
+        try:
+            exam_attempt_obj = cls.objects.get(attempt_code=attempt_code)
+        except ObjectDoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = None
+        return exam_attempt_obj
+
 
 @receiver(pre_delete, sender=ProctoredExamStudentAttempt)
 def on_attempt_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
@@ -473,3 +485,69 @@ def _make_archive_copy(item):
         value=item.value
     )
     archive_object.save()
+
+
+class ProctoredExamSoftwareSecureReview(TimeStampedModel):
+    """
+    This is where we store the proctored exam review feedback
+    from the exam reviewers
+    """
+
+    # which student attempt is this feedback for?
+    attempt_code = models.CharField(max_length=255, db_index=True)
+
+    # overall status of the review
+    review_status = models.CharField(max_length=255)
+
+    # The raw payload that was received back from the
+    # reviewing service
+    raw_data = models.TextField()
+
+    # URL for the exam video that had been reviewed
+    video_url = models.TextField()
+
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamsoftwaresecurereview'
+        verbose_name = 'proctored exam software secure review'
+
+    @classmethod
+    def get_review_by_attempt_code(cls, attempt_code):
+        """
+        Does a lookup by attempt_code
+        """
+        try:
+            review = cls.objects.get(attempt_code=attempt_code)
+            return review
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            return None
+
+
+class ProctoredExamSoftwareSecureComment(TimeStampedModel):
+    """
+    This is where we store the proctored exam review comments
+    from the exam reviewers
+    """
+
+    # which student attempt is this feedback for?
+    review = models.ForeignKey(ProctoredExamSoftwareSecureReview)
+
+    # start time in the video, in seconds, regarding the comment
+    start_time = models.IntegerField()
+
+    # stop time in the video, in seconds, regarding the comment
+    stop_time = models.IntegerField()
+
+    # length of time, in seconds, regarding the comment
+    duration = models.IntegerField()
+
+    # the text that the reviewer typed in
+    comment = models.TextField()
+
+    # reviewers opinion regarding exam validitity based on the comment
+    status = models.CharField(max_length=255)
+
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamstudentattemptcomment'
+        verbose_name = 'proctored exam software secure comment'

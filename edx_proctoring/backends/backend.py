@@ -43,3 +43,10 @@ class ProctoringBackendProvider(object):
         the corresponding desktop software
         """
         raise NotImplementedError()
+
+    @abc.abstractmethod
+    def on_review_callback(self, payload):
+        """
+        Called when the reviewing 3rd party service posts back the results
+        """
+        raise NotImplementedError()

@@ -71,5 +71,10 @@ urlpatterns = patterns(  # pylint: disable=invalid-name
         callbacks.start_exam_callback,
         name='edx_proctoring.anonymous.proctoring_launch_callback.start_exam'
     ),
+    url(
+        r'edx_proctoring/proctoring_review_callback/$',
+        callbacks.ExamReviewCallback.as_view(),
+        name='edx_proctoring.anonymous.proctoring_review_callback'
+    ),
     url(r'^', include('rest_framework.urls', namespace='rest_framework'))
 )

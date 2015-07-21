@@ -13,8 +13,19 @@ import json
 import logging
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_proctoring.exceptions import BackendProvideCannotRegisterAttempt
+from edx_proctoring.exceptions import (
+    BackendProvideCannotRegisterAttempt,
+    StudentExamAttemptDoesNotExistsException,
+    ProctoredExamSuspiciousLookup,
+    ProctoredExamReviewAlreadyExists,
+)
 
+from edx_proctoring. models import (
+    ProctoredExamSoftwareSecureReview,
+    ProctoredExamSoftwareSecureComment,
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptHistory
+)
 
 log = logging.getLogger(__name__)
 
@@ -96,6 +107,108 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         the corresponding desktop software
         """
         return self.software_download_url
+
+    def on_review_callback(self, payload):
+        """
+        Called when the reviewing 3rd party service posts back the results
+
+        Documentation on the data format can be found from SoftwareSecure's
+        documentation named "Reviewer Data Transfer"
+        """
+
+        log_msg = (
+            'Received callback from SoftwareSecure with review data: {payload}'.format(
+                payload=payload
+            )
+        )
+        log.info(log_msg)
+
+        # payload from SoftwareSecure is a JSON payload
+        # which has been converted to a dict by our caller
+        data = payload['payload']
+
+        # what we consider the external_id is SoftwareSecure's 'ssiRecordLocator'
+        external_id = data['examMetaData']['ssiRecordLocator']
+
+        # what we consider the attempt_code is SoftwareSecure's 'examCode'
+        attempt_code = data['examMetaData']['examCode']
+
+        # do a lookup on the attempt by examCode, and compare the
+        # passed in ssiRecordLocator and make sure it matches
+        # what we recorded as the external_id. We need to look in both
+        # the attempt table as well as the archive table
+
+        attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
+
+        if not attempt_obj:
+            # try archive table
+            attempt_obj = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
+
+            if not attempt_obj:
+                # still can't find, error out
+                err_msg = (
+                    'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
+                )
+                raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+        # then make sure we have the right external_id
+        if attempt_obj.external_id != external_id:
+            err_msg = (
+                'Found attempt_code {attempt_code}, but the recorded external_id did not '
+                'match the ssiRecordLocator that had been recorded previously. Has {existing} '
+                'but received {received}!'.format(
+                    attempt_code=attempt_code,
+                    existing=attempt_obj.external_id,
+                    received=external_id
+                )
+            )
+            raise ProctoredExamSuspiciousLookup(err_msg)
+
+        # do we already have a review for this attempt?!? It should not be updated!
+        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
+
+        if review:
+            err_msg = (
+                'We already have a review submitted from SoftwareSecure regarding '
+                'attempt_code {attempt_code}. We do not allow for updates!'.format(
+                    attempt_code=attempt_code
+                )
+            )
+            raise ProctoredExamReviewAlreadyExists(err_msg)
+
+        # do some limited parsing of the JSON payload
+        review_status = data['reviewStatus']
+        video_review_link = data['videoReviewLink']
+
+        # make a new record in the review table
+        review = ProctoredExamSoftwareSecureReview(
+            attempt_code=attempt_code,
+            raw_data=json.dumps(payload),
+            review_status=review_status,
+            video_url=video_review_link,
+        )
+        review.save()
+
+        # go through and populate all of the specific comments
+        for comment in data['webCamComments']:
+            self._save_review_comment(review, comment)
+
+        for comment in data['desktopComments']:
+            self._save_review_comment(review, comment)
+
+    def _save_review_comment(self, review, comment):
+        """
+        Helper method to save a review comment
+        """
+        comment = ProctoredExamSoftwareSecureComment(
+            review=review,
+            start_time=comment['eventStart'],
+            stop_time=comment['eventFinish'],
+            duration=comment['duration'],
+            comment=comment['comments'],
+            status=comment['eventStatus']
+        )
+        comment.save()
 
     def _encrypt_password(self, key, pwd):
         """

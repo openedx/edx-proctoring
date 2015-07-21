@@ -55,3 +55,17 @@ class ProctoredExamPermissionDenied(ProctoredBaseException):
     """
     Raised when the calling user does not have access to the requested object.
     """
+
+
+class ProctoredExamSuspiciousLookup(ProctoredBaseException):
+    """
+    Raised when a lookup on the student attempt table does not fully match
+    all expected security keys
+    """
+
+
+class ProctoredExamReviewAlreadyExists(ProctoredBaseException):
+    """
+    Raised when a lookup on the student attempt table does not fully match
+    all expected security keys
+    """
