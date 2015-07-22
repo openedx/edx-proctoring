@@ -8,9 +8,9 @@
   <p>
     {% trans "This exam has a time limit associated with it." %}
     <strong>
-      {% trans "In order to successfully pass this exam you will have to answer the following questions and problems in the time allotted." %}
+      {% trans "To pass this exam you must complete the problems in the time allowed." %}
     </strong>
-    {% trans "Once you proceed, you'll start both the exam and the "%} {{total_time|lower}} {% trans " given to you." %}
+    {% trans "As soon as you indicate that you are ready to start the exam, you will have "%} {{total_time|lower}} {% trans " to complete the exam." %}
   </p>
   <div class="gated-sequence">
     <a class='start-timed-exam' data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">

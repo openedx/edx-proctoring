@@ -23,7 +23,7 @@ from edx_proctoring.api import (
     get_allowances_for_course,
     get_all_exams_for_course,
     get_exam_attempt_by_id,
-    remove_exam_attempt_by_id,
+    remove_exam_attempt,
     get_all_exam_attempts,
     get_filtered_exam_attempts,
     is_feature_enabled,
@@ -72,10 +72,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.disabled_exam_id = self._create_disabled_exam()
 
         # Messages for get_student_view
-        self.start_an_exam_msg = 'Would you like to take %s as a Proctored Exam?'
+        self.start_an_exam_msg = 'Would you like to take %s as a proctored exam?'
         self.timed_exam_msg = '%s is a Timed Exam'
-        self.exam_time_expired_msg = 'you did not submit your exam before the time allotted expired'
-        self.chose_proctored_exam_msg = 'You\'ve chosen to take %s as a proctored exam'
+        self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
+        self.chose_proctored_exam_msg = 'You have chosen to take %s as a proctored exam'
 
     def _create_proctored_exam(self):
         """
@@ -360,13 +360,13 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Calling the api remove function removes the attempt.
         """
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            remove_exam_attempt_by_id(9999)
+            remove_exam_attempt(9999)
 
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
-        remove_exam_attempt_by_id(proctored_exam_student_attempt.id)
+        remove_exam_attempt(proctored_exam_student_attempt.id)
 
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            remove_exam_attempt_by_id(proctored_exam_student_attempt.id)
+            remove_exam_attempt(proctored_exam_student_attempt.id)
 
     def test_stop_a_non_started_exam(self):
         """

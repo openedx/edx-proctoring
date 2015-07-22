@@ -86,7 +86,7 @@
                         <th class="attempt-started-at"><%- gettext("Started At") %></th>
                         <th class="attempt-completed-at"><%- gettext("Completed At") %> </th>
                         <th class="attempt-status"><%- gettext("Status") %> </th>
-                        <th class="c_action"><%- gettext("Action") %> </th>
+                        <th class="c_action"><%- gettext("Actions") %> </th>
                     </tr>
                 </thead>
                 <tbody>

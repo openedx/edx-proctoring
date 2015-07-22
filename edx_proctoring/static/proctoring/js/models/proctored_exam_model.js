@@ -40,9 +40,15 @@
                 return "";
             }
             else if (totalSeconds <= this.get('low_threshold_sec') && totalSeconds > this.get('critically_low_threshold_sec')) {
+                // returns the class name that has some css properties
+                // and it displays the user with the waring message if
+                // total seconds is less than the low_threshold value.
                 return "low-time warning";
             }
             else {
+                // returns the class name that has some css properties
+                // and it displays the user with the critical message if
+                // total seconds is less than the critically_low_threshold_sec value.
                 return "low-time critical";
             }
         }
