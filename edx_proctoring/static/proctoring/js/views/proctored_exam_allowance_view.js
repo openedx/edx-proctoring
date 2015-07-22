@@ -123,7 +123,6 @@ var edx = edx || {};
             if (this.template !== null) {
                 var html = this.template({proctored_exam_allowances: this.collection.toJSON()});
                 this.$el.html(html);
-                this.$el.show();
             }
         },
         showAddModal: function (event) {

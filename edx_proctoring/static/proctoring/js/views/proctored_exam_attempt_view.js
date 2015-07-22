@@ -125,7 +125,6 @@ var edx = edx || {};
                 _.extend(data, viewHelper);
                 var html = this.template(data);
                 this.$el.html(html);
-                this.$el.show();
             }
         },
         onRemoveAttempt: function (event) {
