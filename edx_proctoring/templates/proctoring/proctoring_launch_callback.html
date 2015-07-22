@@ -1,5 +1,11 @@
+{% load i18n %}
 <html>
 <body>
 </body>
-<p>Your proctored exam has started. Please immediately go back to the website to enter into your exam</p>
+  <p>
+    {% blocktrans %}
+      Your proctoring session has started. Do not close this window.
+      Return to the browser window where your course is open to take your exam.
+    {% endblocktrans %}
+  </p>
 </html>

@@ -23,7 +23,7 @@ from edx_proctoring.api import (
     get_allowances_for_course,
     get_all_exams_for_course,
     get_exam_attempt_by_id,
-    remove_exam_attempt_by_id,
+    remove_exam_attempt,
     get_all_exam_attempts,
     get_filtered_exam_attempts,
     is_feature_enabled,
@@ -360,13 +360,13 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Calling the api remove function removes the attempt.
         """
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            remove_exam_attempt_by_id(9999)
+            remove_exam_attempt(9999)
 
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
-        remove_exam_attempt_by_id(proctored_exam_student_attempt.id)
+        remove_exam_attempt(proctored_exam_student_attempt.id)
 
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            remove_exam_attempt_by_id(proctored_exam_student_attempt.id)
+            remove_exam_attempt(proctored_exam_student_attempt.id)
 
     def test_stop_a_non_started_exam(self):
         """

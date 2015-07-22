@@ -357,7 +357,7 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
         return exam_attempt_obj.id
 
 
-def remove_exam_attempt_by_id(attempt_id):
+def remove_exam_attempt(attempt_id):
     """
     Removes an exam attempt given the attempt id.
     """
@@ -469,10 +469,7 @@ def get_student_view(user_id, course_id, content_id, context):  # pylint: disabl
     render it's own view
     """
 
-    has_started_exam = False
     has_finished_exam = False
-    has_time_expired = False
-    is_proctored = False
     student_view_template = None
 
     exam_id = None
@@ -500,6 +497,7 @@ def get_student_view(user_id, course_id, content_id, context):  # pylint: disabl
 
     attempt = get_exam_attempt(exam_id, user_id)
     has_started_exam = attempt and attempt.get('started_at')
+    has_time_expired = False
     if has_started_exam:
         now_utc = datetime.now(pytz.UTC)
         expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
