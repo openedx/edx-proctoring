@@ -123,6 +123,4 @@
     <% } else { %>
         <p> No exam results found.
     <% } %>
-
-
 </div>
