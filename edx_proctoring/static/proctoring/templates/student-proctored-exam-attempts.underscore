@@ -75,47 +75,50 @@
             </ul>
             <div class="clearfix"></div>
         </div>
-        <table class="exam-attempts-table">
-            <thead>
-                <tr class="exam-attempt-headings">
-                    <th class="username"><%- gettext("Username") %></th>
-                    <th class="exam-name"><%- gettext("Exam Name") %></th>
-                    <th class="attempt-allowed-time"><%- gettext("Allowed Time (Minutes)") %> </th>
-                    <th class="attempt-started-at"><%- gettext("Started At") %></th>
-                    <th class="attempt-completed-at"><%- gettext("Completed At") %> </th>
-                    <th class="attempt-status"><%- gettext("Status") %> </th>
-                    <th class="c_action"><%- gettext("Action") %> </th>
-                </tr>
-            </thead>
-            <tbody>
-                <% _.each(proctored_exam_attempts, function(proctored_exam_attempt){ %>
-                    <tr class="allowance-items">
-                        <td>
-                            <%- interpolate(gettext(' %(username)s '), { username: proctored_exam_attempt.user.username }, true) %>
-                        </td>
-                        <td>
-                            <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam_attempt.proctored_exam.exam_name }, true) %>
-                        </td>
-                        <td> <%= proctored_exam_attempt.allowed_time_limit_mins %></td>
-                        <td> <%= getDateFormat(proctored_exam_attempt.started_at) %></td>
-                        <td> <%= getDateFormat(proctored_exam_attempt.completed_at) %></td>
-                         <td>
-                         <% if (proctored_exam_attempt.status){ %>
-                            <%= proctored_exam_attempt.status %>
-                        <% } else { %>
-                            N/A
-                        <% } %>
-                        </td>
-                        <td>
-                         <% if (proctored_exam_attempt.status){ %>
-                            <a href="#" class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>
-                        </td>
-                        <% } else { %>
-                            N/A
-                        <% } %>
+        <% var is_proctored_attempts = proctored_exam_attempts.length !== 0 %>
+        <% if (is_proctored_attempts) { %>
+            <table class="exam-attempts-table">
+                <thead>
+                    <tr class="exam-attempt-headings">
+                        <th class="username"><%- gettext("Username") %></th>
+                        <th class="exam-name"><%- gettext("Exam Name") %></th>
+                        <th class="attempt-allowed-time"><%- gettext("Allowed Time (Minutes)") %> </th>
+                        <th class="attempt-started-at"><%- gettext("Started At") %></th>
+                        <th class="attempt-completed-at"><%- gettext("Completed At") %> </th>
+                        <th class="attempt-status"><%- gettext("Status") %> </th>
+                        <th class="c_action"><%- gettext("Action") %> </th>
                     </tr>
-                <% }); %>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <% _.each(proctored_exam_attempts, function(proctored_exam_attempt){ %>
+                        <tr class="allowance-items">
+                            <td>
+                                <%- interpolate(gettext(' %(username)s '), { username: proctored_exam_attempt.user.username }, true) %>
+                            </td>
+                            <td>
+                                <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam_attempt.proctored_exam.exam_name }, true) %>
+                            </td>
+                            <td> <%= proctored_exam_attempt.allowed_time_limit_mins %></td>
+                            <td> <%= getDateFormat(proctored_exam_attempt.started_at) %></td>
+                            <td> <%= getDateFormat(proctored_exam_attempt.completed_at) %></td>
+                             <td>
+                             <% if (proctored_exam_attempt.status){ %>
+                                <%= proctored_exam_attempt.status %>
+                            <% } else { %>
+                                N/A
+                            <% } %>
+                            </td>
+                            <td>
+                             <% if (proctored_exam_attempt.status){ %>
+                                <a href="#" class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>
+                            </td>
+                            <% } else { %>
+                                N/A
+                            <% } %>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <%} %>
     </section>
 </div>
