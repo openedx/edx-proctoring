@@ -8,13 +8,13 @@ import json
 
 from django.test import TestCase
 from django.contrib.auth.models import User
+from edx_proctoring.runtime import set_runtime_service
 
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import BackendProvideCannotRegisterAttempt
 
-from edx_proctoring.api import get_exam_attempt_by_id
-
 from edx_proctoring.api import (
+    get_exam_attempt_by_id,
     create_exam,
     create_exam_attempt,
 )
@@ -71,6 +71,20 @@ class SoftwareSecureTests(TestCase):
         self.user = User(username='foo', email='foo@bar.com')
         self.user.save()
 
+        def mock_profile_service(user_id):  # pylint: disable=unused-argument
+            """
+            Mocked out Profile callback endpoint
+            """
+            return {'name': 'Wolfgang von Strucker'}
+
+        set_runtime_service('profile', mock_profile_service)
+
+    def tearDown(self):
+        """
+        When tests are done
+        """
+        set_runtime_service('profile', None)
+
     def test_provider_instance(self):
         """
         Makes sure the instance of the proctoring module can be created
@@ -107,6 +121,31 @@ class SoftwareSecureTests(TestCase):
             attempt = get_exam_attempt_by_id(attempt_id)
             self.assertEqual(attempt['external_id'], 'foobar')
             self.assertIsNone(attempt['started_at'])
+
+    def test_single_name_attempt(self):
+        """
+        Tests to make sure we can parse a fullname which does not have any spaces in it
+        """
+
+        def mock_profile_service(user_id):  # pylint: disable=unused-argument
+            """
+            Mocked out Profile callback endpoint
+            """
+            return {'name': 'Bono'}
+
+        set_runtime_service('profile', mock_profile_service)
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        with HTTMock(response_content):
+            attempt_id = create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
+            self.assertIsNotNone(attempt_id)
 
     def test_failing_register_attempt(self):
         """

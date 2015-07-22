@@ -40,19 +40,17 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.timeout = 10
         self.software_download_url = software_download_url
 
-    def register_exam_attempt(self, exam, time_limit_mins, attempt_code,
-                              is_sample_attempt, callback_url):
+    def register_exam_attempt(self, exam, context):
         """
         Method that is responsible for communicating with the backend provider
         to establish a new proctored exam
         """
 
+        attempt_code = context['attempt_code']
+
         data = self._get_payload(
             exam,
-            time_limit_mins,
-            attempt_code,
-            is_sample_attempt,
-            callback_url
+            context
         )
         headers = {
             "Content-Type": 'application/json'
@@ -114,11 +112,25 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         encrypted_text = cipher.encrypt(pad(pwd))
         return base64.b64encode(encrypted_text)
 
-    def _get_payload(self, exam, time_limit_mins, attempt_code,
-                     is_sample_attempt, callback_url):
+    def _get_payload(self, exam, context):
         """
         Constructs the data payload that Software Secure expects
         """
+
+        attempt_code = context['attempt_code']
+        time_limit_mins = context['time_limit_mins']
+        is_sample_attempt = context['is_sample_attempt']
+        callback_url = context['callback_url']
+        full_name = context['full_name']
+        first_name = ''
+        last_name = ''
+
+        if full_name:
+            name_elements = full_name.split(' ')
+            first_name = name_elements[0]
+            if len(name_elements) > 1:
+                last_name = ' '.join(name_elements[1:])
+
         now = datetime.datetime.utcnow()
         start_time_str = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
         end_time_str = (now + datetime.timedelta(minutes=time_limit_mins)).strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -140,6 +152,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                 "noOfStudents": 1,
                 "examID": exam['id'],
                 "courseID": exam['course_id'],
+                "firstName": first_name,
+                "lastName": last_name,
             }
         }
 

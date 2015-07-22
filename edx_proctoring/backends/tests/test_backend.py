@@ -12,8 +12,7 @@ class TestBackendProvider(ProctoringBackendProvider):
     Implementation of the ProctoringBackendProvider that does nothing
     """
 
-    def register_exam_attempt(self, exam, time_limit_mins, attempt_code,
-                              is_sample_attempt, callback_url):
+    def register_exam_attempt(self, exam, context):
         """
         Called when the exam attempt has been created but not started
         """
@@ -46,17 +45,13 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
     Implementation of the ProctoringBackendProvider that just calls the base class
     """
 
-    def register_exam_attempt(self, exam, time_limit_mins, attempt_code,
-                              is_sample_attempt, callback_url):
+    def register_exam_attempt(self, exam, context):
         """
         Called when the exam attempt has been created but not started
         """
         return super(PassthroughBackendProvider, self).register_exam_attempt(
             exam,
-            time_limit_mins,
-            attempt_code,
-            is_sample_attempt,
-            callback_url
+            context
         )
 
     def start_exam_attempt(self, exam, attempt):
@@ -100,7 +95,7 @@ class TestBackends(TestCase):
         provider = PassthroughBackendProvider()
 
         with self.assertRaises(NotImplementedError):
-            provider.register_exam_attempt(None, None, None, None, None)
+            provider.register_exam_attempt(None, None)
 
         with self.assertRaises(NotImplementedError):
             provider.start_exam_attempt(None, None)
@@ -118,7 +113,7 @@ class TestBackends(TestCase):
 
         provider = NullBackendProvider()
 
-        self.assertIsNone(provider.register_exam_attempt(None, None, None, None, None))
+        self.assertIsNone(provider.register_exam_attempt(None, None))
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
         self.assertIsNone(provider.get_software_download_url())
