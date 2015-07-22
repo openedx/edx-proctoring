@@ -2,7 +2,7 @@
 <div class="sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
-      Would you like to take {{ display_name }} as a Proctored Exam?
+      Would you like to take {{ display_name }} as a proctored exam?
     {% endblocktrans %}
   </h3>
   <p>
@@ -14,37 +14,35 @@
   <div class="gated-sequence">
     <span><i class="fa fa-lock"></i></span>
     <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-      {% trans "Yes, take this as a proctored exam (and be eligible for credit)" %}
+      {% trans "Yes, I want to take this exam with online proctoring (and be eligible for credit)" %}
     </a>
     <p>
       {% blocktrans %}
-        You will need to <strong>download and install {{platform_name}} approved software </strong>for the online proctoring of
-        your exam. After successful installation, you will be <strong>guided through setting up your
-        proctored session and begin the exam immediately </strong>afterwards.</p>
+        You will be guided through installing edX-approved online proctoring software and
+        performing various checks to set up your proctored exam session. Have your photo ID
+        ready for the photo ID verification step.<br />
+        Immediately after you complete the set up, you will begin your timed and proctored exam.<br />
+        Before you set up your proctoring session, you might want to <a href="#">read this</a>
+        to learn more about taking a proctored exam.<br />
       {% endblocktrans %}
+    </p>
+
     <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></i>
   </div>
   <div class="gated-sequence">
     <span><i class="fa fa-unlock"></i></span>
     <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=false data-start-immediately=true>
-      {% trans "No, take this as an open exam (and not be eligible for credit)" %}
+      {% trans "No, I want to take this exam without proctoring (and not be eligible for credit)" %}
     </a>
     <p>
       {% blocktrans %}
-        You may proceed and begin the exam at your leisure, but <strong>you will not be able to apply for
-        college credit </strong>upon completing the exam or this course in general.
+        By not taking the exam as a proctored exam, you will not earn credit for completing
+        the exam or this course. You are taking this exam as an open exam and can begin when
+        you are ready.
       {% endblocktrans %}
     </p>
       <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=false data-start-immediately=true></i>
   </div>
-</div>
-<div class="footer-sequence">
-  <h4> {% trans "Why i am seeing these options?" %} </h4>
-    <p>
-    {% blocktrans %}
-      Text to be added here.
-    {% endblocktrans %}
-  </p>
 </div>
 {% include 'proctoring/seq_proctored_exam_footer.html' %}
 

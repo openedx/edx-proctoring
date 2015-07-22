@@ -2,39 +2,41 @@
 <div class="sequence proctored-exam instructions" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
   <h3>
     {% blocktrans %}
-      Awaiting Proctoring Installation & Set Up
+      Awaiting Proctoring Software Installation and Setup
     {% endblocktrans %}
   </h3>
   <p>
     {% blocktrans %}
-      You've chosen to take {{display_name}} as a proctored exam. You should be directed to a new window
+      You have chosen to take {{display_name}} as a proctored exam. You should be directed to a new window
       with installation and setup instructions. You can also <a href="{{software_download_url}}" target="_blank">open the installation window directly.</a>
     {% endblocktrans %}
   </p>
   <div class="proctored-exam-message">
     <h3>
     {% blocktrans %}
-      Here is your unique exam code. You'll be asked for it during the setup.
+      Here is your unique exam code. You will be asked for it during the setup.
     {% endblocktrans %}
     </h3>
     <h2> {{exam_code}}<span class='copy-to-clipboard'></span></h2>
     <p>
       {% blocktrans %}
-        Please do not share this code. It can only be used once and it tied to your {{platform_name}} account.
+        Do not share this code. It is linked to your {{platform_name}} account and can be used only once.
       {% endblocktrans %}
     </p>
   </div>
 </div>
 <div class="footer-sequence border-b-0 padding-b-0">
-  <span> {% trans "Note: Once you complete installation and set up, your timed exam will begin." %} </span>
+  <span> {% trans "Note: As soon as you finish installing and setting up the proctoring software,
+    you will be prompted to start your timed exam." %} </span>
     <p>
     {% blocktrans %}
-      Please be prepared to start the exam and follow all of the guidelines of an {{platform_name}} proctored exam.
+      Be prepared to start your exam and to complete it while adhering to the {{platform_name}}
+      rules for online proctoring.
     {% endblocktrans %}
   </p>
   <p class="proctored-exam-option">
     {% blocktrans %}
-      Don't want to take this as a proctored exam? <a href="#">Take this as an open exam instead.</a>
+      Don't want to take this exam with online proctoring? <a href="#">Take this exam as an open exam instead.</a>
     {% endblocktrans %}
   </p>
 </div>

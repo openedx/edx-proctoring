@@ -72,10 +72,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.disabled_exam_id = self._create_disabled_exam()
 
         # Messages for get_student_view
-        self.start_an_exam_msg = 'Would you like to take %s as a Proctored Exam?'
+        self.start_an_exam_msg = 'Would you like to take %s as a proctored exam?'
         self.timed_exam_msg = '%s is a Timed Exam'
-        self.exam_time_expired_msg = 'you did not submit your exam before the time allotted expired'
-        self.chose_proctored_exam_msg = 'You\'ve chosen to take %s as a proctored exam'
+        self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
+        self.chose_proctored_exam_msg = 'You have chosen to take %s as a proctored exam'
 
     def _create_proctored_exam(self):
         """
