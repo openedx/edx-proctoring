@@ -17,7 +17,11 @@
       }
 
       .steps-container {
-        width: 80%;
+        width: 100%;
+      }
+
+      .body-container {
+        width: 85%;
       }
 
       .steps-container p {
@@ -157,36 +161,38 @@
     </div>
 
     <div class="steps-container">
-      <h3>{% blocktrans %} Your Proctoring Set Up is Complete {% endblocktrans %}</h3>
-      <p>{% blocktrans %} you may proceed and enter exam now {% endblocktrans %}</p>
+      <div class="body-container">
+        <h3>{% blocktrans %} Your Proctoring Set Up is Complete {% endblocktrans %}</h3>
+        <p>{% blocktrans %} You may proceed and enter exam now {% endblocktrans %}</p>
 
-      <div class="alert">
-        {% blocktrans %} Please leave the window open in the background {% endblocktrans %}
+        <div class="alert">
+          {% blocktrans %} Please leave the window open in the background {% endblocktrans %}
+        </div>
+        <h5> {% blocktrans %} Remember to abide by the guidelines and rules of your proctored exam, including: {% endblocktrans %}</h5>
+        <p>
+          {% blocktrans %}
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+          {% endblocktrans %}
+        </p>
+        <hr>
+        <p>
+          {% blocktrans %}
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+          {% endblocktrans %}
+        </p>
+        <hr>
+        <p>
+          {% blocktrans %}
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+          {% endblocktrans %}
+        </p>
       </div>
-      <h5> {% blocktrans %} Remember to abide by the guidelines and rules of your proctored exam, including: {% endblocktrans %}</h5>
-      <p>
-        {% blocktrans %}
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-          Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-          Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-        {% endblocktrans %}
-      </p>
-      <hr>
-      <p>
-        {% blocktrans %}
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-          Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-          Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-        {% endblocktrans %}
-      </p>
-      <hr>
-      <p>
-        {% blocktrans %}
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-          Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-          Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-        {% endblocktrans %}
-      </p>
     <div class="footer">
       <button>
         {% blocktrans %} Enter My Exam {% endblocktrans %}
