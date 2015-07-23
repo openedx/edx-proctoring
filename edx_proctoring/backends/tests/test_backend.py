@@ -39,6 +39,11 @@ class TestBackendProvider(ProctoringBackendProvider):
         """
         return None
 
+    def on_review_callback(self, payload):
+        """
+        Called when the reviewing 3rd party service posts back the results
+        """
+
 
 class PassthroughBackendProvider(ProctoringBackendProvider):
     """
@@ -81,6 +86,12 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
         """
         return super(PassthroughBackendProvider, self).get_software_download_url()
 
+    def on_review_callback(self, payload):
+        """
+        Called when the reviewing 3rd party service posts back the results
+        """
+        return super(PassthroughBackendProvider, self).on_review_callback(payload)
+
 
 class TestBackends(TestCase):
     """
@@ -106,6 +117,9 @@ class TestBackends(TestCase):
         with self.assertRaises(NotImplementedError):
             provider.get_software_download_url()
 
+        with self.assertRaises(NotImplementedError):
+            provider.on_review_callback(None)
+
     def test_null_provider(self):
         """
         Assert that the Null provider does nothing
@@ -117,3 +131,4 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
         self.assertIsNone(provider.get_software_download_url())
+        self.assertIsNone(provider.on_review_callback(None))

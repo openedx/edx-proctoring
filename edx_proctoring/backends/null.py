@@ -36,3 +36,8 @@ class NullBackendProvider(ProctoringBackendProvider):
         the corresponding desktop software
         """
         return None
+
+    def on_review_callback(self, payload):
+        """
+        Called when the reviewing 3rd party service posts back the results
+        """
