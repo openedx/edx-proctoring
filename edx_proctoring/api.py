@@ -34,6 +34,7 @@ from edx_proctoring.serializers import (
 from edx_proctoring.utils import humanized_time
 
 from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.runtime import get_runtime_service
 
 
 def is_feature_enabled():
@@ -235,13 +236,24 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             )
         )
 
+        # get the name of the user, if the service is available
+        full_name = None
+
+        profile_service = get_runtime_service('profile')
+        if profile_service:
+            profile = profile_service(user_id)
+            full_name = profile['name']
+
         # now call into the backend provider to register exam attempt
         external_id = get_backend_provider().register_exam_attempt(
             exam,
-            allowed_time_limit_mins,
-            attempt_code,
-            False,
-            callback_url
+            context={
+                'time_limit_mins': allowed_time_limit_mins,
+                'attempt_code': attempt_code,
+                'is_sample_attempt': False,
+                'callback_url': callback_url,
+                'full_name': full_name,
+            }
         )
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(

@@ -3,7 +3,9 @@ Test for the xBlock service
 """
 
 import unittest
-from edx_proctoring.services import ProctoringService
+from edx_proctoring.services import (
+    ProctoringService
+)
 from edx_proctoring import api as edx_proctoring_api
 import types
 
