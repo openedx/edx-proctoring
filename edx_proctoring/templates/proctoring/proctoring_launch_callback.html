@@ -145,7 +145,7 @@
         background: rgb(8, 92, 150);
       }
     </style>
-    <link rel="stylesheet" href="main.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
   </head>
   {% load i18n %}
   <body>
@@ -200,6 +200,29 @@
     </div>
     </div>
 
+    <script type="text/javascript">
+      var _poll_interval = null;
 
+      $(document).ready(function() {
+        _poll_interval = setInterval(
+          poll_exam_status,
+          5000
+        );
+      });
+
+      function poll_exam_status() {
+        var url = '{{exam_attempt_status_url}}';
+
+        $.ajax(url).success(function(data){
+          // has the end user completed the exam in the LMS?!?
+          if (data.status === 'completed' || data.status === 'submitted' || data.status === 'verified') {
+            // Signal that the desktop software should terminate
+            // NOTE: This is per the API documentation from SoftwareSecure
+            window.external.quitApplication();
+          }
+        });
+      }
+
+    </script>
   </body>
 </html>
