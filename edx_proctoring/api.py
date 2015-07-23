@@ -1,6 +1,4 @@
-# pylint: disable=unused-argument
-
-# remove pylint rule after we implement each method
+# pylint: disable=too-many-branches
 
 """
 In-Proc API (aka Library) for the edx_proctoring subsystem. This is not to be confused with a HTTP REST
@@ -473,13 +471,19 @@ def get_active_exams_for_user(user_id, course_id=None):
     return result
 
 
-def get_student_view(user_id, course_id, content_id, context):  # pylint: disable=too-many-branches
+def get_student_view(user_id, course_id, content_id,
+                     context, user_role='student'):
     """
     Helper method that will return the view HTML related to the exam control
     flow (i.e. entering, expired, completed, etc.) If there is no specific
     content to display, then None will be returned and the caller should
     render it's own view
     """
+
+    # non-student roles should never see any proctoring related
+    # screens
+    if user_role != 'student':
+        return None
 
     has_finished_exam = False
     student_view_template = None
