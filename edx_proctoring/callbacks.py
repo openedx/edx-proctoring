@@ -1,10 +1,11 @@
 """
-Various callback paths
+Various callback paths that support callbacks from SoftwareSecure
 """
 
 import logging
 from django.template import Context, loader
 from django.http import HttpResponse
+from django.core.urlresolvers import reverse
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -27,7 +28,10 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     NOTE: This returns HTML as it will be displayed in an embedded browser
 
     This is an authenticated endpoint and the attempt_code is passed in
-    as a query string parameter
+    as part of the URL path
+
+    IMPORTANT: This is an unauthenticated endpoint, so be VERY CAREFUL about extending
+    this endpoint
     """
 
     attempt = get_exam_attempt_by_code(attempt_code)
@@ -41,13 +45,27 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
 
     template = loader.get_template('proctoring/proctoring_launch_callback.html')
 
-    return HttpResponse(template.render(Context({})))
+    poll_url = reverse(
+        'edx_proctoring.anonymous.proctoring_poll_status',
+        args=[attempt_code]
+    )
+
+    return HttpResponse(
+        template.render(
+            Context({
+                'exam_attempt_status_url': poll_url,
+            })
+        )
+    )
 
 
 class ExamReviewCallback(APIView):
     """
     This endpoint is called by a 3rd party proctoring review service when
     there are results available for us to record
+
+    IMPORTANT: This is an unauthenticated endpoint, so be VERY CAREFUL about extending
+    this endpoint
     """
 
     def post(self, request):
@@ -61,5 +79,38 @@ class ExamReviewCallback(APIView):
 
         return Response(
             data='OK',
+            status=200
+        )
+
+
+class AttemptStatus(APIView):
+    """
+    This endpoint is called by a 3rd party proctoring review service to determine
+    status of an exam attempt.
+
+    IMPORTANT: This is an unauthenticated endpoint, so be VERY CAREFUL about extending
+    this endpoint
+    """
+
+    def get(self, request, attempt_code):  # pylint: disable=unused-argument
+        """
+        Returns the status of an exam attempt. Given that this is an unauthenticated
+        caller, we will only return the status string, no additional information
+        about the exam
+        """
+
+        attempt = get_exam_attempt_by_code(attempt_code)
+        if not attempt:
+            return HttpResponse(
+                content='You have entered an exam code that is not valid.',
+                status=404
+            )
+
+        return Response(
+            data={
+                # IMPORTANT: Don't add more information to this as it is an
+                # unauthenticated endpoint
+                'status': attempt['status'],
+            },
             status=200
         )

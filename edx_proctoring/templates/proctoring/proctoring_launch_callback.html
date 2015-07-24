@@ -1,11 +1,228 @@
-{% load i18n %}
-<html>
-<body>
-</body>
-  <p>
-    {% blocktrans %}
-      Your proctoring session has started. Do not close this window.
-      Return to the browser window where your course is open to take your exam.
-    {% endblocktrans %}
-  </p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Sample Progress Steps edX</title>
+    <style>
+      body {
+        background-color: #FAFAFA;
+        color: #3c3c3c;
+        font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        padding: 0;
+        margin: 0;
+      }
+
+      .steps-bk {
+        background: #DFE6E8;
+      }
+
+      .steps-container {
+        width: 100%;
+      }
+
+      .body-container {
+        width: 85%;
+      }
+
+      .steps-container p {
+        line-height: 28px;
+        font-size: 16px;
+        color: #5F626C;
+        margin-bottom: 20px;
+      }
+
+      #steps-wrapper {
+        width: 960px;
+        margin: 0 auto;
+        text-align: center;
+        position: relative;
+      }
+
+      .steps {
+        overflow: hidden;
+        padding: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .steps li {
+        list-style-type: none;
+        font-size: 12px;
+        width: 25%;
+        float: left;
+        position: relative;
+        padding: 40px 0 20px;
+        color: #3C464A;
+        font-weight: bold;
+      }
+
+      .steps li:before {
+        content: '';
+        width: 12px;
+        font-size: 12px;
+        margin: 0 auto 5px -6px;
+        border-radius: 9px;
+        border: 2px solid #ccc;
+        height: 12px;
+        background-color: #DFE6E8;
+        position: absolute;
+        z-index: 2;
+        left: 50%;
+        top: 20px;
+      }
+
+      .steps li:after {
+        content: "";
+        width: 100%;
+        height: 1px;
+        background: #ccc;
+        position: absolute;
+        left: -50%;
+        top: 26px
+      }
+
+      li.active {
+        background: #D3DBDC;
+      }
+
+      .steps li:first-child:after {
+        content: none;
+      }
+
+      .steps li.active:before {
+        background: #3C464A;
+        width: 12px;
+        height: 12px;
+        border: none;
+      }
+
+      li.completed {
+        color: #27AE60 !important;
+      }
+
+      .steps li.completed:before {
+        border: 2px solid #27AE60;
+      }
+
+      .steps li:not(.active) {
+        color: rgba(51, 51, 51, 0.4);
+      }
+
+      .steps-container {
+        background: #f6f6f6;
+        margin: 0 auto;
+        padding: 20px 50px;
+      }
+
+      .steps-container p {
+        font-size: 14px;;
+      }
+
+      .steps-container .alert {
+        background: rgb(250, 246, 233);
+        border-left: 3px solid rgb(250, 190, 77);
+        padding: 20px;
+      }
+      hr {
+        border:none;
+        border-bottom: 1px solid rgb(217, 225, 228);
+      }
+      .footer{
+        border-top: 1px solid rgb(215, 224, 227);
+        background: rgb(229, 235, 237);
+        padding: 20px 50px;
+        margin: 0 -50px;
+      }
+      .footer button{
+        background: rgb(16, 118, 189);
+        color: white;
+        font-size: 17px;
+        padding: 7px 60px;
+        border: none;
+      }
+      .footer button:hover {
+        cursor: pointer;
+        background: rgb(8, 92, 150);
+      }
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+  </head>
+  {% load i18n %}
+  <body>
+    <div class="steps-bk">
+      <div id="steps-wrapper">
+        <ul class="steps">
+          <li class="photoid completed">Take ID Photo </li>
+          <li class="roomscan completed">Record Room Scan</li>
+          <li class="photo completed">Take User Photo</li>
+          <li class="end active" >Enter Exam</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="steps-container">
+      <div class="body-container">
+        <h3>{% blocktrans %} Your Proctoring Session Is Ready {% endblocktrans %}</h3>
+        <p>{% blocktrans %} Your proctoring session has started. From this point in time, you must adhere to the online proctoring rules to pass the proctoring review for your exam. Return to the courseware window now and start your exam. {% endblocktrans %}</p>
+
+        <div class="alert">
+          {% blocktrans %} Do not close this window. Leave it open in the background as you take your exam. {% endblocktrans %}
+        </div>
+        <h5> {% blocktrans %} Remember to abide by the guidelines and rules of your proctored exam, including: {% endblocktrans %}</h5>
+        <p>
+          {% blocktrans %}
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+          {% endblocktrans %}
+        </p>
+        <hr>
+        <p>
+          {% blocktrans %}
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+          {% endblocktrans %}
+        </p>
+        <hr>
+        <p>
+          {% blocktrans %}
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+            Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+          {% endblocktrans %}
+        </p>
+      </div>
+    <div class="footer">
+      <button>
+        {% blocktrans %} Go to my exam {% endblocktrans %}
+      </button>
+    </div>
+    </div>
+
+    <script type="text/javascript">
+      var _poll_interval = null;
+
+      $(document).ready(function() {
+        _poll_interval = setInterval(
+          poll_exam_status,
+          5000
+        );
+      });
+
+      function poll_exam_status() {
+        var url = '{{exam_attempt_status_url}}';
+
+        $.ajax(url).success(function(data){
+          // has the end user completed the exam in the LMS?!?
+          if (data.status === 'completed' || data.status === 'submitted' || data.status === 'verified') {
+            // Signal that the desktop software should terminate
+            // NOTE: This is per the API documentation from SoftwareSecure
+            window.external.quitApplication();
+          }
+        });
+      }
+
+    </script>
+  </body>
 </html>

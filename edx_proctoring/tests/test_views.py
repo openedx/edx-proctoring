@@ -935,6 +935,16 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], 'ready_to_start')
 
+        # test the polling callback point
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.anonymous.proctoring_poll_status',
+                args=[attempt_code]
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['status'], 'ready_to_start')
+
     def test_bad_exam_code_callback(self):
         """
         Assert that we get a 404 when doing a callback on an exam code that does not exist
@@ -942,6 +952,15 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response = self.client.get(
             reverse(
                 'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                args=['foo']
+            )
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # test the polling callback point as well
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.anonymous.proctoring_poll_status',
                 args=['foo']
             )
         )
