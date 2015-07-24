@@ -430,8 +430,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         add_allowance_for_user(self.proctored_exam_id, self.user.username, 'new_key', 'new_value')
         student_active_exams = get_active_exams_for_user(self.user_id, self.course_id)
         self.assertEqual(len(student_active_exams), 2)
-        self.assertEqual(len(student_active_exams[0]['allowances']), 2)
-        self.assertEqual(len(student_active_exams[1]['allowances']), 0)
+        self.assertEqual(len(student_active_exams[0]['allowances']), 0)
+        self.assertEqual(len(student_active_exams[1]['allowances']), 2)
 
     def test_get_filtered_exam_attempts(self):
         """
