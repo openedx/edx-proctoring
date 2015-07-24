@@ -138,7 +138,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         if course_id is not None:
             filtered_query = filtered_query & Q(proctored_exam__course_id=course_id)
 
-        return self.filter(filtered_query)
+        return self.filter(filtered_query).order_by('-created')
 
 
 class ProctoredExamStudentAttemptStatus(object):
