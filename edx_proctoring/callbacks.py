@@ -5,6 +5,9 @@ Various callback paths that support callbacks from SoftwareSecure
 import logging
 from django.template import Context, loader
 from django.http import HttpResponse
+import pytz
+from datetime import datetime
+from ipware.ip import get_ip
 from django.core.urlresolvers import reverse
 
 from rest_framework.views import APIView
@@ -13,7 +16,7 @@ from rest_framework.response import Response
 from edx_proctoring.api import (
     get_exam_attempt_by_code,
     mark_exam_attempt_as_ready,
-)
+    update_exam_attempt)
 
 from edx_proctoring.backends import get_backend_provider
 
@@ -33,7 +36,6 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     IMPORTANT: This is an unauthenticated endpoint, so be VERY CAREFUL about extending
     this endpoint
     """
-
     attempt = get_exam_attempt_by_code(attempt_code)
     if not attempt:
         return HttpResponse(
@@ -100,11 +102,15 @@ class AttemptStatus(APIView):
         """
 
         attempt = get_exam_attempt_by_code(attempt_code)
+        ip_address = get_ip(request)
+        timestamp = datetime.now(pytz.UTC)
         if not attempt:
             return HttpResponse(
                 content='You have entered an exam code that is not valid.',
                 status=404
             )
+
+        update_exam_attempt(attempt['id'], last_poll_timestamp=timestamp, last_poll_ipaddr=ip_address)
 
         return Response(
             data={

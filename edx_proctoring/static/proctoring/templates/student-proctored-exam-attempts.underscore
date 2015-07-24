@@ -1,6 +1,5 @@
 <div class="wrapper-content wrapper">
     <% var is_proctored_attempts = proctored_exam_attempts.length !== 0 %>
-    <% if (is_proctored_attempts) { %>
         <section class="content">
             <div class="top-header">
                 <div class='search-attempts'>
@@ -89,6 +88,7 @@
                         <th class="c_action"><%- gettext("Actions") %> </th>
                     </tr>
                 </thead>
+                <% if (is_proctored_attempts) { %>
                 <tbody>
                     <% _.each(proctored_exam_attempts, function(proctored_exam_attempt){ %>
                         <tr class="allowance-items">
@@ -118,9 +118,11 @@
                         </tr>
                     <% }); %>
                 </tbody>
+                <% } %>
             </table>
+            <% if (!is_proctored_attempts) { %>
+                <p> No exam results found.
+            <% } %>
+
         </section>
-    <% } else { %>
-        <p> No exam results found.
-    <% } %>
 </div>
