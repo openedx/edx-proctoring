@@ -190,10 +190,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review.save()
 
         # go through and populate all of the specific comments
-        for comment in data['webCamComments']:
+        for comment in data.get('webCamComments', []):
             self._save_review_comment(review, comment)
 
-        for comment in data['desktopComments']:
+        for comment in data.get('desktopComments', []):
             self._save_review_comment(review, comment)
 
     def _save_review_comment(self, review, comment):
