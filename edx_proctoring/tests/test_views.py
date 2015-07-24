@@ -943,7 +943,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['status'], 'ready_to_start')
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['status'], 'ready_to_start')
 
     def test_bad_exam_code_callback(self):
         """

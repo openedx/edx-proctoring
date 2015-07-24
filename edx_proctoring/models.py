@@ -199,6 +199,9 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     started_at = models.DateTimeField(null=True)
     completed_at = models.DateTimeField(null=True)
 
+    last_poll_timestamp = models.DateTimeField(null=True)
+    last_poll_ipaddr = models.CharField(max_length=32, null=True)
+
     # this will be a unique string ID that the user
     # will have to use when starting the proctored exam
     attempt_code = models.CharField(max_length=255, null=True, db_index=True)
