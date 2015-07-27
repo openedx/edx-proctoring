@@ -3,12 +3,15 @@
 All tests for the proctored_exams.py
 """
 import json
+import pytz
+from mock import Mock
 from httmock import HTTMock
 from string import Template  # pylint: disable=deprecated-module
 from datetime import datetime
 from django.test.client import Client
 from django.core.urlresolvers import reverse, NoReverseMatch
-import pytz
+from django.contrib.auth.models import User
+
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
 from edx_proctoring.views import require_staff
 from edx_proctoring.api import (
@@ -16,12 +19,10 @@ from edx_proctoring.api import (
     create_exam_attempt,
     get_exam_attempt_by_id,
 )
-from django.contrib.auth.models import User
 
 from .utils import (
     LoggedInTestCase
 )
-from mock import Mock
 
 from edx_proctoring.urls import urlpatterns
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
@@ -1005,6 +1006,43 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_review_caseinsensitive(self):
+        """
+        Simulates a callback from the proctoring service with the
+        review data
+        """
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        # be sure to use the mocked out SoftwareSecure handlers
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(
+                exam_id,
+                self.user.id,
+                taking_as_proctored=True
+            )
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertIsNotNone(attempt['external_id'])
+
+        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+            attempt_code=attempt['attempt_code'],
+            external_id=attempt['external_id'].upper()
+        )
+
+        response = self.client.post(
+            reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+            data=test_payload,
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_review_no_contenttype(self):
         """
         Simulates a callback from the proctoring service with the
         review data
