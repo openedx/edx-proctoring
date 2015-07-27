@@ -73,13 +73,14 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         if status not in [200, 201]:
             err_msg = (
-                'Could not register attempt_code = {attempt_code}. '
+                u'Could not register attempt_code = {attempt_code}. '
                 'HTTP Status code was {status_code} and response was {response}.'.format(
                     attempt_code=attempt_code,
                     status_code=status,
                     response=response
                 )
             )
+            log.error(err_msg)
             raise BackendProvideCannotRegisterAttempt(err_msg)
 
         # get the external ID that Software Secure has defined

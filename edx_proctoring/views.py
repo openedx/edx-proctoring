@@ -531,7 +531,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         except ProctoredBaseException, ex:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": str(ex)}
+                data={"detail": unicode(ex)}
             )
 
 
