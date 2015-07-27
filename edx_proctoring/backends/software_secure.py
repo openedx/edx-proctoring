@@ -152,7 +152,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                 raise StudentExamAttemptDoesNotExistsException(err_msg)
 
         # then make sure we have the right external_id
-        if attempt_obj.external_id != external_id:
+        # note that SoftwareSecure might send a case insensitive
+        # ssiRecordLocator than what it returned when we registered the
+        # exam
+        if attempt_obj.external_id.lower() != external_id.lower():
             err_msg = (
                 'Found attempt_code {attempt_code}, but the recorded external_id did not '
                 'match the ssiRecordLocator that had been recorded previously. Has {existing} '
