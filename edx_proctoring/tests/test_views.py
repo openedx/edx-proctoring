@@ -1008,7 +1008,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
     def test_review_caseinsensitive(self):
         """
         Simulates a callback from the proctoring service with the
-        review data
+        review data when we have different casing on the
+        external_id property
         """
 
         exam_id = create_exam(
@@ -1042,10 +1043,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_review_no_contenttype(self):
+    def test_review_bad_contenttype(self):
         """
-        Simulates a callback from the proctoring service with the
-        review data
+        Simulates a callback from the proctoring service when the
+        Content-Type is malformed
         """
 
         exam_id = create_exam(
@@ -1075,7 +1076,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response = self.client.post(
             reverse('edx_proctoring.anonymous.proctoring_review_callback'),
             data=test_payload,
-            content_type='application/json'
+            content_type='foo'
         )
         self.assertEqual(response.status_code, 200)
 
