@@ -1004,6 +1004,80 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_review_caseinsensitive(self):
+        """
+        Simulates a callback from the proctoring service with the
+        review data
+        """
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        # be sure to use the mocked out SoftwareSecure handlers
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(
+                exam_id,
+                self.user.id,
+                taking_as_proctored=True
+            )
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertIsNotNone(attempt['external_id'])
+
+        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+            attempt_code=attempt['attempt_code'],
+            external_id=attempt['external_id'].upper()
+        )
+
+        response = self.client.post(
+            reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+            data=test_payload,
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_review_mismatch(self):
+        """
+        Simulates a callback from the proctoring service with the
+        review data but the external_ids don't match
+        """
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        # be sure to use the mocked out SoftwareSecure handlers
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(
+                exam_id,
+                self.user.id,
+                taking_as_proctored=True
+            )
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertIsNotNone(attempt['external_id'])
+
+        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+            attempt_code=attempt['attempt_code'],
+            external_id='mismatch'
+        )
+
+        response = self.client.post(
+            reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+            data=test_payload,
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
     def test_review_callback_get(self):
         """
         We don't support any http METHOD other than GET

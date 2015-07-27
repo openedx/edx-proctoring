@@ -18,6 +18,8 @@ from edx_proctoring.api import (
     mark_exam_attempt_as_ready,
     update_exam_attempt)
 
+from edx_proctoring.exceptions import ProctoredBaseException
+
 from edx_proctoring.backends import get_backend_provider
 
 log = logging.getLogger(__name__)
@@ -77,7 +79,15 @@ class ExamReviewCallback(APIView):
         provider = get_backend_provider()
 
         # call down into the underlying provider code
-        provider.on_review_callback(request.DATA)
+        try:
+            provider.on_review_callback(request.DATA)
+        except ProctoredBaseException, ex:
+            return Response(
+                data={
+                    'reason': unicode(ex)
+                },
+                status=400
+            )
 
         return Response(
             data='OK',
