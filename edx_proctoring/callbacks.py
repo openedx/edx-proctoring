@@ -12,6 +12,7 @@ from django.core.urlresolvers import reverse
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.negotiation import BaseContentNegotiation
 
 from edx_proctoring.api import (
     get_exam_attempt_by_code,
@@ -63,6 +64,27 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     )
 
 
+class IgnoreClientContentNegotiation(BaseContentNegotiation):
+    """
+    This specialized class allows for more tolerance regarding
+    what the passed in Content-Type is. This is taken directly
+    from the Django REST Framework:
+
+    http://tomchristie.github.io/rest-framework-2-docs/api-guide/content-negotiation
+    """
+    def select_parser(self, request, parsers):
+        """
+        Select the first parser in the `.parser_classes` list.
+        """
+        return parsers[0]
+
+    def select_renderer(self, request, renderers, format_suffix):  # pylint: disable=signature-differs
+        """
+        Select the first renderer in the `.renderer_classes` list.
+        """
+        return (renderers[0], renderers[0].media_type)
+
+
 class ExamReviewCallback(APIView):
     """
     This endpoint is called by a 3rd party proctoring review service when
@@ -71,6 +93,8 @@ class ExamReviewCallback(APIView):
     IMPORTANT: This is an unauthenticated endpoint, so be VERY CAREFUL about extending
     this endpoint
     """
+
+    content_negotiation_class = IgnoreClientContentNegotiation
 
     def post(self, request):
         """
