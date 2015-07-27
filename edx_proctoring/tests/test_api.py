@@ -75,6 +75,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.start_an_exam_msg = 'Would you like to take %s as a proctored exam?'
         self.timed_exam_msg = '%s is a Timed Exam'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
+        self.exam_time_error_msg = 'Your exam has been marked as failed due to an error.'
         self.chose_proctored_exam_msg = 'You have chosen to take %s as a proctored exam'
 
     def _create_proctored_exam(self):
@@ -606,4 +607,31 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'default_time_limit_mins': 90
             }
         )
+
         self.assertIn(self.exam_time_expired_msg, rendered_response)
+
+    def test_get_studentview_erroneous_exam(self):  # pylint: disable=invalid-name
+        """
+        Test for get_student_view proctored exam which has exam status error.
+        """
+
+        ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=self.proctored_exam_id,
+            user_id=self.user_id,
+            external_id=self.external_id,
+            started_at=datetime.now(pytz.UTC),
+            allowed_time_limit_mins=10,
+            status='error'
+        )
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 10
+            }
+        )
+        self.assertIn(self.exam_time_error_msg, rendered_response)

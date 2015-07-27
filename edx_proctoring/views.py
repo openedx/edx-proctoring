@@ -29,7 +29,9 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     get_all_exam_attempts,
     remove_exam_attempt,
-    get_filtered_exam_attempts)
+    get_filtered_exam_attempts,
+    update_exam_attempt
+)
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
@@ -42,6 +44,8 @@ from edx_proctoring.serializers import ProctoredExamSerializer
 from .utils import AuthenticatedAPIView
 
 ATTEMPTS_PER_PAGE = 25
+
+SOFTWARE_SECURE_CLIENT_TIMEOUT = 15
 
 LOG = logging.getLogger("edx_proctoring_views")
 
@@ -265,6 +269,15 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 )
                 raise ProctoredExamPermissionDenied(err_msg)
 
+            # check if the last_poll_timestamp is not None
+            # and if it is older than SOFTWARE_SECURE_CLIENT_TIMEOUT
+            # then attempt status should be marked as error.
+            last_poll_timestamp = attempt['last_poll_timestamp']
+            if last_poll_timestamp is not None \
+                    and (datetime.now(pytz.UTC) - last_poll_timestamp).total_seconds() > SOFTWARE_SECURE_CLIENT_TIMEOUT:
+                attempt['status'] = 'error'
+                update_exam_attempt(attempt_id, status='error')
+
             return Response(
                 data=attempt,
                 status=status.HTTP_200_OK
@@ -482,6 +495,8 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 'low_threshold_sec': low_threshold,
                 'critically_low_threshold_sec': critically_low_threshold,
                 'course_id': exam['course_id'],
+                'attempt_id': attempt['id'],
+                'attempt_status': attempt['status']
             }
         else:
             response_dict = {

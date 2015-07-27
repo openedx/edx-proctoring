@@ -13,6 +13,7 @@ var edx = edx || {};
             this.templateId = options.proctored_template;
             this.template = null;
             this.timerId = null;
+            this.timerTick = 0;
             /* give an extra 5 seconds where the timer holds at 00:00 before page refreshes */
             this.grace_period_secs = 5;
 
@@ -53,7 +54,11 @@ var edx = edx || {};
         },
         render: function () {
             if (this.template !== null) {
-                if (this.model.get('in_timed_exam') && this.model.get('time_remaining_seconds') > 0) {
+                if (
+                    this.model.get('in_timed_exam') &&
+                    this.model.get('time_remaining_seconds') > 0 &&
+                    this.model.get('attempt_status') !== 'error'
+                ) {
                     var html = this.template(this.model.toJSON());
                     this.$el.html(html);
                     this.$el.show();
@@ -71,6 +76,22 @@ var edx = edx || {};
                 "credit eligibility in this course.\n");
         },
         updateRemainingTime: function (self) {
+            self.timerTick ++;
+            if (self.timerTick % 5 == 0){
+                var url = self.model.url + '/' + self.model.get('attempt_id');
+                $.ajax(url).success(function(data) {
+                    if (data.status === 'error') {
+                        // Let the student know that his exam has failed due to an error.
+                        // This alert may or may not bring the browser window back to the
+                        // foreground (depending on browser as well as user settings)
+                        alert(gettext('Your exam has failed'));
+                        clearInterval(self.timerId); // stop the timer once the time finishes.
+                        $(window).unbind('beforeunload', self.unloadMessage);
+                        // refresh the page when the timer expired
+                        location.reload();
+                    }
+                });
+            }
             self.$el.find('div.exam-timer').removeClass("low-time warning critical");
             self.$el.find('div.exam-timer').addClass(self.model.getRemainingTimeState());
             self.$el.find('span#time_remaining_id b').html(self.model.getFormattedRemainingTime());
