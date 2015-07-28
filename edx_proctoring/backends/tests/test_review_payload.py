@@ -4,8 +4,6 @@ Some canned data for SoftwareSecure callback testing.
 
 TEST_REVIEW_PAYLOAD = '''
 {
-  "orgCallbackURL": "http://reds.rpexams.com/reviewerdatatransfer",
-  "payload": {
     "examDate": "Jul 15 2015  1:13AM",
     "examProcessingStatus": "Review Completed",
     "examTakerEmail": "4d07a01a-1502-422e-b943-93ac04dc6ced",
@@ -94,5 +92,4 @@ TEST_REVIEW_PAYLOAD = '''
       }
     ]
   }
-}
 '''

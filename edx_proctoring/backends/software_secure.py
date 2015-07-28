@@ -123,15 +123,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         )
         log.info(log_msg)
 
-        # payload from SoftwareSecure is a JSON payload
-        # which has been converted to a dict by our caller
-        data = payload['payload']
-
         # what we consider the external_id is SoftwareSecure's 'ssiRecordLocator'
-        external_id = data['examMetaData']['ssiRecordLocator']
+        external_id = payload['examMetaData']['ssiRecordLocator']
 
         # what we consider the attempt_code is SoftwareSecure's 'examCode'
-        attempt_code = data['examMetaData']['examCode']
+        attempt_code = payload['examMetaData']['examCode']
 
         # do a lookup on the attempt by examCode, and compare the
         # passed in ssiRecordLocator and make sure it matches
@@ -180,8 +176,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             raise ProctoredExamReviewAlreadyExists(err_msg)
 
         # do some limited parsing of the JSON payload
-        review_status = data['reviewStatus']
-        video_review_link = data['videoReviewLink']
+        review_status = payload['reviewStatus']
+        video_review_link = payload['videoReviewLink']
 
         # make a new record in the review table
         review = ProctoredExamSoftwareSecureReview(
@@ -193,10 +189,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review.save()
 
         # go through and populate all of the specific comments
-        for comment in data.get('webCamComments', []):
+        for comment in payload.get('webCamComments', []):
             self._save_review_comment(review, comment)
 
-        for comment in data.get('desktopComments', []):
+        for comment in payload.get('desktopComments', []):
             self._save_review_comment(review, comment)
 
     def _save_review_comment(self, review, comment):
