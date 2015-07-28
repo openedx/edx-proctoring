@@ -106,6 +106,7 @@ class ExamReviewCallback(APIView):
         try:
             provider.on_review_callback(request.DATA)
         except ProctoredBaseException, ex:
+            log.exception(unicode(ex))
             return Response(
                 data={
                     'reason': unicode(ex)
