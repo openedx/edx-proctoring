@@ -1,19 +1,19 @@
 {% load i18n %}
-<div class="sequence timed-exam completed" data-exam-id="{{exam_id}}">
+<div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
-      This is the end of your timed exam
+      This is the end of your proctored exam
     {% endblocktrans %}
   </h3>
   <p>
     {% blocktrans %}
-      Make sure your responses and work are ready to be submitted. Once they are, you may end the exam below
-      and your worked will then be graded.
+      Make sure your responses and work are ready to be submitted. Once they are, you may end the exam below.
+      Your worked will then be graded and your proctored session will be reviewed separately.
     {% endblocktrans %}
   </p>
-  <button type="button" name="submit-timed-exam" >
+  <button type="button" name="submit-proctored-exam" >
     {% blocktrans %}
-      I'm ready! Submit my answers and end my timed exam
+      I'm ready! Submit my answers and end my proctored exam
     {% endblocktrans %}
   </button>
 </div>

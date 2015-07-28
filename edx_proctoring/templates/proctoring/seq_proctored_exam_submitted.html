@@ -1,0 +1,38 @@
+{% load i18n %}
+<div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      You have submitted this proctored exam for review
+    {% endblocktrans %}
+  </h3>
+
+  <h4>
+    {% blocktrans %}
+      Your Proctoring Session review: <b> Pending </b>
+    {% endblocktrans %}
+  </h4>
+
+  <p>
+    {% blocktrans %}
+      In general sessions are reviewed in 24-48 hours of submission. If you have questions about
+      the status of this review after that timeframe, <a href="#">contact edX support</a>
+    {% endblocktrans %}
+  </p>
+  <hr>
+  <p>
+    {% blocktrans %}
+      Please see <a href="{{progress_page_url}}">your progress in this course </a>
+      for your general course credit worthiness.
+    {% endblocktrans %}
+  </p>
+</div>
+<div class="footer-sequence border-b-0 padding-b-0">
+  <span> {% trans "See Also" %} </span>
+  <p>
+    {% blocktrans %}
+      <a class="footer-link" href="#">
+        Frequently asked questions about proctoring and earning college credit.
+      </a>
+    {% endblocktrans %}
+  </p>
+</div>

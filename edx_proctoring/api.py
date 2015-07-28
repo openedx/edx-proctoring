@@ -1,4 +1,5 @@
 # pylint: disable=too-many-branches
+# pylint: disable=too-many-statements
 
 """
 In-Proc API (aka Library) for the edx_proctoring subsystem. This is not to be confused with a HTTP REST
@@ -495,7 +496,6 @@ def get_student_view(user_id, course_id, content_id,
     if user_role != 'student':
         return None
 
-    has_finished_exam = False
     student_view_template = None
 
     exam_id = None
@@ -552,10 +552,20 @@ def get_student_view(user_id, course_id, content_id,
                 })
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
-    elif has_finished_exam:
-        student_view_template = 'proctoring/seq_timed_exam_completed.html'
     elif has_time_expired:
         student_view_template = 'proctoring/seq_timed_exam_expired.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
+        student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
+        student_view_template = 'proctoring/seq_proctored_exam_verified.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
+        student_view_template = 'proctoring/seq_proctored_exam_rejected.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.completed:
+        if is_proctored:
+            student_view_template = 'proctoring/seq_proctored_exam_completed.html'
+        else:
+            student_view_template = 'proctoring/seq_timed_exam_completed.html'
+
     if student_view_template:
         template = loader.get_template(student_view_template)
         django_context = Context(context)

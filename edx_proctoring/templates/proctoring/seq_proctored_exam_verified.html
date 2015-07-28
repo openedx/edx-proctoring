@@ -1,0 +1,38 @@
+{% load i18n %}
+<div class="success sequence proctored-exam passed" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      Your proctoring session was reviewed and passed all requirements
+    {% endblocktrans %}
+  </h3>
+
+  <h4>
+    {% blocktrans %}
+      Your Proctoring Session review: <b class="success"> Passed </b>
+    {% endblocktrans %}
+  </h4>
+
+  <p>
+    {% blocktrans %}
+      This satisfies the requirement that you complete this exam in a proctored format and contributes
+      to your credit earning work for this course.
+    {% endblocktrans %}
+  </p>
+  <hr>
+  <p>
+    {% blocktrans %}
+      Please see <a href="{{progress_page_url}}">your progress in this course </a>
+      for your general course credit worthiness.
+    {% endblocktrans %}
+  </p>
+</div>
+<div class="footer-sequence border-b-0 padding-b-0">
+  <span> {% trans "See Also" %} </span>
+  <p>
+    {% blocktrans %}
+      <a class="footer-link" href="#">
+        Frequently asked questions about proctoring and earning college credit.
+      </a>
+    {% endblocktrans %}
+  </p>
+</div>
