@@ -5,6 +5,8 @@
 
         defaults: {
             in_timed_exam: false,
+            attempt_id: 0,
+            attempt_status: 'started',
             taking_as_proctored: false,
             exam_display_name: '',
             exam_url_path: '',

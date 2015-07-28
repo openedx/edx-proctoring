@@ -1,12 +1,12 @@
 # Testing Packages
 logilab-common==0.63.2
 coverage==3.7.1
-astroid==1.3.6
+astroid==1.3.4
 django_nose
 nose==1.3.3
 httpretty==0.8.0
 pep8==1.6.2
-pylint==1.4.1
+pylint==1.4.2
 pep257==0.3.2
 mock==1.0.1
 testfixtures==4.0.0

@@ -78,7 +78,8 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
         fields = (
             "id", "created", "modified", "user", "started_at", "completed_at",
             "external_id", "status", "proctored_exam", "allowed_time_limit_mins",
-            "attempt_code", "is_sample_attempt", "taking_as_proctored"
+            "attempt_code", "is_sample_attempt", "taking_as_proctored", "last_poll_timestamp",
+            "last_poll_ipaddr"
         )
 
 
