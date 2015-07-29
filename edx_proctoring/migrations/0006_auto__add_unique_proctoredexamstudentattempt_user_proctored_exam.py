@@ -67,6 +67,28 @@ class Migration(SchemaMigration):
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'time_limit_mins': ('django.db.models.fields.IntegerField', [], {})
         },
+        'edx_proctoring.proctoredexamsoftwaresecurecomment': {
+            'Meta': {'object_name': 'ProctoredExamSoftwareSecureComment', 'db_table': "'proctoring_proctoredexamstudentattemptcomment'"},
+            'comment': ('django.db.models.fields.TextField', [], {}),
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'duration': ('django.db.models.fields.IntegerField', [], {}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            'review': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['edx_proctoring.ProctoredExamSoftwareSecureReview']"}),
+            'start_time': ('django.db.models.fields.IntegerField', [], {}),
+            'status': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'stop_time': ('django.db.models.fields.IntegerField', [], {})
+        },
+        'edx_proctoring.proctoredexamsoftwaresecurereview': {
+            'Meta': {'object_name': 'ProctoredExamSoftwareSecureReview', 'db_table': "'proctoring_proctoredexamsoftwaresecurereview'"},
+            'attempt_code': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'}),
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            'raw_data': ('django.db.models.fields.TextField', [], {}),
+            'review_status': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'video_url': ('django.db.models.fields.TextField', [], {})
+        },
         'edx_proctoring.proctoredexamstudentallowance': {
             'Meta': {'unique_together': "(('user', 'proctored_exam', 'key'),)", 'object_name': 'ProctoredExamStudentAllowance', 'db_table': "'proctoring_proctoredexamstudentallowance'"},
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
@@ -97,6 +119,8 @@ class Migration(SchemaMigration):
             'external_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'db_index': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_sample_attempt': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'last_poll_ipaddr': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True'}),
+            'last_poll_timestamp': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'proctored_exam': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['edx_proctoring.ProctoredExam']"}),
             'started_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
