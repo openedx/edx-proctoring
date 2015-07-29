@@ -496,6 +496,19 @@ def get_student_view(user_id, course_id, content_id,
     if user_role != 'student':
         return None
 
+    # see if only 'verified' track students should see this
+
+    check_mode = (
+        settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
+        'credit_state' in context and
+        context['credit_state']
+    )
+    print context
+    print '***** check_mode = {}'.format(check_mode)
+    if check_mode:
+        if context['credit_state']['enrollment_mode'] != 'verified':
+            return None
+
     student_view_template = None
 
     exam_id = None

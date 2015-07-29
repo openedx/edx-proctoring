@@ -514,6 +514,26 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIn('data-exam-id="%d"' % self.proctored_exam_id, rendered_response)
         self.assertIn(self.start_an_exam_msg % self.exam_name, rendered_response)
 
+    def test_get_honot_view(self):
+        """
+        Test for get_student_view promting when the student is enrolled in non-verified
+        track, this should return None
+        """
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'credit_state': {
+                    'enrollment_mode': 'honor'
+                }
+            }
+        )
+        self.assertIsNone(rendered_response)
+
     def test_student_view_non_student(self):
         """
         Make sure that if we ask for a student view if we are not in a student role,
