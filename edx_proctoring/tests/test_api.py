@@ -42,6 +42,7 @@ from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptStatus,
 )
 
 from .utils import (
@@ -140,6 +141,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             user_id=self.user_id,
             external_id=self.external_id,
             started_at=started_at if started_at else datetime.now(pytz.UTC),
+            status=ProctoredExamStudentAttemptStatus.started,
             allowed_time_limit_mins=10
         )
 

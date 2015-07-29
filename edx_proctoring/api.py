@@ -533,8 +533,10 @@ def get_student_view(user_id, course_id, content_id,
             has_time_expired = now_utc > expires_at
 
     # make sure the attempt has been marked as timed_out, if need be
-    if has_time_expired and attempt['status'] != ProctoredExamStudentAttemptStatus.timed_out:
+    if has_time_expired and attempt['status'] == ProctoredExamStudentAttemptStatus.started:
         mark_exam_attempt_timeout(exam_id, user_id)
+        # refetch since we are transitioning state
+        attempt = get_exam_attempt(exam_id, user_id)
 
     if not has_started_exam:
         # determine whether to show a timed exam only entrance screen
@@ -552,7 +554,7 @@ def get_student_view(user_id, course_id, content_id,
                 })
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
-    elif has_time_expired:
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
         student_view_template = 'proctoring/seq_timed_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
         student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
