@@ -503,8 +503,6 @@ def get_student_view(user_id, course_id, content_id,
         'credit_state' in context and
         context['credit_state']
     )
-    print context
-    print '***** check_mode = {}'.format(check_mode)
     if check_mode:
         if context['credit_state']['enrollment_mode'] != 'verified':
             return None
