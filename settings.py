@@ -78,3 +78,8 @@ PROCTORING_BACKEND_PROVIDER = {
     "class": "edx_proctoring.backends.tests.test_backend.TestBackendProvider",
     "options": {}
 }
+
+PROCTORING_SETTINGS = {
+    'MUST_BE_VERIFIED_TRACK': True,
+    'MUST_COMPLETE_ICRV': True,
+}
