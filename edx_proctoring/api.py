@@ -514,11 +514,14 @@ def get_student_view(user_id, course_id, content_id,
     )
 
     if check_mode:
-        # Return None (show exam content) for non verified users unless it's a practice exam
-        # where both honor and verified users are shown the proctoring screen.
-        if context['credit_state']['enrollment_mode'] != 'verified':
-            if not (context['is_practice_exam'] and context['credit_state']['enrollment_mode'] == 'honor'):
-                return None
+        # Allow only the verified students to take the exam as a proctored exam
+        # Also make an exception for the honor students to take the "practice exam" as a proctored exam.
+        # For the rest of the enrollment modes, None is returned which shows the exam content
+        # to the student rather than the proctoring prompt.
+
+        if not (context['credit_state']['enrollment_mode'] == 'verified' or (
+                context['credit_state']['enrollment_mode'] == 'honor' and context['is_practice_exam'])):
+            return None
 
     student_view_template = None
 
