@@ -160,6 +160,19 @@ class ProctoredExamApiTests(LoggedInTestCase):
             allowed_time_limit_mins=10
         )
 
+    def _create_started_practice_exam_attempt(self, started_at=None):  # pylint: disable=invalid-name
+        """
+        Creates the ProctoredExamStudentAttempt object.
+        """
+        return ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=self.practice_exam_id,
+            user_id=self.user_id,
+            external_id=self.external_id,
+            started_at=started_at if started_at else datetime.now(pytz.UTC),
+            status=ProctoredExamStudentAttemptStatus.started,
+            allowed_time_limit_mins=10
+        )
+
     def _add_allowance_for_user(self):
         """
         creates allowance for user.
@@ -202,11 +215,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         update_practice_exam = ProctoredExam.objects.get(id=updated_practice_exam_id)
 
-        self.assertEqual(update_practice_exam.exam_name, 'Updated Exam Name')
-        self.assertEqual(update_practice_exam.time_limit_mins, 30)
+        self.assertEqual(update_practice_exam.time_limit_mins, 31)
         self.assertEqual(update_practice_exam.course_id, 'test_course')
-        self.assertEqual(update_practice_exam.content_id, 'test_content_id')
-
+        self.assertEqual(update_practice_exam.content_id, 'test_content_id_practice')
 
     def test_update_proctored_exam(self):
         """
@@ -252,7 +263,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(proctored_exam['exam_name'], self.exam_name)
 
         exams = get_all_exams_for_course(self.course_id)
-        self.assertEqual(len(exams), 3)
+        self.assertEqual(len(exams), 4)
 
     def test_get_invalid_proctored_exam(self):
         """
@@ -355,7 +366,15 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         with self.assertRaises(StudentExamAttemptAlreadyExistsException):
-            create_exam_attempt(proctored_exam_student_attempt.proctored_exam, self.user_id)
+            create_exam_attempt(proctored_exam_student_attempt.proctored_exam.id, self.user_id)
+
+    def test_recreate_a_practice_exam_attempt(self):  # pylint: disable=invalid-name
+        """
+        Taking the practice exam several times should not cause an exception.
+        """
+        practice_exam_student_attempt = self._create_started_practice_exam_attempt()
+        new_attempt_id = create_exam_attempt(practice_exam_student_attempt.proctored_exam.id, self.user_id)
+        self.assertGreater(practice_exam_student_attempt, new_attempt_id, "New attempt not created.")
 
     def test_get_exam_attempt(self):
         """

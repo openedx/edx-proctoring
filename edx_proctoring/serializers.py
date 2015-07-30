@@ -29,7 +29,7 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
     time_limit_mins = serializers.IntegerField(required=True)
 
     is_active = StrictBooleanField(required=True)
-    is_practice_exam = StrictBooleanField(required=False)
+    is_practice_exam = StrictBooleanField(required=True)
     is_proctored = StrictBooleanField(required=True)
 
     class Meta:
