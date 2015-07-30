@@ -269,7 +269,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     def delete_exam_attempt(self):
         """
-        deletes the exam attempt object.
+        deletes the exam attempt object and archives it to the ProctoredExamStudentAttemptHistory table.
         """
         self.delete()
 

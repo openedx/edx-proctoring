@@ -64,6 +64,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.course_id = 'test_course'
         self.content_id = 'test_content_id'
         self.content_id_timed = 'test_content_id_timed'
+        self.content_id_practice = 'test_content_id_practice'
         self.disabled_content_id = 'test_disabled_content_id'
         self.exam_name = 'Test Exam'
         self.user_id = self.user.id
@@ -72,6 +73,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.external_id = 'test_external_id'
         self.proctored_exam_id = self._create_proctored_exam()
         self.timed_exam = self._create_timed_exam()
+        self.practice_exam_id = self._create_practice_exam()
         self.disabled_exam_id = self._create_disabled_exam()
 
         # Messages for get_student_view
@@ -106,6 +108,19 @@ class ProctoredExamApiTests(LoggedInTestCase):
             content_id=self.content_id_timed,
             exam_name=self.exam_name,
             time_limit_mins=self.default_time_limit,
+            is_proctored=False
+        )
+
+    def _create_practice_exam(self):
+        """
+        Calls the api's create_exam to create a practice exam object.
+        """
+        return create_exam(
+            course_id=self.course_id,
+            content_id=self.content_id_practice,
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
             is_proctored=False
         )
 
@@ -172,6 +187,26 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         with self.assertRaises(ProctoredExamAlreadyExists):
             self._create_proctored_exam()
+
+    def test_update_practice_exam(self):
+        """
+        test update the existing practice exam to increase the time limit.
+        """
+        updated_practice_exam_id = update_exam(
+            self.practice_exam_id, time_limit_mins=31, is_practice_exam=True
+        )
+
+        # only those fields were updated, whose
+        # values are passed.
+        self.assertEqual(self.practice_exam_id, updated_practice_exam_id)
+
+        update_practice_exam = ProctoredExam.objects.get(id=updated_practice_exam_id)
+
+        self.assertEqual(update_practice_exam.exam_name, 'Updated Exam Name')
+        self.assertEqual(update_practice_exam.time_limit_mins, 30)
+        self.assertEqual(update_practice_exam.course_id, 'test_course')
+        self.assertEqual(update_practice_exam.content_id, 'test_content_id')
+
 
     def test_update_proctored_exam(self):
         """
