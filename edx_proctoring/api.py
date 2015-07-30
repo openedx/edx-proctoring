@@ -87,7 +87,7 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
     if is_proctored is not None:
         proctored_exam.is_proctored = is_proctored
     if is_practice_exam is not None:
-        proctored_exam.is_practice_exam = is_practice_exam,
+        proctored_exam.is_practice_exam = is_practice_exam
     if external_id is not None:
         proctored_exam.external_id = external_id
     if is_active is not None:

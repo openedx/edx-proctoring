@@ -121,7 +121,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         Returns the Student Exam Attempts for the given course_id.
         """
 
-        return self.filter(proctored_exam__course_id=course_id)
+        return self.filter(proctored_exam__course_id=course_id).order_by('-created')
 
     def get_filtered_exam_attempts(self, course_id, search_by):
         """

@@ -508,8 +508,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         filtered_attempts = get_filtered_exam_attempts(self.course_id, self.user.username)
         self.assertEqual(len(filtered_attempts), 2)
-        self.assertEqual(filtered_attempts[0]['id'], exam_attempt.id)
-        self.assertEqual(filtered_attempts[1]['id'], new_exam_attempt)
+        self.assertEqual(filtered_attempts[0]['id'], new_exam_attempt)
+        self.assertEqual(filtered_attempts[1]['id'], exam_attempt.id)
 
     def test_get_all_exam_attempts(self):
         """
@@ -528,8 +528,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         all_exams = get_all_exam_attempts(self.course_id)
         self.assertEqual(len(all_exams), 2)
-        self.assertEqual(all_exams[0]['id'], exam_attempt.id)
-        self.assertEqual(all_exams[1]['id'], updated_exam_attempt_id)
+        self.assertEqual(all_exams[0]['id'], updated_exam_attempt_id)
+        self.assertEqual(all_exams[1]['id'], exam_attempt.id)
 
     def test_get_student_view(self):
         """
