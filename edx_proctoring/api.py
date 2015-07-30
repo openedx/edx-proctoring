@@ -213,16 +213,22 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     one exam_attempt per user per exam. Multiple attempts by user will be archived
     in a separate table
     """
-    if ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id):
-        err_msg = (
-            'Cannot create new exam attempt for exam_id = {exam_id} and '
-            'user_id = {user_id} because it already exists!'
-        ).format(exam_id=exam_id, user_id=user_id)
-
-        raise StudentExamAttemptAlreadyExistsException(err_msg)
-
     # for now the student is allowed the exam default
+
     exam = get_exam_by_id(exam_id)
+    existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    if existing_attempt:
+        if existing_attempt.is_sample_attempt:
+            # Archive the existing attempt by deleting it.
+            existing_attempt.delete_exam_attempt()
+        else:
+            err_msg = (
+                'Cannot create new exam attempt for exam_id = {exam_id} and '
+                'user_id = {user_id} because it already exists!'
+            ).format(exam_id=exam_id, user_id=user_id)
+
+            raise StudentExamAttemptAlreadyExistsException(err_msg)
+
     allowed_time_limit_mins = exam['time_limit_mins']
 
     # add in the allowed additional time
@@ -506,9 +512,13 @@ def get_student_view(user_id, course_id, content_id,
         'credit_state' in context and
         context['credit_state']
     )
+
     if check_mode:
+        # Return None (show exam content) for non verified users unless it's a practice exam
+        # where both honor and verified users are shown the proctoring screen.
         if context['credit_state']['enrollment_mode'] != 'verified':
-            return None
+            if not (context['is_practice_exam'] and context['credit_state']['enrollment_mode'] == 'honor'):
+                return None
 
     student_view_template = None
 
@@ -602,6 +612,7 @@ def get_student_view(user_id, course_id, content_id,
             'total_time': total_time,
             'exam_id': exam_id,
             'progress_page_url': progress_page_url,
+            'is_sample_attempt': attempt['is_sample_attempt'] if attempt else False,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
             'exam_started_poll_url': reverse(
                 'edx_proctoring.proctored_exam.attempt',

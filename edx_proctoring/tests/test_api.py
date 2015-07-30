@@ -169,6 +169,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             user_id=self.user_id,
             external_id=self.external_id,
             started_at=started_at if started_at else datetime.now(pytz.UTC),
+            is_sample_attempt=True,
             status=ProctoredExamStudentAttemptStatus.started,
             allowed_time_limit_mins=10
         )
@@ -368,6 +369,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
         with self.assertRaises(StudentExamAttemptAlreadyExistsException):
             create_exam_attempt(proctored_exam_student_attempt.proctored_exam.id, self.user_id)
 
+    def test_recreate_a_practice_exam_attempt(self):  # pylint: disable=invalid-name
+        """
+        Taking the practice exam several times should not cause an exception.
+        """
+        practice_exam_student_attempt = self._create_started_practice_exam_attempt()
+        new_attempt_id = create_exam_attempt(practice_exam_student_attempt.proctored_exam.id, self.user_id)
+        self.assertGreater(practice_exam_student_attempt, new_attempt_id, "New attempt not created.")
+
     def test_get_exam_attempt(self):
         """
         Test to get the existing exam attempt.
@@ -560,9 +569,30 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIn('data-exam-id="%d"' % self.proctored_exam_id, rendered_response)
         self.assertIn(self.start_an_exam_msg % self.exam_name, rendered_response)
 
-    def test_get_honot_view(self):
+    def test_get_honor_view_with_practice_exam(self):  # pylint: disable=invalid-name
         """
-        Test for get_student_view promting when the student is enrolled in non-verified
+        Test for get_student_view prompting when the student is enrolled in non-verified
+        track for a practice exam, this should return not None
+        """
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'credit_state': {
+                    'enrollment_mode': 'honor'
+                },
+                'is_practice_exam': True
+            }
+        )
+        self.assertIsNotNone(rendered_response)
+
+    def test_get_honor_view(self):
+        """
+        Test for get_student_view prompting when the student is enrolled in non-verified
         track, this should return None
         """
         rendered_response = get_student_view(
@@ -575,7 +605,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'default_time_limit_mins': 90,
                 'credit_state': {
                     'enrollment_mode': 'honor'
-                }
+                },
+                'is_practice_exam': False
             }
         )
         self.assertIsNone(rendered_response)
