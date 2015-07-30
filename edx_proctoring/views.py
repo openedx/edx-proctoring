@@ -81,6 +81,7 @@ class ProctoredExamView(AuthenticatedAPIView):
         "exam_name": "Midterm",
         "time_limit_mins": 90,
         "is_proctored": true,
+        "is_practice_exam": false,
         "external_id": "12213DASAD",
         "is_active": true
     }
@@ -91,6 +92,7 @@ class ProctoredExamView(AuthenticatedAPIView):
         * exam_name: This is the display name of the Exam (Midterm etc).
         * time_limit_mins: Time limit (in minutes) that a student can finish this exam.
         * is_proctored: Whether this exam actually is proctored or not.
+        * is_proctored: Whether this exam will be for practice only.
         * external_id: This will be a integration specific ID - say to SoftwareSecure.
         * is_active: Whether this exam will be active.
 
@@ -108,6 +110,7 @@ class ProctoredExamView(AuthenticatedAPIView):
         "exam_name": "Final",
         "time_limit_mins": 120,
         "is_proctored": true,
+        "is_practice_exam": false,
         "external_id": 235
         "is_active": true
     }
@@ -140,6 +143,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                 exam_name=request.DATA.get('exam_name', None),
                 time_limit_mins=request.DATA.get('time_limit_mins', None),
                 is_proctored=request.DATA.get('is_proctored', None),
+                is_practice_exam=request.DATA.get('is_practice_exam', None),
                 external_id=request.DATA.get('external_id', None),
                 is_active=request.DATA.get('is_active', None)
             )
@@ -162,6 +166,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                 exam_name=request.DATA.get('exam_name', None),
                 time_limit_mins=request.DATA.get('time_limit_mins', None),
                 is_proctored=request.DATA.get('is_proctored', None),
+                is_practice_exam=request.DATA.get('is_practice_exam', None),
                 external_id=request.DATA.get('external_id', None),
                 is_active=request.DATA.get('is_active', None),
             )

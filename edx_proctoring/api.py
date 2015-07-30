@@ -533,12 +533,14 @@ def get_student_view(user_id, course_id, content_id,
         # This really shouldn't happen
         # as Studio will be setting this up
         is_proctored = context.get('is_proctored', False)
+        is_practice_exam = context.get('is_practice_exam', False)
         exam_id = create_exam(
             course_id=course_id,
             content_id=unicode(content_id),
             exam_name=context['display_name'],
             time_limit_mins=context['default_time_limit_mins'],
-            is_proctored=is_proctored
+            is_proctored=is_proctored,
+            is_practice_exam=is_practice_exam
         )
 
     attempt = get_exam_attempt(exam_id, user_id)
