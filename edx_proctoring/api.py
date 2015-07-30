@@ -248,10 +248,10 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         # get the name of the user, if the service is available
         full_name = None
 
-        profile_service = get_runtime_service('profile')
-        if profile_service:
-            profile = profile_service(user_id)
-            full_name = profile['name']
+        credit_service = get_runtime_service('credit')
+        if credit_service:
+            credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
+            full_name = credit_state['profile_fullname']
 
         # now call into the backend provider to register exam attempt
         external_id = get_backend_provider().register_exam_attempt(

@@ -57,6 +57,30 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
     }
 
 
+class MockCreditService(object):
+    """
+    Simple mock of the Credit Service
+    """
+
+    def get_credit_state(self, user_id, course_key):  # pylint: disable=unused-argument
+        """
+        Mock implementation
+        """
+
+        return {
+            'enrollment_mode': 'verified',
+            'profile_fullname': 'Wolfgang von Strucker',
+            'credit_requirement_status': []
+        }
+
+    def set_credit_requirement_status(self, user_id, course_key, req_namespace,
+                                      req_name, status="satisfied", reason=None):  # pylint: disable=unused-argument
+        """
+        Mock implementation
+        """
+        pass
+
+
 @patch(
     'django.conf.settings.PROCTORING_BACKEND_PROVIDER',
     {
@@ -84,19 +108,13 @@ class SoftwareSecureTests(TestCase):
         self.user = User(username='foo', email='foo@bar.com')
         self.user.save()
 
-        def mock_profile_service(user_id):  # pylint: disable=unused-argument
-            """
-            Mocked out Profile callback endpoint
-            """
-            return {'name': 'Wolfgang von Strucker'}
-
-        set_runtime_service('profile', mock_profile_service)
+        set_runtime_service('credit', MockCreditService())
 
     def tearDown(self):
         """
         When tests are done
         """
-        set_runtime_service('profile', None)
+        set_runtime_service('credit', None)
 
     def test_provider_instance(self):
         """
