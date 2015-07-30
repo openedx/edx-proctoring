@@ -368,14 +368,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         with self.assertRaises(StudentExamAttemptAlreadyExistsException):
             create_exam_attempt(proctored_exam_student_attempt.proctored_exam.id, self.user_id)
 
-    def test_recreate_a_practice_exam_attempt(self):  # pylint: disable=invalid-name
-        """
-        Taking the practice exam several times should not cause an exception.
-        """
-        practice_exam_student_attempt = self._create_started_practice_exam_attempt()
-        new_attempt_id = create_exam_attempt(practice_exam_student_attempt.proctored_exam.id, self.user_id)
-        self.assertGreater(practice_exam_student_attempt, new_attempt_id, "New attempt not created.")
-
     def test_get_exam_attempt(self):
         """
         Test to get the existing exam attempt.

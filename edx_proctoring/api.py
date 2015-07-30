@@ -210,25 +210,19 @@ def get_exam_attempt_by_code(attempt_code):
 def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only be
-    one exam_attempt per user per exam except for the practice exams where multiple
-    attempts are allowed. Multiple attempts by user will be archived
+    one exam_attempt per user per exam. Multiple attempts by user will be archived
     in a separate table
     """
+    if ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id):
+        err_msg = (
+            'Cannot create new exam attempt for exam_id = {exam_id} and '
+            'user_id = {user_id} because it already exists!'
+        ).format(exam_id=exam_id, user_id=user_id)
 
+        raise StudentExamAttemptAlreadyExistsException(err_msg)
+
+    # for now the student is allowed the exam default
     exam = get_exam_by_id(exam_id)
-    existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
-    if existing_attempt:
-        if exam['is_practice_exam']:
-            # Archive the existing attempt by deleting it.
-            existing_attempt.delete_exam_attempt()
-        else:
-            err_msg = (
-                'Cannot create new exam attempt for exam_id = {exam_id} and '
-                'user_id = {user_id} because it already exists!'
-            ).format(exam_id=exam_id, user_id=user_id)
-
-            raise StudentExamAttemptAlreadyExistsException(err_msg)
-
     allowed_time_limit_mins = exam['time_limit_mins']
 
     # add in the allowed additional time
