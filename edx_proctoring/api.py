@@ -262,7 +262,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             context={
                 'time_limit_mins': allowed_time_limit_mins,
                 'attempt_code': attempt_code,
-                'is_sample_attempt': False,
+                'is_sample_attempt': exam['is_practice_exam'],
                 'callback_url': callback_url,
                 'full_name': full_name,
             }
@@ -275,7 +275,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         allowed_time_limit_mins,
         attempt_code,
         taking_as_proctored,
-        False,
+        exam['is_practice_exam'],
         external_id
     )
     return attempt.id

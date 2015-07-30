@@ -222,7 +222,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # in case there is an option to opt-out
     taking_as_proctored = models.BooleanField()
 
-    # Whether this attampt is considered a sample attempt, e.g. to try out
+    # Whether this attempt is considered a sample attempt, e.g. to try out
     # the proctoring software
     is_sample_attempt = models.BooleanField()
 
