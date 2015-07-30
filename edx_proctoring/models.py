@@ -37,6 +37,9 @@ class ProctoredExam(TimeStampedModel):
     # Whether this exam actually is proctored or not.
     is_proctored = models.BooleanField()
 
+    # Whether this exam is for practice only.
+    is_practice_exam = models.BooleanField()
+
     # Whether this exam will be active.
     is_active = models.BooleanField()
 

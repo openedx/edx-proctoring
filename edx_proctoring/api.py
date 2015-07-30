@@ -45,7 +45,7 @@ def is_feature_enabled():
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins,
-                is_proctored=True, external_id=None, is_active=True):
+                is_proctored=True, is_practice_exam=False, external_id=None, is_active=True):
     """
     Creates a new ProctoredExam entity, if the course_id/content_id pair do not already exist.
     If that pair already exists, then raise exception.
@@ -62,13 +62,14 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
         exam_name=exam_name,
         time_limit_mins=time_limit_mins,
         is_proctored=is_proctored,
+        is_practice_exam=is_practice_exam,
         is_active=is_active
     )
     return proctored_exam.id
 
 
 def update_exam(exam_id, exam_name=None, time_limit_mins=None,
-                is_proctored=None, external_id=None, is_active=None):
+                is_proctored=None, is_practice_exam=None, external_id=None, is_active=None):
     """
     Given a Django ORM id, update the existing record, otherwise raise exception if not found.
     If an argument is not passed in, then do not change it's current value.
@@ -85,6 +86,8 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
         proctored_exam.time_limit_mins = time_limit_mins
     if is_proctored is not None:
         proctored_exam.is_proctored = is_proctored
+    if is_practice_exam is not None:
+        proctored_exam.is_practice_exam=is_practice_exam,
     if external_id is not None:
         proctored_exam.external_id = external_id
     if is_active is not None:
