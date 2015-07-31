@@ -590,20 +590,10 @@ def get_student_view(user_id, course_id, content_id,
 
     attempt = get_exam_attempt(exam_id, user_id)
     has_started_exam = attempt and attempt.get('started_at')
-    has_time_expired = False
+
     if has_started_exam:
         if attempt.get('status') == 'error':
             student_view_template = 'proctoring/seq_proctored_exam_error.html'
-        else:
-            now_utc = datetime.now(pytz.UTC)
-            expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
-            has_time_expired = now_utc > expires_at
-
-    # make sure the attempt has been marked as timed_out, if need be
-    if has_time_expired and attempt['status'] == ProctoredExamStudentAttemptStatus.started:
-        mark_exam_attempt_timeout(exam_id, user_id)
-        # refetch since we are transitioning state
-        attempt = get_exam_attempt(exam_id, user_id)
 
     if not has_started_exam:
         # determine whether to show a timed exam only entrance screen
