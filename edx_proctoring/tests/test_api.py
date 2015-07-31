@@ -87,6 +87,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
         self.proctored_exam_rejected_msg = 'Your proctoring session was reviewed and did not pass requirements'
         self.timed_exam_completed_msg = 'This is the end of your timed exam'
+        self.start_a_practice_exam_msg = 'Would you like to take %s as a practice proctored exam?'
+        self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
 
     def _create_proctored_exam(self):
         """
@@ -569,6 +571,20 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIn('data-exam-id="%d"' % self.proctored_exam_id, rendered_response)
         self.assertIn(self.start_an_exam_msg % self.exam_name, rendered_response)
 
+        # try practice exam variant
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id + 'foo',
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'is_practice_exam': True,
+            }
+        )
+        self.assertIn(self.start_a_practice_exam_msg % self.exam_name, rendered_response)
+
     def test_get_honor_view_with_practice_exam(self):  # pylint: disable=invalid-name
         """
         Test for get_student_view prompting when the student is enrolled in non-verified
@@ -705,6 +721,22 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
+
+        # test the variant if we are a sample attempt
+        exam_attempt.is_sample_attempt = True
+        exam_attempt.save()
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIn(self.practice_exam_submitted_msg, rendered_response)
 
     def test_get_studentview_rejected_status(self):  # pylint: disable=invalid-name
         """

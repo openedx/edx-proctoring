@@ -1,0 +1,22 @@
+{% load i18n %}
+<div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      You have submitted this practice proctored exam
+    {% endblocktrans %}
+  </h3>
+
+  <h4>
+    {% blocktrans %}
+      Your Practice Proctoring Session: <b> Completed </b>
+    {% endblocktrans %}
+  </h4>
+
+  <p>
+    {% blocktrans %}
+      As practice exams do not count towards a grade or credit eligibility
+      they are not reviewed. You have completed your practice exam and should continue
+      with the rest of your course
+    {% endblocktrans %}
+  </p>
+</div>

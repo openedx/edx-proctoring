@@ -131,7 +131,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
             Q(user__username__contains=search_by) | Q(user__email__contains=search_by)
         )
 
-        return self.filter(filtered_query)
+        return self.filter(filtered_query).order_by('-created')
 
     def get_active_student_attempts(self, user_id, course_id=None):
         """

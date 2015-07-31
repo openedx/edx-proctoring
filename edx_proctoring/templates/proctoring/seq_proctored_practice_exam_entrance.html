@@ -1,0 +1,70 @@
+{% load i18n %}
+<div class="sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      Would you like to take {{ display_name }} as a practice proctored exam?
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% blocktrans %}
+      Since you're enrolled in this course as a verified student, you have the option practice taking a proctored exam. Online proctoring is one requirement towards being eligible for credit.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+      This practice proctored exam is being provided to you so that you can learn more about proctoring. Also this
+      practice exam will give you a chance to test your computer system with the proctoring software without it
+      counting towards your grade.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+        While it is not requireed to take this practice proctored exam, it is highly recommended.
+    {% endblocktrans %}
+  </p>
+  <div class="gated-sequence">
+    <span><i class="fa fa-lock"></i></span>
+    <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
+      {% trans "Yes, I want to take this practice exam with online proctoring" %}
+    </a>
+    <p>
+      {% blocktrans %}
+        You will be guided through installing {{platform_name}} approved online proctoring software and
+        performing various checks to set up your proctored exam session. Have your photo ID
+        ready for the photo ID verification step.<br />
+        Immediately after you complete the set up, you will begin your timed and proctored exam.<br />
+        Before you set up your proctoring session, you might want to <a href="#">read this</a>
+        to learn more about taking a proctored exam.<br />
+      {% endblocktrans %}
+    </p>
+
+    <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></i>
+  </div>
+</div>
+{% include 'proctoring/seq_proctored_exam_footer.html' %}
+
+<script type="text/javascript">
+  $('.start-timed-exam').click(
+    function(event) {
+      var action_url = $(this).data('ajax-url');
+      var exam_id = $(this).data('exam-id');
+      var attempt_proctored = $(this).data('attempt-proctored');
+      var start_immediately = $(this).data('start-immediately');
+      if (typeof action_url === "undefined" ) {
+        return false;
+      }
+      $.post(
+        action_url,
+        {
+          "exam_id": exam_id,
+          "attempt_proctored": attempt_proctored,
+          "start_clock": start_immediately
+        },
+        function(data) {
+          // reload the page, because we've unlocked it
+          location.reload();
+        }
+      );
+    }
+  );
+</script>

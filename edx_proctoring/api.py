@@ -549,6 +549,7 @@ def get_student_view(user_id, course_id, content_id,
             is_proctored=is_proctored,
             is_practice_exam=is_practice_exam
         )
+        exam = get_exam_by_content_id(course_id, content_id)
 
     attempt = get_exam_attempt(exam_id, user_id)
     has_started_exam = attempt and attempt.get('started_at')
@@ -573,7 +574,10 @@ def get_student_view(user_id, course_id, content_id,
 
         if is_proctored:
             if not attempt:
-                student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
+                if exam['is_practice_exam']:
+                    student_view_template = 'proctoring/seq_proctored_practice_exam_entrance.html'
+                else:
+                    student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
             else:
                 provider = get_backend_provider()
                 student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
@@ -586,7 +590,10 @@ def get_student_view(user_id, course_id, content_id,
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
         student_view_template = 'proctoring/seq_timed_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
-        student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
+        if attempt['is_sample_attempt']:
+            student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
+        else:
+            student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
         student_view_template = 'proctoring/seq_proctored_exam_verified.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
