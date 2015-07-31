@@ -505,24 +505,6 @@ def get_student_view(user_id, course_id, content_id,
     if user_role != 'student':
         return None
 
-    # see if only 'verified' track students should see this
-
-    check_mode = (
-        settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
-        'credit_state' in context and
-        context['credit_state']
-    )
-
-    if check_mode:
-        # Allow only the verified students to take the exam as a proctored exam
-        # Also make an exception for the honor students to take the "practice exam" as a proctored exam.
-        # For the rest of the enrollment modes, None is returned which shows the exam content
-        # to the student rather than the proctoring prompt.
-
-        if not (context['credit_state']['enrollment_mode'] == 'verified' or (
-                context['credit_state']['enrollment_mode'] == 'honor' and context['is_practice_exam'])):
-            return None
-
     student_view_template = None
 
     exam_id = None
@@ -535,21 +517,37 @@ def get_student_view(user_id, course_id, content_id,
             return None
 
         exam_id = exam['id']
-        is_proctored = exam['is_proctored']
     except ProctoredExamNotFoundException:
         # This really shouldn't happen
         # as Studio will be setting this up
-        is_proctored = context.get('is_proctored', False)
-        is_practice_exam = context.get('is_practice_exam', False)
         exam_id = create_exam(
             course_id=course_id,
             content_id=unicode(content_id),
             exam_name=context['display_name'],
             time_limit_mins=context['default_time_limit_mins'],
-            is_proctored=is_proctored,
-            is_practice_exam=is_practice_exam
+            is_proctored=context.get('is_proctored', False),
+            is_practice_exam=context.get('is_practice_exam', False)
         )
         exam = get_exam_by_content_id(course_id, content_id)
+
+    is_proctored = exam['is_proctored']
+
+    # see if only 'verified' track students should see this *except* if it is a practice exam
+    check_mode = (
+        settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
+        'credit_state' in context and
+        context['credit_state'] and not
+        exam['is_practice_exam']
+    )
+
+    if check_mode:
+        # Allow only the verified students to take the exam as a proctored exam
+        # Also make an exception for the honor students to take the "practice exam" as a proctored exam.
+        # For the rest of the enrollment modes, None is returned which shows the exam content
+        # to the student rather than the proctoring prompt.
+
+        if context['credit_state']['enrollment_mode'] != 'verified':
+            return None
 
     attempt = get_exam_attempt(exam_id, user_id)
     has_started_exam = attempt and attempt.get('started_at')

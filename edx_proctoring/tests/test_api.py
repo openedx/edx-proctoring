@@ -588,12 +588,13 @@ class ProctoredExamApiTests(LoggedInTestCase):
     def test_get_honor_view_with_practice_exam(self):  # pylint: disable=invalid-name
         """
         Test for get_student_view prompting when the student is enrolled in non-verified
-        track for a practice exam, this should return not None
+        track for a practice exam, this should return not None, meaning
+        student will see proctored content
         """
         rendered_response = get_student_view(
             user_id=self.user_id,
             course_id=self.course_id,
-            content_id=self.content_id,
+            content_id=self.content_id_practice,
             context={
                 'is_proctored': True,
                 'display_name': self.exam_name,
