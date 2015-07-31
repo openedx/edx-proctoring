@@ -37,6 +37,9 @@ class ProctoredExam(TimeStampedModel):
     # Whether this exam actually is proctored or not.
     is_proctored = models.BooleanField()
 
+    # Whether this exam is for practice only.
+    is_practice_exam = models.BooleanField()
+
     # Whether this exam will be active.
     is_active = models.BooleanField()
 
@@ -118,7 +121,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         Returns the Student Exam Attempts for the given course_id.
         """
 
-        return self.filter(proctored_exam__course_id=course_id)
+        return self.filter(proctored_exam__course_id=course_id).order_by('-created')
 
     def get_filtered_exam_attempts(self, course_id, search_by):
         """
@@ -128,7 +131,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
             Q(user__username__contains=search_by) | Q(user__email__contains=search_by)
         )
 
-        return self.filter(filtered_query)
+        return self.filter(filtered_query).order_by('-created')
 
     def get_active_student_attempts(self, user_id, course_id=None):
         """
@@ -219,7 +222,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # in case there is an option to opt-out
     taking_as_proctored = models.BooleanField()
 
-    # Whether this attampt is considered a sample attempt, e.g. to try out
+    # Whether this attempt is considered a sample attempt, e.g. to try out
     # the proctoring software
     is_sample_attempt = models.BooleanField()
 
@@ -266,7 +269,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     def delete_exam_attempt(self):
         """
-        deletes the exam attempt object.
+        deletes the exam attempt object and archives it to the ProctoredExamStudentAttemptHistory table.
         """
         self.delete()
 

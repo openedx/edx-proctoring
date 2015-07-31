@@ -45,7 +45,7 @@ def is_feature_enabled():
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins,
-                is_proctored=True, external_id=None, is_active=True):
+                is_proctored=True, is_practice_exam=False, external_id=None, is_active=True):
     """
     Creates a new ProctoredExam entity, if the course_id/content_id pair do not already exist.
     If that pair already exists, then raise exception.
@@ -62,13 +62,14 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
         exam_name=exam_name,
         time_limit_mins=time_limit_mins,
         is_proctored=is_proctored,
+        is_practice_exam=is_practice_exam,
         is_active=is_active
     )
     return proctored_exam.id
 
 
 def update_exam(exam_id, exam_name=None, time_limit_mins=None,
-                is_proctored=None, external_id=None, is_active=None):
+                is_proctored=None, is_practice_exam=None, external_id=None, is_active=None):
     """
     Given a Django ORM id, update the existing record, otherwise raise exception if not found.
     If an argument is not passed in, then do not change it's current value.
@@ -85,6 +86,8 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
         proctored_exam.time_limit_mins = time_limit_mins
     if is_proctored is not None:
         proctored_exam.is_proctored = is_proctored
+    if is_practice_exam is not None:
+        proctored_exam.is_practice_exam = is_practice_exam
     if external_id is not None:
         proctored_exam.external_id = external_id
     if is_active is not None:
@@ -210,16 +213,22 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     one exam_attempt per user per exam. Multiple attempts by user will be archived
     in a separate table
     """
-    if ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id):
-        err_msg = (
-            'Cannot create new exam attempt for exam_id = {exam_id} and '
-            'user_id = {user_id} because it already exists!'
-        ).format(exam_id=exam_id, user_id=user_id)
-
-        raise StudentExamAttemptAlreadyExistsException(err_msg)
-
     # for now the student is allowed the exam default
+
     exam = get_exam_by_id(exam_id)
+    existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    if existing_attempt:
+        if existing_attempt.is_sample_attempt:
+            # Archive the existing attempt by deleting it.
+            existing_attempt.delete_exam_attempt()
+        else:
+            err_msg = (
+                'Cannot create new exam attempt for exam_id = {exam_id} and '
+                'user_id = {user_id} because it already exists!'
+            ).format(exam_id=exam_id, user_id=user_id)
+
+            raise StudentExamAttemptAlreadyExistsException(err_msg)
+
     allowed_time_limit_mins = exam['time_limit_mins']
 
     # add in the allowed additional time
@@ -259,7 +268,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             context={
                 'time_limit_mins': allowed_time_limit_mins,
                 'attempt_code': attempt_code,
-                'is_sample_attempt': False,
+                'is_sample_attempt': exam['is_practice_exam'],
                 'callback_url': callback_url,
                 'full_name': full_name,
             }
@@ -272,7 +281,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         allowed_time_limit_mins,
         attempt_code,
         taking_as_proctored,
-        False,
+        exam['is_practice_exam'],
         external_id
     )
     return attempt.id
@@ -496,17 +505,6 @@ def get_student_view(user_id, course_id, content_id,
     if user_role != 'student':
         return None
 
-    # see if only 'verified' track students should see this
-
-    check_mode = (
-        settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
-        'credit_state' in context and
-        context['credit_state']
-    )
-    if check_mode:
-        if context['credit_state']['enrollment_mode'] != 'verified':
-            return None
-
     student_view_template = None
 
     exam_id = None
@@ -519,18 +517,37 @@ def get_student_view(user_id, course_id, content_id,
             return None
 
         exam_id = exam['id']
-        is_proctored = exam['is_proctored']
     except ProctoredExamNotFoundException:
         # This really shouldn't happen
         # as Studio will be setting this up
-        is_proctored = context.get('is_proctored', False)
         exam_id = create_exam(
             course_id=course_id,
             content_id=unicode(content_id),
             exam_name=context['display_name'],
             time_limit_mins=context['default_time_limit_mins'],
-            is_proctored=is_proctored
+            is_proctored=context.get('is_proctored', False),
+            is_practice_exam=context.get('is_practice_exam', False)
         )
+        exam = get_exam_by_content_id(course_id, content_id)
+
+    is_proctored = exam['is_proctored']
+
+    # see if only 'verified' track students should see this *except* if it is a practice exam
+    check_mode = (
+        settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
+        'credit_state' in context and
+        context['credit_state'] and not
+        exam['is_practice_exam']
+    )
+
+    if check_mode:
+        # Allow only the verified students to take the exam as a proctored exam
+        # Also make an exception for the honor students to take the "practice exam" as a proctored exam.
+        # For the rest of the enrollment modes, None is returned which shows the exam content
+        # to the student rather than the proctoring prompt.
+
+        if context['credit_state']['enrollment_mode'] != 'verified':
+            return None
 
     attempt = get_exam_attempt(exam_id, user_id)
     has_started_exam = attempt and attempt.get('started_at')
@@ -555,7 +572,10 @@ def get_student_view(user_id, course_id, content_id,
 
         if is_proctored:
             if not attempt:
-                student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
+                if exam['is_practice_exam']:
+                    student_view_template = 'proctoring/seq_proctored_practice_exam_entrance.html'
+                else:
+                    student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
             else:
                 provider = get_backend_provider()
                 student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
@@ -568,7 +588,10 @@ def get_student_view(user_id, course_id, content_id,
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
         student_view_template = 'proctoring/seq_timed_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
-        student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
+        if attempt['is_sample_attempt']:
+            student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
+        else:
+            student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
         student_view_template = 'proctoring/seq_proctored_exam_verified.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
@@ -597,6 +620,7 @@ def get_student_view(user_id, course_id, content_id,
             'total_time': total_time,
             'exam_id': exam_id,
             'progress_page_url': progress_page_url,
+            'is_sample_attempt': attempt['is_sample_attempt'] if attempt else False,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
             'exam_started_poll_url': reverse(
                 'edx_proctoring.proctored_exam.attempt',

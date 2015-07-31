@@ -85,6 +85,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             'time_limit_mins': 90,
             'external_id': '123',
             'is_proctored': True,
+            'is_practice_exam': False,
             'is_active': True
         }
         response = self.client.post(
@@ -119,6 +120,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             'time_limit_mins': 90,
             'external_id': '123',
             'is_proctored': True,
+            'is_practice_exam': False,
             'is_active': True
         }
         response = self.client.post(

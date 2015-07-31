@@ -22,11 +22,15 @@ class TestProctoredExamSerializer(unittest.TestCase):
             'time_limit_mins': 90,
             'external_id': '123',
             'is_proctored': 'bla',
+            'is_practice_exam': 'bla',
             'is_active': 'f'
         }
         serializer = ProctoredExamSerializer(data=data)
 
         self.assertFalse(serializer.is_valid())
         self.assertDictEqual(
-            {'is_proctored': [u'This field is required.']}, serializer.errors
+            {
+                'is_proctored': [u'This field is required.'],
+                'is_practice_exam': [u'This field is required.'],
+            }, serializer.errors
         )
