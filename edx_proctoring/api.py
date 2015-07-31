@@ -168,13 +168,53 @@ def remove_allowance_for_user(exam_id, user_id, key):
         student_allowance.delete()
 
 
+def _update_exam_attempt_status(attempt):
+    """
+    Helper method to see if the status of an
+    exam needs to be updated, e.g. timeout
+    """
+
+    if not attempt:
+        return attempt
+
+    # right now the only adjustment to
+    # status is transitioning to timeout
+    has_started_exam = (
+        attempt and
+        attempt.get('started_at') and
+        attempt.get('status') == ProctoredExamStudentAttemptStatus.started
+    )
+    if has_started_exam:
+        now_utc = datetime.now(pytz.UTC)
+        expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
+        has_time_expired = now_utc > expires_at
+
+        if has_time_expired:
+            exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt['id'])
+            exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.timed_out
+            exam_attempt_obj.save()
+            attempt = ProctoredExamStudentAttemptSerializer(exam_attempt_obj).data
+
+    return attempt
+
+
+def _get_exam_attempt(exam_attempt_obj):
+    """
+    Helper method to commonalize the two query patterns
+    """
+    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
+    attempt = serialized_attempt_obj.data if exam_attempt_obj else None
+    attempt = _update_exam_attempt_status(attempt)
+
+    return attempt
+
+
 def get_exam_attempt(exam_id, user_id):
     """
     Return an existing exam attempt for the given student
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
-    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
-    return serialized_attempt_obj.data if exam_attempt_obj else None
+    return _get_exam_attempt(exam_attempt_obj)
 
 
 def get_exam_attempt_by_id(attempt_id):
@@ -182,8 +222,7 @@ def get_exam_attempt_by_id(attempt_id):
     Return an existing exam attempt for the given student
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
-    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
-    return serialized_attempt_obj.data if exam_attempt_obj else None
+    return _get_exam_attempt(exam_attempt_obj)
 
 
 def update_exam_attempt(attempt_id, **kwargs):
@@ -551,20 +590,10 @@ def get_student_view(user_id, course_id, content_id,
 
     attempt = get_exam_attempt(exam_id, user_id)
     has_started_exam = attempt and attempt.get('started_at')
-    has_time_expired = False
+
     if has_started_exam:
         if attempt.get('status') == 'error':
             student_view_template = 'proctoring/seq_proctored_exam_error.html'
-        else:
-            now_utc = datetime.now(pytz.UTC)
-            expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
-            has_time_expired = now_utc > expires_at
-
-    # make sure the attempt has been marked as timed_out, if need be
-    if has_time_expired and attempt['status'] == ProctoredExamStudentAttemptStatus.started:
-        mark_exam_attempt_timeout(exam_id, user_id)
-        # refetch since we are transitioning state
-        attempt = get_exam_attempt(exam_id, user_id)
 
     if not has_started_exam:
         # determine whether to show a timed exam only entrance screen

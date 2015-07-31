@@ -1,10 +1,10 @@
 """
 All tests for the models.py
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 from mock import patch
 import pytz
-
+from freezegun import freeze_time
 
 from edx_proctoring.api import (
     create_exam,
@@ -702,6 +702,30 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIsNone(rendered_response)
+
+    def test_get_studentview_timedout(self):
+        """
+        Verifies that if we call get_studentview when the timer has expired
+        it will automatically state transition into timed_out
+        """
+
+        attempt_obj = self._create_started_exam_attempt()
+
+        reset_time = datetime.now(pytz.UTC) + timedelta(days=1)
+        with freeze_time(reset_time):
+            get_student_view(
+                user_id=self.user_id,
+                course_id=self.course_id,
+                content_id=self.content_id,
+                context={
+                    'is_proctored': True,
+                    'display_name': self.exam_name,
+                    'default_time_limit_mins': 90
+                }
+            )
+
+        attempt = get_exam_attempt_by_id(attempt_obj.id)
+        self.assertEqual(attempt['status'], 'timed_out')
 
     def test_get_studentview_submitted_status(self):  # pylint: disable=invalid-name
         """
