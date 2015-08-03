@@ -9,7 +9,7 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 
 # Set Travis builds to use docker container
-# sudo: false
+sudo: false
 
 install:
     - npm install
