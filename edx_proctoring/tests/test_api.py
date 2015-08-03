@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+
 """
 All tests for the models.py
 """
@@ -697,6 +699,30 @@ class ProctoredExamApiTests(LoggedInTestCase):
                         {
                             'namespace': 'reverification',
                             'status': 'satisfied',
+                        }
+                    ]
+                },
+                'is_practice_exam': False
+            }
+        )
+        # here, we should get proctoring content
+        self.assertIsNotNone(rendered_response)
+
+        # user doesn't have pre-requisites on reverification
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'credit_state': {
+                    'enrollment_mode': 'verified',
+                    'credit_requirement_status': [
+                        {
+                            'namespace': 'grade',
+                            'status': 'failed',
                         }
                     ]
                 },
