@@ -3,13 +3,14 @@ Tests for the software_secure module
 """
 
 import json
+import ddt
 from string import Template  # pylint: disable=deprecated-module
 from mock import patch
 from httmock import all_requests, HTTMock
 
 from django.test import TestCase
 from django.contrib.auth.models import User
-from edx_proctoring.runtime import set_runtime_service
+from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import BackendProvideCannotRegisterAttempt
@@ -18,19 +19,21 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     create_exam,
     create_exam_attempt,
-    get_exam_attempt_by_id,
     remove_exam_attempt,
 )
 from edx_proctoring.exceptions import (
     StudentExamAttemptDoesNotExistsException,
     ProctoredExamSuspiciousLookup,
     ProctoredExamReviewAlreadyExists,
+    ProctoredExamBadReviewStatus
 )
 from edx_proctoring. models import (
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureComment,
 )
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
+
+from edx_proctoring.tests.test_services import MockCreditService
 
 
 @all_requests
@@ -57,30 +60,6 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
     }
 
 
-class MockCreditService(object):
-    """
-    Simple mock of the Credit Service
-    """
-
-    def get_credit_state(self, user_id, course_key):  # pylint: disable=unused-argument
-        """
-        Mock implementation
-        """
-
-        return {
-            'enrollment_mode': 'verified',
-            'profile_fullname': 'Wolfgang von Strucker',
-            'credit_requirement_status': []
-        }
-
-    def set_credit_requirement_status(self, user_id, course_key, req_namespace,
-                                      req_name, status="satisfied", reason=None):  # pylint: disable=unused-argument
-        """
-        Mock implementation
-        """
-        pass
-
-
 @patch(
     'django.conf.settings.PROCTORING_BACKEND_PROVIDER',
     {
@@ -96,6 +75,7 @@ class MockCreditService(object):
         }
     }
 )
+@ddt.ddt
 class SoftwareSecureTests(TestCase):
     """
     All tests for the SoftwareSecureBackendProvider
@@ -105,6 +85,7 @@ class SoftwareSecureTests(TestCase):
         """
         Initialize
         """
+        super(SoftwareSecureTests, self).setUp()
         self.user = User(username='foo', email='foo@bar.com')
         self.user.save()
 
@@ -234,9 +215,16 @@ class SoftwareSecureTests(TestCase):
         provider = get_backend_provider()
         self.assertIsNone(provider.stop_exam_attempt(None, None))
 
-    def test_review_callback(self):
+    @ddt.data(
+        ('Clean', 'satisfied'),
+        ('Suspicious', 'satisfied'),
+        ('Rules Violation', 'failed'),
+        ('Not Reviewed', 'failed'),
+    )
+    @ddt.unpack
+    def test_review_callback(self, review_status, credit_requirement_status):
         """
-        Simulates a happy path when SoftwareSecure calls us back with a payload
+        Simulates callbacks from SoftwareSecure with various statuses
         """
 
         provider = get_backend_provider()
@@ -264,6 +252,7 @@ class SoftwareSecureTests(TestCase):
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )
+        test_payload = test_payload.replace('Clean', review_status)
 
         provider.on_review_callback(json.loads(test_payload))
 
@@ -271,7 +260,7 @@ class SoftwareSecureTests(TestCase):
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
 
         self.assertIsNotNone(review)
-        self.assertEqual(review.review_status, 'Clean')
+        self.assertEqual(review.review_status, review_status)
         self.assertEqual(
             review.video_url,
             'http://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
@@ -282,6 +271,16 @@ class SoftwareSecureTests(TestCase):
         comments = ProctoredExamSoftwareSecureComment.objects.filter(review_id=review.id)
 
         self.assertEqual(len(comments), 6)
+
+        # check that we got credit requirement set appropriately
+
+        credit_service = get_runtime_service('credit')
+        credit_status = credit_service.get_credit_state(self.user.id, 'foo/bar/baz')
+
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            credit_requirement_status
+        )
 
     def test_review_bad_code(self):
         """
@@ -296,6 +295,22 @@ class SoftwareSecureTests(TestCase):
         )
 
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            provider.on_review_callback(json.loads(test_payload))
+
+    def test_review_status_code(self):
+        """
+        Asserts raising of an exception if we get a report
+        with a reviewStatus which is unexpected
+        """
+
+        provider = get_backend_provider()
+        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+            attempt_code='not-here',
+            external_id='also-not-here'
+        )
+        test_payload = test_payload.replace('Clean', 'Unexpected')
+
+        with self.assertRaises(ProctoredExamBadReviewStatus):
             provider.on_review_callback(json.loads(test_payload))
 
     def test_review_mistmatched_tokens(self):

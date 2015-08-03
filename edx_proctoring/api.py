@@ -389,41 +389,57 @@ def stop_exam_attempt(exam_id, user_id):
     """
     Marks the exam attempt as completed (sets the completed_at field and updates the record)
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
-    if exam_attempt_obj is None:
-        raise StudentExamAttemptDoesNotExistsException('Error. Trying to stop an exam that does not exist.')
-    else:
-        exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
-        exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.completed
-        exam_attempt_obj.save()
-        return exam_attempt_obj.id
+    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.completed)
 
 
 def mark_exam_attempt_timeout(exam_id, user_id):
     """
     Marks the exam attempt as timed_out
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
-    if exam_attempt_obj is None:
-        raise StudentExamAttemptDoesNotExistsException('Error. Trying to time out an exam that does not exist.')
-    else:
-        exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.timed_out
-        exam_attempt_obj.save()
-        return exam_attempt_obj.id
+    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.timed_out)
 
 
 def mark_exam_attempt_as_ready(exam_id, user_id):
     """
     Marks the exam attemp as ready to start
     """
+    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_start)
+
+
+def update_attempt_status(exam_id, user_id, to_status):
+    """
+    Internal helper to handle state transitions of attempt status
+    """
 
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
-        raise StudentExamAttemptDoesNotExistsException('Error. Trying to time out an exam that does not exist.')
-    else:
-        exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.ready_to_start
-        exam_attempt_obj.save()
-        return exam_attempt_obj.id
+        raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
+
+    exam_attempt_obj.status = to_status
+    exam_attempt_obj.save()
+
+    # trigger workflow, as needed
+    credit_service = get_runtime_service('credit')
+
+    # see if the status transition this changes credit requirement status
+    update_credit = to_status in [
+        ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected,
+        ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.not_reviewed
+    ]
+
+    if update_credit:
+        exam = get_exam_by_id(exam_id)
+        verification = 'satisfied' if to_status == ProctoredExamStudentAttemptStatus.verified \
+            else 'failed'
+        credit_service.set_credit_requirement_status(
+            user_id=exam_attempt_obj.user_id,
+            course_key_or_id=exam['course_id'],
+            req_namespace='proctored_exam',
+            req_name='proctored_exam_id:{exam_id}'.format(exam_id=exam_id),
+            status=verification
+        )
+
+    return exam_attempt_obj.id
 
 
 def remove_exam_attempt(attempt_id):

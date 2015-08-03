@@ -28,6 +28,8 @@ from .utils import (
 from edx_proctoring.urls import urlpatterns
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
+from edx_proctoring.tests.test_services import MockCreditService
+from edx_proctoring.runtime import set_runtime_service
 
 
 class ProctoredExamsApiTests(LoggedInTestCase):
@@ -73,6 +75,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.user.is_staff = True
         self.user.save()
         self.client.login_user(self.user)
+        set_runtime_service('credit', MockCreditService())
 
     def test_create_exam(self):
         """

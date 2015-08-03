@@ -156,6 +156,9 @@ class ProctoredExamStudentAttemptStatus(object):
     # the student is eligible to decide if he/she wants to persue credit
     eligible = 'eligible'
 
+    # the student declined to take the exam as a proctored exam
+    declined = 'declined'
+
     # the attempt record has been created, but the exam has not yet
     # been started
     created = 'created'
@@ -182,6 +185,9 @@ class ProctoredExamStudentAttemptStatus(object):
 
     # the exam has been rejected
     rejected = 'rejected'
+
+    # the exam was not reviewed
+    not_reviewed = 'not_reviewed'
 
     # the exam is believed to be in error
     error = 'error'
