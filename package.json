@@ -5,14 +5,13 @@
     "url": "git://github.com/edx/edx-proctoring"
   },
   "devDependencies": {
-    "gulp": "latest",
-    "gulp-karma": "latest",
-    "karma": "latest",
-    "karma-chrome-launcher": "latest",
+    "gulp": "^3.9.0",
+    "gulp-karma": "0.0.1",
+    "karma": "^0.13.0",
+    "karma-chrome-launcher": "^0.2.0",
     "karma-coverage": "latest",
     "karma-firefox-launcher": "latest",
-    "karma-jasmine": "latest",
-    "karma-sinon": "latest",
-    "karma-spec-reporter": "latest"
+    "karma-jasmine": "^0.3.6",
+    "karma-sinon": "latest"
   }
 }
