@@ -20,7 +20,6 @@ module.exports = function(config) {
         'karma-jasmine',
         'karma-jasmine-jquery',
         'karma-firefox-launcher',
-        'karma-phantomjs-launcher',
         'karma-chrome-launcher',
         'karma-coverage',
         'karma-sinon'

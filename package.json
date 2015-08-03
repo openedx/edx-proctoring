@@ -12,8 +12,6 @@
     "karma-coverage": "latest",
     "karma-firefox-launcher": "latest",
     "karma-jasmine": "latest",
-    "karma-jasmine-jquery": "latest",
-    "karma-phantomjs-launcher": "latest",
     "karma-sinon": "latest",
     "karma-spec-reporter": "latest"
   }
