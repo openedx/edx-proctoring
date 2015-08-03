@@ -530,6 +530,33 @@ def get_active_exams_for_user(user_id, course_id=None):
     return result
 
 
+def _check_credit_eligibility(credit_state):
+    """
+    Inspects the credit_state payload which
+    reflects status of all credit requirements
+    and returns True if all pre-requisites have
+    been passed and False if otherwise
+    """
+
+    # Allow only the verified students to take the exam as a proctored exam
+    # Also make an exception for the honor students to take the "practice exam" as a proctored exam.
+    # For the rest of the enrollment modes, None is returned which shows the exam content
+    # to the student rather than the proctoring prompt.
+    if credit_state['enrollment_mode'] != 'verified':
+        return False
+
+    # also, if there are in-course reverifications requirements
+    # then make sure those has a 'satisfied' status
+
+    for requirement in credit_state['credit_requirement_status']:
+        if requirement['namespace'] == 'reverification':
+            if requirement['status'] != 'satisfied':
+                return False
+
+    # passed everything, so we can return True
+    return True
+
+
 def get_student_view(user_id, course_id, content_id,
                      context, user_role='student'):
     """
@@ -572,20 +599,21 @@ def get_student_view(user_id, course_id, content_id,
     is_proctored = exam['is_proctored']
 
     # see if only 'verified' track students should see this *except* if it is a practice exam
-    check_mode = (
+    check_mode_and_eligibility = (
         settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
         'credit_state' in context and
         context['credit_state'] and not
         exam['is_practice_exam']
     )
 
-    if check_mode:
-        # Allow only the verified students to take the exam as a proctored exam
-        # Also make an exception for the honor students to take the "practice exam" as a proctored exam.
-        # For the rest of the enrollment modes, None is returned which shows the exam content
-        # to the student rather than the proctoring prompt.
+    if check_mode_and_eligibility:
+        credit_state = context['credit_state']
 
-        if context['credit_state']['enrollment_mode'] != 'verified':
+        # see if the user has passed all pre-requisite credit eligibility
+        # checks, otherwise just show the user the exam unproctored
+        if not _check_credit_eligibility(credit_state):
+            # Nope, has not fulfilled pre-requisites, thus we
+            # just show the unproctored version
             return None
 
     attempt = get_exam_attempt(exam_id, user_id)

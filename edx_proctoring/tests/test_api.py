@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+
 """
 All tests for the models.py
 """
@@ -627,6 +629,108 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIsNone(rendered_response)
+
+    def test_prerequirements_view(self):
+        """
+        This test asserts that proctoring will not be displayed under the following
+        conditions:
+
+        - Verified student has not completed all 'reverification' requirements
+        """
+
+        # user hasn't attempted reverifications
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'credit_state': {
+                    'enrollment_mode': 'verified',
+                    'credit_requirement_status': [
+                        {
+                            'namespace': 'reverification',
+                            'status': None,
+                        }
+                    ]
+                },
+                'is_practice_exam': False
+            }
+        )
+        self.assertIsNone(rendered_response)
+
+        # user failed reverifications
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'credit_state': {
+                    'enrollment_mode': 'verified',
+                    'credit_requirement_status': [
+                        {
+                            'namespace': 'reverification',
+                            'status': 'failed',
+                        }
+                    ]
+                },
+                'is_practice_exam': False
+            }
+        )
+        self.assertIsNone(rendered_response)
+
+        # user passed reverifications
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'credit_state': {
+                    'enrollment_mode': 'verified',
+                    'credit_requirement_status': [
+                        {
+                            'namespace': 'reverification',
+                            'status': 'satisfied',
+                        }
+                    ]
+                },
+                'is_practice_exam': False
+            }
+        )
+        # here, we should get proctoring content
+        self.assertIsNotNone(rendered_response)
+
+        # user doesn't have pre-requisites on reverification
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'credit_state': {
+                    'enrollment_mode': 'verified',
+                    'credit_requirement_status': [
+                        {
+                            'namespace': 'grade',
+                            'status': 'failed',
+                        }
+                    ]
+                },
+                'is_practice_exam': False
+            }
+        )
+        # here, we should get proctoring content
+        self.assertIsNotNone(rendered_response)
 
     def test_student_view_non_student(self):
         """
