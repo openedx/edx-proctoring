@@ -69,3 +69,9 @@ class ProctoredExamReviewAlreadyExists(ProctoredBaseException):
     Raised when a lookup on the student attempt table does not fully match
     all expected security keys
     """
+
+
+class ProctoredExamBadReviewStatus(ProctoredBaseException):
+    """
+    Raised if we get an unexpected status back from the Proctoring attempt review status
+    """

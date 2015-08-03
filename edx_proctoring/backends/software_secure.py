@@ -18,13 +18,15 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptDoesNotExistsException,
     ProctoredExamSuspiciousLookup,
     ProctoredExamReviewAlreadyExists,
+    ProctoredExamBadReviewStatus,
 )
 
 from edx_proctoring. models import (
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureComment,
     ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptHistory
+    ProctoredExamStudentAttemptHistory,
+    ProctoredExamStudentAttemptStatus,
 )
 
 log = logging.getLogger(__name__)
@@ -130,6 +132,20 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # what we consider the attempt_code is SoftwareSecure's 'examCode'
         attempt_code = payload['examMetaData']['examCode']
 
+        # get the SoftwareSecure status on this attempt
+        review_status = payload['reviewStatus']
+
+        bad_status = review_status not in [
+            'Not Reviewed', 'Suspicious', 'Rules Violation', 'Clean'
+        ]
+
+        if bad_status:
+            err_msg = (
+                'Received unexpected reviewStatus field calue from payload. '
+                'Was {review_status}.'.format(review_status=review_status)
+            )
+            raise ProctoredExamBadReviewStatus(err_msg)
+
         # do a lookup on the attempt by examCode, and compare the
         # passed in ssiRecordLocator and make sure it matches
         # what we recorded as the external_id. We need to look in both
@@ -137,9 +153,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
 
+        is_archived_attempt = False
         if not attempt_obj:
             # try archive table
             attempt_obj = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
+            is_archived_attempt = True
 
             if not attempt_obj:
                 # still can't find, error out
@@ -195,6 +213,28 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         for comment in payload.get('desktopComments', []):
             self._save_review_comment(review, comment)
+
+        # we could have gottent a review for an archived attempt
+        # this should *not* cause an update in our credit
+        # eligibility table
+        if not is_archived_attempt:
+            # update our attempt status, note we have to import api.py here because
+            # api.py imports software_secure.py, so we'll get an import circular reference
+
+            from edx_proctoring.api import update_attempt_status
+
+            # only 'Clean' and 'Rules Violation' could as passing
+            status = (
+                ProctoredExamStudentAttemptStatus.verified
+                if review_status in ['Clean', 'Suspicious']
+                else ProctoredExamStudentAttemptStatus.rejected
+            )
+
+            update_attempt_status(
+                attempt_obj.proctored_exam_id,
+                attempt_obj.user_id,
+                status
+            )
 
     def _save_review_comment(self, review, comment):
         """
