@@ -29,7 +29,7 @@ from edx_proctoring.urls import urlpatterns
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
 from edx_proctoring.tests.test_services import MockCreditService
-from edx_proctoring.runtime import set_runtime_service
+from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 
 class ProctoredExamsApiTests(LoggedInTestCase):
@@ -42,6 +42,7 @@ class ProctoredExamsApiTests(LoggedInTestCase):
         Build out test harnessing
         """
         super(ProctoredExamsApiTests, self).setUp()
+        set_runtime_service('credit', MockCreditService())
 
     def test_no_anonymous_access(self):
         """
@@ -949,6 +950,42 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring.proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_declined_attempt(self):
+        """
+        Makes sure that a declined proctored attempt means that he/she fails credit requirement.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            is_proctored=True,
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'start_clock': False,
+            'attempt_proctored': False
+        }
+        # create a exam attempt
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # make sure we failed the requirement status
+
+        credit_service = get_runtime_service('credit')
+        credit_status = credit_service.get_credit_state(self.user.id, proctored_exam.course_id)
+
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            'failed'
+        )
 
     def test_exam_callback(self):
         """
