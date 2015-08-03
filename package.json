@@ -1,0 +1,20 @@
+{
+  "name": "edx-proctoring",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/edx/edx-proctoring"
+  },
+  "devDependencies": {
+    "gulp": "latest",
+    "gulp-karma": "latest",
+    "karma": "latest",
+    "karma-chrome-launcher": "latest",
+    "karma-coverage": "latest",
+    "karma-firefox-launcher": "latest",
+    "karma-jasmine": "latest",
+    "karma-jasmine-jquery": "latest",
+    "karma-phantomjs-launcher": "latest",
+    "karma-sinon": "latest",
+    "karma-spec-reporter": "latest"
+  }
+}

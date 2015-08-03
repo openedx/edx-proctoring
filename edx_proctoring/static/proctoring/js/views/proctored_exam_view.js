@@ -95,6 +95,9 @@ var edx = edx || {};
             }
             return this;
         },
+        reloadPage: function () {
+          location.reload();
+        },
         unloadMessage: function  () {
             return gettext("Are you sure you want to leave this page? \n" +
                 "To pass your proctored exam you must submit your \n" +
@@ -122,7 +125,7 @@ var edx = edx || {};
                 clearInterval(self.timerId); // stop the timer once the time finishes.
                 $(window).unbind('beforeunload', this.unloadMessage);
                 // refresh the page when the timer expired
-                location.reload();
+                this.reloadPage()
             }
         }
     });
