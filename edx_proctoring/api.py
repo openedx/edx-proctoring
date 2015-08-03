@@ -424,13 +424,18 @@ def update_attempt_status(exam_id, user_id, to_status):
     # see if the status transition this changes credit requirement status
     update_credit = to_status in [
         ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected,
-        ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.not_reviewed
+        ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.not_reviewed,
+        ProctoredExamStudentAttemptStatus.submitted
     ]
 
     if update_credit:
         exam = get_exam_by_id(exam_id)
-        verification = 'satisfied' if to_status == ProctoredExamStudentAttemptStatus.verified \
-            else 'failed'
+        if to_status == ProctoredExamStudentAttemptStatus.verified:
+            verification = 'satisfied'
+        elif to_status == ProctoredExamStudentAttemptStatus.submitted:
+            verification = 'submitted'
+        else:
+            verification = 'failed'
         credit_service.set_credit_requirement_status(
             user_id=exam_attempt_obj.user_id,
             course_key_or_id=exam['course_id'],
