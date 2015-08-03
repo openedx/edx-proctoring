@@ -633,8 +633,13 @@ def get_student_view(user_id, course_id, content_id,
             return None
 
     attempt = get_exam_attempt(exam_id, user_id)
-    has_started_exam = attempt and attempt.get('started_at')
 
+    # if user has declined the attempt, then we don't show the
+    # proctored exam
+    if attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.declined:
+        return None
+
+    has_started_exam = attempt and attempt.get('started_at')
     if has_started_exam:
         if attempt.get('status') == 'error':
             student_view_template = 'proctoring/seq_proctored_exam_error.html'

@@ -30,7 +30,8 @@ from edx_proctoring.api import (
     get_all_exam_attempts,
     remove_exam_attempt,
     get_filtered_exam_attempts,
-    update_exam_attempt
+    update_exam_attempt,
+    update_attempt_status
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
@@ -40,6 +41,7 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptDoesNotExistsException,
 )
 from edx_proctoring.serializers import ProctoredExamSerializer
+from edx_proctoring.models import ProctoredExamStudentAttemptStatus
 
 from .utils import AuthenticatedAPIView
 
@@ -528,7 +530,17 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 taking_as_proctored=attempt_proctored
             )
 
-            if start_immediately:
+            exam = get_exam_by_id(exam_id)
+
+            # if use elected not to take as proctored exam, then
+            # use must take as open book, and loose credit eligibility
+            if exam['is_proctored'] and not attempt_proctored:
+                update_attempt_status(
+                    exam_id,
+                    request.user.id,
+                    ProctoredExamStudentAttemptStatus.declined
+                )
+            elif start_immediately:
                 start_exam_attempt(exam_id, request.user.id)
 
             return Response({'exam_attempt_id': exam_attempt_id})

@@ -788,6 +788,26 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.chose_proctored_exam_msg % self.exam_name, rendered_response)
 
+    def test_declined_attempt(self):
+        """
+        Make sure that a declined attempt does not show proctoring
+        """
+        attempt_obj = self._create_unstarted_exam_attempt()
+        attempt_obj.status = ProctoredExamStudentAttemptStatus.declined
+        attempt_obj.save()
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIsNone(rendered_response)
+
     def test_get_studentview_started_exam(self):  # pylint: disable=invalid-name
         """
         Test for get_student_view proctored exam which has started.
