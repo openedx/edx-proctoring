@@ -31,6 +31,7 @@ from edx_proctoring.api import (
     is_feature_enabled,
     mark_exam_attempt_timeout,
     mark_exam_attempt_as_ready,
+    update_attempt_status,
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -50,6 +51,9 @@ from edx_proctoring.models import (
 from .utils import (
     LoggedInTestCase,
 )
+
+from edx_proctoring.tests.test_services import MockCreditService
+from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 
 class ProctoredExamApiTests(LoggedInTestCase):
@@ -91,6 +95,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.timed_exam_completed_msg = 'This is the end of your timed exam'
         self.start_a_practice_exam_msg = 'Would you like to take %s as a practice proctored exam?'
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
+
+        set_runtime_service('credit', MockCreditService())
 
     def _create_proctored_exam(self):
         """
@@ -1030,3 +1036,24 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIn(self.timed_exam_completed_msg, rendered_response)
+
+    def test_submitted_credit_state(self):
+        """
+        Verify that putting an attempt into the submitted state will also mark
+        the credit requirement as submitted
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.submitted
+        )
+
+        credit_service = get_runtime_service('credit')
+        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
+
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            'submitted'
+        )

@@ -168,7 +168,7 @@ def remove_allowance_for_user(exam_id, user_id, key):
         student_allowance.delete()
 
 
-def _update_exam_attempt_status(attempt):
+def _check_for_attempt_timeout(attempt):
     """
     Helper method to see if the status of an
     exam needs to be updated, e.g. timeout
@@ -190,10 +190,12 @@ def _update_exam_attempt_status(attempt):
         has_time_expired = now_utc > expires_at
 
         if has_time_expired:
-            exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt['id'])
-            exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.timed_out
-            exam_attempt_obj.save()
-            attempt = ProctoredExamStudentAttemptSerializer(exam_attempt_obj).data
+            update_attempt_status(
+                attempt['proctored_exam']['id'],
+                attempt['user']['id'],
+                ProctoredExamStudentAttemptStatus.timed_out
+            )
+            attempt = get_exam_attempt_by_id(attempt['id'])
 
     return attempt
 
@@ -204,7 +206,7 @@ def _get_exam_attempt(exam_attempt_obj):
     """
     serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
     attempt = serialized_attempt_obj.data if exam_attempt_obj else None
-    attempt = _update_exam_attempt_status(attempt)
+    attempt = _check_for_attempt_timeout(attempt)
 
     return attempt
 
@@ -424,13 +426,18 @@ def update_attempt_status(exam_id, user_id, to_status):
     # see if the status transition this changes credit requirement status
     update_credit = to_status in [
         ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected,
-        ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.not_reviewed
+        ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.not_reviewed,
+        ProctoredExamStudentAttemptStatus.submitted
     ]
 
     if update_credit:
         exam = get_exam_by_id(exam_id)
-        verification = 'satisfied' if to_status == ProctoredExamStudentAttemptStatus.verified \
-            else 'failed'
+        if to_status == ProctoredExamStudentAttemptStatus.verified:
+            verification = 'satisfied'
+        elif to_status == ProctoredExamStudentAttemptStatus.submitted:
+            verification = 'submitted'
+        else:
+            verification = 'failed'
         credit_service.set_credit_requirement_status(
             user_id=exam_attempt_obj.user_id,
             course_key_or_id=exam['course_id'],
