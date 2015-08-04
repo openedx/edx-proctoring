@@ -346,6 +346,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             return Response({"exam_attempt_id": exam_attempt_id})
 
         except ProctoredBaseException, ex:
+            LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": str(ex)}

@@ -374,7 +374,7 @@ def _start_exam_attempt(existing_attempt):
     Helper method
     """
 
-    if existing_attempt.started_at:
+    if existing_attempt.started_at and existing_attempt.status == ProctoredExamStudentAttemptStatus.started:
         # cannot restart an attempt
         err_msg = (
             'Cannot start exam attempt for exam_id = {exam_id} '
@@ -488,7 +488,13 @@ def update_attempt_status(exam_id, user_id, to_status):
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()
 
-    if to_status == ProctoredExamStudentAttemptStatus.started:
+    # if we have transitioned to started and haven't set our
+    # started_at timestamp, do so now
+    add_start_time = (
+        to_status == ProctoredExamStudentAttemptStatus.started and
+        not exam_attempt_obj.started_at
+    )
+    if add_start_time:
         exam_attempt_obj.started_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()
 
@@ -692,10 +698,11 @@ def get_student_view(user_id, course_id, content_id,
     if attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.declined:
         return None
 
+    does_time_remain = False
     has_started_exam = attempt and attempt.get('started_at')
     if has_started_exam:
-        if attempt.get('status') == 'error':
-            student_view_template = 'proctoring/seq_proctored_exam_error.html'
+        expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
+        does_time_remain = datetime.now(pytz.UTC) < expires_at
 
     if not has_started_exam:
         # determine whether to show a timed exam only entrance screen
@@ -716,6 +723,8 @@ def get_student_view(user_id, course_id, content_id,
                 })
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
+        student_view_template = 'proctoring/seq_proctored_exam_error.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
         student_view_template = 'proctoring/seq_timed_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
@@ -752,11 +761,16 @@ def get_student_view(user_id, course_id, content_id,
             'exam_id': exam_id,
             'progress_page_url': progress_page_url,
             'is_sample_attempt': attempt['is_sample_attempt'] if attempt else False,
+            'does_time_remain': does_time_remain,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
             'exam_started_poll_url': reverse(
                 'edx_proctoring.proctored_exam.attempt',
                 args=[attempt['id']]
-            ) if attempt else ''
+            ) if attempt else '',
+            'change_state_url': reverse(
+                'edx_proctoring.proctored_exam.attempt',
+                args=[attempt['id']]
+            ) if attempt else '',
         })
         return template.render(django_context)
 

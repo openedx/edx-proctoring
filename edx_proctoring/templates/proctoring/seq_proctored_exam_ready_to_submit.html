@@ -11,17 +11,21 @@
       Your worked will then be graded and your proctored session will be reviewed separately.
     {% endblocktrans %}
   </p>
-  <button type="button" name="submit-proctored-exam" class="exam-action-button" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{data-change-state-url}}">
-    {% blocktrans %}
-      I'm ready! Submit my answers and end my proctored exam.
-    {% endblocktrans %}
-  </button>
-  {% if does_time_remain %}
-    <button type="button" name="goback-proctored-exam" class="exam-action-button" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{data-change-state-url}}">
+  <div>
+    <button type="button" name="submit-proctored-exam" class="exam-action-button" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
       {% blocktrans %}
-        No, I am not ready! I'd like to continue my work.
+        I'm ready! Submit my answers and end my proctored exam.
       {% endblocktrans %}
     </button>
+  </div>
+  {% if does_time_remain %}
+    <div>
+      <button type="button" name="goback-proctored-exam" class="exam-action-button" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+        {% blocktrans %}
+          No, I am not ready! I'd like to continue my work.
+        {% endblocktrans %}
+      </button>
+    </div>
   {% endif %}
 </div>
 <div class="footer-sequence border-b-0 padding-b-0">
@@ -37,13 +41,13 @@
 <script type="text/javascript">
   $('.exam-action-button').click(
     function(event) {
-      var action_url = $(this).data('data-change-state-url');
+      var action_url = $(this).data('change-state-url');
       var exam_id = $(this).data('exam-id');
-      var action = $(this).data('data-action')
+      var action = $(this).data('action')
 
       // Update the state of the attempt
       $.ajax({
-        url: url,
+        url: action_url,
         type: 'PUT',
         data: {
           action: action
