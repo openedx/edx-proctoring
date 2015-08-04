@@ -507,7 +507,6 @@ def remove_exam_attempt(attempt_id):
     """
 
     existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
-
     if not existing_attempt:
         err_msg = (
             'Cannot remove attempt for attempt_id = {attempt_id} '
@@ -516,7 +515,13 @@ def remove_exam_attempt(attempt_id):
 
         raise StudentExamAttemptDoesNotExistsException(err_msg)
 
+    username = existing_attempt.user.username
+    course_id = existing_attempt.proctored_exam.course_id
+    content_id = existing_attempt.proctored_exam.content_id
     existing_attempt.delete_exam_attempt()
+    courseware_service = get_runtime_service('courseware')
+    if courseware_service:
+        courseware_service.delete_student_attempt(username, course_id, content_id)
 
 
 def get_all_exams_for_course(course_id):

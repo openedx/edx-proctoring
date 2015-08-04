@@ -54,7 +54,10 @@ from .utils import (
     LoggedInTestCase,
 )
 
-from edx_proctoring.tests.test_services import MockCreditService
+from edx_proctoring.tests.test_services import (
+    MockCreditService,
+    MockCoursewareService,
+)
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 
@@ -100,6 +103,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
 
         set_runtime_service('credit', MockCreditService())
+        set_runtime_service('courseware', MockCoursewareService())
 
     def _create_proctored_exam(self):
         """

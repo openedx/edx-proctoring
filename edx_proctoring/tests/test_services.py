@@ -60,6 +60,17 @@ class MockCreditService(object):
             found[0]['status'] = status
 
 
+class MockCoursewareService(object):
+    """
+    Simple mock of the Courseware Service
+    """
+    def delete_student_attempt(self, student_identifier, course_id, content_id):  # pylint: disable=unused-argument
+        """
+        Mock implementation
+        """
+        return True
+
+
 class TestProctoringService(unittest.TestCase):
     """
     Tests for ProctoringService
