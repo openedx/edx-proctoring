@@ -75,3 +75,9 @@ class ProctoredExamBadReviewStatus(ProctoredBaseException):
     """
     Raised if we get an unexpected status back from the Proctoring attempt review status
     """
+
+
+class ProctoredExamIllegalStatusTransition(ProctoredBaseException):
+    """
+    Raised if a state transition is not allowed, e.g. going from submitted to started
+    """

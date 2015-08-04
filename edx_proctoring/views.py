@@ -30,7 +30,6 @@ from edx_proctoring.api import (
     get_all_exam_attempts,
     remove_exam_attempt,
     get_filtered_exam_attempts,
-    update_exam_attempt,
     update_attempt_status
 )
 from edx_proctoring.exceptions import (
@@ -283,7 +282,11 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             if last_poll_timestamp is not None \
                     and (datetime.now(pytz.UTC) - last_poll_timestamp).total_seconds() > SOFTWARE_SECURE_CLIENT_TIMEOUT:
                 attempt['status'] = 'error'
-                update_exam_attempt(attempt_id, status='error')
+                update_attempt_status(
+                    attempt['proctored_exam']['id'],
+                    attempt['user']['id'],
+                    ProctoredExamStudentAttemptStatus.error
+                )
 
             return Response(
                 data=attempt,
@@ -334,9 +337,16 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                     exam_id=attempt['proctored_exam']['id'],
                     user_id=request.user.id
                 )
+            elif action == 'submit':
+                exam_attempt_id = update_attempt_status(
+                    attempt['proctored_exam']['id'],
+                    request.user.id,
+                    ProctoredExamStudentAttemptStatus.submitted
+                )
             return Response({"exam_attempt_id": exam_attempt_id})
 
         except ProctoredBaseException, ex:
+            LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": str(ex)}

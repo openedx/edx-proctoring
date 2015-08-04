@@ -18,6 +18,7 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptAlreadyExistsException,
     StudentExamAttemptDoesNotExistsException,
     StudentExamAttemptedAlreadyStarted,
+    ProctoredExamIllegalStatusTransition,
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -373,7 +374,7 @@ def _start_exam_attempt(existing_attempt):
     Helper method
     """
 
-    if existing_attempt.started_at:
+    if existing_attempt.started_at and existing_attempt.status == ProctoredExamStudentAttemptStatus.started:
         # cannot restart an attempt
         err_msg = (
             'Cannot start exam attempt for exam_id = {exam_id} '
@@ -382,7 +383,11 @@ def _start_exam_attempt(existing_attempt):
 
         raise StudentExamAttemptedAlreadyStarted(err_msg)
 
-    existing_attempt.start_exam_attempt()
+    update_attempt_status(
+        existing_attempt.proctored_exam_id,
+        existing_attempt.user_id,
+        ProctoredExamStudentAttemptStatus.started
+    )
 
     return existing_attempt.id
 
@@ -391,7 +396,7 @@ def stop_exam_attempt(exam_id, user_id):
     """
     Marks the exam attempt as completed (sets the completed_at field and updates the record)
     """
-    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.completed)
+    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_submit)
 
 
 def mark_exam_attempt_timeout(exam_id, user_id):
@@ -417,6 +422,37 @@ def update_attempt_status(exam_id, user_id, to_status):
     if exam_attempt_obj is None:
         raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
 
+    #
+    # don't allow state transitions from a completed state to an incomplete state
+    # if a re-attempt is desired then the current attempt must be deleted
+    #
+    in_completed_status = exam_attempt_obj.status in [
+        ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected,
+        ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.not_reviewed,
+        ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error,
+        ProctoredExamStudentAttemptStatus.timed_out
+    ]
+
+    to_incompleted_status = to_status in [
+        ProctoredExamStudentAttemptStatus.eligible, ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.ready_to_start, ProctoredExamStudentAttemptStatus.started,
+        ProctoredExamStudentAttemptStatus.ready_to_submit
+    ]
+
+    if in_completed_status and to_incompleted_status:
+        err_msg = (
+            'A status transition from {from_status} to {to_status} was attempted '
+            'on exam_id {exam_id} for user_id {user_id}. This is not '
+            'allowed!'.format(
+                from_status=exam_attempt_obj.status,
+                to_status=to_status,
+                exam_id=exam_id,
+                user_id=user_id
+            )
+        )
+        raise ProctoredExamIllegalStatusTransition(err_msg)
+
+    # OK, state transition is fine, we can proceed
     exam_attempt_obj.status = to_status
     exam_attempt_obj.save()
 
@@ -427,7 +463,7 @@ def update_attempt_status(exam_id, user_id, to_status):
     update_credit = to_status in [
         ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected,
         ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.not_reviewed,
-        ProctoredExamStudentAttemptStatus.submitted
+        ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error
     ]
 
     if update_credit:
@@ -445,6 +481,22 @@ def update_attempt_status(exam_id, user_id, to_status):
             req_name='proctored_exam_id:{exam_id}'.format(exam_id=exam_id),
             status=verification
         )
+
+    if to_status == ProctoredExamStudentAttemptStatus.submitted:
+        # also mark the exam attempt completed_at timestamp
+        # after we submit the attempt
+        exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
+        exam_attempt_obj.save()
+
+    # if we have transitioned to started and haven't set our
+    # started_at timestamp, do so now
+    add_start_time = (
+        to_status == ProctoredExamStudentAttemptStatus.started and
+        not exam_attempt_obj.started_at
+    )
+    if add_start_time:
+        exam_attempt_obj.started_at = datetime.now(pytz.UTC)
+        exam_attempt_obj.save()
 
     return exam_attempt_obj.id
 
@@ -646,10 +698,11 @@ def get_student_view(user_id, course_id, content_id,
     if attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.declined:
         return None
 
+    does_time_remain = False
     has_started_exam = attempt and attempt.get('started_at')
     if has_started_exam:
-        if attempt.get('status') == 'error':
-            student_view_template = 'proctoring/seq_proctored_exam_error.html'
+        expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
+        does_time_remain = datetime.now(pytz.UTC) < expires_at
 
     if not has_started_exam:
         # determine whether to show a timed exam only entrance screen
@@ -670,6 +723,8 @@ def get_student_view(user_id, course_id, content_id,
                 })
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
+        student_view_template = 'proctoring/seq_proctored_exam_error.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
         student_view_template = 'proctoring/seq_timed_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
@@ -681,11 +736,11 @@ def get_student_view(user_id, course_id, content_id,
         student_view_template = 'proctoring/seq_proctored_exam_verified.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
         student_view_template = 'proctoring/seq_proctored_exam_rejected.html'
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.completed:
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
         if is_proctored:
-            student_view_template = 'proctoring/seq_proctored_exam_completed.html'
+            student_view_template = 'proctoring/seq_proctored_exam_ready_to_submit.html'
         else:
-            student_view_template = 'proctoring/seq_timed_exam_completed.html'
+            student_view_template = 'proctoring/seq_timed_exam_ready_to_submit.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -706,11 +761,16 @@ def get_student_view(user_id, course_id, content_id,
             'exam_id': exam_id,
             'progress_page_url': progress_page_url,
             'is_sample_attempt': attempt['is_sample_attempt'] if attempt else False,
+            'does_time_remain': does_time_remain,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
             'exam_started_poll_url': reverse(
                 'edx_proctoring.proctored_exam.attempt',
                 args=[attempt['id']]
-            ) if attempt else ''
+            ) if attempt else '',
+            'change_state_url': reverse(
+                'edx_proctoring.proctored_exam.attempt',
+                args=[attempt['id']]
+            ) if attempt else '',
         })
         return template.render(django_context)
 
