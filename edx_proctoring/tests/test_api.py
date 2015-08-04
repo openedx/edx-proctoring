@@ -3,6 +3,7 @@
 """
 All tests for the models.py
 """
+import ddt
 from datetime import datetime, timedelta
 from mock import patch
 import pytz
@@ -39,7 +40,8 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptAlreadyExistsException,
     StudentExamAttemptDoesNotExistsException,
     StudentExamAttemptedAlreadyStarted,
-    UserNotFoundException
+    UserNotFoundException,
+    ProctoredExamIllegalStatusTransition
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -56,6 +58,7 @@ from edx_proctoring.tests.test_services import MockCreditService
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 
+@ddt.ddt
 class ProctoredExamApiTests(LoggedInTestCase):
     """
     All tests for the models.py
@@ -497,8 +500,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Test to get the all the active
         exams for the user.
         """
-        active_exam_attempt = self._create_started_exam_attempt()
-        self.assertEqual(active_exam_attempt.is_active, True)
+        self._create_started_exam_attempt()
         exam_id = create_exam(
             course_id=self.course_id,
             content_id='test_content_2',
@@ -938,7 +940,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Test for get_student_view proctored exam which has been completed.
         """
         exam_attempt = self._create_started_exam_attempt()
-        exam_attempt.status = "completed"
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.ready_to_submit
         exam_attempt.save()
 
         rendered_response = get_student_view(
@@ -1022,7 +1024,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Test for get_student_view timed exam which has completed.
         """
         exam_attempt = self._create_started_exam_attempt(is_proctored=False)
-        exam_attempt.status = "completed"
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.ready_to_submit
         exam_attempt.save()
 
         rendered_response = get_student_view(
@@ -1057,3 +1059,55 @@ class ProctoredExamApiTests(LoggedInTestCase):
             credit_status['credit_requirement_status'][0]['status'],
             'submitted'
         )
+
+    def test_error_credit_state(self):
+        """
+        Verify that putting an attempt into the error state will also mark
+        the credit requirement as failed
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.error
+        )
+
+        credit_service = get_runtime_service('credit')
+        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
+
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            'failed'
+        )
+
+    @ddt.data(
+        (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
+        (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.created),
+        (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.ready_to_start),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started),
+        (ProctoredExamStudentAttemptStatus.not_reviewed, ProctoredExamStudentAttemptStatus.started),
+        (ProctoredExamStudentAttemptStatus.error, ProctoredExamStudentAttemptStatus.started),
+    )
+    @ddt.unpack
+    def test_illegal_status_transition(self, from_status, to_status):
+        """
+        Verify that we cannot reset backwards an attempt status
+        once it is in a completed state
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            from_status
+        )
+
+        with self.assertRaises(ProctoredExamIllegalStatusTransition):
+            print '*** from = {}  to {}'.format(from_status, to_status)
+            update_attempt_status(
+                exam_attempt.proctored_exam_id,
+                self.user.id,
+                to_status
+            )

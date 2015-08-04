@@ -13,7 +13,12 @@ from django.test.client import Client
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib.auth.models import User
 
-from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAttemptStatus,
+)
 from edx_proctoring.views import require_staff
 from edx_proctoring.api import (
     create_exam,
@@ -705,6 +710,67 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+    def test_submit_exam_attempt(self):
+        """
+        Tries to submit an exam
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+        old_attempt_id = response_data['exam_attempt_id']
+
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            {
+                'action': 'submit',
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+        attempt = get_exam_attempt_by_id(response_data['exam_attempt_id'])
+
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.submitted)
+
+        # we should not be able to restart it
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            {
+                'action': 'start',
+            }
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            {
+                'action': 'stop',
+            }
+        )
+
+        self.assertEqual(response.status_code, 400)
 
     def test_get_exam_attempts(self):
         """

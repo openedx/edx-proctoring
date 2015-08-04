@@ -1,0 +1,58 @@
+{% load i18n %}
+<div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      This is the end of your proctored exam
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% blocktrans %}
+      Make sure your responses and work are ready to be submitted. Once they are, you may end the exam below.
+      Your worked will then be graded and your proctored session will be reviewed separately.
+    {% endblocktrans %}
+  </p>
+  <button type="button" name="submit-proctored-exam" class="exam-action-button" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{data-change-state-url}}">
+    {% blocktrans %}
+      I'm ready! Submit my answers and end my proctored exam.
+    {% endblocktrans %}
+  </button>
+  {% if does_time_remain %}
+    <button type="button" name="goback-proctored-exam" class="exam-action-button" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{data-change-state-url}}">
+      {% blocktrans %}
+        No, I am not ready! I'd like to continue my work.
+      {% endblocktrans %}
+    </button>
+  {% endif %}
+</div>
+<div class="footer-sequence border-b-0 padding-b-0">
+  <span> {% trans "What happens next ?" %} </span>
+    <p>
+    {% blocktrans %}
+        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+        Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+    {% endblocktrans %}
+  </p>
+</div>
+<script type="text/javascript">
+  $('.exam-action-button').click(
+    function(event) {
+      var action_url = $(this).data('data-change-state-url');
+      var exam_id = $(this).data('exam-id');
+      var action = $(this).data('data-action')
+
+      // Update the state of the attempt
+      $.ajax({
+        url: url,
+        type: 'PUT',
+        data: {
+          action: action
+        },
+        success: function() {
+          // Reloading page will reflect the new state of the attempt
+          location.reload()
+        }
+      });
+    }
+  );
+</script>

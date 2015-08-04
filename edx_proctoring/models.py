@@ -1,8 +1,6 @@
 """
 Data models for the proctoring subsystem
 """
-import pytz
-from datetime import datetime
 from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
@@ -80,6 +78,60 @@ class ProctoredExam(TimeStampedModel):
         return cls.objects.filter(course_id=course_id)
 
 
+class ProctoredExamStudentAttemptStatus(object):
+    """
+    A class to enumerate the various status that an attempt can have
+
+    IMPORTANT: Since these values are stored in a database, they are system
+    constants and should not be language translated, since translations
+    might change over time.
+    """
+
+    # the student is eligible to decide if he/she wants to persue credit
+    eligible = 'eligible'
+
+    # the attempt record has been created, but the exam has not yet
+    # been started
+    created = 'created'
+
+    # the attempt is ready to start but requires
+    # user to acknowledge that he/she wants to start the exam
+    ready_to_start = 'ready_to_start'
+
+    # the student has started the exam and is
+    # in the process of completing the exam
+    started = 'started'
+
+    # the student has completed the exam
+    ready_to_submit = 'ready_to_submit'
+
+    #
+    # The follow statuses below are considered in a 'completed' state
+    # and we will not allow transitions to status above this mark
+    #
+
+    # the student declined to take the exam as a proctored exam
+    declined = 'declined'
+
+    # the exam has timed out
+    timed_out = 'timed_out'
+
+    # the student has submitted the exam for proctoring review
+    submitted = 'submitted'
+
+    # the exam has been verified and approved
+    verified = 'verified'
+
+    # the exam has been rejected
+    rejected = 'rejected'
+
+    # the exam was not reviewed
+    not_reviewed = 'not_reviewed'
+
+    # the exam is believed to be in error
+    error = 'error'
+
+
 class ProctoredExamStudentAttemptManager(models.Manager):
     """
     Custom manager
@@ -137,60 +189,11 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         """
         Returns the active student exams (user in-progress exams)
         """
-        filtered_query = Q(user_id=user_id) & Q(started_at__isnull=False) & Q(completed_at__isnull=True)
+        filtered_query = Q(user_id=user_id) & Q(status=ProctoredExamStudentAttemptStatus.started)
         if course_id is not None:
             filtered_query = filtered_query & Q(proctored_exam__course_id=course_id)
 
         return self.filter(filtered_query).order_by('-created')
-
-
-class ProctoredExamStudentAttemptStatus(object):
-    """
-    A class to enumerate the various status that an attempt can have
-
-    IMPORTANT: Since these values are stored in a database, they are system
-    constants and should not be language translated, since translations
-    might change over time.
-    """
-
-    # the student is eligible to decide if he/she wants to persue credit
-    eligible = 'eligible'
-
-    # the student declined to take the exam as a proctored exam
-    declined = 'declined'
-
-    # the attempt record has been created, but the exam has not yet
-    # been started
-    created = 'created'
-
-    # the attempt is ready to start but requires
-    # user to acknowledge that he/she wants to start the exam
-    ready_to_start = 'ready_to_start'
-
-    # the student has started the exam and is
-    # in the process of completing the exam
-    started = 'started'
-
-    # the exam has timed out
-    timed_out = 'timed_out'
-
-    # the student has completed the exam
-    completed = 'completed'
-
-    # the student has submitted the exam for proctoring review
-    submitted = 'submitted'
-
-    # the exam has been verified and approved
-    verified = 'verified'
-
-    # the exam has been rejected
-    rejected = 'rejected'
-
-    # the exam was not reviewed
-    not_reviewed = 'not_reviewed'
-
-    # the exam is believed to be in error
-    error = 'error'
 
 
 class ProctoredExamStudentAttempt(TimeStampedModel):
@@ -206,6 +209,8 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     # started/completed date times
     started_at = models.DateTimeField(null=True)
+
+    # completed_at means when the attempt was 'submitted'
     completed_at = models.DateTimeField(null=True)
 
     last_poll_timestamp = models.DateTimeField(null=True)
@@ -240,11 +245,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         verbose_name = 'proctored exam attempt'
         unique_together = (('user', 'proctored_exam'),)
 
-    @property
-    def is_active(self):
-        """ returns boolean if this attempt is considered active """
-        return self.started_at and not self.completed_at
-
     @classmethod
     def create_exam_attempt(cls, exam_id, user_id, student_name, allowed_time_limit_mins,
                             attempt_code, taking_as_proctored, is_sample_attempt, external_id):
@@ -264,14 +264,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             external_id=external_id,
             status=ProctoredExamStudentAttemptStatus.created,
         )
-
-    def start_exam_attempt(self):
-        """
-        sets the model's state when an exam attempt has started
-        """
-        self.started_at = datetime.now(pytz.UTC)
-        self.status = ProctoredExamStudentAttemptStatus.started
-        self.save()
 
     def delete_exam_attempt(self):
         """
