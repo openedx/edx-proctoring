@@ -189,7 +189,8 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         """
         Returns the active student exams (user in-progress exams)
         """
-        filtered_query = Q(user_id=user_id) & Q(status=ProctoredExamStudentAttemptStatus.started)
+        filtered_query = Q(user_id=user_id) & (Q(status=ProctoredExamStudentAttemptStatus.started) |
+                                               Q(status=ProctoredExamStudentAttemptStatus.ready_to_submit))
         if course_id is not None:
             filtered_query = filtered_query & Q(proctored_exam__course_id=course_id)
 
