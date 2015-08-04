@@ -11,6 +11,7 @@ var edx = edx || {};
             this.$el = options.el;
             this.model = options.model;
             this.templateId = options.proctored_template;
+            this.examControlsTemplateId = options.controls_template;
             this.template = null;
             this.timerId = null;
             this.timerTick = 0;
@@ -26,6 +27,13 @@ var edx = edx || {};
                 /* don't assume this backbone view is running on a page with the underscore templates */
                 this.template = _.template(template_html);
             }
+
+            var controls_template_html = $(this.examControlsTemplateId).text();
+            if (controls_template_html !== null) {
+                /* don't assume this backbone view is running on a page with the underscore templates */
+                this.controls_template = _.template(controls_template_html);
+            }
+
             /* re-render if the model changes */
             this.listenTo(this.model, 'change', this.modelChanged);
 
@@ -41,9 +49,10 @@ var edx = edx || {};
             // should not be navigating around the courseware
             var taking_as_proctored = this.model.get('taking_as_proctored');
             var time_left = this.model.get('time_remaining_seconds') > 0;
+            var status = this.model.get('attempt_status');
             var in_courseware = document.location.href.indexOf('/courses/' + this.model.get('course_id') + '/courseware/') > -1;
 
-            if ( taking_as_proctored && time_left && in_courseware){
+            if ( taking_as_proctored && time_left && in_courseware && status !== 'started'){
                 $(window).bind('beforeunload', this.unloadMessage);
             } else {
                 // remove callback on unload event
@@ -64,11 +73,36 @@ var edx = edx || {};
                     this.$el.show();
                     this.updateRemainingTime(this);
                     this.timerId = setInterval(this.updateRemainingTime, 1000, this);
+
+                    // put the exam controls (namely stop button)
+                    // right after the sequence naviation ribbon
+                    html = this.controls_template(this.model.toJSON());
+                    $('.sequence-nav').after(html);
+
+                    // Bind a click handler to the exam controls
+                    var self = this;
+                    $('.proctored-exam-action-stop').click(function(){
+                        $(window).unbind('beforeunload', self.unloadMessage);
+
+                        $.ajax({
+                            url: '/api/edx_proctoring/v1/proctored_exam/attempt/' + self.model.get('attempt_id'),
+                            type: 'PUT',
+                            data: {
+                              action: 'stop'
+                            },
+                            success: function() {
+                              // Reloading page will reflect the new state of the attempt
+                              location.reload();
+                            }
+                        });
+                    });
+                    $('.proctored-exam-action-stop').css('cursor', 'pointer');
                 }
             }
             return this;
         },
         unloadMessage: function  () {
+            return null;
             return gettext("As you are currently taking a proctored exam,\n" +
                 "you should not be navigation away from the exam.\n" +
                 "This may be considered as a violation of the \n" +
@@ -77,7 +111,7 @@ var edx = edx || {};
         },
         updateRemainingTime: function (self) {
             self.timerTick ++;
-            if (self.timerTick % 5 == 0){
+            if (self.timerTick % 5 === 0){
                 var url = self.model.url + '/' + self.model.get('attempt_id');
                 $.ajax(url).success(function(data) {
                     if (data.status === 'error') {

@@ -39,9 +39,9 @@
     {% endblocktrans %}
   </p>
   <p class="proctored-exam-instruction">
-    {% blocktrans %}
-      Don't want to take this exam with online proctoring? <a href="#">Take this exam as an open exam instead.</a>
-    {% endblocktrans %}
+      {% trans "Don't want to take this exam with online proctoring?" %}<a class="proctored-decline-exam" href='#' data-action="decline" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+        {% trans "Take this exam as an open exam instead." %}
+      </a>
   </p>
 </div>
 {% include 'proctoring/seq_proctored_exam_footer.html' %}
@@ -49,6 +49,27 @@
 <script type="text/javascript">
 
   var _waiting_for_proctored_interval = null;
+
+  $('.proctored-decline-exam').click(
+    function(event) {
+      var action_url = $(this).data('change-state-url');
+      var exam_id = $(this).data('exam-id');
+      var action = $(this).data('action')
+
+      // Update the state of the attempt
+      $.ajax({
+        url: action_url,
+        type: 'PUT',
+        data: {
+          action: action
+        },
+        success: function() {
+          // Reloading page will reflect the new state of the attempt
+          location.reload()
+        }
+      });
+    }
+  );
 
   $(document).ready(function(){
 

@@ -4,6 +4,7 @@ All tests for the proctored_exams.py
 """
 import json
 import pytz
+import ddt
 from mock import Mock
 from freezegun import freeze_time
 from httmock import HTTMock
@@ -376,6 +377,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.assertEqual(response_data['time_limit_mins'], proctored_exam.time_limit_mins)
 
 
+@ddt.ddt
 class TestStudentProctoredExamAttempt(LoggedInTestCase):
     """
     Tests for the StudentProctoredExamAttempt
@@ -711,7 +713,12 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content)
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
-    def test_submit_exam_attempt(self):
+    @ddt.data(
+        ('submit', ProctoredExamStudentAttemptStatus.submitted),
+        ('decline', ProctoredExamStudentAttemptStatus.declined)
+    )
+    @ddt.unpack
+    def test_submit_exam_attempt(self, action, expected_status):
         """
         Tries to submit an exam
         """
@@ -741,7 +748,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
             {
-                'action': 'submit',
+                'action': action,
             }
         )
 
@@ -751,7 +758,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         attempt = get_exam_attempt_by_id(response_data['exam_attempt_id'])
 
-        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.submitted)
+        self.assertEqual(attempt['status'], expected_status)
 
         # we should not be able to restart it
         response = self.client.put(

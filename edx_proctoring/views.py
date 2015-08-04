@@ -172,7 +172,8 @@ class ProctoredExamView(AuthenticatedAPIView):
                 is_active=request.DATA.get('is_active', None),
             )
             return Response({'exam_id': exam_id})
-        except ProctoredExamNotFoundException:
+        except ProctoredExamNotFoundException, ex:
+            LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": "The exam_id does not exist."}
@@ -193,7 +194,8 @@ class ProctoredExamView(AuthenticatedAPIView):
                     data=get_exam_by_id(exam_id),
                     status=status.HTTP_200_OK
                 )
-            except ProctoredExamNotFoundException:
+            except ProctoredExamNotFoundException, ex:
+                LOG.exception(ex)
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
                     data={"detail": "The exam_id does not exist."}
@@ -207,7 +209,8 @@ class ProctoredExamView(AuthenticatedAPIView):
                             data=get_exam_by_content_id(course_id, content_id),
                             status=status.HTTP_200_OK
                         )
-                    except ProctoredExamNotFoundException:
+                    except ProctoredExamNotFoundException, ex:
+                        LOG.exception(ex)
                         return Response(
                             status=status.HTTP_400_BAD_REQUEST,
                             data={"detail": "The exam with course_id, content_id does not exist."}
@@ -294,6 +297,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             )
 
         except ProctoredBaseException, ex:
+            LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": str(ex)}
@@ -343,6 +347,12 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                     request.user.id,
                     ProctoredExamStudentAttemptStatus.submitted
                 )
+            elif action == 'decline':
+                exam_attempt_id = update_attempt_status(
+                    attempt['proctored_exam']['id'],
+                    request.user.id,
+                    ProctoredExamStudentAttemptStatus.declined
+                )
             return Response({"exam_attempt_id": exam_attempt_id})
 
         except ProctoredBaseException, ex:
@@ -373,6 +383,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             return Response()
 
         except ProctoredBaseException, ex:
+            LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": str(ex)}
@@ -556,6 +567,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
             return Response({'exam_attempt_id': exam_attempt_id})
 
         except ProctoredBaseException, ex:
+            LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": unicode(ex)}
@@ -626,6 +638,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
             ))
 
         except UserNotFoundException, ex:
+            LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": str(ex)}
