@@ -51,10 +51,21 @@
   var _waiting_for_proctored_interval = null;
 
   $('.proctored-decline-exam').click(
-    function(event) {
+    function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
       var action_url = $(this).data('change-state-url');
       var exam_id = $(this).data('exam-id');
       var action = $(this).data('action')
+
+      var msg = gettext(
+        "Are you sure you want to take this exam without proctoring? " +
+        "This will make you no longer eligible to earn credit for this course."
+      )
+      if (!confirm(msg)) {
+        return;
+      }
 
       // Update the state of the attempt
       $.ajax({

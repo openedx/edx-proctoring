@@ -39,6 +39,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     IMPORTANT: This is an unauthenticated endpoint, so be VERY CAREFUL about extending
     this endpoint
     """
+
     attempt = get_exam_attempt_by_code(attempt_code)
     if not attempt:
         return HttpResponse(

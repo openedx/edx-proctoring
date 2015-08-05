@@ -53,6 +53,17 @@
       var exam_id = $(this).data('exam-id');
       var attempt_proctored = $(this).data('attempt-proctored');
       var start_immediately = $(this).data('start-immediately');
+
+      if (!attempt_proctored) {
+        var msg = gettext(
+          "Are you sure you want to take this exam without proctoring? " +
+          "This will make you no longer eligible to earn credit for this course."
+        )
+        if (!confirm(msg)) {
+          return;
+        }
+      }
+
       if (typeof action_url === "undefined" ) {
         return false;
       }

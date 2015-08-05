@@ -418,6 +418,15 @@ def update_attempt_status(exam_id, user_id, to_status):
     Internal helper to handle state transitions of attempt status
     """
 
+    # In some configuration we may treat timeouts the same
+    # as the user saying he/she wises to submit the exam
+    alias_timeout = (
+        to_status == ProctoredExamStudentAttemptStatus.timed_out and
+        not settings.PROCTORING_SETTINGS.get('ALLOW_TIMED_OUT_STATE', False)
+    )
+    if alias_timeout:
+        to_status = ProctoredExamStudentAttemptStatus.ready_to_submit
+
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
         raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')

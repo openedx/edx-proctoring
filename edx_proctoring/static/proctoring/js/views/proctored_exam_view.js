@@ -102,7 +102,6 @@ var edx = edx || {};
             return this;
         },
         unloadMessage: function  () {
-            return null;
             return gettext("As you are currently taking a proctored exam,\n" +
                 "you should not be navigation away from the exam.\n" +
                 "This may be considered as a violation of the \n" +
@@ -115,10 +114,8 @@ var edx = edx || {};
                 var url = self.model.url + '/' + self.model.get('attempt_id');
                 $.ajax(url).success(function(data) {
                     if (data.status === 'error') {
-                        // Let the student know that his exam has failed due to an error.
-                        // This alert may or may not bring the browser window back to the
-                        // foreground (depending on browser as well as user settings)
-                        alert(gettext('Your exam has failed'));
+                        // The proctoring session is in error state
+                        // refresh the page to
                         clearInterval(self.timerId); // stop the timer once the time finishes.
                         $(window).unbind('beforeunload', self.unloadMessage);
                         // refresh the page when the timer expired

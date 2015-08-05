@@ -839,6 +839,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIsNone(rendered_response)
 
+    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
     def test_get_studentview_timedout(self):
         """
         Verifies that if we call get_studentview when the timer has expired
@@ -959,6 +960,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.proctored_exam_completed_msg, rendered_response)
 
+    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
     def test_get_studentview_expired(self):
         """
         Test for get_student_view proctored exam which has expired.
@@ -1095,6 +1097,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (ProctoredExamStudentAttemptStatus.error, ProctoredExamStudentAttemptStatus.started),
     )
     @ddt.unpack
+    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
     def test_illegal_status_transition(self, from_status, to_status):
         """
         Verify that we cannot reset backwards an attempt status
@@ -1109,9 +1112,28 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
 
         with self.assertRaises(ProctoredExamIllegalStatusTransition):
-            print '*** from = {}  to {}'.format(from_status, to_status)
             update_attempt_status(
                 exam_attempt.proctored_exam_id,
                 self.user.id,
                 to_status
             )
+
+    def test_alias_timed_out(self):
+        """
+        Verified that timed_out will automatically state transition
+        to ready_to_submit
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.timed_out
+        )
+
+        exam_attempt = get_exam_attempt_by_id(exam_attempt.id)
+
+        self.assertEqual(
+            exam_attempt['status'],
+            ProctoredExamStudentAttemptStatus.ready_to_submit
+        )
