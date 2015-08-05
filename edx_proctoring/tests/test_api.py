@@ -101,6 +101,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.timed_exam_completed_msg = 'This is the end of your timed exam'
         self.start_a_practice_exam_msg = 'Would you like to take %s as a practice proctored exam?'
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
+        self.ready_to_start_msg = 'Your Proctoring Installation and Set Up is Complete'
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService())
@@ -161,7 +162,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             proctored_exam_id=self.proctored_exam_id if is_proctored else self.timed_exam,
             user_id=self.user_id,
             external_id=self.external_id,
-            allowed_time_limit_mins=10
+            allowed_time_limit_mins=10,
+            status='created'
         )
 
     def _create_started_exam_attempt(self, started_at=None, is_proctored=True):
@@ -820,6 +822,27 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIsNone(rendered_response)
 
+    def test_get_studentview_ready(self):
+        """
+        Assert that we get the right content
+        when the exam is ready to be started
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.ready_to_start
+        exam_attempt.save()
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIn(self.ready_to_start_msg, rendered_response)
+
     def test_get_studentview_started_exam(self):  # pylint: disable=invalid-name
         """
         Test for get_student_view proctored exam which has started.
@@ -869,7 +892,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Test for get_student_view proctored exam which has been submitted.
         """
         exam_attempt = self._create_started_exam_attempt()
-        exam_attempt.status = "submitted"
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
         exam_attempt.save()
 
         rendered_response = get_student_view(
@@ -905,7 +928,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Test for get_student_view proctored exam which has been rejected.
         """
         exam_attempt = self._create_started_exam_attempt()
-        exam_attempt.status = "rejected"
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.rejected
         exam_attempt.save()
 
         rendered_response = get_student_view(
@@ -925,7 +948,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Test for get_student_view proctored exam which has been verified.
         """
         exam_attempt = self._create_started_exam_attempt()
-        exam_attempt.status = "verified"
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.verified
         exam_attempt.save()
 
         rendered_response = get_student_view(

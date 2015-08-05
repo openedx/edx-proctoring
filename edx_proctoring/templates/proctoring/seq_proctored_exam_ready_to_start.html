@@ -1,0 +1,62 @@
+{% load i18n %}
+<div class="sequence proctored-exam instructions" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
+  <h3>
+    {% blocktrans %}
+      Your Proctoring Installation and Set Up is Complete
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% blocktrans %}
+      Placeholder content. <strong>Please keep the proctoring software open and running while you complete your exam</strong>.
+    {% endblocktrans %}
+  </p>
+  <div class="proctored-exam-message">
+    <h3>
+    {% blocktrans %}
+      You May Begin Your Exam Now
+    {% endblocktrans %}
+    </h3>
+    <p>
+      {% blocktrans %}
+        Your proctored and timed exam is now ready. Once you start, <strong>you will have {{total_time}} to
+        complete the exam and cannot stop the timer</strong>. If you did not active complete the exam, at the
+        end of that period your exam will close and proctoring session will be reviewed.
+      {% endblocktrans %}
+    </p>
+    <div>
+      <button type="button" class="proctored-enter-exam" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+        {% blocktrans %}
+          I'm ready! Start my timed proctored exam
+        {% endblocktrans %}
+      </button>
+    </div>
+  </div>
+</div>
+{% include 'proctoring/seq_proctored_exam_footer.html' %}
+
+<script type="text/javascript">
+
+  $('.proctored-enter-exam').click(
+    function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var action_url = $(this).data('change-state-url');
+      var exam_id = $(this).data('exam-id');
+      var action = $(this).data('action')
+
+      // Update the state of the attempt
+      $.ajax({
+        url: action_url,
+        type: 'PUT',
+        data: {
+          action: action
+        },
+        success: function() {
+          // Reloading page will reflect the new state of the attempt
+          location.reload()
+        }
+      });
+    }
+  );
+</script>
