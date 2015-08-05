@@ -26,13 +26,4 @@
     {% endblocktrans %}
   </p>
 </div>
-<div class="footer-sequence border-b-0 padding-b-0">
-  <span> {% trans "See Also" %} </span>
-  <p>
-    {% blocktrans %}
-      <a class="footer-link" href="#">
-        Frequently asked questions about proctoring and earning college credit.
-      </a>
-    {% endblocktrans %}
-  </p>
-</div>
+{% include 'proctoring/seq_proctored_exam_footer.html' %}
