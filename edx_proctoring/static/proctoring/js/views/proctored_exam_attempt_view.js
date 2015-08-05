@@ -18,10 +18,10 @@ var edx = edx || {};
     };
     edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = Backbone.View.extend({
         initialize: function (options) {
-            this.$el = options.el;
-            this.collection = options.collection;
-            this.tempate_url = options.template_url;
-            this.model = options.model;
+            this.setElement($('.student-proctored-exam-container'));
+            this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptCollection();
+            this.tempate_url = '/static/proctoring/templates/student-proctored-exam-attempts.underscore';
+            this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel();
             this.course_id = this.$el.data('course-id');
             this.template = null;
 
