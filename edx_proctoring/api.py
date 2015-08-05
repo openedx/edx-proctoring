@@ -519,9 +519,9 @@ def remove_exam_attempt(attempt_id):
     course_id = existing_attempt.proctored_exam.course_id
     content_id = existing_attempt.proctored_exam.content_id
     existing_attempt.delete_exam_attempt()
-    courseware_service = get_runtime_service('courseware')
-    if courseware_service:
-        courseware_service.delete_student_attempt(username, course_id, content_id)
+    instructor_service = get_runtime_service('instructor')
+    if instructor_service:
+        instructor_service.delete_student_attempt(username, course_id, content_id)
 
 
 def get_all_exams_for_course(course_id):

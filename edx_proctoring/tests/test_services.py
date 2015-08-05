@@ -60,9 +60,9 @@ class MockCreditService(object):
             found[0]['status'] = status
 
 
-class MockCoursewareService(object):
+class MockInstructorService(object):
     """
-    Simple mock of the Courseware Service
+    Simple mock of the Instructor Service
     """
     def delete_student_attempt(self, student_identifier, course_id, content_id):  # pylint: disable=unused-argument
         """
