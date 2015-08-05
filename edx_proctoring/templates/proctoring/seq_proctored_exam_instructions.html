@@ -138,24 +138,9 @@
         if (_waiting_for_proctored_interval != null) {
           clearInterval(_waiting_for_proctored_interval)
         }
-        // Let the student know exam is ready to start.
-        // This alert may or may not bring the browser window back to the
-        // foreground (depending on browser as well as user settings)
-        alert('{% trans "Your proctored exam has started, please click OK to enter into your exam." %}')
-
-        // after the user acknowledges the alert then we can start
-        // the exam and timer
-        $.ajax({
-          url: url,
-          type: 'PUT',
-          data: {
-            action: 'start'
-          },
-          success: function() {
-            // Reloading page will reflect the new state of the attempt
-            location.reload()
-          }
-        });
+        // we've state transitioned, so refresh the page
+        // to reflect the new state (which will expose the test)
+        location.reload();
       }
     });
   }

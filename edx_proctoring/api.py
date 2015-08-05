@@ -718,25 +718,30 @@ def get_student_view(user_id, course_id, content_id,
         expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
         does_time_remain = datetime.now(pytz.UTC) < expires_at
 
-    if not has_started_exam:
+    if attempt:
+        print '*** status = {}'.format(attempt['status'])
+
+    if not attempt:
         # determine whether to show a timed exam only entrance screen
         # or a screen regarding proctoring
 
         if is_proctored:
-            if not attempt:
-                if exam['is_practice_exam']:
-                    student_view_template = 'proctoring/seq_proctored_practice_exam_entrance.html'
-                else:
-                    student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
+            if exam['is_practice_exam']:
+                student_view_template = 'proctoring/seq_proctored_practice_exam_entrance.html'
             else:
-                provider = get_backend_provider()
-                student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
-                context.update({
-                    'exam_code': attempt['attempt_code'],
-                    'software_download_url': provider.get_software_download_url(),
-                })
+                student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
         else:
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
+
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.created:
+        provider = get_backend_provider()
+        student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
+        context.update({
+            'exam_code': attempt['attempt_code'],
+            'software_download_url': provider.get_software_download_url(),
+        })
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
+        student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
         student_view_template = 'proctoring/seq_proctored_exam_error.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
