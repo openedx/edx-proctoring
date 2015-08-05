@@ -1,6 +1,56 @@
 {% load i18n %}
-<div class="sequence proctored-exam error">
-    <div class="gated-sequence">
-        {% trans "Your exam has been marked as failed due to an error." %}
-    </div>
+<div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      Your proctoring session is in error
+    {% endblocktrans %}
+  </h3>
+
+  <h4>
+    {% blocktrans %}
+      Your Proctoring Session review: <b class="failure"> Failed </b>
+    {% endblocktrans %}
+  </h4>
+
+  <p>
+    {% blocktrans %}
+      It appears that your proctoring session has been shut down while you were taking this
+      exam. This invalidates your proctored exam and you will not be eligible for course
+      credit.
+    {% endblocktrans %}
+  </p>
+  <hr>
+  <p>
+    {% blocktrans %}
+      Please see <a href="{{progress_page_url}}">your progress in this course </a>
+      for your general course credit worthiness.
+    {% endblocktrans %}
+  </p>
+</div>
+<div class="footer-sequence border-b-0 padding-b-0">
+  <span> {% trans "Can I contest this review?" %} </span>
+  <p class="proctored-exam-option">
+    {% blocktrans %}
+        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+        Aenean massa.
+    {% endblocktrans %}
+  </p>
+  <a href="#" class="contest-review">Contest this review</a>
+  <hr class="clearfix">
+  <span> {% trans "Is there anything I can do to make up/replace this session?" %} </span>
+  <p class="proctored-exam-option">
+    {% blocktrans %}
+        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+        Aenean massa.
+    {% endblocktrans %}
+  </p>
+  <hr class="clearfix">
+  <span> {% trans "See Also" %} </span>
+  <p>
+    {% blocktrans %}
+      <a class="footer-link" href="#">
+        Frequently asked questions about proctoring and earning college credit.
+      </a>
+    {% endblocktrans %}
+  </p>
 </div>
