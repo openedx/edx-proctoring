@@ -40,7 +40,7 @@ from edx_proctoring.utils import humanized_time
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.runtime import get_runtime_service
 
-log = logging.getLogger("edx_proctoring_views")
+log = logging.getLogger(__name__)
 
 
 def is_feature_enabled():
