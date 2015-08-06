@@ -34,6 +34,7 @@ from edx_proctoring.api import (
     mark_exam_attempt_as_ready,
     update_attempt_status,
     get_attempt_status_summary,
+    update_exam_attempt
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -42,7 +43,8 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptDoesNotExistsException,
     StudentExamAttemptedAlreadyStarted,
     UserNotFoundException,
-    ProctoredExamIllegalStatusTransition
+    ProctoredExamIllegalStatusTransition,
+    ProctoredExamPermissionDenied
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -1298,3 +1300,30 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
 
         self.assertIsNone(summary)
+
+    def test_update_exam_attempt(self):
+        """
+        Make sure we restrict which fields we can update
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+
+        with self.assertRaises(ProctoredExamPermissionDenied):
+            update_exam_attempt(
+                exam_attempt.id,
+                last_poll_timestamp=datetime.utcnow(),
+                last_poll_ipaddr='1.1.1.1',
+                status='foo'
+            )
+
+        now = datetime.now(pytz.UTC)
+        update_exam_attempt(
+            exam_attempt.id,
+            last_poll_timestamp=now,
+            last_poll_ipaddr='1.1.1.1',
+        )
+
+        attempt = get_exam_attempt_by_id(exam_attempt.id)
+
+        self.assertEquals(attempt['last_poll_timestamp'], now)
+        self.assertEquals(attempt['last_poll_ipaddr'], '1.1.1.1')

@@ -23,6 +23,7 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptDoesNotExistsException,
     StudentExamAttemptedAlreadyStarted,
     ProctoredExamIllegalStatusTransition,
+    ProctoredExamPermissionDenied,
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -59,6 +60,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
 
     Returns: id (PK)
     """
+
     if ProctoredExam.get_exam_by_content_id(course_id, content_id) is not None:
         raise ProctoredExamAlreadyExists
 
@@ -72,6 +74,21 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
         is_practice_exam=is_practice_exam,
         is_active=is_active
     )
+
+    log_msg = (
+        'Created exam ({exam_id}) with parameters: course_id={course_id}, '
+        'content_id={content_id}, exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
+        'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
+        'external_id={external_id}, is_active={is_active}'.format(
+            exam_id=proctored_exam.id,
+            course_id=course_id, content_id=content_id,
+            exam_name=exam_name, time_limit_mins=time_limit_mins,
+            is_proctored=is_proctored, is_practice_exam=is_practice_exam,
+            external_id=external_id, is_active=is_active
+        )
+    )
+    log.info(log_msg)
+
     return proctored_exam.id
 
 
@@ -83,6 +100,19 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
 
     Returns: id
     """
+
+    log_msg = (
+        'Updating exam_id {exam_id} with parameters '
+        'exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
+        'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
+        'external_id={external_id}, is_active={is_active}'.format(
+            exam_id=exam_id, exam_name=exam_name, time_limit_mins=time_limit_mins,
+            is_proctored=is_proctored, is_practice_exam=is_practice_exam,
+            external_id=external_id, is_active=is_active
+        )
+    )
+    log.info(log_msg)
+
     proctored_exam = ProctoredExam.get_exam_by_id(exam_id)
     if proctored_exam is None:
         raise ProctoredExamNotFoundException
@@ -155,6 +185,15 @@ def add_allowance_for_user(exam_id, user_info, key, value):
     """
     Adds (or updates) an allowance for a user within a given exam
     """
+
+    log_msg = (
+        'Adding allowance "{key}" with value "{value}" for exam_id {exam_id} '
+        'for user {user_info} '.format(
+            key=key, value=value, exam_id=exam_id, user_info=user_info
+        )
+    )
+    log.info(log_msg)
+
     ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_info, key, value)
 
 
@@ -170,6 +209,13 @@ def remove_allowance_for_user(exam_id, user_id, key):
     """
     Deletes an allowance for a user within a given exam.
     """
+    log_msg = (
+        'Removing allowance "{key}" for exam_id {exam_id} for user_id {user_id} '.format(
+            key=key, exam_id=exam_id, user_id=user_id
+        )
+    )
+    log.info(log_msg)
+
     student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(exam_id, user_id, key)
     if student_allowance is not None:
         student_allowance.delete()
@@ -240,6 +286,14 @@ def update_exam_attempt(attempt_id, **kwargs):
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
     for key, value in kwargs.items():
+        # only allow a limit set of fields to update
+        # namely because status transitions can trigger workflow
+        if key not in ['last_poll_timestamp', 'last_poll_ipaddr']:
+            err_msg = (
+                'You cannot call into update_exam_attempt to change '
+                'field {key}'.format(key=key)
+            )
+            raise ProctoredExamPermissionDenied(err_msg)
         setattr(exam_attempt_obj, key, value)
     exam_attempt_obj.save()
 
@@ -262,6 +316,14 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     in a separate table
     """
     # for now the student is allowed the exam default
+
+    log_msg = (
+        'Creating exam attempt for exam_id {exam_id} for '
+        'user_id {user_id} with taking as proctored = {taking_as_proctored}'.format(
+            exam_id=exam_id, user_id=user_id, taking_as_proctored=taking_as_proctored
+        )
+    )
+    log.info(log_msg)
 
     exam = get_exam_by_id(exam_id)
     existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
@@ -332,6 +394,22 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         exam['is_practice_exam'],
         external_id
     )
+
+    log_msg = (
+        'Created exam attempt ({attempt_id}) for exam_id {exam_id} for '
+        'user_id {user_id} with taking as proctored = {taking_as_proctored} '
+        'with allowed time limit minutes of {allowed_time_limit_mins}. '
+        'Attempt_code {attempt_code} was generated which has a '
+        'external_id of {external_id}'.format(
+            attempt_id=attempt.id, exam_id=exam_id, user_id=user_id,
+            taking_as_proctored=taking_as_proctored,
+            allowed_time_limit_mins=allowed_time_limit_mins,
+            attempt_code=attempt_code,
+            external_id=external_id
+        )
+    )
+    log.info(log_msg)
+
     return attempt.id
 
 
@@ -423,6 +501,14 @@ def update_attempt_status(exam_id, user_id, to_status):
     """
     Internal helper to handle state transitions of attempt status
     """
+
+    log_msg = (
+        'Updating attempt status for exam_id {exam_id} '
+        'for user_id {user_id} to status {to_status}'.format(
+            exam_id=exam_id, user_id=user_id, to_status=to_status
+        )
+    )
+    log.info(log_msg)
 
     # In some configuration we may treat timeouts the same
     # as the user saying he/she wises to submit the exam
@@ -520,6 +606,11 @@ def remove_exam_attempt(attempt_id):
     """
     Removes an exam attempt given the attempt id.
     """
+
+    log_msg = (
+        'Removing exam attempt {attempt_id}'.format(attempt_id=attempt_id)
+    )
+    log.info(log_msg)
 
     existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
     if not existing_attempt:
@@ -806,9 +897,6 @@ def get_student_view(user_id, course_id, content_id,
     if has_started_exam:
         expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
         does_time_remain = datetime.now(pytz.UTC) < expires_at
-
-    if attempt:
-        print '*** status = {}'.format(attempt['status'])
 
     if not attempt:
         # determine whether to show a timed exam only entrance screen
