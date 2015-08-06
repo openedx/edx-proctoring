@@ -920,7 +920,10 @@ def get_student_view(user_id, course_id, content_id,
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
         student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
-        student_view_template = 'proctoring/seq_proctored_exam_error.html'
+        if attempt['is_sample_attempt']:
+            student_view_template = 'proctoring/seq_proctored_practice_exam_error.html'
+        else:
+            student_view_template = 'proctoring/seq_proctored_exam_error.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
         student_view_template = 'proctoring/seq_timed_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
