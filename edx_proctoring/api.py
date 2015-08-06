@@ -1,5 +1,4 @@
-# pylint: disable=too-many-branches
-# pylint: disable=too-many-statements
+# pylint: disable=too-many-branches, too-many-lines, too-many-statements
 
 """
 In-Proc API (aka Library) for the edx_proctoring subsystem. This is not to be confused with a HTTP REST
@@ -575,11 +574,24 @@ def update_attempt_status(exam_id, user_id, to_status):
             verification = 'submitted'
         else:
             verification = 'failed'
+
+        log_msg = (
+            'Calling set_credit_requirement_status for '
+            'user_id {user_id} on {course_id} for '
+            'content_id {content_id}. Status: {status}'.format(
+                user_id=exam_attempt_obj.user_id,
+                course_id=exam['course_id'],
+                content_id=exam_attempt_obj.proctored_exam.content_id,
+                status=verification
+            )
+        )
+        log.info(log_msg)
+
         credit_service.set_credit_requirement_status(
             user_id=exam_attempt_obj.user_id,
             course_key_or_id=exam['course_id'],
             req_namespace='proctored_exam',
-            req_name='proctored_exam_id:{exam_id}'.format(exam_id=exam_id),
+            req_name=exam_attempt_obj.proctored_exam.content_id,
             status=verification
         )
 
