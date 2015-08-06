@@ -33,6 +33,7 @@ from edx_proctoring.api import (
     mark_exam_attempt_timeout,
     mark_exam_attempt_as_ready,
     update_attempt_status,
+    get_attempt_status_summary,
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -1160,3 +1161,140 @@ class ProctoredExamApiTests(LoggedInTestCase):
             exam_attempt['status'],
             ProctoredExamStudentAttemptStatus.ready_to_submit
         )
+
+    @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.eligible, {
+                'status': ProctoredExamStudentAttemptStatus.eligible,
+                'short_description': 'Proctored Option Available',
+                'suggested_icon': 'fa-lock',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.declined, {
+                'status': ProctoredExamStudentAttemptStatus.declined,
+                'short_description': 'Taking As Open Exam',
+                'suggested_icon': 'fa-unlock',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.submitted, {
+                'status': ProctoredExamStudentAttemptStatus.submitted,
+                'short_description': 'Pending Session Review',
+                'suggested_icon': 'fa-spinner fa-spin',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.verified, {
+                'status': ProctoredExamStudentAttemptStatus.verified,
+                'short_description': 'Passed Proctoring',
+                'suggested_icon': 'fa-check',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected, {
+                'status': ProctoredExamStudentAttemptStatus.rejected,
+                'short_description': 'Failed Proctoring',
+                'suggested_icon': 'fa-exclamation-triangle',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.error, {
+                'status': ProctoredExamStudentAttemptStatus.error,
+                'short_description': 'Failed Proctoring',
+                'suggested_icon': 'fa-exclamation-triangle',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.created, {
+                'status': ProctoredExamStudentAttemptStatus.created,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-lock',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.ready_to_start, {
+                'status': ProctoredExamStudentAttemptStatus.ready_to_start,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-lock',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.started, {
+                'status': ProctoredExamStudentAttemptStatus.started,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-lock',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.ready_to_submit, {
+                'status': ProctoredExamStudentAttemptStatus.ready_to_submit,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-lock',
+                'in_completed_state': False
+            }
+        )
+    )
+    @ddt.unpack
+    def test_attempt_status_summary(self, status, expected):
+        """
+        Assert that we get the expected status summaries
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam_attempt.proctored_exam.course_id,
+            exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIn(summary, [expected])
+
+    @ddt.data(
+        'honor', 'staff'
+    )
+    def test_status_summary_honor(self, enrollment_mode):
+        """
+        Make sure status summary is None for a non-verified person
+        """
+
+        set_runtime_service('credit', MockCreditService(enrollment_mode=enrollment_mode))
+
+        exam_attempt = self._create_started_exam_attempt()
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam_attempt.proctored_exam.course_id,
+            exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIsNone(summary)
+
+    def test_status_summary_bad(self):
+        """
+        Make sure we get back a None when getting summary for content that does not
+        exist
+        """
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            'foo',
+            'foo'
+        )
+
+        self.assertIsNone(summary)
