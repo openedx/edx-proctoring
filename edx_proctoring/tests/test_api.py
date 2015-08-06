@@ -105,6 +105,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.start_a_practice_exam_msg = 'Would you like to take %s as a practice proctored exam?'
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
         self.ready_to_start_msg = 'Your Proctoring Installation and Set Up is Complete'
+        self.practice_exam_failed_msg = 'Your proctoring proctoring session is in error'
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService())
@@ -1013,7 +1014,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Test for get_student_view proctored exam which has exam status error.
         """
 
-        ProctoredExamStudentAttempt.objects.create(
+        exam_attempt = ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=self.proctored_exam_id,
             user_id=self.user_id,
             external_id=self.external_id,
@@ -1033,6 +1034,22 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIn(self.exam_time_error_msg, rendered_response)
+
+        # test the variant if we are a sample attempt
+        exam_attempt.is_sample_attempt = True
+        exam_attempt.save()
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIn(self.practice_exam_failed_msg, rendered_response)
 
     def test_get_studentview_unstarted_timed_exam(self):  # pylint: disable=invalid-name
         """
