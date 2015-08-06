@@ -281,6 +281,9 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
 
     user = models.ForeignKey(User, db_index=True)
 
+    # this is the PK of the original table, note this is not a FK
+    attempt_id = models.IntegerField(null=True)
+
     proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
 
     # started/completed date times
@@ -322,6 +325,11 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
             exam_attempt_obj = None
         return exam_attempt_obj
 
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamstudentattempthistory'
+        verbose_name = 'proctored exam attempt history'
+
 
 @receiver(pre_delete, sender=ProctoredExamStudentAttempt)
 def on_attempt_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
@@ -332,6 +340,7 @@ def on_attempt_deleted(sender, instance, **kwargs):  # pylint: disable=unused-ar
 
     archive_object = ProctoredExamStudentAttemptHistory(
         user=instance.user,
+        attempt_id=instance.id,
         proctored_exam=instance.proctored_exam,
         started_at=instance.started_at,
         completed_at=instance.completed_at,
