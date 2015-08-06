@@ -646,6 +646,81 @@ def _check_credit_eligibility(credit_state):
     return True
 
 
+def get_attempt_status_summary(user_id, course_id, content_id):
+    """
+    Returns a summary about the status of the attempt for the user
+    in the course_id and content_id
+
+    Return will be:
+    None: Not applicable
+    - or -
+    {
+        'status': ['eligible', 'declined', 'submitted', 'verified', 'rejected'],
+        'short_description': <short description of status>,
+        'suggested-icon': <recommended font-awesome icon to use>
+    }
+    """
+
+    # as a quick exit, let's check credit eligibility
+    credit_service = get_runtime_service('credit')
+    if credit_service:
+        credit_state = credit_service.get_credit_state(user_id, unicode(course_id))
+        if not _check_credit_eligibility(credit_state):
+            return None
+
+    try:
+        exam = get_exam_by_content_id(course_id, content_id)
+    except ProctoredExamNotFoundException, ex:
+        # this really shouldn't happen, but log it at least
+        log.exception(ex)
+        return None
+
+    attempt = get_exam_attempt(exam_id, user_id)
+
+    if not attempt:
+        return {
+            'status': ProctoredExamStudentAttemptStatus.eligible,
+            'short_description': _('Proctored Option Available'),
+            'suggested-icon': 'fa-lock'
+        }
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.declined:
+        return {
+            'status': ProctoredExamStudentAttemptStatus.eligible,
+            'short_description': _('Taking As Open Exam'),
+            'suggested-icon': 'fa-unlock'
+        }
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
+        return {
+            'status': ProctoredExamStudentAttemptStatus.submitted,
+            'short_description': _('Pending Session Review'),
+            'suggested-icon': 'fa-unlock'
+        }
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
+        return {
+            'status': ProctoredExamStudentAttemptStatus.submitted,
+            'short_description': _('Passed Proctoring'),
+            'suggested-icon': 'fa-check'
+        }
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
+        return {
+            'status': ProctoredExamStudentAttemptStatus.rejected,
+            'short_description': _('Failed Proctoring'),
+            'suggested-icon': 'fa-exclamation-triangle'
+        }
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.started:
+        return {
+            'status': ProctoredExamStudentAttemptStatus.started,
+            'short_description': _('Taking As Proctored Exam'),
+            'suggested-icon': 'fa-lock'
+        }
+    else:
+        return {
+            'status': ProctoredExamStudentAttemptStatus.eligible,
+            'short_description': _('Proctored Option Available'),
+            'suggested-icon': 'fa-lock'
+        }
+
+
 def get_student_view(user_id, course_id, content_id,
                      context, user_role='student'):
     """
