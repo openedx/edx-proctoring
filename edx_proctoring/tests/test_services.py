@@ -17,12 +17,12 @@ class MockCreditService(object):
     Simple mock of the Credit Service
     """
 
-    def __init__(self):
+    def __init__(self, enrollment_mode='verified'):
         """
         Initializer
         """
         self.status = {
-            'enrollment_mode': 'verified',
+            'enrollment_mode': enrollment_mode,
             'profile_fullname': 'Wolfgang von Strucker',
             'credit_requirement_status': []
         }

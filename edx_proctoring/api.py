@@ -7,7 +7,11 @@ API which is in the views.py file, per edX coding standards
 """
 import pytz
 import uuid
+import logging
+
 from datetime import datetime, timedelta
+
+from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.template import Context, loader
 from django.core.urlresolvers import reverse, NoReverseMatch
@@ -35,6 +39,8 @@ from edx_proctoring.utils import humanized_time
 
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.runtime import get_runtime_service
+
+log = logging.getLogger("edx_proctoring_views")
 
 
 def is_feature_enabled():
@@ -646,6 +652,45 @@ def _check_credit_eligibility(credit_state):
     return True
 
 
+STATUS_SUMMARY_MAP = {
+    '_default': {
+        'short_description': _('Taking As Proctored Exam'),
+        'suggested_icon': 'fa-lock',
+        'in_completed_state': False
+    },
+    ProctoredExamStudentAttemptStatus.eligible: {
+        'short_description': _('Proctored Option Available'),
+        'suggested_icon': 'fa-lock',
+        'in_completed_state': False
+    },
+    ProctoredExamStudentAttemptStatus.declined: {
+        'short_description': _('Taking As Open Exam'),
+        'suggested_icon': 'fa-unlock',
+        'in_completed_state': False
+    },
+    ProctoredExamStudentAttemptStatus.submitted: {
+        'short_description': _('Pending Session Review'),
+        'suggested_icon': 'fa-spinner fa-spin',
+        'in_completed_state': True
+    },
+    ProctoredExamStudentAttemptStatus.verified: {
+        'short_description': _('Passed Proctoring'),
+        'suggested_icon': 'fa-check',
+        'in_completed_state': True
+    },
+    ProctoredExamStudentAttemptStatus.rejected: {
+        'short_description': _('Failed Proctoring'),
+        'suggested_icon': 'fa-exclamation-triangle',
+        'in_completed_state': True
+    },
+    ProctoredExamStudentAttemptStatus.error: {
+        'short_description': _('Failed Proctoring'),
+        'suggested_icon': 'fa-exclamation-triangle',
+        'in_completed_state': True
+    }
+}
+
+
 def get_attempt_status_summary(user_id, course_id, content_id):
     """
     Returns a summary about the status of the attempt for the user
@@ -657,7 +702,8 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     {
         'status': ['eligible', 'declined', 'submitted', 'verified', 'rejected'],
         'short_description': <short description of status>,
-        'suggested-icon': <recommended font-awesome icon to use>
+        'suggested_icon': <recommended font-awesome icon to use>,
+        'in_completed_state': <if the status is considered in a 'completed' state>
     }
     """
 
@@ -675,50 +721,18 @@ def get_attempt_status_summary(user_id, course_id, content_id):
         log.exception(ex)
         return None
 
-    attempt = get_exam_attempt(exam_id, user_id)
+    attempt = get_exam_attempt(exam['id'], user_id)
+    status = attempt['status'] if attempt else ProctoredExamStudentAttemptStatus.eligible
 
-    if not attempt:
-        return {
-            'status': ProctoredExamStudentAttemptStatus.eligible,
-            'short_description': _('Proctored Option Available'),
-            'suggested-icon': 'fa-lock'
-        }
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.declined:
-        return {
-            'status': ProctoredExamStudentAttemptStatus.eligible,
-            'short_description': _('Taking As Open Exam'),
-            'suggested-icon': 'fa-unlock'
-        }
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
-        return {
-            'status': ProctoredExamStudentAttemptStatus.submitted,
-            'short_description': _('Pending Session Review'),
-            'suggested-icon': 'fa-unlock'
-        }
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
-        return {
-            'status': ProctoredExamStudentAttemptStatus.submitted,
-            'short_description': _('Passed Proctoring'),
-            'suggested-icon': 'fa-check'
-        }
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
-        return {
-            'status': ProctoredExamStudentAttemptStatus.rejected,
-            'short_description': _('Failed Proctoring'),
-            'suggested-icon': 'fa-exclamation-triangle'
-        }
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.started:
-        return {
-            'status': ProctoredExamStudentAttemptStatus.started,
-            'short_description': _('Taking As Proctored Exam'),
-            'suggested-icon': 'fa-lock'
-        }
+    summary = None
+    if status in STATUS_SUMMARY_MAP:
+        summary = STATUS_SUMMARY_MAP[status]
     else:
-        return {
-            'status': ProctoredExamStudentAttemptStatus.eligible,
-            'short_description': _('Proctored Option Available'),
-            'suggested-icon': 'fa-lock'
-        }
+        summary = STATUS_SUMMARY_MAP['_default']
+
+    summary.update({"status": status})
+
+    return summary
 
 
 def get_student_view(user_id, course_id, content_id,
