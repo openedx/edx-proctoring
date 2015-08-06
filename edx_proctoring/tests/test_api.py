@@ -169,7 +169,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             status='created'
         )
 
-    def _create_started_exam_attempt(self, started_at=None, is_proctored=True):
+    def _create_started_exam_attempt(self, started_at=None, is_proctored=True, is_sample_attempt=False):
         """
         Creates the ProctoredExamStudentAttempt object.
         """
@@ -179,7 +179,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             external_id=self.external_id,
             started_at=started_at if started_at else datetime.now(pytz.UTC),
             status=ProctoredExamStudentAttemptStatus.started,
-            allowed_time_limit_mins=10
+            allowed_time_limit_mins=10,
+            is_sample_attempt=is_sample_attempt
         )
 
     def _create_started_practice_exam_attempt(self, started_at=None):  # pylint: disable=invalid-name
@@ -1253,6 +1254,53 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
 
         exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam_attempt.proctored_exam.course_id,
+            exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIn(summary, [expected])
+
+    @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.eligible, {
+                'status': ProctoredExamStudentAttemptStatus.eligible,
+                'short_description': 'Ungraded Practice Exam',
+                'suggested_icon': 'fa-lock',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.submitted, {
+                'status': ProctoredExamStudentAttemptStatus.submitted,
+                'short_description': 'Practice Exam Completed',
+                'suggested_icon': 'fa-check',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.error, {
+                'status': ProctoredExamStudentAttemptStatus.error,
+                'short_description': 'Practice Exam Failed',
+                'suggested_icon': 'fa-exclamation-triangle',
+                'in_completed_state': True
+            }
+        )
+    )
+    @ddt.unpack
+    def test_practice_status_summary(self, status, expected):
+        """
+        Assert that we get the expected status summaries
+        """
+
+        exam_attempt = self._create_started_exam_attempt(is_sample_attempt=True)
         update_attempt_status(
             exam_attempt.proctored_exam_id,
             self.user.id,

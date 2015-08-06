@@ -782,6 +782,25 @@ STATUS_SUMMARY_MAP = {
 }
 
 
+PRACTICE_STATUS_SUMMARY_MAP = {
+    '_default': {
+        'short_description': _('Ungraded Practice Exam'),
+        'suggested_icon': 'fa-lock',
+        'in_completed_state': False
+    },
+    ProctoredExamStudentAttemptStatus.submitted: {
+        'short_description': _('Practice Exam Completed'),
+        'suggested_icon': 'fa-check',
+        'in_completed_state': True
+    },
+    ProctoredExamStudentAttemptStatus.error: {
+        'short_description': _('Practice Exam Failed'),
+        'suggested_icon': 'fa-exclamation-triangle',
+        'in_completed_state': True
+    }
+}
+
+
 def get_attempt_status_summary(user_id, course_id, content_id):
     """
     Returns a summary about the status of the attempt for the user
@@ -815,11 +834,13 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     attempt = get_exam_attempt(exam['id'], user_id)
     status = attempt['status'] if attempt else ProctoredExamStudentAttemptStatus.eligible
 
+    status_map = STATUS_SUMMARY_MAP if not attempt['is_sample_attempt'] else PRACTICE_STATUS_SUMMARY_MAP
+
     summary = None
-    if status in STATUS_SUMMARY_MAP:
-        summary = STATUS_SUMMARY_MAP[status]
+    if status in status_map:
+        summary = status_map[status]
     else:
-        summary = STATUS_SUMMARY_MAP['_default']
+        summary = status_map['_default']
 
     summary.update({"status": status})
 
