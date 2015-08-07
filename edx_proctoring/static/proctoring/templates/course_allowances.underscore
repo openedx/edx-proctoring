@@ -15,7 +15,7 @@
                <th class="exam-name"><%- gettext("Exam Name") %></th>
                <th class="username"><%- gettext("Username") %></th>
                <th class="email"><%- gettext("Email") %></th>
-               <th class="allowance-name"><%- gettext("Allowance Name") %> </th>
+               <th class="allowance-name"><%- gettext("Allowance Type") %> </th>
                <th class="allowance-value"><%- gettext("Allowance Value") %></th>
                <th class="c_action"><%- gettext("Actions") %> </th>
             </tr>

@@ -57,12 +57,12 @@
 
       var action_url = $(this).data('change-state-url');
       var exam_id = $(this).data('exam-id');
-      var action = $(this).data('action')
+      var action = $(this).data('action');
 
       var msg = gettext(
         "Are you sure you want to take this exam without proctoring? " +
-        "This will make you no longer eligible to earn credit for this course."
-      )
+        "You will no longer be eligible to use this course for academic credit."
+      );
       if (!confirm(msg)) {
         return;
       }
@@ -76,7 +76,7 @@
         },
         success: function() {
           // Reloading page will reflect the new state of the attempt
-          location.reload()
+          location.reload();
         }
       });
     }
@@ -132,7 +132,7 @@
   });
 
   function poll_exam_started() {
-    var url = $('.instructions').data('exam-started-poll-url')
+    var url = $('.instructions').data('exam-started-poll-url');
     $.ajax(url).success(function(data){
       if (data.status === 'ready_to_start') {
         if (_waiting_for_proctored_interval != null) {

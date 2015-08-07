@@ -8,48 +8,29 @@
 
   <h4>
     {% blocktrans %}
-      Your Proctoring Session review: <b class="failure"> Failed </b>
+      Your proctoring session results: <b class="failure"> Unsatisfactory </b>
     {% endblocktrans %}
   </h4>
 
   <p>
     {% blocktrans %}
-      Your session was reviewed by one of our proctors and some activities noted violate the
-      <a href="#">requirements and guidelines</a> needed for a successful review,
+      You are not eligible to purchase academic credit for this course, regardless of your final grade in the course.
+      If you have concerns about your proctoring session results, contact your course team.
     {% endblocktrans %}
   </p>
   <hr>
   <p>
     {% blocktrans %}
-      Please see <a href="{{progress_page_url}}">your progress in this course </a>
-      for your general course credit worthiness.
+      View your credit eligibility status on your <a href="{{progress_page_url}}">Progress</a> page.
     {% endblocktrans %}
   </p>
 </div>
 <div class="footer-sequence border-b-0 padding-b-0">
-  <span> {% trans "Can I contest this review?" %} </span>
-  <p class="proctored-exam-option">
-    {% blocktrans %}
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-        Aenean massa.
-    {% endblocktrans %}
-  </p>
-  <a href="#" class="contest-review">Contest this review</a>
-  <hr class="clearfix">
-  <span> {% trans "Is there anything I can do to make up/replace this session?" %} </span>
-  <p class="proctored-exam-option">
-    {% blocktrans %}
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-        Aenean massa.
-    {% endblocktrans %}
-  </p>
-  <hr class="clearfix">
-  <span> {% trans "See Also" %} </span>
   <p>
     {% blocktrans %}
-      <a class="footer-link" href="#">
-        Frequently asked questions about proctoring and earning college credit.
-      </a>
+      If you have concerns about your proctoring session results, contact your course team.
     {% endblocktrans %}
   </p>
+  <div class="clearfix"></div>
 </div>
+{% include 'proctoring/seq_proctored_exam_footer.html' %}

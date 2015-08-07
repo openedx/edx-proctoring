@@ -7,13 +7,13 @@
   </h3>
   <p>
     {% blocktrans %}
-      Placeholder content. <strong>Please keep the proctoring software open and running while you complete your exam</strong>.
+      Do not close the proctoring session window until you have completed and submitted your exam.
     {% endblocktrans %}
   </p>
   <div class="proctored-exam-message">
     <h3>
     {% blocktrans %}
-      You May Begin Your Exam Now
+      You Can Begin Your Exam Now
     {% endblocktrans %}
     </h3>
     <p>
@@ -26,7 +26,7 @@
     <div>
       <button type="button" class="proctored-enter-exam" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
         {% blocktrans %}
-          I'm ready! Start my timed proctored exam
+          I'm ready! Start my exam
         {% endblocktrans %}
       </button>
     </div>
@@ -43,7 +43,7 @@
 
       var action_url = $(this).data('change-state-url');
       var exam_id = $(this).data('exam-id');
-      var action = $(this).data('action')
+      var action = $(this).data('action');
 
       // Update the state of the attempt
       $.ajax({
@@ -54,7 +54,7 @@
         },
         success: function() {
           // Reloading page will reflect the new state of the attempt
-          location.reload()
+          location.reload();
         }
       });
     }
