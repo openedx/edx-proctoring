@@ -2,16 +2,20 @@
 <div class="faq-proctoring-exam">
   <h4> {% trans "See Also" %} </h4>
     <p>
-    {% blocktrans %}
-      <a class="footer-link" href="{{link_urls.get('faq','#')}}">
+      <a class="footer-link" href="{{link_urls.faq}}">
+        {% blocktrans %}
         Frequently asked questions about proctoring and earning college credit.
+        {% endblocktrans %}
       </a>
-      <a class="footer-link" href="{{link_urls.get('online_proctoring_rules','#')}}">
+      <a class="footer-link" href="{{link_urls.online_proctoring_rules}}">
+        {% blocktrans %}
         Online proctoring rules
+        {% endblocktrans %}
       </a>
-      <a class="footer-link" href="{{link_urls.get('tech_requirements','#')}}">
+      <a class="footer-link" href="{{link_urls.tech_requirements}}">
+        {% blocktrans %}
         Technical Requirements for taking a proctored exam
+        {% endblocktrans %}
       </a>
-    {% endblocktrans %}
   </p>
 </div>
