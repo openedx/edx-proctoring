@@ -11,7 +11,6 @@ var edx = edx || {};
             this.$el = options.el;
             this.model = options.model;
             this.templateId = options.proctored_template;
-            this.examControlsTemplateId = options.controls_template;
             this.template = null;
             this.timerId = null;
             this.timerTick = 0;
@@ -74,14 +73,9 @@ var edx = edx || {};
                     this.updateRemainingTime(this);
                     this.timerId = setInterval(this.updateRemainingTime, 1000, this);
 
-                    // put the exam controls (namely stop button)
-                    // right after the sequence naviation ribbon
-                    html = this.controls_template(this.model.toJSON());
-                    $('.sequence-nav').after(html);
-
                     // Bind a click handler to the exam controls
                     var self = this;
-                    $('.proctored-exam-action-stop').click(function(){
+                    $('.exam-button-turn-in-exam').click(function(){
                         $(window).unbind('beforeunload', self.unloadMessage);
 
                         $.ajax({
@@ -96,7 +90,7 @@ var edx = edx || {};
                             }
                         });
                     });
-                    $('.proctored-exam-action-stop').css('cursor', 'pointer');
+                    //$('.proctored-exam-action-stop').css('cursor', 'pointer');
                 }
             }
             return this;

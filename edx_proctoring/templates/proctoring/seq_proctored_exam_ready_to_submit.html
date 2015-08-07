@@ -41,6 +41,10 @@
 <script type="text/javascript">
   $('.exam-action-button').click(
     function(event) {
+
+      // cancel any warning messages to end user about leaving proctored exam
+      $(window).unbind('beforeunload');
+
       var action_url = $(this).data('change-state-url');
       var exam_id = $(this).data('exam-id');
       var action = $(this).data('action')
