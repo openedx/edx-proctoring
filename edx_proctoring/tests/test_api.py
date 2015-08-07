@@ -1317,7 +1317,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Assert that we get the expected status summaries
         """
 
-        exam_attempt = self._create_started_exam_attempt(is_sample_attempt=True)
+        exam_attempt = self._create_started_practice_exam_attempt()
         update_attempt_status(
             exam_attempt.proctored_exam_id,
             self.user.id,
@@ -1366,9 +1366,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         set_runtime_service('credit', MockCreditService(enrollment_mode='honor'))
 
-        exam_attempt = self._create_started_exam_attempt(is_sample_attempt=True)
-        exam_attempt.proctored_exam.is_practice_exam = True
-        exam_attempt.proctored_exam.save()
+        exam_attempt = self._create_started_practice_exam_attempt()
 
         update_attempt_status(
             exam_attempt.proctored_exam_id,
@@ -1382,6 +1380,36 @@ class ProctoredExamApiTests(LoggedInTestCase):
             exam_attempt.proctored_exam.content_id
         )
 
+        self.assertIn(summary, [expected])
+
+    def test_practice_no_attempt(self):
+        """
+        Assert that we get the expected status summaries
+        """
+
+        expected = {
+            'status': ProctoredExamStudentAttemptStatus.eligible,
+            'short_description': 'Ungraded Practice Exam',
+            'suggested_icon': 'fa-lock',
+            'in_completed_state': False
+        }
+
+        exam = get_exam_by_id(self.practice_exam_id)
+
+        set_runtime_service('credit', MockCreditService(enrollment_mode='honor'))
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam['course_id'],
+            exam['content_id']
+        )
+        self.assertIn(summary, [expected])
+
+        set_runtime_service('credit', MockCreditService())
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam['course_id'],
+            exam['content_id']
+        )
         self.assertIn(summary, [expected])
 
     @ddt.data(

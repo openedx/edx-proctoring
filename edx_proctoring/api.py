@@ -848,7 +848,7 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     attempt = get_exam_attempt(exam['id'], user_id)
     status = attempt['status'] if attempt else ProctoredExamStudentAttemptStatus.eligible
 
-    status_map = STATUS_SUMMARY_MAP if not attempt['is_sample_attempt'] else PRACTICE_STATUS_SUMMARY_MAP
+    status_map = STATUS_SUMMARY_MAP if not exam['is_practice_exam'] else PRACTICE_STATUS_SUMMARY_MAP
 
     summary = None
     if status in status_map:
