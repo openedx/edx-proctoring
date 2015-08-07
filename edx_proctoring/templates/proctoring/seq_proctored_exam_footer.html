@@ -3,13 +3,13 @@
   <h4> {% trans "See Also" %} </h4>
     <p>
     {% blocktrans %}
-      <a class="footer-link" href="http://edx.readthedocs.org/projects/edx-guide-for-students/en/latest/sfd_proctoredexams/SFD_ProctoredExams.html">
+      <a class="footer-link" href="{{link_urls.get('faq','#')}}">
         Frequently asked questions about proctoring and earning college credit.
       </a>
-      <a class="footer-link" href="http://edx.readthedocs.org/projects/edx-guide-for-students/en/latest/sfd_proctoredexams/SFD_OnlineProctoringPolicy.html">
+      <a class="footer-link" href="{{link_urls.get('online_proctoring_rules','#')}}">
         Online proctoring rules
       </a>
-      <a class="footer-link" href="http://clientportal.softwaresecure.com/support/index.php?/Knowledgebase/Article/View/252/0/system-requirements-remote-proctor-now">
+      <a class="footer-link" href="{{link_urls.get('tech_requirements','#')}}">
         Technical Requirements for taking a proctored exam
       </a>
     {% endblocktrans %}

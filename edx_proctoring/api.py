@@ -1005,6 +1005,7 @@ def get_student_view(user_id, course_id, content_id,
                 'edx_proctoring.proctored_exam.attempt',
                 args=[attempt['id']]
             ) if attempt else '',
+            'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
         })
         return template.render(django_context)
 

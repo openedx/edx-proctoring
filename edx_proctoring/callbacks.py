@@ -62,6 +62,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
             Context({
                 'exam_attempt_status_url': poll_url,
                 'platform_name': settings.PLATFORM_NAME,
+                'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {})
             })
         )
     )

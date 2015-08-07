@@ -82,4 +82,10 @@ PROCTORING_BACKEND_PROVIDER = {
 PROCTORING_SETTINGS = {
     'MUST_BE_VERIFIED_TRACK': True,
     'MUST_COMPLETE_ICRV': True,
+    'LINK_URLS': {
+        'online_proctoring_rules': '',
+        'faq': '',
+        'contact_us': '',
+        'tech_requirements': '',
+    }
 }
