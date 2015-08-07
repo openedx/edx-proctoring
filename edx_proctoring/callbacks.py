@@ -4,6 +4,7 @@ Various callback paths that support callbacks from SoftwareSecure
 
 import logging
 from django.template import Context, loader
+from django.conf import settings
 from django.http import HttpResponse
 import pytz
 from datetime import datetime
@@ -60,6 +61,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
         template.render(
             Context({
                 'exam_attempt_status_url': poll_url,
+                'platform_name': settings.PLATFORM_NAME,
             })
         )
     )
