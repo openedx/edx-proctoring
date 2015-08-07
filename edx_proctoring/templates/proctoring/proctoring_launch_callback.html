@@ -216,7 +216,7 @@
 
         $.ajax(url).success(function(data){
           // has the end user completed and submitted the exam in the LMS?!?
-          if (data.status === 'submitted') {
+          if (data.status === 'submitted' || data.status === 'error' || data.status === 'verified' || data.status === 'rejected') {
             // Signal that the desktop software should terminate
             // NOTE: This is per the API documentation from SoftwareSecure
             window.external.quitApplication();
