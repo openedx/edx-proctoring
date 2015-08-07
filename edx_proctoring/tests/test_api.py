@@ -92,20 +92,20 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.disabled_exam_id = self._create_disabled_exam()
 
         # Messages for get_student_view
-        self.start_an_exam_msg = 'Would you like to take %s as a proctored exam?'
+        self.start_an_exam_msg = 'Would you like to take "%s" as a proctored exam?'
         self.timed_exam_msg = '%s is a Timed Exam'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
-        self.exam_time_error_msg = 'Your proctoring session is in error'
+        self.exam_time_error_msg = 'There was a problem with your proctoring session'
         self.chose_proctored_exam_msg = 'You have chosen to take %s as a proctored exam'
-        self.proctored_exam_completed_msg = 'This is the end of your proctored exam'
+        self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
         self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
         self.proctored_exam_rejected_msg = 'Your proctoring session was reviewed and did not pass requirements'
         self.timed_exam_completed_msg = 'This is the end of your timed exam'
-        self.start_a_practice_exam_msg = 'Would you like to take %s as a practice proctored exam?'
+        self.start_a_practice_exam_msg = 'Would you like to take "%s" as a practice proctored exam?'
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
         self.ready_to_start_msg = 'Your Proctoring Installation and Set Up is Complete'
-        self.practice_exam_failed_msg = 'Your proctoring proctoring session is in error'
+        self.practice_exam_failed_msg = 'There was a problem with your practice proctoring session'
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService())
@@ -576,7 +576,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
     def test_get_student_view(self):
         """
-        Test for get_student_view promting the user to take the exam
+        Test for get_student_view prompting the user to take the exam
         as a timed exam or a proctored exam.
         """
         rendered_response = get_student_view(
