@@ -96,11 +96,9 @@ var edx = edx || {};
             return this;
         },
         unloadMessage: function  () {
-            return gettext("As you are currently taking a proctored exam,\n" +
-                "you should not be navigation away from the exam.\n" +
-                "This may be considered as a violation of the \n" +
-                "proctored exam and you may be disqualified for \n" +
-                "credit eligibility in this course.\n");
+            return gettext("Are you sure you want to leave this page? \n" +
+                "To pass your proctored exam you must submit your \n" +
+                "responses within the time limit and also pass the online proctoring review.\n");
         },
         updateRemainingTime: function (self) {
             self.timerTick ++;

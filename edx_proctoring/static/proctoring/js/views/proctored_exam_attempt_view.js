@@ -131,7 +131,7 @@ var edx = edx || {};
             event.preventDefault();
 
             // confirm the user's intent
-            if (!confirm(gettext('Are you sure you wish to remove this student\'s exam attempt?'))) {
+            if (!confirm(gettext('Are you sure you want to remove this student\'s exam attempt?'))) {
                 return;
             }
             var $target = $(event.currentTarget);
