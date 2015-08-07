@@ -1333,6 +1333,58 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIn(summary, [expected])
 
     @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.eligible, {
+                'status': ProctoredExamStudentAttemptStatus.eligible,
+                'short_description': 'Ungraded Practice Exam',
+                'suggested_icon': 'fa-lock',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.submitted, {
+                'status': ProctoredExamStudentAttemptStatus.submitted,
+                'short_description': 'Practice Exam Completed',
+                'suggested_icon': 'fa-check',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.error, {
+                'status': ProctoredExamStudentAttemptStatus.error,
+                'short_description': 'Practice Exam Failed',
+                'suggested_icon': 'fa-exclamation-triangle',
+                'in_completed_state': True
+            }
+        )
+    )
+    @ddt.unpack
+    def test_practice_status_honor(self, status, expected):
+        """
+        Assert that we get the expected status summaries
+        """
+
+        set_runtime_service('credit', MockCreditService(enrollment_mode='honor'))
+
+        exam_attempt = self._create_started_exam_attempt(is_sample_attempt=True)
+        exam_attempt.proctored_exam.is_practice_exam = True
+        exam_attempt.proctored_exam.save()
+
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam_attempt.proctored_exam.course_id,
+            exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIn(summary, [expected])
+
+    @ddt.data(
         'honor', 'staff'
     )
     def test_status_summary_honor(self, enrollment_mode):

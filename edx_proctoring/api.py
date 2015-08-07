@@ -829,19 +829,21 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     }
     """
 
-    # as a quick exit, let's check credit eligibility
-    credit_service = get_runtime_service('credit')
-    if credit_service:
-        credit_state = credit_service.get_credit_state(user_id, unicode(course_id))
-        if not _check_credit_eligibility(credit_state):
-            return None
-
     try:
         exam = get_exam_by_content_id(course_id, content_id)
     except ProctoredExamNotFoundException, ex:
         # this really shouldn't happen, but log it at least
         log.exception(ex)
         return None
+
+    # let's check credit eligibility
+    credit_service = get_runtime_service('credit')
+    # practice exams always has an attempt status regardless of
+    # eligibility
+    if credit_service and not exam['is_practice_exam']:
+        credit_state = credit_service.get_credit_state(user_id, unicode(course_id))
+        if not _check_credit_eligibility(credit_state):
+            return None
 
     attempt = get_exam_attempt(exam['id'], user_id)
     status = attempt['status'] if attempt else ProctoredExamStudentAttemptStatus.eligible
