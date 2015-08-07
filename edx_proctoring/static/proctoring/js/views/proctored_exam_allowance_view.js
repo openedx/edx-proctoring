@@ -15,7 +15,7 @@ var edx = edx || {};
             this.course_id = this.$el.data('course-id');
 
             /* this should be moved to a 'data' attribute in HTML */
-            this.tempate_url = '/static/proctoring/templates/course_allowances.underscore';
+            this.template_url = '/static/proctoring/templates/course_allowances.underscore';
             this.template = null;
             this.initial_url = this.collection.url;
             this.allowance_url = this.initial_url + 'allowance';
@@ -94,7 +94,7 @@ var edx = edx || {};
         },
         loadTemplateData: function () {
             var self = this;
-            $.ajax({url: self.tempate_url, dataType: "html"})
+            $.ajax({url: self.template_url, dataType: "html"})
                 .error(function (jqXHR, textStatus, errorThrown) {
 
                 })

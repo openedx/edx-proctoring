@@ -2,29 +2,27 @@
 <div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
-      Your proctoring proctoring session is in error
+      There was a problem with your practice proctoring session
     {% endblocktrans %}
   </h3>
 
   <h4>
     {% blocktrans %}
-      Your Practice Proctoring Session: <b class="failure"> Failed </b>
+      Your practice proctoring results: <b class="failure"> Unsatisfactory </b>
     {% endblocktrans %}
   </h4>
 
   <p>
     {% blocktrans %}
-      It appears that your proctoring session has been shut down while you were taking this
-      practice exam. Your practice exam is considered in error. While this will not affect your grade
-      or credit eligibility, it is recommended that you retry this practice exam until your
-      are successful
+      Your proctoring session ended before you completed this practice exam.
+      You can retry this practice exam if you had problems setting up the online proctoring software.
     {% endblocktrans %}
   </p>
   <hr>
   <div class="gated-sequence">
     <span><i class="fa fa-lock"></i></span>
     <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-      {% trans "Please retry this practice exam again" %}
+      {% trans "Try this practice exam again" %}
     </a>
   </div>
 </div>
