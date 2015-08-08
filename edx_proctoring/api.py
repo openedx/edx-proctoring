@@ -355,12 +355,14 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
 
     external_id = None
     if taking_as_proctored:
-        callback_url = 'http://{hostname}{path}'.format(
+        scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
+        callback_url = '{scheme}://{hostname}{path}'.format(
+            scheme=scheme,
             hostname=settings.SITE_NAME,
             path=reverse(
                 'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
                 args=[attempt_code]
-            )
+            ),
         )
 
         # get the name of the user, if the service is available
