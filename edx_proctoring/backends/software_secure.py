@@ -12,6 +12,8 @@ import datetime
 import json
 import logging
 
+from django.conf import settings
+
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.exceptions import (
     BackendProvideCannotRegisterAttempt,
@@ -170,7 +172,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # note that SoftwareSecure might send a case insensitive
         # ssiRecordLocator than what it returned when we registered the
         # exam
-        if attempt_obj.external_id.lower() != external_id.lower():
+        match = (
+            attempt_obj.external_id.lower() == external_id.lower() or
+            settings.PROCTORING_SETTINGS.get('ALLOW_CALLBACK_SIMULATION', False)
+        )
+        if not match:
             err_msg = (
                 'Found attempt_code {attempt_code}, but the recorded external_id did not '
                 'match the ssiRecordLocator that had been recorded previously. Has {existing} '
