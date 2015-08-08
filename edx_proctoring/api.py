@@ -362,7 +362,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             path=reverse(
                 'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
                 args=[attempt_code]
-            ),
+            )
         )
 
         # get the name of the user, if the service is available
