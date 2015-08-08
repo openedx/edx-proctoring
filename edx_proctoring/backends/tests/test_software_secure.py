@@ -30,6 +30,7 @@ from edx_proctoring.exceptions import (
 from edx_proctoring. models import (
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureComment,
+    ProctoredExamStudentAttemptStatus,
 )
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
 
@@ -348,6 +349,46 @@ class SoftwareSecureTests(TestCase):
 
         with self.assertRaises(ProctoredExamSuspiciousLookup):
             provider.on_review_callback(json.loads(test_payload))
+
+    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_CALLBACK_SIMULATION': True})
+    def test_allow_simulated_callbacks(self):
+        """
+        Verify that the configuration switch to
+        not do confirmation of external_id/ssiRecordLocators
+        """
+
+        provider = get_backend_provider()
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        # be sure to use the mocked out SoftwareSecure handlers
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(
+                exam_id,
+                self.user.id,
+                taking_as_proctored=True
+            )
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertIsNotNone(attempt['external_id'])
+
+        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+            attempt_code=attempt['attempt_code'],
+            external_id='bogus'
+        )
+
+        # this should not raise an exception since we have
+        # the ALLOW_CALLBACK_SIMULATION override
+        provider.on_review_callback(json.loads(test_payload))
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.verified)
 
     def test_review_on_archived_attempt(self):
         """

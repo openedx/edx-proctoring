@@ -88,5 +88,6 @@ PROCTORING_SETTINGS = {
         'faq': '',
         'contact_us': '',
         'tech_requirements': '',
-    }
+    },
+    'ALLOW_CALLBACK_SIMULATION': False
 }
