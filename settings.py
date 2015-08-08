@@ -18,6 +18,7 @@ TIME_ZONE = {}
 SECRET_KEY='SHHHHHH'
 PLATFORM_NAME='Open edX'
 FEATURES = {}
+HTTPS = 'off'
 
 DATABASES = {
     'default': {
