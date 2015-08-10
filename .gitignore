@@ -53,3 +53,4 @@ coverage/
 htmlcov/
 acceptance_tests/*.png
 
+node_modules/

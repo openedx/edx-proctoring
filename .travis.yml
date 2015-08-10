@@ -12,6 +12,7 @@ before_install:
 sudo: false
 
 install:
+    - npm install
     - "pip install -r requirements.txt"
     - "pip install -r test_requirements.txt"
     - "pip install coveralls"
@@ -19,6 +20,7 @@ install:
 script:
     - coverage run ./manage.py test edx_proctoring
     - coverage report -m
+    - gulp test
     - pep8 edx_proctoring
     - pylint edx_proctoring --report=no
 
