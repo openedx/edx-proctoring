@@ -11,9 +11,9 @@
       To be eligible to earn credit for this course, you must take and pass the proctoring review for this exam.
     {% endblocktrans %}
   </p>
-  <div class="gated-sequence">
+  <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
     <span><i class="fa fa-lock"></i></span>
-    <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
+    <a>
       {% trans "Yes, I want to take this exam with online proctoring (and be eligible for credit)" %}
     </a>
     <p>
@@ -26,10 +26,10 @@
     </p>
 
     <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></i>
-  </div>
-  <div class="gated-sequence">
+  </button>
+  <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=false data-start-immediately=true>
     <span><i class="fa fa-unlock"></i></span>
-    <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=false data-start-immediately=true>
+    <a>
       {% trans "No, I want to take this exam without proctoring (and not be eligible for credit)" %}
     </a>
     <p>
@@ -39,7 +39,7 @@
       {% endblocktrans %}
     </p>
       <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=false data-start-immediately=true></i>
-  </div>
+  </button>
 </div>
 {% include 'proctoring/seq_proctored_exam_footer.html' %}
 

@@ -2,25 +2,46 @@
 <div class="sequence proctored-exam instructions message-top-bar" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
   <h3>
     {% blocktrans %}
-      Awaiting Proctoring Software Installation and Setup
+      You Have Chosen to take a Proctored Exam
     {% endblocktrans %}
   </h3>
   <p>
     {% blocktrans %}
-      You have chosen to take {{display_name}} as a proctored exam. You should be directed to a new window
-      with installation and setup instructions. You can also <a href="{{software_download_url}}" target="_blank">open the installation window directly.</a>
+    You must set up and start the proctoring software before you begin your exam
     {% endblocktrans %}
   </p>
   <div class="proctored-exam-message">
     <h3>
     {% blocktrans %}
-      Here is your unique exam code. You will be asked for it during the setup.
+      Install and Set Up Proctoring Software
     {% endblocktrans %}
     </h3>
-    <h2> {{exam_code}}<span class='copy-to-clipboard'></span></h2>
+    <p>
+      {% blocktrans %}
+        1. Open the procotring software installation window and follow the instructions to <a href="{{software_download_url}}" target="_blank">install and set up the proctoring software</a>.
+      {% endblocktrans %}
+    </p>
+    <p>
+      {% blocktrans %}
+        2. Dopy this unique exam code and poste it in the proctoring software window when you are asked for it.
+      {% endblocktrans %}
+    </p>
+    <p>
+      <span class="proctored-exam-code">{{exam_code}}</span>&nbsp;<button class='proctored-exam-select-code'>Click to select exam code</button>
+    </p>
     <p>
       {% blocktrans %}
         Do not share this code. It is linked to your {{platform_name}} account and can be used only once.
+      {% endblocktrans %}
+    </p>
+    <p>
+      {% blocktrans %}
+        3. Keep the proctoring sesion window open while you are taking the exam. If you close it, the proctoring recording is stopped and you will not successfully complete the proctored exam.
+      {% endblocktrans %}
+    </p>
+    <p>
+      {% blocktrans %}
+        4. Return to the {{platform_name}} courseware to start your exam
       {% endblocktrans %}
     </p>
   </div>
@@ -82,49 +103,32 @@
     }
   );
 
+  $('.proctored-exam-select-code').click(function() {
+    selectText($('.proctored-exam-code'));
+    $(event.currentTarget).blur();
+  });
+
+  function selectText(textToBeSelected) {
+    // this selects all the text in an element
+    // http://stackoverflow.com/questions/12243898/how-to-select-all-text-in-contenteditable-div
+    var doc = document,
+      range, selection,
+      element = textToBeSelected[0];
+
+    if (doc.body.createTextRange) {
+      range = doc.body.createTextRange();
+      range.moveToElementText(element);
+      range.select();
+    } else if (window.getSelection) {
+      selection = window.getSelection();
+      range = doc.createRange();
+      range.selectNodeContents(element);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }
+
   $(document).ready(function(){
-
-    var hasFlash = false;
-    try {
-      var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
-      if (fo) {
-        hasFlash = true;
-      }
-    } catch (e) {
-      if (navigator.mimeTypes
-            && navigator.mimeTypes['application/x-shockwave-flash'] != undefined
-            && navigator.mimeTypes['application/x-shockwave-flash'].enabledPlugin) {
-        hasFlash = true;
-      }
-    }
-
-    if (hasFlash) {
-      $('.copy-to-clipboard').html(
-        '<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" \
-        width="110" \
-        height="14" \
-        id="clippy" > \
-          <param name="movie" value="/static/proctoring/clippy.swf"/> \
-          <param name="allowScriptAccess" value="always" /> \
-          <param name="quality" value="high" /> \
-          <param name="scale" value="noscale" /> \
-          <param NAME="FlashVars" value="text={{exam_code}}"> \
-          <param name="bgcolor" value="#F2F4F5"> \
-          <embed src="/static/proctoring/clippy.swf" \
-            width="110" \
-             height="14" \
-             name="clippy" \
-             quality="high" \
-            allowScriptAccess="always" \
-            type="application/x-shockwave-flash" \
-            pluginspage="http://www.macromedia.com/go/getflashplayer" \
-            FlashVars="text={{exam_code}}" \
-            bgcolor="#F2F4F5" \
-          /> \
-        </object>'
-      );
-    }
-
     _waiting_for_proctored_interval = setInterval(
       poll_exam_started,
       5000

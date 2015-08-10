@@ -96,7 +96,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.timed_exam_msg = '%s is a Timed Exam'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
         self.exam_time_error_msg = 'There was a problem with your proctoring session'
-        self.chose_proctored_exam_msg = 'You have chosen to take %s as a proctored exam'
+        self.chose_proctored_exam_msg = 'You Have Chosen to take a Proctored Exam'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
         self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
@@ -805,7 +805,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'default_time_limit_mins': 90
             }
         )
-        self.assertIn(self.chose_proctored_exam_msg % self.exam_name, rendered_response)
+        self.assertIn(self.chose_proctored_exam_msg, rendered_response)
 
     def test_declined_attempt(self):
         """
