@@ -114,7 +114,6 @@ var edx = edx || {};
         },
         render: function () {
             if (this.template !== null) {
-                var self = this;
                 var data = {
                     proctored_exam_attempts: this.collection.toJSON()[0].proctored_exam_attempts,
                     pagination_info: this.collection.toJSON()[0].pagination_info,
