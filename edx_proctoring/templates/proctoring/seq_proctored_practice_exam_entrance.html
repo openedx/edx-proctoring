@@ -10,9 +10,9 @@
       You can try this practice exam as many times as you want.
     {% endblocktrans %}
   </p>
-  <div class="gated-sequence">
+  <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
     <span><i class="fa fa-lock"></i></span>
-    <a class="start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
+    <a>
       {% trans "Yes, I want to take this practice exam with online proctoring" %}
     </a>
     <p>
@@ -23,7 +23,7 @@
     </p>
 
     <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></i>
-  </div>
+  </button>
 </div>
 {% include 'proctoring/seq_proctored_exam_footer.html' %}
 
