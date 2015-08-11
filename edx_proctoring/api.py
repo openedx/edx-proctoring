@@ -498,7 +498,7 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
     return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_start)
 
 
-def update_attempt_status(exam_id, user_id, to_status):
+def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True):
     """
     Internal helper to handle state transitions of attempt status
     """
@@ -522,7 +522,10 @@ def update_attempt_status(exam_id, user_id, to_status):
 
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
-        raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
+        if raise_if_not_found:
+            raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
+        else:
+            return
 
     #
     # don't allow state transitions from a completed state to an incomplete state
@@ -738,22 +741,39 @@ def _check_credit_eligibility(credit_state):
     been passed and False if otherwise
     """
 
+    # check both conditions
+    return (
+        _check_eligibility_of_enrollment_mode(credit_state) and
+        _check_eligibility_of_prerequisites(credit_state)
+    )
+
+
+def _check_eligibility_of_enrollment_mode(credit_state):
+    """
+    Inspects that the enrollment mode of the user
+    is valid for proctoring
+    """
+
     # Allow only the verified students to take the exam as a proctored exam
     # Also make an exception for the honor students to take the "practice exam" as a proctored exam.
     # For the rest of the enrollment modes, None is returned which shows the exam content
     # to the student rather than the proctoring prompt.
-    if credit_state['enrollment_mode'] != 'verified':
-        return False
+    return credit_state['enrollment_mode'] == 'verified'
+
+
+def _check_eligibility_of_prerequisites(credit_state):
+    """
+    Inspects that the user has completed all prerequiste
+    steps required to be allowed to take a proctored exam
+    """
 
     # also, if there are in-course reverifications requirements
     # then make sure those has a 'satisfied' status
-
     for requirement in credit_state['credit_requirement_status']:
         if requirement['namespace'] == 'reverification':
             if requirement['status'] != 'satisfied':
                 return False
 
-    # passed everything, so we can return True
     return True
 
 
@@ -912,14 +932,35 @@ def get_student_view(user_id, course_id, content_id,
         exam['is_practice_exam']
     )
 
+    attempt = None
     if check_mode_and_eligibility:
         credit_state = context['credit_state']
 
+        has_mode = _check_eligibility_of_enrollment_mode(credit_state)
+        has_prerequisites = False
+        if has_mode:
+            has_prerequisites = _check_eligibility_of_prerequisites(credit_state)
+
         # see if the user has passed all pre-requisite credit eligibility
         # checks, otherwise just show the user the exam unproctored
-        if not _check_credit_eligibility(credit_state):
-            # Nope, has not fulfilled pre-requisites, thus we
-            # just show the unproctored version
+        if not has_mode or not has_prerequisites:
+            # if we are in the right mode and if we don't have
+            # pre-requisites, then we implicitly decline the exam
+            if has_mode:
+                attempt = get_exam_attempt(exam_id, user_id)
+                if not attempt:
+                    # user hasn't a record of attempt, create one now
+                    # so we can mark it as declined
+                    create_exam_attempt(exam_id, user_id)
+
+                update_attempt_status(
+                    exam_id,
+                    user_id,
+                    ProctoredExamStudentAttemptStatus.declined,
+                    raise_if_not_found=False
+                )
+
+            # don't override context, let the courseware show
             return None
 
     attempt = get_exam_attempt(exam_id, user_id)
