@@ -649,7 +649,15 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIsNone(rendered_response)
 
-    def test_prerequirements_view(self):
+    @ddt.data(
+        ('reverification', None, False, True, ProctoredExamStudentAttemptStatus.declined),
+        ('reverification', 'failed', False, False, ProctoredExamStudentAttemptStatus.declined),
+        ('reverification', 'satisfied', True, True, None),
+        ('grade', 'failed', True, False, None)
+    )
+    @ddt.unpack
+    def test_prereq_scarios(self, namespace, req_status, show_proctored,
+                            pre_create_attempt, mark_as_declined):
         """
         This test asserts that proctoring will not be displayed under the following
         conditions:
@@ -657,99 +665,42 @@ class ProctoredExamApiTests(LoggedInTestCase):
         - Verified student has not completed all 'reverification' requirements
         """
 
+        exam = get_exam_by_id(self.proctored_exam_id)
+
+        if pre_create_attempt:
+            create_exam_attempt(self.proctored_exam_id, self.user_id)
+
         # user hasn't attempted reverifications
         rendered_response = get_student_view(
             user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
+            course_id=exam['course_id'],
+            content_id=exam['content_id'],
             context={
                 'is_proctored': True,
                 'display_name': self.exam_name,
                 'default_time_limit_mins': 90,
+                'is_practice_exam': False,
                 'credit_state': {
                     'enrollment_mode': 'verified',
                     'credit_requirement_status': [
                         {
-                            'namespace': 'reverification',
-                            'status': None,
+                            'namespace': namespace,
+                            'status': req_status,
                         }
                     ]
-                },
-                'is_practice_exam': False
+                }
             }
         )
-        self.assertIsNone(rendered_response)
+        if show_proctored:
+            self.assertIsNotNone(rendered_response)
+        else:
+            self.assertIsNone(rendered_response)
 
-        # user failed reverifications
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'credit_state': {
-                    'enrollment_mode': 'verified',
-                    'credit_requirement_status': [
-                        {
-                            'namespace': 'reverification',
-                            'status': 'failed',
-                        }
-                    ]
-                },
-                'is_practice_exam': False
-            }
-        )
-        self.assertIsNone(rendered_response)
-
-        # user passed reverifications
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'credit_state': {
-                    'enrollment_mode': 'verified',
-                    'credit_requirement_status': [
-                        {
-                            'namespace': 'reverification',
-                            'status': 'satisfied',
-                        }
-                    ]
-                },
-                'is_practice_exam': False
-            }
-        )
-        # here, we should get proctoring content
-        self.assertIsNotNone(rendered_response)
-
-        # user doesn't have pre-requisites on reverification
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'credit_state': {
-                    'enrollment_mode': 'verified',
-                    'credit_requirement_status': [
-                        {
-                            'namespace': 'grade',
-                            'status': 'failed',
-                        }
-                    ]
-                },
-                'is_practice_exam': False
-            }
-        )
-        # here, we should get proctoring content
-        self.assertIsNotNone(rendered_response)
+        # also the user should have been marked as declined in certain
+        # cases
+        if mark_as_declined:
+            attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
+            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
 
     def test_student_view_non_student(self):
         """
@@ -1180,6 +1131,24 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(
             exam_attempt['status'],
             ProctoredExamStudentAttemptStatus.ready_to_submit
+        )
+
+    def test_update_unexisting_attempt(self):
+        """
+        Tests updating an non-existing attempt
+        """
+
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            update_attempt_status(0, 0, ProctoredExamStudentAttemptStatus.timed_out)
+
+        # also check the raise_if_not_found flag
+        self.assertIsNone(
+            update_attempt_status(
+                0,
+                0,
+                ProctoredExamStudentAttemptStatus.timed_out,
+                raise_if_not_found=False
+            )
         )
 
     @ddt.data(
