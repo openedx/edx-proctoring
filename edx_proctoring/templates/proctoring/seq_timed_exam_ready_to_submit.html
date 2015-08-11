@@ -21,7 +21,7 @@
   $('.exam-action-button').click(
     function(event) {
 
-      // cancel any warning messages to end user about leaving proctored exam
+      // cancel any warning messages to end user about leaving timed exam
       $(window).unbind('beforeunload');
 
       var action_url = $(this).data('change-state-url');
