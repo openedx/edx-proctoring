@@ -59,11 +59,13 @@
       rules for online proctoring.
     {% endblocktrans %}
   </p>
+  {% if not is_sample_attempt %}
   <p class="proctored-exam-instruction">
       {% trans "Don't want to take this exam with online proctoring?" %}<a class="proctored-decline-exam" href='#' data-action="decline" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
         {% trans "Take this exam as an open exam instead." %}
       </a>
   </p>
+  {% endif %}
 </div>
 {% include 'proctoring/seq_proctored_exam_footer.html' %}
 
