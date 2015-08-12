@@ -1,4 +1,4 @@
-<div class='modal-header'><%- gettext("Add a new Allowance") %></div>
+<div class='modal-header'><%- gettext("Add a New Allowance") %></div>
 <form>
     <h3 class='error-response'><h3>
     <table class='compact'>

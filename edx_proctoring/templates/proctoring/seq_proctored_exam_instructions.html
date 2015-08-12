@@ -2,7 +2,7 @@
 <div class="sequence proctored-exam instructions message-top-bar" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
   <h3>
     {% blocktrans %}
-      You Have Chosen to take a Proctored Exam
+      You Have Chosen To Take a Proctored Exam
     {% endblocktrans %}
   </h3>
   <p>
@@ -27,7 +27,7 @@
       {% endblocktrans %}
     </p>
     <p>
-      <span class="proctored-exam-code" role="application">{{exam_code}}</span>&nbsp;<button class='proctored-exam-select-code'>Click to select exam code</button>
+      <span class="proctored-exam-code" role="application">{{exam_code}}</span>&nbsp;<button class='proctored-exam-select-code'>Select exam code</button>
     </p>
     <p>
       {% blocktrans %}
@@ -47,18 +47,6 @@
   </div>
 </div>
 <div class="footer-sequence border-b-0 padding-b-0">
-  <span>
-    {% blocktrans %}
-      Note: As soon as you finish installing and setting up the proctoring software,
-      you will be prompted to start your timed exam.
-    {% endblocktrans %}
-   </span>
-    <p>
-    {% blocktrans %}
-      Be prepared to start your exam and to complete it while adhering to the {{platform_name}}
-      rules for online proctoring.
-    {% endblocktrans %}
-  </p>
   {% if not is_sample_attempt %}
   <p class="proctored-exam-instruction">
       {% trans "Don't want to take this exam with online proctoring?" %}<a class="proctored-decline-exam" href='#' data-action="decline" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">

@@ -96,7 +96,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.timed_exam_msg = '%s is a Timed Exam'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
         self.exam_time_error_msg = 'There was a problem with your proctoring session'
-        self.chose_proctored_exam_msg = 'You Have Chosen to take a Proctored Exam'
+        self.chose_proctored_exam_msg = 'You Have Chosen To Take a Proctored Exam'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
         self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'

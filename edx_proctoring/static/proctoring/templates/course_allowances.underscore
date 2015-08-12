@@ -1,4 +1,4 @@
-<span class="tip"> <%- gettext("Add Allowance") %>
+<span class="tip"> <%- gettext("Allowances") %>
     <span>
         <a id="add-allowance" href="#"  class="add blue-button">+ <%- gettext("Add Allowance") %></a>
     </span>
