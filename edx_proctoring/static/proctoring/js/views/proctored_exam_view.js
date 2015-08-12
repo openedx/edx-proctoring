@@ -124,7 +124,7 @@ var edx = edx || {};
                 clearInterval(self.timerId); // stop the timer once the time finishes.
                 $(window).unbind('beforeunload', this.unloadMessage);
                 // refresh the page when the timer expired
-                this.reloadPage()
+                self.reloadPage();
             }
         }
     });
