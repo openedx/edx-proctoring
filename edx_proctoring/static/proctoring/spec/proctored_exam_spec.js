@@ -6,9 +6,9 @@ describe('ProctoredExamView', function () {
             '<div class="proctored_exam_status">' +
             '<script type="text/template" id="proctored-exam-status-tpl">' +
             '<div class="exam-timer">' +
-            '<%- gettext("You are taking \"") %>' +
+            'You are taking "' +
             '<a href="<%= exam_url_path %>"> <%= exam_display_name %> </a>' +
-            '<%- gettext("\" as a proctored exam. The timer on the right shows the time remaining in the exam") %>' +
+            '" as a proctored exam. The timer on the right shows the time remaining in the exam' +
             '<span id="time_remaining_id" class="pull-right"> <b> </b> </span> </div>' +
             '</script>'+
             '</div>'
