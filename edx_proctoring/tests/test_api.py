@@ -487,7 +487,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = mark_exam_attempt_timeout(
-            proctored_exam_student_attempt.proctored_exam, self.user_id
+            proctored_exam_student_attempt.proctored_exam.id, self.user_id
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
@@ -1116,7 +1116,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     def test_alias_timed_out(self):
         """
         Verified that timed_out will automatically state transition
-        to ready_to_submit
+        to submitted
         """
 
         exam_attempt = self._create_started_exam_attempt()
@@ -1130,7 +1130,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         self.assertEqual(
             exam_attempt['status'],
-            ProctoredExamStudentAttemptStatus.ready_to_submit
+            ProctoredExamStudentAttemptStatus.submitted
         )
 
     def test_update_unexisting_attempt(self):
