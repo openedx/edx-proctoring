@@ -18,9 +18,10 @@
     </h3>
     <p>
       {% blocktrans %}
-        Your proctored and timed exam is now ready. Once you start, <strong>you will have {{total_time}} to
-        complete the exam and cannot stop the timer</strong>. If you did not active complete the exam, at the
-        end of that period your exam will close and proctoring session will be reviewed.
+        When you start your exam you will have {{total_time}} to complete it. You cannot stop the timer once you start.
+      {% endblocktrans %}
+      {% blocktrans %}
+        If the allotted time expires before you mark your exam as ended, the answers you have completed up to that point are submitted for grading, and your proctoring session is uploaded for review.
       {% endblocktrans %}
     </p>
     <div>
