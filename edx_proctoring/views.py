@@ -46,7 +46,7 @@ from .utils import AuthenticatedAPIView
 
 ATTEMPTS_PER_PAGE = 25
 
-SOFTWARE_SECURE_CLIENT_TIMEOUT = 15
+SOFTWARE_SECURE_CLIENT_TIMEOUT = settings.PROCTORING_SETTINGS.get('SOFTWARE_SECURE_CLIENT_TIMEOUT', 30)
 
 LOG = logging.getLogger("edx_proctoring_views")
 

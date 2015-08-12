@@ -1022,7 +1022,8 @@ def get_student_view(user_id, course_id, content_id,
     if student_view_template:
         template = loader.get_template(student_view_template)
         django_context = Context(context)
-        total_time = humanized_time(context['default_time_limit_mins'])
+        attempt_time = attempt['allowed_time_limit_mins'] if attempt else exam['time_limit_mins']
+        total_time = humanized_time(attempt_time)
         progress_page_url = ''
         try:
             progress_page_url = reverse(
@@ -1030,6 +1031,9 @@ def get_student_view(user_id, course_id, content_id,
                 args=[course_id]
             )
         except NoReverseMatch:
+            # we are allowing a failure here since we can't guarantee
+            # that we are running in-proc with the edx-platform LMS
+            # (for example unit tests)
             pass
 
         django_context.update({
