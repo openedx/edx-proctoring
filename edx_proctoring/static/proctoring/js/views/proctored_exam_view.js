@@ -100,7 +100,7 @@ var edx = edx || {};
         },
         unloadMessage: function  () {
             return gettext("Are you sure you want to leave this page? \n" +
-                "To pass your proctored exam you must also pass the online proctoring session review.n");
+                "To pass your proctored exam you must also pass the online proctoring session review.");
         },
         updateRemainingTime: function (self) {
             self.timerTick ++;
