@@ -2,6 +2,9 @@
 Helpers for the HTTP APIs
 """
 
+import pytz
+from datetime import datetime, timedelta
+
 from django.utils.translation import ugettext as _
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
@@ -14,6 +17,23 @@ class AuthenticatedAPIView(APIView):
     """
     authentication_classes = (SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+
+def get_time_remaining_for_attempt(attempt):
+    """
+    Returns the remaining time (in seconds) on an attempt
+    """
+
+    # need to adjust for allowances
+    expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
+    now_utc = datetime.now(pytz.UTC)
+
+    if expires_at > now_utc:
+        time_remaining_seconds = (expires_at - now_utc).seconds
+    else:
+        time_remaining_seconds = 0
+
+    return time_remaining_seconds
 
 
 def humanized_time(time_in_minutes):
