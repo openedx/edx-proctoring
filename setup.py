@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def is_requirement(line):
     """
@@ -34,7 +34,7 @@ def load_requirements(*requirements_paths):
 
 setup(
     name='edx-proctoring',
-    version='0.1.0',
+    version='0.6.0',
     description='Proctoring subsystem for Open edX',
     long_description=open('README.md').read(),
     author='edX',
@@ -49,7 +49,10 @@ setup(
         'Programming Language :: Python',
         'Framework :: Django',
     ],
-    packages=['edx_proctoring'],
+    packages=find_packages(exclude=["tests"]),
+    package_data={
+        '': ['*.html', '*.underscore', '*.png', '*.js', '*swf']
+    },
     dependency_links=[
     ],
     install_requires=load_requirements('requirements.txt'),
