@@ -230,32 +230,6 @@ describe('ProctoredExamAddAllowanceView', function () {
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Additional time (minutes)');
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Test Exam');
     });
-
-    it("should render the proctored exam add allowance view properly", function () {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
-            [
-                200,
-                {
-                    "Content-Type": "application/json"
-                },
-                JSON.stringify(expectedProctoredAllowanceJson)
-            ]
-        );
-
-        this.proctored_exam_allowance = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView();
-        var add_allowance_view = new edx.instructor_dashboard.proctoring.AddAllowanceView({
-            course_id: 'test_course_id',
-            proctored_exams: proctoredExamJson,
-            proctored_exam_allowance_view: this.proctored_exam_allowance
-        });
-        this.server.respond();
-        this.server.respond();
-        this.server.respond();
-
-        expect(add_allowance_view.$el.find('#proctored_exam').html()).toContain('Midterm Exam');
-        expect(add_allowance_view.$el.find('#proctored_exam').html()).toContain('Final Exam');
-        expect(add_allowance_view.$el.find('#proctored_exam').html()).toContain('Test Exam');
-    });
     it("should send error when adding proctored exam allowance", function () {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
             [
