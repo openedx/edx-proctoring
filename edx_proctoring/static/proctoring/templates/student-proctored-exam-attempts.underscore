@@ -1,6 +1,6 @@
 <div class="wrapper-content wrapper">
     <% var is_proctored_attempts = proctored_exam_attempts.length !== 0 %>
-        <section class="content">
+        <section class="content exam-attempts-content">
             <div class="top-header">
                 <div class='search-attempts'>
                     <input type="text" id="search_attempt_id" placeholder="e.g johndoe or john.doe@gmail.com"
@@ -81,7 +81,7 @@
                     <tr class="exam-attempt-headings">
                         <th class="username"><%- gettext("Username") %></th>
                         <th class="exam-name"><%- gettext("Exam Name") %></th>
-                        <th class="attempt-allowed-time"><%- gettext("Allowed Time (Minutes)") %> </th>
+                        <th class="attempt-allowed-time"><%- gettext("Time Limit") %> </th>
                         <th class="attempt-started-at"><%- gettext("Started At") %></th>
                         <th class="attempt-completed-at"><%- gettext("Completed At") %> </th>
                         <th class="attempt-status"><%- gettext("Status") %> </th>
@@ -103,7 +103,7 @@
                             <td> <%= getDateFormat(proctored_exam_attempt.completed_at) %></td>
                              <td>
                              <% if (proctored_exam_attempt.status){ %>
-                                <%= proctored_exam_attempt.status %>
+                                <%= getExamAttemptStatus(proctored_exam_attempt.status) %>
                             <% } else { %>
                                 N/A
                             <% } %>
