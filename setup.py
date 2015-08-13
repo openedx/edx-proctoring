@@ -34,7 +34,7 @@ def load_requirements(*requirements_paths):
 
 setup(
     name='edx-proctoring',
-    version='0.4.0',
+    version='0.5.0',
     description='Proctoring subsystem for Open edX',
     long_description=open('README.md').read(),
     author='edX',
@@ -51,7 +51,7 @@ setup(
     ],
     packages=find_packages(exclude=["tests"]),
     package_data={
-        '': ['*']
+        '': ['*.html', '*.underscore', '*.png', '*.js', '*swf']
     },
     dependency_links=[
     ],
