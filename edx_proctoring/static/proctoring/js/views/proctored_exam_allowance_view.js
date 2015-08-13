@@ -7,7 +7,7 @@ var edx = edx || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
 
     edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = Backbone.View.extend({
-        initialize: function (options) {
+        initialize: function () {
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection();
             this.proctoredExamCollection = new edx.instructor_dashboard.proctoring.ProctoredExamCollection();
             /* unfortunately we have to make some assumptions about what is being set up in HTML */
@@ -140,4 +140,5 @@ var edx = edx || {};
             event.preventDefault();
         }
     });
+    this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView;
 }).call(this, Backbone, $, _);
