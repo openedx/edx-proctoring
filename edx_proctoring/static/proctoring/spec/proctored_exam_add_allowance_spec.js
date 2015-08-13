@@ -1,9 +1,9 @@
 describe('ProctoredExamAddAllowanceView', function () {
     var html = '';
     var allowancesHtml = '';
-    var errorAddingAllowance = [{
-        detail: "Cannot find user against asd"
-    }];
+    var errorAddingAllowance = {
+        detail: "Cannot find user"
+    };
     var expectedProctoredAllowanceJson = [
         {
             created: "2015-08-10T09:15:45Z",
@@ -306,11 +306,11 @@ describe('ProctoredExamAddAllowanceView', function () {
         );
 
         //select the form values
-
+        // invalid user_info returns error
         $('#proctored_exam').val('Test Exam');
         $('#allowance_type').val('Additional time (minutes)');
-        $('#allowance_value').val('asdasdasdsa');
-        $("#user_info").val('testuser1');
+        $('#allowance_value').val('2');
+        $("#user_info").val('testuser112321');
 
         // trigger the add allowance event.
         var spyEvent = spyOnEvent('form', 'submit');
@@ -320,9 +320,20 @@ describe('ProctoredExamAddAllowanceView', function () {
         this.server.respond();
         this.server.respond();
 
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('testuser1');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('testuser1@test.com');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Additional time (minutes)');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Test Exam');
+        expect(add_allowance_view.$el.find('.error-response').html()).toContain('Cannot find user');
+
+        //select the form values
+        // empty value returns error
+        $('#proctored_exam').val('Test Exam');
+        $('#allowance_type').val('Additional time (minutes)');
+        $('#allowance_value').val('');
+        $("#user_info").val('testuser1');
+
+        // trigger the add allowance event.
+        var spyEvent = spyOnEvent('form', 'submit');
+        $('form').trigger( "submit" );
+
+        expect(add_allowance_view.$el.find('.error-message').html()).toContain('Required field');
+
     });
 });
