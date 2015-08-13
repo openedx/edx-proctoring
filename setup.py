@@ -34,7 +34,7 @@ def load_requirements(*requirements_paths):
 
 setup(
     name='edx-proctoring',
-    version='0.3.0',
+    version='0.4.0',
     description='Proctoring subsystem for Open edX',
     long_description=open('README.md').read(),
     author='edX',
@@ -50,7 +50,9 @@ setup(
         'Framework :: Django',
     ],
     packages=find_packages(exclude=["tests"]),
-    include_package_data=True,
+    package_data={
+        '': ['*']
+    },
     dependency_links=[
     ],
     install_requires=load_requirements('requirements.txt'),
