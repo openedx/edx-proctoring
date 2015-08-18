@@ -147,6 +147,39 @@ class ProctoredExamStudentAttemptStatus(object):
             ProctoredExamStudentAttemptStatus.error
         ]
 
+    @classmethod
+    def is_incomplete_status(cls, status):
+        """
+        Returns a boolean if the passed in status is in an "incomplete" state.
+        """
+        return status in [
+            ProctoredExamStudentAttemptStatus.eligible, ProctoredExamStudentAttemptStatus.created,
+            ProctoredExamStudentAttemptStatus.ready_to_start, ProctoredExamStudentAttemptStatus.started,
+            ProctoredExamStudentAttemptStatus.ready_to_submit
+        ]
+
+    @classmethod
+    def needs_credit_status_update(cls, to_status):
+        """
+        Returns a boolean if the passed in to_status calls for an update to the credit requirement status.
+        """
+        return to_status in [
+            ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected,
+            ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.not_reviewed,
+            ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error
+        ]
+
+    @classmethod
+    def is_a_cascadable_failure(cls, to_status):
+        """
+        Returns a boolean if the passed in to_status has a failure that needs to be cascaded
+        to other attempts.
+        """
+        return to_status in [
+            ProctoredExamStudentAttemptStatus.rejected,
+            ProctoredExamStudentAttemptStatus.declined
+        ]
+
 
 class ProctoredExamStudentAttemptManager(models.Manager):
     """
