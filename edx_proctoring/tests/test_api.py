@@ -650,14 +650,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIsNone(rendered_response)
 
     @ddt.data(
-        ('reverification', None, False, True, ProctoredExamStudentAttemptStatus.declined),
-        ('reverification', 'failed', False, False, ProctoredExamStudentAttemptStatus.declined),
-        ('reverification', 'satisfied', True, True, None),
-        ('grade', 'failed', True, False, None)
+        ('reverification', None, True, True, False),
+        ('reverification', 'failed', False, False, True),
+        ('reverification', 'satisfied', True, True, False),
+        ('grade', 'failed', True, False, False)
     )
     @ddt.unpack
-    def test_prereq_scarios(self, namespace, req_status, show_proctored,
-                            pre_create_attempt, mark_as_declined):
+    def test_prereq_scenarios(self, namespace, req_status, show_proctored,
+                              pre_create_attempt, mark_as_declined):
         """
         This test asserts that proctoring will not be displayed under the following
         conditions:

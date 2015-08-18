@@ -771,7 +771,7 @@ def _check_eligibility_of_prerequisites(credit_state):
     # then make sure those has a 'satisfied' status
     for requirement in credit_state['credit_requirement_status']:
         if requirement['namespace'] == 'reverification':
-            if requirement['status'] != 'satisfied':
+            if requirement['status'] == 'failed':
                 return False
 
     return True
