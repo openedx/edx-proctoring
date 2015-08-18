@@ -498,7 +498,7 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
     return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_start)
 
 
-def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True):
+def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, cascade_effects=True):
     """
     Internal helper to handle state transitions of attempt status
     """
@@ -561,9 +561,6 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True):
     exam_attempt_obj.status = to_status
     exam_attempt_obj.save()
 
-    # trigger workflow, as needed
-    credit_service = get_runtime_service('credit')
-
     # see if the status transition this changes credit requirement status
     update_credit = to_status in [
         ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected,
@@ -572,6 +569,9 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True):
     ]
 
     if update_credit:
+        # trigger credit workflow, as needed
+        credit_service = get_runtime_service('credit')
+
         exam = get_exam_by_id(exam_id)
         if to_status == ProctoredExamStudentAttemptStatus.verified:
             verification = 'satisfied'
@@ -599,6 +599,51 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True):
             req_name=exam_attempt_obj.proctored_exam.content_id,
             status=verification
         )
+
+    if cascade_effects:
+        # some state transitions (namely to a rejected or declined status)
+        # will mark other exams as declined because once we fail or decline
+        # one exam all other (un-completed) proctored exams will we likewise
+        # updated to reflect a declined status
+        cascade_failure = to_status in [
+            ProctoredExamStudentAttemptStatus.rejected,
+            ProctoredExamStudentAttemptStatus.declined
+        ]
+        if cascade_failure:
+            # get all other unattempted exams and mark also as declined
+            _exams = ProctoredExam.get_all_exams_for_course(
+                exam_attempt_obj.proctored_exam.course_id,
+                active_only=True
+            )
+
+            # we just want other exams which are proctored and are not practice
+            exams = [
+                exam
+                for exam in _exams
+                if (
+                    exam.content_id != exam_attempt_obj.proctored_exam.content_id and
+                    exam.is_proctored and not exam.is_practice_exam
+                )
+            ]
+
+            for exam in exams:
+                if exam.content_id != exam_attempt_obj.proctored_exam.content_id:
+                    # make sure there was no attempt
+                    attempt = get_exam_attempt(exam.id, user_id)
+                    if attempt and ProctoredExamStudentAttemptStatus.is_completed_status(attempt['status']):
+                        # don't touch any completed statuses
+                        continue
+
+                    if not attempt:
+                        create_exam_attempt(exam.id, user_id, taking_as_proctored=False)
+
+                    # update any new or existing status to declined
+                    update_attempt_status(
+                        exam.id,
+                        user_id,
+                        ProctoredExamStudentAttemptStatus.declined,
+                        cascade_effects=False
+                    )
 
     if to_status == ProctoredExamStudentAttemptStatus.submitted:
         # also mark the exam attempt completed_at timestamp

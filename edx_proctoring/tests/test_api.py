@@ -1083,6 +1083,93 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
 
     @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.declined,
+            False,
+            None,
+            ProctoredExamStudentAttemptStatus.declined
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            False,
+            None,
+            ProctoredExamStudentAttemptStatus.declined
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            True,
+            ProctoredExamStudentAttemptStatus.verified,
+            ProctoredExamStudentAttemptStatus.verified
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.declined,
+            True,
+            ProctoredExamStudentAttemptStatus.submitted,
+            ProctoredExamStudentAttemptStatus.submitted
+        ),
+    )
+    @ddt.unpack
+    def test_cascading(self, to_status, create_attempt, second_attempt_status, expected_second_status):
+        """
+        Make sure that when we decline/reject one attempt all other exams in the course
+        are auto marked as declined
+        """
+
+        # create other exams in course
+        second_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="2nd exam",
+            exam_name="2nd exam",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=False,
+            is_proctored=True
+        )
+
+        practice_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="practice",
+            exam_name="practice",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True
+        )
+
+        timed_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="timed",
+            exam_name="timed",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=False,
+            is_proctored=False
+        )
+
+        if create_attempt:
+            create_exam_attempt(second_exam_id, self.user_id, taking_as_proctored=False)
+
+            if second_attempt_status:
+                update_attempt_status(second_exam_id, self.user_id, second_attempt_status)
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            to_status
+        )
+
+        # make sure we reamain in the right status
+        read_back = get_exam_attempt(exam_attempt.proctored_exam_id, self.user.id)
+        self.assertEqual(read_back['status'], to_status)
+
+        # make sure an attempt was made for second_exam
+        second_exam_attempt = get_exam_attempt(second_exam_id, self.user_id)
+        self.assertIsNotNone(second_exam_attempt)
+        self.assertEqual(second_exam_attempt['status'], expected_second_status)
+
+        # no auto-generated attempts for practice and timed exams
+        self.assertIsNone(get_exam_attempt(practice_exam_id, self.user_id))
+        self.assertIsNone(get_exam_attempt(timed_exam_id, self.user_id))
+
+    @ddt.data(
         (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
         (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.created),
         (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.ready_to_start),
