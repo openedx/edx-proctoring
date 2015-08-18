@@ -603,7 +603,7 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
     if cascade_effects:
         # some state transitions (namely to a rejected or declined status)
         # will mark other exams as declined because once we fail or decline
-        # one exam all other (un-completed) proctored exams will we likewise
+        # one exam all other (un-completed) proctored exams will be likewise
         # updated to reflect a declined status
         cascade_failure = to_status in [
             ProctoredExamStudentAttemptStatus.rejected,
@@ -627,23 +627,23 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
             ]
 
             for exam in exams:
-                if exam.content_id != exam_attempt_obj.proctored_exam.content_id:
-                    # make sure there was no attempt
-                    attempt = get_exam_attempt(exam.id, user_id)
-                    if attempt and ProctoredExamStudentAttemptStatus.is_completed_status(attempt['status']):
-                        # don't touch any completed statuses
-                        continue
+                # see if there was an attempt on those other exams already
+                attempt = get_exam_attempt(exam.id, user_id)
+                if attempt and ProctoredExamStudentAttemptStatus.is_completed_status(attempt['status']):
+                    # don't touch any completed statuses
+                    # we won't revoke those
+                    continue
 
-                    if not attempt:
-                        create_exam_attempt(exam.id, user_id, taking_as_proctored=False)
+                if not attempt:
+                    create_exam_attempt(exam.id, user_id, taking_as_proctored=False)
 
-                    # update any new or existing status to declined
-                    update_attempt_status(
-                        exam.id,
-                        user_id,
-                        ProctoredExamStudentAttemptStatus.declined,
-                        cascade_effects=False
-                    )
+                # update any new or existing status to declined
+                update_attempt_status(
+                    exam.id,
+                    user_id,
+                    ProctoredExamStudentAttemptStatus.declined,
+                    cascade_effects=False
+                )
 
     if to_status == ProctoredExamStudentAttemptStatus.submitted:
         # also mark the exam attempt completed_at timestamp
