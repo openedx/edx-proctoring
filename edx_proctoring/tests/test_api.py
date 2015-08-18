@@ -1143,6 +1143,16 @@ class ProctoredExamApiTests(LoggedInTestCase):
             is_proctored=False
         )
 
+        inactive_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="inactive",
+            exam_name="inactive",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=False,
+            is_proctored=True,
+            is_active=False
+        )
+
         if create_attempt:
             create_exam_attempt(second_exam_id, self.user_id, taking_as_proctored=False)
 
@@ -1168,6 +1178,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         # no auto-generated attempts for practice and timed exams
         self.assertIsNone(get_exam_attempt(practice_exam_id, self.user_id))
         self.assertIsNone(get_exam_attempt(timed_exam_id, self.user_id))
+        self.assertIsNone(get_exam_attempt(inactive_exam_id, self.user_id))
 
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
