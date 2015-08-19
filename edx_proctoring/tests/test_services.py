@@ -17,17 +17,19 @@ class MockCreditService(object):
     Simple mock of the Credit Service
     """
 
-    def __init__(self, enrollment_mode='verified', profile_fullname='Wolfgang von Strucker'):
+    def __init__(self, enrollment_mode='verified', profile_fullname='Wolfgang von Strucker',
+                 course_name='edx demo'):
         """
         Initializer
         """
         self.status = {
+            'course_name': course_name,
             'enrollment_mode': enrollment_mode,
             'profile_fullname': profile_fullname,
             'credit_requirement_status': []
         }
 
-    def get_credit_state(self, user_id, course_key):  # pylint: disable=unused-argument
+    def get_credit_state(self, user_id, course_key, return_course_name=False):  # pylint: disable=unused-argument
         """
         Mock implementation
         """

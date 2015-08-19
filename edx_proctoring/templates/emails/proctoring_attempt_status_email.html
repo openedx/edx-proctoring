@@ -1,0 +1,9 @@
+{% load i18n %}
+
+{% blocktrans %}
+
+This email is to let you know that the status of your proctoring session review for {{ exam_name }} in
+<a href="{{ course_url }}">{{ course_name }} </a> is {{ status }}. If you have any questions about proctoring,
+contact {{ platform }} support at {{ contact_email }}.
+
+{% endblocktrans %}

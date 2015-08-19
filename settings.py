@@ -91,3 +91,6 @@ PROCTORING_SETTINGS = {
     },
     'ALLOW_CALLBACK_SIMULATION': False
 }
+
+DEFAULT_FROM_EMAIL = 'no-reply@example.com'
+CONTACT_EMAIL = 'info@edx.org'
