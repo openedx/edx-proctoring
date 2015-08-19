@@ -4,6 +4,7 @@
 In-Proc API (aka Library) for the edx_proctoring subsystem. This is not to be confused with a HTTP REST
 API which is in the views.py file, per edX coding standards
 """
+from django.core.mail.message import EmailMessage
 import pytz
 import uuid
 import logging
@@ -640,7 +641,23 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
         exam_attempt_obj.started_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()
 
+    if ProctoredExamStudentAttemptStatus.is_attempt_change_status(exam_attempt_obj.status):
+        send_proctoring_attempt_status_email(exam_attempt_obj.status, exam_attempt_obj.user.email)
+
     return exam_attempt_obj.id
+
+def send_proctoring_attempt_status_email(status, email_to):
+    """
+    Send an email about proctoring attempt status
+    """
+
+    email_template = loader.get_template('emails/proctoring_attempt_status_email.html')
+    body = email_template.render(Context({
+        'Name': 'abc123'
+    }))
+    subject = "You exam status is {status}".format(status=status)
+    from_email = "hasn@gmail.com"
+    EmailMessage(subject=subject, body=body, from_email=from_email, to=[email_to]).send()
 
 
 def remove_exam_attempt(attempt_id):

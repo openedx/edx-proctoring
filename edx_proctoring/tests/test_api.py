@@ -5,6 +5,7 @@ All tests for the models.py
 """
 import ddt
 from datetime import datetime, timedelta
+from django.core import mail
 from mock import patch
 import pytz
 from freezegun import freeze_time
@@ -1539,3 +1540,40 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         self.assertEquals(attempt['last_poll_timestamp'], now)
         self.assertEquals(attempt['last_poll_ipaddr'], '1.1.1.1')
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.submitted,
+        ProctoredExamStudentAttemptStatus.verified,
+        ProctoredExamStudentAttemptStatus.rejected
+    )
+    def test_send_email(self, status):
+        """
+        Assert that email has sent on the following statuses on proctoring attempt
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+        self.assertEquals(len(mail.outbox), 1)
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.ready_to_start,
+        ProctoredExamStudentAttemptStatus.declined,
+        ProctoredExamStudentAttemptStatus.ready_to_submit
+    )
+    def test_not_send_email(self, status):
+        """
+        Assert that email has not sent on the following statuses on proctoring attempt
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+        self.assertEquals(len(mail.outbox), 0)

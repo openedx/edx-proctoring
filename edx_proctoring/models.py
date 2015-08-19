@@ -180,6 +180,17 @@ class ProctoredExamStudentAttemptStatus(object):
             ProctoredExamStudentAttemptStatus.declined
         ]
 
+    @classmethod
+    def is_attempt_change_status(cls, to_status):
+        """
+        Returns a boolean if the passed in to_status has a changed the attempt proctoring status
+        """
+
+        return to_status in [
+            ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.submitted,
+            ProctoredExamStudentAttemptStatus.verified
+        ]
+
 
 class ProctoredExamStudentAttemptManager(models.Manager):
     """
