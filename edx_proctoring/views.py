@@ -443,6 +443,15 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         HTTP GET Handler. Returns the status of the exam attempt.
         """
         if course_id is not None:
+            #
+            # This code path is only for authenticated global staff users
+            #
+            if not request.user.is_staff:
+                return Response(
+                    status=status.HTTP_403_FORBIDDEN,
+                    data={"detail": "Must be a Staff User to Perform this request."}
+                )
+
             if search_by is not None:
                 exam_attempts = get_filtered_exam_attempts(course_id, search_by)
                 attempt_url = reverse('edx_proctoring.proctored_exam.attempt.search', args=[course_id, search_by])
