@@ -279,6 +279,16 @@ def get_exam_attempt_by_id(attempt_id):
     return _get_exam_attempt(exam_attempt_obj)
 
 
+def get_exam_attempt_by_code(attempt_code):
+    """
+    Signals the beginning of an exam attempt when we only have
+    an attempt code
+    """
+
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
+    return _get_exam_attempt(exam_attempt_obj)
+
+
 def update_exam_attempt(attempt_id, **kwargs):
     """
     update exam_attempt
@@ -295,17 +305,6 @@ def update_exam_attempt(attempt_id, **kwargs):
             raise ProctoredExamPermissionDenied(err_msg)
         setattr(exam_attempt_obj, key, value)
     exam_attempt_obj.save()
-
-
-def get_exam_attempt_by_code(attempt_code):
-    """
-    Signals the beginning of an exam attempt when we only have
-    an attempt code
-    """
-
-    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
-    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
-    return serialized_attempt_obj.data if exam_attempt_obj else None
 
 
 def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
