@@ -6,17 +6,17 @@ var edx = edx || {};
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
     var examStatusReadableFormat = {
-        eligible: 'Eligible',
-        created: 'Created',
-        ready_to_start: 'Ready to start',
-        started: 'Started',
-        ready_to_submit: 'Ready to submit',
-        declined: 'Declined',
-        timed_out: 'Timed out',
-        submitted: 'Submitted',
-        verified: 'Verified',
-        rejected: 'Rejected',
-        not_reviewed: 'Not reviewed',
+        eligible: gettext('Eligible'),
+        created: gettext('Created'),
+        ready_to_start: gettext('Ready to start'),
+        started: gettext('Started'),
+        ready_to_submit: gettext('Ready to submit'),
+        declined: gettext('Declined'),
+        timed_out: gettext('Timed out'),
+        submitted: gettext('Submitted'),
+        verified: gettext('Verified'),
+        rejected: gettext('Rejected'),
+        not_reviewed: gettext('Not reviewed'),
         error: 'Error'
     };
     var viewHelper = {
