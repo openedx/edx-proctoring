@@ -646,6 +646,7 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
 
     return exam_attempt_obj.id
 
+
 def send_proctoring_attempt_status_email(status, email_to):
     """
     Send an email about proctoring attempt status
