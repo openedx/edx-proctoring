@@ -641,7 +641,7 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
         exam_attempt_obj.started_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()
 
-    if ProctoredExamStudentAttemptStatus.is_attempt_change_status(exam_attempt_obj.status):
+    if ProctoredExamStudentAttemptStatus.needs_status_change_email(exam_attempt_obj.status):
         send_proctoring_attempt_status_email(exam_attempt_obj.status, exam_attempt_obj.user.email)
 
     return exam_attempt_obj.id

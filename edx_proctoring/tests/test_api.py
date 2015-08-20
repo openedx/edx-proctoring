@@ -1548,7 +1548,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     )
     def test_send_email(self, status):
         """
-        Assert that email has sent on the following statuses on proctoring attempt
+        Assert that email is sent on the following statuses of proctoring attempt.
         """
 
         exam_attempt = self._create_started_exam_attempt()
@@ -1560,14 +1560,20 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEquals(len(mail.outbox), 1)
 
     @ddt.data(
+        ProctoredExamStudentAttemptStatus.eligible,
         ProctoredExamStudentAttemptStatus.created,
         ProctoredExamStudentAttemptStatus.ready_to_start,
+        ProctoredExamStudentAttemptStatus.started,
+        ProctoredExamStudentAttemptStatus.ready_to_submit,
         ProctoredExamStudentAttemptStatus.declined,
-        ProctoredExamStudentAttemptStatus.ready_to_submit
+        ProctoredExamStudentAttemptStatus.timed_out,
+        ProctoredExamStudentAttemptStatus.not_reviewed,
+        ProctoredExamStudentAttemptStatus.error
     )
+    @patch.dict('settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
     def test_not_send_email(self, status):
         """
-        Assert that email has not sent on the following statuses on proctoring attempt
+        Assert that email is not sent on the following statuses of proctoring attempt.
         """
 
         exam_attempt = self._create_started_exam_attempt()

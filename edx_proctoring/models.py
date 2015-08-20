@@ -181,9 +181,9 @@ class ProctoredExamStudentAttemptStatus(object):
         ]
 
     @classmethod
-    def is_attempt_change_status(cls, to_status):
+    def needs_status_change_email(cls, to_status):
         """
-        Returns a boolean if the passed in to_status has a changed the attempt proctoring status
+        We need to send out emails for rejected, verified and submitted statuses.
         """
 
         return to_status in [
