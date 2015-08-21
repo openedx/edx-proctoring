@@ -34,7 +34,7 @@
                         </a>
                     </li>
                     <% }%>
-                    <% for(var n = 1; n <= pagination_info.total_pages; n++) { %>
+                    <% for(var n = start_page; n <= end_page; n++) { %>
                         <li>
                             <a class="target-link <% if (pagination_info.current_page == n){ %> active <% } %>"
                             data-target-url="
