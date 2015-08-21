@@ -140,13 +140,14 @@ var edx = edx || {};
                 var data_json = this.collection.toJSON()[0];
 
                 // calculate which pages ranges to display
-                // show no more than 7 pages at the same time
-                var start_page = data_json.pagination_info.current_page - 3;
-                var end_page = data_json.pagination_info.current_page + 3;
+                // show no more than 5 pages at the same time
+                var start_page = data_json.pagination_info.current_page - 2;
 
                 if (start_page < 1) {
                     start_page = 1;
                 }
+
+                var end_page = start_page + 4;
 
                 if (end_page > data_json.pagination_info.total_pages) {
                     end_page = data_json.pagination_info.total_pages;
