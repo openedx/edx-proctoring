@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, invalid-name
 
 """
 All tests for the models.py
@@ -34,7 +34,8 @@ from edx_proctoring.api import (
     mark_exam_attempt_as_ready,
     update_attempt_status,
     get_attempt_status_summary,
-    update_exam_attempt
+    update_exam_attempt,
+    _check_for_attempt_timeout
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -383,6 +384,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['allowed_time_limit_mins'], self.default_time_limit + allowed_extra_time)
+
+    def test_no_existing_attempt(self):
+        """
+        Make sure we get back a None when calling get_exam_attempt_by_id() with a non existing attempt
+        """
+        self.assertIsNone(get_exam_attempt_by_id(0))
+
+    def test_check_for_attempt_timeout_with_none(self):
+        """
+        Make sure that we can safely pass in a None into _check_for_attempt_timeout
+        """
+        self.assertIsNone(_check_for_attempt_timeout(None))
 
     def test_recreate_an_exam_attempt(self):
         """
