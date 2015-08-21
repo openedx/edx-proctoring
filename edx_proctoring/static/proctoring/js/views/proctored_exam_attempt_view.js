@@ -17,7 +17,7 @@ var edx = edx || {};
         verified: gettext('Verified'),
         rejected: gettext('Rejected'),
         not_reviewed: gettext('Not reviewed'),
-        error: 'Error'
+        error: gettext('Error')
     };
     var viewHelper = {
         getDateFormat: function(date) {
