@@ -900,6 +900,43 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt['proctored_exam']['id'], proctored_exam.id)
         self.assertEqual(attempt['user']['id'], self.user.id)
 
+    def test_paginated_exam_attempts(self):
+        """
+        Test to get the paginated exam attempts in a course.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        # create number of exam attempts
+        for i in range(90):
+            ProctoredExamStudentAttempt.create_exam_attempt(
+                proctored_exam.id, i, 'test_name{0}'.format(i), i + 1,
+                'test_attempt_code{0}'.format(i), True, False, 'test_external_id{0}'.format(i)
+            )
+
+        self.client.login_user(self.user)
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.proctored_exam.attempts.course',
+                kwargs={
+                    'course_id': proctored_exam.course_id
+                }
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 25)
+        self.assertTrue(response_data['pagination_info']['has_next'])
+        self.assertEqual(response_data['pagination_info']['total_pages'], 4)
+        self.assertEqual(response_data['pagination_info']['current_page'], 1)
+
     def test_stop_others_attempt(self):
         """
         Start an exam (create an exam attempt)
