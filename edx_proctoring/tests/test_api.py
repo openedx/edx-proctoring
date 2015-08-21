@@ -1098,6 +1098,12 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (
             ProctoredExamStudentAttemptStatus.rejected,
             True,
+            ProctoredExamStudentAttemptStatus.created,
+            ProctoredExamStudentAttemptStatus.declined
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            True,
             ProctoredExamStudentAttemptStatus.verified,
             ProctoredExamStudentAttemptStatus.verified
         ),
