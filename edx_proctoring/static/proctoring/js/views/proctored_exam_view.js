@@ -11,6 +11,7 @@ var edx = edx || {};
             _.bindAll(this, "detectScroll");
             this.$el = options.el;
             this.timerBarTopPosition = this.$el.position().top;
+            this.courseNavBarMarginTop = this.timerBarTopPosition - 3;
             this.model = options.model;
             this.templateId = options.proctored_template;
             this.template = null;
@@ -47,11 +48,11 @@ var edx = edx || {};
         },
         detectScroll: function(event) {
             if ($(event.currentTarget).scrollTop() > this.timerBarTopPosition) {
-                $(".proctored_exam_status").addClass('fixed');
-                $(".wrapper-course-material").css('margin-top', '58px');
+                $(".proctored_exam_status").addClass('is-fixed');
+                $(".wrapper-course-material").css('margin-top', this.courseNavBarMarginTop + 'px');
             }
             else {
-                $(".proctored_exam_status").removeClass('fixed');
+                $(".proctored_exam_status").removeClass('is-fixed');
                 $(".wrapper-course-material").css('margin-top', '0');
             }
 
