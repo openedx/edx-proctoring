@@ -26,7 +26,3 @@ script:
     - pylint edx_proctoring --report=no
 
 after_success: coveralls
-
-branches:
-    only:
-      - master
