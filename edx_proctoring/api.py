@@ -234,7 +234,7 @@ def _check_for_attempt_timeout(attempt):
     has_started_exam = (
         attempt and
         attempt.get('started_at') and
-        attempt.get('status') == ProctoredExamStudentAttemptStatus.started
+        ProctoredExamStudentAttemptStatus.is_incomplete_status(attempt.get('status'))
     )
     if has_started_exam:
         now_utc = datetime.now(pytz.UTC)
