@@ -341,10 +341,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         string = ""
         for key in keys:
             value = body_json[key]
-            if str(value) == 'True':
-                value = 'true'
-            if str(value) == 'False':
-                value = 'false'
+            if isinstance(value, bool):
+                if value:
+                    value = 'true'
+                else:
+                    value = 'false'
             if isinstance(value, (list, tuple)):
                 for idx, arr in enumerate(value):
                     if isinstance(arr, dict):
@@ -356,7 +357,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             else:
                 if value != "" and not value:
                     value = "null"
-                string += str(prefix) + str(key) + ":" + str(value).encode('utf-8') + '\n'
+                string += str(prefix) + str(key) + ":" + unicode(value).encode('utf-8') + '\n'
 
         return string
 
