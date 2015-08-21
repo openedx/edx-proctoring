@@ -142,3 +142,27 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
 
         attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
         self.assertEqual(len(attempt_history), 1)
+
+    def test_get_exam_attempts(self):
+        """
+        Test to get all the exam attempts for a course
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        # create number of exam attempts
+        for i in range(90):
+            ProctoredExamStudentAttempt.create_exam_attempt(
+                proctored_exam.id, i, 'test_name{0}'.format(i), i + 1,
+                'test_attempt_code{0}'.format(i), True, False, 'test_external_id{0}'.format(i)
+            )
+
+        with self.assertNumQueries(1):
+            exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts('a/b/c')
+            self.assertEqual(len(exam_attempts), 90)
