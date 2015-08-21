@@ -75,10 +75,10 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
     )
 
     log_msg = (
-        'Created exam ({exam_id}) with parameters: course_id={course_id}, '
-        'content_id={content_id}, exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
-        'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
-        'external_id={external_id}, is_active={is_active}'.format(
+        u'Created exam ({exam_id}) with parameters: course_id={course_id}, '
+        u'content_id={content_id}, exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
+        u'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
+        u'external_id={external_id}, is_active={is_active}'.format(
             exam_id=proctored_exam.id,
             course_id=course_id, content_id=content_id,
             exam_name=exam_name, time_limit_mins=time_limit_mins,
@@ -101,10 +101,10 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
     """
 
     log_msg = (
-        'Updating exam_id {exam_id} with parameters '
-        'exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
-        'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
-        'external_id={external_id}, is_active={is_active}'.format(
+        u'Updating exam_id {exam_id} with parameters '
+        u'exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
+        u'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
+        u'external_id={external_id}, is_active={is_active}'.format(
             exam_id=exam_id, exam_name=exam_name, time_limit_mins=time_limit_mins,
             is_proctored=is_proctored, is_practice_exam=is_practice_exam,
             external_id=external_id, is_active=is_active
