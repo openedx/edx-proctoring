@@ -254,10 +254,14 @@ def _check_for_attempt_timeout(attempt):
 
 def _get_exam_attempt(exam_attempt_obj):
     """
-    Helper method to commonalize the two query patterns
+    Helper method to commonalize all query patterns
     """
+
+    if not exam_attempt_obj:
+        return None
+
     serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(exam_attempt_obj)
-    attempt = serialized_attempt_obj.data if exam_attempt_obj else None
+    attempt = serialized_attempt_obj.data
     attempt = _check_for_attempt_timeout(attempt)
 
     return attempt
