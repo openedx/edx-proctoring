@@ -557,6 +557,68 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             response_data = json.loads(response.content)
             self.assertEqual(response_data['status'], 'error')
 
+    def test_attempt_callback_timeout(self):
+        """
+        Ensures that the polling from the client will cause the
+        server to transition to timed_out if the user runs out of time
+        """
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        attempt_id = response_data['exam_attempt_id']
+        self.assertEqual(attempt_id, 1)
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['status'], 'started')
+        attempt_code = response_data['attempt_code']
+
+        # test the polling callback point
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.anonymous.proctoring_poll_status',
+                args=[attempt_code]
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['status'], 'started')
+
+        # set time to be in future
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=180)
+        with freeze_time(reset_time):
+            # Now the callback should transition us away from started
+            response = self.client.get(
+                reverse(
+                    'edx_proctoring.anonymous.proctoring_poll_status',
+                    args=[attempt_code]
+                )
+            )
+            self.assertEqual(response.status_code, 200)
+            response_data = json.loads(response.content)
+            self.assertEqual(response_data['status'], 'submitted')
+
     def test_remove_attempt(self):
         """
         Confirms that an attempt can be removed
