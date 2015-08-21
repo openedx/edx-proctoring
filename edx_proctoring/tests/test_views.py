@@ -793,19 +793,22 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
-            'user_id': self.student_taking_exam.id,
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
-        url = reverse('edx_proctoring.proctored_exam.attempt', kwargs={'course_id': proctored_exam.course_id})
+        url = reverse('edx_proctoring.proctored_exam.attempts.course', kwargs={'course_id': proctored_exam.course_id})
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
+
+        attempt = response_data['proctored_exam_attempts'][0]
+        self.assertEqual(attempt['proctored_exam']['id'], proctored_exam.id)
+        self.assertEqual(attempt['user']['id'], self.user.id)
 
         url = '{url}?page={invalid_page_no}'.format(url=url, invalid_page_no=9999)
         # url with the invalid page # still gives us the first page result.
@@ -835,7 +838,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
-        url = reverse('edx_proctoring.proctored_exam.attempt', kwargs={'course_id': proctored_exam.course_id})
+        url = reverse('edx_proctoring.proctored_exam.attempts.course', kwargs={'course_id': proctored_exam.course_id})
 
         self.user.is_staff = False
         self.user.save()
@@ -878,7 +881,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.user)
         response = self.client.get(
             reverse(
-                'edx_proctoring.proctored_exam.attempt.search',
+                'edx_proctoring.proctored_exam.attempts.search',
                 kwargs={
                     'course_id': proctored_exam.course_id,
                     'search_by': 'tester'
@@ -889,6 +892,13 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content)
 
         self.assertEqual(len(response_data['proctored_exam_attempts']), 2)
+        attempt = response_data['proctored_exam_attempts'][0]
+        self.assertEqual(attempt['proctored_exam']['id'], proctored_exam.id)
+        self.assertEqual(attempt['user']['id'], self.second_user.id)
+
+        attempt = response_data['proctored_exam_attempts'][1]
+        self.assertEqual(attempt['proctored_exam']['id'], proctored_exam.id)
+        self.assertEqual(attempt['user']['id'], self.user.id)
 
     def test_stop_others_attempt(self):
         """
