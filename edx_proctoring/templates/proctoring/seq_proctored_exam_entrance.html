@@ -45,21 +45,19 @@
 
 <script type="text/javascript">
 
-  var selector = $('.start-timed-exam');
-
-  selector.click(
+  $('.start-timed-exam').click(
     function(event) {
 
-      var action_url = selector.data('ajax-url');
-      var exam_id = selector.data('exam-id');
-      var attempt_proctored = selector.data('attempt-proctored');
-      var start_immediately = selector.data('start-immediately');
+      var action_url = $(this).data('ajax-url');
+      var exam_id = $(this).data('exam-id');
+      var attempt_proctored = $(this).data('attempt-proctored');
+      var start_immediately = $(this).data('start-immediately');
 
       // unbind the click event to prevent the multiple calls
-      selector.unbind('click');
+      $(this).unbind('click');
 
       // adding class for moving cursor and to change the color of button
-      selector.parent().addClass('disable-proctored-exam-btn');
+      $(this).parent().addClass('disable-proctored-exam-btn');
 
       if (!attempt_proctored) {
         var msg = gettext(
@@ -74,6 +72,7 @@
       if (typeof action_url === "undefined" ) {
         return false;
       }
+      var self = $(this);
       $.post(
         action_url,
         {
@@ -84,8 +83,8 @@
         function(data) {
 
           // remove the class and bind the click event
-          selector.parent().removeClass('disable-proctored-exam-btn');
-          selector.bind('click');
+          self.parent().removeClass('disable-proctored-exam-btn');
+          self.bind('click');
 
           // reload the page, because we've unlocked it
           location.reload();
