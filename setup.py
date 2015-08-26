@@ -34,7 +34,7 @@ def load_requirements(*requirements_paths):
 
 setup(
     name='edx-proctoring',
-    version='0.6.3',
+    version='0.7.2',
     description='Proctoring subsystem for Open edX',
     long_description=open('README.md').read(),
     author='edX',
