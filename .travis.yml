@@ -13,6 +13,7 @@ sudo: false
 
 install:
     - npm install
+    - "pip install -r local_requirements.txt"
     - "pip install -r requirements.txt"
     - "pip install -r test_requirements.txt"
     - "pip install coveralls"
@@ -25,7 +26,3 @@ script:
     - pylint edx_proctoring --report=no
 
 after_success: coveralls
-
-branches:
-    only:
-      - master

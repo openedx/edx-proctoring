@@ -1,4 +1,4 @@
-describe('ProctoredExamView', function () {
+describe('ProctoredExamAttemptView', function () {
     var html = '';
     var deletedProctoredExamAttemptJson = [{
         attempt_url: '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/edX/DemoX/Demo_Course',
@@ -149,18 +149,11 @@ describe('ProctoredExamView', function () {
                 JSON.stringify(expectedProctoredExamAttemptJson)
             ]
         );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
 
-        var callbacks = [sinon.spy(), sinon.spy()];
+        this.server.respond();
+        this.server.respond();
 
-        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView(
-            {
-                el: $('.student-proctored-exam-container'),
-                template_url: '/static/proctoring/templates/student-proctored-exam-attempts.underscore'
-            }
-        );
-        console.log(this.server.requests); // Logs all requests so far
-        this.server.respond(); // Process all requests so far
-        this.server.respond(); // Process all requests so far
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items')).toContainHtml('<td> testuser1  </td>');
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
     });
@@ -175,15 +168,7 @@ describe('ProctoredExamView', function () {
                 JSON.stringify(expectedProctoredExamAttemptJson)
             ]
         );
-
-        var callbacks = [sinon.spy(), sinon.spy()];
-
-        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView(
-            {
-                el: $('.student-proctored-exam-container'),
-                template_url: '/static/proctoring/templates/student-proctored-exam-attempts.underscore'
-            }
-        );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
 
         // Process all requests so far
         this.server.respond();
@@ -242,14 +227,7 @@ describe('ProctoredExamView', function () {
             ]
         );
 
-        var callbacks = [sinon.spy(), sinon.spy()];
-
-        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView(
-            {
-                el: $('.student-proctored-exam-container'),
-                template_url: '/static/proctoring/templates/student-proctored-exam-attempts.underscore'
-            }
-        );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
 
         // Process all requests so far
         this.server.respond();
@@ -293,15 +271,7 @@ describe('ProctoredExamView', function () {
                 JSON.stringify(expectedProctoredExamAttemptJson)
             ]
         );
-
-        var callbacks = [sinon.spy(), sinon.spy()];
-
-        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView(
-            {
-                el: $('.student-proctored-exam-container'),
-                template_url: '/static/proctoring/templates/student-proctored-exam-attempts.underscore'
-            }
-        );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
 
         // Process all requests so far
         this.server.respond();

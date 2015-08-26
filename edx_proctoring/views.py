@@ -27,9 +27,7 @@ from edx_proctoring.api import (
     get_allowances_for_course,
     get_all_exams_for_course,
     get_exam_attempt_by_id,
-    get_all_exam_attempts,
     remove_exam_attempt,
-    get_filtered_exam_attempts,
     update_attempt_status
 )
 from edx_proctoring.exceptions import (
@@ -39,8 +37,8 @@ from edx_proctoring.exceptions import (
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException,
 )
-from edx_proctoring.serializers import ProctoredExamSerializer
-from edx_proctoring.models import ProctoredExamStudentAttemptStatus
+from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
+from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt
 
 from .utils import AuthenticatedAPIView
 
@@ -438,53 +436,10 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         return the status of the exam attempt
     """
 
-    def get(self, request, course_id=None, search_by=None):  # pylint: disable=unused-argument
+    def get(self, request):  # pylint: disable=unused-argument
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
-        if course_id is not None:
-            #
-            # This code path is only for authenticated global staff users
-            #
-            if not request.user.is_staff:
-                return Response(
-                    status=status.HTTP_403_FORBIDDEN,
-                    data={"detail": "Must be a Staff User to Perform this request."}
-                )
-
-            if search_by is not None:
-                exam_attempts = get_filtered_exam_attempts(course_id, search_by)
-                attempt_url = reverse('edx_proctoring.proctored_exam.attempt.search', args=[course_id, search_by])
-            else:
-                exam_attempts = get_all_exam_attempts(course_id)
-                attempt_url = reverse('edx_proctoring.proctored_exam.attempt', args=[course_id])
-
-            paginator = Paginator(exam_attempts, ATTEMPTS_PER_PAGE)
-            page = request.GET.get('page')
-            try:
-                exam_attempts_page = paginator.page(page)
-            except PageNotAnInteger:
-                # If page is not an integer, deliver first page.
-                exam_attempts_page = paginator.page(1)
-            except EmptyPage:
-                # If page is out of range (e.g. 9999), deliver last page of results.
-                exam_attempts_page = paginator.page(paginator.num_pages)
-
-            data = {
-                'proctored_exam_attempts': exam_attempts_page.object_list,
-                'pagination_info': {
-                    'has_previous': exam_attempts_page.has_previous(),
-                    'has_next': exam_attempts_page.has_next(),
-                    'current_page': exam_attempts_page.number,
-                    'total_pages': exam_attempts_page.paginator.num_pages,
-                },
-                'attempt_url': attempt_url
-
-            }
-            return Response(
-                data=data,
-                status=status.HTTP_200_OK
-            )
 
         exams = get_active_exams_for_user(request.user.id)
 
@@ -581,6 +536,57 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": unicode(ex)}
             )
+
+
+class StudentProctoredExamAttemptsByCourse(AuthenticatedAPIView):
+    """
+    This endpoint is called by the Instructor Dashboard to get
+    paginated attempts in a course
+
+    A search parameter is optional
+    """
+    @method_decorator(require_staff)
+    def get(self, request, course_id, search_by=None):  # pylint: disable=unused-argument
+        """
+        HTTP GET Handler. Returns the status of the exam attempt.
+        """
+
+        if search_by is not None:
+            exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(course_id, search_by)
+            attempt_url = reverse('edx_proctoring.proctored_exam.attempts.search', args=[course_id, search_by])
+        else:
+            exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(course_id)
+            attempt_url = reverse('edx_proctoring.proctored_exam.attempts.course', args=[course_id])
+
+        paginator = Paginator(exam_attempts, ATTEMPTS_PER_PAGE)
+        page = request.GET.get('page')
+        try:
+            exam_attempts_page = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            exam_attempts_page = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            exam_attempts_page = paginator.page(paginator.num_pages)
+
+        data = {
+            'proctored_exam_attempts': [
+                ProctoredExamStudentAttemptSerializer(attempt).data for
+                attempt in exam_attempts_page.object_list
+            ],
+            'pagination_info': {
+                'has_previous': exam_attempts_page.has_previous(),
+                'has_next': exam_attempts_page.has_next(),
+                'current_page': exam_attempts_page.number,
+                'total_pages': exam_attempts_page.paginator.num_pages,
+            },
+            'attempt_url': attempt_url
+
+        }
+        return Response(
+            data=data,
+            status=status.HTTP_200_OK
+        )
 
 
 class ExamAllowanceView(AuthenticatedAPIView):

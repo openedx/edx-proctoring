@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Tests for the software_secure module
 """
@@ -140,13 +141,26 @@ class SoftwareSecureTests(TestCase):
         Tests to make sure we can parse a fullname which does not have any spaces in it
         """
 
-        def mock_profile_service(user_id):  # pylint: disable=unused-argument
-            """
-            Mocked out Profile callback endpoint
-            """
-            return {'name': 'Bono'}
+        set_runtime_service('credit', MockCreditService())
 
-        set_runtime_service('profile', mock_profile_service)
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
+            self.assertIsNotNone(attempt_id)
+
+    def test_unicode_attempt(self):
+        """
+        Tests to make sure we can handle an attempt when a user's fullname has unicode characters in it
+        """
+
+        set_runtime_service('credit', MockCreditService(profile_fullname=u'अआईउऊऋऌ अआईउऊऋऌ'))
 
         exam_id = create_exam(
             course_id='foo/bar/baz',

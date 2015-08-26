@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, invalid-name
 
 """
 All tests for the models.py
@@ -34,7 +34,8 @@ from edx_proctoring.api import (
     mark_exam_attempt_as_ready,
     update_attempt_status,
     get_attempt_status_summary,
-    update_exam_attempt
+    update_exam_attempt,
+    _check_for_attempt_timeout
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -384,6 +385,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['allowed_time_limit_mins'], self.default_time_limit + allowed_extra_time)
 
+    def test_no_existing_attempt(self):
+        """
+        Make sure we get back a None when calling get_exam_attempt_by_id() with a non existing attempt
+        """
+        self.assertIsNone(get_exam_attempt_by_id(0))
+
+    def test_check_for_attempt_timeout_with_none(self):
+        """
+        Make sure that we can safely pass in a None into _check_for_attempt_timeout
+        """
+        self.assertIsNone(_check_for_attempt_timeout(None))
+
     def test_recreate_an_exam_attempt(self):
         """
         Start an exam attempt that has already been created.
@@ -650,14 +663,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIsNone(rendered_response)
 
     @ddt.data(
-        ('reverification', None, False, True, ProctoredExamStudentAttemptStatus.declined),
-        ('reverification', 'failed', False, False, ProctoredExamStudentAttemptStatus.declined),
-        ('reverification', 'satisfied', True, True, None),
-        ('grade', 'failed', True, False, None)
+        ('reverification', None, True, True, False),
+        ('reverification', 'failed', False, False, True),
+        ('reverification', 'satisfied', True, True, False),
+        ('grade', 'failed', True, False, False)
     )
     @ddt.unpack
-    def test_prereq_scarios(self, namespace, req_status, show_proctored,
-                            pre_create_attempt, mark_as_declined):
+    def test_prereq_scenarios(self, namespace, req_status, show_proctored,
+                              pre_create_attempt, mark_as_declined):
         """
         This test asserts that proctoring will not be displayed under the following
         conditions:
@@ -1081,6 +1094,110 @@ class ProctoredExamApiTests(LoggedInTestCase):
             credit_status['credit_requirement_status'][0]['status'],
             'failed'
         )
+
+    @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.declined,
+            False,
+            None,
+            ProctoredExamStudentAttemptStatus.declined
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            False,
+            None,
+            ProctoredExamStudentAttemptStatus.declined
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            True,
+            ProctoredExamStudentAttemptStatus.created,
+            ProctoredExamStudentAttemptStatus.declined
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            True,
+            ProctoredExamStudentAttemptStatus.verified,
+            ProctoredExamStudentAttemptStatus.verified
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.declined,
+            True,
+            ProctoredExamStudentAttemptStatus.submitted,
+            ProctoredExamStudentAttemptStatus.submitted
+        ),
+    )
+    @ddt.unpack
+    def test_cascading(self, to_status, create_attempt, second_attempt_status, expected_second_status):
+        """
+        Make sure that when we decline/reject one attempt all other exams in the course
+        are auto marked as declined
+        """
+
+        # create other exams in course
+        second_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="2nd exam",
+            exam_name="2nd exam",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=False,
+            is_proctored=True
+        )
+
+        practice_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="practice",
+            exam_name="practice",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True
+        )
+
+        timed_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="timed",
+            exam_name="timed",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=False,
+            is_proctored=False
+        )
+
+        inactive_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="inactive",
+            exam_name="inactive",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=False,
+            is_proctored=True,
+            is_active=False
+        )
+
+        if create_attempt:
+            create_exam_attempt(second_exam_id, self.user_id, taking_as_proctored=False)
+
+            if second_attempt_status:
+                update_attempt_status(second_exam_id, self.user_id, second_attempt_status)
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            to_status
+        )
+
+        # make sure we reamain in the right status
+        read_back = get_exam_attempt(exam_attempt.proctored_exam_id, self.user.id)
+        self.assertEqual(read_back['status'], to_status)
+
+        # make sure an attempt was made for second_exam
+        second_exam_attempt = get_exam_attempt(second_exam_id, self.user_id)
+        self.assertIsNotNone(second_exam_attempt)
+        self.assertEqual(second_exam_attempt['status'], expected_second_status)
+
+        # no auto-generated attempts for practice and timed exams
+        self.assertIsNone(get_exam_attempt(practice_exam_id, self.user_id))
+        self.assertIsNone(get_exam_attempt(timed_exam_id, self.user_id))
+        self.assertIsNone(get_exam_attempt(inactive_exam_id, self.user_id))
 
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),

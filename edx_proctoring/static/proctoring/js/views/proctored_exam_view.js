@@ -85,12 +85,12 @@ var edx = edx || {};
                               action: 'stop'
                             },
                             success: function() {
-                              // Reloading page will reflect the new state of the attempt
-                              location.reload();
+                              // change the location of the page to the active exam page
+                              // which will reflect the new state of the attempt
+                              location.href = self.model.get('exam_url_path');
                             }
                         });
                     });
-                    //$('.proctored-exam-action-stop').css('cursor', 'pointer');
                 }
             }
             return this;

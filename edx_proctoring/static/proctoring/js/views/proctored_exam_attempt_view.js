@@ -114,12 +114,31 @@ var edx = edx || {};
         },
         render: function () {
             if (this.template !== null) {
+
+                var data_json = this.collection.toJSON()[0];
+
+                // calculate which pages ranges to display
+                // show no more than 5 pages at the same time
+                var start_page = data_json.pagination_info.current_page - 2;
+
+                if (start_page < 1) {
+                    start_page = 1;
+                }
+
+                var end_page = start_page + 4;
+
+                if (end_page > data_json.pagination_info.total_pages) {
+                    end_page = data_json.pagination_info.total_pages;
+                }
+
                 var data = {
-                    proctored_exam_attempts: this.collection.toJSON()[0].proctored_exam_attempts,
-                    pagination_info: this.collection.toJSON()[0].pagination_info,
-                    attempt_url: this.collection.toJSON()[0].attempt_url,
+                    proctored_exam_attempts: data_json.proctored_exam_attempts,
+                    pagination_info: data_json.pagination_info,
+                    attempt_url: data_json.attempt_url,
                     inSearchMode: this.inSearchMode,
-                    searchText: this.searchText
+                    searchText: this.searchText,
+                    start_page: start_page,
+                    end_page: end_page
                 };
                 _.extend(data, viewHelper);
                 var html = this.template(data);
