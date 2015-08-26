@@ -8,10 +8,7 @@ var edx = edx || {};
 
     edx.coursware.proctored_exam.ProctoredExamView = Backbone.View.extend({
         initialize: function (options) {
-            _.bindAll(this, "detectScroll");
             this.$el = options.el;
-            this.timerBarTopPosition = this.$el.position().top;
-            this.courseNavBarMarginTop = this.timerBarTopPosition - 3;
             this.model = options.model;
             this.templateId = options.proctored_template;
             this.template = null;
@@ -46,17 +43,6 @@ var edx = edx || {};
             /* will call into the rendering */
             this.model.fetch();
         },
-        detectScroll: function(event) {
-            if ($(event.currentTarget).scrollTop() > this.timerBarTopPosition) {
-                $(".proctored_exam_status").addClass('is-fixed');
-                $(".wrapper-course-material").css('margin-top', this.courseNavBarMarginTop + 'px');
-            }
-            else {
-                $(".proctored_exam_status").removeClass('is-fixed');
-                $(".wrapper-course-material").css('margin-top', '0');
-            }
-
-        },
         modelChanged: function () {
             // if we are a proctored exam, then we need to alert user that he/she
             // should not be navigating around the courseware
@@ -81,9 +67,6 @@ var edx = edx || {};
                     this.model.get('time_remaining_seconds') > 0 &&
                     this.model.get('attempt_status') !== 'error'
                 ) {
-                    // add callback on scroll event
-                    $(window).bind('scroll', this.detectScroll);
-
                     var html = this.template(this.model.toJSON());
                     this.$el.html(html);
                     this.$el.show();
@@ -108,10 +91,6 @@ var edx = edx || {};
                             }
                         });
                     });
-                }
-                else {
-                    // remove callback on scroll event
-                    $(window).unbind('scroll', this.detectScroll);
                 }
             }
             return this;

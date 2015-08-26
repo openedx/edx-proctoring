@@ -5,20 +5,6 @@ var edx = edx || {};
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
-    var examStatusReadableFormat = {
-        eligible: gettext('Eligible'),
-        created: gettext('Created'),
-        ready_to_start: gettext('Ready to start'),
-        started: gettext('Started'),
-        ready_to_submit: gettext('Ready to submit'),
-        declined: gettext('Declined'),
-        timed_out: gettext('Timed out'),
-        submitted: gettext('Submitted'),
-        verified: gettext('Verified'),
-        rejected: gettext('Rejected'),
-        not_reviewed: gettext('Not reviewed'),
-        error: gettext('Error')
-    };
     var viewHelper = {
         getDateFormat: function(date) {
             if (date) {
@@ -28,14 +14,6 @@ var edx = edx || {};
                 return '---';
             }
 
-        },
-        getExamAttemptStatus: function(status) {
-            if (status in examStatusReadableFormat) {
-                return examStatusReadableFormat[status]
-            }
-            else {
-                return status
-            }
         }
     };
     edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = Backbone.View.extend({
