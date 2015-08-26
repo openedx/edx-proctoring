@@ -24,6 +24,10 @@ def get_time_remaining_for_attempt(attempt):
     Returns the remaining time (in seconds) on an attempt
     """
 
+    # returns 0 if the attempt has not been started yet.
+    if attempt['started_at'] is None:
+        return 0
+
     # need to adjust for allowances
     expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
     now_utc = datetime.now(pytz.UTC)
