@@ -482,6 +482,43 @@ class ProctoredExamApiTests(LoggedInTestCase):
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
             remove_exam_attempt(proctored_exam_student_attempt.id)
 
+    @ddt.data(
+        (ProctoredExamStudentAttemptStatus.verified, 'satisfied'),
+        (ProctoredExamStudentAttemptStatus.submitted, 'submitted'),
+        (ProctoredExamStudentAttemptStatus.error, 'failed')
+    )
+    @ddt.unpack
+    def test_remove_exam_attempt_with_status(self, to_status, requirement_status):
+        """
+        Test to remove the exam attempt which calls
+        the Credit Service method `remove_credit_requirement_status`.
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            to_status
+        )
+
+        # make sure the credit requirement status is there
+        credit_service = get_runtime_service('credit')
+        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
+
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            requirement_status
+        )
+
+        # now remove exam attempt which calls the credit service method 'remove_credit_requirement_status'
+        remove_exam_attempt(exam_attempt.proctored_exam_id)
+
+        # make sure the credit requirement status is no longer there
+        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
+
+        self.assertEqual(len(credit_status['credit_requirement_status']), 0)
+
     def test_stop_a_non_started_exam(self):
         """
         Stop an exam attempt that had not started yet.

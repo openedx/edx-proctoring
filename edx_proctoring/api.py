@@ -666,12 +666,27 @@ def remove_exam_attempt(attempt_id):
         raise StudentExamAttemptDoesNotExistsException(err_msg)
 
     username = existing_attempt.user.username
+    user_id = existing_attempt.user.id
     course_id = existing_attempt.proctored_exam.course_id
     content_id = existing_attempt.proctored_exam.content_id
+    to_status = existing_attempt.status
+
     existing_attempt.delete_exam_attempt()
     instructor_service = get_runtime_service('instructor')
+
     if instructor_service:
         instructor_service.delete_student_attempt(username, course_id, content_id)
+
+    # see if the status transition this changes credit requirement status
+    if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
+        # trigger credit workflow, as needed
+        credit_service = get_runtime_service('credit')
+        credit_service.remove_credit_requirement_status(
+            user_id=user_id,
+            course_key_or_id=course_id,
+            req_namespace=u'proctored_exam',
+            req_name=content_id
+        )
 
 
 def get_all_exams_for_course(course_id):
