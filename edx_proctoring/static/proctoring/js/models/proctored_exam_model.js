@@ -16,32 +16,24 @@
             course_id: null,
             lastFetched: new Date()
         },
-        getRemainingSeconds: function () {
-            var currentTime = (new Date()).getTime();
-            var lastFetched = this.get('lastFetched').getTime();
-            var totalSeconds = this.get('time_remaining_seconds') - (currentTime - lastFetched) / 1000;
-            return totalSeconds;
-        },
-        getFormattedRemainingTime: function () {
-            var totalSeconds = this.getRemainingSeconds();
+        getFormattedRemainingTime: function (secondsLeft) {
             /* since we can have a small grace period, we can end in the negative numbers */
-            if (totalSeconds < 0)
-                totalSeconds = 0;
+            if (secondsLeft < 0)
+                secondsLeft = 0;
 
-            var hours = parseInt(totalSeconds / 3600) % 24;
-            var minutes = parseInt(totalSeconds / 60) % 60;
-            var seconds = Math.floor(totalSeconds % 60);
+            var hours = parseInt(secondsLeft / 3600) % 24;
+            var minutes = parseInt(secondsLeft / 60) % 60;
+            var seconds = Math.floor(secondsLeft % 60);
 
             return hours + ":" + (minutes < 10 ? "0" + minutes : minutes)
                 + ":" + (seconds < 10 ? "0" + seconds : seconds);
 
         },
-        getRemainingTimeState: function () {
-            var totalSeconds = this.getRemainingSeconds();
-            if (totalSeconds > this.get('low_threshold_sec')) {
+        getRemainingTimeState: function (secondsLeft) {
+            if (secondsLeft > this.get('low_threshold_sec')) {
                 return "";
             }
-            else if (totalSeconds <= this.get('low_threshold_sec') && totalSeconds > this.get('critically_low_threshold_sec')) {
+            else if (secondsLeft <= this.get('low_threshold_sec') && secondsLeft > this.get('critically_low_threshold_sec')) {
                 // returns the class name that has some css properties
                 // and it displays the user with the waring message if
                 // total seconds is less than the low_threshold value.

@@ -17,6 +17,7 @@ var edx = edx || {};
             this.template = null;
             this.timerId = null;
             this.timerTick = 0;
+            this.secondsLeft = 0;
             /* give an extra 5 seconds where the timer holds at 00:00 before page refreshes */
             this.grace_period_secs = 5;
 
@@ -62,6 +63,7 @@ var edx = edx || {};
             // should not be navigating around the courseware
             var taking_as_proctored = this.model.get('taking_as_proctored');
             var time_left = this.model.get('time_remaining_seconds') > 0;
+            this.secondsLeft = this.model.get('time_remaining_seconds');
             var status = this.model.get('attempt_status');
             var in_courseware = document.location.href.indexOf('/courses/' + this.model.get('course_id') + '/courseware/') > -1;
 
@@ -125,6 +127,7 @@ var edx = edx || {};
         },
         updateRemainingTime: function (self) {
             self.timerTick ++;
+            self.secondsLeft --;
             if (self.timerTick % 5 === 0){
                 var url = self.model.url + '/' + self.model.get('attempt_id');
                 $.ajax(url).success(function(data) {
@@ -136,12 +139,15 @@ var edx = edx || {};
                         // refresh the page when the timer expired
                         location.reload();
                     }
+                    else {
+                        self.secondsLeft = data.time_remaining_seconds;
+                    }
                 });
             }
             self.$el.find('div.exam-timer').removeClass("low-time warning critical");
-            self.$el.find('div.exam-timer').addClass(self.model.getRemainingTimeState());
-            self.$el.find('span#time_remaining_id b').html(self.model.getFormattedRemainingTime());
-            if (self.model.getRemainingSeconds() <= -self.grace_period_secs) {
+            self.$el.find('div.exam-timer').addClass(self.model.getRemainingTimeState(self.secondsLeft));
+            self.$el.find('span#time_remaining_id b').html(self.model.getFormattedRemainingTime(self.secondsLeft));
+            if (self.secondsLeft <= -self.grace_period_secs) {
                 clearInterval(self.timerId); // stop the timer once the time finishes.
                 $(window).unbind('beforeunload', this.unloadMessage);
                 // refresh the page when the timer expired
