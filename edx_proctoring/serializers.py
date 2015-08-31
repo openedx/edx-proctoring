@@ -1,5 +1,6 @@
 """Defines serializers used by the Proctoring API."""
 from rest_framework import serializers
+from rest_framework.fields import DateTimeField
 from django.contrib.auth.models import User
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
 
@@ -10,6 +11,9 @@ class StrictBooleanField(serializers.BooleanField):
     where required=True is ignored.
     """
     def from_native(self, value):
+        """
+        Convert representations of a boolean to a Python `boolean`.
+        """
         if value in ('true', 't', 'True', '1'):
             return True
         if value in ('false', 'f', 'False', '0'):
@@ -69,6 +73,13 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
     """
     proctored_exam = ProctoredExamSerializer()
     user = UserSerializer()
+
+    # Django Rest Framework v3 defaults to `settings.DATE_FORMAT` when serializing
+    # datetime fields.  We need to specify `format=None` to maintain the old behavior
+    # of returning raw `datetime` objects instead of unicode.
+    started_at = DateTimeField(format=None)
+    completed_at = DateTimeField(format=None)
+    last_poll_timestamp = DateTimeField(format=None)
 
     class Meta:
         """
