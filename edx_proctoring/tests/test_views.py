@@ -25,6 +25,7 @@ from edx_proctoring.api import (
     create_exam,
     create_exam_attempt,
     get_exam_attempt_by_id,
+    update_attempt_status,
 )
 
 from .utils import (
@@ -588,7 +589,13 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             response_data = json.loads(response.content)
             self.assertEqual(response_data['status'], 'error')
 
-    def test_attempt_callback_timeout(self):
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.ready_to_start,
+        ProctoredExamStudentAttemptStatus.started,
+        ProctoredExamStudentAttemptStatus.ready_to_submit
+    )
+    def test_attempt_callback_timeout(self, running_status):
         """
         Ensures that the polling from the client will cause the
         server to transition to timed_out if the user runs out of time
@@ -625,6 +632,9 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response_data['status'], 'started')
         attempt_code = response_data['attempt_code']
 
+        # now set status to what we want per DDT
+        update_attempt_status(proctored_exam.id, self.user.id, running_status)
+
         # test the polling callback point
         response = self.client.get(
             reverse(
@@ -634,7 +644,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data['status'], 'started')
+        self.assertEqual(response_data['status'], running_status)
 
         # set time to be in future
         reset_time = datetime.now(pytz.UTC) + timedelta(minutes=180)
