@@ -36,6 +36,7 @@ class MockCreditService(object):
 
         return self.status
 
+    # pylint: disable=unused-argument
     def set_credit_requirement_status(self, user_id, course_key_or_id, req_namespace,
                                       req_name, status="satisfied", reason=None):
         """
@@ -60,6 +61,25 @@ class MockCreditService(object):
             })
         else:
             found[0]['status'] = status
+
+    # pylint: disable=unused-argument
+    # pylint: disable=invalid-name
+    def remove_credit_requirement_status(self, user_id, course_key_or_id, req_namespace, req_name):
+        """
+        Mock implementation for removing the credit requirement status.
+        """
+
+        for requirement in self.status['credit_requirement_status']:
+            match = (
+                requirement['name'] == req_name and
+                requirement['namespace'] == req_namespace and
+                requirement['course_id'] == unicode(course_key_or_id)
+            )
+            if match:
+                self.status['credit_requirement_status'].remove(requirement)
+                break
+
+        return True
 
 
 class MockInstructorService(object):
