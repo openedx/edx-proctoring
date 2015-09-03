@@ -701,7 +701,7 @@ def send_proctoring_attempt_status_email(exam_attempt_obj, course_name):
             'exam_name': exam_attempt_obj.proctored_exam.exam_name,
             'status': ProctoredExamStudentAttemptStatus.get_status_alias(exam_attempt_obj.status),
             'platform': constants.PLATFORM_NAME,
-            'contact_email': constants.CONTACT_EMAIL
+            'contact_email': constants.CONTACT_EMAIL,
         })
     )
 
@@ -712,12 +712,14 @@ def send_proctoring_attempt_status_email(exam_attempt_obj, course_name):
         )
     )
 
-    EmailMessage(
+    email = EmailMessage(
         body=body,
         from_email=constants.FROM_EMAIL,
         to=[exam_attempt_obj.user.email],
         subject=subject
-    ).send()
+    )
+    email.content_subtype = "html"
+    email.send()
 
 
 def remove_exam_attempt(attempt_id):
