@@ -1004,53 +1004,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     Timed Exam
     """
     student_view_template = None
-    is_proctored = exam['is_proctored']
-
-    # see if only 'verified' track students should see this *except* if it is a practice exam
-    check_mode_and_eligibility = (
-        settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
-        'credit_state' in context and
-        context['credit_state'] and not
-        exam['is_practice_exam']
-    )
-
-    attempt = None
-    if check_mode_and_eligibility:
-        credit_state = context['credit_state']
-
-        has_mode = _check_eligibility_of_enrollment_mode(credit_state)
-        has_prerequisites = False
-        if has_mode:
-            has_prerequisites = _check_eligibility_of_prerequisites(credit_state)
-
-        # see if the user has passed all pre-requisite credit eligibility
-        # checks, otherwise just show the user the exam unproctored
-        if not has_mode or not has_prerequisites:
-            # if we are in the right mode and if we don't have
-            # pre-requisites, then we implicitly decline the exam
-            if has_mode:
-                attempt = get_exam_attempt(exam_id, user_id)
-                if not attempt:
-                    # user hasn't a record of attempt, create one now
-                    # so we can mark it as declined
-                    create_exam_attempt(exam_id, user_id)
-
-                update_attempt_status(
-                    exam_id,
-                    user_id,
-                    ProctoredExamStudentAttemptStatus.declined,
-                    raise_if_not_found=False
-                )
-
-            # don't override context, let the courseware show
-            return None
-
     attempt = get_exam_attempt(exam_id, user_id)
-
-    # if user has declined the attempt, then we don't show the
-    # proctored exam
-    if attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.declined:
-        return None
 
     does_time_remain = False
     has_started_exam = attempt and attempt.get('started_at')
@@ -1059,47 +1013,12 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         does_time_remain = datetime.now(pytz.UTC) < expires_at
 
     if not attempt:
-        # determine whether to show a timed exam only entrance screen
-        # or a screen regarding proctoring
+        student_view_template = 'proctoring/seq_timed_exam_entrance.html'
 
-        if is_proctored:
-            if exam['is_practice_exam']:
-                student_view_template = 'proctoring/seq_proctored_practice_exam_entrance.html'
-            else:
-                student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
-        else:
-            student_view_template = 'proctoring/seq_timed_exam_entrance.html'
-
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.created:
-        provider = get_backend_provider()
-        student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
-        context.update({
-            'exam_code': attempt['attempt_code'],
-            'software_download_url': provider.get_software_download_url(),
-        })
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
-        student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
-        if attempt['is_sample_attempt']:
-            student_view_template = 'proctoring/seq_proctored_practice_exam_error.html'
-        else:
-            student_view_template = 'proctoring/seq_proctored_exam_error.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
         student_view_template = 'proctoring/seq_timed_exam_expired.html'
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
-        if attempt['is_sample_attempt']:
-            student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
-        else:
-            student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
-        student_view_template = 'proctoring/seq_proctored_exam_verified.html'
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
-        student_view_template = 'proctoring/seq_proctored_exam_rejected.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
-        if is_proctored:
-            student_view_template = 'proctoring/seq_proctored_exam_ready_to_submit.html'
-        else:
-            student_view_template = 'proctoring/seq_timed_exam_ready_to_submit.html'
+        student_view_template = 'proctoring/seq_timed_exam_ready_to_submit.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
