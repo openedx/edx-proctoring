@@ -999,45 +999,11 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     return summary
 
 
-def get_student_view(user_id, course_id, content_id,
-                     context, user_role='student'):
+def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     """
-    Helper method that will return the view HTML related to the exam control
-    flow (i.e. entering, expired, completed, etc.) If there is no specific
-    content to display, then None will be returned and the caller should
-    render it's own view
+    Timed Exam
     """
-
-    # non-student roles should never see any proctoring related
-    # screens
-    if user_role != 'student':
-        return None
-
     student_view_template = None
-
-    exam_id = None
-    try:
-        exam = get_exam_by_content_id(course_id, content_id)
-        if not exam['is_active']:
-            # Exam is no longer active
-            # Note, we don't hard delete exams since we need to retain
-            # data
-            return None
-
-        exam_id = exam['id']
-    except ProctoredExamNotFoundException:
-        # This really shouldn't happen
-        # as Studio will be setting this up
-        exam_id = create_exam(
-            course_id=course_id,
-            content_id=unicode(content_id),
-            exam_name=context['display_name'],
-            time_limit_mins=context['default_time_limit_mins'],
-            is_proctored=context.get('is_proctored', False),
-            is_practice_exam=context.get('is_practice_exam', False)
-        )
-        exam = get_exam_by_content_id(course_id, content_id)
-
     is_proctored = exam['is_proctored']
 
     # see if only 'verified' track students should see this *except* if it is a practice exam
@@ -1173,3 +1139,437 @@ def get_student_view(user_id, course_id, content_id,
         return template.render(django_context)
 
     return None
+
+
+def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
+    """
+    Practice Exam
+    """
+    student_view_template = None
+
+    attempt = get_exam_attempt(exam_id, user_id)
+
+    does_time_remain = False
+    has_started_exam = attempt and attempt.get('started_at')
+    if has_started_exam:
+        expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
+        does_time_remain = datetime.now(pytz.UTC) < expires_at
+
+    if not attempt:
+        student_view_template = 'proctoring/seq_proctored_practice_exam_entrance.html'
+
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.created:
+        provider = get_backend_provider()
+        student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
+        context.update({
+            'exam_code': attempt['attempt_code'],
+            'software_download_url': provider.get_software_download_url(),
+        })
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
+        student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
+        student_view_template = 'proctoring/seq_proctored_practice_exam_error.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
+        student_view_template = 'proctoring/seq_timed_exam_expired.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
+        student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
+        student_view_template = 'proctoring/seq_proctored_exam_verified.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
+        student_view_template = 'proctoring/seq_proctored_exam_rejected.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
+        student_view_template = 'proctoring/seq_proctored_exam_ready_to_submit.html'
+
+    if student_view_template:
+        template = loader.get_template(student_view_template)
+        django_context = Context(context)
+        attempt_time = attempt['allowed_time_limit_mins'] if attempt else exam['time_limit_mins']
+        total_time = humanized_time(attempt_time)
+        progress_page_url = ''
+        try:
+            progress_page_url = reverse(
+                'courseware.views.progress',
+                args=[course_id]
+            )
+        except NoReverseMatch:
+            # we are allowing a failure here since we can't guarantee
+            # that we are running in-proc with the edx-platform LMS
+            # (for example unit tests)
+            pass
+
+        django_context.update({
+            'platform_name': settings.PLATFORM_NAME,
+            'total_time': total_time,
+            'exam_id': exam_id,
+            'progress_page_url': progress_page_url,
+            'is_sample_attempt': attempt['is_sample_attempt'] if attempt else False,
+            'does_time_remain': does_time_remain,
+            'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            'exam_started_poll_url': reverse(
+                'edx_proctoring.proctored_exam.attempt',
+                args=[attempt['id']]
+            ) if attempt else '',
+            'change_state_url': reverse(
+                'edx_proctoring.proctored_exam.attempt',
+                args=[attempt['id']]
+            ) if attempt else '',
+            'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
+        })
+        return template.render(django_context)
+
+    return None
+
+
+def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
+    """
+    Proctored Exams
+    """
+    student_view_template = None
+
+    # see if only 'verified' track students should see this *except* if it is a practice exam
+    check_mode_and_eligibility = (
+        settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
+        'credit_state' in context and
+        context['credit_state'] and not
+        exam['is_practice_exam']
+    )
+
+    attempt = None
+    if check_mode_and_eligibility:
+        credit_state = context['credit_state']
+
+        has_mode = _check_eligibility_of_enrollment_mode(credit_state)
+        has_prerequisites = False
+        if has_mode:
+            has_prerequisites = _check_eligibility_of_prerequisites(credit_state)
+
+        # see if the user has passed all pre-requisite credit eligibility
+        # checks, otherwise just show the user the exam unproctored
+        if not has_mode or not has_prerequisites:
+            # if we are in the right mode and if we don't have
+            # pre-requisites, then we implicitly decline the exam
+            if has_mode:
+                attempt = get_exam_attempt(exam_id, user_id)
+                if not attempt:
+                    # user hasn't a record of attempt, create one now
+                    # so we can mark it as declined
+                    create_exam_attempt(exam_id, user_id)
+
+                update_attempt_status(
+                    exam_id,
+                    user_id,
+                    ProctoredExamStudentAttemptStatus.declined,
+                    raise_if_not_found=False
+                )
+
+            # don't override context, let the courseware show
+            return None
+    attempt = get_exam_attempt(exam_id, user_id)
+
+    # if user has declined the attempt, then we don't show the
+    # proctored exam
+    if attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.declined:
+        return None
+
+    does_time_remain = False
+    has_started_exam = attempt and attempt.get('started_at')
+    if has_started_exam:
+        expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
+        does_time_remain = datetime.now(pytz.UTC) < expires_at
+
+    if not attempt:
+        # determine whether to show a timed exam only entrance screen
+        # or a screen regarding proctoring
+        student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
+
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.created:
+        provider = get_backend_provider()
+        student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
+        context.update({
+            'exam_code': attempt['attempt_code'],
+            'software_download_url': provider.get_software_download_url(),
+        })
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
+        student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
+        if attempt['is_sample_attempt']:
+            student_view_template = 'proctoring/seq_proctored_practice_exam_error.html'
+        else:
+            student_view_template = 'proctoring/seq_proctored_exam_error.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
+        student_view_template = 'proctoring/seq_timed_exam_expired.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
+        if attempt['is_sample_attempt']:
+            student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
+        else:
+            student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
+        student_view_template = 'proctoring/seq_proctored_exam_verified.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
+        student_view_template = 'proctoring/seq_proctored_exam_rejected.html'
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
+        student_view_template = 'proctoring/seq_proctored_exam_ready_to_submit.html'
+
+    if student_view_template:
+        template = loader.get_template(student_view_template)
+        django_context = Context(context)
+        attempt_time = attempt['allowed_time_limit_mins'] if attempt else exam['time_limit_mins']
+        total_time = humanized_time(attempt_time)
+        progress_page_url = ''
+        try:
+            progress_page_url = reverse(
+                'courseware.views.progress',
+                args=[course_id]
+            )
+        except NoReverseMatch:
+            # we are allowing a failure here since we can't guarantee
+            # that we are running in-proc with the edx-platform LMS
+            # (for example unit tests)
+            pass
+
+        django_context.update({
+            'platform_name': settings.PLATFORM_NAME,
+            'total_time': total_time,
+            'exam_id': exam_id,
+            'progress_page_url': progress_page_url,
+            'is_sample_attempt': attempt['is_sample_attempt'] if attempt else False,
+            'does_time_remain': does_time_remain,
+            'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            'exam_started_poll_url': reverse(
+                'edx_proctoring.proctored_exam.attempt',
+                args=[attempt['id']]
+            ) if attempt else '',
+            'change_state_url': reverse(
+                'edx_proctoring.proctored_exam.attempt',
+                args=[attempt['id']]
+            ) if attempt else '',
+            'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
+        })
+        return template.render(django_context)
+
+    return None
+
+
+def get_student_view(user_id, course_id, content_id,
+                     context, user_role='student'):
+    """
+    Helper method that will return the view HTML related to the exam control
+    flow (i.e. entering, expired, completed, etc.) If there is no specific
+    content to display, then None will be returned and the caller should
+    render it's own view
+    """
+
+    # non-student roles should never see any proctoring related
+    # screens
+    if user_role != 'student':
+        return None
+
+    exam_id = None
+    try:
+        exam = get_exam_by_content_id(course_id, content_id)
+        if not exam['is_active']:
+            # Exam is no longer active
+            # Note, we don't hard delete exams since we need to retain
+            # data
+            return None
+
+        exam_id = exam['id']
+    except ProctoredExamNotFoundException:
+        # This really shouldn't happen
+        # as Studio will be setting this up
+        exam_id = create_exam(
+            course_id=course_id,
+            content_id=unicode(content_id),
+            exam_name=context['display_name'],
+            time_limit_mins=context['default_time_limit_mins'],
+            is_proctored=context.get('is_proctored', False),
+            is_practice_exam=context.get('is_practice_exam', False)
+        )
+        exam = get_exam_by_content_id(course_id, content_id)
+
+    is_practice_exam = exam['is_practice_exam']
+    is_proctored_exam = exam['is_proctored'] and not is_practice_exam
+    is_timed_exam = not exam['is_proctored']
+
+    if is_timed_exam:
+        return _get_timed_exam_view(exam, context, exam_id, user_id, course_id)
+    elif is_practice_exam:
+        return _get_practice_exam_view(exam, context, exam_id, user_id, course_id)
+    elif is_proctored_exam:
+        return _get_proctored_exam_view(exam, context, exam_id, user_id, course_id)
+
+
+# def get_student_view_orig(user_id, course_id, content_id,
+#                      context, user_role='student'):
+#     """
+#     Helper method that will return the view HTML related to the exam control
+#     flow (i.e. entering, expired, completed, etc.) If there is no specific
+#     content to display, then None will be returned and the caller should
+#     render it's own view
+#     """
+#
+#     # non-student roles should never see any proctoring related
+#     # screens
+#     if user_role != 'student':
+#         return None
+#
+#     student_view_template = None
+#
+#     exam_id = None
+#     try:
+#         exam = get_exam_by_content_id(course_id, content_id)
+#         if not exam['is_active']:
+#             # Exam is no longer active
+#             # Note, we don't hard delete exams since we need to retain
+#             # data
+#             return None
+#
+#         exam_id = exam['id']
+#     except ProctoredExamNotFoundException:
+#         # This really shouldn't happen
+#         # as Studio will be setting this up
+#         exam_id = create_exam(
+#             course_id=course_id,
+#             content_id=unicode(content_id),
+#             exam_name=context['display_name'],
+#             time_limit_mins=context['default_time_limit_mins'],
+#             is_proctored=context.get('is_proctored', False),
+#             is_practice_exam=context.get('is_practice_exam', False)
+#         )
+#         exam = get_exam_by_content_id(course_id, content_id)
+#
+#     is_proctored = exam['is_proctored']
+#
+#     # see if only 'verified' track students should see this *except* if it is a practice exam
+#     check_mode_and_eligibility = (
+#         settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
+#         'credit_state' in context and
+#         context['credit_state'] and not
+#         exam['is_practice_exam']
+#     )
+#
+#     attempt = None
+#     if check_mode_and_eligibility:
+#         credit_state = context['credit_state']
+#
+#         has_mode = _check_eligibility_of_enrollment_mode(credit_state)
+#         has_prerequisites = False
+#         if has_mode:
+#             has_prerequisites = _check_eligibility_of_prerequisites(credit_state)
+#
+#         # see if the user has passed all pre-requisite credit eligibility
+#         # checks, otherwise just show the user the exam unproctored
+#         if not has_mode or not has_prerequisites:
+#             # if we are in the right mode and if we don't have
+#             # pre-requisites, then we implicitly decline the exam
+#             if has_mode:
+#                 attempt = get_exam_attempt(exam_id, user_id)
+#                 if not attempt:
+#                     # user hasn't a record of attempt, create one now
+#                     # so we can mark it as declined
+#                     create_exam_attempt(exam_id, user_id)
+#
+#                 update_attempt_status(
+#                     exam_id,
+#                     user_id,
+#                     ProctoredExamStudentAttemptStatus.declined,
+#                     raise_if_not_found=False
+#                 )
+#
+#             # don't override context, let the courseware show
+#             return None
+#
+#     attempt = get_exam_attempt(exam_id, user_id)
+#
+#     # if user has declined the attempt, then we don't show the
+#     # proctored exam
+#     if attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.declined:
+#         return None
+#
+#     does_time_remain = False
+#     has_started_exam = attempt and attempt.get('started_at')
+#     if has_started_exam:
+#         expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
+#         does_time_remain = datetime.now(pytz.UTC) < expires_at
+#
+#     if not attempt:
+#         # determine whether to show a timed exam only entrance screen
+#         # or a screen regarding proctoring
+#
+#         if is_proctored:
+#             if exam['is_practice_exam']:
+#                 student_view_template = 'proctoring/seq_proctored_practice_exam_entrance.html'
+#             else:
+#                 student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
+#         else:
+#             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
+#
+#     elif attempt['status'] == ProctoredExamStudentAttemptStatus.created:
+#         provider = get_backend_provider()
+#         student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
+#         context.update({
+#             'exam_code': attempt['attempt_code'],
+#             'software_download_url': provider.get_software_download_url(),
+#         })
+#     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
+#         student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
+#     elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
+#         if attempt['is_sample_attempt']:
+#             student_view_template = 'proctoring/seq_proctored_practice_exam_error.html'
+#         else:
+#             student_view_template = 'proctoring/seq_proctored_exam_error.html'
+#     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
+#         student_view_template = 'proctoring/seq_timed_exam_expired.html'
+#     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
+#         if attempt['is_sample_attempt']:
+#             student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
+#         else:
+#             student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
+#     elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
+#         student_view_template = 'proctoring/seq_proctored_exam_verified.html'
+#     elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
+#         student_view_template = 'proctoring/seq_proctored_exam_rejected.html'
+#     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
+#         if is_proctored:
+#             student_view_template = 'proctoring/seq_proctored_exam_ready_to_submit.html'
+#         else:
+#             student_view_template = 'proctoring/seq_timed_exam_ready_to_submit.html'
+#
+#     if student_view_template:
+#         template = loader.get_template(student_view_template)
+#         django_context = Context(context)
+#         attempt_time = attempt['allowed_time_limit_mins'] if attempt else exam['time_limit_mins']
+#         total_time = humanized_time(attempt_time)
+#         progress_page_url = ''
+#         try:
+#             progress_page_url = reverse(
+#                 'courseware.views.progress',
+#                 args=[course_id]
+#             )
+#         except NoReverseMatch:
+#             # we are allowing a failure here since we can't guarantee
+#             # that we are running in-proc with the edx-platform LMS
+#             # (for example unit tests)
+#             pass
+#
+#         django_context.update({
+#             'platform_name': settings.PLATFORM_NAME,
+#             'total_time': total_time,
+#             'exam_id': exam_id,
+#             'progress_page_url': progress_page_url,
+#             'is_sample_attempt': attempt['is_sample_attempt'] if attempt else False,
+#             'does_time_remain': does_time_remain,
+#             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
+#             'exam_started_poll_url': reverse(
+#                 'edx_proctoring.proctored_exam.attempt',
+#                 args=[attempt['id']]
+#             ) if attempt else '',
+#             'change_state_url': reverse(
+#                 'edx_proctoring.proctored_exam.attempt',
+#                 args=[attempt['id']]
+#             ) if attempt else '',
+#             'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
+#         })
+#         return template.render(django_context)
+#
+#     return None
