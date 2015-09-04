@@ -64,7 +64,7 @@
     <div class="clearfix"></div>
     </div>
 </div>
-{% include 'proctoring/seq_proctored_exam_footer.html' %}
+{% include 'proctored_exam/footer.html' %}
 
 <script type="text/javascript">
   var startProctoredExam = function(selector, exam_id, action_url, start_immediately, attempt_proctored) {
@@ -90,7 +90,7 @@
       alert(msg);
     });
   };
-  
+
   var inProcess = false;
 
   var disableClickEvent = function (selector) {
@@ -110,7 +110,7 @@
       $( this ).css('cursor', 'pointer');
     });
   };
-  
+
   $('.start-timed-exam').click(
     function() {
       if (!inProcess) {
