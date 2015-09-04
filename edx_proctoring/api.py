@@ -1015,8 +1015,6 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     if not attempt:
         student_view_template = 'proctoring/seq_timed_exam_entrance.html'
 
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
-        student_view_template = 'proctoring/seq_timed_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctoring/seq_timed_exam_ready_to_submit.html'
 
@@ -1088,8 +1086,6 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
         student_view_template = 'proctoring/seq_proctored_practice_exam_error.html'
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
-        student_view_template = 'proctoring/seq_timed_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
         student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
@@ -1137,7 +1133,6 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         return template.render(django_context)
 
     return None
-
 
 def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     """
