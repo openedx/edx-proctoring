@@ -1134,6 +1134,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
 
     return None
 
+
 def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     """
     Proctored Exams
