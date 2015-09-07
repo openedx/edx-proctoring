@@ -1083,17 +1083,13 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
             'software_download_url': provider.get_software_download_url(),
         })
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
-        student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
+        student_view_template = 'proctoring/seq_proctored_practice_exam_ready_to_start.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
         student_view_template = 'proctoring/seq_proctored_practice_exam_error.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
         student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
-        student_view_template = 'proctoring/seq_proctored_exam_verified.html'
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
-        student_view_template = 'proctoring/seq_proctored_exam_rejected.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
-        student_view_template = 'proctoring/seq_proctored_exam_ready_to_submit.html'
+        student_view_template = 'proctoring/seq_proctored_practice_exam_ready_to_submit.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -1117,7 +1113,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
             'total_time': total_time,
             'exam_id': exam_id,
             'progress_page_url': progress_page_url,
-            'is_sample_attempt': attempt['is_sample_attempt'] if attempt else False,
+            'is_sample_attempt': True,
             'does_time_remain': does_time_remain,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
             'exam_started_poll_url': reverse(
@@ -1131,7 +1127,6 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
             'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
         })
         return template.render(django_context)
-
     return None
 
 
@@ -1207,17 +1202,11 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
         student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
-        if attempt['is_sample_attempt']:
-            student_view_template = 'proctoring/seq_proctored_practice_exam_error.html'
-        else:
-            student_view_template = 'proctoring/seq_proctored_exam_error.html'
+        student_view_template = 'proctoring/seq_proctored_exam_error.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
-        student_view_template = 'proctoring/seq_timed_exam_expired.html'
+        student_view_template = 'proctoring/seq_proctored_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
-        if attempt['is_sample_attempt']:
-            student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
-        else:
-            student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
+        student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
         student_view_template = 'proctoring/seq_proctored_exam_verified.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
@@ -1247,7 +1236,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             'total_time': total_time,
             'exam_id': exam_id,
             'progress_page_url': progress_page_url,
-            'is_sample_attempt': attempt['is_sample_attempt'] if attempt else False,
+            'is_sample_attempt': False,
             'does_time_remain': does_time_remain,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
             'exam_started_poll_url': reverse(
@@ -1302,8 +1291,8 @@ def get_student_view(user_id, course_id, content_id,
         )
         exam = get_exam_by_content_id(course_id, content_id)
 
-    is_practice_exam = exam['is_practice_exam']
-    is_proctored_exam = exam['is_proctored'] and not is_practice_exam
+    is_practice_exam = exam['is_proctored'] and exam['is_practice_exam']
+    is_proctored_exam = exam['is_proctored'] and not exam['is_practice_exam']
     is_timed_exam = not exam['is_proctored']
 
     if is_timed_exam:

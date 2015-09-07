@@ -148,7 +148,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             exam_name=self.exam_name,
             time_limit_mins=self.default_time_limit,
             is_practice_exam=True,
-            is_proctored=False
+            is_proctored=True
         )
 
     def _create_disabled_exam(self):
@@ -918,14 +918,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
 
-        # test the variant if we are a sample attempt
-        exam_attempt.is_sample_attempt = True
+    def test_get_studentview_submitted_status_practiceexam(self):  # pylint: disable=invalid-name
+        """
+        Test for get_student_view proctored exam which has been submitted.
+        """
+        exam_attempt = self._create_started_practice_exam_attempt()
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
         exam_attempt.save()
 
         rendered_response = get_student_view(
             user_id=self.user_id,
             course_id=self.course_id,
-            content_id=self.content_id,
+            content_id=self.content_id_practice,
             context={
                 'is_proctored': True,
                 'display_name': self.exam_name,
@@ -1041,14 +1045,19 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.exam_time_error_msg, rendered_response)
 
-        # test the variant if we are a sample attempt
-        exam_attempt.is_sample_attempt = True
+    def test_get_studentview_erroneous_practice_exam(self):  # pylint: disable=invalid-name
+        """
+        Test for get_student_view practice exam which has exam status error.
+        """
+
+        exam_attempt = self._create_started_practice_exam_attempt()
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.error
         exam_attempt.save()
 
         rendered_response = get_student_view(
             user_id=self.user_id,
             course_id=self.course_id,
-            content_id=self.content_id,
+            content_id=self.content_id_practice,
             context={
                 'is_proctored': True,
                 'display_name': self.exam_name,
