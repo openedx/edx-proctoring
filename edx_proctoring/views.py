@@ -6,6 +6,7 @@ import logging
 import pytz
 from datetime import datetime
 
+from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.core.urlresolvers import reverse, NoReverseMatch
@@ -481,6 +482,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
             response_dict = {
                 'in_timed_exam': True,
                 'taking_as_proctored': attempt['taking_as_proctored'],
+                'exam_type': _('proctored') if attempt['taking_as_proctored'] else _('timed'),
                 'exam_display_name': exam['exam_name'],
                 'exam_url_path': exam_url_path,
                 'time_remaining_seconds': time_remaining_seconds,
