@@ -148,7 +148,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             exam_name=self.exam_name,
             time_limit_mins=self.default_time_limit,
             is_practice_exam=True,
-            is_proctored=False
+            is_proctored=True
         )
 
     def _create_disabled_exam(self):
@@ -1456,6 +1456,30 @@ class ProctoredExamApiTests(LoggedInTestCase):
             self.user.id,
             exam_attempt.proctored_exam.course_id,
             exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIn(summary, [expected])
+
+    @ddt.data(
+        (
+            {
+                'short_description': 'Timed Exam',
+                'suggested_icon': 'fa-clock-o',
+                'in_completed_state': False
+            },
+        )
+    )
+    @ddt.unpack
+    def test_timed_exam_status_summary(self, expected):
+        """
+        Assert that we get the expected status summaries
+        for the timed exams.
+        """
+        timed_exam = get_exam_by_id(self.timed_exam)
+        summary = get_attempt_status_summary(
+            self.user.id,
+            timed_exam['course_id'],
+            timed_exam['content_id']
         )
 
         self.assertIn(summary, [expected])
