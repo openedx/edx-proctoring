@@ -59,7 +59,8 @@ var edx = edx || {};
             });
             $el.find('form input[type="text"]').css({
                 "height": "26px",
-                "padding": "5px 8px"
+                "padding": "1px 8px 2px",
+                "font-size": "14px"
             });
             $el.find('form input[type="submit"]').css({
                 "margin-top": "10px",
@@ -75,6 +76,10 @@ var edx = edx || {};
                 "line-height": "normal",
                 "font-size": "14px",
                 "padding": "0px 10px 5px 7px"
+            });
+             $el.find('form select').css({
+                "padding": "2px 0px 2px 2px",
+                "font-size": "16px"
             });
         },
         getCurrentFormValues: function () {
