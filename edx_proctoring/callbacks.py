@@ -50,7 +50,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
 
     mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
 
-    template = loader.get_template('proctoring/proctoring_launch_callback.html')
+    template = loader.get_template('proctored_exams/proctoring_launch_callback.html')
 
     poll_url = reverse(
         'edx_proctoring.anonymous.proctoring_poll_status',
