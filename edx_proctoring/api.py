@@ -1013,10 +1013,10 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         does_time_remain = datetime.now(pytz.UTC) < expires_at
 
     if not attempt:
-        student_view_template = 'proctoring/seq_timed_exam_entrance.html'
+        student_view_template = 'timed_exams/seq_timed_exam_entrance.html'
 
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
-        student_view_template = 'proctoring/seq_timed_exam_ready_to_submit.html'
+        student_view_template = 'timed_exams/seq_timed_exam_ready_to_submit.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -1073,23 +1073,23 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         does_time_remain = datetime.now(pytz.UTC) < expires_at
 
     if not attempt:
-        student_view_template = 'proctoring/seq_proctored_practice_exam_entrance.html'
+        student_view_template = 'practice_exams/seq_proctored_practice_exam_entrance.html'
 
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.created:
         provider = get_backend_provider()
-        student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_instructions.html'
         context.update({
             'exam_code': attempt['attempt_code'],
             'software_download_url': provider.get_software_download_url(),
         })
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
-        student_view_template = 'proctoring/seq_proctored_practice_exam_ready_to_start.html'
+        student_view_template = 'practice_exams/seq_proctored_practice_exam_ready_to_start.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
-        student_view_template = 'proctoring/seq_proctored_practice_exam_error.html'
+        student_view_template = 'practice_exams/seq_proctored_practice_exam_error.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
-        student_view_template = 'proctoring/seq_proctored_practice_exam_submitted.html'
+        student_view_template = 'practice_exams/seq_proctored_practice_exam_submitted.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
-        student_view_template = 'proctoring/seq_proctored_practice_exam_ready_to_submit.html'
+        student_view_template = 'practice_exams/seq_proctored_practice_exam_ready_to_submit.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -1190,29 +1190,29 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     if not attempt:
         # determine whether to show a timed exam only entrance screen
         # or a screen regarding proctoring
-        student_view_template = 'proctoring/seq_proctored_exam_entrance.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_entrance.html'
 
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.created:
         provider = get_backend_provider()
-        student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_instructions.html'
         context.update({
             'exam_code': attempt['attempt_code'],
             'software_download_url': provider.get_software_download_url(),
         })
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_start:
-        student_view_template = 'proctoring/seq_proctored_exam_ready_to_start.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_ready_to_start.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.error:
-        student_view_template = 'proctoring/seq_proctored_exam_error.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_error.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out:
-        student_view_template = 'proctoring/seq_proctored_exam_expired.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_expired.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
-        student_view_template = 'proctoring/seq_proctored_exam_submitted.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_submitted.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
-        student_view_template = 'proctoring/seq_proctored_exam_verified.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_verified.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.rejected:
-        student_view_template = 'proctoring/seq_proctored_exam_rejected.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_rejected.html'
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
-        student_view_template = 'proctoring/seq_proctored_exam_ready_to_submit.html'
+        student_view_template = 'proctored_exams/seq_proctored_exam_ready_to_submit.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)

@@ -2,7 +2,7 @@
 <div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
-      There was a problem with your proctoring session
+      Your proctoring session was reviewed and did not pass requirements
     {% endblocktrans %}
   </h3>
 
@@ -14,8 +14,8 @@
 
   <p>
     {% blocktrans %}
-      Your proctoring session ended before you completed this exam, so your proctoring results are incomplete.
-      You will not be eligible to use this course for academic credit, even if you achieve a passing grade.
+      You are not eligible to purchase academic credit for this course, regardless of your final grade in the course.
+      If you have concerns about your proctoring session results, contact your course team.
     {% endblocktrans %}
   </p>
   <hr>
@@ -33,4 +33,4 @@
   </p>
   <div class="clearfix"></div>
 </div>
-{% include 'proctoring/seq_proctored_exam_footer.html' %}
+{% include 'proctored_exams/seq_proctored_exam_footer.html' %}
