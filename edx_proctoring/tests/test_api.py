@@ -2,7 +2,7 @@
 # pylint: disable=too-many-lines, invalid-name
 
 """
-All tests for the models.py
+All tests for the api.py
 """
 import ddt
 from datetime import datetime, timedelta
