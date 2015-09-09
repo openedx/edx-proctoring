@@ -97,7 +97,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         # Messages for get_student_view
         self.start_an_exam_msg = 'This exam is proctored'
         self.timed_exam_msg = '{exam_name} is a Timed Exam'
-
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
         self.exam_time_error_msg = 'There was a problem with your proctoring session'
         self.chose_proctored_exam_msg = 'Follow these steps to set up and start your proctored exam'
