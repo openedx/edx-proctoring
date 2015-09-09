@@ -19,7 +19,8 @@ FROM_EMAIL = (
     'STATUS_EMAIL_FROM_ADDRESS' in settings.PROCTORING_SETTINGS else settings.DEFAULT_FROM_EMAIL
 )
 
+# Note that CONTACT_EMAIL is not defined in Studio runtimes
 CONTACT_EMAIL = (
     settings.PROCTORING_SETTINGS['CONTACT_EMAIL'] if
-    'CONTACT_EMAIL' in settings.PROCTORING_SETTINGS else settings.CONTACT_EMAIL
+    'CONTACT_EMAIL' in settings.PROCTORING_SETTINGS else getattr(settings, 'CONTACT_EMAIL', FROM_EMAIL)
 )
