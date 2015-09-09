@@ -20,6 +20,7 @@ var edx = edx || {};
             this.secondsLeft = 0;
             /* give an extra 5 seconds where the timer holds at 00:00 before page refreshes */
             this.grace_period_secs = 5;
+            this.first_time_rendering = true;
 
             // we need to keep a copy here because the model will
             // get destroyed before onbeforeunload is called
@@ -89,6 +90,13 @@ var edx = edx || {};
                     var html = this.template(this.model.toJSON());
                     this.$el.html(html);
                     this.$el.show();
+                    // only render the accesibility string the first time we render after
+                    // page load (then we will update on time left warnings)
+                    if (this.first_time_rendering) {
+                        this.accessibility_time_string = this.model.get('accessibility_time_string');
+                        this.$el.find('.timer-announce').html(this.accessibility_time_string);
+                        this.first_time_rendering = false;
+                    }
                     this.updateRemainingTime(this);
                     this.timerId = setInterval(this.updateRemainingTime, 1000, this);
 
@@ -141,11 +149,20 @@ var edx = edx || {};
                     }
                     else {
                         self.secondsLeft = data.time_remaining_seconds;
+                        self.accessibility_time_string = data.accessibility_time_string;
                     }
                 });
             }
-            self.$el.find('div.exam-timer').removeClass("low-time warning critical");
-            self.$el.find('div.exam-timer').addClass(self.model.getRemainingTimeState(self.secondsLeft));
+            var oldState = self.$el.find('div.exam-timer').attr('class');
+            var newState = self.model.getRemainingTimeState(self.secondsLeft);
+
+            if (newState !== null && !self.$el.find('div.exam-timer').hasClass(newState)) {
+                self.$el.find('div.exam-timer').removeClass("warning critical");
+                self.$el.find('div.exam-timer').addClass("low-time " + newState);
+                // refresh accessibility string
+                self.$el.find('.timer-announce').html(self.accessibility_time_string);
+            }
+
             self.$el.find('span#time_remaining_id b').html(self.model.getFormattedRemainingTime(self.secondsLeft));
             if (self.secondsLeft <= -self.grace_period_secs) {
                 clearInterval(self.timerId); // stop the timer once the time finishes.
