@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
+from django.utils.translation import ugettext as _
 
 from django.contrib.auth.models import User
 from edx_proctoring.exceptions import UserNotFoundException
@@ -134,6 +135,13 @@ class ProctoredExamStudentAttemptStatus(object):
     # the exam is believed to be in error
     error = 'error'
 
+    # status alias for sending email
+    status_alias_mapping = {
+        submitted: _('pending'),
+        verified: _('satisfactory'),
+        rejected: _('unsatisfactory')
+    }
+
     @classmethod
     def is_completed_status(cls, status):
         """
@@ -141,10 +149,8 @@ class ProctoredExamStudentAttemptStatus(object):
         that it cannot go backwards in state
         """
         return status in [
-            ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.timed_out,
-            ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.verified,
-            ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.not_reviewed,
-            ProctoredExamStudentAttemptStatus.error
+            cls.declined, cls.timed_out, cls.submitted, cls.verified, cls.rejected,
+            cls.not_reviewed, cls.error
         ]
 
     @classmethod
@@ -153,9 +159,7 @@ class ProctoredExamStudentAttemptStatus(object):
         Returns a boolean if the passed in status is in an "incomplete" state.
         """
         return status in [
-            ProctoredExamStudentAttemptStatus.eligible, ProctoredExamStudentAttemptStatus.created,
-            ProctoredExamStudentAttemptStatus.ready_to_start, ProctoredExamStudentAttemptStatus.started,
-            ProctoredExamStudentAttemptStatus.ready_to_submit
+            cls.eligible, cls.created, cls.ready_to_start, cls.started, cls.ready_to_submit
         ]
 
     @classmethod
@@ -164,9 +168,8 @@ class ProctoredExamStudentAttemptStatus(object):
         Returns a boolean if the passed in to_status calls for an update to the credit requirement status.
         """
         return to_status in [
-            ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected,
-            ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.not_reviewed,
-            ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error
+            cls.verified, cls.rejected, cls.declined, cls.not_reviewed, cls.submitted,
+            cls.error
         ]
 
     @classmethod
@@ -176,9 +179,26 @@ class ProctoredExamStudentAttemptStatus(object):
         to other attempts.
         """
         return to_status in [
-            ProctoredExamStudentAttemptStatus.rejected,
-            ProctoredExamStudentAttemptStatus.declined
+            cls.rejected, cls.declined
         ]
+
+    @classmethod
+    def needs_status_change_email(cls, to_status):
+        """
+        We need to send out emails for rejected, verified and submitted statuses.
+        """
+
+        return to_status in [
+            cls.rejected, cls.submitted, cls.verified
+        ]
+
+    @classmethod
+    def get_status_alias(cls, status):
+        """
+        Returns status alias used in email
+        """
+
+        return cls.status_alias_mapping.get(status, '')
 
 
 class ProctoredExamStudentAttemptManager(models.Manager):

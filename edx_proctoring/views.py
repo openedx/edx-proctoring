@@ -4,7 +4,7 @@ Proctored Exams HTTP-based API endpoints
 
 import logging
 import pytz
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.utils.decorators import method_decorator
 from django.conf import settings
@@ -40,7 +40,7 @@ from edx_proctoring.exceptions import (
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt
 
-from .utils import AuthenticatedAPIView
+from .utils import AuthenticatedAPIView, get_time_remaining_for_attempt
 
 ATTEMPTS_PER_PAGE = 25
 
@@ -264,7 +264,9 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                         attempt_id=attempt_id
                     )
                 )
-                raise StudentExamAttemptDoesNotExistsException(err_msg)
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
             # make sure the the attempt belongs to the calling user_id
             if attempt['user']['id'] != request.user.id:
@@ -288,6 +290,11 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                     attempt['user']['id'],
                     ProctoredExamStudentAttemptStatus.error
                 )
+
+            # add in the computed time remaining as a helper to a client app
+            time_remaining_seconds = get_time_remaining_for_attempt(attempt)
+
+            attempt['time_remaining_seconds'] = time_remaining_seconds
 
             return Response(
                 data=attempt,
@@ -449,14 +456,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
             exam = exam_info['exam']
             attempt = exam_info['attempt']
 
-            # need to adjust for allowances
-            expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
-            now_utc = datetime.now(pytz.UTC)
-
-            if expires_at > now_utc:
-                time_remaining_seconds = (expires_at - now_utc).seconds
-            else:
-                time_remaining_seconds = 0
+            time_remaining_seconds = get_time_remaining_for_attempt(attempt)
 
             proctoring_settings = getattr(settings, 'PROCTORING_SETTINGS', {})
             low_threshold_pct = proctoring_settings.get('low_threshold_pct', .2)

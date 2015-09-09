@@ -174,6 +174,19 @@ class SoftwareSecureTests(TestCase):
             attempt_id = create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
             self.assertIsNotNone(attempt_id)
 
+        # try unicode exam name, also
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content_unicode_name',
+            exam_name=u'अआईउऊऋऌ अआईउऊऋऌ',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
+            self.assertIsNotNone(attempt_id)
+
     def test_failing_register_attempt(self):
         """
         Makes sure we can register an attempt

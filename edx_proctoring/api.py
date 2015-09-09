@@ -14,7 +14,9 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.template import Context, loader
 from django.core.urlresolvers import reverse, NoReverseMatch
+from django.core.mail.message import EmailMessage
 
+from edx_proctoring import constants
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
@@ -75,10 +77,10 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
     )
 
     log_msg = (
-        'Created exam ({exam_id}) with parameters: course_id={course_id}, '
-        'content_id={content_id}, exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
-        'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
-        'external_id={external_id}, is_active={is_active}'.format(
+        u'Created exam ({exam_id}) with parameters: course_id={course_id}, '
+        u'content_id={content_id}, exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
+        u'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
+        u'external_id={external_id}, is_active={is_active}'.format(
             exam_id=proctored_exam.id,
             course_id=course_id, content_id=content_id,
             exam_name=exam_name, time_limit_mins=time_limit_mins,
@@ -101,10 +103,10 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
     """
 
     log_msg = (
-        'Updating exam_id {exam_id} with parameters '
-        'exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
-        'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
-        'external_id={external_id}, is_active={is_active}'.format(
+        u'Updating exam_id {exam_id} with parameters '
+        u'exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
+        u'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
+        u'external_id={external_id}, is_active={is_active}'.format(
             exam_id=exam_id, exam_name=exam_name, time_limit_mins=time_limit_mins,
             is_proctored=is_proctored, is_practice_exam=is_practice_exam,
             external_id=external_id, is_active=is_active
@@ -234,7 +236,7 @@ def _check_for_attempt_timeout(attempt):
     has_started_exam = (
         attempt and
         attempt.get('started_at') and
-        attempt.get('status') == ProctoredExamStudentAttemptStatus.started
+        ProctoredExamStudentAttemptStatus.is_incomplete_status(attempt.get('status'))
     )
     if has_started_exam:
         now_utc = datetime.now(pytz.UTC)
@@ -556,6 +558,7 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
 
     # see if the status transition this changes credit requirement status
     if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
+
         # trigger credit workflow, as needed
         credit_service = get_runtime_service('credit')
 
@@ -643,7 +646,80 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
         exam_attempt_obj.started_at = datetime.now(pytz.UTC)
         exam_attempt_obj.save()
 
+    # email will be send when the exam is proctored and not practice exam
+    # and the status is verified, submitted or rejected
+    should_send_status_email = (
+        exam_attempt_obj.taking_as_proctored and
+        not exam_attempt_obj.is_sample_attempt and
+        ProctoredExamStudentAttemptStatus.needs_status_change_email(exam_attempt_obj.status)
+    )
+    if should_send_status_email:
+        # trigger credit workflow, as needed
+        credit_service = get_runtime_service('credit')
+
+        # call service to get course name.
+        credit_state = credit_service.get_credit_state(
+            exam_attempt_obj.user_id,
+            exam_attempt_obj.proctored_exam.course_id,
+            return_course_name=True
+        )
+
+        send_proctoring_attempt_status_email(
+            exam_attempt_obj,
+            credit_state.get('course_name', _('your course'))
+        )
+
     return exam_attempt_obj.id
+
+
+def send_proctoring_attempt_status_email(exam_attempt_obj, course_name):
+    """
+    Sends an email about change in proctoring attempt status.
+    """
+
+    course_info_url = ''
+    email_template = loader.get_template('emails/proctoring_attempt_status_email.html')
+    try:
+        course_info_url = reverse('courseware.views.course_info', args=[exam_attempt_obj.proctored_exam.course_id])
+    except NoReverseMatch:
+        # we are allowing a failure here since we can't guarantee
+        # that we are running in-proc with the edx-platform LMS
+        # (for example unit tests)
+        pass
+
+    scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
+    course_url = '{scheme}://{site_name}{course_info_url}'.format(
+        scheme=scheme,
+        site_name=constants.SITE_NAME,
+        course_info_url=course_info_url
+    )
+
+    body = email_template.render(
+        Context({
+            'course_url': course_url,
+            'course_name': course_name,
+            'exam_name': exam_attempt_obj.proctored_exam.exam_name,
+            'status': ProctoredExamStudentAttemptStatus.get_status_alias(exam_attempt_obj.status),
+            'platform': constants.PLATFORM_NAME,
+            'contact_email': constants.CONTACT_EMAIL,
+        })
+    )
+
+    subject = (
+        _('Proctoring Session Results Update for {course_name} {exam_name}').format(
+            course_name=course_name,
+            exam_name=exam_attempt_obj.proctored_exam.exam_name
+        )
+    )
+
+    email = EmailMessage(
+        body=body,
+        from_email=constants.FROM_EMAIL,
+        to=[exam_attempt_obj.user.email],
+        subject=subject
+    )
+    email.content_subtype = "html"
+    email.send()
 
 
 def remove_exam_attempt(attempt_id):
@@ -666,12 +742,27 @@ def remove_exam_attempt(attempt_id):
         raise StudentExamAttemptDoesNotExistsException(err_msg)
 
     username = existing_attempt.user.username
+    user_id = existing_attempt.user.id
     course_id = existing_attempt.proctored_exam.course_id
     content_id = existing_attempt.proctored_exam.content_id
+    to_status = existing_attempt.status
+
     existing_attempt.delete_exam_attempt()
     instructor_service = get_runtime_service('instructor')
+
     if instructor_service:
         instructor_service.delete_student_attempt(username, course_id, content_id)
+
+    # see if the status transition this changes credit requirement status
+    if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
+        # trigger credit workflow, as needed
+        credit_service = get_runtime_service('credit')
+        credit_service.remove_credit_requirement_status(
+            user_id=user_id,
+            course_key_or_id=course_id,
+            req_namespace=u'proctored_exam',
+            req_name=content_id
+        )
 
 
 def get_all_exams_for_course(course_id):
