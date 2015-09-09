@@ -502,6 +502,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response_data['proctored_exam']['id'], proctored_exam.id)
         self.assertIsNotNone(response_data['started_at'])
         self.assertIsNone(response_data['completed_at'])
+        # make sure we have the accessible human string
+        self.assertEqual(response_data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
 
     def test_attempt_ready_to_start(self):
         """
@@ -1128,6 +1130,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(data['exam_display_name'], 'Test Exam')
         self.assertEqual(data['low_threshold_sec'], 1080)
         self.assertEqual(data['critically_low_threshold_sec'], 270)
+        # make sure we have the accessible human string
+        self.assertEqual(data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
 
     def test_get_expired_attempt(self):
         """

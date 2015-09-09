@@ -14,6 +14,7 @@
             low_threshold_sec: 0,
             critically_low_threshold_sec: 0,
             course_id: null,
+            accessibility_time_string: '',
             lastFetched: new Date()
         },
         getFormattedRemainingTime: function (secondsLeft) {
@@ -31,19 +32,19 @@
         },
         getRemainingTimeState: function (secondsLeft) {
             if (secondsLeft > this.get('low_threshold_sec')) {
-                return "";
+                return null;
             }
             else if (secondsLeft <= this.get('low_threshold_sec') && secondsLeft > this.get('critically_low_threshold_sec')) {
                 // returns the class name that has some css properties
                 // and it displays the user with the waring message if
                 // total seconds is less than the low_threshold value.
-                return "low-time warning";
+                return "warning";
             }
             else {
                 // returns the class name that has some css properties
                 // and it displays the user with the critical message if
                 // total seconds is less than the critically_low_threshold_sec value.
-                return "low-time critical";
+                return "critical";
             }
         }
     });

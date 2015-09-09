@@ -41,7 +41,7 @@ from edx_proctoring.exceptions import (
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt
 
-from .utils import AuthenticatedAPIView, get_time_remaining_for_attempt
+from .utils import AuthenticatedAPIView, get_time_remaining_for_attempt, humanized_time
 
 ATTEMPTS_PER_PAGE = 25
 
@@ -296,6 +296,11 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             time_remaining_seconds = get_time_remaining_for_attempt(attempt)
 
             attempt['time_remaining_seconds'] = time_remaining_seconds
+            attempt['accessibility_time_string'] = _('you have {remaining_time} remaining').format(
+                remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
+            )
+
+            print attempt['accessibility_time_string']
 
             return Response(
                 data=attempt,
@@ -490,6 +495,9 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 'critically_low_threshold_sec': critically_low_threshold,
                 'course_id': exam['course_id'],
                 'attempt_id': attempt['id'],
+                'accessibility_time_string': _('you have {remaining_time} remaining').format(
+                    remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
+                ),
                 'attempt_status': attempt['status']
             }
         else:
