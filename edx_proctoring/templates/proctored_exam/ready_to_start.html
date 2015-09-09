@@ -1,27 +1,17 @@
 {% load i18n %}
-<div class="sequence proctored-exam success-top-bar instructions" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
-  <h3>
-    {% blocktrans %}
-      Your Proctoring Installation and Set Up is Complete
-    {% endblocktrans %}
-  </h3>
-  <p>
-    {% blocktrans %}
-      Do not close the proctoring session window until you have completed and submitted your exam.
-    {% endblocktrans %}
-  </p>
-  <div class="proctored-exam-message">
+<div class="sequence proctored-exam success-left-bar instructions" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
+  <div>
     <h3>
     {% blocktrans %}
-      You Can Begin Your Exam Now
+      Follow these instructions
     {% endblocktrans %}
     </h3>
     <p>
       {% blocktrans %}
-        When you start your exam you will have {{total_time}} to complete it. You cannot stop the timer once you start.
-      {% endblocktrans %}
-      {% blocktrans %}
-        If the allotted time expires before you mark your exam as ended, the answers you have completed up to that point are submitted for grading, and your proctoring session is uploaded for review.
+        &#8226; Do not close the proctoring window until you have completed and submitted your exam. </br>
+        &#8226; When you start your exam you will have {{ total_time }} to complete it. </br>
+        &#8226; If the allotted time expires before your end your exam, the answers you have completed up
+        to that point are submitted for grading and your proctoring session is uploaded for review. </br>
       {% endblocktrans %}
     </p>
     <div>

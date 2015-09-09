@@ -1,47 +1,41 @@
 {% load i18n %}
-<div class="sequence proctored-exam instructions message-top-bar" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
-  <h3>
-    {% blocktrans %}
-      You Have Chosen To Take a Proctored Exam
-    {% endblocktrans %}
-  </h3>
-  <p>
-    {% blocktrans %}
-    You must set up and start the proctoring software before you begin your exam
-    {% endblocktrans %}
-  </p>
-  <div class="proctored-exam-message">
+<div class="sequence proctored-exam instructions message-left-bar" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
+
+  <div class="">
     <h3>
     {% blocktrans %}
-      Install and Set Up Proctoring Software
+      Follow these steps to set up and start your proctored exam.
     {% endblocktrans %}
     </h3>
     <p>
       {% blocktrans %}
-        1. Open the proctoring software installation window and follow the instructions to <a href="{{software_download_url}}" target="_blank">install and set up the proctoring software</a>.
+        1. Copy this unique exam code. You will be prompted to paste this code later before you start the exam.
+      {% endblocktrans %}
+    </p>
+    <p>
+      <span class="proctored-exam-code">{{exam_code}}</span>
+    </p>
+    <p>
+      {% blocktrans %}
+        Select the exam code, then copy it using Command+C (Mac) or Control+C (Windows).
       {% endblocktrans %}
     </p>
     <p>
       {% blocktrans %}
-        2. Copy this unique exam code and paste it in the proctoring software window when you are asked for it.
+        2. Follow the link below to set up proctoring.
       {% endblocktrans %}
     </p>
     <p>
-      <span class="proctored-exam-code" role="application">{{exam_code}}</span>&nbsp;<button class='proctored-exam-select-code'>Select exam code</button>
+      <span><a href="{{software_download_url}}" target="_blank">Start System Check</a></span>
     </p>
     <p>
       {% blocktrans %}
-        Do not share this code. It is linked to your {{platform_name}} account and can be used only once.
-      {% endblocktrans %}
-    </p>
-    <p>
-      {% blocktrans %}
-        3. Keep the proctoring session window open while you are taking the exam. If you close it, the proctoring recording is stopped and you will not successfully complete the proctored exam.
+        A new window will open. You will run a system check before downloading the proctoring application.
       {% endblocktrans %}
     </p>
     <p>
       {% blocktrans %}
-        4. Return to the {{platform_name}} courseware to start your exam.
+        You will be asked to verify your identity before you begin the exam. Make sure you have valid photo identification, such as a driver's license or passport, before you continue.
       {% endblocktrans %}
     </p>
   </div>
@@ -92,31 +86,6 @@
       });
     }
   );
-
-  $('.proctored-exam-select-code').click(function() {
-    selectText($('.proctored-exam-code'));
-    $(event.currentTarget).blur();
-  });
-
-  function selectText(textToBeSelected) {
-    // this selects all the text in an element
-    // http://stackoverflow.com/questions/12243898/how-to-select-all-text-in-contenteditable-div
-    var doc = document,
-      range, selection,
-      element = textToBeSelected[0];
-
-    if (doc.body.createTextRange) {
-      range = doc.body.createTextRange();
-      range.moveToElementText(element);
-      range.select();
-    } else if (window.getSelection) {
-      selection = window.getSelection();
-      range = doc.createRange();
-      range.selectNodeContents(element);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  }
 
   $(document).ready(function(){
     _waiting_for_proctored_interval = setInterval(

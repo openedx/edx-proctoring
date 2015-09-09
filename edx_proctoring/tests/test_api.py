@@ -95,21 +95,22 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.disabled_exam_id = self._create_disabled_exam()
 
         # Messages for get_student_view
-        self.start_an_exam_msg = 'Would you like to take "{exam_name}" as a proctored exam?'
+        self.start_an_exam_msg = 'This exam is proctored'
         self.timed_exam_msg = '{exam_name} is a Timed Exam'
+
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
         self.exam_time_error_msg = 'There was a problem with your proctoring session'
-        self.chose_proctored_exam_msg = 'You Have Chosen To Take a Proctored Exam'
+        self.chose_proctored_exam_msg = 'Follow these steps to set up and start your proctored exam'
         self.proctored_exam_optout_msg = 'Take this exam as an open exam instead'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
         self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
         self.proctored_exam_rejected_msg = 'Your proctoring session was reviewed and did not pass requirements'
-        self.start_a_practice_exam_msg = 'Would you like to take "{exam_name}" as a practice proctored exam?'
+        self.start_a_practice_exam_msg = 'Get familiar with proctoring for real exams later in the course'
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
-        self.practice_exam_created_msg = 'You must set up and start the proctoring software before you begin your exam'
+        self.practice_exam_created_msg = 'Follow these steps to set up and start your proctored exam'
         self.practice_exam_completion_msg = 'Are you sure you want to end your proctored exam'
-        self.ready_to_start_msg = 'Your Proctoring Installation and Set Up is Complete'
+        self.ready_to_start_msg = 'Follow these instructions'
         self.practice_exam_failed_msg = 'There was a problem with your practice proctoring session'
         self.proctored_exam_email_subject = 'Proctoring Session Results Update'
         self.proctored_exam_email_body = 'the status of your proctoring session review'
