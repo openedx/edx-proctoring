@@ -95,7 +95,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.disabled_exam_id = self._create_disabled_exam()
 
         # Messages for get_student_view
-        self.start_an_exam_msg = 'Would you like to take "%s" as a proctored exam?'
+        self.start_an_exam_msg = 'This exam is proctored.'
         self.timed_exam_msg = '%s is a Timed Exam'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
         self.exam_time_error_msg = 'There was a problem with your proctoring session'
@@ -105,9 +105,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
         self.proctored_exam_rejected_msg = 'Your proctoring session was reviewed and did not pass requirements'
         self.timed_exam_completed_msg = 'This is the end of your timed exam'
-        self.start_a_practice_exam_msg = 'Would you like to take "%s" as a practice proctored exam?'
+        self.start_a_practice_exam_msg = 'Get familiar with proctoring for real exams later in the course.'
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
-        self.ready_to_start_msg = 'Your Proctoring Installation and Set Up is Complete'
+        self.ready_to_start_msg = 'Follow these instructions'
         self.practice_exam_failed_msg = 'There was a problem with your practice proctoring session'
         self.proctored_exam_email_subject = 'Proctoring Session Results Update'
         self.proctored_exam_email_body = 'the status of your proctoring session review'
@@ -645,7 +645,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIn('data-exam-id="%d"' % self.proctored_exam_id, rendered_response)
-        self.assertIn(self.start_an_exam_msg % self.exam_name, rendered_response)
+        self.assertIn(self.start_an_exam_msg, rendered_response)
 
         # try practice exam variant
         rendered_response = get_student_view(
@@ -659,7 +659,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'is_practice_exam': True,
             }
         )
-        self.assertIn(self.start_a_practice_exam_msg % self.exam_name, rendered_response)
+        self.assertIn(self.start_a_practice_exam_msg, rendered_response)
 
     def test_get_honor_view_with_practice_exam(self):  # pylint: disable=invalid-name
         """
@@ -793,25 +793,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 }
             )
         )
-
-    def test_get_studentview_unstarted_exam(self):  # pylint: disable=invalid-name
-        """
-        Test for get_student_view proctored exam which has not started yet.
-        """
-
-        self._create_unstarted_exam_attempt()
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
-        self.assertIn(self.chose_proctored_exam_msg, rendered_response)
 
     def test_declined_attempt(self):
         """
@@ -1073,7 +1054,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertNotIn('data-exam-id="%d"' % self.proctored_exam_id, rendered_response)
         self.assertIn(self.timed_exam_msg % self.exam_name, rendered_response)
-        self.assertNotIn(self.start_an_exam_msg % self.exam_name, rendered_response)
+        self.assertNotIn(self.start_an_exam_msg, rendered_response)
 
     def test_get_studentview_completed_timed_exam(self):  # pylint: disable=invalid-name
         """
