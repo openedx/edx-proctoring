@@ -505,6 +505,17 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # make sure we have the accessible human string
         self.assertEqual(response_data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
 
+        # check the special casing of the human string when under a minute
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=90, seconds=30)
+        with freeze_time(reset_time):
+            response = self.client.get(
+                reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+            )
+            self.assertEqual(response.status_code, 200)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response_data['accessibility_time_string'], 'you have less than a minute remaining')
+
     def test_attempt_ready_to_start(self):
         """
         Test to get an attempt with ready_to_start status
