@@ -7,8 +7,7 @@
 <% if (is_allowances) { %>
 
 <div class="wrapper-content wrapper">
-   <section class="content">
-
+   <section class="content exam-allowances-content">
       <table class="allowance-table">
          <thead>
             <tr class="allowance-headings">
