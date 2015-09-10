@@ -300,8 +300,6 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
             )
 
-            print attempt['accessibility_time_string']
-
             return Response(
                 data=attempt,
                 status=status.HTTP_200_OK
