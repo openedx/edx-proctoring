@@ -5,6 +5,11 @@
       This exam is proctored.
     {% endblocktrans %}
   </h3>
+  <p>
+    {% blocktrans %}
+      To be eligible to earn credit for this course, you must take and pass the proctoring review for this exam.
+    {% endblocktrans %}
+  </p>
   <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
     <a>
       {% trans "Continue to my proctored exam. I want to be eligible for credit." %}
@@ -19,9 +24,14 @@
   </button>
   <button class="gated-sequence start-timed-exam" data-attempt-proctored=false>
     <a>
-      {% trans "Take this exam without proctoring. I am not interested in academic credit." %}
+      {% trans "Take this exam without proctoring." %}
     </a>
       <i class="fa fa-arrow-circle-right"></i>
+    <p>
+      {% blocktrans %}
+        I am not interested in academic credit.
+      {% endblocktrans %}
+    </p>
   </button>
 </div>
 <div class="proctored-exam-skip-confirm-wrapper hidden">
