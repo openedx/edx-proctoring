@@ -104,7 +104,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
         self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
         self.proctored_exam_rejected_msg = 'Your proctoring session was reviewed and did not pass requirements'
-        self.timed_exam_completed_msg = 'This is the end of your timed exam'
+        self.timed_exam_completed_msg = 'Are you sure you want to end your timed exam?'
         self.start_a_practice_exam_msg = 'Would you like to take "%s" as a practice proctored exam?'
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
         self.ready_to_start_msg = 'Your Proctoring Installation and Set Up is Complete'
