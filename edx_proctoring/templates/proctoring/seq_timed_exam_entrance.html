@@ -12,14 +12,14 @@
     </strong>
     {% trans "As soon as you indicate that you are ready to start the exam, you will have "%} {{total_time|lower}} {% trans " to complete the exam." %}
   </p>
-  <div class="gated-sequence">
-    <a class='start-timed-exam' data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
+  <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
+    <a>
       {% blocktrans %}
         I'm ready! Start this timed exam.
       {% endblocktrans %}
-        <i class="fa fa-arrow-circle-right"></i>
-      </a>
-  </div>
+      <i class="fa fa-arrow-circle-right"></i>
+    </a>
+  </button>
 </div>
 {% include 'proctoring/seq_timed_exam_footer.html' %}
 
