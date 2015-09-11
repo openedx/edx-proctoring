@@ -5,22 +5,6 @@ from django.contrib.auth.models import User
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
 
 
-class StrictBooleanField(serializers.BooleanField):
-    """
-    Boolean field serializer to cater for a bug in DRF BooleanField serializer
-    where required=True is ignored.
-    """
-    def from_native(self, value):
-        """
-        Convert representations of a boolean to a Python `boolean`.
-        """
-        if value in ('true', 't', 'True', '1'):
-            return True
-        if value in ('false', 'f', 'False', '0'):
-            return False
-        return None
-
-
 class ProctoredExamSerializer(serializers.ModelSerializer):
     """
     Serializer for the ProctoredExam Model.
@@ -32,9 +16,9 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
     exam_name = serializers.CharField(required=True)
     time_limit_mins = serializers.IntegerField(required=True)
 
-    is_active = StrictBooleanField(required=True)
-    is_practice_exam = StrictBooleanField(required=True)
-    is_proctored = StrictBooleanField(required=True)
+    is_active = serializers.BooleanField(required=True)
+    is_practice_exam = serializers.BooleanField(required=True)
+    is_proctored = serializers.BooleanField(required=True)
 
     class Meta:
         """
