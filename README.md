@@ -10,7 +10,7 @@ in an Open edX installation.
 
 NOTE: Proctoring will not be available in the Open edX named releases until Dogwood. However, you can use this if you use a copy of edx-platform (master) after 8/20/2015.
 
-In order to use edx-proctoring, you must obtain an account (and secret configuration - see below) with SoftwareSecure, which provide the proctoring review services that edx-proctoring integrates with.
+In order to use edx-proctoring, you must obtain an account (and secret configuration - see below) with SoftwareSecure, which provides the proctoring review services that edx-proctoring integrates with.
 
 
 CONFIGURATION:
