@@ -2,30 +2,29 @@
 <div class="sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
-      Would you like to take "{{ display_name }}" as a practice proctored exam?
+      Try a proctored exam
     {% endblocktrans %}
   </h3>
   <p>
     {% blocktrans %}
-      You can try this practice exam as many times as you want.
+      Get familiar with proctoring for real exams later in the course. This practice exam has no impact
+      on your grade in the course.
     {% endblocktrans %}
   </p>
   <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-    <span><i class="fa fa-lock"></i></span>
     <a>
-      {% trans "Yes, I want to take this practice exam with online proctoring" %}
+      {% trans "Continue to my practice exam" %}
     </a>
     <p>
       {% blocktrans %}
         You will be guided through steps to set up online proctoring software and to perform various checks.
-        When you start the exam, the timer on the right shows the time remaining in the exam.
       {% endblocktrans %}
     </p>
 
-    <i class="fa fa-arrow-circle-right start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></i>
+    <i class="fa fa-arrow-circle-right practice-exam start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></i>
   </button>
 </div>
-{% include 'proctoring/seq_proctored_exam_footer.html' %}
+{% include 'proctoring/seq_proctored_practice_exam_footer.html' %}
 
 <script type="text/javascript">
 
