@@ -296,9 +296,16 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             time_remaining_seconds = get_time_remaining_for_attempt(attempt)
 
             attempt['time_remaining_seconds'] = time_remaining_seconds
-            attempt['accessibility_time_string'] = _('you have {remaining_time} remaining').format(
-                remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
-            )
+
+            accessibility_time_string = _('you have {remaining_time} remaining').format(
+                remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0))))
+
+            # special case if we are less than a minute, since we don't produce
+            # text translations of granularity at the seconds range
+            if time_remaining_seconds < 60:
+                accessibility_time_string = _('you have less than a minute remaining')
+
+            attempt['accessibility_time_string'] = accessibility_time_string
 
             return Response(
                 data=attempt,

@@ -2,43 +2,36 @@
 <div class="sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
-      Would you like to take "{{ display_name }}" as a proctored exam?
+      This exam is proctored.
     {% endblocktrans %}
   </h3>
   <p>
     {% blocktrans %}
-      As a verified learner in this course, you have the option of taking this exam with online proctoring.
       To be eligible to earn credit for this course, you must take and pass the proctoring review for this exam.
     {% endblocktrans %}
   </p>
   <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-    <span><i class="fa fa-lock"></i></span>
     <a>
-      {% trans "Yes, I want to take this exam with online proctoring (and be eligible for credit)" %}
+      {% trans "Continue to my proctored exam. I want to be eligible for credit." %}
     </a>
     <p>
       {% blocktrans %}
         You will be guided through steps to set up online proctoring software and to perform various checks.</br>
-          &#8226; Have your photo ID ready so that you can verify your identity. </br>
-          &#8226; Be ready to start your exam after you complete the proctoring setup. </br>
-
       {% endblocktrans %}
     </p>
 
     <i class="fa fa-arrow-circle-right"></i>
   </button>
   <button class="gated-sequence start-timed-exam" data-attempt-proctored=false>
-    <span><i class="fa fa-unlock"></i></span>
     <a>
-      {% trans "No, I want to take this exam without proctoring (and not be eligible for credit)" %}
+      {% trans "Take this exam without proctoring." %}
     </a>
+      <i class="fa fa-arrow-circle-right"></i>
     <p>
       {% blocktrans %}
-        If you take this exam without proctoring, you will not be eligible to use this course for academic credit,
-        even if you achieve a passing grade.
+        I am not interested in academic credit.
       {% endblocktrans %}
     </p>
-      <i class="fa fa-arrow-circle-right"></i>
   </button>
 </div>
 <div class="proctored-exam-skip-confirm-wrapper hidden">
@@ -50,15 +43,15 @@
     </div>
     <div class="msg-content">
       {% blocktrans %}
-        You will no longer be eligible to use this course for academic credit.
+        If you take this exam without proctoring, you will <strong> no longer be eligible for academic credit. </strong>
       {% endblocktrans %}
     </div>
     <div class="proctored-exam-skip-actions">
-      <button class="proctored-exam-skip-cancel-button btn btn-default btn-base">
-        {% trans "Cancel" %}
-      </button>
       <button class="proctored-exam-skip-confirm-button btn btn-primary btn-base" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
-        {% trans "Yes, Take this as an open exam" %}
+        {% trans "Continue Exam Without Proctoring" %}
+      </button>
+      <button class="proctored-exam-skip-cancel-button btn btn-default btn-base">
+        {% trans "Go Back" %}
       </button>
     </div>
     <div class="clearfix"></div>
