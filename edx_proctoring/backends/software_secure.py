@@ -232,7 +232,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             # only 'Clean' and 'Rules Violation' could as passing
             status = (
                 ProctoredExamStudentAttemptStatus.verified
-                if review_status in ['Clean', 'Suspicious']
+                if review_status in ['Clean', 'Rules Violation']
                 else ProctoredExamStudentAttemptStatus.rejected
             )
 
