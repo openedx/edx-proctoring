@@ -245,8 +245,8 @@ class SoftwareSecureTests(TestCase):
 
     @ddt.data(
         ('Clean', 'satisfied'),
-        ('Suspicious', 'satisfied'),
-        ('Rules Violation', 'failed'),
+        ('Rules Violation', 'satisfied'),
+        ('Suspicious', 'failed'),
         ('Not Reviewed', 'failed'),
     )
     @ddt.unpack
