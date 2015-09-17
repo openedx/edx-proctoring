@@ -6,6 +6,7 @@ import logging
 import pytz
 from datetime import datetime
 
+from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.core.urlresolvers import reverse, NoReverseMatch
@@ -40,7 +41,7 @@ from edx_proctoring.exceptions import (
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt
 
-from .utils import AuthenticatedAPIView, get_time_remaining_for_attempt
+from .utils import AuthenticatedAPIView, get_time_remaining_for_attempt, humanized_time
 
 ATTEMPTS_PER_PAGE = 25
 
@@ -296,6 +297,16 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
 
             attempt['time_remaining_seconds'] = time_remaining_seconds
 
+            accessibility_time_string = _('you have {remaining_time} remaining').format(
+                remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0))))
+
+            # special case if we are less than a minute, since we don't produce
+            # text translations of granularity at the seconds range
+            if time_remaining_seconds < 60:
+                accessibility_time_string = _('you have less than a minute remaining')
+
+            attempt['accessibility_time_string'] = accessibility_time_string
+
             return Response(
                 data=attempt,
                 status=status.HTTP_200_OK
@@ -481,6 +492,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
             response_dict = {
                 'in_timed_exam': True,
                 'taking_as_proctored': attempt['taking_as_proctored'],
+                'exam_type': _('proctored') if attempt['taking_as_proctored'] else _('timed'),
                 'exam_display_name': exam['exam_name'],
                 'exam_url_path': exam_url_path,
                 'time_remaining_seconds': time_remaining_seconds,
@@ -488,6 +500,9 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 'critically_low_threshold_sec': critically_low_threshold,
                 'course_id': exam['course_id'],
                 'attempt_id': attempt['id'],
+                'accessibility_time_string': _('you have {remaining_time} remaining').format(
+                    remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
+                ),
                 'attempt_status': attempt['status']
             }
         else:

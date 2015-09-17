@@ -952,11 +952,22 @@ PRACTICE_STATUS_SUMMARY_MAP = {
     }
 }
 
+TIMED_EXAM_STATUS_SUMMARY_MAP = {
+    '_default': {
+        'short_description': _('Timed Exam'),
+        'suggested_icon': 'fa-clock-o',
+        'in_completed_state': False
+    }
+}
+
 
 def get_attempt_status_summary(user_id, course_id, content_id):
     """
     Returns a summary about the status of the attempt for the user
     in the course_id and content_id
+
+    If the exam is timed exam only then we simply
+    return the dictionary with timed exam default summary
 
     Return will be:
     None: Not applicable
@@ -975,6 +986,10 @@ def get_attempt_status_summary(user_id, course_id, content_id):
         # this really shouldn't happen, but log it at least
         log.exception(ex)
         return None
+
+    # check if the exam is not proctored
+    if not exam['is_proctored']:
+        return TIMED_EXAM_STATUS_SUMMARY_MAP['_default']
 
     # let's check credit eligibility
     credit_service = get_runtime_service('credit')
