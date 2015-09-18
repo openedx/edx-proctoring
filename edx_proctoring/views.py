@@ -38,8 +38,9 @@ from edx_proctoring.exceptions import (
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException,
 )
+from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
-from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt
+from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt, ProctoredExam
 
 from .utils import AuthenticatedAPIView, get_time_remaining_for_attempt, humanized_time
 
@@ -59,6 +60,48 @@ def require_staff(func):
             return Response(
                 status=status.HTTP_403_FORBIDDEN,
                 data={"detail": "Must be a Staff User to Perform this request."}
+            )
+    return wrapped
+
+
+def require_course_or_global_staff(func):
+    """View decorator that requires that the user have staff permissions. """
+    def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
+        instructor_service = get_runtime_service('instructor')
+        course_id = kwargs['course_id'] if 'course_id' in kwargs else None
+        exam_id = request.DATA.get('exam_id', None)
+        attempt_id = kwargs['attempt_id'] if 'attempt_id' in kwargs else None
+        response_message = _("Must be a instructor of the course to Perform this request.")
+        if request.user.is_staff:
+            is_request_allowed = True
+        elif course_id is not None:
+            if instructor_service.is_course_staff(request.user, course_id):
+                is_request_allowed = True
+            else:
+                is_request_allowed = False
+        elif exam_id is not None:
+            # get the course_id from the exam
+            exam = ProctoredExam.get_exam_by_id(exam_id)
+            if instructor_service.is_course_staff(request.user, exam.course_id):
+                is_request_allowed = True
+            else:
+                is_request_allowed = False
+        elif attempt_id is not None:
+            exam_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+            if instructor_service.is_course_staff(request.user, exam_attempt.proctored_exam.course_id):
+                is_request_allowed = True
+            else:
+                is_request_allowed = False
+        else:
+            is_request_allowed = False
+            response_message = _("Must be a Staff User to Perform this request.")
+
+        if is_request_allowed:
+            return func(request, *args, **kwargs)
+        else:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+                data={"detail": response_message}
             )
     return wrapped
 
@@ -215,8 +258,10 @@ class ProctoredExamView(AuthenticatedAPIView):
                             data={"detail": "The exam with course_id, content_id does not exist."}
                         )
                 else:
+                    timed_exams_only = not request.user.is_staff
                     result_set = get_all_exams_for_course(
-                        course_id=course_id
+                        course_id=course_id,
+                        timed_exams_only=timed_exams_only
                     )
                     return Response(result_set)
 
@@ -378,7 +423,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 data={"detail": str(ex)}
             )
 
-    @method_decorator(require_staff)
+    @method_decorator(require_course_or_global_staff)
     def delete(self, request, attempt_id):  # pylint: disable=unused-argument
         """
         HTTP DELETE handler. Removes an exam attempt.
@@ -560,17 +605,23 @@ class StudentProctoredExamAttemptsByCourse(AuthenticatedAPIView):
 
     A search parameter is optional
     """
-    @method_decorator(require_staff)
+    @method_decorator(require_course_or_global_staff)
     def get(self, request, course_id, search_by=None):  # pylint: disable=unused-argument
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
+        # course staff only views attempts of timed exams. edx staff can view both timed and proctored attempts.
+        time_exams_only = not request.user.is_staff
 
         if search_by is not None:
-            exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(course_id, search_by)
+            exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(
+                course_id, search_by, time_exams_only
+            )
             attempt_url = reverse('edx_proctoring.proctored_exam.attempts.search', args=[course_id, search_by])
         else:
-            exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(course_id)
+            exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(
+                course_id, time_exams_only
+            )
             attempt_url = reverse('edx_proctoring.proctored_exam.attempts.course', args=[course_id])
 
         paginator = Paginator(exam_attempts, ATTEMPTS_PER_PAGE)
@@ -644,17 +695,21 @@ class ExamAllowanceView(AuthenticatedAPIView):
     **Response Values**
         * returns Nothing. deletes the allowance for the user proctored exam.
     """
-    @method_decorator(require_staff)
+    @method_decorator(require_course_or_global_staff)
     def get(self, request, course_id):  # pylint: disable=unused-argument
         """
         HTTP GET handler. Get all allowances for a course.
         """
+        # course staff only views attempts of timed exams. edx staff can view both timed and proctored attempts.
+        time_exams_only = not request.user.is_staff
+
         result_set = get_allowances_for_course(
-            course_id=course_id
+            course_id=course_id,
+            timed_exams_only=time_exams_only
         )
         return Response(result_set)
 
-    @method_decorator(require_staff)
+    @method_decorator(require_course_or_global_staff)
     def put(self, request):
         """
         HTTP GET handler. Adds or updates Allowance
@@ -674,7 +729,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
                 data={"detail": str(ex)}
             )
 
-    @method_decorator(require_staff)
+    @method_decorator(require_course_or_global_staff)
     def delete(self, request):
         """
         HTTP DELETE handler. Removes Allowance.

@@ -86,11 +86,23 @@ class MockInstructorService(object):
     """
     Simple mock of the Instructor Service
     """
+    def __init__(self, is_user_course_staff=True):
+        """
+        Initializer
+        """
+        self.is_user_course_staff = is_user_course_staff
+
     def delete_student_attempt(self, student_identifier, course_id, content_id):  # pylint: disable=unused-argument
         """
         Mock implementation
         """
         return True
+
+    def is_course_staff(self, user, course_id):
+        """
+        Mocked implementation of is_course_staff
+        """
+        return self.is_user_course_staff
 
 
 class TestProctoringService(unittest.TestCase):
