@@ -153,6 +153,18 @@ var edx = edx || {};
                     end_page = data_json.pagination_info.total_pages;
                 }
 
+                _.each(data_json.proctored_exam_attempts, function(proctored_exam_attempt) {
+                    if (proctored_exam_attempt.taking_as_proctored) {
+                        if (proctored_exam_attempt.is_sample_attempt) {
+                            proctored_exam_attempt.exam_attempt_type = gettext('Practice');
+                        } else {
+                            proctored_exam_attempt.exam_attempt_type = gettext('Proctored');
+                        }
+                    } else {
+                        proctored_exam_attempt.exam_attempt_type = gettext('Timed');
+                    }
+                });
+
                 var data = {
                     proctored_exam_attempts: data_json.proctored_exam_attempts,
                     pagination_info: data_json.pagination_info,
