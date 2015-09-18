@@ -71,38 +71,30 @@ def require_course_or_global_staff(func):
         course_id = kwargs['course_id'] if 'course_id' in kwargs else None
         exam_id = request.DATA.get('exam_id', None)
         attempt_id = kwargs['attempt_id'] if 'attempt_id' in kwargs else None
-        response_message = _("Must be a instructor of the course to Perform this request.")
         if request.user.is_staff:
-            is_request_allowed = True
-        elif course_id is not None:
-            if instructor_service.is_course_staff(request.user, course_id):
-                is_request_allowed = True
-            else:
-                is_request_allowed = False
-        elif exam_id is not None:
-            # get the course_id from the exam
-            exam = ProctoredExam.get_exam_by_id(exam_id)
-            if instructor_service.is_course_staff(request.user, exam.course_id):
-                is_request_allowed = True
-            else:
-                is_request_allowed = False
-        elif attempt_id is not None:
-            exam_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
-            if instructor_service.is_course_staff(request.user, exam_attempt.proctored_exam.course_id):
-                is_request_allowed = True
-            else:
-                is_request_allowed = False
-        else:
-            is_request_allowed = False
-            response_message = _("Must be a Staff User to Perform this request.")
-
-        if is_request_allowed:
             return func(request, *args, **kwargs)
         else:
-            return Response(
-                status=status.HTTP_403_FORBIDDEN,
-                data={"detail": response_message}
-            )
+            if course_id is None:
+                if exam_id is not None:
+                    exam = ProctoredExam.get_exam_by_id(exam_id)
+                    course_id = exam.course_id
+                elif attempt_id is not None:
+                    exam_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+                    course_id = exam_attempt.proctored_exam.course_id
+                else:
+                    response_message = _("could not determine the course_id")
+                    return Response(
+                        status=status.HTTP_403_FORBIDDEN,
+                        data={"detail": response_message}
+                    )
+            if instructor_service.is_course_staff(request.user, course_id):
+                return func(request, *args, **kwargs)
+            else:
+                return Response(
+                    status=status.HTTP_403_FORBIDDEN,
+                    data={"detail": _("Must be a Staff User to Perform this request.")}
+                )
+
     return wrapped
 
 

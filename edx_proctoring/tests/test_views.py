@@ -758,7 +758,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt_id = response_data['exam_attempt_id']
         self.assertGreater(attempt_id, 0)
 
-        # now set the user is_staff t0 false
+        # now set the user is_staff to False
         # and also user is not a course staff
         self.user.is_staff = False
         self.user.save()
@@ -770,7 +770,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data['detail'], 'Must be a instructor of the course to Perform this request.')
+        self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
     def test_read_others_attempt(self):
         """
@@ -1788,7 +1788,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         self.user.save()
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
         # Create an exam.
-        proctored_exam = ProctoredExam.objects.create(
+        timed_exam = ProctoredExam.objects.create(
             course_id='a/b/c',
             content_id='test_content',
             exam_name='Test Exam',
@@ -1797,7 +1797,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             is_proctored=False
         )
         allowance_data = {
-            'exam_id': proctored_exam.id,
+            'exam_id': timed_exam.id,
             'user_info': self.student_taking_exam.username,
             'key': 'a_key',
             'value': '30'
@@ -1808,7 +1808,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data['detail'], 'Must be a instructor of the course to Perform this request.')
+        self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
     def test_get_allowances_for_course(self):
         """
@@ -1881,7 +1881,7 @@ class TestExamAllowanceView(LoggedInTestCase):
 
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data['detail'], 'Must be a instructor of the course to Perform this request.')
+        self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
     def test_get_timed_exam_allowances_for_course(self):  # pylint: disable=invalid-name
         """
