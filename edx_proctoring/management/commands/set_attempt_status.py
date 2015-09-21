@@ -6,11 +6,6 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand
 
-from edx_proctoring.api import (
-    update_attempt_status,
-    get_exam_by_id
-)
-
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus
 
 
@@ -26,7 +21,7 @@ class Command(BaseCommand):
                     help='exam_id to change'),
         make_option('-u', '--user',
                     metavar='USER',
-                    dest='user',
+                    dest='user_id',
                     help="user_id of user to affect"),
         make_option('-t', '--to',
                     metavar='TO_STATUS',
@@ -38,6 +33,11 @@ class Command(BaseCommand):
         """
         Management command entry point, simply call into the signal firiing
         """
+
+        from edx_proctoring.api import (
+            update_attempt_status,
+            get_exam_by_id
+        )
 
         exam_id = options['exam_id']
         user_id = options['user_id']
