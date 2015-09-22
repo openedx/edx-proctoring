@@ -298,7 +298,12 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             "organization": self.organization,
             "duration": time_limit_mins,
             "reviewedExam": not is_sample_attempt,
-            "reviewerNotes": 'Closed Book',
+            # NOTE: we will have to allow these notes to be authorable in Studio
+            # and then we will pull this from the exam database model
+            "reviewerNotes": (
+                'Closed Book; Allow users to take notes on paper during the exam; '
+                'Allow users to use a hand-held calculator during the exam'
+            ),
             "examPassword": self._encrypt_password(self.crypto_key, attempt_code),
             "examSponsor": self.exam_sponsor,
             "examName": exam['exam_name'],
