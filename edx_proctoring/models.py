@@ -34,13 +34,13 @@ class ProctoredExam(TimeStampedModel):
     time_limit_mins = models.IntegerField()
 
     # Whether this exam actually is proctored or not.
-    is_proctored = models.BooleanField()
+    is_proctored = models.BooleanField(default=False)
 
     # Whether this exam is for practice only.
-    is_practice_exam = models.BooleanField()
+    is_practice_exam = models.BooleanField(default=False)
 
     # Whether this exam will be active.
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=False)
 
     class Meta:
         """ Meta class for this Django model """
@@ -301,11 +301,11 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     # if the user is attempting this as a proctored exam
     # in case there is an option to opt-out
-    taking_as_proctored = models.BooleanField()
+    taking_as_proctored = models.BooleanField(default=False)
 
     # Whether this attempt is considered a sample attempt, e.g. to try out
     # the proctoring software
-    is_sample_attempt = models.BooleanField()
+    is_sample_attempt = models.BooleanField(default=False)
 
     student_name = models.CharField(max_length=255)
 
@@ -374,11 +374,11 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
 
     # if the user is attempting this as a proctored exam
     # in case there is an option to opt-out
-    taking_as_proctored = models.BooleanField()
+    taking_as_proctored = models.BooleanField(default=False)
 
     # Whether this attampt is considered a sample attempt, e.g. to try out
     # the proctoring software
-    is_sample_attempt = models.BooleanField()
+    is_sample_attempt = models.BooleanField(default=False)
 
     student_name = models.CharField(max_length=255)
 
@@ -439,7 +439,7 @@ class ProctoredExamStudentAllowanceManager(models.Manager):
     Custom manager to override with the custom queryset
     to enable archiving on Allowance updation.
     """
-    def get_query_set(self):
+    def get_queryset(self):
         return QuerySetWithUpdateOverride(self.model, using=self._db)
 
 
