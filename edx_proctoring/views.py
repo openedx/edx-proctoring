@@ -38,6 +38,7 @@ from edx_proctoring.exceptions import (
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException,
     ProctoredExamIllegalStatusTransition,
+    ProctoredExamNotActiveException,
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
@@ -254,7 +255,8 @@ class ProctoredExamView(AuthenticatedAPIView):
                     timed_exams_only = not request.user.is_staff
                     result_set = get_all_exams_for_course(
                         course_id=course_id,
-                        timed_exams_only=timed_exams_only
+                        timed_exams_only=timed_exams_only,
+                        active_only=True
                     )
                     return Response(result_set)
 
@@ -719,7 +721,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
                 value=request.DATA.get('value', None)
             ))
 
-        except UserNotFoundException, ex:
+        except (UserNotFoundException, ProctoredExamNotActiveException) as ex:
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,

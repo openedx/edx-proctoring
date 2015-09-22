@@ -9,7 +9,10 @@ from model_utils.models import TimeStampedModel
 from django.utils.translation import ugettext as _
 
 from django.contrib.auth.models import User
-from edx_proctoring.exceptions import UserNotFoundException
+from edx_proctoring.exceptions import (
+    UserNotFoundException,
+    ProctoredExamNotActiveException,
+)
 from django.db.models.base import ObjectDoesNotExist
 
 
@@ -670,6 +673,10 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
                 raise UserNotFoundException(err_msg)
 
             user_id = users[0].id
+
+        exam = ProctoredExam.get_exam_by_id(exam_id)
+        if exam and not exam.is_active:
+            raise ProctoredExamNotActiveException
 
         try:
             student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
