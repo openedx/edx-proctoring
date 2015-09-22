@@ -5,25 +5,15 @@
       You have submitted this practice proctored exam
     {% endblocktrans %}
   </h3>
-  <p>
-    {% blocktrans %}
-      Make sure you return to the proctoring software and select <strong>Quit</strong> to end the proctoring session.
-    {% endblocktrans %}
-  </p>
-  <h4>
-    {% blocktrans %}
-      Your practice proctoring session: <b> Completed </b>
-    {% endblocktrans %}
-  </h4>
 
   <p>
     {% blocktrans %}
       Practice exams do not affect your grade or your credit eligibility.
-      You have completed this practice exam and can continue with your course.
+      You have completed this practice exam and can continue with your course work.
     {% endblocktrans %}
   </p>
   <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-    <span><i class="fa fa-lock"></i></span>
+    
     <a>
       {% trans "You can also retry this practice exam" %}
     </a>
