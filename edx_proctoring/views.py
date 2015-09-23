@@ -37,6 +37,7 @@ from edx_proctoring.exceptions import (
     UserNotFoundException,
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException,
+    ProctoredExamIllegalStatusTransition,
 )
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt
@@ -285,12 +286,16 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             last_poll_timestamp = attempt['last_poll_timestamp']
             if last_poll_timestamp is not None \
                     and (datetime.now(pytz.UTC) - last_poll_timestamp).total_seconds() > SOFTWARE_SECURE_CLIENT_TIMEOUT:
-                attempt['status'] = 'error'
-                update_attempt_status(
-                    attempt['proctored_exam']['id'],
-                    attempt['user']['id'],
-                    ProctoredExamStudentAttemptStatus.error
-                )
+                try:
+                    update_attempt_status(
+                        attempt['proctored_exam']['id'],
+                        attempt['user']['id'],
+                        ProctoredExamStudentAttemptStatus.error
+                    )
+                    attempt['status'] = ProctoredExamStudentAttemptStatus.error
+                except ProctoredExamIllegalStatusTransition:
+                    # don't transition a completed state to an error state
+                    pass
 
             # add in the computed time remaining as a helper to a client app
             time_remaining_seconds = get_time_remaining_for_attempt(attempt)

@@ -200,6 +200,13 @@ class ProctoredExamStudentAttemptStatus(object):
 
         return cls.status_alias_mapping.get(status, '')
 
+    @classmethod
+    def is_valid_status(cls, status):
+        """
+        Makes sure that passed in status string is valid
+        """
+        return cls.is_completed_status(status) or cls.is_incomplete_status(status)
+
 
 class ProctoredExamStudentAttemptManager(models.Manager):
     """

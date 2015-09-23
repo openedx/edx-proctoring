@@ -552,6 +552,21 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
         )
         raise ProctoredExamIllegalStatusTransition(err_msg)
 
+    # special case logic, if we are in a completed status we shouldn't allow
+    # for a transition to 'Error' state
+    if in_completed_status and to_status == ProctoredExamStudentAttemptStatus.error:
+        err_msg = (
+            'A status transition from {from_status} to {to_status} was attempted '
+            'on exam_id {exam_id} for user_id {user_id}. This is not '
+            'allowed!'.format(
+                from_status=exam_attempt_obj.status,
+                to_status=to_status,
+                exam_id=exam_id,
+                user_id=user_id
+            )
+        )
+        raise ProctoredExamIllegalStatusTransition(err_msg)
+
     # OK, state transition is fine, we can proceed
     exam_attempt_obj.status = to_status
     exam_attempt_obj.save()
@@ -591,6 +606,13 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
         )
 
     if cascade_effects and ProctoredExamStudentAttemptStatus.is_a_cascadable_failure(to_status):
+        if to_status == ProctoredExamStudentAttemptStatus.declined:
+            # if user declines attempt, make sure we clear out the external_id and
+            # taking_as_proctored fields
+            exam_attempt_obj.taking_as_proctored = False
+            exam_attempt_obj.external_id = None
+            exam_attempt_obj.save()
+
         # some state transitions (namely to a rejected or declined status)
         # will mark other exams as declined because once we fail or decline
         # one exam all other (un-completed) proctored exams will be likewise
