@@ -15,6 +15,7 @@ import logging
 from django.conf import settings
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
+from edx_proctoring import constants
 from edx_proctoring.exceptions import (
     BackendProvideCannotRegisterAttempt,
     StudentExamAttemptDoesNotExistsException,
@@ -188,29 +189,42 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             )
             raise ProctoredExamSuspiciousLookup(err_msg)
 
-        # do we already have a review for this attempt?!? It should not be updated!
-        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
-
-        if review:
-            err_msg = (
-                'We already have a review submitted from SoftwareSecure regarding '
-                'attempt_code {attempt_code}. We do not allow for updates!'.format(
-                    attempt_code=attempt_code
-                )
-            )
-            raise ProctoredExamReviewAlreadyExists(err_msg)
-
         # do some limited parsing of the JSON payload
         review_status = payload['reviewStatus']
         video_review_link = payload['videoReviewLink']
 
-        # make a new record in the review table
-        review = ProctoredExamSoftwareSecureReview(
-            attempt_code=attempt_code,
-            raw_data=json.dumps(payload),
-            review_status=review_status,
-            video_url=video_review_link,
-        )
+        # do we already have a review for this attempt?!? We may not allow updates
+        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
+
+        if review:
+            if not constants.ALLOW_REVIEW_UPDATES:
+                err_msg = (
+                    'We already have a review submitted from SoftwareSecure regarding '
+                    'attempt_code {attempt_code}. We do not allow for updates!'.format(
+                        attempt_code=attempt_code
+                    )
+                )
+                raise ProctoredExamReviewAlreadyExists(err_msg)
+
+            # we allow updates
+            warn_msg = (
+                'We already have a review submitted from SoftwareSecure regarding '
+                'attempt_code {attempt_code}. We have been configured to allow for '
+                'updates and will continue...'.format(
+                    attempt_code=attempt_code
+                )
+            )
+            log.warn(warn_msg)
+        else:
+            # this is first time we've received this attempt_code, so
+            # make a new record in the review table
+            review = ProctoredExamSoftwareSecureReview()
+
+        review.attempt_code = attempt_code
+        review.raw_data = json.dumps(payload)
+        review.review_status = review_status
+        review.video_url = video_review_link
+
         review.save()
 
         # go through and populate all of the specific comments
