@@ -281,6 +281,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         is_sample_attempt = context['is_sample_attempt']
         callback_url = context['callback_url']
         full_name = context['full_name']
+        exam_review_policy = context['exam_review_policy']
         first_name = ''
         last_name = ''
 
@@ -300,10 +301,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             "reviewedExam": not is_sample_attempt,
             # NOTE: we will have to allow these notes to be authorable in Studio
             # and then we will pull this from the exam database model
-            "reviewerNotes": (
-                'Closed Book; Allow users to take notes on paper during the exam; '
-                'Allow users to use a hand-held calculator during the exam'
-            ),
+            "reviewerNotes": exam_review_policy,
             "examPassword": self._encrypt_password(self.crypto_key, attempt_code),
             "examSponsor": self.exam_sponsor,
             "examName": exam['exam_name'],
