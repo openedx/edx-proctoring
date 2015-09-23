@@ -1,7 +1,8 @@
 """Defines serializers used by the Proctoring API."""
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
+from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance, \
+    ProctoredExamSoftwareSecureReview
 
 
 class StrictBooleanField(serializers.BooleanField):
@@ -98,4 +99,19 @@ class ProctoredExamStudentAllowanceSerializer(serializers.ModelSerializer):
         model = ProctoredExamStudentAllowance
         fields = (
             "id", "created", "modified", "user", "key", "value", "proctored_exam"
+        )
+
+
+class ProctoredExamSoftwareSecureReviewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ProctoredExamSoftwareSecureReview Model.
+    """
+
+    class Meta:
+        """
+        Meta Class
+        """
+        model = ProctoredExamSoftwareSecureReview
+        fields = (
+            "id", "created", "modified", "attempt_code", "review_status", "raw_data", "video_url"
         )
