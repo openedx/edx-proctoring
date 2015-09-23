@@ -378,7 +378,12 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
             full_name = credit_state['profile_fullname']
 
+        # construct the exam policy that reviewers will use when
+        # reviewing proctored sessions
+        exam_review_policy = constants.EXAM_REVIEW_POLICY
+
         # now call into the backend provider to register exam attempt
+
         external_id = get_backend_provider().register_exam_attempt(
             exam,
             context={
@@ -387,6 +392,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
                 'is_sample_attempt': exam['is_practice_exam'],
                 'callback_url': callback_url,
                 'full_name': full_name,
+                'exam_review_policy': exam_review_policy,
             }
         )
 
