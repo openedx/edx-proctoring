@@ -186,6 +186,7 @@ var edx = edx || {};
             if (!confirm(gettext('Are you sure you want to remove this student\'s exam attempt?'))) {
                 return;
             }
+            $('body').css('cursor', 'wait');
             var $target = $(event.currentTarget);
             var attemptId = $target.data("attemptId");
 
@@ -199,6 +200,7 @@ var edx = edx || {};
                 success: function () {
                     // fetch the attempts again.
                     self.hydrate();
+                    $('body').css('cursor', 'auto');
                 }
             });
         }
