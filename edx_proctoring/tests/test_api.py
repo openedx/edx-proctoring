@@ -113,6 +113,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.practice_exam_failed_msg = 'There was a problem with your practice proctoring session'
         self.proctored_exam_email_subject = 'Proctoring Session Results Update'
         self.proctored_exam_email_body = 'the status of your proctoring session review'
+        self.footer_msg = 'About Proctored Exams'
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService())
@@ -1942,3 +1943,33 @@ class ProctoredExamApiTests(LoggedInTestCase):
             status
         )
         self.assertEquals(len(mail.outbox), 0)
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.eligible,
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.submitted,
+        ProctoredExamStudentAttemptStatus.verified,
+        ProctoredExamStudentAttemptStatus.rejected
+    )
+    def test_footer_present(self, status):
+        """
+        Make sure the footer content is visible in the rendered output
+        """
+
+        if status != ProctoredExamStudentAttemptStatus.eligible:
+            exam_attempt = self._create_started_exam_attempt()
+            exam_attempt.status = status
+            exam_attempt.save()
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIsNotNone(rendered_response)
+        self.assertIn(self.footer_msg, rendered_response)
