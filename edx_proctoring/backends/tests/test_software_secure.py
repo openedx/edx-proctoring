@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines, invalid-name
 """
 Tests for the software_secure module
 """
@@ -32,6 +33,7 @@ from edx_proctoring. models import (
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureComment,
     ProctoredExamStudentAttemptStatus,
+    ProctoredExamSoftwareSecureReviewHistory,
 )
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
 
@@ -471,7 +473,8 @@ class SoftwareSecureTests(TestCase):
 
         self.assertEqual(len(comments), 6)
 
-    def test_review_resubmission(self):
+    @patch('edx_proctoring.constants.ALLOW_REVIEW_UPDATES', False)
+    def test_disallow_review_resubmission(self):
         """
         Tests that an exception is raised if a review report is resubmitted for the same
         attempt
@@ -508,3 +511,70 @@ class SoftwareSecureTests(TestCase):
         # now call again
         with self.assertRaises(ProctoredExamReviewAlreadyExists):
             provider.on_review_callback(json.loads(test_payload))
+
+    @patch('edx_proctoring.constants.ALLOW_REVIEW_UPDATES', True)
+    def test_allow_review_resubmission(self):
+        """
+        Tests that an resubmission is allowed
+        """
+
+        provider = get_backend_provider()
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        # be sure to use the mocked out SoftwareSecure handlers
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(
+                exam_id,
+                self.user.id,
+                taking_as_proctored=True
+            )
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertIsNotNone(attempt['external_id'])
+
+        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+            attempt_code=attempt['attempt_code'],
+            external_id=attempt['external_id']
+        )
+
+        provider.on_review_callback(json.loads(test_payload))
+
+        # make sure history table is empty
+        records = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt['attempt_code'])
+        self.assertEqual(len(records), 0)
+
+        # now call again, this will not throw exception
+        test_payload = test_payload.replace('Clean', 'Suspicious')
+        provider.on_review_callback(json.loads(test_payload))
+
+        # make sure that what we have in the Database matches what we expect
+        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
+
+        self.assertIsNotNone(review)
+        self.assertEqual(review.review_status, 'Suspicious')
+        self.assertEqual(
+            review.video_url,
+            'http://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
+        )
+        self.assertIsNotNone(review.raw_data)
+
+        # make sure history table is no longer empty
+        records = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt['attempt_code'])
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0].review_status, 'Clean')
+
+        # now try to delete the record and make sure it was archived
+
+        review.delete()
+
+        records = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt['attempt_code'])
+        self.assertEqual(len(records), 2)
+        self.assertEqual(records[0].review_status, 'Clean')
+        self.assertEqual(records[1].review_status, 'Suspicious')

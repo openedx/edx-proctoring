@@ -3,7 +3,7 @@ Data models for the proctoring subsystem
 """
 from django.db import models
 from django.db.models import Q
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
 from django.utils.translation import ugettext as _
@@ -543,15 +543,16 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
 
 
 # Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
-@receiver(post_save, sender=ProctoredExamStudentAllowance)
-def on_allowance_saved(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
+@receiver(pre_save, sender=ProctoredExamStudentAllowance)
+def on_allowance_saved(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """
     Archiving all changes made to the Student Allowance.
     Will only archive on update, and not on new entries created.
     """
 
-    if not created:
-        _make_archive_copy(instance)
+    if instance.id:
+        original = ProctoredExamStudentAllowance.objects.get(id=instance.id)
+        _make_archive_copy(original)
 
 
 @receiver(pre_delete, sender=ProctoredExamStudentAllowance)
@@ -612,6 +613,66 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
             return review
         except cls.DoesNotExist:  # pylint: disable=no-member
             return None
+
+
+class ProctoredExamSoftwareSecureReviewHistory(TimeStampedModel):
+    """
+    When records get updated, we will archive them here
+    """
+
+    # which student attempt is this feedback for?
+    attempt_code = models.CharField(max_length=255, db_index=True)
+
+    # overall status of the review
+    review_status = models.CharField(max_length=255)
+
+    # The raw payload that was received back from the
+    # reviewing service
+    raw_data = models.TextField()
+
+    # URL for the exam video that had been reviewed
+    video_url = models.TextField()
+
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamsoftwaresecurereviewhistory'
+        verbose_name = 'proctored exam review history'
+
+
+# Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
+@receiver(pre_save, sender=ProctoredExamSoftwareSecureReview)
+def on_review_saved(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    Archiving all changes made to the Student Allowance.
+    Will only archive on update, and not on new entries created.
+    """
+
+    if instance.id:
+        original = ProctoredExamSoftwareSecureReview.objects.get(id=instance.id)
+        _make_review_archive_copy(original)
+
+
+@receiver(pre_delete, sender=ProctoredExamSoftwareSecureReview)
+def on_review_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    Archive the allowance when the item is about to be deleted
+    """
+
+    _make_review_archive_copy(instance)
+
+
+def _make_review_archive_copy(instance):
+    """
+    Do the copying into the history table
+    """
+
+    archive_object = ProctoredExamSoftwareSecureReviewHistory(
+        attempt_code=instance.attempt_code,
+        review_status=instance.review_status,
+        raw_data=instance.raw_data,
+        video_url=instance.video_url,
+    )
+    archive_object.save()
 
 
 class ProctoredExamSoftwareSecureComment(TimeStampedModel):
