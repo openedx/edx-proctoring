@@ -47,6 +47,17 @@ class ProctoredExam(TimeStampedModel):
         unique_together = (('course_id', 'content_id'),)
         db_table = 'proctoring_proctoredexam'
 
+    def __unicode__(self):
+        """
+        How to serialize myself as a string
+        """
+
+        return "{course_id}: {exam_name} ({active})".format(
+            course_id=self.course_id,
+            exam_name=self.exam_name,
+            active='active' if self.is_active else 'inactive',
+        )
+
     @classmethod
     def get_exam_by_content_id(cls, course_id, content_id):
         """
@@ -208,6 +219,105 @@ class ProctoredExamStudentAttemptStatus(object):
         return cls.is_completed_status(status) or cls.is_incomplete_status(status)
 
 
+class ProctoredExamReviewPolicy(TimeStampedModel):
+    """
+    This is how an instructor can set review policies for a proctored exam
+    """
+
+    # who set this ProctoredExamReviewPolicy
+    set_by_user = models.ForeignKey(User)
+
+    # for which exam?
+    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
+
+    # policy that will be passed to reviewers
+    review_policy = models.TextField()
+
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamreviewpolicy'
+        verbose_name = 'proctored exam review policy'
+
+    @classmethod
+    def get_review_policy_for_exam(cls, exam_id):
+        """
+        Returns the current exam review policy for the specified
+        exam_id or None if none exists
+        """
+
+        try:
+            return cls.objects.get(proctored_exam_id=exam_id)
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            return None
+
+
+class ProctoredExamReviewPolicyHistory(TimeStampedModel):
+    """
+    Archive table to record all policies that were deleted or updated
+    """
+
+    # what was the original PK for the Review Policy
+    original_id = models.IntegerField(db_index=True)
+
+    # who set this ProctoredExamReviewPolicy
+    set_by_user = models.ForeignKey(User)
+
+    # for which exam?
+    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
+
+    # policy that will be passed to reviewers
+    review_policy = models.TextField()
+
+    class Meta:
+        """ Meta class for this Django model """
+        db_table = 'proctoring_proctoredexamreviewpolicyhistory'
+        verbose_name = 'proctored exam review policy history'
+
+    def delete(self, *args, **kwargs):
+        """
+        Don't allow deletions!
+        """
+        raise NotImplementedError()
+
+
+# Hook up the post_save signal to record creations in the ProctoredExamReviewPolicyHistory table.
+@receiver(pre_save, sender=ProctoredExamReviewPolicy)
+def on_review_policy_saved(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    Archiving all changes made to the Student Allowance.
+    Will only archive on update, and not on new entries created.
+    """
+
+    if instance.id:
+        # only for update cases
+        original = ProctoredExamReviewPolicy.objects.get(id=instance.id)
+        _make_review_policy_archive_copy(original)
+
+
+# Hook up the pre_delete signal to record creations in the ProctoredExamReviewPolicyHistory table.
+@receiver(pre_delete, sender=ProctoredExamReviewPolicy)
+def on_review_policy_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    Archive the allowance when the item is about to be deleted
+    """
+
+    _make_review_policy_archive_copy(instance)
+
+
+def _make_review_policy_archive_copy(instance):
+    """
+    Do the copying into the history table
+    """
+
+    archive_object = ProctoredExamReviewPolicyHistory(
+        original_id=instance.id,
+        set_by_user_id=instance.set_by_user_id,
+        proctored_exam=instance.proctored_exam,
+        review_policy=instance.review_policy,
+    )
+    archive_object.save()
+
+
 class ProctoredExamStudentAttemptManager(models.Manager):
     """
     Custom manager
@@ -316,6 +426,11 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     student_name = models.CharField(max_length=255)
 
+    # what review policy was this exam submitted under
+    # Note that this is not a foreign key because
+    # this ID might point to a record that is in the History table
+    review_policy_id = models.IntegerField(null=True)
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'
@@ -324,7 +439,8 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     @classmethod
     def create_exam_attempt(cls, exam_id, user_id, student_name, allowed_time_limit_mins,
-                            attempt_code, taking_as_proctored, is_sample_attempt, external_id):
+                            attempt_code, taking_as_proctored, is_sample_attempt, external_id,
+                            review_policy_id=None):
         """
         Create a new exam attempt entry for a given exam_id and
         user_id.
@@ -340,6 +456,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             is_sample_attempt=is_sample_attempt,
             external_id=external_id,
             status=ProctoredExamStudentAttemptStatus.created,
+            review_policy_id=review_policy_id
         )
 
     def delete_exam_attempt(self):
@@ -389,6 +506,11 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
 
     student_name = models.CharField(max_length=255)
 
+    # what review policy was this exam submitted under
+    # Note that this is not a foreign key because
+    # this ID might point to a record that is in the History table
+    review_policy_id = models.IntegerField(null=True)
+
     @classmethod
     def get_exam_attempt_by_code(cls, attempt_code):
         """
@@ -426,7 +548,8 @@ def on_attempt_deleted(sender, instance, **kwargs):  # pylint: disable=unused-ar
         status=instance.status,
         taking_as_proctored=instance.taking_as_proctored,
         is_sample_attempt=instance.is_sample_attempt,
-        student_name=instance.student_name
+        student_name=instance.student_name,
+        review_policy_id=instance.review_policy_id,
     )
     archive_object.save()
 
@@ -648,6 +771,7 @@ def on_review_saved(sender, instance, **kwargs):  # pylint: disable=unused-argum
     """
 
     if instance.id:
+        # only for update cases
         original = ProctoredExamSoftwareSecureReview.objects.get(id=instance.id)
         _make_review_archive_copy(original)
 

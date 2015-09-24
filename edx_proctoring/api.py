@@ -31,6 +31,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptStatus,
+    ProctoredExamReviewPolicy,
 )
 from edx_proctoring.serializers import (
     ProctoredExamSerializer,
@@ -359,6 +360,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     attempt_code = unicode(uuid.uuid4()).upper()
 
     external_id = None
+    review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
     if taking_as_proctored:
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         callback_url = '{scheme}://{hostname}{path}'.format(
@@ -378,16 +380,25 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
             full_name = credit_state['profile_fullname']
 
+        context = {
+            'time_limit_mins': allowed_time_limit_mins,
+            'attempt_code': attempt_code,
+            'is_sample_attempt': exam['is_practice_exam'],
+            'callback_url': callback_url,
+            'full_name': full_name,
+        }
+
+        # see if there is an exam review policy for this exam
+        # if so, then pass it into the provider
+        if review_policy:
+            context.update({
+                'review_policy': review_policy.review_policy
+            })
+
         # now call into the backend provider to register exam attempt
         external_id = get_backend_provider().register_exam_attempt(
             exam,
-            context={
-                'time_limit_mins': allowed_time_limit_mins,
-                'attempt_code': attempt_code,
-                'is_sample_attempt': exam['is_practice_exam'],
-                'callback_url': callback_url,
-                'full_name': full_name,
-            }
+            context=context,
         )
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
@@ -398,7 +409,8 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         attempt_code,
         taking_as_proctored,
         exam['is_practice_exam'],
-        external_id
+        external_id,
+        review_policy_id=review_policy.id if review_policy else None,
     )
 
     log_msg = (
