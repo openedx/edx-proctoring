@@ -24,17 +24,17 @@ class ProctoredExamReviewPolicyAdmin(admin.ModelAdmin):
     """
     readonly_fields = ['set_by_user']
 
-    def course_id(obj):
+    def course_id(obj):  # pylint: disable=no-self-argument
         """
         return course_id of related model
         """
-        return obj.proctored_exam.course_id
+        return obj.proctored_exam.course_id  # pylint: disable=no-member
 
-    def exam_name(obj):
+    def exam_name(obj):  # pylint: disable=no-self-argument
         """
         return exam name of related model
         """
-        return obj.proctored_exam.exam_name
+        return obj.proctored_exam.exam_name  # pylint: disable=no-member
 
     list_display = [
         course_id,
