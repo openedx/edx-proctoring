@@ -54,6 +54,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptStatus,
+    ProctoredExamReviewPolicy,
 )
 
 from .utils import (
@@ -372,6 +373,24 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
         self.assertGreater(attempt_id, 0)
+
+    def test_attempt_with_review_policy(self):
+        """
+        Create an unstarted exam attempt with a review policy associated with it.
+        """
+
+        policy = ProctoredExamReviewPolicy.objects.create(
+            set_by_user_id=self.user_id,
+            proctored_exam_id=self.proctored_exam_id,
+            review_policy='Foo Policy'
+        )
+
+        attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
+        self.assertGreater(attempt_id, 0)
+
+        # make sure we recorded the policy id at the time this was created
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['review_policy_id'], policy.id)
 
     def test_attempt_with_allowance(self):
         """
