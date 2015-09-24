@@ -16,6 +16,7 @@ from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import BackendProvideCannotRegisterAttempt
+from edx_proctoring import constants
 
 from edx_proctoring.api import (
     get_exam_attempt_by_id,
@@ -34,6 +35,7 @@ from edx_proctoring. models import (
     ProctoredExamSoftwareSecureComment,
     ProctoredExamStudentAttemptStatus,
     ProctoredExamSoftwareSecureReviewHistory,
+    ProctoredExamReviewPolicy,
 )
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
 
@@ -137,6 +139,100 @@ class SoftwareSecureTests(TestCase):
             attempt = get_exam_attempt_by_id(attempt_id)
             self.assertEqual(attempt['external_id'], 'foobar')
             self.assertIsNone(attempt['started_at'])
+
+    def test_attempt_with_review_policy(self):
+        """
+        Create an unstarted proctoring attempt with a review policy associated with it.
+        """
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        policy = ProctoredExamReviewPolicy.objects.create(
+            set_by_user_id=self.user.id,
+            proctored_exam_id=exam_id,
+            review_policy='Foo Policy'
+        )
+
+        def assert_get_payload_mock(exam, context):
+            """
+            Add a mock shim so we can assert that the _get_payload has been called with the right
+            review policy
+            """
+            self.assertIn('review_policy', context)
+            self.assertEqual(policy.review_policy, context['review_policy'])
+
+            # call into real implementation
+            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)  # pylint: disable=protected-access
+
+            # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
+            self.assertEqual(result['reviewerNotes'], context['review_policy'])
+            return result
+
+        with HTTMock(mock_response_content):
+            # patch the _get_payload method on the backend provider
+            # so that we can assert that we are called with the review policy
+            # as well as asserting that _get_payload includes that review policy
+            # that was passed in
+            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock):  # pylint: disable=protected-access
+                attempt_id = create_exam_attempt(
+                    exam_id,
+                    self.user.id,
+                    taking_as_proctored=True
+                )
+                self.assertGreater(attempt_id, 0)
+
+                # make sure we recorded the policy id at the time this was created
+                attempt = get_exam_attempt_by_id(attempt_id)
+                self.assertEqual(attempt['review_policy_id'], policy.id)
+
+    def test_attempt_with_no_review_policy(self):
+        """
+        Create an unstarted proctoring attempt with no review policy associated with it.
+        """
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        def assert_get_payload_mock_no_policy(exam, context):
+            """
+            Add a mock shim so we can assert that the _get_payload has been called with the right
+            review policy
+            """
+            self.assertNotIn('review_policy', context)
+
+            # call into real implementation
+            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)  # pylint: disable=protected-access
+
+            # assert that we use the default that is defined in system configuration
+            self.assertEqual(result['reviewerNotes'], constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
+            return result
+
+        with HTTMock(mock_response_content):
+            # patch the _get_payload method on the backend provider
+            # so that we can assert that we are called with the review policy
+            # undefined and that we use the system default
+            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_no_policy):  # pylint: disable=protected-access
+                attempt_id = create_exam_attempt(
+                    exam_id,
+                    self.user.id,
+                    taking_as_proctored=True
+                )
+                self.assertGreater(attempt_id, 0)
+
+                # make sure we recorded that there is no review policy
+                attempt = get_exam_attempt_by_id(attempt_id)
+                self.assertIsNone(attempt['review_policy_id'])
 
     def test_single_name_attempt(self):
         """

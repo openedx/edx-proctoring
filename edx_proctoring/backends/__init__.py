@@ -11,7 +11,7 @@ from django.core.exceptions import ImproperlyConfigured
 _BACKEND_PROVIDER = None
 
 
-def get_backend_provider():
+def get_backend_provider(emphemeral=False):
     """
     Returns an instance of the configured backend provider that is configured
     via the settings file
@@ -19,7 +19,8 @@ def get_backend_provider():
 
     global _BACKEND_PROVIDER  # pylint: disable=global-statement
 
-    if not _BACKEND_PROVIDER:
+    provider = _BACKEND_PROVIDER
+    if not _BACKEND_PROVIDER or emphemeral:
         config = getattr(settings, 'PROCTORING_BACKEND_PROVIDER')
         if not config:
             raise ImproperlyConfigured("Settings not configured with PROCTORING_BACKEND_PROVIDER!")
@@ -34,6 +35,9 @@ def get_backend_provider():
         module_path, _, name = config['class'].rpartition('.')
         class_ = getattr(import_module(module_path), name)
 
-        _BACKEND_PROVIDER = class_(**config['options'])
+        provider = class_(**config['options'])
 
-    return _BACKEND_PROVIDER
+        if not emphemeral:
+            _BACKEND_PROVIDER = provider
+
+    return provider

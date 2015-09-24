@@ -1,8 +1,15 @@
 """
 All tests for the models.py
 """
-from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAllowanceHistory, \
-    ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAllowanceHistory,
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptHistory,
+    ProctoredExamReviewPolicy,
+    ProctoredExamReviewPolicyHistory,
+)
 
 from .utils import (
     LoggedInTestCase
@@ -166,3 +173,82 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         with self.assertNumQueries(1):
             exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts('a/b/c')
             self.assertEqual(len(exam_attempts), 90)
+
+    def test_exam_review_policy(self):
+        """
+        Assert correct behavior of the Exam Policy model including archiving of updates and deletes
+        """
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        policy = ProctoredExamReviewPolicy.objects.create(
+            set_by_user_id=self.user.id,
+            proctored_exam=proctored_exam,
+            review_policy='Foo Policy'
+        )
+
+        attempt = ProctoredExamStudentAttempt.create_exam_attempt(
+            proctored_exam.id,
+            self.user.id,
+            'test_name{0}'.format(self.user.id),
+            self.user.id + 1,
+            'test_attempt_code{0}'.format(self.user.id),
+            True,
+            False,
+            'test_external_id{0}'.format(self.user.id)
+        )
+        attempt.review_policy_id = policy.id
+        attempt.save()
+
+        history = ProctoredExamReviewPolicyHistory.objects.all()
+        self.assertEqual(len(history), 0)
+
+        # now update it
+        policy.review_policy = 'Updated Foo Policy'
+        policy.save()
+
+        # look in history
+        history = ProctoredExamReviewPolicyHistory.objects.all()
+        self.assertEqual(len(history), 1)
+        previous = history[0]
+        self.assertEqual(previous.set_by_user_id, self.user.id)
+        self.assertEqual(previous.proctored_exam_id, proctored_exam.id)
+        self.assertEqual(previous.original_id, policy.id)
+        self.assertEqual(previous.review_policy, 'Foo Policy')
+
+        # now delete updated one
+        deleted_id = policy.id
+        policy.delete()
+
+        # look in history
+        history = ProctoredExamReviewPolicyHistory.objects.all()
+        self.assertEqual(len(history), 2)
+        previous = history[0]
+        self.assertEqual(previous.set_by_user_id, self.user.id)
+        self.assertEqual(previous.proctored_exam_id, proctored_exam.id)
+        self.assertEqual(previous.original_id, deleted_id)
+        self.assertEqual(previous.review_policy, 'Foo Policy')
+
+        previous = history[1]
+        self.assertEqual(previous.set_by_user_id, self.user.id)
+        self.assertEqual(previous.proctored_exam_id, proctored_exam.id)
+        self.assertEqual(previous.original_id, deleted_id)
+        self.assertEqual(previous.review_policy, 'Updated Foo Policy')
+
+        # assert that we cannot delete history!
+        with self.assertRaises(NotImplementedError):
+            previous.delete()
+
+        # now delete attempt, to make sure we preserve the policy_id in the archive table
+        attempt.delete()
+
+        attempts = ProctoredExamStudentAttemptHistory.objects.all()
+        self.assertEqual(len(attempts), 1)
+        self.assertEqual(attempts[0].review_policy_id, deleted_id)
