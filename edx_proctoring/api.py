@@ -932,17 +932,17 @@ def _check_eligibility_of_prerequisites(credit_state):
 STATUS_SUMMARY_MAP = {
     '_default': {
         'short_description': _('Taking As Proctored Exam'),
-        'suggested_icon': 'fa-lock',
+        'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.eligible: {
         'short_description': _('Proctored Option Available'),
-        'suggested_icon': 'fa-lock',
+        'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.declined: {
         'short_description': _('Taking As Open Exam'),
-        'suggested_icon': 'fa-unlock',
+        'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.submitted: {
@@ -971,7 +971,7 @@ STATUS_SUMMARY_MAP = {
 PRACTICE_STATUS_SUMMARY_MAP = {
     '_default': {
         'short_description': _('Ungraded Practice Exam'),
-        'suggested_icon': 'fa-lock',
+        'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.submitted: {

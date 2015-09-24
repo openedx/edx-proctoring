@@ -1542,7 +1542,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.eligible, {
                 'status': ProctoredExamStudentAttemptStatus.eligible,
                 'short_description': 'Proctored Option Available',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1550,7 +1550,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.declined, {
                 'status': ProctoredExamStudentAttemptStatus.declined,
                 'short_description': 'Taking As Open Exam',
-                'suggested_icon': 'fa-unlock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1590,7 +1590,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.created, {
                 'status': ProctoredExamStudentAttemptStatus.created,
                 'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1598,7 +1598,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.ready_to_start, {
                 'status': ProctoredExamStudentAttemptStatus.ready_to_start,
                 'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1606,7 +1606,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.started, {
                 'status': ProctoredExamStudentAttemptStatus.started,
                 'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1614,7 +1614,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.ready_to_submit, {
                 'status': ProctoredExamStudentAttemptStatus.ready_to_submit,
                 'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         )
@@ -1645,7 +1645,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.eligible, {
                 'status': ProctoredExamStudentAttemptStatus.eligible,
                 'short_description': 'Ungraded Practice Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1716,7 +1716,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.eligible, {
                 'status': ProctoredExamStudentAttemptStatus.eligible,
                 'short_description': 'Ungraded Practice Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1769,7 +1769,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         expected = {
             'status': ProctoredExamStudentAttemptStatus.eligible,
             'short_description': 'Ungraded Practice Exam',
-            'suggested_icon': 'fa-lock',
+            'suggested_icon': 'fa-pencil-square-o',
             'in_completed_state': False
         }
 

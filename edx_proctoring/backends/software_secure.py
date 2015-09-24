@@ -23,12 +23,10 @@ from edx_proctoring.exceptions import (
     ProctoredExamReviewAlreadyExists,
     ProctoredExamBadReviewStatus,
 )
-
+from edx_proctoring.utils import locate_attempt_by_attempt_code
 from edx_proctoring. models import (
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureComment,
-    ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptHistory,
     ProctoredExamStudentAttemptStatus,
 )
 
@@ -154,20 +152,13 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # what we recorded as the external_id. We need to look in both
         # the attempt table as well as the archive table
 
-        attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
-
-        is_archived_attempt = False
+        (attempt_obj, is_archived_attempt) = locate_attempt_by_attempt_code(attempt_code)
         if not attempt_obj:
-            # try archive table
-            attempt_obj = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
-            is_archived_attempt = True
-
-            if not attempt_obj:
-                # still can't find, error out
-                err_msg = (
-                    'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
-                )
-                raise StudentExamAttemptDoesNotExistsException(err_msg)
+            # still can't find, error out
+            err_msg = (
+                'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
+            )
+            raise StudentExamAttemptDoesNotExistsException(err_msg)
 
         # then make sure we have the right external_id
         # note that SoftwareSecure might send a case insensitive
@@ -224,6 +215,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review.raw_data = json.dumps(payload)
         review.review_status = review_status
         review.video_url = video_review_link
+        review.student = attempt_obj.user
+        review.exam = attempt_obj.proctored_exam
 
         review.save()
 
@@ -234,21 +227,54 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         for comment in payload.get('desktopComments', []):
             self._save_review_comment(review, comment)
 
-        # we could have gottent a review for an archived attempt
+        # we could have gotten a review for an archived attempt
         # this should *not* cause an update in our credit
         # eligibility table
         if not is_archived_attempt:
             # update our attempt status, note we have to import api.py here because
             # api.py imports software_secure.py, so we'll get an import circular reference
 
-            from edx_proctoring.api import update_attempt_status
+            allow_status_update_on_fail = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
 
-            # only 'Clean' and 'Rules Violation' could as passing
-            status = (
-                ProctoredExamStudentAttemptStatus.verified
-                if review_status in self.passing_review_status
-                else ProctoredExamStudentAttemptStatus.rejected
+            self.on_review_saved(review, allow_status_update_on_fail=allow_status_update_on_fail)
+
+    def on_review_saved(self, review, allow_status_update_on_fail=False):  # pylint: disable=arguments-differ
+        """
+        called when a review has been save - either through API (on_review_callback) or via Django Admin panel
+        in order to trigger any workflow associated with proctoring review results
+        """
+
+        (attempt_obj, is_archived_attempt) = locate_attempt_by_attempt_code(review.attempt_code)
+
+        if not attempt_obj:
+            # This should not happen, but it is logged in the help
+            # method
+            return
+
+        if is_archived_attempt:
+            # we don't trigger workflow on reviews on archived attempts
+            err_msg = (
+                'Got on_review_save() callback for an archived attempt with '
+                'attempt_code {attempt_code}. Will not trigger workflow...'.format(
+                    attempt_code=review.attempt_code
+                )
             )
+            log.warn(err_msg)
+            return
+
+        # only 'Clean' and 'Rules Violation' count as passing
+        status = (
+            ProctoredExamStudentAttemptStatus.verified
+            if review.review_status in self.passing_review_status
+            else ProctoredExamStudentAttemptStatus.rejected
+        )
+
+        # are we allowed to update the status if we have a failure status
+        # i.e. do we need a review to come in from Django Admin panel?
+        if status == ProctoredExamStudentAttemptStatus.verified or allow_status_update_on_fail:
+            # updating attempt status will trigger workflow
+            # (i.e. updating credit eligibility table)
+            from edx_proctoring.api import update_attempt_status
 
             update_attempt_status(
                 attempt_obj.proctored_exam_id,
@@ -285,6 +311,19 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         encrypted_text = cipher.encrypt(pad(pwd))
         return base64.b64encode(encrypted_text)
 
+    def _split_fullname(self, full_name):
+        """
+        Utility to break Full Name to first and last name
+        """
+        first_name = ''
+        last_name = ''
+        name_elements = full_name.split(' ')
+        first_name = name_elements[0]
+        if len(name_elements) > 1:
+            last_name = ' '.join(name_elements[1:])
+
+        return (first_name, last_name)
+
     def _get_payload(self, exam, context):
         """
         Constructs the data payload that Software Secure expects
@@ -296,14 +335,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         callback_url = context['callback_url']
         full_name = context['full_name']
         review_policy = context.get('review_policy', constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
-        first_name = ''
-        last_name = ''
-
-        if full_name:
-            name_elements = full_name.split(' ')
-            first_name = name_elements[0]
-            if len(name_elements) > 1:
-                last_name = ' '.join(name_elements[1:])
+        (first_name, last_name) = self._split_fullname(full_name)
 
         now = datetime.datetime.utcnow()
         start_time_str = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
