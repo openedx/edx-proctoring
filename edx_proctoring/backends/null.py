@@ -41,3 +41,9 @@ class NullBackendProvider(ProctoringBackendProvider):
         """
         Called when the reviewing 3rd party service posts back the results
         """
+
+    def on_review_saved(self, review):
+        """
+        called when a review has been save - either through API or via Django Admin panel
+        in order to trigger any workflow
+        """

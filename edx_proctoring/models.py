@@ -236,7 +236,8 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamreviewpolicy'
-        verbose_name = 'proctored exam review policy'
+        verbose_name = 'Proctored exam review policy'
+        verbose_name_plural = "Proctored exam review policies"
 
     @classmethod
     def get_review_policy_for_exam(cls, exam_id):
@@ -721,10 +722,23 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     # URL for the exam video that had been reviewed
     video_url = models.TextField()
 
+    # user_id of person who did the review (can be None if submitted via server-to-server API)
+    reviewed_by = models.ForeignKey(User, null=True, related_name='+')
+
+    # student username for the exam
+    # this is an optimization for the Django Admin pane (so we can search)
+    # this is null because it is being added after initial production ship
+    student = models.ForeignKey(User, null=True, related_name='+')
+
+    # exam_id for the review
+    # this is an optimization for the Django Admin pane (so we can search)
+    # this is null because it is being added after initial production ship
+    exam = models.ForeignKey(ProctoredExam, null=True)
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamsoftwaresecurereview'
-        verbose_name = 'proctored exam software secure review'
+        verbose_name = 'Proctored exam software secure review'
 
     @classmethod
     def get_review_by_attempt_code(cls, attempt_code):
@@ -756,10 +770,23 @@ class ProctoredExamSoftwareSecureReviewHistory(TimeStampedModel):
     # URL for the exam video that had been reviewed
     video_url = models.TextField()
 
+    # user_id of person who did the review (can be None if submitted via server-to-server API)
+    reviewed_by = models.ForeignKey(User, null=True, related_name='+')
+
+    # student username for the exam
+    # this is an optimization for the Django Admin pane (so we can search)
+    # this is null because it is being added after initial production ship
+    student = models.ForeignKey(User, null=True, related_name='+')
+
+    # exam_id for the review
+    # this is an optimization for the Django Admin pane (so we can search)
+    # this is null because it is being added after initial production ship
+    exam = models.ForeignKey(ProctoredExam, null=True)
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamsoftwaresecurereviewhistory'
-        verbose_name = 'proctored exam review history'
+        verbose_name = 'Proctored exam review archive'
 
 
 # Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
@@ -795,6 +822,9 @@ def _make_review_archive_copy(instance):
         review_status=instance.review_status,
         raw_data=instance.raw_data,
         video_url=instance.video_url,
+        reviewed_by=instance.reviewed_by,
+        student=instance.student,
+        exam=instance.exam,
     )
     archive_object.save()
 
