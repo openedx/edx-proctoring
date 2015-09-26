@@ -411,7 +411,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         add_allowance_for_user(
             self.proctored_exam_id,
             self.user.username,
-            "Additional time (minutes)",
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
             str(allowed_extra_time)
         )
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)

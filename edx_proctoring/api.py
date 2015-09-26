@@ -347,20 +347,16 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     allowed_time_limit_mins = exam['time_limit_mins']
 
     # add in the allowed additional time
-    allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
-        exam_id,
-        user_id,
-        "Additional time (minutes)"
-    )
-
-    if allowance:
-        allowance_extra_mins = int(allowance.value)
+    allowance_extra_mins = ProctoredExamStudentAllowance.get_additional_time_granted(exam_id, user_id)
+    if allowance_extra_mins:
         allowed_time_limit_mins += allowance_extra_mins
 
     attempt_code = unicode(uuid.uuid4()).upper()
 
     external_id = None
     review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
+    review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
+
     if taking_as_proctored:
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         callback_url = '{scheme}://{hostname}{path}'.format(
@@ -393,6 +389,14 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         if review_policy:
             context.update({
                 'review_policy': review_policy.review_policy
+            })
+
+        # see if there is a review policy exception for this *user*
+        # exceptions are granted on a individual basis as an
+        # allowance
+        if review_policy_exception:
+            context.update({
+                'review_policy_exception': review_policy_exception
             })
 
         # now call into the backend provider to register exam attempt
