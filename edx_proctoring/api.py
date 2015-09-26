@@ -25,17 +25,20 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptedAlreadyStarted,
     ProctoredExamIllegalStatusTransition,
     ProctoredExamPermissionDenied,
+    ProctoredExamSoftwareSecureReviewNotFoundException
 )
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptStatus,
+    ProctoredExamSoftwareSecureReview
 )
 from edx_proctoring.serializers import (
     ProctoredExamSerializer,
     ProctoredExamStudentAttemptSerializer,
     ProctoredExamStudentAllowanceSerializer,
+    ProctoredExamSoftwareSecureReviewSerializer
 )
 from edx_proctoring.utils import humanized_time
 
@@ -871,6 +874,18 @@ def get_active_exams_for_user(user_id, course_id=None):
         })
 
     return result
+
+
+def get_review_by_attempt_code(attempt_code):
+    """
+    Return Serialized data of the ProctoredExamSoftwareSecureReview
+    """
+    exam_review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
+    if exam_review is None:
+        raise ProctoredExamSoftwareSecureReviewNotFoundException
+
+    serialized_object = ProctoredExamSoftwareSecureReviewSerializer(exam_review)
+    return serialized_object.data
 
 
 def _check_credit_eligibility(credit_state):

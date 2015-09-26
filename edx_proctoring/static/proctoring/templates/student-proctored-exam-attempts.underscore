@@ -105,7 +105,13 @@
                             <td> <%= getDateFormat(proctored_exam_attempt.completed_at) %></td>
                              <td>
                              <% if (proctored_exam_attempt.status){ %>
-                                <%= getExamAttemptStatus(proctored_exam_attempt.status) %>
+                                <% if (proctored_exam_attempt.status == 'verified' || proctored_exam_attempt.status == 'rejected' ) { %>
+                                    <a href="#" id="id-attempt-status" data-attempt-code="<%= proctored_exam_attempt.attempt_code %>" data-attempt-status="<%=proctored_exam_attempt.status %>">
+                                    <%= getExamAttemptStatus(proctored_exam_attempt.status) %>
+                                    </a>
+                                <% } else { %>
+                                    <%= getExamAttemptStatus(proctored_exam_attempt.status) %>
+                                <% } %>
                             <% } else { %>
                                 N/A
                             <% } %>

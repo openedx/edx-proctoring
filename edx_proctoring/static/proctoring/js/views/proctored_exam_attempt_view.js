@@ -63,7 +63,8 @@ var edx = edx || {};
             "click .remove-attempt": "onRemoveAttempt",
             'click li > a.target-link': 'getPaginatedAttempts',
             'click .search-attempts > span.search': 'searchAttempts',
-            'click .search-attempts > span.clear-search': 'clearSearch'
+            'click .search-attempts > span.clear-search': 'clearSearch',
+            'click #id-attempt-status': 'showAttemptModal'
         },
         searchAttempts: function(event) {
             var searchText = $('#search_attempt_id').val();
@@ -106,6 +107,26 @@ var edx = edx || {};
                 }
             }
             return cookieValue;
+        },
+        showAttemptModal: function(event) {
+            var $target = $(event.currentTarget);
+            var attemptCode = $target.data("attempt-code");
+            var attemptStatus = $target.data("attempt-status");
+            this.model = new edx.instructor_dashboard.proctoring.ProctoredExamSoftwareSecureReview();
+            this.model.url = this.model.url + attemptCode;
+            var self = this;
+            self.model.fetch({
+                success: function () {
+                    var attempt_status = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptStatusView({
+                        course_id: self.course_id,
+                        ssReview: self.model.toJSON(),
+                        attemptStatus: attemptStatus,
+                        proctored_exam_attempt_view: self
+                    });
+                }
+            });
+            event.stopPropagation();
+            event.preventDefault();
         },
         loadTemplateData: function () {
             var self = this;

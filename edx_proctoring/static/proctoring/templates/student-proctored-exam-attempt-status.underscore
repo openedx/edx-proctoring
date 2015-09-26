@@ -1,0 +1,42 @@
+<div class='modal-header'><%- gettext("Proctored Exam Attempt Status") %></div>
+<form>
+    <h3 class='error-response'><h3>
+    <table class='compact'>
+        <tr>
+            <td>
+                <label><%- gettext("Proctored Exam Attempt Status") %></label>
+            </td>
+            <td>
+                <select id='proctored_exam_attempt_status'>
+                    <% for (var key in attemptStatusOptions) { %>
+                    <option value="<%= key %>">
+                    <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: attemptStatusOptions[key] }, true) %>
+                    </option>
+                    <% } %>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><%- gettext("Video Url") %></label>
+            </td>
+            <td>
+                <a href="<%- ssReview.video_url %>"><%- ssReview.video_url %></a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><%- gettext("Reason") %></label>
+            </td>
+            <td>
+                <textarea rows="4" name="reason" ></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input id='save_proctored_exam_review' type='submit' value='Save' />
+            </td>
+        </tr>
+    </table>
+</form>

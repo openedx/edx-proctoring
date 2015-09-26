@@ -29,8 +29,8 @@ from edx_proctoring.api import (
     get_all_exams_for_course,
     get_exam_attempt_by_id,
     remove_exam_attempt,
-    update_attempt_status
-)
+    update_attempt_status,
+    get_review_by_attempt_code)
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
@@ -706,4 +706,18 @@ class ActiveExamsForUserView(AuthenticatedAPIView):
         return Response(get_active_exams_for_user(
             user_id=request.DATA.get('user_id', None),
             course_id=request.DATA.get('course_id', None)
+        ))
+
+
+class ProctoredExamSoftwareSecureReviewView(AuthenticatedAPIView):
+    """
+
+    """
+    @method_decorator(require_staff)
+    def get(self, request, attempt_code):
+        """
+        returns the get_active_exams_for_user
+        """
+        return Response(get_review_by_attempt_code(
+            attempt_code=attempt_code
         ))
