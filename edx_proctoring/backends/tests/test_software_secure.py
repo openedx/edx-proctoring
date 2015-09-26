@@ -23,6 +23,8 @@ from edx_proctoring.api import (
     create_exam,
     create_exam_attempt,
     remove_exam_attempt,
+    add_allowance_for_user
+
 )
 from edx_proctoring.exceptions import (
     StudentExamAttemptDoesNotExistsException,
@@ -37,6 +39,7 @@ from edx_proctoring.models import (
     ProctoredExamSoftwareSecureReviewHistory,
     ProctoredExamReviewPolicy,
     ProctoredExamStudentAttemptHistory,
+    ProctoredExamStudentAllowance
 )
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
 
@@ -141,7 +144,8 @@ class SoftwareSecureTests(TestCase):
             self.assertEqual(attempt['external_id'], 'foobar')
             self.assertIsNone(attempt['started_at'])
 
-    def test_attempt_with_review_policy(self):
+    @ddt.data(None, 'additional person allowed in room')
+    def test_attempt_with_review_policy(self, review_policy_exception):
         """
         Create an unstarted proctoring attempt with a review policy associated with it.
         """
@@ -153,6 +157,14 @@ class SoftwareSecureTests(TestCase):
             time_limit_mins=10,
             is_proctored=True
         )
+
+        if review_policy_exception:
+            add_allowance_for_user(
+                exam_id,
+                self.user.id,
+                ProctoredExamStudentAllowance.REVIEW_POLICY_EXCEPTION,
+                review_policy_exception
+            )
 
         policy = ProctoredExamReviewPolicy.objects.create(
             set_by_user_id=self.user.id,
@@ -169,10 +181,17 @@ class SoftwareSecureTests(TestCase):
             self.assertEqual(policy.review_policy, context['review_policy'])
 
             # call into real implementation
-            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)  # pylint: disable=protected-access
+            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)
 
             # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
-            self.assertEqual(result['reviewerNotes'], context['review_policy'])
+            expected = context['review_policy']
+            if review_policy_exception:
+                expected = '{base}; {exception}'.format(
+                    base=expected,
+                    exception=review_policy_exception
+                )
+
+            self.assertEqual(result['reviewerNotes'], expected)
             return result
 
         with HTTMock(mock_response_content):
@@ -180,7 +199,7 @@ class SoftwareSecureTests(TestCase):
             # so that we can assert that we are called with the review policy
             # as well as asserting that _get_payload includes that review policy
             # that was passed in
-            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock):  # pylint: disable=protected-access
+            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock):
                 attempt_id = create_exam_attempt(
                     exam_id,
                     self.user.id,
