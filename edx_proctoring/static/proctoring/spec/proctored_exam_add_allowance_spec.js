@@ -9,7 +9,7 @@ describe('ProctoredExamAddAllowanceView', function () {
             created: "2015-08-10T09:15:45Z",
             id: 1,
             modified: "2015-08-10T09:15:45Z",
-            key: "Additional time (minutes)",
+            key: "additional_time_granted",
             value: "1",
             proctored_exam: {
                 content_id: "i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c",
@@ -59,8 +59,8 @@ describe('ProctoredExamAddAllowanceView', function () {
             '<label>Allowance Type</label>' +
             '</td><td><select id="allowance_type">' +
             '<% _.each(allowance_types, function(allowance_type){ %>' +
-            '<option value="<%= allowance_type %>">' +
-            '<%- interpolate(gettext(" %(allowance_type)s "), { allowance_type: allowance_type }, true) %>' +
+            '<option value="<%= allowance_type[0] %>">' +
+            '<%= allowance_type[1] %>' +
             '</option>' +
             '<% }); %>' +
             '</select></td></tr><tr><td>' +
@@ -101,7 +101,7 @@ describe('ProctoredExamAddAllowanceView', function () {
             '<td>N/A</td><td>N/A</td>' +
             '<% } %>' +
             '<td>' +
-            '<%- interpolate(gettext(" %(allowance_name)s "), { allowance_name: proctored_exam_allowance.key }, true) %>' +
+            '<%- interpolate(gettext(" %(allowance_name)s "), { allowance_name: proctored_exam_allowance.key_display_name }, true) %>' +
             '</td>' +
             '<td>' +
             '<%= proctored_exam_allowance.value %>' +
@@ -185,7 +185,7 @@ describe('ProctoredExamAddAllowanceView', function () {
 
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('testuser1');
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('testuser1@test.com');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('Additional time (minutes)');
+        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('Additional Time (minutes)');
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('Test Exam');
 
         // add the proctored exam allowance
@@ -213,7 +213,7 @@ describe('ProctoredExamAddAllowanceView', function () {
         //select the form values
 
         $('#proctored_exam').val('Test Exam');
-        $('#allowance_type').val('Additional time (minutes)');
+        $('#allowance_type').val('additional_time_granted');
         $('#allowance_value').val('1');
         $("#user_info").val('testuser1');
 
@@ -227,7 +227,7 @@ describe('ProctoredExamAddAllowanceView', function () {
 
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('testuser1');
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('testuser1@test.com');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Additional time (minutes)');
+        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Additional Time (minutes)');
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Test Exam');
     });
     it("should send error when adding proctored exam allowance", function () {
@@ -254,7 +254,7 @@ describe('ProctoredExamAddAllowanceView', function () {
 
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('testuser1');
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('testuser1@test.com');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('Additional time (minutes)');
+        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('Additional Time (minutes)');
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).not.toContain('Test Exam');
 
         // add the proctored exam allowance
@@ -282,7 +282,7 @@ describe('ProctoredExamAddAllowanceView', function () {
         //select the form values
         // invalid user_info returns error
         $('#proctored_exam').val('Test Exam');
-        $('#allowance_type').val('Additional time (minutes)');
+        $('#allowance_type').val('additional_time_granted');
         $('#allowance_value').val('2');
         $("#user_info").val('testuser112321');
 
@@ -299,7 +299,7 @@ describe('ProctoredExamAddAllowanceView', function () {
         //select the form values
         // empty value returns error
         $('#proctored_exam').val('Test Exam');
-        $('#allowance_type').val('Additional time (minutes)');
+        $('#allowance_type').val('Additional Time (minutes)');
         $('#allowance_value').val('');
         $("#user_info").val('testuser1');
 

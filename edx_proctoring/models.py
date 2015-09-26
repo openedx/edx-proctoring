@@ -579,6 +579,15 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
     Information about allowing a student additional time on exam.
     """
 
+    # DONT EDIT THE KEYS - THE FIRST VALUE OF THE TUPLE - AS ARE THEY ARE STORED IN THE DATABASE
+    # THE SECOND ELEMENT OF THE TUPLE IS A DISPLAY STRING AND CAN BE EDITED
+    ADDITIONAL_TIME_GRANTED = ('additional_time_granted', _('Additional Time (minutes)'))
+    REVIEW_POLICY_EXCEPTION = ('review_policy_exception', _('Review Policy Exception'))
+
+    all_allowances = [
+        ADDITIONAL_TIME_GRANTED + REVIEW_POLICY_EXCEPTION
+    ]
+
     objects = ProctoredExamStudentAllowanceManager()
 
     user = models.ForeignKey(User)
@@ -625,22 +634,55 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         """
         Add or (Update) an allowance for a user within a given exam
         """
-        users = User.objects.filter(username=user_info)
-        if not users.exists():
-            users = User.objects.filter(email=user_info)
+        user_id = None
 
-        if not users.exists():
-            err_msg = (
-                'Cannot find user against {user_info}'
-            ).format(user_info=user_info)
-            raise UserNotFoundException(err_msg)
+        # see if key is a tuple, if it is, then the first element is the key
+        if isinstance(key, tuple) and len(key) > 0:
+            key = key[0]
+
+        # were we passed a PK?
+        if isinstance(user_info, (int, long)):
+            user_id = user_info
+        else:
+            # we got a string, so try to resolve it
+            users = User.objects.filter(username=user_info)
+            if not users.exists():
+                users = User.objects.filter(email=user_info)
+
+            if not users.exists():
+                err_msg = (
+                    'Cannot find user against {user_info}'
+                ).format(user_info=user_info)
+                raise UserNotFoundException(err_msg)
+
+            user_id = users[0].id
 
         try:
-            student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=users[0].id, key=key)
+            student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
             student_allowance.value = value
             student_allowance.save()
         except cls.DoesNotExist:  # pylint: disable=no-member
-            cls.objects.create(proctored_exam_id=exam_id, user_id=users[0].id, key=key, value=value)
+            cls.objects.create(proctored_exam_id=exam_id, user_id=user_id, key=key, value=value)
+
+    @classmethod
+    def get_additional_time_granted(cls, exam_id, user_id):
+        """
+        Helper method to get the additional time granted
+        """
+        allowance = cls.get_allowance_for_user(exam_id, user_id, cls.ADDITIONAL_TIME_GRANTED[0])
+        if allowance:
+            return int(allowance.value)
+
+        return None
+
+    @classmethod
+    def get_review_policy_exception(cls, exam_id, user_id):
+        """
+        Helper method to get the policy exception that reviewers should
+        follow
+        """
+        allowance = cls.get_allowance_for_user(exam_id, user_id, cls.REVIEW_POLICY_EXCEPTION[0])
+        return allowance.value if allowance else None
 
 
 class ProctoredExamStudentAllowanceHistory(TimeStampedModel):

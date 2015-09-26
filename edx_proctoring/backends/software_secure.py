@@ -335,6 +335,18 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         callback_url = context['callback_url']
         full_name = context['full_name']
         review_policy = context.get('review_policy', constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
+        review_policy_exception = context.get('review_policy_exception')
+
+        # compile the notes to the reviewer
+        # this is a combination of the Exam Policy which is for all students
+        # combined with any exceptions granted to the particular student
+        reviewer_notes = review_policy
+        if review_policy_exception:
+            reviewer_notes = '{notes}; {exception}'.format(
+                notes=reviewer_notes,
+                exception=review_policy_exception
+            )
+
         (first_name, last_name) = self._split_fullname(full_name)
 
         now = datetime.datetime.utcnow()
@@ -347,7 +359,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             "reviewedExam": not is_sample_attempt,
             # NOTE: we will have to allow these notes to be authorable in Studio
             # and then we will pull this from the exam database model
-            "reviewerNotes": review_policy,
+            "reviewerNotes": reviewer_notes,
             "examPassword": self._encrypt_password(self.crypto_key, attempt_code),
             "examSponsor": self.exam_sponsor,
             "examName": exam['exam_name'],
