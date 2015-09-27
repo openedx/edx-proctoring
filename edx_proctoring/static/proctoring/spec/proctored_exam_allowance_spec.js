@@ -59,7 +59,7 @@ describe('ProctoredExamAllowanceView', function () {
         '<td>N/A</td><td>N/A</td>' +
         '<% } %>' +
         '<td>' +
-        '<%- interpolate(gettext(" %(allowance_name)s "), { allowance_name: proctored_exam_allowance.key }, true) %>' +
+        '<%- interpolate(gettext(" %(allowance_name)s "), { allowance_name: proctored_exam_allowance.key_display_name }, true) %>' +
         '</td>' +
         '<td>' +
         '<%= proctored_exam_allowance.value %>' +
