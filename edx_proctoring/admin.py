@@ -78,7 +78,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     """
 
     readonly_fields = [video_url_for_review, 'attempt_code', 'exam', 'student', 'reviewed_by', 'modified']
-    list_filter = ['review_status', 'exam__course_id', 'exam__exam_name']
+    list_filter = ['review_status', 'exam__course_id', 'exam__exam_name', 'reviewed_by']
     list_select_related = True
     search_fields = ['student__username', 'attempt_code']
     form = ProctoredExamSoftwareSecureReviewForm
@@ -118,6 +118,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         'student_username_for_review',
         'attempt_code',
         'modified',
+        'reviewed_by',
         'review_status'
     ]
 
@@ -133,7 +134,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         """
         Override callback so that we can inject the user_id that made the change
         """
-        review.set_by_user = request.user
+        review.reviewed_by = request.user
         review.save()
         # call the review saved and since it's coming from
         # the Django admin will we accept failures
