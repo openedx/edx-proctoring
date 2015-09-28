@@ -4,6 +4,7 @@ Django Admin pages
 # pylint: disable=no-self-argument, no-member
 
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 from edx_proctoring.models import (
     ProctoredExamReviewPolicy,
@@ -72,13 +73,44 @@ def video_url_for_review(obj):
 video_url_for_review.allow_tags = True
 
 
+class ReviewListFilter(admin.SimpleListFilter):
+    """
+    Quick filter to allow admins to see which reviews have not been reviewed internally
+    """
+
+    title = _('internally reviewed')
+
+    parameter_name = 'reviewed_by'
+
+    def lookups(self, request, model_admin):
+        """
+        List of values to allow admin to select
+        """
+        return (
+            ('all_unreviewed', _('All Unreviewed')),
+            ('all_unreviewed_failures', _('All Unreviewed Failures')),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Return the filtered queryset
+        """
+
+        if self.value() == 'all_unreviewed':
+            return queryset.filter(reviewed_by__isnull=True)
+        elif self.value() == 'all_unreviewed_failures':
+            return queryset.filter(reviewed_by__isnull=True, review_status='Suspicious')
+        else:
+            return queryset
+
+
 class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     """
     The admin panel for SoftwareSecure Review records
     """
 
     readonly_fields = [video_url_for_review, 'attempt_code', 'exam', 'student', 'reviewed_by', 'modified']
-    list_filter = ['review_status', 'exam__course_id', 'exam__exam_name', 'reviewed_by']
+    list_filter = ['review_status', 'exam__course_id', 'exam__exam_name', ReviewListFilter]
     list_select_related = True
     search_fields = ['student__username', 'attempt_code']
     form = ProctoredExamSoftwareSecureReviewForm

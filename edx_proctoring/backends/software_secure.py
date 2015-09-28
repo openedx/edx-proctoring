@@ -217,6 +217,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review.video_url = video_review_link
         review.student = attempt_obj.user
         review.exam = attempt_obj.proctored_exam
+        # set reviewed_by to None because it was reviewed by our 3rd party
+        # service provider, not a user in our database
+        review.reviewed_by = None
 
         review.save()
 
