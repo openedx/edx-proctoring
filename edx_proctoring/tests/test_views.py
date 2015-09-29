@@ -177,7 +177,8 @@ class ProctoredExamViewTests(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.exam'),
-            updated_exam_data
+            json.dumps(updated_exam_data),
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 200)
@@ -246,7 +247,8 @@ class ProctoredExamViewTests(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.exam'),
-            updated_exam_data
+            json.dumps(updated_exam_data),
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 400)
@@ -499,9 +501,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
-            {
+            json.dumps({
                 'action': 'start',
-            }
+            }),
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 200)
@@ -1021,9 +1024,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
-            {
+            json.dumps({
                 'action': 'stop',
-            }
+            }),
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 200)
@@ -1064,9 +1068,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
-            {
+            json.dumps({
                 'action': action,
-            }
+            }),
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 200)
@@ -1080,18 +1085,20 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # we should not be able to restart it
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
-            {
+            json.dumps({
                 'action': 'start',
-            }
+            }),
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 400)
 
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
-            {
+            json.dumps({
                 'action': 'stop',
-            }
+            }),
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 400)
@@ -1859,7 +1866,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -1884,7 +1892,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
@@ -1944,7 +1953,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         # Try to add an allowance
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         # Returns a 400 status.
         self.assertEqual(response.status_code, 400)
@@ -1970,7 +1980,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -1978,7 +1989,8 @@ class TestExamAllowanceView(LoggedInTestCase):
 
         response = self.client.delete(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -2007,7 +2019,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.content)
@@ -2034,7 +2047,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -2073,7 +2087,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -2113,7 +2128,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -2135,7 +2151,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -2173,7 +2190,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -2214,7 +2232,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         # Add allowance
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -2226,7 +2245,8 @@ class TestExamAllowanceView(LoggedInTestCase):
 
         response = self.client.delete(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
