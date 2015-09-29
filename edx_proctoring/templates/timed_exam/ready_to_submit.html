@@ -12,7 +12,7 @@
     {% endblocktrans %}
   </p>
   <div>
-    <button type="button" name="submit-proctored-exam" class="exam-action-button" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+    <button type="button" name="submit-proctored-exam" class="exam-action-button btn btn-secondary btn-base" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
       {% blocktrans %}
         Yes, end my timed exam
       {% endblocktrans %}
@@ -20,7 +20,7 @@
   </div>
   {% if does_time_remain %}
     <div>
-      <button type="button" name="goback-proctored-exam" class="exam-action-button" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+      <button type="button" name="goback-proctored-exam" class="exam-action-button btn btn-secondary btn-base" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
         {% blocktrans %}
           No, I'd like to continue working
         {% endblocktrans %}
