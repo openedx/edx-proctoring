@@ -1645,7 +1645,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.eligible, {
                 'status': ProctoredExamStudentAttemptStatus.eligible,
                 'short_description': 'Ungraded Practice Exam',
-                'suggested_icon': 'fa-pencil-square-o',
+                'suggested_icon': '',
                 'in_completed_state': False
             }
         ),
@@ -1716,7 +1716,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.eligible, {
                 'status': ProctoredExamStudentAttemptStatus.eligible,
                 'short_description': 'Ungraded Practice Exam',
-                'suggested_icon': 'fa-pencil-square-o',
+                'suggested_icon': '',
                 'in_completed_state': False
             }
         ),
@@ -1769,7 +1769,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         expected = {
             'status': ProctoredExamStudentAttemptStatus.eligible,
             'short_description': 'Ungraded Practice Exam',
-            'suggested_icon': 'fa-pencil-square-o',
+            'suggested_icon': '',
             'in_completed_state': False
         }
 
