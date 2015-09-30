@@ -143,6 +143,30 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
         self.assertEqual(len(attempt_history), 1)
 
+        # make sure we can ready it back with helper class method
+        deleted_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
+        self.assertEqual(deleted_item.student_name, "John. D")
+
+        # re-create and delete again using same attempt_cde
+        attempt = ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=proctored_exam.id,
+            user_id=1,
+            student_name="John. D Updated",
+            allowed_time_limit_mins=10,
+            attempt_code="123456",
+            taking_as_proctored=True,
+            is_sample_attempt=True,
+            external_id=1
+        )
+
+        attempt.delete_exam_attempt()
+
+        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
+        self.assertEqual(len(attempt_history), 2)
+
+        deleted_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
+        self.assertEqual(deleted_item.student_name, "John. D Updated")
+
     def test_get_exam_attempts(self):
         """
         Test to get all the exam attempts for a course
