@@ -518,10 +518,16 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
         Returns the Student Exam Attempt object if found
         else Returns None.
         """
-        try:
-            exam_attempt_obj = cls.objects.get(attempt_code=attempt_code)
-        except ObjectDoesNotExist:  # pylint: disable=no-member
-            exam_attempt_obj = None
+        # NOTE: compared to the ProctoredExamAttempt table
+        # we can have multiple rows with the same attempt_code
+        # So, just return the first one (most recent) if
+        # there are any
+        exam_attempt_obj = None
+
+        items = cls.objects.filter(attempt_code=attempt_code).order_by("-created")
+        if items:
+            exam_attempt_obj = items[0]
+
         return exam_attempt_obj
 
     class Meta:
