@@ -201,10 +201,22 @@
 
         $.ajax(url).success(function(data){
           // has the end user completed and submitted the exam in the LMS?!?
-          if (data.status === 'submitted' || data.status === 'error' || data.status === 'verified' || data.status === 'rejected') {
+          if (data.status === 'waiting_for_app_shutdown' || data.status === 'error' || data.status === 'verified' || data.status === 'rejected') {
             // Signal that the desktop software should terminate
             // NOTE: This is per the API documentation from SoftwareSecure
-            window.external.quitApplication();
+            if (_poll_interval != null) {
+              clearInterval(_poll_interval)
+            }
+            var response = window.external.quitApplication();
+            if (undefined === response){
+              _poll_interval = setInterval(
+                poll_exam_status,
+                5000
+              );
+            } else {
+              $.ajax(url+'?app_shutdown=true').success();
+            }
+
           }
         });
       }

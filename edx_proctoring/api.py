@@ -305,14 +305,18 @@ def update_exam_attempt(attempt_id, **kwargs):
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
     for key, value in kwargs.items():
         # only allow a limit set of fields to update
-        # namely because status transitions can trigger workflow
-        if key not in ['last_poll_timestamp', 'last_poll_ipaddr']:
+        # namely because status t ransitions can trigger workflow
+        if key not in ['last_poll_timestamp', 'last_poll_ipaddr', 'app_shutdown']:
             err_msg = (
                 'You cannot call into update_exam_attempt to change '
                 'field {key}'.format(key=key)
             )
             raise ProctoredExamPermissionDenied(err_msg)
-        setattr(exam_attempt_obj, key, value)
+        if key == 'app_shutdown':
+            if exam_attempt_obj.status == ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown:
+                exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.submitted
+        else:
+            setattr(exam_attempt_obj, key, value)
     exam_attempt_obj.save()
 
 
@@ -670,7 +674,7 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
                 cascade_effects=False
             )
 
-    if to_status == ProctoredExamStudentAttemptStatus.submitted:
+    if to_status == ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown:
         # also mark the exam attempt completed_at timestamp
         # after we submit the attempt
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
@@ -1058,6 +1062,11 @@ STATUS_SUMMARY_MAP = {
         'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
+    ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown: {
+        'short_description': _('Exam pending submission'),
+        'suggested_icon': 'fa-spinner fa-spin',
+        'in_completed_state': True
+    },
     ProctoredExamStudentAttemptStatus.submitted: {
         'short_description': _('Pending Session Review'),
         'suggested_icon': 'fa-spinner fa-spin',
@@ -1086,6 +1095,11 @@ PRACTICE_STATUS_SUMMARY_MAP = {
         'short_description': _('Ungraded Practice Exam'),
         'suggested_icon': '',
         'in_completed_state': False
+    },
+    ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown: {
+        'short_description': _('Exam pending submission'),
+        'suggested_icon': 'fa-spinner fa-spin',
+        'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.submitted: {
         'short_description': _('Practice Exam Completed'),
@@ -1311,6 +1325,12 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/ready_to_start.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.error:
         student_view_template = 'practice_exam/error.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown:
+        if _is_exam_shutting_down(attempt, exam_id, user_id):
+            attempt['status'] = ProctoredExamStudentAttemptStatus.submitted
+            student_view_template = 'practice_exam/submitted.html'
+        else:
+            student_view_template = 'proctored_exam/waiting_for_app_shutdown.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
         student_view_template = 'practice_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
@@ -1413,6 +1433,12 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/error.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.timed_out:
         raise NotImplementedError('There is no defined rendering for ProctoredExamStudentAttemptStatus.timed_out!')
+    elif attempt_status == ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown:
+        if _is_exam_shutting_down(attempt, exam_id, user_id):
+            attempt['status'] = ProctoredExamStudentAttemptStatus.submitted
+            student_view_template = 'proctored_exam/submitted.html'
+        else:
+            student_view_template = 'proctored_exam/waiting_for_app_shutdown.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
         student_view_template = 'proctored_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.verified:
@@ -1427,6 +1453,25 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         django_context = Context(context)
         django_context.update(_get_proctored_exam_context(exam, attempt, course_id))
         return template.render(django_context)
+
+
+def _is_exam_shutting_down(attempt, exam_id, user_id):
+    """
+    Checks whether the last poll and current time difference is greater than
+    SOFTWARE_SECURE_CLIENT_TIMEOUT (30 seconds)
+    """
+
+    is_shutting_down = False
+    if attempt['last_poll_timestamp'] is not None and \
+            (datetime.now(pytz.UTC) - attempt['last_poll_timestamp']).total_seconds() > \
+            constants.SOFTWARE_SECURE_CLIENT_TIMEOUT:
+        update_attempt_status(
+            exam_id,
+            user_id,
+            ProctoredExamStudentAttemptStatus.submitted
+        )
+        is_shutting_down = True
+    return is_shutting_down
 
 
 def get_student_view(user_id, course_id, content_id,

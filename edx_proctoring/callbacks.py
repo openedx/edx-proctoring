@@ -141,21 +141,26 @@ class AttemptStatus(APIView):
         """
 
         attempt = get_exam_attempt_by_code(attempt_code)
-        ip_address = get_ip(request)
-        timestamp = datetime.now(pytz.UTC)
         if not attempt:
             return HttpResponse(
                 content='You have entered an exam code that is not valid.',
                 status=404
             )
+        attempt_status = attempt['status']
 
-        update_exam_attempt(attempt['id'], last_poll_timestamp=timestamp, last_poll_ipaddr=ip_address)
+        if request.QUERY_PARAMS.get('app_shutdown', None):
+            update_exam_attempt(attempt['id'], app_shutdown=True)
+            attempt_status = 'submitted'
+        else:
+            ip_address = get_ip(request)
+            timestamp = datetime.now(pytz.UTC)
+            update_exam_attempt(attempt['id'], last_poll_timestamp=timestamp, last_poll_ipaddr=ip_address)
 
         return Response(
             data={
                 # IMPORTANT: Don't add more information to this as it is an
                 # unauthenticated endpoint
-                'status': attempt['status'],
+                'status': attempt_status,
             },
             status=200
         )

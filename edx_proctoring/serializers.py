@@ -57,6 +57,9 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
     """
     proctored_exam = ProctoredExamSerializer()
     user = UserSerializer()
+    started_at = serializers.DateTimeField(format=None)
+    completed_at = serializers.DateTimeField(format=None)
+    last_poll_timestamp = serializers.DateTimeField(format=None)
 
     # Django Rest Framework v3 defaults to `settings.DATE_FORMAT` when serializing
     # datetime fields.  We need to specify `format=None` to maintain the old behavior

@@ -408,6 +408,34 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
+    def _create_exam_attempt(self):
+        """
+        Create and start the exam attempt, and return the exam attempt object
+        """
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+
+        # Starting exam attempt
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        return ProctoredExamStudentAttempt.objects.get_exam_attempt(proctored_exam.id, self.user.id)
+
     def test_start_exam_create(self):
         """
         Start an exam (create an exam attempt)
@@ -616,6 +644,129 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             self.assertEqual(response.status_code, 200)
             response_data = json.loads(response.content)
             self.assertEqual(response_data['status'], ProctoredExamStudentAttemptStatus.error)
+
+    def test_attempt_status_waiting_for_app_timeout(self):
+        """
+        Test to confirm that attempt status is marked as submitted
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        attempt_id = response_data['exam_attempt_id']
+        self.assertEqual(attempt_id, 1)
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['status'], ProctoredExamStudentAttemptStatus.started)
+        attempt_code = response_data['attempt_code']
+
+        # test the polling callback point
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.anonymous.proctoring_poll_status',
+                args=[attempt_code]
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+
+        update_attempt_status(
+            proctored_exam.id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown
+        )
+
+        # now reset the time to 2 minutes in the future.
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
+        with freeze_time(reset_time):
+            response = self.client.get(
+                reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+            )
+            self.assertEqual(response.status_code, 200)
+            response_data = json.loads(response.content)
+            self.assertEqual(response_data['status'], ProctoredExamStudentAttemptStatus.submitted)
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown,
+    )
+    def test_attempt_status_changes_to_submitted(self, attempt_status):
+        """
+        Test to confirm that a status will change to submitted if status is 'waiting_for_app_shutdown'
+        """
+
+        exam_attempt_obj = self._create_exam_attempt()
+        exam_attempt_obj.status = attempt_status
+        exam_attempt_obj.save()
+        attempt_code = exam_attempt_obj.attempt_code
+
+        # test the update status callback point
+        url = reverse('edx_proctoring.anonymous.proctoring_poll_status', args=[attempt_code])
+        response = self.client.get(url + "?app_shutdown=true")
+        self.assertEqual(response.status_code, 200)
+
+        exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(
+            exam_attempt_obj.id
+        )
+        self.assertEqual(exam_attempt_obj.status, ProctoredExamStudentAttemptStatus.submitted)
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.eligible,
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.ready_to_start,
+        ProctoredExamStudentAttemptStatus.ready_to_submit,
+        ProctoredExamStudentAttemptStatus.declined,
+        ProctoredExamStudentAttemptStatus.verified,
+        ProctoredExamStudentAttemptStatus.rejected,
+        ProctoredExamStudentAttemptStatus.not_reviewed,
+        ProctoredExamStudentAttemptStatus.error,
+    )
+    def test_attempt_status_not_change_to_submitted(self, attempt_status):
+        """
+        Test to confirm that a status will change not to submitted if status is not 'waiting_for_app_shutdown'
+        """
+
+        exam_attempt_obj = self._create_exam_attempt()
+        exam_attempt_obj.status = attempt_status
+        exam_attempt_obj.save()
+        attempt_code = exam_attempt_obj.attempt_code
+
+        # test the update status callback point
+        url = reverse('edx_proctoring.anonymous.proctoring_poll_status', args=[attempt_code])
+        response = self.client.get(url + "?app_shutdown=true")
+        self.assertEqual(response.status_code, 200)
+
+        exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(
+            exam_attempt_obj.id
+        )
+        self.assertNotEqual(exam_attempt_obj.status, ProctoredExamStudentAttemptStatus.submitted)
+
+    def test_wrong_exam_code_update_status_callback(self):
+        """
+        Test the wrong attempt code scenario for update status callback
+        """
+
+        url = reverse('edx_proctoring.anonymous.proctoring_poll_status', args=['foo'])
+        response = self.client.get(url + "?app_shutdown=true")
+        self.assertEqual(response.status_code, 404)
 
     def test_attempt_status_stickiness(self):
         """
@@ -955,7 +1106,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
     @ddt.data(
-        ('submit', ProctoredExamStudentAttemptStatus.submitted),
+        ('submit', ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown),
         ('decline', ProctoredExamStudentAttemptStatus.declined)
     )
     @ddt.unpack

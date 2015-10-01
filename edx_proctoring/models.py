@@ -109,7 +109,7 @@ class ProctoredExamStudentAttemptStatus(object):
     might change over time.
     """
 
-    # the student is eligible to decide if he/she wants to persue credit
+    # the student is eligible to decide if he/she wants to pursue credit
     eligible = 'eligible'
 
     # the attempt record has been created, but the exam has not yet
@@ -131,6 +131,9 @@ class ProctoredExamStudentAttemptStatus(object):
     # The follow statuses below are considered in a 'completed' state
     # and we will not allow transitions to status above this mark
     #
+
+    # waiting for the student to close the software secure client window.
+    waiting_for_app_shutdown = 'waiting_for_app_shutdown'
 
     # the student declined to take the exam as a proctored exam
     declined = 'declined'
@@ -168,7 +171,7 @@ class ProctoredExamStudentAttemptStatus(object):
         """
         return status in [
             cls.declined, cls.timed_out, cls.submitted, cls.verified, cls.rejected,
-            cls.not_reviewed, cls.error
+            cls.not_reviewed, cls.error, cls.waiting_for_app_shutdown
         ]
 
     @classmethod

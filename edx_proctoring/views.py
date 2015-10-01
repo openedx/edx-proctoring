@@ -40,6 +40,7 @@ from edx_proctoring.exceptions import (
     ProctoredExamIllegalStatusTransition,
     ProctoredExamNotActiveException,
 )
+from edx_proctoring import constants
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt, ProctoredExam
@@ -47,8 +48,6 @@ from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredEx
 from .utils import AuthenticatedAPIView, get_time_remaining_for_attempt, humanized_time
 
 ATTEMPTS_PER_PAGE = 25
-
-SOFTWARE_SECURE_CLIENT_TIMEOUT = settings.PROCTORING_SETTINGS.get('SOFTWARE_SECURE_CLIENT_TIMEOUT', 30)
 
 LOG = logging.getLogger("edx_proctoring_views")
 
@@ -323,18 +322,28 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             # and if it is older than SOFTWARE_SECURE_CLIENT_TIMEOUT
             # then attempt status should be marked as error.
             last_poll_timestamp = attempt['last_poll_timestamp']
-            if last_poll_timestamp is not None \
-                    and (datetime.now(pytz.UTC) - last_poll_timestamp).total_seconds() > SOFTWARE_SECURE_CLIENT_TIMEOUT:
-                try:
-                    update_attempt_status(
-                        attempt['proctored_exam']['id'],
-                        attempt['user']['id'],
-                        ProctoredExamStudentAttemptStatus.error
-                    )
-                    attempt['status'] = ProctoredExamStudentAttemptStatus.error
-                except ProctoredExamIllegalStatusTransition:
-                    # don't transition a completed state to an error state
-                    pass
+
+            if last_poll_timestamp is not None:
+                if (datetime.now(pytz.UTC) - last_poll_timestamp).total_seconds() > \
+                        constants.SOFTWARE_SECURE_CLIENT_TIMEOUT:
+                    if attempt['status'] == ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown:
+                        update_attempt_status(
+                            attempt['proctored_exam']['id'],
+                            attempt['user']['id'],
+                            ProctoredExamStudentAttemptStatus.submitted
+                        )
+                        attempt['status'] = ProctoredExamStudentAttemptStatus.submitted
+                    else:
+                        try:
+                            update_attempt_status(
+                                attempt['proctored_exam']['id'],
+                                attempt['user']['id'],
+                                ProctoredExamStudentAttemptStatus.error
+                            )
+                            attempt['status'] = ProctoredExamStudentAttemptStatus.error
+                        except ProctoredExamIllegalStatusTransition:
+                            # don't transition a completed state to an error state
+                            pass
 
             # add in the computed time remaining as a helper to a client app
             time_remaining_seconds = get_time_remaining_for_attempt(attempt)
@@ -405,7 +414,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 exam_attempt_id = update_attempt_status(
                     attempt['proctored_exam']['id'],
                     request.user.id,
-                    ProctoredExamStudentAttemptStatus.submitted
+                    ProctoredExamStudentAttemptStatus.waiting_for_app_shutdown
                 )
             elif action == 'decline':
                 exam_attempt_id = update_attempt_status(
