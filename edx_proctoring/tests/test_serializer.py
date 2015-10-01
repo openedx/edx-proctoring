@@ -30,7 +30,7 @@ class TestProctoredExamSerializer(unittest.TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertDictEqual(
             {
-                'is_proctored': [u'This field is required.'],
-                'is_practice_exam': [u'This field is required.'],
+                'is_proctored': [u'"bla" is not a valid boolean.'],
+                'is_practice_exam': [u'"bla" is not a valid boolean.'],
             }, serializer.errors
         )

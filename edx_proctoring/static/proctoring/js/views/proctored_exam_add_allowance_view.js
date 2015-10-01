@@ -14,6 +14,7 @@ var edx = edx || {};
             this.proctored_exams = options.proctored_exams;
             this.proctored_exam_allowance_view = options.proctored_exam_allowance_view;
             this.course_id = options.course_id;
+            this.allowance_types = options.allowance_types;
             this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel();
             _.bindAll(this, "render");
             this.loadTemplateData();
@@ -156,11 +157,9 @@ var edx = edx || {};
         },
 
         render: function () {
-            var allowance_types = ['Additional time (minutes)'];
-
             $(this.el).html(this.template({
                 proctored_exams: this.proctored_exams,
-                allowance_types: allowance_types
+                allowance_types: this.allowance_types
             }));
 
             this.$form = {

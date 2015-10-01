@@ -31,6 +31,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptStatus,
+    ProctoredExamReviewPolicy,
 )
 from edx_proctoring.serializers import (
     ProctoredExamSerializer,
@@ -346,19 +347,16 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     allowed_time_limit_mins = exam['time_limit_mins']
 
     # add in the allowed additional time
-    allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
-        exam_id,
-        user_id,
-        "Additional time (minutes)"
-    )
-
-    if allowance:
-        allowance_extra_mins = int(allowance.value)
+    allowance_extra_mins = ProctoredExamStudentAllowance.get_additional_time_granted(exam_id, user_id)
+    if allowance_extra_mins:
         allowed_time_limit_mins += allowance_extra_mins
 
     attempt_code = unicode(uuid.uuid4()).upper()
 
     external_id = None
+    review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
+    review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
+
     if taking_as_proctored:
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         callback_url = '{scheme}://{hostname}{path}'.format(
@@ -378,16 +376,33 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
             full_name = credit_state['profile_fullname']
 
+        context = {
+            'time_limit_mins': allowed_time_limit_mins,
+            'attempt_code': attempt_code,
+            'is_sample_attempt': exam['is_practice_exam'],
+            'callback_url': callback_url,
+            'full_name': full_name,
+        }
+
+        # see if there is an exam review policy for this exam
+        # if so, then pass it into the provider
+        if review_policy:
+            context.update({
+                'review_policy': review_policy.review_policy
+            })
+
+        # see if there is a review policy exception for this *user*
+        # exceptions are granted on a individual basis as an
+        # allowance
+        if review_policy_exception:
+            context.update({
+                'review_policy_exception': review_policy_exception
+            })
+
         # now call into the backend provider to register exam attempt
         external_id = get_backend_provider().register_exam_attempt(
             exam,
-            context={
-                'time_limit_mins': allowed_time_limit_mins,
-                'attempt_code': attempt_code,
-                'is_sample_attempt': exam['is_practice_exam'],
-                'callback_url': callback_url,
-                'full_name': full_name,
-            }
+            context=context,
         )
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
@@ -398,7 +413,8 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         attempt_code,
         taking_as_proctored,
         exam['is_practice_exam'],
-        external_id
+        external_id,
+        review_policy_id=review_policy.id if review_policy else None,
     )
 
     log_msg = (
@@ -920,17 +936,17 @@ def _check_eligibility_of_prerequisites(credit_state):
 STATUS_SUMMARY_MAP = {
     '_default': {
         'short_description': _('Taking As Proctored Exam'),
-        'suggested_icon': 'fa-lock',
+        'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.eligible: {
         'short_description': _('Proctored Option Available'),
-        'suggested_icon': 'fa-lock',
+        'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.declined: {
         'short_description': _('Taking As Open Exam'),
-        'suggested_icon': 'fa-unlock',
+        'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.submitted: {
@@ -959,7 +975,7 @@ STATUS_SUMMARY_MAP = {
 PRACTICE_STATUS_SUMMARY_MAP = {
     '_default': {
         'short_description': _('Ungraded Practice Exam'),
-        'suggested_icon': 'fa-lock',
+        'suggested_icon': '',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.submitted: {

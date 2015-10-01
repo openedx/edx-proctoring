@@ -54,6 +54,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptStatus,
+    ProctoredExamReviewPolicy,
 )
 
 from .utils import (
@@ -384,6 +385,24 @@ class ProctoredExamApiTests(LoggedInTestCase):
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
         self.assertGreater(attempt_id, 0)
 
+    def test_attempt_with_review_policy(self):
+        """
+        Create an unstarted exam attempt with a review policy associated with it.
+        """
+
+        policy = ProctoredExamReviewPolicy.objects.create(
+            set_by_user_id=self.user_id,
+            proctored_exam_id=self.proctored_exam_id,
+            review_policy='Foo Policy'
+        )
+
+        attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
+        self.assertGreater(attempt_id, 0)
+
+        # make sure we recorded the policy id at the time this was created
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['review_policy_id'], policy.id)
+
     def test_attempt_with_allowance(self):
         """
         Create an unstarted exam attempt with additional time.
@@ -392,7 +411,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         add_allowance_for_user(
             self.proctored_exam_id,
             self.user.username,
-            "Additional time (minutes)",
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
             str(allowed_extra_time)
         )
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
@@ -1523,7 +1542,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.eligible, {
                 'status': ProctoredExamStudentAttemptStatus.eligible,
                 'short_description': 'Proctored Option Available',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1531,7 +1550,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.declined, {
                 'status': ProctoredExamStudentAttemptStatus.declined,
                 'short_description': 'Taking As Open Exam',
-                'suggested_icon': 'fa-unlock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1571,7 +1590,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.created, {
                 'status': ProctoredExamStudentAttemptStatus.created,
                 'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1579,7 +1598,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.ready_to_start, {
                 'status': ProctoredExamStudentAttemptStatus.ready_to_start,
                 'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1587,7 +1606,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.started, {
                 'status': ProctoredExamStudentAttemptStatus.started,
                 'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         ),
@@ -1595,7 +1614,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.ready_to_submit, {
                 'status': ProctoredExamStudentAttemptStatus.ready_to_submit,
                 'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
             }
         )
@@ -1626,7 +1645,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.eligible, {
                 'status': ProctoredExamStudentAttemptStatus.eligible,
                 'short_description': 'Ungraded Practice Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': '',
                 'in_completed_state': False
             }
         ),
@@ -1697,7 +1716,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.eligible, {
                 'status': ProctoredExamStudentAttemptStatus.eligible,
                 'short_description': 'Ungraded Practice Exam',
-                'suggested_icon': 'fa-lock',
+                'suggested_icon': '',
                 'in_completed_state': False
             }
         ),
@@ -1750,7 +1769,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         expected = {
             'status': ProctoredExamStudentAttemptStatus.eligible,
             'short_description': 'Ungraded Practice Exam',
-            'suggested_icon': 'fa-lock',
+            'suggested_icon': '',
             'in_completed_state': False
         }
 

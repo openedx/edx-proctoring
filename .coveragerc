@@ -5,3 +5,4 @@ omit =
     **/__init__.py
     **/migrations/*
     **/tests/*
+    edx_proctoring/admin.py

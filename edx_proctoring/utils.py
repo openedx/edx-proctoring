@@ -3,12 +3,20 @@ Helpers for the HTTP APIs
 """
 
 import pytz
+import logging
 from datetime import datetime, timedelta
 
 from django.utils.translation import ugettext as _
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+
+from edx_proctoring.models import (
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptHistory,
+)
+
+log = logging.getLogger(__name__)
 
 
 class AuthenticatedAPIView(APIView):
@@ -82,3 +90,27 @@ def humanized_time(time_in_minutes):
 
     human_time = template.format(num_of_hours=hours, num_of_minutes=minutes)
     return human_time
+
+
+def locate_attempt_by_attempt_code(attempt_code):
+    """
+    Helper method to look up an attempt by attempt_code. This can be either in
+    the ProctoredExamStudentAttempt *OR* ProctoredExamStudentAttemptHistory tables
+    we will return a tuple of (attempt, is_archived_attempt)
+    """
+    attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
+
+    is_archived_attempt = False
+    if not attempt_obj:
+        # try archive table
+        attempt_obj = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
+        is_archived_attempt = True
+
+        if not attempt_obj:
+            # still can't find, error out
+            err_msg = (
+                'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
+            )
+            log.error(err_msg)
+
+    return (attempt_obj, is_archived_attempt)

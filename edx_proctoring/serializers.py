@@ -1,20 +1,8 @@
 """Defines serializers used by the Proctoring API."""
 from rest_framework import serializers
+from rest_framework.fields import DateTimeField
 from django.contrib.auth.models import User
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
-
-
-class StrictBooleanField(serializers.BooleanField):
-    """
-    Boolean field serializer to cater for a bug in DRF BooleanField serializer
-    where required=True is ignored.
-    """
-    def from_native(self, value):
-        if value in ('true', 't', 'True', '1'):
-            return True
-        if value in ('false', 'f', 'False', '0'):
-            return False
-        return None
 
 
 class ProctoredExamSerializer(serializers.ModelSerializer):
@@ -28,9 +16,9 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
     exam_name = serializers.CharField(required=True)
     time_limit_mins = serializers.IntegerField(required=True)
 
-    is_active = StrictBooleanField(required=True)
-    is_practice_exam = StrictBooleanField(required=True)
-    is_proctored = StrictBooleanField(required=True)
+    is_active = serializers.BooleanField(required=True)
+    is_practice_exam = serializers.BooleanField(required=True)
+    is_proctored = serializers.BooleanField(required=True)
 
     class Meta:
         """
@@ -70,6 +58,13 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
     proctored_exam = ProctoredExamSerializer()
     user = UserSerializer()
 
+    # Django Rest Framework v3 defaults to `settings.DATE_FORMAT` when serializing
+    # datetime fields.  We need to specify `format=None` to maintain the old behavior
+    # of returning raw `datetime` objects instead of unicode.
+    started_at = DateTimeField(format=None)
+    completed_at = DateTimeField(format=None)
+    last_poll_timestamp = DateTimeField(format=None)
+
     class Meta:
         """
         Meta Class
@@ -80,7 +75,7 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
             "id", "created", "modified", "user", "started_at", "completed_at",
             "external_id", "status", "proctored_exam", "allowed_time_limit_mins",
             "attempt_code", "is_sample_attempt", "taking_as_proctored", "last_poll_timestamp",
-            "last_poll_ipaddr"
+            "last_poll_ipaddr", "review_policy_id"
         )
 
 
