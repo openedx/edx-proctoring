@@ -8,6 +8,12 @@ var edx = edx || {};
 
     edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = Backbone.View.extend({
         initialize: function () {
+
+            this.allowance_types = [
+                ['additional_time_granted', gettext('Additional Time (minutes)')],
+                ['review_policy_exception', gettext('Review Policy Exception')]
+            ];
+
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection();
             this.proctoredExamCollection = new edx.instructor_dashboard.proctoring.ProctoredExamCollection();
             /* unfortunately we have to make some assumptions about what is being set up in HTML */
@@ -121,6 +127,20 @@ var edx = edx || {};
         },
         render: function () {
             if (this.template !== null) {
+                var self = this;
+                this.collection.each(function(item){
+                    var key = item.get('key');
+                    var i
+                    for (i=0; i<self.allowance_types.length; i++) {
+                        if (key === self.allowance_types[i][0]) {
+                            item.set('key_display_name', self.allowance_types[i][1]);
+                            break;
+                        }
+                    }
+                    if (!item.has('key_display_name')) {
+                        item.set('key_display_name', key);
+                    }
+                });
                 var html = this.template({proctored_exam_allowances: this.collection.toJSON()});
                 this.$el.html(html);
             }
@@ -132,7 +152,8 @@ var edx = edx || {};
                     var add_allowance_view = new edx.instructor_dashboard.proctoring.AddAllowanceView({
                         course_id: self.course_id,
                         proctored_exams: self.proctoredExamCollection.toJSON(),
-                        proctored_exam_allowance_view: self
+                        proctored_exam_allowance_view: self,
+                        allowance_types: self.allowance_types
                     });
                 }
             });
