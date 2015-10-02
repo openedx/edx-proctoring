@@ -199,11 +199,13 @@ def add_allowance_for_user(exam_id, user_info, key, value):
     ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_info, key, value)
 
 
-def get_allowances_for_course(course_id):
+def get_allowances_for_course(course_id, timed_exams_only):
     """
     Get all the allowances for the course.
     """
-    student_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(course_id)
+    student_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(
+        course_id, timed_exams_only=timed_exams_only
+    )
     return [ProctoredExamStudentAllowanceSerializer(allowance).data for allowance in student_allowances]
 
 
@@ -803,7 +805,7 @@ def remove_exam_attempt(attempt_id):
         )
 
 
-def get_all_exams_for_course(course_id):
+def get_all_exams_for_course(course_id, timed_exams_only):
     """
     This method will return all exams for a course. This will return a list
     of dictionaries, whose schema is the same as what is returned in
@@ -827,7 +829,7 @@ def get_all_exams_for_course(course_id):
     ..
     ]
     """
-    exams = ProctoredExam.get_all_exams_for_course(course_id)
+    exams = ProctoredExam.get_all_exams_for_course(course_id, timed_exams_only=timed_exams_only)
 
     return [ProctoredExamSerializer(proctored_exam).data for proctored_exam in exams]
 

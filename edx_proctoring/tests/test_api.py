@@ -117,7 +117,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.footer_msg = 'About Proctored Exams'
 
         set_runtime_service('credit', MockCreditService())
-        set_runtime_service('instructor', MockInstructorService())
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
     def _create_proctored_exam(self):
         """
@@ -305,8 +305,26 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(proctored_exam['content_id'], self.content_id)
         self.assertEqual(proctored_exam['exam_name'], self.exam_name)
 
-        exams = get_all_exams_for_course(self.course_id)
+        exams = get_all_exams_for_course(self.course_id, False)
         self.assertEqual(len(exams), 4)
+
+    def test_get_timed_exam(self):
+        """
+        test to get the exam by the exam_id and
+        then compare their values.
+        """
+        timed_exam = get_exam_by_id(self.timed_exam)
+        self.assertEqual(timed_exam['course_id'], self.course_id)
+        self.assertEqual(timed_exam['content_id'], self.content_id_timed)
+        self.assertEqual(timed_exam['exam_name'], self.exam_name)
+
+        timed_exam = get_exam_by_content_id(self.course_id, self.content_id_timed)
+        self.assertEqual(timed_exam['course_id'], self.course_id)
+        self.assertEqual(timed_exam['content_id'], self.content_id_timed)
+        self.assertEqual(timed_exam['exam_name'], self.exam_name)
+
+        exams = get_all_exams_for_course(self.course_id, True)
+        self.assertEqual(len(exams), 1)
 
     def test_get_invalid_proctored_exam(self):
         """
@@ -356,7 +374,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Test to get all the allowances for a course.
         """
         allowance = self._add_allowance_for_user()
-        course_allowances = get_allowances_for_course(self.course_id)
+        course_allowances = get_allowances_for_course(self.course_id, False)
         self.assertEqual(len(course_allowances), 1)
         self.assertEqual(course_allowances[0]['proctored_exam']['course_id'], allowance.proctored_exam.course_id)
 

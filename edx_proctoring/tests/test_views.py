@@ -20,7 +20,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttemptStatus,
 )
-from edx_proctoring.views import require_staff
+from edx_proctoring.views import require_staff, require_course_or_global_staff
 from edx_proctoring.api import (
     create_exam,
     create_exam_attempt,
@@ -35,7 +35,7 @@ from .utils import (
 from edx_proctoring.urls import urlpatterns
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
-from edx_proctoring.tests.test_services import MockCreditService
+from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 
@@ -204,11 +204,23 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.assertEqual(response.status_code, 403)
         self.assertFalse(func.called)
 
+    def test_decorator_require_course_or_global_staff(self):  # pylint: disable=invalid-name
+        """
+        Test assert require_course_or_global_staff before hitting any api url.
+        """
+        func = Mock()
+        decorated_func = require_course_or_global_staff(func)
+        request = self.mock_request()
+        response = decorated_func(request)
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(func.called)
+
     def mock_request(self):
         """
         mock request
         """
         request = Mock()
+        request.DATA = {}
         self.user.is_staff = False
         self.user.save()
         request.user = self.user
@@ -392,6 +404,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.user)
         self.student_taking_exam = User()
         self.student_taking_exam.save()
+
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
     def test_start_exam_create(self):
         """
@@ -772,11 +786,56 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt_id = response_data['exam_attempt_id']
         self.assertGreater(attempt_id, 0)
 
+        self.user.is_staff = False
+        self.user.save()
         response = self.client.delete(
             reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
         )
 
         self.assertEqual(response.status_code, 200)
+
+    def test_remove_attempt_non_staff(self):
+        """
+        Confirms that an attempt cannot be removed
+        by the not staff/global user
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        attempt_id = response_data['exam_attempt_id']
+        self.assertGreater(attempt_id, 0)
+
+        # now set the user is_staff to False
+        # and also user is not a course staff
+        self.user.is_staff = False
+        self.user.save()
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+
+        response = self.client.delete(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+        )
+
+        self.assertEqual(response.status_code, 403)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
     def test_read_others_attempt(self):
         """
@@ -1000,22 +1059,44 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
     def test_exam_attempts_not_staff(self):
         """
-        Test to get the exam attempts in a course.
+        Test to get the exam attempts in a course as a not
+        staff user but still we get the timed exams attempts
+        but not the proctored exam attempts
         """
-        # Create an exam.
-        proctored_exam = ProctoredExam.objects.create(
+        # Create an timed_exam.
+        timed_exam = ProctoredExam.objects.create(
             course_id='a/b/c',
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
-            time_limit_mins=90
+            time_limit_mins=90,
+            is_proctored=False
+        )
+        attempt_data = {
+            'exam_id': timed_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': timed_exam.external_id
+        }
+        self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        # Create a proctored exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content1',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=True
         )
         attempt_data = {
             'exam_id': proctored_exam.id,
             'user_id': self.student_taking_exam.id,
             'external_id': proctored_exam.external_id
         }
-        response = self.client.post(
+        self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
             attempt_data
         )
@@ -1025,7 +1106,15 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.user.save()
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        # we should only get the timed exam attempt in this case
+        # so the len should be 1
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
+        self.assertEqual(
+            response_data['proctored_exam_attempts'][0]['proctored_exam']['is_proctored'],
+            timed_exam.is_proctored
+        )
 
     def test_get_filtered_exam_attempts(self):
         """
@@ -1079,6 +1168,63 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         attempt = response_data['proctored_exam_attempts'][1]
         self.assertEqual(attempt['proctored_exam']['id'], proctored_exam.id)
+        self.assertEqual(attempt['user']['id'], self.user.id)
+
+    def test_get_filtered_timed_exam_attempts(self):  # pylint: disable=invalid-name
+        """
+        Test to get the filtered timed exam attempts in a course.
+        """
+        # Create an exam.
+        timed_exm = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=False
+        )
+        attempt_data = {
+            'exam_id': timed_exm.id,
+            'start_clock': False,
+            'attempt_proctored': False
+        }
+        # create a exam attempt
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.login_user(self.second_user)
+        # create a new exam attempt for second student
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.user.is_staff = False
+        self.user.save()
+        self.client.login_user(self.user)
+        response = self.client.get(
+            reverse(
+                'edx_proctoring.proctored_exam.attempts.search',
+                kwargs={
+                    'course_id': timed_exm.course_id,
+                    'search_by': 'tester'
+                }
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 2)
+        attempt = response_data['proctored_exam_attempts'][0]
+        self.assertEqual(attempt['proctored_exam']['id'], timed_exm.id)
+        self.assertEqual(attempt['user']['id'], self.second_user.id)
+
+        attempt = response_data['proctored_exam_attempts'][1]
+        self.assertEqual(attempt['proctored_exam']['id'], timed_exm.id)
         self.assertEqual(attempt['user']['id'], self.user.id)
 
     def test_paginated_exam_attempts(self):
@@ -1168,6 +1314,48 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response_data['detail'], 'Attempted to access attempt_id 0 but it does not exist.')
 
     def test_get_exam_attempt(self):
+        """
+        Test Case for retrieving student proctored exam attempt status.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt.collection')
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertNotIn('exam_display_name', data)
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.user.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt.collection')
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['exam_display_name'], 'Test Exam')
+        self.assertEqual(data['low_threshold_sec'], 1080)
+        self.assertEqual(data['critically_low_threshold_sec'], 270)
+        # make sure we have the accessible human string
+        self.assertEqual(data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
+
+    def test_get_exam_attempt_with_non_staff_user(self):  # pylint: disable=invalid-name
         """
         Test Case for retrieving student proctored exam attempt status.
         """
@@ -1571,6 +1759,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         self.student_taking_exam = User()
         self.student_taking_exam.save()
 
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+
     def test_add_allowance_for_user(self):
         """
         Add allowance for a user for an exam.
@@ -1654,6 +1844,37 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_add_allowance_non_staff_user(self):  # pylint: disable=invalid-name
+        """
+        Test to add allowance with not staff/global user
+        returns forbidden response.
+        """
+        self.user.is_staff = False
+        self.user.save()
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+        # Create an exam.
+        timed_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=False
+        )
+        allowance_data = {
+            'exam_id': timed_exam.id,
+            'user_info': self.student_taking_exam.username,
+            'key': 'a_key',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 403)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
+
     def test_get_allowances_for_course(self):
         """
         Remove allowance for a user for an exam.
@@ -1686,6 +1907,107 @@ class TestExamAllowanceView(LoggedInTestCase):
         response_data = json.loads(response.content)
         self.assertEqual(len(response_data), 1)
         self.assertEqual(response_data[0]['proctored_exam']['course_id'], proctored_exam.course_id)
+        self.assertEqual(response_data[0]['key'], allowance_data['key'])
+
+    def test_get_allowance_non_staff_user(self):  # pylint: disable=invalid-name
+        """
+        Test to get allowance of a user with not staff/global user
+        returns forbidden response.
+        """
+        self.user.is_staff = False
+        self.user.save()
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=False
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_info': self.student_taking_exam.username,
+            'key': 'a_key',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # update the Instructor Mock service to return the course staff to False
+        # which will return in the Forbidden request.
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
+        )
+
+        self.assertEqual(response.status_code, 403)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
+
+    def test_get_timed_exam_allowances_for_course(self):  # pylint: disable=invalid-name
+        """
+        get the timed exam allowances for the course
+        """
+        self.user.is_staff = False
+        self.user.save()
+
+        # Create an timed exam.
+        timed_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=False
+        )
+        allowance_data = {
+            'exam_id': timed_exam.id,
+            'user_info': self.student_taking_exam.username,
+            'key': 'a_key',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Create proctored exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content1',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=True
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_info': self.student_taking_exam.username,
+            'key': 'a_key',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        # we should only get the timed exam allowance
+        # We are not logged in as a global user
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(response_data[0]['proctored_exam']['course_id'], timed_exam.course_id)
+        self.assertEqual(response_data[0]['proctored_exam']['content_id'], timed_exam.content_id)
         self.assertEqual(response_data[0]['key'], allowance_data['key'])
 
 

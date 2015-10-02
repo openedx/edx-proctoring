@@ -83,14 +83,18 @@ class ProctoredExam(TimeStampedModel):
         return proctored_exam
 
     @classmethod
-    def get_all_exams_for_course(cls, course_id, active_only=False):
+    def get_all_exams_for_course(cls, course_id, active_only=False, timed_exams_only=False):
         """
         Returns all exams for a give course
         """
-        result = cls.objects.filter(course_id=course_id)
+        filtered_query = Q(course_id=course_id)
+
         if active_only:
-            result = result.filter(is_active=True)
-        return result
+            filtered_query = filtered_query & Q(is_active=True)
+        if timed_exams_only:
+            filtered_query = filtered_query & Q(is_proctored=False)
+
+        return cls.objects.filter(filtered_query)
 
 
 class ProctoredExamStudentAttemptStatus(object):
@@ -355,20 +359,26 @@ class ProctoredExamStudentAttemptManager(models.Manager):
             exam_attempt_obj = None
         return exam_attempt_obj
 
-    def get_all_exam_attempts(self, course_id):
+    def get_all_exam_attempts(self, course_id, timed_exams_only=False):
         """
         Returns the Student Exam Attempts for the given course_id.
         """
+        filtered_query = Q(proctored_exam__course_id=course_id)
 
-        return self.filter(proctored_exam__course_id=course_id).order_by('-created')
+        if timed_exams_only:
+            filtered_query = filtered_query & Q(proctored_exam__is_proctored=False)
 
-    def get_filtered_exam_attempts(self, course_id, search_by):
+        return self.filter(filtered_query).order_by('-created')
+
+    def get_filtered_exam_attempts(self, course_id, search_by, timed_exams_only=False):
         """
         Returns the Student Exam Attempts for the given course_id filtered by search_by.
         """
         filtered_query = Q(proctored_exam__course_id=course_id) & (
             Q(user__username__contains=search_by) | Q(user__email__contains=search_by)
         )
+        if timed_exams_only:
+            filtered_query = filtered_query & Q(proctored_exam__is_proctored=False)
 
         return self.filter(filtered_query).order_by('-created')
 
@@ -605,11 +615,15 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         verbose_name = 'proctored allowance'
 
     @classmethod
-    def get_allowances_for_course(cls, course_id):
+    def get_allowances_for_course(cls, course_id, timed_exams_only=False):
         """
         Returns all the allowances for a course.
         """
-        return cls.objects.filter(proctored_exam__course_id=course_id)
+        filtered_query = Q(proctored_exam__course_id=course_id)
+        if timed_exams_only:
+            filtered_query = filtered_query & Q(proctored_exam__is_proctored=False)
+
+        return cls.objects.filter(filtered_query)
 
     @classmethod
     def get_allowance_for_user(cls, exam_id, user_id, key):
