@@ -2,7 +2,7 @@
 <div class="failure sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
-      This exam is proctored.
+      This exam is proctored
     {% endblocktrans %}
   </h3>
   <p>
@@ -39,10 +39,15 @@
       <i class="fa fa-arrow-circle-right"></i>
     <p>
       {% blocktrans %}
-        I am not interested in academic credit.
+        I understand that I am not eligible for academic credit.
       {% endblocktrans %}
     </p>
   </button>
+  <p>
+    {% blocktrans %}
+      If you have questions about the status of your requirements for course credit, contact {{ platform_name }} Support.
+    {% endblocktrans %}
+  </p>
 </div>
 {% include 'proctored_exam/confirm-decline.html' %}
 {% include 'proctored_exam/footer.html' %}
