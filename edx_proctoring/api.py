@@ -199,7 +199,7 @@ def add_allowance_for_user(exam_id, user_info, key, value):
     ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_info, key, value)
 
 
-def get_allowances_for_course(course_id, timed_exams_only):
+def get_allowances_for_course(course_id, timed_exams_only=False):
     """
     Get all the allowances for the course.
     """
@@ -805,7 +805,7 @@ def remove_exam_attempt(attempt_id):
         )
 
 
-def get_all_exams_for_course(course_id, timed_exams_only, active_only=False):
+def get_all_exams_for_course(course_id, timed_exams_only=False, active_only=False):
     """
     This method will return all exams for a course. This will return a list
     of dictionaries, whose schema is the same as what is returned in
