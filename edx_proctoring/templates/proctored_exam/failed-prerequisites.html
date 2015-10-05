@@ -1,0 +1,48 @@
+{% load i18n %}
+<div class="failure sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      This exam is proctored.
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% blocktrans %}
+    You have not completed the prerequisites for this exam. All requirements must be satisfied before you can take this proctored exam and be eligible for credit. See your <a href="{{progress_page_url}}">Progress</a> page for a list of requirements in the order that they must be completed.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+    You did not satisfy the following prerequisites:
+    {% endblocktrans %}
+    <ol style='list-style-type: disc'>
+    {% for requirement in prerequisite_status.failed_prerequisites %}
+      <li>
+        {% if requirement.jumpto_url %}
+          <a href='{{requirement.jumpto_url}}'>{{requirement.display_name}}</a>
+        {% else %}
+          {{requirement.display_name}}
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ol>
+  </p>
+  <p>
+    {% blocktrans %}
+    Due to unsatisfied prerequisites, you can only take this exam without proctoring.
+    {% endblocktrans %}
+  </p>
+
+  <button class="gated-sequence start-timed-exam" data-attempt-proctored=false>
+    <a>
+      {% trans "Take this exam without proctoring." %}
+    </a>
+      <i class="fa fa-arrow-circle-right"></i>
+    <p>
+      {% blocktrans %}
+        I am not interested in academic credit.
+      {% endblocktrans %}
+    </p>
+  </button>
+</div>
+{% include 'proctored_exam/confirm-decline.html' %}
+{% include 'proctored_exam/footer.html' %}

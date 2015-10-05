@@ -37,7 +37,9 @@ from edx_proctoring.api import (
     update_attempt_status,
     get_attempt_status_summary,
     update_exam_attempt,
-    _check_for_attempt_timeout
+    _check_for_attempt_timeout,
+    _get_ordered_prerequisites,
+    _are_prerequirements_satisfied,
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -118,6 +120,39 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+
+        self.prerequisites = [
+            {
+                'namespace': 'proctoring',
+                'name': 'proc1',
+                'order': 2,
+                'status': 'satisfied',
+            },
+            {
+                'namespace': 'reverification',
+                'name': 'rever1',
+                'order': 1,
+                'status': 'satisfied',
+            },
+            {
+                'namespace': 'grade',
+                'name': 'grade1',
+                'order': 0,
+                'status': 'pending',
+            },
+            {
+                'namespace': 'reverification',
+                'name': 'rever2',
+                'order': 3,
+                'status': 'failed',
+            },
+            {
+                'namespace': 'proctoring',
+                'name': 'proc2',
+                'order': 4,
+                'status': 'pending',
+            },
+        ]
 
     def _create_proctored_exam(self):
         """
@@ -756,14 +791,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIsNone(rendered_response)
 
     @ddt.data(
-        ('reverification', None, True, True, False),
-        ('reverification', 'failed', False, False, True),
-        ('reverification', 'satisfied', True, True, False),
-        ('grade', 'failed', True, False, False)
+        ('reverification', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
+        ('reverification', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
+        ('reverification', 'failed', 'You did not satisfy the following prerequisites', True),
+        ('reverification', 'satisfied', 'To be eligible to earn credit for this course', False),
+        ('proctored_exam', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
+        ('proctored_exam', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
+        ('proctored_exam', 'failed', 'You did not satisfy the following prerequisites', True),
+        ('proctored_exam', 'satisfied', 'To be eligible to earn credit for this course', False),
+        ('grade', 'failed', 'To be eligible to earn credit for this course', False)
     )
     @ddt.unpack
-    def test_prereq_scenarios(self, namespace, req_status, show_proctored,
-                              pre_create_attempt, mark_as_declined):
+    def test_prereq_scenarios(self, namespace, req_status, expected_content, should_see_prereq):
         """
         This test asserts that proctoring will not be displayed under the following
         conditions:
@@ -772,9 +811,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
 
         exam = get_exam_by_id(self.proctored_exam_id)
-
-        if pre_create_attempt:
-            create_exam_attempt(self.proctored_exam_id, self.user_id)
 
         # user hasn't attempted reverifications
         rendered_response = get_student_view(
@@ -791,22 +827,20 @@ class ProctoredExamApiTests(LoggedInTestCase):
                     'credit_requirement_status': [
                         {
                             'namespace': namespace,
+                            'name': 'foo',
+                            'display_name': 'Foo Requirement',
                             'status': req_status,
+                            'order': 0
                         }
                     ]
                 }
             }
         )
-        if show_proctored:
-            self.assertIsNotNone(rendered_response)
-        else:
-            self.assertIsNone(rendered_response)
 
-        # also the user should have been marked as declined in certain
-        # cases
-        if mark_as_declined:
-            attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
-            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
+        self.assertIn(expected_content, rendered_response)
+
+        if should_see_prereq:
+            self.assertIn('Foo Requirement', rendered_response)
 
     def test_student_view_non_student(self):
         """
@@ -2010,3 +2044,67 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIsNotNone(rendered_response)
         self.assertIn(self.footer_msg, rendered_response)
+
+    def test_requirement_status_order(self):
+        """
+        Make sure that we get a correct ordered list of all statuses sorted in the correct
+        order
+        """
+
+        # try unfiltered version first
+        ordered_list = _get_ordered_prerequisites(self.prerequisites)
+
+        self.assertEqual(len(ordered_list), 5)
+
+        # check the ordering
+        for idx in range(5):
+            self.assertEqual(ordered_list[idx]['order'], idx)
+
+        # now filter out the 'grade' namespace
+        ordered_list = _get_ordered_prerequisites(self.prerequisites, ['grade'])
+
+        self.assertEqual(len(ordered_list), 4)
+
+        # check the ordering
+        for idx in range(4):
+            # we +1 on the idx because we know we filtered out one
+            self.assertEqual(ordered_list[idx]['order'], idx + 1)
+
+        # check other expected ordering
+        self.assertEqual(ordered_list[0]['namespace'], 'reverification')
+        self.assertEqual(ordered_list[0]['name'], 'rever1')
+        self.assertEqual(ordered_list[1]['namespace'], 'proctoring')
+        self.assertEqual(ordered_list[1]['name'], 'proc1')
+        self.assertEqual(ordered_list[2]['namespace'], 'reverification')
+        self.assertEqual(ordered_list[2]['name'], 'rever2')
+        self.assertEqual(ordered_list[3]['namespace'], 'proctoring')
+        self.assertEqual(ordered_list[3]['name'], 'proc2')
+
+    @ddt.data(
+        ('rever1', True, 0, 0, 0),
+        ('proc1', True, 1, 0, 0),
+        ('rever2', True, 2, 0, 0),
+        ('proc2', False, 2, 1, 0),
+        ('unknown', False, 2, 1, 1),
+        (None, False, 2, 1, 1),
+    )
+    @ddt.unpack
+    def test_are_prerequisite_satisifed(self, content_id,
+                                        expected_are_prerequisites_satisifed,
+                                        expected_len_satisfied_prerequisites,
+                                        expected_len_failed_prerequisites,
+                                        expected_len_pending_prerequisites):
+        """
+        verify proper operation of the logic when computing is prerequisites are satisfied
+        """
+
+        results = _are_prerequirements_satisfied(
+            self.prerequisites,
+            content_id,
+            filter_out_namespaces=['grade']
+        )
+
+        self.assertEqual(results['are_prerequisites_satisifed'], expected_are_prerequisites_satisifed)
+        self.assertEqual(len(results['satisfied_prerequisites']), expected_len_satisfied_prerequisites)
+        self.assertEqual(len(results['failed_prerequisites']), expected_len_failed_prerequisites)
+        self.assertEqual(len(results['pending_prerequisites']), expected_len_pending_prerequisites)

@@ -22,6 +22,7 @@ class MockCreditService(object):
         """
         Initializer
         """
+        self.order = 0
         self.status = {
             'course_name': course_name,
             'enrollment_mode': enrollment_mode,
@@ -57,10 +58,13 @@ class MockCreditService(object):
                 'req_namespace': req_namespace,
                 'namespace': req_namespace,
                 'name': req_name,
-                'status': status
+                'status': status,
+                'order': self.order,
             })
         else:
             found[0]['status'] = status
+
+        self.order = self.order + 1
 
     # pylint: disable=unused-argument
     # pylint: disable=invalid-name

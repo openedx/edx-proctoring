@@ -895,21 +895,6 @@ def get_active_exams_for_user(user_id, course_id=None):
     return result
 
 
-def _check_credit_eligibility(credit_state):
-    """
-    Inspects the credit_state payload which
-    reflects status of all credit requirements
-    and returns True if all pre-requisites have
-    been passed and False if otherwise
-    """
-
-    # check both conditions
-    return (
-        _check_eligibility_of_enrollment_mode(credit_state) and
-        _check_eligibility_of_prerequisites(credit_state)
-    )
-
-
 def _check_eligibility_of_enrollment_mode(credit_state):
     """
     Inspects that the enrollment mode of the user
@@ -923,20 +908,138 @@ def _check_eligibility_of_enrollment_mode(credit_state):
     return credit_state['enrollment_mode'] == 'verified'
 
 
-def _check_eligibility_of_prerequisites(credit_state):
+def _get_ordered_prerequisites(prerequisites_statuses, filter_out_namespaces=None):
     """
-    Inspects that the user has completed all prerequiste
-    steps required to be allowed to take a proctored exam
+    Apply filter and ordering of requirements status in our credit_state dictionary. This will
+    return a list of statuses, filtered according to the filter_lambda (if non-None). We do this to ensure
+    that we check for satisfactory fulfillment of prerequistes that we do so IN THE RIGHT ORDER
     """
 
-    # also, if there are in-course reverifications requirements
-    # then make sure those has a 'satisfied' status
-    for requirement in credit_state['credit_requirement_status']:
-        if requirement['namespace'] == 'reverification':
-            if requirement['status'] == 'failed':
-                return False
+    _filter_out_namespaces = filter_out_namespaces if filter_out_namespaces else []
 
-    return True
+    filtered_list = [
+        status
+        for status in prerequisites_statuses
+        if status['namespace'] not in _filter_out_namespaces
+    ]
+    sorted_list = sorted(filtered_list, key=lambda status: status['order'])
+
+    return sorted_list
+
+
+def _are_prerequirements_satisfied(prerequisites_statuses, evaluate_for_requirement_name=None,
+                                   filter_out_namespaces=None):
+    """
+    Returns a dict about the fulfillment of any pre-requisites in order to this exam
+    as proctored. The pre-requisites are taken from the credit requirements table. So if ordering
+    of requirements are - say - ICRV1, Proctoring1, ICRV2, and Proctoring2, then the user cannot take
+    Proctoring2 until there is an explicit pass on ICRV1, Proctoring1, ICRV2...
+
+    NOTE: If evaluate_for_requirement_name=None that means check all requirements
+
+    Return (dict):
+
+        {
+            # If all prerequisites are satisfied
+            'are_prerequisites_satisifed': True/False,
+
+            # A list of prerequisites that have been satisfied
+            'satisfied_prerequisites': [...]
+
+            # A list of prerequisites that have failed
+            'failed_prerequisites': [....],
+
+            # A list of prerequisites that are still pending
+            'pending_prerequisites': [...],
+        }
+
+    NOTE: We filter out any 'grade' requirement since the student will most likely not have fulfilled
+    those requirements while he/she is in the course
+    """
+
+    satisfied_prerequisites = []
+    failed_prerequisites = []
+    pending_prerequisites = []
+
+    # insure an ordered and filtered list
+    # we remove 'grade' requirements since those cannot be
+    # satisfied while student is in the middle of a course
+    requirement_statuses = _get_ordered_prerequisites(
+        prerequisites_statuses,
+        filter_out_namespaces=filter_out_namespaces
+    )
+
+    # find ourselves in the list
+    ourself = None
+    if evaluate_for_requirement_name:
+        for idx, requirement in enumerate(requirement_statuses):
+            if requirement['name'] == evaluate_for_requirement_name:
+                ourself = requirement
+                break
+
+    # we are not in the list of requirements, look at all requirements
+    if not ourself:
+        idx = len(requirement_statuses)
+
+    # now that we have the index of ourselves in the ordered list, we can walk backwards
+    # and inspect all prerequisites
+
+    # we don't look at ourselves
+    idx = idx - 1
+    while idx >= 0:
+        requirement = requirement_statuses[idx]
+        status = requirement['status']
+        if status == 'satisfied':
+            satisfied_prerequisites.append(requirement)
+        elif status == 'failed':
+            failed_prerequisites.append(requirement)
+        else:
+            pending_prerequisites.append(requirement)
+
+        idx = idx - 1
+
+    return {
+        # all prequisites are satisfied if there are no failed or pending requirement
+        # statuses
+        'are_prerequisites_satisifed': (
+            not failed_prerequisites and not pending_prerequisites
+        ),
+        # note that we reverse the list here, because we assempled it by walking backwards
+        'satisfied_prerequisites': list(reversed(satisfied_prerequisites)),
+        'failed_prerequisites': list(reversed(failed_prerequisites)),
+        'pending_prerequisites': list(reversed(pending_prerequisites)),
+    }
+
+
+JUMPTO_SUPPORTED_NAMESPACES = [
+    'proctored_exam',
+    'reverification',
+]
+
+
+def _resolve_prerequisite_links(exam, prerequisites):
+    """
+    This will inject a jumpto URL into the list of prerequisites so that a user
+    can click through
+    """
+
+    for prerequisite in prerequisites:
+        jumpto_url = None
+        if prerequisite['namespace'] in JUMPTO_SUPPORTED_NAMESPACES and prerequisite['name']:
+            try:
+                jumpto_url = reverse(
+                    'courseware.views.jump_to',
+                    args=[exam['course_id'], prerequisite['name']]
+                )
+            except NoReverseMatch:
+                # we are allowing a failure here since we can't guarantee
+                # that we are running in-proc with the edx-platform LMS
+                # (for example unit tests)
+                pass
+
+        prerequisite['jumpto_url'] = jumpto_url
+
+    return prerequisites
 
 
 STATUS_SUMMARY_MAP = {
@@ -1041,7 +1144,7 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     # eligibility
     if credit_service and not exam['is_practice_exam']:
         credit_state = credit_service.get_credit_state(user_id, unicode(course_id))
-        if not _check_credit_eligibility(credit_state):
+        if not _check_eligibility_of_enrollment_mode(credit_state):
             return None
 
     attempt = get_exam_attempt(exam['id'], user_id)
@@ -1226,55 +1329,74 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     """
     student_view_template = None
 
+    credit_state = context.get('credit_state')
+
     # see if only 'verified' track students should see this *except* if it is a practice exam
-    check_mode_and_eligibility = (
+    check_mode = (
         settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
-        'credit_state' in context and
-        context['credit_state'] and not
-        exam['is_practice_exam']
+        credit_state
     )
 
-    attempt = None
-    if check_mode_and_eligibility:
-        credit_state = context['credit_state']
-
+    if check_mode:
         has_mode = _check_eligibility_of_enrollment_mode(credit_state)
-        has_prerequisites = False
-        if has_mode:
-            has_prerequisites = _check_eligibility_of_prerequisites(credit_state)
-
-        # see if the user has passed all pre-requisite credit eligibility
-        # checks, otherwise just show the user the exam unproctored
-        if not has_mode or not has_prerequisites:
-            # if we are in the right mode and if we don't have
-            # pre-requisites, then we implicitly decline the exam
-            if has_mode:
-                attempt = get_exam_attempt(exam_id, user_id)
-                if not attempt:
-                    # user hasn't a record of attempt, create one now
-                    # so we can mark it as declined
-                    create_exam_attempt(exam_id, user_id)
-
-                update_attempt_status(
-                    exam_id,
-                    user_id,
-                    ProctoredExamStudentAttemptStatus.declined,
-                    raise_if_not_found=False
-                )
-
-            # don't override context, let the courseware show
+        if not has_mode:
+            # user does not have the required enrollment mode
+            # so do not override view this is a quick exit
             return None
+
     attempt = get_exam_attempt(exam_id, user_id)
 
     attempt_status = attempt['status'] if attempt else None
 
     # if user has declined the attempt, then we don't show the
-    # proctored exam
+    # proctored exam, a quick exit....
     if attempt_status == ProctoredExamStudentAttemptStatus.declined:
         return None
 
     if not attempt_status:
-        student_view_template = 'proctored_exam/entrance.html'
+        # student has not started an attempt
+        # so, show them:
+        #       1) If there are failed prerequisites then block user and say why
+        #       2) If there are pending prerequisites then block user and allow them to remediate them
+        #       3) Otherwise - all prerequisites are satisfied - then give user
+        #          option to take exam as proctored
+
+        # get information about prerequisites
+
+        credit_requirement_status = (
+            credit_state.get('credit_requirement_status')
+            if credit_state else []
+        )
+
+        prerequisite_status = _are_prerequirements_satisfied(
+            credit_requirement_status,
+            evaluate_for_requirement_name=exam['content_id'],
+            filter_out_namespaces=['grade']
+        )
+
+        # add any prerequisite information, if applicable
+        context.update({
+            'prerequisite_status': prerequisite_status
+        })
+
+        if not prerequisite_status['are_prerequisites_satisifed']:
+            # do we have failed prerequisites? That takes priority
+            if prerequisite_status['failed_prerequisites']:
+                # Let's resolve the URLs to jump to this prequisite
+                prerequisite_status['failed_prerequisites'] = _resolve_prerequisite_links(
+                    exam,
+                    prerequisite_status['failed_prerequisites']
+                )
+                student_view_template = 'proctored_exam/failed-prerequisites.html'
+            else:
+                # Let's resolve the URLs to jump to this prequisite
+                prerequisite_status['pending_prerequisites'] = _resolve_prerequisite_links(
+                    exam,
+                    prerequisite_status['pending_prerequisites']
+                )
+                student_view_template = 'proctored_exam/pending-prerequisites.html'
+        else:
+            student_view_template = 'proctored_exam/entrance.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should override the view
         return None
