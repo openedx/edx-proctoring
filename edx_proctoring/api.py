@@ -805,7 +805,7 @@ def remove_exam_attempt(attempt_id):
         )
 
 
-def get_all_exams_for_course(course_id, timed_exams_only):
+def get_all_exams_for_course(course_id, timed_exams_only, active_only=False):
     """
     This method will return all exams for a course. This will return a list
     of dictionaries, whose schema is the same as what is returned in
@@ -829,7 +829,11 @@ def get_all_exams_for_course(course_id, timed_exams_only):
     ..
     ]
     """
-    exams = ProctoredExam.get_all_exams_for_course(course_id, timed_exams_only=timed_exams_only)
+    exams = ProctoredExam.get_all_exams_for_course(
+        course_id,
+        active_only=active_only,
+        timed_exams_only=timed_exams_only
+    )
 
     return [ProctoredExamSerializer(proctored_exam).data for proctored_exam in exams]
 

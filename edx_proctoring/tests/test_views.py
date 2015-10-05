@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, invalid-name
 """
 All tests for the proctored_exams.py
 """
@@ -323,7 +323,8 @@ class ProctoredExamViewTests(LoggedInTestCase):
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
-            time_limit_mins=90
+            time_limit_mins=90,
+            is_active=True
         )
 
         response = self.client.get(
@@ -1771,7 +1772,8 @@ class TestExamAllowanceView(LoggedInTestCase):
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
-            time_limit_mins=90
+            time_limit_mins=90,
+            is_active=True
         )
         allowance_data = {
             'exam_id': proctored_exam.id,
@@ -1795,7 +1797,8 @@ class TestExamAllowanceView(LoggedInTestCase):
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
-            time_limit_mins=90
+            time_limit_mins=90,
+            is_active=True
         )
         allowance_data = {
             'exam_id': proctored_exam.id,
@@ -1812,6 +1815,33 @@ class TestExamAllowanceView(LoggedInTestCase):
         self.assertEqual(len(response_data), 1)
         self.assertEqual(response_data['detail'], u"Cannot find user against invalid_user")
 
+    def test_add_allowance_for_inactive_exam(self):
+        """
+        Adding allowance for an inactive exam returns a 400 error.
+        """
+        # Create an inactive exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=False
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_info': self.student_taking_exam.username,
+            'key': 'a_key',
+            'value': '30'
+        }
+        # Try to add an allowance
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        # Returns a 400 status.
+        self.assertEqual(response.status_code, 400)
+
     def test_remove_allowance_for_user(self):
         """
         Remove allowance for a user for an exam.
@@ -1822,7 +1852,8 @@ class TestExamAllowanceView(LoggedInTestCase):
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
-            time_limit_mins=90
+            time_limit_mins=90,
+            is_active=True
         )
         allowance_data = {
             'exam_id': proctored_exam.id,
@@ -1877,7 +1908,7 @@ class TestExamAllowanceView(LoggedInTestCase):
 
     def test_get_allowances_for_course(self):
         """
-        Remove allowance for a user for an exam.
+        Get allowances for a user for an exam.
         """
         # Create an exam.
         proctored_exam = ProctoredExam.objects.create(
@@ -1885,7 +1916,8 @@ class TestExamAllowanceView(LoggedInTestCase):
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
-            time_limit_mins=90
+            time_limit_mins=90,
+            is_active=True
         )
         allowance_data = {
             'exam_id': proctored_exam.id,
@@ -1923,6 +1955,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             exam_name='Test Exam',
             external_id='123aXqe3',
             time_limit_mins=90,
+            is_active=True,
             is_proctored=False
         )
         allowance_data = {
@@ -1962,6 +1995,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             exam_name='Test Exam',
             external_id='123aXqe3',
             time_limit_mins=90,
+            is_active=True,
             is_proctored=False
         )
         allowance_data = {
@@ -1983,6 +2017,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             exam_name='Test Exam',
             external_id='123aXqe3',
             time_limit_mins=90,
+            is_active=True,
             is_proctored=True
         )
         allowance_data = {
@@ -2009,6 +2044,84 @@ class TestExamAllowanceView(LoggedInTestCase):
         self.assertEqual(response_data[0]['proctored_exam']['course_id'], timed_exam.course_id)
         self.assertEqual(response_data[0]['proctored_exam']['content_id'], timed_exam.content_id)
         self.assertEqual(response_data[0]['key'], allowance_data['key'])
+
+    def test_get_allowances_for_inactive_exam(self):
+        """
+        Get allowances for a for an inactive exam should be allowed.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_info': self.student_taking_exam.username,
+            'key': 'a_key',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # now make the exam inactive
+        proctored_exam.is_active = False
+        proctored_exam.save()
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(response_data[0]['proctored_exam']['course_id'], proctored_exam.course_id)
+        self.assertEqual(response_data[0]['key'], allowance_data['key'])
+
+    def test_remove_allowance_for_inactive_exam(self):
+        """
+        Removing allowance for a user for an inactive exam should be allowed.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_info': self.student_taking_exam.email,
+            'key': 'a_key',
+            'value': '30'
+        }
+
+        # Add allowance
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        allowance_data.pop('value')
+
+        # now make the exam inactive
+        proctored_exam.is_active = False
+        proctored_exam.save()
+
+        response = self.client.delete(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 class TestActiveExamsForUserView(LoggedInTestCase):
