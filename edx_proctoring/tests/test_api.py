@@ -726,6 +726,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     @ddt.data(
         ('reverification', None, True, True, False),
         ('reverification', 'failed', False, False, True),
+        ('reverification', 'failed', False, True, False),
         ('reverification', 'satisfied', True, True, False),
         ('grade', 'failed', True, False, False)
     )
@@ -775,6 +776,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
         if mark_as_declined:
             attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
             self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
+        else:
+            attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
+            if attempt:
+                self.assertNotEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
 
     def test_student_view_non_student(self):
         """
