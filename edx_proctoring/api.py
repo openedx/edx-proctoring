@@ -1124,12 +1124,12 @@ def get_student_view(user_id, course_id, content_id,
                     # so we can mark it as declined
                     create_exam_attempt(exam_id, user_id)
 
-                update_attempt_status(
-                    exam_id,
-                    user_id,
-                    ProctoredExamStudentAttemptStatus.declined,
-                    raise_if_not_found=False
-                )
+                    update_attempt_status(
+                        exam_id,
+                        user_id,
+                        ProctoredExamStudentAttemptStatus.declined,
+                        raise_if_not_found=False
+                    )
 
             # don't override context, let the courseware show
             return None
