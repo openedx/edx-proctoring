@@ -803,7 +803,9 @@ class SoftwareSecureTests(TestCase):
 
         # look at the attempt again, since it moved into Archived state
         # then it should still remain unchanged
-        archived_attempt = ProctoredExamStudentAttemptHistory.objects.get(attempt_code=attempt['attempt_code'])
+        archived_attempt = ProctoredExamStudentAttemptHistory.objects.filter(
+            attempt_code=attempt['attempt_code']
+        ).latest('created')
 
         self.assertEqual(archived_attempt.status, attempt['status'])
 
