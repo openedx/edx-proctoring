@@ -110,7 +110,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     """
 
     readonly_fields = [video_url_for_review, 'attempt_code', 'exam', 'student', 'reviewed_by', 'modified']
-    list_filter = ['review_status', 'exam__course_id', 'exam__exam_name', ReviewListFilter]
+    list_filter = [ReviewListFilter, 'review_status', 'exam__course_id', 'exam__exam_name']
     list_select_related = True
     search_fields = ['student__username', 'attempt_code']
     form = ProctoredExamSoftwareSecureReviewForm
