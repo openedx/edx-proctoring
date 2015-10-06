@@ -724,14 +724,19 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIsNone(rendered_response)
 
     @ddt.data(
-        ('reverification', None, True, True, False),
-        ('reverification', 'failed', False, False, True),
-        ('reverification', 'failed', False, True, False),
-        ('reverification', 'satisfied', True, True, False),
-        ('grade', 'failed', True, False, False)
+        (True, 'reverification', None, True, True, False),
+        (True, 'reverification', 'failed', False, False, True),
+        (True, 'reverification', 'failed', True, True, False),
+        (True, 'reverification', 'satisfied', True, True, False),
+        (True, 'grade', 'failed', True, False, False),
+        (False, 'reverification', None, True, True, False),
+        (False, 'reverification', 'failed', True, False, False),
+        (False, 'reverification', 'failed', True, True, False),
+        (False, 'reverification', 'satisfied', True, True, False),
+        (False, 'grade', 'failed', True, False, False),
     )
     @ddt.unpack
-    def test_prereq_scenarios(self, namespace, req_status, show_proctored,
+    def test_prereq_scenarios(self, enforce_prereq, namespace, req_status, show_proctored,
                               pre_create_attempt, mark_as_declined):
         """
         This test asserts that proctoring will not be displayed under the following
@@ -740,46 +745,47 @@ class ProctoredExamApiTests(LoggedInTestCase):
         - Verified student has not completed all 'reverification' requirements
         """
 
-        exam = get_exam_by_id(self.proctored_exam_id)
+        with patch('edx_proctoring.constants.ENFORCE_PREREQUISITES', enforce_prereq):
+            exam = get_exam_by_id(self.proctored_exam_id)
 
-        if pre_create_attempt:
-            create_exam_attempt(self.proctored_exam_id, self.user_id)
+            if pre_create_attempt:
+                create_exam_attempt(self.proctored_exam_id, self.user_id)
 
-        # user hasn't attempted reverifications
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=exam['course_id'],
-            content_id=exam['content_id'],
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'is_practice_exam': False,
-                'credit_state': {
-                    'enrollment_mode': 'verified',
-                    'credit_requirement_status': [
-                        {
-                            'namespace': namespace,
-                            'status': req_status,
-                        }
-                    ]
+            # user hasn't attempted reverifications
+            rendered_response = get_student_view(
+                user_id=self.user_id,
+                course_id=exam['course_id'],
+                content_id=exam['content_id'],
+                context={
+                    'is_proctored': True,
+                    'display_name': self.exam_name,
+                    'default_time_limit_mins': 90,
+                    'is_practice_exam': False,
+                    'credit_state': {
+                        'enrollment_mode': 'verified',
+                        'credit_requirement_status': [
+                            {
+                                'namespace': namespace,
+                                'status': req_status,
+                            }
+                        ]
+                    }
                 }
-            }
-        )
-        if show_proctored:
-            self.assertIsNotNone(rendered_response)
-        else:
-            self.assertIsNone(rendered_response)
+            )
+            if show_proctored:
+                self.assertIsNotNone(rendered_response)
+            else:
+                self.assertIsNone(rendered_response)
 
-        # also the user should have been marked as declined in certain
-        # cases
-        if mark_as_declined:
-            attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
-            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
-        else:
-            attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
-            if attempt:
-                self.assertNotEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
+            # also the user should have been marked as declined in certain
+            # cases
+            if mark_as_declined:
+                attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
+                self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
+            else:
+                attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
+                if attempt:
+                    self.assertNotEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
 
     def test_student_view_non_student(self):
         """
