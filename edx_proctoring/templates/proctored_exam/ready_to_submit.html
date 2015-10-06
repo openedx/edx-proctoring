@@ -12,21 +12,17 @@
       as well as achieve a final grade that meets credit requirements for the course.
     {% endblocktrans %}
   </p>
-  <P>
-    <button type="button" name="submit-proctored-exam" class="exam-action-button btn btn-primary btn-base" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+  <button type="button" name="submit-proctored-exam" class="exam-action-button btn btn-primary btn-base" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+    {% blocktrans %}
+      Yes, end my proctored exam
+    {% endblocktrans %}
+  </button>
+  {% if does_time_remain %}
+    <button type="button" name="goback-proctored-exam" class="exam-action-button btn btn-secondary btn-base" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
       {% blocktrans %}
-        Yes, end my proctored exam
+        No, I'd like to continue working
       {% endblocktrans %}
     </button>
-  </P>
-  {% if does_time_remain %}
-    <P>
-      <button type="button" name="goback-proctored-exam" class="exam-action-button btn btn-primary btn-base" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
-        {% blocktrans %}
-          No, I'd like to continue working
-        {% endblocktrans %}
-      </button>
-    </P>
   {% endif %}
 </div>
 <script type="text/javascript">
