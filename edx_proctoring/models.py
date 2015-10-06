@@ -194,10 +194,10 @@ class ProctoredExamStudentAttemptStatus(object):
     def is_a_cascadable_failure(cls, to_status):
         """
         Returns a boolean if the passed in to_status has a failure that needs to be cascaded
-        to other attempts.
+        to other unattempted exams.
         """
         return to_status in [
-            cls.rejected, cls.declined
+            cls.declined
         ]
 
     @classmethod

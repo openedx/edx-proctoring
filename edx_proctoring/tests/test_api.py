@@ -1426,13 +1426,13 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.rejected,
             False,
             None,
-            ProctoredExamStudentAttemptStatus.declined
+            None
         ),
         (
             ProctoredExamStudentAttemptStatus.rejected,
             True,
             ProctoredExamStudentAttemptStatus.created,
-            ProctoredExamStudentAttemptStatus.declined
+            ProctoredExamStudentAttemptStatus.created
         ),
         (
             ProctoredExamStudentAttemptStatus.rejected,
@@ -1511,8 +1511,11 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         # make sure an attempt was made for second_exam
         second_exam_attempt = get_exam_attempt(second_exam_id, self.user_id)
-        self.assertIsNotNone(second_exam_attempt)
-        self.assertEqual(second_exam_attempt['status'], expected_second_status)
+        if expected_second_status:
+            self.assertIsNotNone(second_exam_attempt)
+            self.assertEqual(second_exam_attempt['status'], expected_second_status)
+        else:
+            self.assertIsNone(second_exam_attempt)
 
         # no auto-generated attempts for practice and timed exams
         self.assertIsNone(get_exam_attempt(practice_exam_id, self.user_id))
