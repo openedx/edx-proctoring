@@ -1108,31 +1108,28 @@ def get_student_view(user_id, course_id, content_id,
         credit_state = context['credit_state']
 
         has_mode = _check_eligibility_of_enrollment_mode(credit_state)
-        has_prerequisites = False
-        if has_mode:
-            has_prerequisites = _check_eligibility_of_prerequisites(credit_state)
+        if not has_mode:
+            return None
+
+        has_prerequisites = _check_eligibility_of_prerequisites(credit_state)
 
         # see if the user has passed all pre-requisite credit eligibility
         # checks, otherwise just show the user the exam unproctored
-        if not has_mode or not has_prerequisites:
+        if not has_prerequisites and constants.ENFORCE_PREREQUISITES:
             # if we are in the right mode and if we don't have
             # pre-requisites, then we implicitly decline the exam
-            if has_mode:
-                attempt = get_exam_attempt(exam_id, user_id)
-                if not attempt:
-                    # user hasn't a record of attempt, create one now
-                    # so we can mark it as declined
-                    create_exam_attempt(exam_id, user_id)
+            attempt = get_exam_attempt(exam_id, user_id)
+            if not attempt:
+                # user hasn't a record of attempt, create one now
+                # so we can mark it as declined
+                create_exam_attempt(exam_id, user_id)
 
-                    update_attempt_status(
-                        exam_id,
-                        user_id,
-                        ProctoredExamStudentAttemptStatus.declined,
-                        raise_if_not_found=False
-                    )
-
-            # don't override context, let the courseware show
-            return None
+                update_attempt_status(
+                    exam_id,
+                    user_id,
+                    ProctoredExamStudentAttemptStatus.declined,
+                    raise_if_not_found=False
+                )
 
     attempt = get_exam_attempt(exam_id, user_id)
 
