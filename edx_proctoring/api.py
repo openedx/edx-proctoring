@@ -643,11 +643,11 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
 
         # we just want other exams which are proctored and are not practice
         exams = [
-            exam
-            for exam in _exams
+            _exam
+            for _exam in _exams
             if (
-                exam.content_id != exam_attempt_obj.proctored_exam.content_id and
-                exam.is_proctored and not exam.is_practice_exam
+                _exam.content_id != exam_attempt_obj.proctored_exam.content_id and
+                _exam.is_proctored and not _exam.is_practice_exam
             )
         ]
 
