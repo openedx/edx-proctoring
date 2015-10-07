@@ -525,6 +525,9 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     # this ID might point to a record that is in the History table
     review_policy_id = models.IntegerField(null=True)
 
+    last_poll_timestamp = models.DateTimeField(null=True)
+    last_poll_ipaddr = models.CharField(max_length=32, null=True)
+
     @classmethod
     def get_exam_attempt_by_code(cls, attempt_code):
         """
@@ -537,9 +540,10 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
         # there are any
         exam_attempt_obj = None
 
-        items = cls.objects.filter(attempt_code=attempt_code).order_by("-created")
-        if items:
-            exam_attempt_obj = items[0]
+        try:
+            exam_attempt_obj = cls.objects.filter(attempt_code=attempt_code).latest("created")
+        except cls.DoesNotExist:  # pylint: disable=no-member
+            pass
 
         return exam_attempt_obj
 
@@ -570,8 +574,46 @@ def on_attempt_deleted(sender, instance, **kwargs):  # pylint: disable=unused-ar
         is_sample_attempt=instance.is_sample_attempt,
         student_name=instance.student_name,
         review_policy_id=instance.review_policy_id,
+        last_poll_timestamp=instance.last_poll_timestamp,
+        last_poll_ipaddr=instance.last_poll_ipaddr,
+
     )
     archive_object.save()
+
+
+@receiver(pre_save, sender=ProctoredExamStudentAttempt)
+def on_attempt_updated(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    Archive the exam attempt whenever the attempt status is about to be
+    modified. Make a new entry with the previous value of the status in the
+    ProctoredExamStudentAttemptHistory table.
+    """
+
+    if instance.id:
+        # on an update case, get the original
+        # and see if the status has changed, if so, then we need
+        # to archive it
+        original = ProctoredExamStudentAttempt.objects.get(id=instance.id)
+
+        if original.status != instance.status:
+            archive_object = ProctoredExamStudentAttemptHistory(
+                user=original.user,
+                attempt_id=original.id,
+                proctored_exam=original.proctored_exam,
+                started_at=original.started_at,
+                completed_at=original.completed_at,
+                attempt_code=original.attempt_code,
+                external_id=original.external_id,
+                allowed_time_limit_mins=original.allowed_time_limit_mins,
+                status=original.status,
+                taking_as_proctored=original.taking_as_proctored,
+                is_sample_attempt=original.is_sample_attempt,
+                student_name=original.student_name,
+                review_policy_id=original.review_policy_id,
+                last_poll_timestamp=original.last_poll_timestamp,
+                last_poll_ipaddr=original.last_poll_ipaddr,
+            )
+            archive_object.save()
 
 
 class QuerySetWithUpdateOverride(models.query.QuerySet):

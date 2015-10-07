@@ -1,6 +1,7 @@
 """
 All tests for the models.py
 """
+# pylint: disable=invalid-name
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
@@ -9,6 +10,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptHistory,
     ProctoredExamReviewPolicy,
     ProctoredExamReviewPolicyHistory,
+    ProctoredExamStudentAttemptStatus,
 )
 
 from .utils import (
@@ -173,6 +175,52 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
 
         deleted_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
         self.assertEqual(deleted_item.student_name, "John. D Updated")
+
+    def test_update_proctored_exam_attempt(self):
+        """
+        Deleting the proctored exam attempt creates an entry in the history table.
+        """
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='test_course',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt = ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=proctored_exam.id,
+            user_id=1,
+            status=ProctoredExamStudentAttemptStatus.created,
+            student_name="John. D",
+            allowed_time_limit_mins=10,
+            attempt_code="123456",
+            taking_as_proctored=True,
+            is_sample_attempt=True,
+            external_id=1
+        )
+
+        # No entry in the History table on creation of the Allowance entry.
+        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
+        self.assertEqual(len(attempt_history), 0)
+
+        # re-saving, but not changing status should not make an archive copy
+        attempt.student_name = 'John. D Updated'
+        attempt.save()
+
+        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
+        self.assertEqual(len(attempt_history), 0)
+
+        # change status...
+        attempt.status = ProctoredExamStudentAttemptStatus.started
+        attempt.save()
+
+        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
+        self.assertEqual(len(attempt_history), 1)
+
+        # make sure we can ready it back with helper class method
+        updated_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
+        self.assertEqual(updated_item.student_name, "John. D Updated")
+        self.assertEqual(updated_item.status, ProctoredExamStudentAttemptStatus.created)
 
     def test_get_exam_attempts(self):
         """
