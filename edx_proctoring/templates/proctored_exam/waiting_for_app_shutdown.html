@@ -1,0 +1,46 @@
+{% load i18n %}
+<div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      You have not yet submitted this proctored exam
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% blocktrans %}
+      Make sure you return to the proctoring software and select <strong> Quit </strong> to end proctoring
+      and submit your exam.
+    {% endblocktrans %}
+  </p>
+
+  <p>
+    {% blocktrans %}
+      If you have questions about the status of your proctored exam results, contact {{ platform_name }} Support.
+    {% endblocktrans %}
+  </p>
+</div>
+
+<script type="text/javascript">
+  var _waiting_for_app_timeout = null;
+
+  $(document).ready(function(){
+    _waiting_for_app_timeout = setInterval(
+      poll_exam_started,
+      1000
+    );
+  });
+
+  function poll_exam_started() {
+    var url = '{{ exam_started_poll_url }}';
+    $.ajax(url).success(function(data){
+      if (data.status === 'submitted') {
+        if (_waiting_for_app_timeout != null) {
+          clearInterval(_waiting_for_app_timeout)
+        }
+        // we've state transitioned, so refresh the page
+        // to reflect the new state (which will expose the test)
+        location.reload();
+      }
+    });
+  }
+
+</script>

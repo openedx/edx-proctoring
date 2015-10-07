@@ -11,6 +11,7 @@ var edx = edx || {};
         ready_to_start: gettext('Ready to start'),
         started: gettext('Started'),
         ready_to_submit: gettext('Ready to submit'),
+        waiting_for_app_timeout: gettext('Pending Submission'),
         declined: gettext('Declined'),
         timed_out: gettext('Timed out'),
         submitted: gettext('Submitted'),
