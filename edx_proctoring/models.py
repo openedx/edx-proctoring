@@ -584,8 +584,9 @@ def on_attempt_deleted(sender, instance, **kwargs):  # pylint: disable=unused-ar
 @receiver(pre_save, sender=ProctoredExamStudentAttempt)
 def on_attempt_updated(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """
-    Archive the exam attempt when the item is about to be deleted
-    Make a clone and populate in the History table
+    Archive the exam attempt whenever the attempt status is about to be
+    modified. Make a new entry with the previous value of the status in the
+    ProctoredExamStudentAttemptHistory table.
     """
 
     if instance.id:
