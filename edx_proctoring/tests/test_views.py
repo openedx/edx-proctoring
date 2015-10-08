@@ -5,7 +5,7 @@ All tests for the proctored_exams.py
 import json
 import pytz
 import ddt
-from mock import Mock
+from mock import Mock, patch
 from freezegun import freeze_time
 from httmock import HTTMock
 from string import Template  # pylint: disable=deprecated-module
@@ -19,6 +19,9 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttemptStatus,
+)
+from edx_proctoring.exceptions import (
+    ProctoredExamIllegalStatusTransition,
 )
 from edx_proctoring.views import require_staff, require_course_or_global_staff
 from edx_proctoring.api import (
@@ -408,6 +411,34 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
+    def _create_exam_attempt(self):
+        """
+        Create and start the exam attempt, and return the exam attempt object
+        """
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+
+        # Starting exam attempt
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+
+        return ProctoredExamStudentAttempt.objects.get_exam_attempt(proctored_exam.id, self.user.id)
+
     def test_start_exam_create(self):
         """
         Start an exam (create an exam attempt)
@@ -616,6 +647,51 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             self.assertEqual(response.status_code, 200)
             response_data = json.loads(response.content)
             self.assertEqual(response_data['status'], ProctoredExamStudentAttemptStatus.error)
+
+    def test_attempt_status_waiting_for_app_shutdown(self):
+        """
+        Test to confirm that attempt status is submitted when proctored client is shutdown
+        """
+
+        exam_attempt = self._create_exam_attempt()
+        exam_attempt.last_poll_timestamp = datetime.now(pytz.UTC)
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
+        exam_attempt.save()
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[exam_attempt.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertFalse(response_data['client_has_shutdown'])
+
+        # now reset the time to 2 minutes in the future.
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
+        with freeze_time(reset_time):
+            response = self.client.get(
+                reverse('edx_proctoring.proctored_exam.attempt', args=[exam_attempt.id])
+            )
+            self.assertEqual(response.status_code, 200)
+            response_data = json.loads(response.content)
+            self.assertTrue(response_data['client_has_shutdown'])
+
+    def test_attempt_status_for_exception(self):
+        """
+        Test to confirm that exception will not effect the API call
+        """
+        exam_attempt = self._create_exam_attempt()
+        exam_attempt.last_poll_timestamp = datetime.now(pytz.UTC)
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.verified
+        exam_attempt.save()
+
+        # now reset the time to 2 minutes in the future.
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
+        with patch('edx_proctoring.api.update_attempt_status', Mock(side_effect=ProctoredExamIllegalStatusTransition)):
+            with freeze_time(reset_time):
+                response = self.client.get(
+                    reverse('edx_proctoring.proctored_exam.attempt', args=[exam_attempt.id])
+                )
+                self.assertEqual(response.status_code, 200)
 
     def test_attempt_status_stickiness(self):
         """

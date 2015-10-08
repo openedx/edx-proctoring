@@ -109,7 +109,7 @@ class ProctoredExamStudentAttemptStatus(object):
     might change over time.
     """
 
-    # the student is eligible to decide if he/she wants to persue credit
+    # the student is eligible to decide if he/she wants to pursue credit
     eligible = 'eligible'
 
     # the attempt record has been created, but the exam has not yet

@@ -38,7 +38,10 @@ from edx_proctoring.serializers import (
     ProctoredExamStudentAttemptSerializer,
     ProctoredExamStudentAllowanceSerializer,
 )
-from edx_proctoring.utils import humanized_time
+from edx_proctoring.utils import (
+    humanized_time,
+    has_client_app_shutdown
+)
 
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.runtime import get_runtime_service
@@ -1312,7 +1315,10 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.error:
         student_view_template = 'practice_exam/error.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
-        student_view_template = 'practice_exam/submitted.html'
+        if has_client_app_shutdown(attempt):
+            student_view_template = 'practice_exam/submitted.html'
+        else:
+            student_view_template = 'proctored_exam/waiting_for_app_shutdown.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
@@ -1414,7 +1420,10 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.timed_out:
         raise NotImplementedError('There is no defined rendering for ProctoredExamStudentAttemptStatus.timed_out!')
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
-        student_view_template = 'proctored_exam/submitted.html'
+        if has_client_app_shutdown(attempt):
+            student_view_template = 'proctored_exam/submitted.html'
+        else:
+            student_view_template = 'proctored_exam/waiting_for_app_shutdown.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.verified:
         student_view_template = 'proctored_exam/verified.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.rejected:
