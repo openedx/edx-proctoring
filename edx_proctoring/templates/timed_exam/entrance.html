@@ -8,14 +8,18 @@
   <p>
     {% trans "This exam has a time limit associated with it." %}
     <strong>
-      {% trans "To pass this exam you must complete the problems in the time allowed." %}
+      {% trans "To pass this exam, you must complete the problems in the time allowed." %}
     </strong>
-    {% trans "As soon as you indicate that you are ready to start the exam, you will have "%} {{total_time|lower}} {% trans " to complete the exam." %}
+    {% trans "After you select " %}
+    <strong>
+      {% trans "I am ready to start this timed exam" %}
+    </strong>
+    {% trans ", you will have "%} {{total_time|lower}} {% trans " to complete and submit the exam." %}
   </p>
   <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
     <a>
       {% blocktrans %}
-        I'm ready! Start this timed exam.
+        I am ready to start this timed exam.
       {% endblocktrans %}
       <i class="fa fa-arrow-circle-right"></i>
     </a>
@@ -60,8 +64,8 @@
           var msg = gettext(
             "There has been a problem starting your exam.\n\n" +
             "Possible reasons are that your account has not been fully activated,\n" +
-            "you have are experiencing a network connection problem, or there has been\n" +
-            "a service disruption. Please check these and try again."
+            "you are experiencing a network connection problem, or there has been\n" +
+            "a service disruption. Please check these potential problems and try again."
           );
           alert(msg);
         });

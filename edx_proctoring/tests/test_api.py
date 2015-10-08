@@ -1345,7 +1345,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     @ddt.data(
         (
             ProctoredExamStudentAttemptStatus.ready_to_submit,
-            'Are you sure you want to end your timed exam?'
+            'Are you sure that you want to submit your timed exam?'
         ),
         (
             ProctoredExamStudentAttemptStatus.submitted,
