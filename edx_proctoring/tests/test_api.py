@@ -105,6 +105,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.chose_proctored_exam_msg = 'Follow these steps to set up and start your proctored exam'
         self.proctored_exam_optout_msg = 'Take this exam as an open exam instead'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
+        self.proctored_exam_waiting_for_app_shutdown_msg = 'You are about to complete your proctored exam'
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
         self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
         self.proctored_exam_rejected_msg = 'Your proctoring session was reviewed and did not pass requirements'
@@ -243,6 +244,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         return ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=self.practice_exam_id,
+            taking_as_proctored=True,
             user_id=self.user_id,
             external_id=self.external_id,
             started_at=started_at if started_at else datetime.now(pytz.UTC),
@@ -1067,6 +1069,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         exam_attempt = self._create_started_exam_attempt()
         exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
+        exam_attempt.last_poll_timestamp = datetime.now(pytz.UTC)
         exam_attempt.save()
 
         rendered_response = get_student_view(
@@ -1079,7 +1082,21 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'default_time_limit_mins': 90
             }
         )
-        self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
+        self.assertIn(self.proctored_exam_waiting_for_app_shutdown_msg, rendered_response)
+
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
+        with freeze_time(reset_time):
+            rendered_response = get_student_view(
+                user_id=self.user_id,
+                course_id=self.course_id,
+                content_id=self.content_id,
+                context={
+                    'is_proctored': True,
+                    'display_name': self.exam_name,
+                    'default_time_limit_mins': 90
+                }
+            )
+            self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
 
     def test_get_studentview_submitted_status_practiceexam(self):
         """
@@ -1087,6 +1104,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         exam_attempt = self._create_started_practice_exam_attempt()
         exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
+        exam_attempt.last_poll_timestamp = datetime.now(pytz.UTC)
         exam_attempt.save()
 
         rendered_response = get_student_view(
@@ -1099,7 +1117,21 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'default_time_limit_mins': 90
             }
         )
-        self.assertIn(self.practice_exam_submitted_msg, rendered_response)
+        self.assertIn(self.proctored_exam_waiting_for_app_shutdown_msg, rendered_response)
+
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
+        with freeze_time(reset_time):
+            rendered_response = get_student_view(
+                user_id=self.user_id,
+                course_id=self.course_id,
+                content_id=self.content_id_practice,
+                context={
+                    'is_proctored': True,
+                    'display_name': self.exam_name,
+                    'default_time_limit_mins': 90
+                }
+            )
+            self.assertIn(self.practice_exam_submitted_msg, rendered_response)
 
     def test_get_studentview_created_status_practiceexam(self):
         """
@@ -2046,7 +2078,25 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIsNotNone(rendered_response)
-        self.assertIn(self.footer_msg, rendered_response)
+        if status == ProctoredExamStudentAttemptStatus.submitted:
+            exam_attempt.last_poll_timestamp = datetime.now(pytz.UTC)
+            exam_attempt.save()
+
+            reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
+            with freeze_time(reset_time):
+                rendered_response = get_student_view(
+                    user_id=self.user_id,
+                    course_id=self.course_id,
+                    content_id=self.content_id,
+                    context={
+                        'is_proctored': True,
+                        'display_name': self.exam_name,
+                        'default_time_limit_mins': 90
+                    }
+                )
+                self.assertIn(self.footer_msg, rendered_response)
+        else:
+            self.assertIn(self.footer_msg, rendered_response)
 
     def test_requirement_status_order(self):
         """

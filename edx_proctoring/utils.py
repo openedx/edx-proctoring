@@ -15,6 +15,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptHistory,
 )
+from edx_proctoring import constants
 
 log = logging.getLogger(__name__)
 
@@ -114,3 +115,16 @@ def locate_attempt_by_attempt_code(attempt_code):
             log.error(err_msg)
 
     return (attempt_obj, is_archived_attempt)
+
+
+def has_client_app_shutdown(attempt):
+    """
+    Returns True if the client app has shut down, False otherwise
+    """
+
+    # we never heard from the client, so it must not have started
+    if not attempt['last_poll_timestamp']:
+        return True
+
+    elapsed_time = (datetime.now(pytz.UTC) - attempt['last_poll_timestamp']).total_seconds()
+    return elapsed_time > constants.SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD
