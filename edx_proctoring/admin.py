@@ -113,6 +113,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     list_filter = [ReviewListFilter, 'review_status', 'exam__course_id', 'exam__exam_name']
     list_select_related = True
     search_fields = ['student__username', 'attempt_code']
+    ordering = ['-modified']
     form = ProctoredExamSoftwareSecureReviewForm
 
     def _get_exam_from_attempt_code(self, code):
