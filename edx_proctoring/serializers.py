@@ -19,6 +19,7 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
     is_active = serializers.BooleanField(required=True)
     is_practice_exam = serializers.BooleanField(required=True)
     is_proctored = serializers.BooleanField(required=True)
+    due_date = serializers.DateTimeField(required=False, format=None)
 
     class Meta:
         """
@@ -28,7 +29,7 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
 
         fields = (
             "id", "course_id", "content_id", "external_id", "exam_name",
-            "time_limit_mins", "is_proctored", "is_practice_exam", "is_active"
+            "time_limit_mins", "is_proctored", "is_practice_exam", "is_active", "due_date"
         )
 
 

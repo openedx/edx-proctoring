@@ -3,6 +3,7 @@ Lists of constants that can be used in the edX proctoring
 """
 
 from django.conf import settings
+import datetime
 
 SITE_NAME = (
     settings.PROCTORING_SETTINGS['SITE_NAME'] if
@@ -53,3 +54,5 @@ SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD = (
     'SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD' in settings.PROCTORING_SETTINGS
     else getattr(settings, 'SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD', 10)
 )
+
+MINIMUM_TIME = datetime.datetime.fromtimestamp(0)
