@@ -155,6 +155,39 @@ class ProctoredExamApiTests(LoggedInTestCase):
             },
         ]
 
+        self.declined_prerequisites = [
+            {
+                'namespace': 'proctoring',
+                'name': 'proc1',
+                'order': 2,
+                'status': 'satisfied',
+            },
+            {
+                'namespace': 'reverification',
+                'name': 'rever1',
+                'order': 1,
+                'status': 'satisfied',
+            },
+            {
+                'namespace': 'grade',
+                'name': 'grade1',
+                'order': 0,
+                'status': 'pending',
+            },
+            {
+                'namespace': 'reverification',
+                'name': 'rever2',
+                'order': 3,
+                'status': 'declined',
+            },
+            {
+                'namespace': 'proctoring',
+                'name': 'proc2',
+                'order': 4,
+                'status': 'pending',
+            },
+        ]
+
     def _create_proctored_exam(self):
         """
         Calls the api's create_exam to create an exam object.
@@ -575,6 +608,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.verified, 'satisfied'),
         (ProctoredExamStudentAttemptStatus.submitted, 'submitted'),
+        (ProctoredExamStudentAttemptStatus.declined, 'declined'),
         (ProctoredExamStudentAttemptStatus.error, 'failed')
     )
     @ddt.unpack
@@ -797,11 +831,15 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ('reverification', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('reverification', 'failed', 'You did not satisfy the following prerequisites', True),
         ('reverification', 'satisfied', 'To be eligible to earn credit for this course', False),
+        ('reverification', 'declined', None, False),
         ('proctored_exam', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('proctored_exam', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('proctored_exam', 'failed', 'You did not satisfy the following prerequisites', True),
         ('proctored_exam', 'satisfied', 'To be eligible to earn credit for this course', False),
-        ('grade', 'failed', 'To be eligible to earn credit for this course', False)
+        ('proctored_exam', 'declined', None, False),
+        ('grade', 'failed', 'To be eligible to earn credit for this course', False),
+        # this is nonesense, but let's double check it
+        ('grade', 'declined', 'To be eligible to earn credit for this course', False),
     )
     @ddt.unpack
     def test_prereq_scenarios(self, namespace, req_status, expected_content, should_see_prereq):
@@ -839,7 +877,16 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
 
-        self.assertIn(expected_content, rendered_response)
+        if expected_content:
+            self.assertIn(expected_content, rendered_response)
+        else:
+            self.assertIsNone(rendered_response)
+
+        if req_status == 'declined' and not expected_content:
+            # also we should have auto-declined if a pre-requisite was declined
+            attempt = get_exam_attempt(exam['id'], self.user_id)
+            self.assertIsNotNone(attempt)
+            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
 
         if should_see_prereq:
             self.assertIn('Foo Requirement', rendered_response)
@@ -2134,19 +2181,20 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(ordered_list[3]['name'], 'proc2')
 
     @ddt.data(
-        ('rever1', True, 0, 0, 0),
-        ('proc1', True, 1, 0, 0),
-        ('rever2', True, 2, 0, 0),
-        ('proc2', False, 2, 1, 0),
-        ('unknown', False, 2, 1, 1),
-        (None, False, 2, 1, 1),
+        ('rever1', True, 0, 0, 0, 0),
+        ('proc1', True, 1, 0, 0, 0),
+        ('rever2', True, 2, 0, 0, 0),
+        ('proc2', False, 2, 1, 0, 0),
+        ('unknown', False, 2, 1, 1, 0),
+        (None, False, 2, 1, 1, 0),
     )
     @ddt.unpack
     def test_are_prerequisite_satisifed(self, content_id,
                                         expected_are_prerequisites_satisifed,
                                         expected_len_satisfied_prerequisites,
                                         expected_len_failed_prerequisites,
-                                        expected_len_pending_prerequisites):
+                                        expected_len_pending_prerequisites,
+                                        expected_len_declined_prerequisites):
         """
         verify proper operation of the logic when computing is prerequisites are satisfied
         """
@@ -2161,3 +2209,35 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(len(results['satisfied_prerequisites']), expected_len_satisfied_prerequisites)
         self.assertEqual(len(results['failed_prerequisites']), expected_len_failed_prerequisites)
         self.assertEqual(len(results['pending_prerequisites']), expected_len_pending_prerequisites)
+        self.assertEqual(len(results['declined_prerequisites']), expected_len_declined_prerequisites)
+
+    @ddt.data(
+        ('rever1', True, 0, 0, 0, 0),
+        ('proc1', True, 1, 0, 0, 0),
+        ('rever2', True, 2, 0, 0, 0),
+        ('proc2', False, 2, 0, 0, 1),
+        ('unknown', False, 2, 0, 1, 1),
+        (None, False, 2, 0, 1, 1),
+    )
+    @ddt.unpack
+    def test_declined_prerequisites(self, content_id,
+                                    expected_are_prerequisites_satisifed,
+                                    expected_len_satisfied_prerequisites,
+                                    expected_len_failed_prerequisites,
+                                    expected_len_pending_prerequisites,
+                                    expected_len_declined_prerequisites):
+        """
+        verify proper operation of the logic when computing is prerequisites are satisfied
+        """
+
+        results = _are_prerequirements_satisfied(
+            self.declined_prerequisites,
+            content_id,
+            filter_out_namespaces=['grade']
+        )
+
+        self.assertEqual(results['are_prerequisites_satisifed'], expected_are_prerequisites_satisifed)
+        self.assertEqual(len(results['satisfied_prerequisites']), expected_len_satisfied_prerequisites)
+        self.assertEqual(len(results['failed_prerequisites']), expected_len_failed_prerequisites)
+        self.assertEqual(len(results['pending_prerequisites']), expected_len_pending_prerequisites)
+        self.assertEqual(len(results['declined_prerequisites']), expected_len_declined_prerequisites)

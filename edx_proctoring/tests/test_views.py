@@ -1573,7 +1573,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        # make sure we failed the requirement status
+        # make sure we declined the requirement status
 
         credit_service = get_runtime_service('credit')
         credit_status = credit_service.get_credit_state(self.user.id, proctored_exam.course_id)
@@ -1581,7 +1581,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(len(credit_status['credit_requirement_status']), 1)
         self.assertEqual(
             credit_status['credit_requirement_status'][0]['status'],
-            'failed'
+            'declined'
         )
 
     def test_exam_callback(self):
