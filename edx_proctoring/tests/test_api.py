@@ -83,6 +83,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         super(ProctoredExamApiTests, self).setUp()
         self.default_time_limit = 21
         self.course_id = 'test_course'
+        self.content_id_for_exam_with_due_date = 'test_content_due_date_id'
         self.content_id = 'test_content_id'
         self.content_id_timed = 'test_content_id_timed'
         self.content_id_practice = 'test_content_id_practice'
@@ -197,6 +198,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
             content_id=self.content_id,
             exam_name=self.exam_name,
             time_limit_mins=self.default_time_limit
+        )
+
+    def _create_proctored_exam_with_due_time(self, due_date=None):
+        """
+        Calls the api's create_exam to create an exam object.
+        """
+        return create_exam(
+            course_id=self.course_id,
+            content_id=self.content_id_for_exam_with_due_date,
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            due_date=due_date
         )
 
     def _create_timed_exam(self):
@@ -338,7 +351,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         updated_proctored_exam_id = update_exam(
             self.proctored_exam_id, exam_name='Updated Exam Name', time_limit_mins=30,
-            is_proctored=True, external_id='external_id', is_active=True
+            is_proctored=True, external_id='external_id', is_active=True,
+            due_date=datetime.now(pytz.UTC)
         )
 
         # only those fields were updated, whose
@@ -465,6 +479,49 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(len(ProctoredExamStudentAllowance.objects.filter()), 1)
         remove_allowance_for_user(student_allowance.proctored_exam.id, self.user_id, self.key)
         self.assertEqual(len(ProctoredExamStudentAllowance.objects.filter()), 0)
+
+    def test_create_an_exam_attempt_with_due_datetime(self):
+        """
+        Create the exam attempt with due date
+        """
+
+        due_date = datetime.now(pytz.UTC) + timedelta(days=1)
+
+        # exam is created with due datetime > current_datetime and due_datetime < current_datetime + allowed_mins
+        exam_id = self._create_proctored_exam_with_due_time(due_date=due_date)
+
+        # due_date is exactly after 24 hours, our exam's allowed minutes are 21
+        # student will get full allowed minutes if student will start exam within next 23 hours and 39 minutes
+        # otherwise allowed minutes = due_datetime - exam_attempt_datetime
+        # so if students arrives after 23 hours and 45 minutes later then he will get only 15 minutes
+
+        minutes_before_past_due_date = 15
+        reset_time = due_date - timedelta(minutes=minutes_before_past_due_date)
+        with freeze_time(reset_time):
+            attempt_id = create_exam_attempt(exam_id, self.user_id)
+            attempt = get_exam_attempt_by_id(attempt_id)
+            self.assertTrue(
+                minutes_before_past_due_date - 1 <= attempt['allowed_time_limit_mins'] <= minutes_before_past_due_date
+            )
+
+    def test_create_an_exam_attempt_with_past_due_datetime(self):
+        """
+        Create the exam attempt with past due date
+        """
+
+        due_date = datetime.now(pytz.UTC) + timedelta(days=1)
+
+        # exam is created with due datetime which has already passed
+        exam_id = self._create_proctored_exam_with_due_time(due_date=due_date)
+
+        # due_date is exactly after 24 hours, if student arrives after 2 days
+        # then he can not attempt the proctored exam
+
+        reset_time = due_date + timedelta(days=2)
+        with freeze_time(reset_time):
+            attempt_id = create_exam_attempt(exam_id, self.user_id)
+            attempt = get_exam_attempt_by_id(attempt_id)
+            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
 
     def test_create_an_exam_attempt(self):
         """

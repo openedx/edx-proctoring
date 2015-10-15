@@ -36,6 +36,9 @@ class ProctoredExam(TimeStampedModel):
     # Time limit (in minutes) that a student can finish this exam.
     time_limit_mins = models.IntegerField()
 
+    # Due date is a deadline to finish the exam
+    due_date = models.DateTimeField(null=True)
+
     # Whether this exam actually is proctored or not.
     is_proctored = models.BooleanField()
 

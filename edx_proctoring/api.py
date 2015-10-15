@@ -57,7 +57,7 @@ def is_feature_enabled():
     return hasattr(settings, 'FEATURES') and settings.FEATURES.get('ENABLE_PROCTORED_EXAMS', False)
 
 
-def create_exam(course_id, content_id, exam_name, time_limit_mins,
+def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True):
     """
     Creates a new ProctoredExam entity, if the course_id/content_id pair do not already exist.
@@ -75,6 +75,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
         external_id=external_id,
         exam_name=exam_name,
         time_limit_mins=time_limit_mins,
+        due_date=due_date,
         is_proctored=is_proctored,
         is_practice_exam=is_practice_exam,
         is_active=is_active
@@ -97,7 +98,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
     return proctored_exam.id
 
 
-def update_exam(exam_id, exam_name=None, time_limit_mins=None,
+def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constants.MINIMUM_TIME,
                 is_proctored=None, is_practice_exam=None, external_id=None, is_active=None):
     """
     Given a Django ORM id, update the existing record, otherwise raise exception if not found.
@@ -108,11 +109,11 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
 
     log_msg = (
         u'Updating exam_id {exam_id} with parameters '
-        u'exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
+        u'exam_name={exam_name}, time_limit_mins={time_limit_mins}, due_date={due_date}'
         u'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
         u'external_id={external_id}, is_active={is_active}'.format(
             exam_id=exam_id, exam_name=exam_name, time_limit_mins=time_limit_mins,
-            is_proctored=is_proctored, is_practice_exam=is_practice_exam,
+            due_date=due_date, is_proctored=is_proctored, is_practice_exam=is_practice_exam,
             external_id=external_id, is_active=is_active
         )
     )
@@ -126,6 +127,8 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
         proctored_exam.exam_name = exam_name
     if time_limit_mins is not None:
         proctored_exam.time_limit_mins = time_limit_mins
+    if due_date is not constants.MINIMUM_TIME:
+        proctored_exam.due_date = due_date
     if is_proctored is not None:
         proctored_exam.is_proctored = is_proctored
     if is_practice_exam is not None:
@@ -319,6 +322,13 @@ def update_exam_attempt(attempt_id, **kwargs):
     exam_attempt_obj.save()
 
 
+def _has_due_date_passed(due_datetime):
+    """
+    return True if due date is lesser than current datetime, otherwise False
+    """
+    return due_datetime <= datetime.now(pytz.UTC)
+
+
 def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only be
@@ -350,11 +360,24 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             raise StudentExamAttemptAlreadyExistsException(err_msg)
 
     allowed_time_limit_mins = exam['time_limit_mins']
+    due_datetime = exam['due_date']
+    current_datetime = datetime.now(pytz.UTC)
+    is_exam_past_due_date = False
 
     # add in the allowed additional time
     allowance_extra_mins = ProctoredExamStudentAllowance.get_additional_time_granted(exam_id, user_id)
     if allowance_extra_mins:
         allowed_time_limit_mins += allowance_extra_mins
+
+    if due_datetime:
+        if _has_due_date_passed(due_datetime):
+            is_exam_past_due_date = True
+        elif current_datetime + timedelta(minutes=allowed_time_limit_mins) > due_datetime:
+
+            # e.g current_datetime=09:00, due_datetime=10:00 and allowed_time_limit_mins=120(2hours)
+            # then allowed_time_limit_mins should be 60(1hour)
+
+            allowed_time_limit_mins = int((due_datetime - current_datetime).seconds / 60)
 
     attempt_code = unicode(uuid.uuid4()).upper()
 
@@ -362,7 +385,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
     review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
 
-    if taking_as_proctored:
+    if not is_exam_past_due_date and taking_as_proctored:
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         callback_url = '{scheme}://{hostname}{path}'.format(
             scheme=scheme,
@@ -421,6 +444,13 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         external_id,
         review_policy_id=review_policy.id if review_policy else None,
     )
+
+    if is_exam_past_due_date:
+        update_attempt_status(
+            exam_id,
+            user_id,
+            ProctoredExamStudentAttemptStatus.declined
+        )
 
     log_msg = (
         'Created exam attempt ({attempt_id}) for exam_id {exam_id} for '
@@ -1495,7 +1525,8 @@ def get_student_view(user_id, course_id, content_id,
             exam_name=context['display_name'],
             time_limit_mins=context['default_time_limit_mins'],
             is_proctored=context.get('is_proctored', False),
-            is_practice_exam=context.get('is_practice_exam', False)
+            is_practice_exam=context.get('is_practice_exam', False),
+            due_date=context.get('due_date', None)
         )
         exam = get_exam_by_content_id(course_id, content_id)
 
