@@ -600,11 +600,13 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
 
         exam = get_exam_by_id(exam_id)
         if to_status == ProctoredExamStudentAttemptStatus.verified:
-            verification = 'satisfied'
+            credit_requirement_status = 'satisfied'
         elif to_status == ProctoredExamStudentAttemptStatus.submitted:
-            verification = 'submitted'
+            credit_requirement_status = 'submitted'
+        elif to_status == ProctoredExamStudentAttemptStatus.declined:
+            credit_requirement_status = 'declined'
         else:
-            verification = 'failed'
+            credit_requirement_status = 'failed'
 
         log_msg = (
             'Calling set_credit_requirement_status for '
@@ -613,7 +615,7 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
                 user_id=exam_attempt_obj.user_id,
                 course_id=exam['course_id'],
                 content_id=exam_attempt_obj.proctored_exam.content_id,
-                status=verification
+                status=credit_requirement_status
             )
         )
         log.info(log_msg)
@@ -623,7 +625,7 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
             course_key_or_id=exam['course_id'],
             req_namespace='proctored_exam',
             req_name=exam_attempt_obj.proctored_exam.content_id,
-            status=verification
+            status=credit_requirement_status
         )
 
     if cascade_effects and ProctoredExamStudentAttemptStatus.is_a_cascadable_failure(to_status):
@@ -963,6 +965,7 @@ def _are_prerequirements_satisfied(prerequisites_statuses, evaluate_for_requirem
     satisfied_prerequisites = []
     failed_prerequisites = []
     pending_prerequisites = []
+    declined_prerequisites = []
 
     # insure an ordered and filtered list
     # we remove 'grade' requirements since those cannot be
@@ -996,6 +999,8 @@ def _are_prerequirements_satisfied(prerequisites_statuses, evaluate_for_requirem
             satisfied_prerequisites.append(requirement)
         elif status == 'failed':
             failed_prerequisites.append(requirement)
+        elif status == 'declined':
+            declined_prerequisites.append(requirement)
         else:
             pending_prerequisites.append(requirement)
 
@@ -1005,12 +1010,13 @@ def _are_prerequirements_satisfied(prerequisites_statuses, evaluate_for_requirem
         # all prequisites are satisfied if there are no failed or pending requirement
         # statuses
         'are_prerequisites_satisifed': (
-            not failed_prerequisites and not pending_prerequisites
+            not failed_prerequisites and not pending_prerequisites and not declined_prerequisites
         ),
         # note that we reverse the list here, because we assempled it by walking backwards
         'satisfied_prerequisites': list(reversed(satisfied_prerequisites)),
         'failed_prerequisites': list(reversed(failed_prerequisites)),
         'pending_prerequisites': list(reversed(pending_prerequisites)),
+        'declined_prerequisites': list(reversed(declined_prerequisites))
     }
 
 
@@ -1364,7 +1370,9 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         # so, show them:
         #       1) If there are failed prerequisites then block user and say why
         #       2) If there are pending prerequisites then block user and allow them to remediate them
-        #       3) Otherwise - all prerequisites are satisfied - then give user
+        #       3) If there are declined prerequisites, then we auto-decline proctoring since user
+        #          explicitly declined their interest in credit
+        #       4) Otherwise - all prerequisites are satisfied - then give user
         #          option to take exam as proctored
 
         # get information about prerequisites
@@ -1386,7 +1394,23 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         })
 
         if not prerequisite_status['are_prerequisites_satisifed']:
-            # do we have failed prerequisites? That takes priority
+            # do we have any declined prerequisites, if so, then we
+            # will auto-decline this proctored exam
+            if prerequisite_status['declined_prerequisites']:
+                # user hasn't a record of attempt, create one now
+                # so we can mark it as declined
+                create_exam_attempt(exam_id, user_id)
+
+                update_attempt_status(
+                    exam_id,
+                    user_id,
+                    ProctoredExamStudentAttemptStatus.declined,
+                    raise_if_not_found=False
+                )
+                return None
+
+            # do we have failed prerequisites? That takes priority in terms of
+            # messaging
             if prerequisite_status['failed_prerequisites']:
                 # Let's resolve the URLs to jump to this prequisite
                 prerequisite_status['failed_prerequisites'] = _resolve_prerequisite_links(
