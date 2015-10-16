@@ -2325,7 +2325,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.submitted,
         ProctoredExamStudentAttemptStatus.verified,
         ProctoredExamStudentAttemptStatus.rejected,
-        ProctoredExamStudentAttemptStatus.expired,
     )
     def test_footer_present(self, status):
         """
