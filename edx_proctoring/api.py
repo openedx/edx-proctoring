@@ -475,7 +475,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         update_attempt_status(
             exam_id,
             user_id,
-            ProctoredExamStudentAttemptStatus.declined
+            ProctoredExamStudentAttemptStatus.expired
         )
 
     log_msg = (
