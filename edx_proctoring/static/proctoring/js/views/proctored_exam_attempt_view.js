@@ -154,8 +154,8 @@ var edx = edx || {};
                 }
 
                 _.each(data_json.proctored_exam_attempts, function(proctored_exam_attempt) {
-                    if (proctored_exam_attempt.taking_as_proctored) {
-                        if (proctored_exam_attempt.is_sample_attempt) {
+                    if (proctored_exam_attempt.proctored_exam.is_proctored) {
+                        if (proctored_exam_attempt.proctored_exam.is_practice_exam) {
                             proctored_exam_attempt.exam_attempt_type = gettext('Practice');
                         } else {
                             proctored_exam_attempt.exam_attempt_type = gettext('Proctored');
