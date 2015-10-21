@@ -524,7 +524,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         with freeze_time(reset_time):
             attempt_id = create_exam_attempt(exam_id, self.user_id)
             attempt = get_exam_attempt_by_id(attempt_id)
-            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
+            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.expired)
 
     def test_create_an_exam_attempt(self):
         """
