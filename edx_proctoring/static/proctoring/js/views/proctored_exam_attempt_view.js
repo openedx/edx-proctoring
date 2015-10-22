@@ -8,6 +8,7 @@ var edx = edx || {};
     var examStatusReadableFormat = {
         eligible: gettext('Eligible'),
         created: gettext('Created'),
+        download_software_clicked: gettext('Download Software Clicked'),
         ready_to_start: gettext('Ready to start'),
         started: gettext('Started'),
         ready_to_submit: gettext('Ready to submit'),

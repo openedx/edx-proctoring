@@ -26,7 +26,7 @@
       {% endblocktrans %}
     </p>
     <p>
-      <span><a href="{{software_download_url}}" target="_blank">Start System Check</a></span>
+      <span><a href="#" id="software_download_link" data-action="click_download_software" target="_blank">Start System Check</a></span>
     </p>
     <p>
       {% blocktrans %}
@@ -107,5 +107,28 @@
       }
     });
   }
+
+  $("#software_download_link").click(function (e) {
+    e.preventDefault();
+    var url = $('.instructions').data('exam-started-poll-url');
+    var action = $(this).data('action');
+    // open the new tab in the click event with an empty URL but show the message.
+    var newWindow = window.open("", "_blank");
+    $(newWindow.document.body).html("<p>Please wait while you are being redirected...</p>");
+
+    var self = this;
+    $.ajax({
+      url: url,
+      type: 'PUT',
+      data: {
+        action: action
+      },
+      success: function (data) {
+        newWindow.location = "{{software_download_url}}";
+      }
+    }).fail(function(){
+      newWindow.close();
+    });
+  });
 
 </script>
