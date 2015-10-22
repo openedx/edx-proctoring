@@ -40,7 +40,8 @@ from edx_proctoring.serializers import (
 )
 from edx_proctoring.utils import (
     humanized_time,
-    has_client_app_shutdown
+    has_client_app_shutdown,
+    emit_event
 )
 
 from edx_proctoring.backends import get_backend_provider
@@ -95,6 +96,22 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
     )
     log.info(log_msg)
 
+    emit_event(
+        'created',
+        {
+            'course_id': course_id
+        },
+        {
+            'exam_id': proctored_exam.id,
+            'content_id': content_id,
+            'exam_name': exam_name,
+            'time_limit_mins': time_limit_mins,
+            'is_proctored': is_proctored,
+            'is_practice_exam': is_practice_exam,
+            'is_active': is_active
+        }
+    )
+
     return proctored_exam.id
 
 
@@ -138,6 +155,23 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constant
     if is_active is not None:
         proctored_exam.is_active = is_active
     proctored_exam.save()
+
+    emit_event(
+        'updated',
+        {
+            'course_id': proctored_exam.course_id
+        },
+        {
+            'exam_id': proctored_exam.id,
+            'content_id': proctored_exam.content_id,
+            'exam_name': exam_name,
+            'time_limit_mins': time_limit_mins,
+            'is_proctored': is_proctored,
+            'is_practice_exam': is_practice_exam,
+            'is_active': is_active
+        }
+    )
+
     return proctored_exam.id
 
 

@@ -109,6 +109,17 @@ class MockInstructorService(object):
         return self.is_user_course_staff
 
 
+class MockAnalyticsService(object):
+    """
+    A mock implementation of the 'analytics' service
+    """
+    def emit_event(self, name, context, data):
+        """
+        Do nothing
+        """
+        pass
+
+
 class TestProctoringService(unittest.TestCase):
     """
     Tests for ProctoringService

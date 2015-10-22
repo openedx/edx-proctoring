@@ -66,6 +66,7 @@ from .utils import (
 from edx_proctoring.tests.test_services import (
     MockCreditService,
     MockInstructorService,
+    MockAnalyticsService,
 )
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
@@ -123,6 +124,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+        set_runtime_service('analytics', MockAnalyticsService())
 
         self.prerequisites = [
             {

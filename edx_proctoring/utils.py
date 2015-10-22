@@ -16,6 +16,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptHistory,
 )
 from edx_proctoring import constants
+from edx_proctoring.runtime import get_runtime_service
 
 log = logging.getLogger(__name__)
 
@@ -128,3 +129,17 @@ def has_client_app_shutdown(attempt):
 
     elapsed_time = (datetime.now(pytz.UTC) - attempt['last_poll_timestamp']).total_seconds()
     return elapsed_time > constants.SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD
+
+
+def emit_event(short_name, context, data):
+    """
+    Helper method to emit an analytics event
+    """
+
+    name = '.'.join(['edx', 'edx-proctoring', 'exam', short_name])
+
+    service = get_runtime_service('analytics')
+    if service:
+        service.emit_event(name, context, data)
+    else:
+        log.warn('Analytics event not configured. If this is a production environment, please resolve.')
