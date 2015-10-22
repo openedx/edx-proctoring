@@ -1030,6 +1030,47 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content)
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
+    def test_download_software_clicked_action(self):
+        """
+        Test if the download_software_clicked state is set
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+        old_attempt_id = response_data['exam_attempt_id']
+
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            {
+                'action': 'click_download_software',
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.download_software_clicked)
+
     @ddt.data(
         ('submit', ProctoredExamStudentAttemptStatus.submitted),
         ('decline', ProctoredExamStudentAttemptStatus.declined)
@@ -1498,13 +1539,17 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+
+        attempt = get_exam_attempt_by_id(data['exam_attempt_id'])
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.submitted)
 
         response = self.client.get(
             reverse('edx_proctoring.proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['time_remaining_seconds'], 0)
+        self.assertNotIn('time_remaining_seconds', data)
 
     def test_get_expired_exam_attempt(self):
         """

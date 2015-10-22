@@ -136,6 +136,21 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
     Tests for the ProctoredExamStudentAttempt Model
     """
 
+    def test_exam_unicode(self):
+        """
+        Serialize the object as a display string
+        """
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='test_course',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        string = unicode(proctored_exam)
+        self.assertEqual(string, "test_course: Test Exam (inactive)")
+
     def test_delete_proctored_exam_attempt(self):  # pylint: disable=invalid-name
         """
         Deleting the proctored exam attempt creates an entry in the history table.
@@ -147,6 +162,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
             external_id='123aXqe3',
             time_limit_mins=90
         )
+
         attempt = ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=proctored_exam.id,
             user_id=1,

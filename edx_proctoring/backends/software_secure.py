@@ -23,13 +23,16 @@ from edx_proctoring.exceptions import (
     ProctoredExamReviewAlreadyExists,
     ProctoredExamBadReviewStatus,
 )
-from edx_proctoring.utils import locate_attempt_by_attempt_code
+from edx_proctoring.utils import locate_attempt_by_attempt_code, emit_event
 from edx_proctoring. models import (
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureComment,
     ProctoredExamStudentAttemptStatus,
 )
-
+from edx_proctoring.serializers import (
+    ProctoredExamSerializer,
+    ProctoredExamStudentAttemptSerializer,
+)
 log = logging.getLogger(__name__)
 
 
@@ -243,6 +246,20 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             allow_status_update_on_fail = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
 
             self.on_review_saved(review, allow_status_update_on_fail=allow_status_update_on_fail)
+
+        # emit an event for 'review-received'
+        data = {
+            'review_attempt_code': review.attempt_code,
+            'review_raw_data': review.raw_data,
+            'review_status': review.review_status,
+            'review_video_url': review.video_url
+        }
+
+        serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(attempt_obj)
+        attempt = serialized_attempt_obj.data
+        serialized_exam_object = ProctoredExamSerializer(attempt_obj.proctored_exam)
+        exam = serialized_exam_object.data
+        emit_event(exam, 'review-received', attempt=attempt, override_data=data)
 
     def on_review_saved(self, review, allow_status_update_on_fail=False):  # pylint: disable=arguments-differ
         """
