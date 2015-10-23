@@ -136,10 +136,10 @@ def emit_event(short_name, context, data):
     Helper method to emit an analytics event
     """
 
-    name = '.'.join(['edx', 'edx-proctoring', 'exam', short_name])
+    name = '.'.join(['edx', 'timedexam', short_name])
 
     service = get_runtime_service('analytics')
     if service:
         service.emit_event(name, context, data)
     else:
-        log.warn('Analytics event not configured. If this is a production environment, please resolve.')
+        log.warn('Analytics event service not configured. If this is a production environment, please resolve.')
