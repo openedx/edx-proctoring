@@ -94,7 +94,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.value = 'Test Value'
         self.external_id = 'test_external_id'
         self.proctored_exam_id = self._create_proctored_exam()
-        self.timed_exam = self._create_timed_exam()
+        self.timed_exam_id = self._create_timed_exam()
         self.practice_exam_id = self._create_practice_exam()
         self.disabled_exam_id = self._create_disabled_exam()
 
@@ -262,7 +262,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             else:
                 exam_id = self.proctored_exam_id
         else:
-            exam_id = self.timed_exam
+            exam_id = self.timed_exam_id
 
         return ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=exam_id,
@@ -277,7 +277,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Creates the ProctoredExamStudentAttempt object.
         """
         return ProctoredExamStudentAttempt.objects.create(
-            proctored_exam_id=self.proctored_exam_id if is_proctored else self.timed_exam,
+            proctored_exam_id=self.proctored_exam_id if is_proctored else self.timed_exam_id,
             user_id=self.user_id,
             external_id=self.external_id,
             started_at=started_at if started_at else datetime.now(pytz.UTC),
@@ -400,7 +400,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         test to get the exam by the exam_id and
         then compare their values.
         """
-        timed_exam = get_exam_by_id(self.timed_exam)
+        timed_exam = get_exam_by_id(self.timed_exam_id)
         self.assertEqual(timed_exam['course_id'], self.course_id)
         self.assertEqual(timed_exam['content_id'], self.content_id_timed)
         self.assertEqual(timed_exam['exam_name'], self.exam_name)
@@ -1594,29 +1594,26 @@ class ProctoredExamApiTests(LoggedInTestCase):
         But user has an allowance
         """
 
-        ProctoredExamStudentAllowance.objects.create(
-            proctored_exam_id=self.timed_exam,
-            user_id=self.user_id,
-            key='Additional time (minutes)',
-            value=15
+        allowed_extra_time = 10
+        add_allowance_for_user(
+            self.timed_exam_id,
+            self.user.username,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+            str(allowed_extra_time)
         )
 
         rendered_response = get_student_view(
             user_id=self.user_id,
             course_id=self.course_id,
             content_id=self.content_id_timed,
-            context={
-                'is_proctored': False,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
+            context={}
         )
         self.assertNotIn(
             'data-exam-id="{proctored_exam_id}"'.format(proctored_exam_id=self.proctored_exam_id),
             rendered_response
         )
         self.assertIn(self.timed_exam_msg.format(exam_name=self.exam_name), rendered_response)
-        self.assertIn('36 minutes', rendered_response)
+        self.assertIn('31 minutes', rendered_response)
         self.assertNotIn(self.start_an_exam_msg.format(exam_name=self.exam_name), rendered_response)
 
     @ddt.data(
@@ -1643,9 +1640,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             course_id=self.course_id,
             content_id=self.content_id_timed,
             context={
-                'is_proctored': False,
                 'display_name': self.exam_name,
-                'default_time_limit_mins': 90
             }
         )
         self.assertIn(expected_content, rendered_response)
@@ -2049,7 +2044,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Assert that we get the expected status summaries
         for the timed exams.
         """
-        timed_exam = get_exam_by_id(self.timed_exam)
+        timed_exam = get_exam_by_id(self.timed_exam_id)
         summary = get_attempt_status_summary(
             self.user.id,
             timed_exam['course_id'],
