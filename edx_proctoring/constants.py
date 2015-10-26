@@ -5,31 +5,6 @@ Lists of constants that can be used in the edX proctoring
 from django.conf import settings
 import datetime
 
-SITE_NAME = (
-    settings.PROCTORING_SETTINGS['SITE_NAME'] if
-    'SITE_NAME' in settings.PROCTORING_SETTINGS else settings.SITE_NAME
-)
-
-PLATFORM_NAME = (
-    settings.PROCTORING_SETTINGS['PLATFORM_NAME'] if
-    'PLATFORM_NAME' in settings.PROCTORING_SETTINGS else settings.PLATFORM_NAME
-)
-
-FROM_EMAIL = (
-    settings.PROCTORING_SETTINGS['STATUS_EMAIL_FROM_ADDRESS'] if
-    'STATUS_EMAIL_FROM_ADDRESS' in settings.PROCTORING_SETTINGS else settings.DEFAULT_FROM_EMAIL
-)
-
-# Note that CONTACT_EMAIL is not defined in Studio runtimes
-CONTACT_EMAIL = (
-    settings.PROCTORING_SETTINGS['CONTACT_EMAIL'] if
-    'CONTACT_EMAIL' in settings.PROCTORING_SETTINGS else getattr(settings, 'CONTACT_EMAIL', FROM_EMAIL)
-)
-
-ALLOW_REVIEW_UPDATES = (
-    settings.PROCTORING_SETTINGS['ALLOW_REVIEW_UPDATES'] if
-    'ALLOW_REVIEW_UPDATES' in settings.PROCTORING_SETTINGS else getattr(settings, 'ALLOW_REVIEW_UPDATES', True)
-)
 
 DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY = (
     settings.PROCTORING_SETTINGS['DEFAULT_REVIEW_POLICY'] if
@@ -49,10 +24,38 @@ SOFTWARE_SECURE_CLIENT_TIMEOUT = (
     else getattr(settings, 'SOFTWARE_SECURE_CLIENT_TIMEOUT', 30)
 )
 
-SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD = (
-    settings.PROCTORING_SETTINGS['SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD'] if
-    'SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD' in settings.PROCTORING_SETTINGS
-    else getattr(settings, 'SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD', 10)
+SHUT_DOWN_GRACEPERIOD = (
+    settings.PROCTORING_SETTINGS['SHUT_DOWN_GRACEPERIOD'] if
+    'SHUT_DOWN_GRACEPERIOD' in settings.PROCTORING_SETTINGS
+    else getattr(settings, 'SHUT_DOWN_GRACEPERIOD', 10)
+)
+
+MINIMUM_TIME = datetime.datetime.fromtimestamp(0)
+
+ALLOW_REVIEW_UPDATES = (
+    settings.PROCTORING_SETTINGS['ALLOW_REVIEW_UPDATES'] if
+    'ALLOW_REVIEW_UPDATES' in settings.PROCTORING_SETTINGS
+    else getattr(settings, 'ALLOW_REVIEW_UPDATES', False)
+)
+
+CLIENT_TIMEOUT = (
+    settings.PROCTORING_SETTINGS['CLIENT_TIMEOUT'] if
+    'CLIENT_TIMEOUT' in settings.PROCTORING_SETTINGS
+    else getattr(settings, 'CLIENT_TIMEOUT', 30)
+)
+
+MINIMUM_TIME = datetime.datetime.fromtimestamp(0)
+
+ALLOW_REVIEW_UPDATES = (
+    settings.PROCTORING_SETTINGS['ALLOW_REVIEW_UPDATES'] if
+    'ALLOW_REVIEW_UPDATES' in settings.PROCTORING_SETTINGS
+    else getattr(settings, 'ALLOW_REVIEW_UPDATES', False)
+)
+
+CLIENT_TIMEOUT = (
+    settings.PROCTORING_SETTINGS['CLIENT_TIMEOUT'] if
+    'CLIENT_TIMEOUT' in settings.PROCTORING_SETTINGS
+    else getattr(settings, 'CLIENT_TIMEOUT', 30)
 )
 
 MINIMUM_TIME = datetime.datetime.fromtimestamp(0)

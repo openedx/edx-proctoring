@@ -14,9 +14,12 @@ import logging
 import unicodedata
 
 from django.conf import settings
+from edx_proctoring.backends import (
+    get_proctoring_settings,
+    get_provider_name_by_course_id
+)
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_proctoring import constants
 from edx_proctoring.exceptions import (
     BackendProvideCannotRegisterAttempt,
     StudentExamAttemptDoesNotExistsException,
@@ -193,11 +196,15 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             )
             raise ProctoredExamSuspiciousLookup(err_msg)
 
+        # do some limited parsing of the JSON payload
+        review_status = payload['reviewStatus']
+        provider_name = get_provider_name_by_course_id(attempt_obj.proctored_exam.course_id)
+        proctoring_settings = get_proctoring_settings(provider_name)
+
         # do we already have a review for this attempt?!? We may not allow updates
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
-
         if review:
-            if not constants.ALLOW_REVIEW_UPDATES:
+            if not proctoring_settings.get('ALLOW_REVIEW_UPDATES'):
                 err_msg = (
                     'We already have a review submitted from SoftwareSecure regarding '
                     'attempt_code {attempt_code}. We do not allow for updates!'.format(
@@ -245,7 +252,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             # update our attempt status, note we have to import api.py here because
             # api.py imports software_secure.py, so we'll get an import circular reference
 
-            allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
+            allow_rejects = not proctoring_settings.get('REQUIRE_FAILURE_SECOND_REVIEWS')
 
             self.on_review_saved(review, allow_rejects=allow_rejects)
 
@@ -353,13 +360,14 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         Constructs the data payload that Software Secure expects
         """
-
+        provider_name = get_provider_name_by_course_id(exam['course_id'])
+        proctoring_settings = get_proctoring_settings(provider_name)
         attempt_code = context['attempt_code']
         time_limit_mins = context['time_limit_mins']
         is_sample_attempt = context['is_sample_attempt']
         callback_url = context['callback_url']
         full_name = context['full_name']
-        review_policy = context.get('review_policy', constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
+        review_policy = context.get('review_policy', proctoring_settings.get('DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY'))
         review_policy_exception = context.get('review_policy_exception')
 
         # compile the notes to the reviewer
