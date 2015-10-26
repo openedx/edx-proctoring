@@ -1,10 +1,13 @@
 """
 Tests for backend.py
 """
-
 from django.test import TestCase
+from django.conf import settings
+
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.backends.null import NullBackendProvider
+from edx_proctoring.exceptions import ProctoredExamSuspiciousLookup
+from edx_proctoring.utils import locate_attempt_by_attempt_code
 
 
 class TestBackendProvider(ProctoringBackendProvider):
@@ -43,6 +46,25 @@ class TestBackendProvider(ProctoringBackendProvider):
         """
         Called when the reviewing 3rd party service posts back the results
         """
+        external_id = payload['examMetaData']['ssiRecordLocator']
+        attempt_code = payload['examMetaData']['examCode']
+
+        (attempt_obj, is_archived_attempt) = locate_attempt_by_attempt_code(attempt_code)
+        match = (
+            attempt_obj.external_id.lower() == external_id.lower() or
+            settings.PROCTORING_SETTINGS.get('ALLOW_CALLBACK_SIMULATION', False)
+        )
+        if not match:
+            err_msg = (
+                'Found attempt_code {attempt_code}, but the recorded external_id did not '
+                'match the ssiRecordLocator that had been recorded previously. Has {existing} '
+                'but received {received}!'.format(
+                    attempt_code=attempt_code,
+                    existing=attempt_obj.external_id,
+                    received=external_id
+                )
+            )
+            raise ProctoredExamSuspiciousLookup(err_msg)
 
     def on_review_saved(self, review):
         """

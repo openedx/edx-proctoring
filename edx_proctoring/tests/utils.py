@@ -64,3 +64,29 @@ class LoggedInTestCase(TestCase):
         self.user = User(username='tester', email='tester@test.com')
         self.user.save()
         self.client.login_user(self.user)
+
+
+def get_provider_name_test(*args, **kwargs):
+    return "TEST"
+
+
+def get_provider_name_software_secure(*args, **kwargs):
+    return "SOFTWARE_SECURE"
+
+
+class MockedCourseKey(object):
+    def __new__(self, course_key):
+        pass
+
+class MockedCourse(object):
+    def __init__(self, course_key):
+        self.course_key = course_key
+        self.available_proctoring_services = "a,b"
+        self.proctoring_service = "a"
+
+class MockedModulestore(object):
+    def get_course(self, course_key):
+        return MockedCourse(course_key)
+
+    def update_item(self,course,user_id):
+        pass

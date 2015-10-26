@@ -5,7 +5,9 @@ Tests for the set_attempt_status management command
 from datetime import datetime
 import pytz
 
-from edx_proctoring.tests.utils import LoggedInTestCase
+from mock import patch
+
+from edx_proctoring.tests.utils import LoggedInTestCase, get_provider_name_test
 from edx_proctoring.api import create_exam, get_exam_attempt
 from edx_proctoring.management.commands import set_attempt_status
 
@@ -45,6 +47,7 @@ class SetAttemptStatusTests(LoggedInTestCase):
             is_sample_attempt=False
         )
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_run_comand(self):
         """
         Run the management command
