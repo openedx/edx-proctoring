@@ -650,7 +650,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = stop_exam_attempt(
-            proctored_exam_student_attempt.proctored_exam, self.user_id
+            proctored_exam_student_attempt.proctored_exam.id, self.user_id
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
@@ -739,7 +739,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = mark_exam_attempt_as_ready(
-            proctored_exam_student_attempt.proctored_exam, self.user_id
+            proctored_exam_student_attempt.proctored_exam.id, self.user_id
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 

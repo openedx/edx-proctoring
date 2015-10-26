@@ -96,21 +96,9 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
     )
     log.info(log_msg)
 
-    emit_event(
-        'created',
-        {
-            'course_id': course_id
-        },
-        {
-            'exam_id': proctored_exam.id,
-            'content_id': content_id,
-            'exam_name': exam_name,
-            'time_limit_mins': time_limit_mins,
-            'is_proctored': is_proctored,
-            'is_practice_exam': is_practice_exam,
-            'is_active': is_active
-        }
-    )
+    # read back exam so we can emit an event on it
+    exam = get_exam_by_id(proctored_exam.id)
+    emit_event(exam, 'created')
 
     return proctored_exam.id
 
@@ -156,21 +144,9 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constant
         proctored_exam.is_active = is_active
     proctored_exam.save()
 
-    emit_event(
-        'updated',
-        {
-            'course_id': proctored_exam.course_id
-        },
-        {
-            'exam_id': proctored_exam.id,
-            'content_id': proctored_exam.content_id,
-            'exam_name': exam_name,
-            'time_limit_mins': time_limit_mins,
-            'is_proctored': is_proctored,
-            'is_practice_exam': is_practice_exam,
-            'is_active': is_active
-        }
-    )
+    # read back exam so we can emit an event on it
+    exam = get_exam_by_id(proctored_exam.id)
+    emit_event(exam, 'updated')
 
     return proctored_exam.id
 
@@ -643,6 +619,8 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
         else:
             return
 
+    exam = get_exam_by_id(exam_id)
+
     #
     # don't allow state transitions from a completed state to an incomplete state
     # if a re-attempt is desired then the current attempt must be deleted
@@ -688,7 +666,6 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
         # trigger credit workflow, as needed
         credit_service = get_runtime_service('credit')
 
-        exam = get_exam_by_id(exam_id)
         if to_status == ProctoredExamStudentAttemptStatus.verified:
             credit_requirement_status = 'satisfied'
         elif to_status == ProctoredExamStudentAttemptStatus.submitted:
@@ -731,35 +708,35 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
         # one exam all other (un-completed) proctored exams will be likewise
         # updated to reflect a declined status
         # get all other unattempted exams and mark also as declined
-        _exams = ProctoredExam.get_all_exams_for_course(
+        all_other_exams = ProctoredExam.get_all_exams_for_course(
             exam_attempt_obj.proctored_exam.course_id,
             active_only=True
         )
 
         # we just want other exams which are proctored and are not practice
-        exams = [
-            _exam
-            for _exam in _exams
+        other_exams = [
+            other_exam
+            for other_exam in all_other_exams
             if (
-                _exam.content_id != exam_attempt_obj.proctored_exam.content_id and
-                _exam.is_proctored and not _exam.is_practice_exam
+                other_exam.content_id != exam_attempt_obj.proctored_exam.content_id and
+                other_exam.is_proctored and not other_exam.is_practice_exam
             )
         ]
 
-        for exam in exams:
+        for other_exam in other_exams:
             # see if there was an attempt on those other exams already
-            attempt = get_exam_attempt(exam.id, user_id)
+            attempt = get_exam_attempt(other_exam.id, user_id)
             if attempt and ProctoredExamStudentAttemptStatus.is_completed_status(attempt['status']):
                 # don't touch any completed statuses
                 # we won't revoke those
                 continue
 
             if not attempt:
-                create_exam_attempt(exam.id, user_id, taking_as_proctored=False)
+                create_exam_attempt(other_exam.id, user_id, taking_as_proctored=False)
 
             # update any new or existing status to declined
             update_attempt_status(
-                exam.id,
+                other_exam.id,
                 user_id,
                 ProctoredExamStudentAttemptStatus.declined,
                 cascade_effects=False
@@ -804,7 +781,15 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
             credit_state.get('course_name', _('your course'))
         )
 
-    return exam_attempt_obj.id
+    # emit an anlytics event based on the state transition
+    # we re-read this from the database in case fields got updated
+    # via workflow
+    attempt = get_exam_attempt(exam_id, user_id)
+
+    # we user the 'status' field as the name of the event 'verb'
+    emit_event(exam, attempt['status'], attempt=attempt)
+
+    return attempt['id']
 
 
 def send_proctoring_attempt_status_email(exam_attempt_obj, course_name):
@@ -1562,6 +1547,9 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
                 student_view_template = 'proctored_exam/pending-prerequisites.html'
         else:
             student_view_template = 'proctored_exam/entrance.html'
+            # emit an event that the user was presented with the option
+            # to start timed exam
+            emit_event(exam, 'option-presented')
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
         return None

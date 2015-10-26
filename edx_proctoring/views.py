@@ -568,7 +568,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         else:
             response_dict = {
                 'in_timed_exam': False,
-                'is_proctored': False,
+                'is_proctored': False
             }
 
         return Response(

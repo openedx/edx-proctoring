@@ -131,12 +131,73 @@ def has_client_app_shutdown(attempt):
     return elapsed_time > constants.SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD
 
 
-def emit_event(short_name, context, data):
+def emit_event(exam, event_short_name, attempt=None, target_user_id=None, override_context=None, override_data=None):
     """
     Helper method to emit an analytics event
     """
 
-    name = '.'.join(['edx', 'timedexam', short_name])
+    exam_type = (
+        'timed' if not exam['is_proctored'] else
+        ('practice' if exam['is_practice_exam'] else 'proctored')
+    )
+
+    # establish baseline schema for event 'context'
+    context = {
+        'course_id': exam['course_id']
+    }
+
+    # establish baseline schema for event 'data'
+    data = {
+        'exam_id': exam['id'],
+        'exam_content_id': exam['content_id'],
+        'exam_name': exam['exam_name'],
+        'exam_default_time_limit_mins': exam['time_limit_mins'],
+        'exam_is_proctored': exam['is_proctored'],
+        'exam_is_practice_exam': exam['is_practice_exam'],
+        'exam_is_active': exam['is_active']
+    }
+
+    if attempt:
+        # if an attempt is passed in then use that to add additional baseline
+        # schema elements
+
+        # let's compute the relative time we're firing the event
+        # compared to the start time, if the attempt has already started.
+        # This can be used to determine how far into an attempt a given
+        # event occured (e.g. "time to complete exam")
+        attempt_event_elapsed_time_secs = (
+            (datetime.now(pytz.UTC) - attempt['started_at']).seconds if attempt['started_at'] else
+            None
+        )
+
+        attempt_data = {
+            'attempt_id': attempt['id'],
+            'attempt_user_id': attempt['user']['id'],
+            'attempt_username': attempt['student_name'],
+            'attempt_started_at': attempt['started_at'],
+            'attempt_completed_at': attempt['completed_at'],
+            'attempt_code': attempt['attempt_code'],
+            'attempt_allowed_time_limit_mins': attempt['allowed_time_limit_mins'],
+            'attempt_status': attempt['status'],
+            'attempt_event_elapsed_time_secs': attempt_event_elapsed_time_secs
+        }
+        data.update(attempt_data)
+        name = '.'.join(['edx', 'special-exam', exam_type, 'attempt', event_short_name])
+    else:
+        name = '.'.join(['edx', 'special-exam', exam_type, event_short_name])
+
+    # allow caller to override event context and data
+    if override_context:
+        context.update(override_context)
+    if override_data:
+        data.update(override_data)
+
+    # see if a target user was set
+    # i.e. this will contain the user that an exam allowance was granted to
+    if target_user_id:
+        data.update({
+            'target_user_id': target_user_id
+        })
 
     service = get_runtime_service('analytics')
     if service:

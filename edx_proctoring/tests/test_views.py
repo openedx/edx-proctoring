@@ -1498,13 +1498,17 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+
+        attempt = get_exam_attempt_by_id(data['exam_attempt_id'])
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.submitted)
 
         response = self.client.get(
             reverse('edx_proctoring.proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['time_remaining_seconds'], 0)
+        self.assertNotIn('time_remaining_seconds', data)
 
     def test_get_expired_exam_attempt(self):
         """
