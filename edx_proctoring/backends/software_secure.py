@@ -23,7 +23,7 @@ from edx_proctoring.exceptions import (
     ProctoredExamReviewAlreadyExists,
     ProctoredExamBadReviewStatus,
 )
-from edx_proctoring.utils import locate_attempt_by_attempt_code
+from edx_proctoring.utils import locate_attempt_by_attempt_code, emit_event
 from edx_proctoring. models import (
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureComment,
@@ -240,6 +240,13 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             allow_status_update_on_fail = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
 
             self.on_review_saved(review, allow_status_update_on_fail=allow_status_update_on_fail)
+
+        # emit an event for 'review-received'
+        data = {}
+        for key, value in review.iteritems():
+            data['review_' + key] = value
+
+        emit_event(attempt_obj.proctored_exam, 'review-received', attempt=attempt_obj, override_data=data)
 
     def on_review_saved(self, review, allow_status_update_on_fail=False):  # pylint: disable=arguments-differ
         """
