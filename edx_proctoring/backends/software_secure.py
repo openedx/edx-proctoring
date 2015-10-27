@@ -242,9 +242,12 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             self.on_review_saved(review, allow_status_update_on_fail=allow_status_update_on_fail)
 
         # emit an event for 'review-received'
-        data = {}
-        for key, value in review.iteritems():
-            data['review_' + key] = value
+        data = {
+            'review_attempt_code': review.attempt_code,
+            'review_raw_data': review.raw_data,
+            'review_status': review.review_status,
+            'review_video_url': review.video_url
+        }
 
         emit_event(attempt_obj.proctored_exam, 'review-received', attempt=attempt_obj, override_data=data)
 
