@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from edx_proctoring.exceptions import (
     UserNotFoundException,
     ProctoredExamNotActiveException,
+    AllowanceValueNotAllowedException
 )
 from django.db.models.base import ObjectDoesNotExist
 
@@ -710,6 +711,12 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         # see if key is a tuple, if it is, then the first element is the key
         if isinstance(key, tuple) and len(key) > 0:
             key = key[0]
+
+        if not value.isdigit():
+            err_msg = (
+                'allowance_value "{value}" should be non-negative integer value.'
+            ).format(value=value)
+            raise AllowanceValueNotAllowedException(err_msg)
 
         # were we passed a PK?
         if isinstance(user_info, (int, long)):

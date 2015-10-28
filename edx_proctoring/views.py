@@ -39,6 +39,7 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptDoesNotExistsException,
     ProctoredExamIllegalStatusTransition,
     ProctoredExamNotActiveException,
+    AllowanceValueNotAllowedException
 )
 from edx_proctoring import constants
 from edx_proctoring.runtime import get_runtime_service
@@ -737,7 +738,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
                 value=request.DATA.get('value', None)
             ))
 
-        except (UserNotFoundException, ProctoredExamNotActiveException) as ex:
+        except (AllowanceValueNotAllowedException, UserNotFoundException, ProctoredExamNotActiveException) as ex:
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
