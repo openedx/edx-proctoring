@@ -49,14 +49,6 @@ from edx_proctoring.runtime import get_runtime_service
 log = logging.getLogger(__name__)
 
 
-def is_feature_enabled():
-    """
-    Returns if this feature has been enabled in our FEATURE flags
-    """
-
-    return hasattr(settings, 'FEATURES') and settings.FEATURES.get('ENABLE_PROCTORED_EXAMS', False)
-
-
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True):
     """

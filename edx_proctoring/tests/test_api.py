@@ -31,7 +31,6 @@ from edx_proctoring.api import (
     remove_exam_attempt,
     get_all_exam_attempts,
     get_filtered_exam_attempts,
-    is_feature_enabled,
     mark_exam_attempt_timeout,
     mark_exam_attempt_as_ready,
     update_attempt_status,
@@ -309,18 +308,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         return ProctoredExamStudentAllowance.objects.create(
             proctored_exam_id=self.proctored_exam_id, user_id=self.user_id, key=self.key, value=self.value
         )
-
-    def test_feature_enabled(self):
-        """
-        Checks the is_feature_enabled method
-        """
-        self.assertFalse(is_feature_enabled())
-
-        with patch.dict('django.conf.settings.FEATURES', {'ENABLE_PROCTORED_EXAMS': False}):
-            self.assertFalse(is_feature_enabled())
-
-        with patch.dict('django.conf.settings.FEATURES', {'ENABLE_PROCTORED_EXAMS': True}):
-            self.assertTrue(is_feature_enabled())
 
     def test_create_duplicate_exam(self):
         """
