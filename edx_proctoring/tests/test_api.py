@@ -91,7 +91,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.disabled_content_id = 'test_disabled_content_id'
         self.exam_name = 'Test Exam'
         self.user_id = self.user.id
-        self.key = 'Test Key'
+        self.key = 'additional_time_granted'
         self.value = '10'
         self.external_id = 'test_external_id'
         self.proctored_exam_id = self._create_proctored_exam()

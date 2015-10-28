@@ -144,7 +144,7 @@ class SoftwareSecureTests(TestCase):
             self.assertEqual(attempt['external_id'], 'foobar')
             self.assertIsNone(attempt['started_at'])
 
-    @ddt.data(None, '10')
+    @ddt.data(None, 'additional person allowed in room')
     def test_attempt_with_review_policy(self, review_policy_exception):
         """
         Create an unstarted proctoring attempt with a review policy associated with it.

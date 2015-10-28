@@ -1907,7 +1907,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         allowance_data = {
             'exam_id': proctored_exam.id,
             'user_info': self.student_taking_exam.username,
-            'key': 'a_key',
+            'key': 'additional_time_granted',
             'value': 'invalid_value'
         }
         response = self.client.put(
