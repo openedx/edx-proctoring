@@ -48,7 +48,8 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptedAlreadyStarted,
     UserNotFoundException,
     ProctoredExamIllegalStatusTransition,
-    ProctoredExamPermissionDenied
+    ProctoredExamPermissionDenied,
+    AllowanceValueNotAllowedException
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -90,7 +91,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.exam_name = 'Test Exam'
         self.user_id = self.user.id
         self.key = 'Test Key'
-        self.value = 'Test Value'
+        self.value = '10'
         self.external_id = 'test_external_id'
         self.proctored_exam_id = self._create_proctored_exam()
         self.timed_exam_id = self._create_timed_exam()
@@ -430,18 +431,26 @@ class ProctoredExamApiTests(LoggedInTestCase):
         with self.assertRaises(UserNotFoundException):
             add_allowance_for_user(self.proctored_exam_id, 'invalid_user', self.key, self.value)
 
+    @ddt.data('invalid', '-2', '-99', 'invalid123')
+    def test_add_invalid_allowance_value(self, allowance_value):
+        """
+        Test to add allowance for invalid allowance value.
+        """
+        with self.assertRaises(AllowanceValueNotAllowedException):
+            add_allowance_for_user(self.proctored_exam_id, self.user.username, self.key, allowance_value)
+
     def test_update_existing_allowance(self):
         """
         Test updation to the allowance that already exists.
         """
         student_allowance = self._add_allowance_for_user()
-        add_allowance_for_user(student_allowance.proctored_exam.id, self.user.username, self.key, 'new_value')
+        add_allowance_for_user(student_allowance.proctored_exam.id, self.user.username, self.key, '4')
 
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
             student_allowance.proctored_exam.id, self.user_id, self.key
         )
         self.assertIsNotNone(student_allowance)
-        self.assertEqual(student_allowance.value, 'new_value')
+        self.assertEqual(student_allowance.value, '4')
 
     def test_get_allowances_for_course(self):
         """
@@ -749,7 +758,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             user_id=self.user_id,
         )
         add_allowance_for_user(self.proctored_exam_id, self.user.username, self.key, self.value)
-        add_allowance_for_user(self.proctored_exam_id, self.user.username, 'new_key', 'new_value')
+        add_allowance_for_user(self.proctored_exam_id, self.user.username, 'new_key', '2')
         student_active_exams = get_active_exams_for_user(self.user_id, self.course_id)
         self.assertEqual(len(student_active_exams), 2)
         self.assertEqual(len(student_active_exams[0]['allowances']), 0)
