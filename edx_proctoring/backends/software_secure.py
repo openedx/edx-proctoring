@@ -29,7 +29,10 @@ from edx_proctoring. models import (
     ProctoredExamSoftwareSecureComment,
     ProctoredExamStudentAttemptStatus,
 )
-
+from edx_proctoring.serializers import (
+    ProctoredExamSerializer,
+    ProctoredExamStudentAttemptSerializer,
+)
 log = logging.getLogger(__name__)
 
 
@@ -249,7 +252,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             'review_video_url': review.video_url
         }
 
-        emit_event(attempt_obj.proctored_exam, 'review-received', attempt=attempt_obj, override_data=data)
+        serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(attempt_obj)
+        attempt = serialized_attempt_obj.data
+        serialized_exam_object = ProctoredExamSerializer(attempt_obj.proctored_exam)
+        exam = serialized_exam_object.data
+        emit_event(exam, 'review-received', attempt=attempt, override_data=data)
 
     def on_review_saved(self, review, allow_status_update_on_fail=False):  # pylint: disable=arguments-differ
         """
