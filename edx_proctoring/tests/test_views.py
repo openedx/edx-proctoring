@@ -1891,6 +1891,37 @@ class TestExamAllowanceView(LoggedInTestCase):
         self.assertEqual(len(response_data), 1)
         self.assertEqual(response_data['detail'], u"Cannot find user against invalid_user")
 
+    def test_add_invalid_allowance_value(self):
+        """
+        Add allowance for a invalid user_info.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True
+        )
+        allowance_data = {
+            'exam_id': proctored_exam.id,
+            'user_info': self.student_taking_exam.username,
+            'key': 'additional_time_granted',
+            'value': 'invalid_value'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring.proctored_exam.allowance'),
+            allowance_data
+        )
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content)
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(
+            response_data['detail'],
+            u'allowance_value "invalid_value" should be non-negative integer value.'
+        )
+
     def test_add_allowance_for_inactive_exam(self):
         """
         Adding allowance for an inactive exam returns a 400 error.

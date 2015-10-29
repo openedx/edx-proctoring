@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from edx_proctoring.exceptions import (
     UserNotFoundException,
     ProctoredExamNotActiveException,
+    AllowanceValueNotAllowedException
 )
 from django.db.models.base import ObjectDoesNotExist
 
@@ -711,6 +712,11 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         if isinstance(key, tuple) and len(key) > 0:
             key = key[0]
 
+        if not cls.is_allowance_value_valid(key, value):
+            err_msg = (
+                'allowance_value "{value}" should be non-negative integer value.'
+            ).format(value=value)
+            raise AllowanceValueNotAllowedException(err_msg)
         # were we passed a PK?
         if isinstance(user_info, (int, long)):
             user_id = user_info
@@ -738,6 +744,18 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
             student_allowance.save()
         except cls.DoesNotExist:  # pylint: disable=no-member
             cls.objects.create(proctored_exam_id=exam_id, user_id=user_id, key=key, value=value)
+
+    @classmethod
+    def is_allowance_value_valid(cls, allowance_type, allowance_value):
+        """
+        Method that validates the allowance value against the allowance type
+        """
+        # validates the allowance value only when the allowance type is "ADDITIONAL_TIME_GRANTED"
+        if allowance_type in cls.ADDITIONAL_TIME_GRANTED:
+            if not allowance_value.isdigit():
+                return False
+
+        return True
 
     @classmethod
     def get_additional_time_granted(cls, exam_id, user_id):

@@ -51,6 +51,12 @@ class UserNotFoundException(ProctoredBaseException):
     """
 
 
+class AllowanceValueNotAllowedException(ProctoredBaseException):
+    """
+    Raised when the allowance value is not an non-negative integer
+    """
+
+
 class BackendProvideCannotRegisterAttempt(ProctoredBaseException):
     """
     Raised when a back-end provider cannot register an attempt
