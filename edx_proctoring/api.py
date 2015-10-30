@@ -25,6 +25,7 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptedAlreadyStarted,
     ProctoredExamIllegalStatusTransition,
     ProctoredExamPermissionDenied,
+    ProctoredExamNotActiveException,
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -212,18 +213,22 @@ def add_allowance_for_user(exam_id, user_info, key, value):
     )
     log.info(log_msg)
 
-    student_allowance, action = ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_info, key, value)
+    try:
+        student_allowance, action = ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_info, key, value)
+    except ProctoredExamNotActiveException:
+        student_allowance = None
 
-    # emit an event for 'allowance.created|updated'
-    data = {
-        'allowance_user': student_allowance.user,
-        'allowance_proctored_exam': student_allowance.proctored_exam,
-        'allowance_key': student_allowance.key,
-        'allowance_value': student_allowance.value
-        }
+    if student_allowance is not None:
+        # emit an event for 'allowance.created|updated'
+        data = {
+            'allowance_user': student_allowance.user,
+            'allowance_proctored_exam': student_allowance.proctored_exam,
+            'allowance_key': student_allowance.key,
+            'allowance_value': student_allowance.value
+            }
 
-    exam = get_exam_by_id(exam_id)
-    emit_event(exam, 'allowance.{action}'.format(action=action), override_data=data)
+        exam = get_exam_by_id(exam_id)
+        emit_event(exam, 'allowance.{action}'.format(action=action), override_data=data)
 
 def get_allowances_for_course(course_id, timed_exams_only=False):
     """
@@ -250,16 +255,16 @@ def remove_allowance_for_user(exam_id, user_id, key):
     if student_allowance is not None:
         student_allowance.delete()
 
-    # emit an event for 'allowance.deleted'
-    data = {
-        'allowance_user': student_allowance.user,
-        'allowance_proctored_exam': student_allowance.proctored_exam,
-        'allowance_key': student_allowance.key,
-        'allowance_value': student_allowance.value
-        }
+        # emit an event for 'allowance.deleted'
+        data = {
+            'allowance_user': student_allowance.user,
+            'allowance_proctored_exam': student_allowance.proctored_exam,
+            'allowance_key': student_allowance.key,
+            'allowance_value': student_allowance.value
+            }
 
-    exam = get_exam_by_id(exam_id)
-    emit_event(exam, 'allowance.deleted', override_data=data)
+        exam = get_exam_by_id(exam_id)
+        emit_event(exam, 'allowance.deleted', override_data=data)
 
 def _check_for_attempt_timeout(attempt):
     """
