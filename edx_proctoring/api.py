@@ -890,6 +890,7 @@ def remove_exam_attempt(attempt_id):
     attempt = serialized_attempt_obj.data
     emit_event(exam, 'deleted', attempt=attempt)
 
+
 def get_all_exams_for_course(course_id, timed_exams_only=False, active_only=False):
     """
     This method will return all exams for a course. This will return a list
