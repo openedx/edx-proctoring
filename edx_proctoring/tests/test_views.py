@@ -1921,7 +1921,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.allowance'),
-            allowance_data
+            json.dumps(allowance_data),
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
