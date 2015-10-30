@@ -225,10 +225,11 @@ def add_allowance_for_user(exam_id, user_info, key, value):
             'allowance_proctored_exam': student_allowance.proctored_exam,
             'allowance_key': student_allowance.key,
             'allowance_value': student_allowance.value
-            }
+        }
 
         exam = get_exam_by_id(exam_id)
         emit_event(exam, 'allowance.{action}'.format(action=action), override_data=data)
+
 
 def get_allowances_for_course(course_id, timed_exams_only=False):
     """
@@ -261,10 +262,11 @@ def remove_allowance_for_user(exam_id, user_id, key):
             'allowance_proctored_exam': student_allowance.proctored_exam,
             'allowance_key': student_allowance.key,
             'allowance_value': student_allowance.value
-            }
+        }
 
         exam = get_exam_by_id(exam_id)
         emit_event(exam, 'allowance.deleted', override_data=data)
+
 
 def _check_for_attempt_timeout(attempt):
     """
