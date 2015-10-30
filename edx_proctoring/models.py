@@ -736,8 +736,11 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
             student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
             student_allowance.value = value
             student_allowance.save()
+            action = "updated"
         except cls.DoesNotExist:  # pylint: disable=no-member
-            cls.objects.create(proctored_exam_id=exam_id, user_id=user_id, key=key, value=value)
+            student_allowance = cls.objects.create(proctored_exam_id=exam_id, user_id=user_id, key=key, value=value)
+            action = "created"
+        return student_allowance, action
 
     @classmethod
     def get_additional_time_granted(cls, exam_id, user_id):
