@@ -108,7 +108,7 @@ class ExamReviewCallback(APIView):
 
         # call down into the underlying provider code
         try:
-            provider.on_review_callback(request.DATA)
+            provider.on_review_callback(request.data)
         except ProctoredBaseException, ex:
             log.exception(ex)
             return Response(
