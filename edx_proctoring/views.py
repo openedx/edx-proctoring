@@ -76,7 +76,7 @@ def require_course_or_global_staff(func):
     def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
         instructor_service = get_runtime_service('instructor')
         course_id = kwargs['course_id'] if 'course_id' in kwargs else None
-        exam_id = request.DATA.get('exam_id', None)
+        exam_id = request.data.get('exam_id', None)
         attempt_id = kwargs['attempt_id'] if 'attempt_id' in kwargs else None
         if request.user.is_staff:
             return func(request, *args, **kwargs)
@@ -177,17 +177,17 @@ class ProctoredExamView(AuthenticatedAPIView):
         """
         Http POST handler. Creates an exam.
         """
-        serializer = ProctoredExamSerializer(data=request.DATA)
+        serializer = ProctoredExamSerializer(data=request.data)
         if serializer.is_valid():
             exam_id = create_exam(
-                course_id=request.DATA.get('course_id', None),
-                content_id=request.DATA.get('content_id', None),
-                exam_name=request.DATA.get('exam_name', None),
-                time_limit_mins=request.DATA.get('time_limit_mins', None),
-                is_proctored=request.DATA.get('is_proctored', None),
-                is_practice_exam=request.DATA.get('is_practice_exam', None),
-                external_id=request.DATA.get('external_id', None),
-                is_active=request.DATA.get('is_active', None)
+                course_id=request.data.get('course_id', None),
+                content_id=request.data.get('content_id', None),
+                exam_name=request.data.get('exam_name', None),
+                time_limit_mins=request.data.get('time_limit_mins', None),
+                is_proctored=request.data.get('is_proctored', None),
+                is_practice_exam=request.data.get('is_practice_exam', None),
+                external_id=request.data.get('external_id', None),
+                is_active=request.data.get('is_active', None)
             )
             return Response({'exam_id': exam_id})
         else:
@@ -204,13 +204,13 @@ class ProctoredExamView(AuthenticatedAPIView):
         """
         try:
             exam_id = update_exam(
-                exam_id=request.DATA.get('exam_id', None),
-                exam_name=request.DATA.get('exam_name', None),
-                time_limit_mins=request.DATA.get('time_limit_mins', None),
-                is_proctored=request.DATA.get('is_proctored', None),
-                is_practice_exam=request.DATA.get('is_practice_exam', None),
-                external_id=request.DATA.get('external_id', None),
-                is_active=request.DATA.get('is_active', None),
+                exam_id=request.data.get('exam_id', None),
+                exam_name=request.data.get('exam_name', None),
+                time_limit_mins=request.data.get('time_limit_mins', None),
+                is_proctored=request.data.get('is_proctored', None),
+                is_practice_exam=request.data.get('is_practice_exam', None),
+                external_id=request.data.get('external_id', None),
+                is_active=request.data.get('is_active', None),
             )
             return Response({'exam_id': exam_id})
         except ProctoredExamNotFoundException, ex:
@@ -406,7 +406,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 )
                 raise ProctoredExamPermissionDenied(err_msg)
 
-            action = request.DATA.get('action')
+            action = request.data.get('action')
 
             if action == 'stop':
                 exam_attempt_id = stop_exam_attempt(
@@ -581,9 +581,9 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         """
         HTTP POST handler. To create an exam attempt.
         """
-        start_immediately = request.DATA.get('start_clock', 'false').lower() == 'true'
-        exam_id = request.DATA.get('exam_id', None)
-        attempt_proctored = request.DATA.get('attempt_proctored', 'false').lower() == 'true'
+        start_immediately = request.data.get('start_clock', 'false').lower() == 'true'
+        exam_id = request.data.get('exam_id', None)
+        attempt_proctored = request.data.get('attempt_proctored', 'false').lower() == 'true'
         try:
             exam_attempt_id = create_exam_attempt(
                 exam_id=exam_id,
@@ -732,10 +732,10 @@ class ExamAllowanceView(AuthenticatedAPIView):
         """
         try:
             return Response(add_allowance_for_user(
-                exam_id=request.DATA.get('exam_id', None),
-                user_info=request.DATA.get('user_info', None),
-                key=request.DATA.get('key', None),
-                value=request.DATA.get('value', None)
+                exam_id=request.data.get('exam_id', None),
+                user_info=request.data.get('user_info', None),
+                key=request.data.get('key', None),
+                value=request.data.get('value', None)
             ))
 
         except (AllowanceValueNotAllowedException, UserNotFoundException, ProctoredExamNotActiveException) as ex:
@@ -751,9 +751,9 @@ class ExamAllowanceView(AuthenticatedAPIView):
         HTTP DELETE handler. Removes Allowance.
         """
         return Response(remove_allowance_for_user(
-            exam_id=request.DATA.get('exam_id', None),
-            user_id=request.DATA.get('user_id', None),
-            key=request.DATA.get('key', None)
+            exam_id=request.data.get('exam_id', None),
+            user_id=request.data.get('user_id', None),
+            key=request.data.get('key', None)
         ))
 
 
@@ -770,6 +770,6 @@ class ActiveExamsForUserView(AuthenticatedAPIView):
         returns the get_active_exams_for_user
         """
         return Response(get_active_exams_for_user(
-            user_id=request.DATA.get('user_id', None),
-            course_id=request.DATA.get('course_id', None)
+            user_id=request.data.get('user_id', None),
+            course_id=request.data.get('course_id', None)
         ))

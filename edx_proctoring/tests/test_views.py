@@ -224,7 +224,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         mock request
         """
         request = Mock()
-        request.DATA = {}
+        request.data = {}
         self.user.is_staff = False
         self.user.save()
         request.user = self.user
