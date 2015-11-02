@@ -884,6 +884,12 @@ def remove_exam_attempt(attempt_id):
             req_name=content_id
         )
 
+    # emit an event for 'deleted'
+    exam = get_exam_by_content_id(course_id, content_id)
+    serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(existing_attempt)
+    attempt = serialized_attempt_obj.data
+    emit_event(exam, 'deleted', attempt=attempt)
+
 
 def get_all_exams_for_course(course_id, timed_exams_only=False, active_only=False):
     """
