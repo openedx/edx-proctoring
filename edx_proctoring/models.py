@@ -119,6 +119,10 @@ class ProctoredExamStudentAttemptStatus(object):
     # been started
     created = 'created'
 
+    # the student has clicked on the external
+    # software download link
+    download_software_clicked = 'download_software_clicked'
+
     # the attempt is ready to start but requires
     # user to acknowledge that he/she wants to start the exam
     ready_to_start = 'ready_to_start'
@@ -183,7 +187,8 @@ class ProctoredExamStudentAttemptStatus(object):
         Returns a boolean if the passed in status is in an "incomplete" state.
         """
         return status in [
-            cls.eligible, cls.created, cls.ready_to_start, cls.started, cls.ready_to_submit
+            cls.eligible, cls.created, cls.download_software_clicked, cls.ready_to_start, cls.started,
+            cls.ready_to_submit
         ]
 
     @classmethod

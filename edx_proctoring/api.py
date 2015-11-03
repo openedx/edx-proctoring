@@ -1588,7 +1588,8 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         return None
     elif attempt_status == ProctoredExamStudentAttemptStatus.expired:
         student_view_template = 'proctored_exam/expired.html'
-    elif attempt_status == ProctoredExamStudentAttemptStatus.created:
+    elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
+                            ProctoredExamStudentAttemptStatus.download_software_clicked]:
         provider = get_backend_provider()
         student_view_template = 'proctored_exam/instructions.html'
         context.update({
