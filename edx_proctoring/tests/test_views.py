@@ -1068,6 +1068,9 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content)
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.download_software_clicked)
+
     @ddt.data(
         ('submit', ProctoredExamStudentAttemptStatus.submitted),
         ('decline', ProctoredExamStudentAttemptStatus.declined)

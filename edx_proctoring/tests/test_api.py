@@ -1031,6 +1031,27 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIn(self.chose_proctored_exam_msg, rendered_response)
         self.assertIn(self.proctored_exam_optout_msg, rendered_response)
 
+        # now make sure content remains the same if
+        # the status transitions to 'download_software_clicked'
+        update_attempt_status(
+            self.proctored_exam_id,
+            self.user_id,
+            ProctoredExamStudentAttemptStatus.download_software_clicked
+        )
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIn(self.chose_proctored_exam_msg, rendered_response)
+        self.assertIn(self.proctored_exam_optout_msg, rendered_response)
+
     def test_get_studentview_unstarted_practice_exam(self):
         """
         Test for get_student_view Practice exam which has not started yet.
@@ -1811,6 +1832,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
         (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.created),
         (ProctoredExamStudentAttemptStatus.expired, ProctoredExamStudentAttemptStatus.created),
+        (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.download_software_clicked),
+        (ProctoredExamStudentAttemptStatus.expired, ProctoredExamStudentAttemptStatus.download_software_clicked),
         (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.ready_to_start),
         (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started),
@@ -1930,6 +1953,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (
             ProctoredExamStudentAttemptStatus.created, {
                 'status': ProctoredExamStudentAttemptStatus.created,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.download_software_clicked, {
+                'status': ProctoredExamStudentAttemptStatus.download_software_clicked,
                 'short_description': 'Taking As Proctored Exam',
                 'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
@@ -2262,6 +2293,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     @ddt.data(
         ProctoredExamStudentAttemptStatus.eligible,
         ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
         ProctoredExamStudentAttemptStatus.ready_to_start,
         ProctoredExamStudentAttemptStatus.started,
         ProctoredExamStudentAttemptStatus.ready_to_submit,
@@ -2324,6 +2356,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     @ddt.data(
         ProctoredExamStudentAttemptStatus.eligible,
         ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
         ProctoredExamStudentAttemptStatus.submitted,
         ProctoredExamStudentAttemptStatus.verified,
         ProctoredExamStudentAttemptStatus.rejected,
