@@ -1,183 +1,227 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import migrations, models
+import django.utils.timezone
+from django.conf import settings
+import model_utils.fields
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'ProctoredExam'
-        db.create_table('proctoring_proctoredexam', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
-            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
-            ('course_id', self.gf('django.db.models.fields.CharField')(max_length=255, db_index=True)),
-            ('content_id', self.gf('django.db.models.fields.CharField')(max_length=255, db_index=True)),
-            ('external_id', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, db_index=True)),
-            ('exam_name', self.gf('django.db.models.fields.TextField')()),
-            ('time_limit_mins', self.gf('django.db.models.fields.IntegerField')()),
-            ('is_proctored', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('edx_proctoring', ['ProctoredExam'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding unique constraint on 'ProctoredExam', fields ['course_id', 'content_id']
-        db.create_unique('proctoring_proctoredexam', ['course_id', 'content_id'])
-
-        # Adding model 'ProctoredExamStudentAttempt'
-        db.create_table('proctoring_proctoredexamstudentattempt', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
-            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('proctored_exam', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['edx_proctoring.ProctoredExam'])),
-            ('started_at', self.gf('django.db.models.fields.DateTimeField')(null=True)),
-            ('completed_at', self.gf('django.db.models.fields.DateTimeField')(null=True)),
-            ('external_id', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, db_index=True)),
-            ('allowed_time_limit_mins', self.gf('django.db.models.fields.IntegerField')()),
-            ('status', self.gf('django.db.models.fields.CharField')(max_length=64)),
-            ('taking_as_proctored', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('student_name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-        ))
-        db.send_create_signal('edx_proctoring', ['ProctoredExamStudentAttempt'])
-
-        # Adding model 'ProctoredExamStudentAllowance'
-        db.create_table('proctoring_proctoredexamstudentallowance', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
-            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('proctored_exam', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['edx_proctoring.ProctoredExam'])),
-            ('key', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('value', self.gf('django.db.models.fields.CharField')(max_length=255)),
-        ))
-        db.send_create_signal('edx_proctoring', ['ProctoredExamStudentAllowance'])
-
-        # Adding unique constraint on 'ProctoredExamStudentAllowance', fields ['user', 'proctored_exam', 'key']
-        db.create_unique('proctoring_proctoredexamstudentallowance', ['user_id', 'proctored_exam_id', 'key'])
-
-        # Adding model 'ProctoredExamStudentAllowanceHistory'
-        db.create_table('proctoring_proctoredexamstudentallowancehistory', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
-            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
-            ('allowance_id', self.gf('django.db.models.fields.IntegerField')()),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('proctored_exam', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['edx_proctoring.ProctoredExam'])),
-            ('key', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('value', self.gf('django.db.models.fields.CharField')(max_length=255)),
-        ))
-        db.send_create_signal('edx_proctoring', ['ProctoredExamStudentAllowanceHistory'])
-
-
-    def backwards(self, orm):
-        # Removing unique constraint on 'ProctoredExamStudentAllowance', fields ['user', 'proctored_exam', 'key']
-        db.delete_unique('proctoring_proctoredexamstudentallowance', ['user_id', 'proctored_exam_id', 'key'])
-
-        # Removing unique constraint on 'ProctoredExam', fields ['course_id', 'content_id']
-        db.delete_unique('proctoring_proctoredexam', ['course_id', 'content_id'])
-
-        # Deleting model 'ProctoredExam'
-        db.delete_table('proctoring_proctoredexam')
-
-        # Deleting model 'ProctoredExamStudentAttempt'
-        db.delete_table('proctoring_proctoredexamstudentattempt')
-
-        # Deleting model 'ProctoredExamStudentAllowance'
-        db.delete_table('proctoring_proctoredexamstudentallowance')
-
-        # Deleting model 'ProctoredExamStudentAllowanceHistory'
-        db.delete_table('proctoring_proctoredexamstudentallowancehistory')
-
-
-    models = {
-        'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        'auth.permission': {
-            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'edx_proctoring.proctoredexam': {
-            'Meta': {'unique_together': "(('course_id', 'content_id'),)", 'object_name': 'ProctoredExam', 'db_table': "'proctoring_proctoredexam'"},
-            'content_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'}),
-            'course_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'}),
-            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
-            'exam_name': ('django.db.models.fields.TextField', [], {}),
-            'external_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'db_index': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_proctored': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'time_limit_mins': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'edx_proctoring.proctoredexamstudentallowance': {
-            'Meta': {'unique_together': "(('user', 'proctored_exam', 'key'),)", 'object_name': 'ProctoredExamStudentAllowance', 'db_table': "'proctoring_proctoredexamstudentallowance'"},
-            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'key': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'proctored_exam': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['edx_proctoring.ProctoredExam']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'value': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'edx_proctoring.proctoredexamstudentallowancehistory': {
-            'Meta': {'object_name': 'ProctoredExamStudentAllowanceHistory', 'db_table': "'proctoring_proctoredexamstudentallowancehistory'"},
-            'allowance_id': ('django.db.models.fields.IntegerField', [], {}),
-            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'key': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'proctored_exam': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['edx_proctoring.ProctoredExam']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'value': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'edx_proctoring.proctoredexamstudentattempt': {
-            'Meta': {'object_name': 'ProctoredExamStudentAttempt', 'db_table': "'proctoring_proctoredexamstudentattempt'"},
-            'allowed_time_limit_mins': ('django.db.models.fields.IntegerField', [], {}),
-            'completed_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
-            'external_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'db_index': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'proctored_exam': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['edx_proctoring.ProctoredExam']"}),
-            'started_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'status': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            'student_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'taking_as_proctored': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        }
-    }
-
-    complete_apps = ['edx_proctoring']
+    operations = [
+        migrations.CreateModel(
+            name='ProctoredExam',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('course_id', models.CharField(max_length=255, db_index=True)),
+                ('content_id', models.CharField(max_length=255, db_index=True)),
+                ('external_id', models.CharField(max_length=255, null=True, db_index=True)),
+                ('exam_name', models.TextField()),
+                ('time_limit_mins', models.IntegerField()),
+                ('due_date', models.DateTimeField(null=True)),
+                ('is_proctored', models.BooleanField(default=False)),
+                ('is_practice_exam', models.BooleanField(default=False)),
+                ('is_active', models.BooleanField(default=False)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexam',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProctoredExamReviewPolicy',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('review_policy', models.TextField()),
+                ('proctored_exam', models.ForeignKey(to='edx_proctoring.ProctoredExam')),
+                ('set_by_user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexamreviewpolicy',
+                'verbose_name': 'Proctored exam review policy',
+                'verbose_name_plural': 'Proctored exam review policies',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProctoredExamReviewPolicyHistory',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('original_id', models.IntegerField(db_index=True)),
+                ('review_policy', models.TextField()),
+                ('proctored_exam', models.ForeignKey(to='edx_proctoring.ProctoredExam')),
+                ('set_by_user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexamreviewpolicyhistory',
+                'verbose_name': 'proctored exam review policy history',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProctoredExamSoftwareSecureComment',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('start_time', models.IntegerField()),
+                ('stop_time', models.IntegerField()),
+                ('duration', models.IntegerField()),
+                ('comment', models.TextField()),
+                ('status', models.CharField(max_length=255)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexamstudentattemptcomment',
+                'verbose_name': 'proctored exam software secure comment',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProctoredExamSoftwareSecureReview',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('attempt_code', models.CharField(max_length=255, db_index=True)),
+                ('review_status', models.CharField(max_length=255)),
+                ('raw_data', models.TextField()),
+                ('video_url', models.TextField()),
+                ('exam', models.ForeignKey(to='edx_proctoring.ProctoredExam', null=True)),
+                ('reviewed_by', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL, null=True)),
+                ('student', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexamsoftwaresecurereview',
+                'verbose_name': 'Proctored exam software secure review',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProctoredExamSoftwareSecureReviewHistory',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('attempt_code', models.CharField(max_length=255, db_index=True)),
+                ('review_status', models.CharField(max_length=255)),
+                ('raw_data', models.TextField()),
+                ('video_url', models.TextField()),
+                ('exam', models.ForeignKey(to='edx_proctoring.ProctoredExam', null=True)),
+                ('reviewed_by', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL, null=True)),
+                ('student', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexamsoftwaresecurereviewhistory',
+                'verbose_name': 'Proctored exam review archive',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProctoredExamStudentAllowance',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('key', models.CharField(max_length=255)),
+                ('value', models.CharField(max_length=255)),
+                ('proctored_exam', models.ForeignKey(to='edx_proctoring.ProctoredExam')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexamstudentallowance',
+                'verbose_name': 'proctored allowance',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProctoredExamStudentAllowanceHistory',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('allowance_id', models.IntegerField()),
+                ('key', models.CharField(max_length=255)),
+                ('value', models.CharField(max_length=255)),
+                ('proctored_exam', models.ForeignKey(to='edx_proctoring.ProctoredExam')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexamstudentallowancehistory',
+                'verbose_name': 'proctored allowance history',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProctoredExamStudentAttempt',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('started_at', models.DateTimeField(null=True)),
+                ('completed_at', models.DateTimeField(null=True)),
+                ('last_poll_timestamp', models.DateTimeField(null=True)),
+                ('last_poll_ipaddr', models.CharField(max_length=32, null=True)),
+                ('attempt_code', models.CharField(max_length=255, null=True, db_index=True)),
+                ('external_id', models.CharField(max_length=255, null=True, db_index=True)),
+                ('allowed_time_limit_mins', models.IntegerField()),
+                ('status', models.CharField(max_length=64)),
+                ('taking_as_proctored', models.BooleanField(default=False)),
+                ('is_sample_attempt', models.BooleanField(default=False)),
+                ('student_name', models.CharField(max_length=255)),
+                ('review_policy_id', models.IntegerField(null=True)),
+                ('proctored_exam', models.ForeignKey(to='edx_proctoring.ProctoredExam')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexamstudentattempt',
+                'verbose_name': 'proctored exam attempt',
+            },
+        ),
+        migrations.CreateModel(
+            name='ProctoredExamStudentAttemptHistory',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('attempt_id', models.IntegerField(null=True)),
+                ('started_at', models.DateTimeField(null=True)),
+                ('completed_at', models.DateTimeField(null=True)),
+                ('attempt_code', models.CharField(max_length=255, null=True, db_index=True)),
+                ('external_id', models.CharField(max_length=255, null=True, db_index=True)),
+                ('allowed_time_limit_mins', models.IntegerField()),
+                ('status', models.CharField(max_length=64)),
+                ('taking_as_proctored', models.BooleanField(default=False)),
+                ('is_sample_attempt', models.BooleanField(default=False)),
+                ('student_name', models.CharField(max_length=255)),
+                ('review_policy_id', models.IntegerField(null=True)),
+                ('last_poll_timestamp', models.DateTimeField(null=True)),
+                ('last_poll_ipaddr', models.CharField(max_length=32, null=True)),
+                ('proctored_exam', models.ForeignKey(to='edx_proctoring.ProctoredExam')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'db_table': 'proctoring_proctoredexamstudentattempthistory',
+                'verbose_name': 'proctored exam attempt history',
+            },
+        ),
+        migrations.AddField(
+            model_name='proctoredexamsoftwaresecurecomment',
+            name='review',
+            field=models.ForeignKey(to='edx_proctoring.ProctoredExamSoftwareSecureReview'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='proctoredexam',
+            unique_together=set([('course_id', 'content_id')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='proctoredexamstudentattempt',
+            unique_together=set([('user', 'proctored_exam')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='proctoredexamstudentallowance',
+            unique_together=set([('user', 'proctored_exam', 'key')]),
+        ),
+    ]
