@@ -1256,7 +1256,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     attempt = get_exam_attempt(exam_id, user_id)
 
     attempt_status = attempt['status'] if attempt else None
-
+    has_due_date = True if exam['due_date'] is not None else False
     if not attempt_status:
         if _has_due_date_passed(exam['due_date']):
             _create_and_expire_attempt(exam_id, user_id)
@@ -1271,6 +1271,11 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'timed_exam/ready_to_submit.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
+        # check if the exam's due_date has passed then we return None
+        # so that the user can see his exam answers in read only mode.
+        if _has_due_date_passed(exam['due_date']):
+            return None
+
         student_view_template = 'timed_exam/submitted.html'
 
     if student_view_template:
@@ -1310,6 +1315,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
 
         django_context.update({
             'total_time': total_time,
+            'has_due_date': has_due_date,
             'exam_id': exam_id,
             'exam_name': exam['exam_name'],
             'progress_page_url': progress_page_url,

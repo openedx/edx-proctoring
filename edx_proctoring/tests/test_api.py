@@ -102,6 +102,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.start_an_exam_msg = 'This exam is proctored'
         self.exam_expired_msg = 'The due date for this exam has passed'
         self.timed_exam_msg = '{exam_name} is a Timed Exam'
+        self.submitted_timed_exam_msg_with_due_date = 'After the due date has passed,'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
         self.exam_time_error_msg = 'There was a problem with your proctoring session'
         self.chose_proctored_exam_msg = 'Follow these steps to set up and start your proctored exam'
@@ -250,6 +251,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
             exam_name=self.exam_name,
             time_limit_mins=self.default_time_limit,
             is_active=False
+        )
+
+    def _create_exam_attempt(self, exam_id, status='created'):
+        """
+        Creates the ProctoredExamStudentAttempt object.
+        """
+        return ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=exam_id,
+            user_id=self.user_id,
+            external_id=self.external_id,
+            allowed_time_limit_mins=10,
+            status=status
         )
 
     def _create_unstarted_exam_attempt(self, is_proctored=True, is_practice=False):
@@ -1143,6 +1156,37 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIsNone(rendered_response)
+
+    @ddt.data(
+        (datetime.now(pytz.UTC) + timedelta(days=1), False),
+        (datetime.now(pytz.UTC) - timedelta(days=1), True),
+    )
+    @ddt.unpack
+    def test_get_studentview_submitted_timed_exam_with_past_due_date(self, due_date, has_due_date_passed):
+        """
+        Test for get_student_view timed exam with the due date.
+        """
+
+        # exam is created with due datetime which has already passed
+        exam_id = self._create_exam_with_due_time(is_proctored=False, due_date=due_date)
+
+        # now create the timed_exam attempt in the submitted state
+        self._create_exam_attempt(exam_id, status='submitted')
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_for_exam_with_due_date,
+            context={
+                'is_proctored': False,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 10
+            }
+        )
+        if not has_due_date_passed:
+            self.assertIn(self.submitted_timed_exam_msg_with_due_date, rendered_response)
+        else:
+            self.assertIsNone(None)
 
     @ddt.data(
         (True, False),
