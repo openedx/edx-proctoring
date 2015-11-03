@@ -15,13 +15,13 @@ In order to use edx-proctoring, you must obtain an account (and secret configura
 
 CONFIGURATION:
 
-You will need to turn on the ENABLE_PROCTORED_EXAMS in lms.env.json and cms.env.json FEATURES dictionary:
+You will need to turn on the ENABLE_SPECIAL_EXAMS in lms.env.json and cms.env.json FEATURES dictionary:
 
 ```
 :
 "FEATURES": {
     :
-    "ENABLE_PROCTORED_EXAMS": true,
+    "ENABLE_SPECIAL_EXAMS": true,
     :
 }
 ```

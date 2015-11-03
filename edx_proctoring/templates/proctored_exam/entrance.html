@@ -11,9 +11,7 @@
     {% endblocktrans %}
   </p>
   <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-    <a>
-      {% trans "Continue to my proctored exam. I want to be eligible for credit." %}
-    </a>
+    {% trans "Continue to my proctored exam. I want to be eligible for credit." %}
     <p>
       {% blocktrans %}
         You will be guided through steps to set up online proctoring software and to perform various checks.</br>
@@ -23,9 +21,7 @@
     <i class="fa fa-arrow-circle-right"></i>
   </button>
   <button class="gated-sequence start-timed-exam" data-attempt-proctored=false>
-    <a>
-      {% trans "Take this exam without proctoring." %}
-    </a>
+    {% trans "Take this exam without proctoring." %}
       <i class="fa fa-arrow-circle-right"></i>
     <p>
       {% blocktrans %}
