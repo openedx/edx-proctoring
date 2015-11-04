@@ -4,7 +4,7 @@
     <table class='compact'>
         <tr>
             <td>
-                <label><%- gettext("Proctored Exam") %></label>
+                <label><%- gettext("Special Exam") %></label>
             </td>
             <td>
                 <select id='proctored_exam'>
