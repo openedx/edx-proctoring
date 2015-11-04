@@ -49,14 +49,6 @@ from edx_proctoring.runtime import get_runtime_service
 log = logging.getLogger(__name__)
 
 
-def is_feature_enabled():
-    """
-    Returns if this feature has been enabled in our FEATURE flags
-    """
-
-    return hasattr(settings, 'FEATURES') and settings.FEATURES.get('ENABLE_PROCTORED_EXAMS', False)
-
-
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True):
     """
@@ -475,7 +467,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         update_attempt_status(
             exam_id,
             user_id,
-            ProctoredExamStudentAttemptStatus.declined
+            ProctoredExamStudentAttemptStatus.expired
         )
 
     log_msg = (
@@ -1297,15 +1289,12 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
             # time limit, including any accommodations
 
             allowed_time_limit_mins = exam['time_limit_mins']
-            allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
-                exam_id,
-                user_id,
-                "Additional time (minutes)"
-            )
+            allowance_extra_mins = ProctoredExamStudentAllowance.get_additional_time_granted(exam_id, user_id)
 
-            if allowance:
-                allowed_time_limit_mins += int(allowance.value)
+            if allowance_extra_mins:
+                allowed_time_limit_mins += int(allowance_extra_mins)
 
+            # apply any cut off times according to due dates
             allowed_time_limit_mins, _ = _calculate_allowed_mins(
                 exam['due_date'],
                 allowed_time_limit_mins
@@ -1328,6 +1317,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
             'total_time': total_time,
             'has_due_date': has_due_date,
             'exam_id': exam_id,
+            'exam_name': exam['exam_name'],
             'progress_page_url': progress_page_url,
             'does_time_remain': _does_time_remain(attempt),
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
