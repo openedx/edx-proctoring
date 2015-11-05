@@ -173,7 +173,6 @@ def emit_event(exam, event_short_name, attempt=None, override_data=None):
         attempt_data = {
             'attempt_id': attempt['id'],
             'attempt_user_id': attempt['user']['id'],
-            'attempt_username': attempt['student_name'],
             'attempt_started_at': attempt['started_at'],
             'attempt_completed_at': attempt['completed_at'],
             'attempt_code': attempt['attempt_code'],
