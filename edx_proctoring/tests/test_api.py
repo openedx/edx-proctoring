@@ -66,6 +66,7 @@ from .utils import (
 from edx_proctoring.tests.test_services import (
     MockCreditService,
     MockInstructorService,
+    MockAnalyticsService,
 )
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
@@ -124,6 +125,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+        set_runtime_service('analytics', MockAnalyticsService())
 
         self.prerequisites = [
             {
@@ -657,7 +659,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = stop_exam_attempt(
-            proctored_exam_student_attempt.proctored_exam, self.user_id
+            proctored_exam_student_attempt.proctored_exam.id, self.user_id
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
@@ -746,7 +748,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = mark_exam_attempt_as_ready(
-            proctored_exam_student_attempt.proctored_exam, self.user_id
+            proctored_exam_student_attempt.proctored_exam.id, self.user_id
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
@@ -1024,6 +1026,27 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
 
         self._create_unstarted_exam_attempt()
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIn(self.chose_proctored_exam_msg, rendered_response)
+        self.assertIn(self.proctored_exam_optout_msg, rendered_response)
+
+        # now make sure content remains the same if
+        # the status transitions to 'download_software_clicked'
+        update_attempt_status(
+            self.proctored_exam_id,
+            self.user_id,
+            ProctoredExamStudentAttemptStatus.download_software_clicked
+        )
 
         rendered_response = get_student_view(
             user_id=self.user_id,
@@ -1844,6 +1867,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
         (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.created),
         (ProctoredExamStudentAttemptStatus.expired, ProctoredExamStudentAttemptStatus.created),
+        (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.download_software_clicked),
+        (ProctoredExamStudentAttemptStatus.expired, ProctoredExamStudentAttemptStatus.download_software_clicked),
         (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.ready_to_start),
         (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started),
@@ -1963,6 +1988,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (
             ProctoredExamStudentAttemptStatus.created, {
                 'status': ProctoredExamStudentAttemptStatus.created,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.download_software_clicked, {
+                'status': ProctoredExamStudentAttemptStatus.download_software_clicked,
                 'short_description': 'Taking As Proctored Exam',
                 'suggested_icon': 'fa-pencil-square-o',
                 'in_completed_state': False
@@ -2295,6 +2328,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     @ddt.data(
         ProctoredExamStudentAttemptStatus.eligible,
         ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
         ProctoredExamStudentAttemptStatus.ready_to_start,
         ProctoredExamStudentAttemptStatus.started,
         ProctoredExamStudentAttemptStatus.ready_to_submit,
@@ -2357,6 +2391,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     @ddt.data(
         ProctoredExamStudentAttemptStatus.eligible,
         ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
         ProctoredExamStudentAttemptStatus.submitted,
         ProctoredExamStudentAttemptStatus.verified,
         ProctoredExamStudentAttemptStatus.rejected,

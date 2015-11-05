@@ -16,6 +16,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptHistory,
 )
 from edx_proctoring import constants
+from edx_proctoring.runtime import get_runtime_service
 
 log = logging.getLogger(__name__)
 
@@ -128,3 +129,69 @@ def has_client_app_shutdown(attempt):
 
     elapsed_time = (datetime.now(pytz.UTC) - attempt['last_poll_timestamp']).total_seconds()
     return elapsed_time > constants.SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD
+
+
+def emit_event(exam, event_short_name, attempt=None, override_data=None):
+    """
+    Helper method to emit an analytics event
+    """
+
+    exam_type = (
+        'timed' if not exam['is_proctored'] else
+        ('practice' if exam['is_practice_exam'] else 'proctored')
+    )
+
+    # establish baseline schema for event 'context'
+    context = {
+        'course_id': exam['course_id']
+    }
+
+    # establish baseline schema for event 'data'
+    data = {
+        'exam_id': exam['id'],
+        'exam_content_id': exam['content_id'],
+        'exam_name': exam['exam_name'],
+        'exam_default_time_limit_mins': exam['time_limit_mins'],
+        'exam_is_proctored': exam['is_proctored'],
+        'exam_is_practice_exam': exam['is_practice_exam'],
+        'exam_is_active': exam['is_active']
+    }
+
+    if attempt:
+        # if an attempt is passed in then use that to add additional baseline
+        # schema elements
+
+        # let's compute the relative time we're firing the event
+        # compared to the start time, if the attempt has already started.
+        # This can be used to determine how far into an attempt a given
+        # event occured (e.g. "time to complete exam")
+        attempt_event_elapsed_time_secs = (
+            (datetime.now(pytz.UTC) - attempt['started_at']).seconds if attempt['started_at'] else
+            None
+        )
+
+        attempt_data = {
+            'attempt_id': attempt['id'],
+            'attempt_user_id': attempt['user']['id'],
+            'attempt_username': attempt['student_name'],
+            'attempt_started_at': attempt['started_at'],
+            'attempt_completed_at': attempt['completed_at'],
+            'attempt_code': attempt['attempt_code'],
+            'attempt_allowed_time_limit_mins': attempt['allowed_time_limit_mins'],
+            'attempt_status': attempt['status'],
+            'attempt_event_elapsed_time_secs': attempt_event_elapsed_time_secs
+        }
+        data.update(attempt_data)
+        name = '.'.join(['edx', 'special-exam', exam_type, 'attempt', event_short_name])
+    else:
+        name = '.'.join(['edx', 'special-exam', exam_type, event_short_name])
+
+    # allow caller to override event data
+    if override_data:
+        data.update(override_data)
+
+    service = get_runtime_service('analytics')
+    if service:
+        service.emit_event(name, context, data)
+    else:
+        log.warn('Analytics event service not configured. If this is a production environment, please resolve.')

@@ -424,6 +424,12 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                     request.user.id,
                     ProctoredExamStudentAttemptStatus.submitted
                 )
+            elif action == 'click_download_software':
+                exam_attempt_id = update_attempt_status(
+                    attempt['proctored_exam']['id'],
+                    request.user.id,
+                    ProctoredExamStudentAttemptStatus.download_software_clicked
+                )
             elif action == 'decline':
                 exam_attempt_id = update_attempt_status(
                     attempt['proctored_exam']['id'],
@@ -569,7 +575,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         else:
             response_dict = {
                 'in_timed_exam': False,
-                'is_proctored': False,
+                'is_proctored': False
             }
 
         return Response(
