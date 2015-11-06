@@ -34,7 +34,11 @@ def load_requirements(*requirements_paths):
 
 setup(
     name='edx-proctoring',
+<<<<<<< HEAD
     version='0.11.0',
+=======
+    version='0.10.19',
+>>>>>>> Substitute all illegal characters when registering exams with SoftwareSecure
     description='Proctoring subsystem for Open edX',
     long_description=open('README.md').read(),
     author='edX',

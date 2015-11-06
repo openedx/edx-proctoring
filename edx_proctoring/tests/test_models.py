@@ -1,7 +1,8 @@
+# coding=utf-8
+# pylint: disable=invalid-name
 """
 All tests for the models.py
 """
-# pylint: disable=invalid-name
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
@@ -28,6 +29,20 @@ class ProctoredExamModelTests(LoggedInTestCase):
         Build out test harnessing
         """
         super(ProctoredExamModelTests, self).setUp()
+
+    def test_unicode(self):
+        """
+        Make sure we support Unicode characters
+        """
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='test_course',
+            content_id='test_content',
+            exam_name=u'अआईउऊऋऌ अआईउऊऋऌ',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        output = unicode(proctored_exam)
+        self.assertEquals(output, u"test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive)")
 
     def test_save_proctored_exam_student_allowance_history(self):  # pylint: disable=invalid-name
         """
