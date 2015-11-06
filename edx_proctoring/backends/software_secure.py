@@ -355,6 +355,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         now = datetime.datetime.utcnow()
         start_time_str = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
         end_time_str = (now + datetime.timedelta(minutes=time_limit_mins)).strftime("%a, %d %b %Y %H:%M:%S GMT")
+        # note, SoftwareSecure does not appear to allow colons in the exam names
+        exam_name = exam['exam_name'].replace(':', '-')
         return {
             "examCode": attempt_code,
             "organization": self.organization,
@@ -365,7 +367,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             "reviewerNotes": reviewer_notes,
             "examPassword": self._encrypt_password(self.crypto_key, attempt_code),
             "examSponsor": self.exam_sponsor,
-            "examName": exam['exam_name'],
+            "examName": exam_name,
             "ssiProduct": 'rp-now',
             # need to pass in a URL to the LMS?
             "examUrl": callback_url,

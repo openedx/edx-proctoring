@@ -219,7 +219,7 @@ class SoftwareSecureTests(TestCase):
         exam_id = create_exam(
             course_id='foo/bar/baz',
             content_id='content',
-            exam_name='Sample Exam',
+            exam_name='Sample Exam with : Colon',
             time_limit_mins=10,
             is_proctored=True
         )
@@ -236,6 +236,13 @@ class SoftwareSecureTests(TestCase):
 
             # assert that we use the default that is defined in system configuration
             self.assertEqual(result['reviewerNotes'], constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
+
+            # the check that if a colon was passed in for the exam name, then the colon was changed to
+            # a dash. This is because SoftwareSecure cannot handle a colon in the exam name
+            if ':' in exam['exam_name']:
+                self.assertIn('-', result['examName'])
+                self.assertNotIn(':', result['examName'])
+
             return result
 
         with HTTMock(mock_response_content):
