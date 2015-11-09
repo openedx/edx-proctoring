@@ -645,6 +645,9 @@ class ProctoredExamStudentAllowanceManager(models.Manager):
     to enable archiving on Allowance updation.
     """
     def get_queryset(self):
+        """
+        Return a specialized queryset
+        """
         return QuerySetWithUpdateOverride(self.model, using=self._db)
 
 
