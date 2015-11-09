@@ -1053,7 +1053,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.attempt.collection'),
-            attempt_data
+            json.dumps(attempt_data),
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 200)
@@ -1063,9 +1064,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         response = self.client.put(
             reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
-            {
+            json.dumps({
                 'action': 'click_download_software',
-            }
+            }),
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 200)
