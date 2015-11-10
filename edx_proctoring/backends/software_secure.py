@@ -33,6 +33,9 @@ from edx_proctoring. models import (
 log = logging.getLogger(__name__)
 
 
+SOFTWARE_SECURE_INVALID_CHARS = '[]<>#:|?/\'"*\\'
+
+
 class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     """
     Implementation of the ProctoringBackendProvider for Software Secure's
@@ -355,6 +358,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         now = datetime.datetime.utcnow()
         start_time_str = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
         end_time_str = (now + datetime.timedelta(minutes=time_limit_mins)).strftime("%a, %d %b %Y %H:%M:%S GMT")
+        # remove all illegal characters from the exam name
+        exam_name = exam['exam_name']
+        for character in SOFTWARE_SECURE_INVALID_CHARS:
+            exam_name = exam_name.replace(character, '_')
         return {
             "examCode": attempt_code,
             "organization": self.organization,
@@ -365,7 +372,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             "reviewerNotes": reviewer_notes,
             "examPassword": self._encrypt_password(self.crypto_key, attempt_code),
             "examSponsor": self.exam_sponsor,
-            "examName": exam['exam_name'],
+            "examName": exam_name,
             "ssiProduct": 'rp-now',
             # need to pass in a URL to the LMS?
             "examUrl": callback_url,
