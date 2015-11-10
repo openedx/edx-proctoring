@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="proctored-exam-skip-confirm-wrapper hidden">
+<div class="proctored-exam skip-confirm-wrapper warning hidden">
   <div class="proctored-exam-skip-confirm">
     <div class="msg-title">
       {% blocktrans %}
@@ -12,10 +12,10 @@
       {% endblocktrans %}
     </div>
     <div class="proctored-exam-skip-actions">
-      <button class="proctored-exam-skip-confirm-button btn btn-pl-primary btn-base" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
+      <button class="exam-action-button proctored-exam-skip-confirm-button btn btn-pl-primary btn-base" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
         {% trans "Continue Exam Without Proctoring" %}
       </button>
-      <button class="proctored-exam-skip-cancel-button btn btn-default btn-base">
+      <button class="exam-action-button proctored-exam-skip-cancel-button btn btn-secondary btn-base">
         {% trans "Go Back" %}
       </button>
     </div>
@@ -46,7 +46,7 @@
       if (!inProcess) {
         enableClickEvent($(this));
         $(".proctored-exam.entrance").removeClass('hidden');
-        $(".proctored-exam-skip-confirm-wrapper").addClass('hidden');
+        $(".proctored-exam.skip-confirm-wrapper").addClass('hidden');
       } else {
         return false;
       }
