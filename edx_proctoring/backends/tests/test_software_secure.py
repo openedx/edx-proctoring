@@ -41,9 +41,12 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptHistory,
     ProctoredExamStudentAllowance
 )
-from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
+from edx_proctoring.backends.tests.test_review_payload import (
+    TEST_REVIEW_PAYLOAD
+)
 
 from edx_proctoring.tests.test_services import MockCreditService
+from edx_proctoring.backends.software_secure import SOFTWARE_SECURE_INVALID_CHARS
 
 
 @all_requests
@@ -216,14 +219,6 @@ class SoftwareSecureTests(TestCase):
         Create an unstarted proctoring attempt with no review policy associated with it.
         """
 
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True
-        )
-
         def assert_get_payload_mock_no_policy(exam, context):
             """
             Add a mock shim so we can assert that the _get_payload has been called with the right
@@ -236,23 +231,40 @@ class SoftwareSecureTests(TestCase):
 
             # assert that we use the default that is defined in system configuration
             self.assertEqual(result['reviewerNotes'], constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
+
+            # the check that if a colon was passed in for the exam name, then the colon was changed to
+            # a dash. This is because SoftwareSecure cannot handle a colon in the exam name
+            for illegal_char in SOFTWARE_SECURE_INVALID_CHARS:
+                if illegal_char in exam['exam_name']:
+                    self.assertNotIn(illegal_char, result['examName'])
+                    self.assertIn('_', result['examName'])
+
             return result
 
-        with HTTMock(mock_response_content):
-            # patch the _get_payload method on the backend provider
-            # so that we can assert that we are called with the review policy
-            # undefined and that we use the system default
-            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_no_policy):  # pylint: disable=protected-access
-                attempt_id = create_exam_attempt(
-                    exam_id,
-                    self.user.id,
-                    taking_as_proctored=True
-                )
-                self.assertGreater(attempt_id, 0)
+        for illegal_char in SOFTWARE_SECURE_INVALID_CHARS:
+            exam_id = create_exam(
+                course_id='foo/bar/baz',
+                content_id='content with {}'.format(illegal_char),
+                exam_name='Sample Exam with {} character'.format(illegal_char),
+                time_limit_mins=10,
+                is_proctored=True
+            )
 
-                # make sure we recorded that there is no review policy
-                attempt = get_exam_attempt_by_id(attempt_id)
-                self.assertIsNone(attempt['review_policy_id'])
+            with HTTMock(mock_response_content):
+                # patch the _get_payload method on the backend provider
+                # so that we can assert that we are called with the review policy
+                # undefined and that we use the system default
+                with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_no_policy):  # pylint: disable=protected-access
+                    attempt_id = create_exam_attempt(
+                        exam_id,
+                        self.user.id,
+                        taking_as_proctored=True
+                    )
+                    self.assertGreater(attempt_id, 0)
+
+                    # make sure we recorded that there is no review policy
+                    attempt = get_exam_attempt_by_id(attempt_id)
+                    self.assertIsNone(attempt['review_policy_id'])
 
     def test_single_name_attempt(self):
         """
