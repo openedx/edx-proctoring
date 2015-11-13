@@ -2,7 +2,12 @@
 from rest_framework import serializers
 from rest_framework.fields import DateTimeField
 from django.contrib.auth.models import User
-from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt, ProctoredExamStudentAllowance
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAllowance,
+    ProctoredExamReviewPolicy
+)
 
 
 class ProctoredExamSerializer(serializers.ModelSerializer):
@@ -94,4 +99,21 @@ class ProctoredExamStudentAllowanceSerializer(serializers.ModelSerializer):
         model = ProctoredExamStudentAllowance
         fields = (
             "id", "created", "modified", "user", "key", "value", "proctored_exam"
+        )
+
+
+class ProctoredExamReviewPolicySerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ProctoredExamStudentAllowance Model.
+    """
+    proctored_exam = ProctoredExamSerializer()
+    set_by_user = UserSerializer()
+
+    class Meta:
+        """
+        Meta Class
+        """
+        model = ProctoredExamReviewPolicy
+        fields = (
+            "id", "created", "modified", "set_by_user", "proctored_exam", "review_policy"
         )

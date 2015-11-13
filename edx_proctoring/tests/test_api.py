@@ -39,6 +39,9 @@ from edx_proctoring.api import (
     _check_for_attempt_timeout,
     _get_ordered_prerequisites,
     _are_prerequirements_satisfied,
+    create_exam_review_policy,
+    get_review_policy_by_exam_id,
+    update_review_policy
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -49,7 +52,9 @@ from edx_proctoring.exceptions import (
     UserNotFoundException,
     ProctoredExamIllegalStatusTransition,
     ProctoredExamPermissionDenied,
-    AllowanceValueNotAllowedException
+    AllowanceValueNotAllowedException,
+    ProctoredExamReviewPolicyAlreadyExists,
+    ProctoredExamReviewPolicyNotFoundException
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -397,6 +402,94 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         exams = get_all_exams_for_course(self.course_id, False)
         self.assertEqual(len(exams), 4)
+
+    def test_create_exam_review_policy(self):
+        """
+        Test to create a new exam review policy for
+        proctored exam and tests that it stores in the
+        db correctly
+        """
+        proctored_exam = get_exam_by_id(self.proctored_exam_id)
+        create_exam_review_policy(
+            exam_id=proctored_exam['id'],
+            set_by_user_id=self.user_id,
+            review_policy=u'allow use of paper'
+        )
+
+        # now get the exam review policy for the proctored exam
+        exam_review_policy = get_review_policy_by_exam_id(proctored_exam['id'])
+
+        self.assertEqual(exam_review_policy['proctored_exam']['id'], proctored_exam['id'])
+        self.assertEqual(exam_review_policy['set_by_user']['id'], self.user_id)
+        self.assertEqual(exam_review_policy['review_policy'], u'allow use of paper')
+
+    def test_update_exam_review_policy(self):
+        """
+        Test to update existing exam review policy for
+        proctored exam and tests that it stores in the
+        db correctly
+        """
+        proctored_exam = get_exam_by_id(self.proctored_exam_id)
+        create_exam_review_policy(
+            exam_id=proctored_exam['id'],
+            set_by_user_id=self.user_id,
+            review_policy=u'allow use of paper'
+        )
+
+        # now update the exam review policy for the proctored exam
+        update_review_policy(
+            exam_id=proctored_exam['id'],
+            set_by_user_id=self.user_id,
+            review_policy=u'allow use of calculator'
+        )
+
+        # now get the updated exam review policy for the proctored exam
+        exam_review_policy = get_review_policy_by_exam_id(proctored_exam['id'])
+
+        self.assertEqual(exam_review_policy['proctored_exam']['id'], proctored_exam['id'])
+        self.assertEqual(exam_review_policy['set_by_user']['id'], self.user_id)
+        self.assertEqual(exam_review_policy['review_policy'], u'allow use of calculator')
+
+    def test_update_non_existing_exam_review_policy(self):
+        """
+        Test to update non existing exam review policy for
+        proctored exam and it will raises exception
+        """
+
+        # update the non existing exam review policy for the proctored exam
+        with self.assertRaises(ProctoredExamReviewPolicyNotFoundException):
+            update_review_policy(
+                exam_id=self.practice_exam_id,
+                set_by_user_id=10,
+                review_policy=u'allow use of calculator'
+            )
+
+    def test_create_exam_review_policy_with_same_exam_id(self):
+        """
+        Test to create a same exam review policy will raise exception
+        """
+        proctored_exam = get_exam_by_id(self.proctored_exam_id)
+        create_exam_review_policy(
+            exam_id=proctored_exam['id'],
+            set_by_user_id=self.user_id,
+            review_policy=u'allow use of paper'
+        )
+
+        # create the same review policy again will raise exception
+        with self.assertRaises(ProctoredExamReviewPolicyAlreadyExists):
+            create_exam_review_policy(
+                exam_id=proctored_exam['id'],
+                set_by_user_id=self.user_id,
+                review_policy=u'allow use of paper'
+            )
+
+    def test_get_non_existing_review_policy_raises_exception(self):
+        """
+        Test to get the non-existing review policy raises exception
+        """
+        with self.assertRaises(ProctoredExamReviewPolicyNotFoundException):
+            # now get the exam review policy for the proctored exam
+            get_review_policy_by_exam_id(self.practice_exam_id)
 
     def test_get_timed_exam(self):
         """
