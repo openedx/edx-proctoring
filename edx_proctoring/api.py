@@ -101,8 +101,8 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
 
 def create_exam_review_policy(exam_id=None, set_by_user_id=None, review_policy=None):
     """
-    Creates a new exam_review_policy entity, if the review_policy for exam_id do not already exist.
-    If already exists, then raise exception.
+    Creates a new exam_review_policy entity, if the review_policy
+    for exam_id does not already exist. If it exists, then raise exception.
 
     Returns: id (PK)
     """
@@ -166,8 +166,10 @@ def get_review_policy_by_exam_id(exam_id):
     {
         "id": 1
         "proctored_exam": "{object}",
-        "user": "{object}",
+        "set_by_user": "{object}",
         "exam_review_rules": "review rules value"
+        "created": "datetime",
+        "modified": "datetime"
     }
     """
     exam_review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
