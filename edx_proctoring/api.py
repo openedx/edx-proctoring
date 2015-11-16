@@ -213,8 +213,7 @@ def add_allowance_for_user(exam_id, user_info, key, value):
     if student_allowance is not None:
         # emit an event for 'allowance.created|updated'
         data = {
-            'allowance_user': student_allowance.user,
-            'allowance_proctored_exam': student_allowance.proctored_exam,
+            'allowance_user_id': student_allowance.user.id,
             'allowance_key': student_allowance.key,
             'allowance_value': student_allowance.value
         }
@@ -250,8 +249,7 @@ def remove_allowance_for_user(exam_id, user_id, key):
 
         # emit an event for 'allowance.deleted'
         data = {
-            'allowance_user': student_allowance.user,
-            'allowance_proctored_exam': student_allowance.proctored_exam,
+            'allowance_user_id': student_allowance.user.id,
             'allowance_key': student_allowance.key,
             'allowance_value': student_allowance.value
         }
