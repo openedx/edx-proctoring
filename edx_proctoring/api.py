@@ -132,7 +132,7 @@ def create_exam_review_policy(exam_id, set_by_user_id, review_policy):
 
 def update_review_policy(exam_id, set_by_user_id, review_policy):
     """
-    Given a exam id, update the existing record, otherwise raise exception if not found.
+    Given a exam id, update/remove the existing record, otherwise raise exception if not found.
     Returns: review_policy_id
     """
 
@@ -148,9 +148,33 @@ def update_review_policy(exam_id, set_by_user_id, review_policy):
     if exam_review_policy is None:
         raise ProctoredExamReviewPolicyNotFoundException
 
-    exam_review_policy.set_by_user_id = set_by_user_id
-    exam_review_policy.review_policy = review_policy
-    exam_review_policy.save()
+    if review_policy:
+        exam_review_policy.set_by_user_id = set_by_user_id
+        exam_review_policy.review_policy = review_policy
+        exam_review_policy.save()
+        msg = 'Updated exam review policy with {exam_id}'.format(exam_id=exam_id)
+        log.info(msg)
+    else:
+        exam_review_policy.delete()
+        msg = 'removed exam review policy with {exam_id}'.format(exam_id=exam_id)
+        log.info(msg)
+
+
+def remove_review_policy(exam_id):
+    """
+    Given a exam id, remove the existing record, otherwise raise exception if not found.
+    """
+
+    log_msg = (
+        u'removing exam review policy with exam_id {exam_id}'
+        .format(exam_id=exam_id)
+    )
+    log.info(log_msg)
+    exam_review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
+    if exam_review_policy is None:
+        raise ProctoredExamReviewPolicyNotFoundException
+
+    exam_review_policy.delete()
 
 
 def get_review_policy_by_exam_id(exam_id):
