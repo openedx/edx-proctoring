@@ -99,7 +99,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
     return proctored_exam.id
 
 
-def create_exam_review_policy(exam_id=None, set_by_user_id=None, review_policy=None):
+def create_exam_review_policy(exam_id, set_by_user_id, review_policy):
     """
     Creates a new exam_review_policy entity, if the review_policy
     for exam_id does not already exist. If it exists, then raise exception.
@@ -130,11 +130,9 @@ def create_exam_review_policy(exam_id=None, set_by_user_id=None, review_policy=N
     return exam_review_policy.id
 
 
-def update_review_policy(exam_id=None, set_by_user_id=None, review_policy=None):
+def update_review_policy(exam_id, set_by_user_id, review_policy):
     """
     Given a exam id, update the existing record, otherwise raise exception if not found.
-    If an argument is not passed in, then do not change it's current value.
-
     Returns: review_policy_id
     """
 
@@ -151,9 +149,7 @@ def update_review_policy(exam_id=None, set_by_user_id=None, review_policy=None):
         raise ProctoredExamReviewPolicyNotFoundException
 
     exam_review_policy.set_by_user_id = set_by_user_id
-    exam_review_policy.proctored_exam_id = exam_id
     exam_review_policy.review_policy = review_policy
-
     exam_review_policy.save()
 
 
