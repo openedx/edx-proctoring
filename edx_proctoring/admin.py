@@ -119,8 +119,8 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
 
     def _get_exam_from_attempt_code(self, code):
         """Get exam from attempt code. Note that the attempt code could be an archived one"""
-        attempt = locate_attempt_by_attempt_code(code)
-        return attempt.proctored_exam if attempt else None
+        (attempt_obj, __) = locate_attempt_by_attempt_code(code)
+        return attempt_obj.proctored_exam if attempt_obj else None
 
     def course_id_for_review(self, obj):
         """Return course_id associated with review"""
@@ -143,8 +143,8 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         if obj.student:
             return obj.student.username
         else:
-            attempt = locate_attempt_by_attempt_code(obj.attempt_code)
-            return attempt.user.username if attempt else '(None)'
+            (attempt_obj, __) = locate_attempt_by_attempt_code(obj.attempt_code)
+            return attempt_obj.user.username if attempt_obj else '(None)'
 
     list_display = [
         'course_id_for_review',
