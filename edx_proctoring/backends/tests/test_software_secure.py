@@ -266,6 +266,52 @@ class SoftwareSecureTests(TestCase):
                     attempt = get_exam_attempt_by_id(attempt_id)
                     self.assertIsNone(attempt['review_policy_id'])
 
+    def test_attempt_with_unicode_characters(self):
+        """
+        test that the unicode characters are removed from exam names before registering with
+        software secure.
+        """
+
+        def is_ascii(value):
+            """
+            returns True if string is ascii and False otherwise.
+            """
+
+            try:
+                value.encode('ascii')
+                return True
+            except UnicodeEncodeError:
+                return False
+
+        def assert_get_payload_mock_unicode_characters(exam, context):
+            """
+            Add a mock so we can assert that the _get_payload call removes unicode characters.
+            """
+
+            # call into real implementation
+            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)  # pylint: disable=protected-access
+            self.assertFalse(isinstance(result['examName'], unicode))
+            self.assertTrue(is_ascii(result['examName']))
+            return result
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content with unicode characters',
+            exam_name=u'Klüft skräms inför på fédéral électoral große',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        with HTTMock(mock_response_content):
+            # patch the _get_payload method on the backend provider
+            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_unicode_characters):  # pylint: disable=protected-access
+                attempt_id = create_exam_attempt(
+                    exam_id,
+                    self.user.id,
+                    taking_as_proctored=True
+                )
+                self.assertGreater(attempt_id, 0)
+
     def test_single_name_attempt(self):
         """
         Tests to make sure we can parse a fullname which does not have any spaces in it
