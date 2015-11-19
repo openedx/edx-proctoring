@@ -52,6 +52,7 @@ class ProctoredExamSoftwareSecureReviewForm(forms.ModelForm):
     """Admin Form to display for reading/updating a Review"""
     class Meta(object):  # pylint: disable=missing-docstring
         model = ProctoredExamSoftwareSecureReview
+        fields = '__all__'
 
     REVIEW_STATUS_CHOICES = [
         ('Clean', 'Clean'),

@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'edx_proctoring',
     'django_nose',
-    'south',
 )
 
 # Static files (CSS, JavaScript, Images)
