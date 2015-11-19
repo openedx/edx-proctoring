@@ -11,6 +11,7 @@ import binascii
 import datetime
 import json
 import logging
+import unicodedata
 
 from django.conf import settings
 
@@ -377,6 +378,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         end_time_str = (now + datetime.timedelta(minutes=time_limit_mins)).strftime("%a, %d %b %Y %H:%M:%S GMT")
         # remove all illegal characters from the exam name
         exam_name = exam['exam_name']
+        exam_name = unicodedata.normalize('NFKD', exam_name).encode('ascii', 'ignore')
         for character in SOFTWARE_SECURE_INVALID_CHARS:
             exam_name = exam_name.replace(character, '_')
         return {
