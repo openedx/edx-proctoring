@@ -375,21 +375,6 @@ def _create_and_decline_attempt(exam_id, user_id):
     )
 
 
-def _create_and_expire_attempt(exam_id, user_id):
-    """
-    It will create the exam attempt and change the attempt's status to decline.
-    it will auto-decline further exams too
-    """
-
-    create_exam_attempt(exam_id, user_id)
-    update_attempt_status(
-        exam_id,
-        user_id,
-        ProctoredExamStudentAttemptStatus.expired,
-        raise_if_not_found=False
-    )
-
-
 def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only be
@@ -497,13 +482,6 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         external_id,
         review_policy_id=review_policy.id if review_policy else None,
     )
-
-    if is_exam_past_due_date:
-        update_attempt_status(
-            exam_id,
-            user_id,
-            ProctoredExamStudentAttemptStatus.expired
-        )
 
     log_msg = (
         'Created exam attempt ({attempt_id}) for exam_id {exam_id} for '
@@ -1184,11 +1162,6 @@ STATUS_SUMMARY_MAP = {
         'short_description': _('Failed Proctoring'),
         'suggested_icon': 'fa-exclamation-triangle',
         'in_completed_state': True
-    },
-    ProctoredExamStudentAttemptStatus.expired: {
-        'short_description': _('Exam Expired'),
-        'suggested_icon': 'fa-exclamation-triangle',
-        'in_completed_state': True
     }
 }
 
@@ -1206,11 +1179,6 @@ PRACTICE_STATUS_SUMMARY_MAP = {
     },
     ProctoredExamStudentAttemptStatus.error: {
         'short_description': _('Practice Exam Failed'),
-        'suggested_icon': 'fa-exclamation-triangle',
-        'in_completed_state': True
-    },
-    ProctoredExamStudentAttemptStatus.expired: {
-        'short_description': _('Exam Expired'),
         'suggested_icon': 'fa-exclamation-triangle',
         'in_completed_state': True
     }
@@ -1309,15 +1277,12 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     has_due_date = True if exam['due_date'] is not None else False
     if not attempt_status:
         if _has_due_date_passed(exam['due_date']):
-            _create_and_expire_attempt(exam_id, user_id)
-            student_view_template = 'proctored_exam/expired.html'
+            student_view_template = 'timed_exam/expired.html'
         else:
             student_view_template = 'timed_exam/entrance.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
         return None
-    elif attempt_status == ProctoredExamStudentAttemptStatus.expired:
-        student_view_template = 'proctored_exam/expired.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'timed_exam/ready_to_submit.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
@@ -1450,15 +1415,12 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
 
     if not attempt_status:
         if _has_due_date_passed(exam['due_date']):
-            _create_and_expire_attempt(exam_id, user_id)
             student_view_template = 'proctored_exam/expired.html'
         else:
             student_view_template = 'practice_exam/entrance.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
         return None
-    elif attempt_status == ProctoredExamStudentAttemptStatus.expired:
-        student_view_template = 'proctored_exam/expired.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.created:
         provider = get_backend_provider()
         student_view_template = 'proctored_exam/instructions.html'
@@ -1545,7 +1507,6 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
 
         # if exam due date has passed, then we can't take the exam
         if _has_due_date_passed(exam['due_date']):
-            _create_and_expire_attempt(exam_id, user_id)
             student_view_template = 'proctored_exam/expired.html'
         elif not prerequisite_status['are_prerequisites_satisifed']:
             # do we have any declined prerequisites, if so, then we
@@ -1580,8 +1541,6 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
         return None
-    elif attempt_status == ProctoredExamStudentAttemptStatus.expired:
-        student_view_template = 'proctored_exam/expired.html'
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
         provider = get_backend_provider()

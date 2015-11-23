@@ -518,25 +518,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 minutes_before_past_due_date - 1 <= attempt['allowed_time_limit_mins'] <= minutes_before_past_due_date
             )
 
-    def test_create_exam_attempt_with_past_due_datetime(self):
-        """
-        Create the exam attempt with past due date
-        """
-
-        due_date = datetime.now(pytz.UTC) + timedelta(days=1)
-
-        # exam is created with due datetime which has already passed
-        exam_id = self._create_exam_with_due_time(due_date=due_date)
-
-        # due_date is exactly after 24 hours, if student arrives after 2 days
-        # then he can not attempt the proctored exam
-
-        reset_time = due_date + timedelta(days=2)
-        with freeze_time(reset_time):
-            attempt_id = create_exam_attempt(exam_id, self.user_id)
-            attempt = get_exam_attempt_by_id(attempt_id)
-            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.expired)
-
     def test_create_an_exam_attempt(self):
         """
         Create an unstarted exam attempt.
@@ -681,7 +662,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (ProctoredExamStudentAttemptStatus.submitted, 'submitted'),
         (ProctoredExamStudentAttemptStatus.declined, 'declined'),
         (ProctoredExamStudentAttemptStatus.error, 'failed'),
-        (ProctoredExamStudentAttemptStatus.expired, 'failed'),
     )
     @ddt.unpack
     def test_remove_exam_attempt_with_status(self, to_status, requirement_status):
@@ -1764,12 +1744,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
             None
         ),
         (
-            ProctoredExamStudentAttemptStatus.expired,
-            False,
-            None,
-            None
-        ),
-        (
             ProctoredExamStudentAttemptStatus.rejected,
             True,
             ProctoredExamStudentAttemptStatus.created,
@@ -1866,9 +1840,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
         (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.created),
-        (ProctoredExamStudentAttemptStatus.expired, ProctoredExamStudentAttemptStatus.created),
         (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.download_software_clicked),
-        (ProctoredExamStudentAttemptStatus.expired, ProctoredExamStudentAttemptStatus.download_software_clicked),
         (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.ready_to_start),
         (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started),
@@ -2071,14 +2043,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'suggested_icon': 'fa-exclamation-triangle',
                 'in_completed_state': True
             }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.expired, {
-                'status': ProctoredExamStudentAttemptStatus.expired,
-                'short_description': 'Exam Expired',
-                'suggested_icon': 'fa-exclamation-triangle',
-                'in_completed_state': True
-            }
         )
     )
     @ddt.unpack
@@ -2147,14 +2111,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.error, {
                 'status': ProctoredExamStudentAttemptStatus.error,
                 'short_description': 'Practice Exam Failed',
-                'suggested_icon': 'fa-exclamation-triangle',
-                'in_completed_state': True
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.expired, {
-                'status': ProctoredExamStudentAttemptStatus.expired,
-                'short_description': 'Exam Expired',
                 'suggested_icon': 'fa-exclamation-triangle',
                 'in_completed_state': True
             }
@@ -2335,8 +2291,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.declined,
         ProctoredExamStudentAttemptStatus.timed_out,
         ProctoredExamStudentAttemptStatus.not_reviewed,
-        ProctoredExamStudentAttemptStatus.error,
-        ProctoredExamStudentAttemptStatus.expired
+        ProctoredExamStudentAttemptStatus.error
     )
     @patch.dict('settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
     def test_not_send_email(self, status):

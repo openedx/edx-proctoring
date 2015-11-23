@@ -162,9 +162,6 @@ class ProctoredExamStudentAttemptStatus(object):
     # the exam is believed to be in error
     error = 'error'
 
-    # the exam has expired, i.e. past due date
-    expired = 'expired'
-
     # status alias for sending email
     status_alias_mapping = {
         submitted: _('pending'),
@@ -180,7 +177,7 @@ class ProctoredExamStudentAttemptStatus(object):
         """
         return status in [
             cls.declined, cls.timed_out, cls.submitted, cls.verified, cls.rejected,
-            cls.not_reviewed, cls.error, cls.expired
+            cls.not_reviewed, cls.error
         ]
 
     @classmethod
@@ -200,7 +197,7 @@ class ProctoredExamStudentAttemptStatus(object):
         """
         return to_status in [
             cls.verified, cls.rejected, cls.declined, cls.not_reviewed, cls.submitted,
-            cls.error, cls.expired
+            cls.error
         ]
 
     @classmethod
