@@ -292,17 +292,37 @@ class SoftwareSecureTests(TestCase):
             result = get_backend_provider(emphemeral=True)._get_payload(exam, context)  # pylint: disable=protected-access
             self.assertFalse(isinstance(result['examName'], unicode))
             self.assertTrue(is_ascii(result['examName']))
+            self.assertGreater(len(result['examName']), 0)
             return result
 
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content with unicode characters',
-            exam_name=u'Klüft skräms inför på fédéral électoral große',
-            time_limit_mins=10,
-            is_proctored=True
-        )
-
         with HTTMock(mock_response_content):
+
+            exam_id = create_exam(
+                course_id='foo/bar/baz',
+                content_id='content with unicode characters',
+                exam_name=u'Klüft skräms inför på fédéral électoral große',
+                time_limit_mins=10,
+                is_proctored=True
+            )
+
+            # patch the _get_payload method on the backend provider
+            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_unicode_characters):  # pylint: disable=protected-access
+                attempt_id = create_exam_attempt(
+                    exam_id,
+                    self.user.id,
+                    taking_as_proctored=True
+                )
+                self.assertGreater(attempt_id, 0)
+
+            # now try with an eastern language (Chinese)
+            exam_id = create_exam(
+                course_id='foo/bar/baz',
+                content_id='content with chinese characters',
+                exam_name=u'到处群魔乱舞',
+                time_limit_mins=10,
+                is_proctored=True
+            )
+
             # patch the _get_payload method on the backend provider
             with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_unicode_characters):  # pylint: disable=protected-access
                 attempt_id = create_exam_attempt(
