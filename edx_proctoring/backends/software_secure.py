@@ -379,8 +379,16 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # remove all illegal characters from the exam name
         exam_name = exam['exam_name']
         exam_name = unicodedata.normalize('NFKD', exam_name).encode('ascii', 'ignore')
+
         for character in SOFTWARE_SECURE_INVALID_CHARS:
             exam_name = exam_name.replace(character, '_')
+
+        # if exam_name is blank because we can't normalize a potential unicode (like Chinese) exam name
+        # into something ascii-like, then we have use a default otherwise
+        # SoftwareSecure will fail on the exam registration API call
+        if not exam_name:
+            exam_name = 'Proctored Exam'
+
         return {
             "examCode": attempt_code,
             "organization": self.organization,
