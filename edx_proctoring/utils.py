@@ -16,7 +16,11 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptHistory,
 )
 from edx_proctoring import constants
-from edx_proctoring.runtime import get_runtime_service
+
+# import dependent libraries (in local_requirements.txt otherwise pick up from running Open edX LMS runtime)
+from eventtracking import tracker
+from opaque_keys.edx.keys import CourseKey
+from opaque_keys import InvalidKeyError
 
 log = logging.getLogger(__name__)
 
@@ -181,16 +185,42 @@ def emit_event(exam, event_short_name, attempt=None, override_data=None):
             'attempt_event_elapsed_time_secs': attempt_event_elapsed_time_secs
         }
         data.update(attempt_data)
-        name = '.'.join(['edx', 'special-exam', exam_type, 'attempt', event_short_name])
+        name = '.'.join(['edx', 'special_exam', exam_type, 'attempt', event_short_name])
     else:
-        name = '.'.join(['edx', 'special-exam', exam_type, event_short_name])
+        name = '.'.join(['edx', 'special_exam', exam_type, event_short_name])
 
     # allow caller to override event data
     if override_data:
         data.update(override_data)
 
-    service = get_runtime_service('analytics')
-    if service:
-        service.emit_event(name, context, data)
-    else:
-        log.warn('Analytics event service not configured. If this is a production environment, please resolve.')
+    _emit_event(name, context, data)
+
+
+def _emit_event(name, context, data):
+    """
+    Do the actual integration into the event-tracker
+    """
+
+    try:
+        if context:
+            # try to parse out the org_id from the course_id
+            if 'course_id' in context:
+                try:
+                    course_key = CourseKey.from_string(context['course_id'])
+                    context['org_id'] = course_key.org
+                except InvalidKeyError:
+                    # leave org_id blank
+                    pass
+
+            with tracker.get_tracker().context(name, context):
+                tracker.emit(name, data)
+        else:
+            # if None is passed in then we don't construct the 'with' context stack
+            tracker.emit(name, data)
+    except KeyError:
+        # This happens when a default tracker has not been registered by the host application
+        # aka LMS. This is normal when running unit tests in isolation.
+        log.warning(
+            'Analytics tracker not properly configured. '
+            'If this message appears in a production environment, please investigate'
+        )
