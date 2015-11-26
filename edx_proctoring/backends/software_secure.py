@@ -191,6 +191,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review_status = payload['reviewStatus']
         video_review_link = payload['videoReviewLink']
 
+        # be sure to change over any http: to https: on the video_review_link
+        video_review_link = video_review_link.replace('http:', 'https:')
+
         # do we already have a review for this attempt?!? We may not allow updates
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
 

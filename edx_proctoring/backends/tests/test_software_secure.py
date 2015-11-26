@@ -488,7 +488,7 @@ class SoftwareSecureTests(TestCase):
         self.assertEqual(review.review_status, review_status)
         self.assertEqual(
             review.video_url,
-            'http://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
+            'https://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
         )
         self.assertIsNotNone(review.raw_data)
         self.assertIsNone(review.reviewed_by)
@@ -662,7 +662,7 @@ class SoftwareSecureTests(TestCase):
         self.assertEqual(review.review_status, 'Clean')
         self.assertEqual(
             review.video_url,
-            'http://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
+            'https://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
         )
         self.assertIsNotNone(review.raw_data)
 
@@ -760,7 +760,7 @@ class SoftwareSecureTests(TestCase):
         self.assertEqual(review.review_status, 'Suspicious')
         self.assertEqual(
             review.video_url,
-            'http://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
+            'https://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
         )
         self.assertIsNotNone(review.raw_data)
 
