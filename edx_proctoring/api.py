@@ -653,6 +653,20 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
 
     # OK, state transition is fine, we can proceed
     exam_attempt_obj.status = to_status
+
+    # if we have transitioned to started and haven't set our
+    # started_at timestamp, do so now
+    add_start_time = (
+        to_status == ProctoredExamStudentAttemptStatus.started and
+        not exam_attempt_obj.started_at
+    )
+    if add_start_time:
+        exam_attempt_obj.started_at = datetime.now(pytz.UTC)
+    elif to_status == ProctoredExamStudentAttemptStatus.submitted:
+        # likewise, when we transition to submitted mark
+        # when the exam has been completed
+        exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
+
     exam_attempt_obj.save()
 
     # see if the status transition this changes credit requirement status
@@ -736,22 +750,6 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
                 ProctoredExamStudentAttemptStatus.declined,
                 cascade_effects=False
             )
-
-    if to_status == ProctoredExamStudentAttemptStatus.submitted:
-        # also mark the exam attempt completed_at timestamp
-        # after we submit the attempt
-        exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
-        exam_attempt_obj.save()
-
-    # if we have transitioned to started and haven't set our
-    # started_at timestamp, do so now
-    add_start_time = (
-        to_status == ProctoredExamStudentAttemptStatus.started and
-        not exam_attempt_obj.started_at
-    )
-    if add_start_time:
-        exam_attempt_obj.started_at = datetime.now(pytz.UTC)
-        exam_attempt_obj.save()
 
     # email will be send when the exam is proctored and not practice exam
     # and the status is verified, submitted or rejected
