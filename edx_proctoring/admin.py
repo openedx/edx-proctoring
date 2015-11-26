@@ -3,10 +3,15 @@ Django Admin pages
 """
 # pylint: disable=no-self-argument, no-member
 
+import pytz
+from datetime import datetime, timedelta
+
+from django.db.models import Q
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 from edx_proctoring.models import (
+    ProctoredExam,
     ProctoredExamReviewPolicy,
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureReviewHistory,
@@ -105,13 +110,134 @@ class ReviewListFilter(admin.SimpleListFilter):
             return queryset
 
 
+class ProctoredExamListFilter(admin.SimpleListFilter):
+    """
+    Quick filter to allow admins to see which reviews have not been reviewed internally
+    """
+
+    title = _('active proctored exams')
+
+    parameter_name = 'exam__id'
+
+    def lookups(self, request, model_admin):
+        """
+        List of values to allow admin to select
+        """
+
+        now_utc = datetime.now(pytz.UTC)
+        thirty_days_ago = now_utc - timedelta(days=30)
+        one_week_from_now = now_utc + timedelta(days=7)
+
+        # only consider proctored (not practice) exams that have a due date of no more than
+        # a month ago as well as a week into the future. This is to help keep the list of
+        # quick filters small and reasonable in length
+        exams = ProctoredExam.objects.filter(
+            Q(is_proctored=True) &
+            Q(is_active=True) &
+            Q(is_practice_exam=False) &
+            Q(
+                Q(due_date__gte=thirty_days_ago, due_date__lte=one_week_from_now) |
+                Q(due_date__isnull=True)
+            )
+        )
+
+        lookups = (())
+
+        for exam in exams:
+            course_id = exam.course_id
+
+            # to help disambiguate exam names,
+            # prepend the exam_name with a parsed out course_id
+            course_id = course_id.replace('+', ' ').replace('/', ' ').replace('course-v1:', '')
+            lookups += ((
+                exam.id,
+                u'{course_id}: {exam_name}'.format(
+                    course_id=course_id,
+                    exam_name=exam.exam_name
+                )
+            ),)
+
+        return lookups
+
+    def queryset(self, request, queryset):
+        """
+        Return the filtered queryset
+        """
+        if not self.value():
+            return queryset
+
+        return queryset.filter(exam__id=self.value())
+
+
+class ProctoredExamCoursesListFilter(admin.SimpleListFilter):
+    """
+    Quick filter to allow admins to see which reviews have not been reviewed internally
+    """
+
+    title = _('courses with active proctored exams')
+
+    parameter_name = 'exam__course_id'
+
+    def lookups(self, request, model_admin):
+        """
+        List of values to allow admin to select
+        """
+
+        now_utc = datetime.now(pytz.UTC)
+        thirty_days_ago = now_utc - timedelta(days=30)
+        one_week_from_now = now_utc + timedelta(days=7)
+
+        # only consider proctored (not practice) exams that have a due date of no more than
+        # a month ago as well as a week into the future. This is to help keep the list of
+        # quick filters small and reasonable in length
+        exams = ProctoredExam.objects.filter(
+            is_proctored=True,
+            is_active=True,
+            is_practice_exam=False,
+            due_date__gte=thirty_days_ago,
+            due_date__lte=one_week_from_now
+        )
+
+        lookups = (())
+
+        existing_course_ids = []
+
+        for exam in exams:
+            # make sure we don't have duplicate course_ids
+            if exam.course_id not in existing_course_ids:
+                lookups += ((exam.course_id, exam.course_id),)
+                existing_course_ids.append(exam.course_id)
+
+        return lookups
+
+    def queryset(self, request, queryset):
+        """
+        Return the filtered queryset
+        """
+
+        if not self.value():
+            return queryset
+
+        return queryset.filter(
+            exam__course_id=self.value(),
+            exam__is_proctored=True,
+            exam__is_active=True,
+            exam__is_practice_exam=False
+        )
+
+
 class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     """
     The admin panel for SoftwareSecure Review records
     """
 
     readonly_fields = [video_url_for_review, 'attempt_code', 'exam', 'student', 'reviewed_by', 'modified']
-    list_filter = [ReviewListFilter, 'review_status', 'exam__course_id', 'exam__exam_name']
+    list_filter = [
+        ReviewListFilter,
+        ProctoredExamListFilter,
+        ProctoredExamCoursesListFilter,
+        'review_status'
+    ]
     list_select_related = True
     search_fields = ['student__username', 'attempt_code']
     ordering = ['-modified']
@@ -178,6 +304,11 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         form = super(ProctoredExamSoftwareSecureReviewAdmin, self).get_form(request, obj, **kwargs)
         del form.base_fields['video_url']
         return form
+
+    def lookup_allowed(self, key, value):
+        if key == 'exam__course_id':
+            return True
+        return super(ProctoredExamSoftwareSecureReviewAdmin, self).lookup_allowed(key, value)
 
 
 class ProctoredExamSoftwareSecureReviewHistoryAdmin(ProctoredExamSoftwareSecureReviewAdmin):
