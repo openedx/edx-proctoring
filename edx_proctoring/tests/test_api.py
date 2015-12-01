@@ -66,9 +66,21 @@ from .utils import (
 from edx_proctoring.tests.test_services import (
     MockCreditService,
     MockInstructorService,
-    MockAnalyticsService,
 )
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
+from eventtracking import tracker
+from eventtracking.tracker import Tracker, TRACKERS
+
+
+class MockTracker(Tracker):
+    """
+    A mocked out tracker which implements the emit method
+    """
+    def emit(self, name=None, data=None):
+        """
+        Overload this method to do nothing
+        """
+        pass
 
 
 @ddt.ddt
@@ -125,7 +137,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
-        set_runtime_service('analytics', MockAnalyticsService())
+
+        tracker.register_tracker(MockTracker())
 
         self.prerequisites = [
             {
@@ -192,6 +205,12 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'status': 'pending',
             },
         ]
+
+    def tearDown(self):
+        """
+        Cleanup
+        """
+        del TRACKERS['default']
 
     def _create_proctored_exam(self):
         """

@@ -39,7 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'edx_proctoring',
-    'django_nose',
+    'django_nose'
 )
 
 # Static files (CSS, JavaScript, Images)
