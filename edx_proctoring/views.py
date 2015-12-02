@@ -559,7 +559,10 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
             response_dict = {
                 'in_timed_exam': True,
                 'taking_as_proctored': attempt['taking_as_proctored'],
-                'exam_type': _('proctored') if attempt['taking_as_proctored'] else _('timed'),
+                'exam_type': (
+                    _('timed') if not attempt['taking_as_proctored'] else
+                    (_('practice') if attempt['is_sample_attempt'] else _('proctored'))
+                ),
                 'exam_display_name': exam['exam_name'],
                 'exam_url_path': exam_url_path,
                 'time_remaining_seconds': time_remaining_seconds,
