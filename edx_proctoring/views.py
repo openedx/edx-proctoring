@@ -29,7 +29,8 @@ from edx_proctoring.api import (
     get_all_exams_for_course,
     get_exam_attempt_by_id,
     remove_exam_attempt,
-    update_attempt_status
+    update_attempt_status,
+    update_exam_attempt
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
@@ -782,3 +783,42 @@ class ActiveExamsForUserView(AuthenticatedAPIView):
             user_id=request.data.get('user_id', None),
             course_id=request.data.get('course_id', None)
         ))
+
+
+class ProctoredExamAttemptReviewStatus(AuthenticatedAPIView):
+    """
+    Endpoint for updating exam attempt's review status to acknowledged.
+    edx_proctoring/v1/proctored_exam/attempt/(<attempt_id>)/review_status$
+
+    Supports:
+        HTTP PUT: Update the is_status_acknowledge flag
+    """
+    def put(self, request, attempt_id):     # pylint: disable=unused-argument
+        """
+        Update the is_status_acknowledge flag for the specific attempt
+        """
+        try:
+            attempt = get_exam_attempt_by_id(attempt_id)
+
+            # make sure the the attempt belongs to the calling user_id
+            if attempt and attempt['user']['id'] != request.user.id:
+                err_msg = (
+                    'Attempted to access attempt_id {attempt_id} but '
+                    'does not have access to it.'.format(
+                        attempt_id=attempt_id
+                    )
+                )
+                raise ProctoredExamPermissionDenied(err_msg)
+
+            update_exam_attempt(attempt_id, is_status_acknowledged=True)
+
+            return Response(
+                status=status.HTTP_200_OK
+            )
+
+        except (StudentExamAttemptDoesNotExistsException, ProctoredExamPermissionDenied) as ex:
+            LOG.exception(ex)
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": str(ex)}
+            )

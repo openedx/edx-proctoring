@@ -439,10 +439,19 @@ def update_exam_attempt(attempt_id, **kwargs):
     update exam_attempt
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+    if not exam_attempt_obj:
+        err_msg = (
+            'Attempted to access of attempt object with attempt_id {attempt_id} but '
+            'it does not exist.'.format(
+                attempt_id=attempt_id
+            )
+        )
+        raise StudentExamAttemptDoesNotExistsException(err_msg)
+
     for key, value in kwargs.items():
         # only allow a limit set of fields to update
         # namely because status transitions can trigger workflow
-        if key not in ['last_poll_timestamp', 'last_poll_ipaddr']:
+        if key not in ['last_poll_timestamp', 'last_poll_ipaddr', 'is_status_acknowledged']:
             err_msg = (
                 'You cannot call into update_exam_attempt to change '
                 'field {key}'.format(key=key)
@@ -461,6 +470,13 @@ def _has_due_date_passed(due_datetime):
     if due_datetime:
         return due_datetime <= datetime.now(pytz.UTC)
     return False
+
+
+def _was_review_status_acknowledged(is_status_acknowledged, due_datetime):
+    """
+    return True if review status has been acknowledged and due date has been passed
+    """
+    return is_status_acknowledged and _has_due_date_passed(due_datetime)
 
 
 def _create_and_decline_attempt(exam_id, user_id):
@@ -1490,6 +1506,7 @@ def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False
         'exam_id': exam['id'],
         'progress_page_url': progress_page_url,
         'is_sample_attempt': is_practice_exam,
+        'has_due_date_passed': _has_due_date_passed(exam['due_date']),
         'does_time_remain': _does_time_remain(attempt),
         'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
         'exam_started_poll_url': reverse(
@@ -1498,6 +1515,10 @@ def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False
         ) if attempt else '',
         'change_state_url': reverse(
             'edx_proctoring.proctored_exam.attempt',
+            args=[attempt['id']]
+        ) if attempt else '',
+        'update_is_status_acknowledge_url': reverse(
+            'edx_proctoring.proctored_exam.attempt.review_status',
             args=[attempt['id']]
         ) if attempt else '',
         'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
@@ -1658,13 +1679,22 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         raise NotImplementedError('There is no defined rendering for ProctoredExamStudentAttemptStatus.timed_out!')
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
         if has_client_app_shutdown(attempt):
-            student_view_template = 'proctored_exam/submitted.html'
+            student_view_template = None if _was_review_status_acknowledged(
+                attempt['is_status_acknowledged'],
+                exam['due_date']
+            ) else 'proctored_exam/submitted.html'
         else:
             student_view_template = 'proctored_exam/waiting_for_app_shutdown.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.verified:
-        student_view_template = 'proctored_exam/verified.html'
+        student_view_template = None if _was_review_status_acknowledged(
+            attempt['is_status_acknowledged'],
+            exam['due_date']
+        ) else 'proctored_exam/verified.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.rejected:
-        student_view_template = 'proctored_exam/rejected.html'
+        student_view_template = None if _was_review_status_acknowledged(
+            attempt['is_status_acknowledged'],
+            exam['due_date']
+        ) else 'proctored_exam/rejected.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
