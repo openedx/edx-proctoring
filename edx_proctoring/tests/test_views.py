@@ -515,6 +515,47 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertIsNotNone(attempt['started_at'])
 
+    def test_start_exam_callback(self):
+        """
+        Test that hitting software secure callback URL twice does not change the state
+        from 'started' back to 'ready to start'
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=True
+        )
+        attempt_id = create_exam_attempt(proctored_exam.id, self.user.id)
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], "created")
+
+        # hit callback and verify that exam status is 'ready to start'
+        code = attempt['attempt_code']
+        self.client.get(
+            reverse('edx_proctoring.anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
+        )
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], "ready_to_start")
+
+        # update exam status to 'started'
+        exam_id = attempt['proctored_exam']['id']
+        user_id = attempt['user']['id']
+        update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.started)
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], "started")
+
+        # hit callback again and verify that status is still 'started' and not 'ready to start'
+        self.client.get(
+            reverse('edx_proctoring.anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
+        )
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], "started")
+        self.assertFalse(attempt['status'] == "ready_to_start")
+
     def test_attempt_readback(self):
         """
         Confirms that an attempt can be read
