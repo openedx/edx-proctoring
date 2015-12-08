@@ -21,6 +21,18 @@ class ProctoredExamNotFoundException(ProctoredBaseException):
     """
 
 
+class ProctoredExamReviewPolicyNotFoundException(ProctoredBaseException):
+    """
+    Raised when a look up fails.
+    """
+
+
+class ProctoredExamReviewPolicyAlreadyExists(ProctoredBaseException):
+    """
+    Raised when trying to create an ProctoredExamReviewPolicy that already exists.
+    """
+
+
 class ProctoredExamNotActiveException(ProctoredBaseException):
     """
     Raised when a look up fails.

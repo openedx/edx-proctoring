@@ -26,6 +26,8 @@ from edx_proctoring.exceptions import (
     ProctoredExamIllegalStatusTransition,
     ProctoredExamPermissionDenied,
     ProctoredExamNotActiveException,
+    ProctoredExamReviewPolicyNotFoundException,
+    ProctoredExamReviewPolicyAlreadyExists
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -38,6 +40,7 @@ from edx_proctoring.serializers import (
     ProctoredExamSerializer,
     ProctoredExamStudentAttemptSerializer,
     ProctoredExamStudentAllowanceSerializer,
+    ProctoredExamReviewPolicySerializer
 )
 from edx_proctoring.utils import (
     humanized_time,
@@ -94,6 +97,106 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
     emit_event(exam, 'created')
 
     return proctored_exam.id
+
+
+def create_exam_review_policy(exam_id, set_by_user_id, review_policy):
+    """
+    Creates a new exam_review_policy entity, if the review_policy
+    for exam_id does not already exist. If it exists, then raise exception.
+
+    Returns: id (PK)
+    """
+
+    exam_review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
+    if exam_review_policy is not None:
+        raise ProctoredExamReviewPolicyAlreadyExists
+
+    exam_review_policy = ProctoredExamReviewPolicy.objects.create(
+        proctored_exam_id=exam_id,
+        set_by_user_id=set_by_user_id,
+        review_policy=review_policy
+    )
+
+    log_msg = (
+        u'Created ProctoredExamReviewPolicy ({review_policy}) with parameters: exam_id={exam_id}, '
+        u'set_by_user_id={set_by_user_id}'.format(
+            exam_id=exam_id,
+            review_policy=review_policy,
+            set_by_user_id=set_by_user_id
+        )
+    )
+    log.info(log_msg)
+
+    return exam_review_policy.id
+
+
+def update_review_policy(exam_id, set_by_user_id, review_policy):
+    """
+    Given a exam id, update/remove the existing record, otherwise raise exception if not found.
+    Returns: review_policy_id
+    """
+
+    log_msg = (
+        u'Updating exam review policy with exam_id {exam_id}'
+        u'set_by_user_id={set_by_user_id}, review_policy={review_policy}'
+        .format(
+            exam_id=exam_id, set_by_user_id=set_by_user_id, review_policy=review_policy,
+        )
+    )
+    log.info(log_msg)
+    exam_review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
+    if exam_review_policy is None:
+        raise ProctoredExamReviewPolicyNotFoundException
+
+    if review_policy:
+        exam_review_policy.set_by_user_id = set_by_user_id
+        exam_review_policy.review_policy = review_policy
+        exam_review_policy.save()
+        msg = 'Updated exam review policy with {exam_id}'.format(exam_id=exam_id)
+        log.info(msg)
+    else:
+        exam_review_policy.delete()
+        msg = 'removed exam review policy with {exam_id}'.format(exam_id=exam_id)
+        log.info(msg)
+
+
+def remove_review_policy(exam_id):
+    """
+    Given a exam id, remove the existing record, otherwise raise exception if not found.
+    """
+
+    log_msg = (
+        u'removing exam review policy with exam_id {exam_id}'
+        .format(exam_id=exam_id)
+    )
+    log.info(log_msg)
+    exam_review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
+    if exam_review_policy is None:
+        raise ProctoredExamReviewPolicyNotFoundException
+
+    exam_review_policy.delete()
+
+
+def get_review_policy_by_exam_id(exam_id):
+    """
+    Looks up exam by the Primary Key. Raises exception if not found.
+
+    Returns dictionary version of the Django ORM object
+    e.g.
+    {
+        "id": 1
+        "proctored_exam": "{object}",
+        "set_by_user": "{object}",
+        "exam_review_rules": "review rules value"
+        "created": "datetime",
+        "modified": "datetime"
+    }
+    """
+    exam_review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
+    if exam_review_policy is None:
+        raise ProctoredExamReviewPolicyNotFoundException
+
+    return ProctoredExamReviewPolicySerializer(exam_review_policy).data
 
 
 def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constants.MINIMUM_TIME,
