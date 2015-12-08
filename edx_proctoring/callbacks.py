@@ -48,7 +48,8 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
             status=404
         )
 
-    mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
+    if attempt['status'] == "created":
+        mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
 
     template = loader.get_template('proctored_exam/proctoring_launch_callback.html')
 
