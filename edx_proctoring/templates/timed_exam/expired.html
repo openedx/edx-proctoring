@@ -1,0 +1,13 @@
+{% load i18n %}
+<div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      The due date for this exam has passed
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% blocktrans %}
+      Because the due date has passed, you are no longer able to take this exam.
+    {% endblocktrans %}
+  </p>
+</div>

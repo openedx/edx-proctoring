@@ -1,0 +1,53 @@
+{% load i18n %}
+<div class="sequence proctored-exam success-left-bar instructions" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
+  <div>
+    <h3>
+    {% blocktrans %}
+      Follow these instructions
+    {% endblocktrans %}
+    </h3>
+    <p>
+      {% blocktrans %}
+        &#8226; When you start your exam you will have {{ total_time }} to complete it. </br>
+        &#8226; You cannot stop the timer once you start. </br>
+        &#8226; If time expires before you finish your exam, your completed answers will be
+                submitted for review. </br>
+      {% endblocktrans %}
+    </p>
+    <div>
+      <button type="button" class="exam-action-button proctored-enter-exam btn btn-pl-primary btn-base" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+        {% blocktrans %}
+          Start my exam
+        {% endblocktrans %}
+      </button>
+    </div>
+  </div>
+</div>
+{% include 'proctored_exam/footer.html' %}
+
+<script type="text/javascript">
+
+  $('.proctored-enter-exam').click(
+    function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var action_url = $(this).data('change-state-url');
+      var exam_id = $(this).data('exam-id');
+      var action = $(this).data('action');
+
+      // Update the state of the attempt
+      $.ajax({
+        url: action_url,
+        type: 'PUT',
+        data: {
+          action: action
+        },
+        success: function() {
+          // Reloading page will reflect the new state of the attempt
+          location.reload();
+        }
+      });
+    }
+  );
+</script>

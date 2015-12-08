@@ -1,0 +1,79 @@
+{% load i18n %}
+<div class="faq-proctoring-exam">
+    <p>
+      <a class="footer-link" href="{{link_urls.faq}}" target="_blank">
+        {% blocktrans %}
+        About Proctored Exams
+        {% endblocktrans %}
+      </a>
+  </p>
+</div>
+
+<script type="text/javascript">
+  var startProctoredExam = function(selector, exam_id, action_url, start_immediately, attempt_proctored) {
+    $.post(
+      action_url,
+      {
+        "exam_id": exam_id,
+        "attempt_proctored": attempt_proctored,
+        "start_clock": start_immediately
+      },
+      function(data) {
+        // reload the page, because we've unlocked it
+        location.reload();
+      }
+    ).fail(function(){
+      enableClickEvent(selector);
+      var msg = gettext(
+        "There has been a problem starting your exam.\n\n" +
+        "Possible reasons are that your account has not been fully activated,\n" +
+        "you have are experiencing a network connection problem, or there has been\n" +
+        "a service disruption. Check your account or network connection and try again."
+      );
+      alert(msg);
+    });
+  };
+
+  var inProcess = false;
+
+  var disableClickEvent = function (selector) {
+    inProcess = true;
+    $('body').css('cursor', 'wait');
+
+    selector.each(function() {
+      $( this ).css('cursor', 'wait');
+    });
+
+  };
+
+  var enableClickEvent = function (selector) {
+    inProcess = false;
+    $('body').css('cursor', 'auto');
+    selector.each(function() {
+      $( this ).css('cursor', 'pointer');
+    });
+  };
+
+  $('.start-timed-exam').click(
+    function() {
+      if (!inProcess) {
+        disableClickEvent($(this));
+        var attempt_proctored = $(this).data('attempt-proctored');
+
+        if (!attempt_proctored) {
+          enableClickEvent($(this));
+          $(".proctored-exam.entrance").addClass('hidden');
+          $(".proctored-exam.skip-confirm-wrapper").removeClass('hidden');
+        } else {
+          var action_url = $(this).data('ajax-url');
+          var exam_id = $(this).data('exam-id');
+          var start_immediately = $(this).data('start-immediately');
+          startProctoredExam($(this), exam_id, action_url, start_immediately, attempt_proctored);
+        }
+      } else {
+        return false;
+      }
+    }
+  );
+
+</script>

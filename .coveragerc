@@ -1,0 +1,8 @@
+[run]
+branch = True
+source = edx_proctoring
+omit =
+    **/__init__.py
+    **/migrations/*
+    **/tests/*
+    edx_proctoring/admin.py

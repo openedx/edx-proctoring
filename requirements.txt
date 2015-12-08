@@ -1,0 +1,2 @@
+# Empty so that we will use the versions of dependencies installed in edx-platform.
+# See local_requirements.txt for the requirements needed for local development.

@@ -1,0 +1,55 @@
+{% load i18n %}
+<div class="proctored-exam skip-confirm-wrapper warning hidden">
+  <div class="proctored-exam-skip-confirm">
+    <div class="msg-title">
+      {% blocktrans %}
+        Are you sure you want to take this exam without proctoring?
+      {% endblocktrans %}
+    </div>
+    <div class="msg-content">
+      {% blocktrans %}
+        If you take this exam without proctoring, you will <strong> no longer be eligible for academic credit. </strong>
+      {% endblocktrans %}
+    </div>
+    <div class="proctored-exam-skip-actions">
+      <button class="exam-action-button proctored-exam-skip-confirm-button btn btn-pl-primary btn-base" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
+        {% trans "Continue Exam Without Proctoring" %}
+      </button>
+      <button class="exam-action-button proctored-exam-skip-cancel-button btn btn-secondary btn-base">
+        {% trans "Go Back" %}
+      </button>
+    </div>
+    <div class="clearfix"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+  $('.proctored-exam-skip-confirm-button').click(
+    function(event){
+      if (!inProcess) {
+        // find the all the buttons and call disableClickEvent
+        // on the events
+        var events = $(this).parent().find('button');
+        disableClickEvent(events);
+        var action_url = $(this).data('ajax-url');
+        var exam_id = $(this).data('exam-id');
+
+        // this is defined in parent template
+        startProctoredExam(events, exam_id, action_url, true, false);
+      } else {
+        return false
+      }
+    }
+  );
+  $('.proctored-exam-skip-cancel-button').click(
+    function(event){
+      if (!inProcess) {
+        enableClickEvent($(this));
+        $(".proctored-exam.entrance").removeClass('hidden');
+        $(".proctored-exam.skip-confirm-wrapper").addClass('hidden');
+      } else {
+        return false;
+      }
+    }
+  )
+</script>

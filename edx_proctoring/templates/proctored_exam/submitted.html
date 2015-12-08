@@ -1,0 +1,28 @@
+{% load i18n %}
+<div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      You have submitted this proctored exam for review
+    {% endblocktrans %}
+  </h3>
+
+  <p>
+    {% blocktrans %}
+      &#8226; After you quit the proctoring session, the recorded data is uploaded for review. </br>
+      &#8226; Proctoring results are usually available within 5 business days after you submit your exam.
+    {% endblocktrans %}
+  </p>
+
+  <p>
+    {% blocktrans %}
+      If you have questions about the status of your proctored exam results, contact {{ platform_name }} Support.
+    {% endblocktrans %}
+  </p>
+  <hr>
+  <p>
+    {% blocktrans %}
+      View your credit eligibility status on your <a href="{{progress_page_url}}">Progress</a> page.
+    {% endblocktrans %}
+  </p>
+</div>
+{% include 'proctored_exam/footer.html' %}
