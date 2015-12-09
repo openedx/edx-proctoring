@@ -1,0 +1,40 @@
+{% load i18n %}
+{% if has_due_date_passed %}
+
+  <p>
+    {% blocktrans %}
+      If you want to view your exam questions and responses, click on the button “let me see my exam”.
+      When you clicked the button, you will be taken directly to the exam content. The exam’s status will
+      still be visible to you in the left navigation pane.
+    {% endblocktrans %}
+  </p>
+  <p>
+    <button type="button" name="visit-exam-content" class="visit-exam-button exam-action-button btn btn-pl-primary btn-base" data-action-url="{{update_is_status_acknowledge_url}}">
+        {% trans "Let me see my exam" %}
+    </button>
+    <div class="clearfix"></div>
+  </p>
+
+  <script type="text/javascript">
+    $('.visit-exam-button').click(
+      function(event) {
+
+        // cancel any warning messages to end user about leaving proctored exam
+        $(window).unbind('beforeunload');
+
+        var action_url = $(this).data('action-url');
+
+        // Update the state of the attempt
+        $.ajax({
+          url: action_url,
+          type: 'PUT',
+          data: {},
+          success: function() {
+            // Reloading page will reflect the new state of the attempt
+            location.reload()
+          }
+        });
+      }
+    );
+  </script>
+{% endif %}

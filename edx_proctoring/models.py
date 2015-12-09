@@ -455,6 +455,10 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # this ID might point to a record that is in the History table
     review_policy_id = models.IntegerField(null=True)
 
+    # if student has press the button to explore the exam then true
+    # else always false
+    is_status_acknowledged = models.BooleanField(default=False)
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'

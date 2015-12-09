@@ -22,7 +22,7 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.exceptions import (
     ProctoredExamIllegalStatusTransition,
-)
+    StudentExamAttemptDoesNotExistsException, ProctoredExamPermissionDenied)
 from edx_proctoring.views import require_staff, require_course_or_global_staff
 from edx_proctoring.api import (
     create_exam,
@@ -1954,6 +1954,90 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['exam_type'], expected_exam_type)
+
+    def _create_proctored_exam_attempt_with_duedate(self, due_date=datetime.now(pytz.UTC), user=None):
+        """
+        Test the ProctoredExamAttemptReviewStatus view
+        Create the proctored exam with due date
+        """
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            external_id='123aXqe3',
+            time_limit_mins=30,
+            is_proctored=True,
+            due_date=due_date
+        )
+
+        return ProctoredExamStudentAttempt.objects.create(
+            proctored_exam=proctored_exam,
+            user=user if user else self.user,
+            allowed_time_limit_mins=30,
+            taking_as_proctored=True,
+            external_id=proctored_exam.external_id,
+            status=ProctoredExamStudentAttemptStatus.started
+        )
+
+    def test_attempt_review_status_callback(self):
+        """
+        Test the ProctoredExamAttemptReviewStatus view
+        """
+        attempt = self._create_proctored_exam_attempt_with_duedate(
+            due_date=datetime.now(pytz.UTC) + timedelta(minutes=40)
+        )
+
+        response = self.client.put(
+            reverse(
+                'edx_proctoring.proctored_exam.attempt.review_status',
+                args=[attempt.id]
+            ),
+            {},
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_attempt_review_status_callback_with_doesnotexit_exception(self):
+        """
+        Test the ProctoredExamAttemptReviewStatus view with does not exit exception
+        """
+        self._create_proctored_exam_attempt_with_duedate(
+            due_date=datetime.now(pytz.UTC) + timedelta(minutes=40)
+        )
+
+        response = self.client.put(
+            reverse(
+                'edx_proctoring.proctored_exam.attempt.review_status',
+                args=['5']
+            ),
+            {},
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertRaises(StudentExamAttemptDoesNotExistsException)
+
+    def test_attempt_review_status_callback_with_permission_exception(self):
+        """
+        Test the ProctoredExamAttemptReviewStatus view with permission exception
+        """
+
+        # creating new user for creating exam attempt
+        user = User(username='tester_', email='tester@test.com_')
+        user.save()
+
+        attempt = self._create_proctored_exam_attempt_with_duedate(
+            due_date=datetime.now(pytz.UTC) + timedelta(minutes=40),
+            user=user
+        )
+
+        response = self.client.put(
+            reverse(
+                'edx_proctoring.proctored_exam.attempt.review_status',
+                args=[attempt.id]
+            ),
+            {},
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertRaises(ProctoredExamPermissionDenied)
 
 
 class TestExamAllowanceView(LoggedInTestCase):

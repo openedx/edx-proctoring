@@ -1548,6 +1548,61 @@ class ProctoredExamApiTests(LoggedInTestCase):
             )
             self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
 
+    def test_get_studentview_submitted_status_with_duedate(self):
+        """
+        Test for get_student_view proctored exam which has been submitted
+        And due date has passed
+        """
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=30,
+            is_proctored=True,
+            is_active=True,
+            due_date=datetime.now(pytz.UTC) + timedelta(minutes=40)
+        )
+
+        exam_attempt = ProctoredExamStudentAttempt.objects.create(
+            proctored_exam=proctored_exam,
+            user=self.user,
+            allowed_time_limit_mins=30,
+            taking_as_proctored=True,
+            external_id=proctored_exam.external_id,
+            status=ProctoredExamStudentAttemptStatus.submitted,
+            last_poll_timestamp=datetime.now(pytz.UTC)
+        )
+
+        # due date is after 10 minutes
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=20)
+        with freeze_time(reset_time):
+            rendered_response = get_student_view(
+                user_id=self.user.id,
+                course_id='a/b/c',
+                content_id='test_content',
+                context={
+                    'is_proctored': True,
+                    'display_name': 'Test Exam',
+                    'default_time_limit_mins': 30
+                }
+            )
+            self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
+            exam_attempt.is_status_acknowledged = True
+            exam_attempt.save()
+
+            rendered_response = get_student_view(
+                user_id=self.user.id,
+                course_id='a/b/c',
+                content_id='test_content',
+                context={
+                    'is_proctored': True,
+                    'display_name': 'Test Exam',
+                    'default_time_limit_mins': 30
+                }
+            )
+            self.assertIsNotNone(rendered_response)
+
     def test_get_studentview_submitted_status_practiceexam(self):
         """
         Test for get_student_view practice exam which has been submitted.
