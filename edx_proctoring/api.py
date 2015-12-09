@@ -1486,6 +1486,7 @@ def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False
     """
     Common context variables for the Proctored and Practice exams' templates.
     """
+    has_due_date = True if exam['due_date'] is not None else False
     attempt_time = attempt['allowed_time_limit_mins'] if attempt else exam['time_limit_mins']
     total_time = humanized_time(attempt_time)
     progress_page_url = ''
@@ -1506,6 +1507,7 @@ def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False
         'exam_id': exam['id'],
         'progress_page_url': progress_page_url,
         'is_sample_attempt': is_practice_exam,
+        'has_due_date': has_due_date,
         'has_due_date_passed': _has_due_date_passed(exam['due_date']),
         'does_time_remain': _does_time_remain(attempt),
         'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
