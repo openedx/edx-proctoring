@@ -103,6 +103,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.start_an_exam_msg = 'This exam is proctored'
         self.exam_expired_msg = 'The due date for this exam has passed'
         self.timed_exam_msg = '{exam_name} is a Timed Exam'
+        self.timed_exam_submitted = 'You have submitted your timed exam.'
+        self.timed_exam_expired = 'The time allotted for this exam has expired.'
         self.submitted_timed_exam_msg_with_due_date = 'After the due date has passed,'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
         self.exam_time_error_msg = 'There was a problem with your proctoring session'
@@ -259,13 +261,25 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         Creates the ProctoredExamStudentAttempt object.
         """
-        return ProctoredExamStudentAttempt.objects.create(
+
+        attempt = ProctoredExamStudentAttempt(
             proctored_exam_id=exam_id,
             user_id=self.user_id,
             external_id=self.external_id,
             allowed_time_limit_mins=10,
             status=status
         )
+
+        if status in (ProctoredExamStudentAttemptStatus.started,
+                      ProctoredExamStudentAttemptStatus.ready_to_submit, ProctoredExamStudentAttemptStatus.submitted):
+            attempt.started_at = datetime.now(pytz.UTC)
+
+        if ProctoredExamStudentAttemptStatus.is_completed_status(status):
+            attempt.completed_at = datetime.now(pytz.UTC)
+
+        attempt.save()
+
+        return attempt
 
     def _create_unstarted_exam_attempt(self, is_proctored=True, is_practice=False):
         """
@@ -1676,6 +1690,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         exam_attempt = self._create_started_exam_attempt(is_proctored=False)
         exam_attempt.status = status
+        if status == 'submitted':
+            exam_attempt.completed_at = datetime.now(pytz.UTC)
+
         exam_attempt.save()
 
         rendered_response = get_student_view(
@@ -1687,6 +1704,44 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIn(expected_content, rendered_response)
+
+    def test_expired_exam(self):
+        """
+        Test that an expired exam shows a difference message when the exam is expired just recently
+        """
+        # create exam with completed_at equal to current time and started_at equal to allowed_time_limit_mins ago
+        attempt = self._create_started_exam_attempt(is_proctored=False)
+        attempt.status = "submitted"
+        attempt.started_at = attempt.started_at - timedelta(minutes=attempt.allowed_time_limit_mins)
+        attempt.completed_at = attempt.started_at + timedelta(minutes=attempt.allowed_time_limit_mins)
+        attempt.save()
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_timed,
+            context={
+                'display_name': self.exam_name,
+            }
+        )
+
+        self.assertIn(self.timed_exam_expired, rendered_response)
+
+        # update start and completed time such that completed_time is allowed_time_limit_mins ago than the current time
+        attempt.started_at = attempt.started_at - timedelta(minutes=attempt.allowed_time_limit_mins)
+        attempt.completed_at = attempt.completed_at - timedelta(minutes=attempt.allowed_time_limit_mins)
+        attempt.save()
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_timed,
+            context={
+                'display_name': self.exam_name,
+            }
+        )
+
+        self.assertIn(self.timed_exam_submitted, rendered_response)
 
     def test_submitted_credit_state(self):
         """

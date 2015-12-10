@@ -50,6 +50,8 @@ from edx_proctoring.runtime import get_runtime_service
 
 log = logging.getLogger(__name__)
 
+SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is shown for a timed-out exam
+
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True):
@@ -1272,6 +1274,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     """
     student_view_template = None
     attempt = get_exam_attempt(exam_id, user_id)
+    has_time_expired = False
 
     attempt_status = attempt['status'] if attempt else None
     has_due_date = True if exam['due_date'] is not None else False
@@ -1292,6 +1295,18 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
             return None
 
         student_view_template = 'timed_exam/submitted.html'
+
+        current_datetime = datetime.now(pytz.UTC)
+        start_time = attempt['started_at']
+        end_time = attempt['completed_at']
+        attempt_duration_sec = (end_time - start_time).total_seconds()
+        allowed_duration_sec = attempt['allowed_time_limit_mins'] * 60
+        since_exam_ended_sec = (current_datetime - end_time).total_seconds()
+
+        # if the user took >= the available time, then the exam must have expired.
+        # but we show expiry message only when the exam was taken recently (less than SHOW_EXPIRY_MESSAGE_DURATION)
+        if attempt_duration_sec >= allowed_duration_sec and since_exam_ended_sec < SHOW_EXPIRY_MESSAGE_DURATION:
+            has_time_expired = True
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -1335,6 +1350,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
             'exam_name': exam['exam_name'],
             'progress_page_url': progress_page_url,
             'does_time_remain': _does_time_remain(attempt),
+            'has_time_expired': has_time_expired,
             'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
             'change_state_url': reverse(
                 'edx_proctoring.proctored_exam.attempt',
