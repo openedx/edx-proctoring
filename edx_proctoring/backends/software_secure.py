@@ -247,9 +247,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             # update our attempt status, note we have to import api.py here because
             # api.py imports software_secure.py, so we'll get an import circular reference
 
-            allow_status_update_on_fail = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
+            allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
 
-            self.on_review_saved(review, allow_status_update_on_fail=allow_status_update_on_fail)
+            self.on_review_saved(review, allow_rejects=allow_rejects)
 
         # emit an event for 'review-received'
         data = {
@@ -265,7 +265,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         exam = serialized_exam_object.data
         emit_event(exam, 'review-received', attempt=attempt, override_data=data)
 
-    def on_review_saved(self, review, allow_status_update_on_fail=False):  # pylint: disable=arguments-differ
+    def on_review_saved(self, review, allow_rejects=False):  # pylint: disable=arguments-differ
         """
         called when a review has been save - either through API (on_review_callback) or via Django Admin panel
         in order to trigger any workflow associated with proctoring review results
@@ -293,21 +293,23 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         status = (
             ProctoredExamStudentAttemptStatus.verified
             if review.review_status in self.passing_review_status
-            else ProctoredExamStudentAttemptStatus.rejected
+            else (
+                # if we are not allowed to store 'rejected' on this
+                # code path, then put status into 'second_review_required'
+                ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
+                ProctoredExamStudentAttemptStatus.second_review_required
+            )
         )
 
-        # are we allowed to update the status if we have a failure status
-        # i.e. do we need a review to come in from Django Admin panel?
-        if status == ProctoredExamStudentAttemptStatus.verified or allow_status_update_on_fail:
-            # updating attempt status will trigger workflow
-            # (i.e. updating credit eligibility table)
-            from edx_proctoring.api import update_attempt_status
+        # updating attempt status will trigger workflow
+        # (i.e. updating credit eligibility table)
+        from edx_proctoring.api import update_attempt_status
 
-            update_attempt_status(
-                attempt_obj.proctored_exam_id,
-                attempt_obj.user_id,
-                status
-            )
+        update_attempt_status(
+            attempt_obj.proctored_exam_id,
+            attempt_obj.user_id,
+            status
+        )
 
     def _save_review_comment(self, review, comment):
         """

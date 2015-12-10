@@ -150,6 +150,9 @@ class ProctoredExamStudentAttemptStatus(object):
     # the student has submitted the exam for proctoring review
     submitted = 'submitted'
 
+    # the student has submitted the exam for proctoring review
+    second_review_required = 'second_review_required'
+
     # the exam has been verified and approved
     verified = 'verified'
 
@@ -176,8 +179,8 @@ class ProctoredExamStudentAttemptStatus(object):
         that it cannot go backwards in state
         """
         return status in [
-            cls.declined, cls.timed_out, cls.submitted, cls.verified, cls.rejected,
-            cls.not_reviewed, cls.error
+            cls.declined, cls.timed_out, cls.submitted, cls.second_review_required,
+            cls.verified, cls.rejected, cls.not_reviewed, cls.error
         ]
 
     @classmethod
@@ -196,8 +199,8 @@ class ProctoredExamStudentAttemptStatus(object):
         Returns a boolean if the passed in to_status calls for an update to the credit requirement status.
         """
         return to_status in [
-            cls.verified, cls.rejected, cls.declined, cls.not_reviewed, cls.submitted,
-            cls.error
+            cls.verified, cls.rejected, cls.declined, cls.not_reviewed,
+            cls.submitted, cls.error
         ]
 
     @classmethod

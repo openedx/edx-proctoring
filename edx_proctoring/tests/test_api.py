@@ -824,6 +824,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (ProctoredExamStudentAttemptStatus.submitted, 'submitted'),
         (ProctoredExamStudentAttemptStatus.declined, 'declined'),
         (ProctoredExamStudentAttemptStatus.error, 'failed'),
+        (ProctoredExamStudentAttemptStatus.second_review_required, None),
     )
     @ddt.unpack
     def test_remove_exam_attempt_with_status(self, to_status, requirement_status):
@@ -843,19 +844,24 @@ class ProctoredExamApiTests(LoggedInTestCase):
         credit_service = get_runtime_service('credit')
         credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
 
-        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
-        self.assertEqual(
-            credit_status['credit_requirement_status'][0]['status'],
-            requirement_status
-        )
+        if requirement_status:
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                requirement_status
+            )
 
-        # now remove exam attempt which calls the credit service method 'remove_credit_requirement_status'
-        remove_exam_attempt(exam_attempt.proctored_exam_id)
+            # now remove exam attempt which calls the credit service method 'remove_credit_requirement_status'
+            remove_exam_attempt(exam_attempt.proctored_exam_id)
 
-        # make sure the credit requirement status is no longer there
-        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
+            # make sure the credit requirement status is no longer there
+            credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
 
-        self.assertEqual(len(credit_status['credit_requirement_status']), 0)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 0)
+        else:
+            # There is not an expected changed to the credit requirement table
+            # given the attempt status
+            self.assertEqual(len(credit_status['credit_requirement_status']), 0)
 
     def test_stop_a_non_started_exam(self):
         """
@@ -1536,6 +1542,25 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
         with freeze_time(reset_time):
+            rendered_response = get_student_view(
+                user_id=self.user_id,
+                course_id=self.course_id,
+                content_id=self.content_id,
+                context={
+                    'is_proctored': True,
+                    'display_name': self.exam_name,
+                    'default_time_limit_mins': 90
+                }
+            )
+            self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
+
+            # now make sure if this status transitions to 'second_review_required'
+            # the student will still see a 'submitted' message
+            update_attempt_status(
+                exam_attempt.proctored_exam_id,
+                exam_attempt.user_id,
+                ProctoredExamStudentAttemptStatus.second_review_required
+            )
             rendered_response = get_student_view(
                 user_id=self.user_id,
                 course_id=self.course_id,
@@ -2470,6 +2495,23 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIn(self.proctored_exam_email_body, mail.outbox[0].body)
         self.assertIn(ProctoredExamStudentAttemptStatus.get_status_alias(status), mail.outbox[0].body)
         self.assertIn(credit_state['course_name'], mail.outbox[0].body)
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.second_review_required,
+        ProctoredExamStudentAttemptStatus.error
+    )
+    def test_email_not_sent(self, status):
+        """
+        Assert than email is not sent on the following statuses of proctoring attempt
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+        self.assertEquals(len(mail.outbox), 0)
 
     def test_send_email_unicode(self):
         """
