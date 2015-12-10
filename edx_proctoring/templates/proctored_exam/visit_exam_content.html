@@ -1,16 +1,14 @@
 {% load i18n %}
 {% if has_due_date_passed %}
-
+  <hr>
   <p>
     {% blocktrans %}
-      If you want to view your exam questions and responses, click on the button “let me see my exam”.
-      When you clicked the button, you will be taken directly to the exam content. The exam’s status will
-      still be visible to you in the left navigation pane.
+      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.
     {% endblocktrans %}
   </p>
   <p>
     <button type="button" name="visit-exam-content" class="visit-exam-button exam-action-button btn btn-pl-primary btn-base" data-action-url="{{update_is_status_acknowledge_url}}">
-        {% trans "Let me see my exam" %}
+        {% trans "View my exam" %}
     </button>
     <div class="clearfix"></div>
   </p>
@@ -37,4 +35,10 @@
       }
     );
   </script>
+{% elif has_due_date %}
+  <p>
+    {% blocktrans %}
+      After the due date for this exam has passed, you will be able to review your answers on this page.
+    {% endblocktrans %}
+  </p>
 {% endif %}
