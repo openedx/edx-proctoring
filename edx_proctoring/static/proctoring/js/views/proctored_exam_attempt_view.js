@@ -14,6 +14,7 @@ var edx = edx || {};
         ready_to_submit: gettext('Ready to submit'),
         declined: gettext('Declined'),
         timed_out: gettext('Timed out'),
+        second_review_required: gettext('Second Review Required'),
         submitted: gettext('Submitted'),
         verified: gettext('Verified'),
         rejected: gettext('Rejected'),

@@ -778,7 +778,8 @@ class SoftwareSecureTests(TestCase):
         self.assertEqual(records[0].review_status, 'Clean')
         self.assertEqual(records[1].review_status, 'Suspicious')
 
-    def test_failure_submission(self):
+    @ddt.data(False, True)
+    def test_failure_submission(self, allow_rejects):
         """
         Tests that a submission of a failed test and make sure that we
         don't automatically update the status to failure
@@ -824,10 +825,17 @@ class SoftwareSecureTests(TestCase):
         # now simulate a update via Django Admin table which will actually
         # push through the failure into our attempt status (as well as trigger)
         # other workflow
-        provider.on_review_saved(review, allow_status_update_on_fail=True)
+        provider.on_review_saved(review, allow_rejects=allow_rejects)
 
         attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.rejected)
+
+        # if we don't allow rejects to be stored in attempt status
+        # then we should expect a 'second_review_required' status
+        expected_status = (
+            ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
+            ProctoredExamStudentAttemptStatus.second_review_required
+        )
+        self.assertEqual(attempt['status'], expected_status)
 
     def test_update_archived_attempt(self):
         """
@@ -877,7 +885,7 @@ class SoftwareSecureTests(TestCase):
         # now simulate a update via Django Admin table which will actually
         # push through the failure into our attempt status but
         # as this is an archived attempt, we don't do anything
-        provider.on_review_saved(review, allow_status_update_on_fail=True)
+        provider.on_review_saved(review, allow_rejects=True)
 
         # look at the attempt again, since it moved into Archived state
         # then it should still remain unchanged
@@ -897,7 +905,7 @@ class SoftwareSecureTests(TestCase):
         review = ProctoredExamSoftwareSecureReview()
         review.attempt_code = 'foo'
 
-        self.assertIsNone(provider.on_review_saved(review, allow_status_update_on_fail=True))
+        self.assertIsNone(provider.on_review_saved(review, allow_rejects=True))
 
     def test_split_fullname(self):
         """
