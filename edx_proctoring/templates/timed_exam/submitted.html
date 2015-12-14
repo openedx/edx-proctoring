@@ -1,9 +1,17 @@
 {% load i18n %}
 <div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
   <h3>
-    {% blocktrans %}
-      You have submitted your timed exam.
-    {% endblocktrans %}
+
+    {% if has_time_expired %}
+      {% blocktrans %}
+        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans %}
+        You have submitted your timed exam.
+      {% endblocktrans %}
+    {% endif %}
+
   </h3>
   <hr>
   <p>
