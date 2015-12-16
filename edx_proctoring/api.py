@@ -1267,6 +1267,11 @@ STATUS_SUMMARY_MAP = {
         'suggested_icon': 'fa-spinner fa-spin',
         'in_completed_state': True
     },
+    ProctoredExamStudentAttemptStatus.second_review_required: {
+        'short_description': _('Pending Session Review'),
+        'suggested_icon': 'fa-spinner fa-spin',
+        'in_completed_state': True
+    },
     ProctoredExamStudentAttemptStatus.verified: {
         'short_description': _('Passed Proctoring'),
         'suggested_icon': 'fa-check',

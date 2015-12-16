@@ -2231,6 +2231,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         ),
         (
+            ProctoredExamStudentAttemptStatus.second_review_required, {
+                'status': ProctoredExamStudentAttemptStatus.second_review_required,
+                'short_description': 'Pending Session Review',
+                'suggested_icon': 'fa-spinner fa-spin',
+                'in_completed_state': True
+            }
+        ),
+        (
             ProctoredExamStudentAttemptStatus.verified, {
                 'status': ProctoredExamStudentAttemptStatus.verified,
                 'short_description': 'Passed Proctoring',
