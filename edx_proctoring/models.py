@@ -445,11 +445,11 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     # if the user is attempting this as a proctored exam
     # in case there is an option to opt-out
-    taking_as_proctored = models.BooleanField(default=False)
+    taking_as_proctored = models.BooleanField(default=False, verbose_name=_("Taking as Proctored"))
 
     # Whether this attempt is considered a sample attempt, e.g. to try out
     # the proctoring software
-    is_sample_attempt = models.BooleanField(default=False)
+    is_sample_attempt = models.BooleanField(default=False, verbose_name=_("Is Sample Attempt"))
 
     student_name = models.CharField(max_length=255)
 
