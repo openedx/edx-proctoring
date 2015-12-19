@@ -6,18 +6,26 @@ Django Admin pages
 import pytz
 from datetime import datetime, timedelta
 
+from django import forms
 from django.db.models import Q
 from django.contrib import admin
+from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
-from django import forms
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamReviewPolicy,
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureReviewHistory,
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptStatus,
 )
-from edx_proctoring.utils import locate_attempt_by_attempt_code
+from edx_proctoring.api import update_attempt_status
 from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.utils import locate_attempt_by_attempt_code
+from edx_proctoring.exceptions import (
+    ProctoredExamIllegalStatusTransition,
+    StudentExamAttemptDoesNotExistsException,
+)
 
 
 class ProctoredExamReviewPolicyAdmin(admin.ModelAdmin):
@@ -148,11 +156,10 @@ class ProctoredExamListFilter(admin.SimpleListFilter):
 
             # to help disambiguate exam names,
             # prepend the exam_name with a parsed out course_id
-            course_id = course_id.replace('+', ' ').replace('/', ' ').replace('course-v1:', '')
             lookups += ((
                 exam.id,
                 u'{course_id}: {exam_name}'.format(
-                    course_id=course_id,
+                    course_id=prettify_course_id(course_id),
                     exam_name=exam.exam_name
                 )
             ),)
@@ -334,6 +341,191 @@ class ProctoredExamSoftwareSecureReviewHistoryAdmin(ProctoredExamSoftwareSecureR
         return
 
 
+class ExamAttemptFilterByStatus(admin.SimpleListFilter):
+    """
+    Quick filter to allow admins to see attempts by "status"
+    """
+
+    title = _('Status')
+    parameter_name = 'status'
+
+    def lookups(self, request, model_admin):
+        """
+        List of values to allow admin to select
+        """
+        return (
+            (ProctoredExamStudentAttemptStatus.created, _('Created')),
+            (ProctoredExamStudentAttemptStatus.download_software_clicked, _('Download Software Clicked')),
+            (ProctoredExamStudentAttemptStatus.ready_to_start, _('Ready To Start')),
+            (ProctoredExamStudentAttemptStatus.started, _('Started')),
+            (ProctoredExamStudentAttemptStatus.ready_to_submit, _('Ready To Submit')),
+            (ProctoredExamStudentAttemptStatus.declined, _('Declined')),
+            (ProctoredExamStudentAttemptStatus.timed_out, _('Timed Out')),
+            (ProctoredExamStudentAttemptStatus.submitted, _('Submitted')),
+            (ProctoredExamStudentAttemptStatus.second_review_required, _('Second Review Required')),
+            (ProctoredExamStudentAttemptStatus.verified, _('Verified')),
+            (ProctoredExamStudentAttemptStatus.rejected, _('Rejected')),
+            (ProctoredExamStudentAttemptStatus.not_reviewed, _('Not Reviewed')),
+            (ProctoredExamStudentAttemptStatus.error, _('Error')),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Return the filtered queryset
+        """
+
+        if self.value() in [ProctoredExamStudentAttemptStatus.created, ProctoredExamStudentAttemptStatus.submitted]:
+            return queryset.filter(status=self.value())
+        else:
+            return queryset
+
+
+class ExamAttemptFilterByCourseId(admin.SimpleListFilter):
+    """
+    Quick filter to allow admins to see attempts by "course_id"
+    """
+
+    title = _('Course Id')
+    parameter_name = 'proctored_exam__course_id'
+
+    def lookups(self, request, model_admin):
+        """
+        List of values to allow admin to select
+        """
+        lookups = (())
+        unique_course_ids = ProctoredExamStudentAttempt.objects.values_list(
+            'proctored_exam__course_id',
+            flat=True
+        ).distinct()
+
+        if unique_course_ids:
+            lookups = [(course_id, prettify_course_id(course_id)) for course_id in unique_course_ids]
+
+        return lookups
+
+    def queryset(self, request, queryset):
+        """
+        Return the filtered queryset
+        """
+        if self.value():
+            return queryset.filter(proctored_exam__course_id=self.value())
+        else:
+            return queryset
+
+
+class ProctoredExamAttemptForm(forms.ModelForm):
+    """
+    Admin Form to display for reading/updating a Proctored Exam Attempt
+    """
+
+    class Meta(object):  # pylint: disable=missing-docstring
+        model = ProctoredExamStudentAttempt
+        fields = '__all__'
+
+    STATUS_CHOICES = [
+        (ProctoredExamStudentAttemptStatus.created, _('Created')),
+        (ProctoredExamStudentAttemptStatus.download_software_clicked, _('Download Software Clicked')),
+        (ProctoredExamStudentAttemptStatus.ready_to_start, _('Ready To Start')),
+        (ProctoredExamStudentAttemptStatus.started, _('Started')),
+        (ProctoredExamStudentAttemptStatus.ready_to_submit, _('Ready To Submit')),
+        (ProctoredExamStudentAttemptStatus.declined, _('Declined')),
+        (ProctoredExamStudentAttemptStatus.timed_out, _('Timed Out')),
+        (ProctoredExamStudentAttemptStatus.submitted, _('Submitted')),
+        (ProctoredExamStudentAttemptStatus.second_review_required, _('Second Review Required')),
+        (ProctoredExamStudentAttemptStatus.verified, _('Verified')),
+        (ProctoredExamStudentAttemptStatus.rejected, _('Rejected')),
+        (ProctoredExamStudentAttemptStatus.not_reviewed, _('Not Reviewed')),
+        (ProctoredExamStudentAttemptStatus.error, _('Error')),
+    ]
+
+    status = forms.ChoiceField(choices=STATUS_CHOICES)
+
+
+class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
+    """
+    Admin panel for Proctored Exam Attempts
+    """
+
+    readonly_fields = [
+        'user',
+        'proctored_exam',
+        'started_at',
+        'completed_at',
+        'last_poll_timestamp',
+        'last_poll_ipaddr',
+        'attempt_code',
+        'external_id',
+        'allowed_time_limit_mins',
+        'taking_as_proctored',
+        'is_sample_attempt',
+        'student_name',
+        'review_policy_id',
+        'is_status_acknowledged'
+    ]
+
+    list_display = [
+        'username',
+        'exam_name',
+        'course_id',
+        'taking_as_proctored',
+        'is_sample_attempt',
+        'attempt_code',
+        'status',
+        'modified'
+    ]
+
+    search_fields = [
+        'user__username',
+        'attempt_code'
+    ]
+
+    list_filter = [
+        ExamAttemptFilterByStatus,
+        "taking_as_proctored",
+        "is_sample_attempt",
+        ExamAttemptFilterByCourseId
+    ]
+
+    form = ProctoredExamAttemptForm
+
+    def username(self, obj):
+        """ Return user's username of attempt"""
+        return obj.user.username
+
+    def exam_name(self, obj):
+        """ Return exam_name of attempt"""
+        return obj.proctored_exam.exam_name
+
+    def course_id(self, obj):
+        """ Return course_id of attempt"""
+        return obj.proctored_exam.course_id
+
+    def save_model(self, request, obj, form, change):
+        """
+        Override callback so that we can change the status by "update_attempt_status" function
+        """
+        try:
+            if change:
+                update_attempt_status(obj.proctored_exam.id, obj.user.id, form.cleaned_data['status'])
+        except (ProctoredExamIllegalStatusTransition, StudentExamAttemptDoesNotExistsException) as ex:
+            messages.error(request, ex.message)
+
+    def has_add_permission(self, request):
+        """Don't allow adds"""
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        """Don't allow deletes"""
+        return False
+
+
+def prettify_course_id(course_id):
+    """
+    Prettify the COURSE ID string
+    """
+    return course_id.replace('+', ' ').replace('/', ' ').replace('course-v1:', '')
+
+admin.site.register(ProctoredExamStudentAttempt, ProctoredExamStudentAttemptAdmin)
 admin.site.register(ProctoredExamReviewPolicy, ProctoredExamReviewPolicyAdmin)
 admin.site.register(ProctoredExamSoftwareSecureReview, ProctoredExamSoftwareSecureReviewAdmin)
 admin.site.register(ProctoredExamSoftwareSecureReviewHistory, ProctoredExamSoftwareSecureReviewHistoryAdmin)
