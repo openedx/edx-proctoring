@@ -374,7 +374,7 @@ class ExamAttemptFilterByStatus(admin.SimpleListFilter):
         Return the filtered queryset
         """
 
-        if self.value() in [ProctoredExamStudentAttemptStatus.created, ProctoredExamStudentAttemptStatus.submitted]:
+        if self.value():
             return queryset.filter(status=self.value())
         else:
             return queryset
