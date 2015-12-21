@@ -341,45 +341,6 @@ class ProctoredExamSoftwareSecureReviewHistoryAdmin(ProctoredExamSoftwareSecureR
         return
 
 
-class ExamAttemptFilterByStatus(admin.SimpleListFilter):
-    """
-    Quick filter to allow admins to see attempts by "status"
-    """
-
-    title = _('Status')
-    parameter_name = 'status'
-
-    def lookups(self, request, model_admin):
-        """
-        List of values to allow admin to select
-        """
-        return (
-            (ProctoredExamStudentAttemptStatus.created, _('Created')),
-            (ProctoredExamStudentAttemptStatus.download_software_clicked, _('Download Software Clicked')),
-            (ProctoredExamStudentAttemptStatus.ready_to_start, _('Ready To Start')),
-            (ProctoredExamStudentAttemptStatus.started, _('Started')),
-            (ProctoredExamStudentAttemptStatus.ready_to_submit, _('Ready To Submit')),
-            (ProctoredExamStudentAttemptStatus.declined, _('Declined')),
-            (ProctoredExamStudentAttemptStatus.timed_out, _('Timed Out')),
-            (ProctoredExamStudentAttemptStatus.submitted, _('Submitted')),
-            (ProctoredExamStudentAttemptStatus.second_review_required, _('Second Review Required')),
-            (ProctoredExamStudentAttemptStatus.verified, _('Verified')),
-            (ProctoredExamStudentAttemptStatus.rejected, _('Rejected')),
-            (ProctoredExamStudentAttemptStatus.not_reviewed, _('Not Reviewed')),
-            (ProctoredExamStudentAttemptStatus.error, _('Error')),
-        )
-
-    def queryset(self, request, queryset):
-        """
-        Return the filtered queryset
-        """
-
-        if self.value() in [ProctoredExamStudentAttemptStatus.created, ProctoredExamStudentAttemptStatus.submitted]:
-            return queryset.filter(status=self.value())
-        else:
-            return queryset
-
-
 class ExamAttemptFilterByCourseId(admin.SimpleListFilter):
     """
     Quick filter to allow admins to see attempts by "course_id"
@@ -480,9 +441,9 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
     ]
 
     list_filter = [
-        ExamAttemptFilterByStatus,
-        "taking_as_proctored",
-        "is_sample_attempt",
+        'status',
+        'taking_as_proctored',
+        'is_sample_attempt',
         ExamAttemptFilterByCourseId
     ]
 
