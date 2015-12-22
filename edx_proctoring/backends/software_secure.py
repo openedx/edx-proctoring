@@ -129,6 +129,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         documentation named "Reviewer Data Transfer"
         """
 
+        # redact the videoReviewLink from the payload
+        if 'videoReviewLink' in payload:
+            del payload['videoReviewLink']
+
         log_msg = (
             'Received callback from SoftwareSecure with review data: {payload}'.format(
                 payload=payload
@@ -189,10 +193,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         # do some limited parsing of the JSON payload
         review_status = payload['reviewStatus']
-        video_review_link = payload['videoReviewLink']
-
-        # be sure to change over any http: to https: on the video_review_link
-        video_review_link = video_review_link.replace('http:', 'https:')
 
         # do we already have a review for this attempt?!? We may not allow updates
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
@@ -224,7 +224,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review.attempt_code = attempt_code
         review.raw_data = json.dumps(payload)
         review.review_status = review_status
-        review.video_url = video_review_link
         review.student = attempt_obj.user
         review.exam = attempt_obj.proctored_exam
         # set reviewed_by to None because it was reviewed by our 3rd party
@@ -256,7 +255,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             'review_attempt_code': review.attempt_code,
             'review_raw_data': review.raw_data,
             'review_status': review.review_status,
-            'review_video_url': review.video_url
         }
 
         serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(attempt_obj)
