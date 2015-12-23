@@ -75,16 +75,7 @@ class ProctoredExamSoftwareSecureReviewForm(forms.ModelForm):
     ]
 
     review_status = forms.ChoiceField(choices=REVIEW_STATUS_CHOICES)
-    video_url = forms.URLField()
     raw_data = forms.CharField(widget=forms.Textarea, label='Reviewer Notes')
-
-
-def video_url_for_review(obj):
-    """Return hyperlink to review video url"""
-    return (
-        '<a href="{video_url}" target="_blank">{video_url}</a>'.format(video_url=obj.video_url)
-    )
-video_url_for_review.allow_tags = True
 
 
 class ReviewListFilter(admin.SimpleListFilter):
@@ -238,7 +229,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     The admin panel for SoftwareSecure Review records
     """
 
-    readonly_fields = [video_url_for_review, 'attempt_code', 'exam', 'student', 'reviewed_by', 'modified']
+    readonly_fields = ['attempt_code', 'exam', 'student', 'reviewed_by', 'modified']
     list_filter = [
         ReviewListFilter,
         ProctoredExamListFilter,
@@ -309,7 +300,8 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(ProctoredExamSoftwareSecureReviewAdmin, self).get_form(request, obj, **kwargs)
-        del form.base_fields['video_url']
+        if 'video_url' in form.base_fields:
+            del form.base_fields['video_url']
         return form
 
     def lookup_allowed(self, key, value):
@@ -324,7 +316,6 @@ class ProctoredExamSoftwareSecureReviewHistoryAdmin(ProctoredExamSoftwareSecureR
     """
 
     readonly_fields = [
-        video_url_for_review,
         'review_status',
         'raw_data',
         'attempt_code',

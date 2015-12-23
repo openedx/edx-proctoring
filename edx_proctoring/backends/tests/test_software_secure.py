@@ -486,10 +486,8 @@ class SoftwareSecureTests(TestCase):
 
         self.assertIsNotNone(review)
         self.assertEqual(review.review_status, review_status)
-        self.assertEqual(
-            review.video_url,
-            'https://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
-        )
+        self.assertFalse(review.video_url)
+
         self.assertIsNotNone(review.raw_data)
         self.assertIsNone(review.reviewed_by)
 
@@ -660,10 +658,8 @@ class SoftwareSecureTests(TestCase):
 
         self.assertIsNotNone(review)
         self.assertEqual(review.review_status, 'Clean')
-        self.assertEqual(
-            review.video_url,
-            'https://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
-        )
+        self.assertFalse(review.video_url)
+
         self.assertIsNotNone(review.raw_data)
 
         # now check the comments that were stored
@@ -758,10 +754,8 @@ class SoftwareSecureTests(TestCase):
 
         self.assertIsNotNone(review)
         self.assertEqual(review.review_status, 'Suspicious')
-        self.assertEqual(
-            review.video_url,
-            'https://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo'
-        )
+        self.assertFalse(review.video_url)
+
         self.assertIsNotNone(review.raw_data)
 
         # make sure history table is no longer empty

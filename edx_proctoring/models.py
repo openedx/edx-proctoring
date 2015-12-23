@@ -871,6 +871,8 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     raw_data = models.TextField()
 
     # URL for the exam video that had been reviewed
+    # NOTE: To be deleted in future release, once the code that depends on it
+    # has been removed
     video_url = models.TextField()
 
     # user_id of person who did the review (can be None if submitted via server-to-server API)
@@ -972,7 +974,6 @@ def _make_review_archive_copy(instance):
         attempt_code=instance.attempt_code,
         review_status=instance.review_status,
         raw_data=instance.raw_data,
-        video_url=instance.video_url,
         reviewed_by=instance.reviewed_by,
         student=instance.student,
         exam=instance.exam,
