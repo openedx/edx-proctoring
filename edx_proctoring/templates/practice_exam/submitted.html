@@ -12,12 +12,14 @@
       You have completed this practice exam and can continue with your course work.
     {% endblocktrans %}
   </p>
-  <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-    
-    <a>
-      {% trans "You can also retry this practice exam" %}
-    </a>
-  </button>
+  {% if not has_due_date_passed %}
+    <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
+
+      <a>
+        {% trans "You can also retry this practice exam" %}
+      </a>
+    </button>
+  {% endif %}
 </div>
 <script type="text/javascript">
   $('.start-timed-exam').click(
