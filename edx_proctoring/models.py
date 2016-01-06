@@ -159,9 +159,6 @@ class ProctoredExamStudentAttemptStatus(object):
     # the exam has been rejected
     rejected = 'rejected'
 
-    # the exam was not reviewed
-    not_reviewed = 'not_reviewed'
-
     # the exam is believed to be in error
     error = 'error'
 
@@ -180,7 +177,7 @@ class ProctoredExamStudentAttemptStatus(object):
         """
         return status in [
             cls.declined, cls.timed_out, cls.submitted, cls.second_review_required,
-            cls.verified, cls.rejected, cls.not_reviewed, cls.error
+            cls.verified, cls.rejected, cls.error
         ]
 
     @classmethod
@@ -199,8 +196,7 @@ class ProctoredExamStudentAttemptStatus(object):
         Returns a boolean if the passed in to_status calls for an update to the credit requirement status.
         """
         return to_status in [
-            cls.verified, cls.rejected, cls.declined, cls.not_reviewed,
-            cls.submitted, cls.error
+            cls.verified, cls.rejected, cls.declined, cls.submitted, cls.error
         ]
 
     @classmethod

@@ -386,7 +386,6 @@ class ProctoredExamAttemptForm(forms.ModelForm):
         (ProctoredExamStudentAttemptStatus.second_review_required, _('Second Review Required')),
         (ProctoredExamStudentAttemptStatus.verified, _('Verified')),
         (ProctoredExamStudentAttemptStatus.rejected, _('Rejected')),
-        (ProctoredExamStudentAttemptStatus.not_reviewed, _('Not Reviewed')),
         (ProctoredExamStudentAttemptStatus.error, _('Error')),
     ]
 

@@ -18,7 +18,6 @@ var edx = edx || {};
         submitted: gettext('Submitted'),
         verified: gettext('Verified'),
         rejected: gettext('Rejected'),
-        not_reviewed: gettext('Not reviewed'),
         error: gettext('Error')
     };
     var viewHelper = {

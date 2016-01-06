@@ -2141,7 +2141,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.ready_to_start),
         (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started),
-        (ProctoredExamStudentAttemptStatus.not_reviewed, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.error, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error),
     )
@@ -2612,7 +2611,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.ready_to_submit,
         ProctoredExamStudentAttemptStatus.declined,
         ProctoredExamStudentAttemptStatus.timed_out,
-        ProctoredExamStudentAttemptStatus.not_reviewed,
         ProctoredExamStudentAttemptStatus.error
     )
     @patch.dict('settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
