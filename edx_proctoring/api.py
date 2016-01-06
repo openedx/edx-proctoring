@@ -1559,10 +1559,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     attempt_status = attempt['status'] if attempt else None
 
     if not attempt_status:
-        if _has_due_date_passed(exam['due_date']):
-            student_view_template = 'proctored_exam/expired.html'
-        else:
-            student_view_template = 'practice_exam/entrance.html'
+        student_view_template = 'practice_exam/entrance.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
         return None
