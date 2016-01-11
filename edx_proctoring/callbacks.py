@@ -18,11 +18,11 @@ from rest_framework.negotiation import BaseContentNegotiation
 from edx_proctoring.api import (
     get_exam_attempt_by_code,
     mark_exam_attempt_as_ready,
-    update_exam_attempt)
-
-from edx_proctoring.exceptions import ProctoredBaseException
-
+    update_exam_attempt
+)
 from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.exceptions import ProctoredBaseException
+from edx_proctoring.models import ProctoredExamStudentAttemptStatus
 
 log = logging.getLogger(__name__)
 
@@ -48,7 +48,8 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
             status=404
         )
 
-    if attempt['status'] == "created":
+    if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
+                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
         mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
 
     template = loader.get_template('proctored_exam/proctoring_launch_callback.html')
