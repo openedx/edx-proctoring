@@ -1373,58 +1373,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         else:
             self.assertIsNone(None)
 
-    @ddt.data(
-        (True, False),
-        (True, True),
-        (False, False),
-    )
-    @ddt.unpack
-    def test_practice_exam_attempt_with_past_due_datetime(self, is_proctored, is_practice):
-        """
-        Test for get_student_view for practice proctored exam with past due datetime
-        """
-
-        due_date = datetime.now(pytz.UTC) + timedelta(days=1)
-
-        # exam is created with due datetime which has already passed
-        self._create_exam_with_due_time(
-            is_proctored=is_proctored,
-            is_practice_exam=is_practice,
-            due_date=due_date
-        )
-
-        # due_date is exactly after 24 hours, if student arrives after 2 days
-        # then he can not attempt the proctored exam
-        reset_time = due_date + timedelta(days=2)
-        with freeze_time(reset_time):
-            rendered_response = get_student_view(
-                user_id=self.user_id,
-                course_id=self.course_id,
-                content_id=self.content_id_for_exam_with_due_date,
-                context={
-                    'is_proctored': True,
-                    'is_practice_exam': True,
-                    'display_name': self.exam_name,
-                    'default_time_limit_mins': self.default_time_limit
-                }
-            )
-            self.assertIn(self.exam_expired_msg, rendered_response)
-
-            # call the view again, because the first call set the exam attempt to 'expired'
-            # this second call will render the view based on the state
-            rendered_response = get_student_view(
-                user_id=self.user_id,
-                course_id=self.course_id,
-                content_id=self.content_id_for_exam_with_due_date,
-                context={
-                    'is_proctored': True,
-                    'is_practice_exam': True,
-                    'display_name': self.exam_name,
-                    'default_time_limit_mins': self.default_time_limit
-                }
-            )
-            self.assertIn(self.exam_expired_msg, rendered_response)
-
     def test_proctored_exam_attempt_with_past_due_datetime(self):
         """
         Test for get_student_view for proctored exam with past due datetime
@@ -2145,7 +2093,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.ready_to_start),
         (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started),
-        (ProctoredExamStudentAttemptStatus.not_reviewed, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.error, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error),
     )
@@ -2616,7 +2563,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.ready_to_submit,
         ProctoredExamStudentAttemptStatus.declined,
         ProctoredExamStudentAttemptStatus.timed_out,
-        ProctoredExamStudentAttemptStatus.not_reviewed,
         ProctoredExamStudentAttemptStatus.error
     )
     @patch.dict('settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
