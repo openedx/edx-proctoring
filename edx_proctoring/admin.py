@@ -285,8 +285,8 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        """Don't allow deletes"""
-        return False
+        """ Allow deletes """
+        return True
 
     def save_model(self, request, review, form, change):
         """
