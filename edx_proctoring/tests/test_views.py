@@ -441,6 +441,56 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         return ProctoredExamStudentAttempt.objects.get_exam_attempt(proctored_exam.id, self.user.id)
 
+    def _test_exam_attempt_creation(self):
+        """
+        Create proctored exam and exam attempt and verify the status of the attempt is "created"
+        """
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=True
+        )
+        attempt_id = create_exam_attempt(proctored_exam.id, self.user.id)
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], "created")
+
+        return attempt
+
+    def _test_repeated_start_exam_callbacks(self, attempt):
+        """
+        Given an exam attempt, call the start exam callback twice to verify
+        that the status in not incorrectly reverted
+        """
+
+        # hit callback and verify that exam status is 'ready to start'
+        attempt_id = attempt['id']
+        code = attempt['attempt_code']
+        self.client.get(
+            reverse('edx_proctoring.anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
+        )
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], "ready_to_start")
+
+        # update exam status to 'started'
+        exam_id = attempt['proctored_exam']['id']
+        user_id = attempt['user']['id']
+        update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.started)
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], "started")
+
+        # hit callback again and verify that status is still 'started' and not 'ready to start'
+        self.client.get(
+            reverse('edx_proctoring.anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
+        )
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], "started")
+        self.assertFalse(attempt['status'] == "ready_to_start")
+
     def test_start_exam_create(self):
         """
         Start an exam (create an exam attempt)
@@ -515,46 +565,28 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertIsNotNone(attempt['started_at'])
 
-    def test_start_exam_callback(self):
+    def test_start_exam_callback_when_created(self):
         """
-        Test that hitting software secure callback URL twice does not change the state
-        from 'started' back to 'ready to start'
+        Test that hitting software secure callback URL twice when the attempt state begins at
+        'created' does not change the state from 'started' back to 'ready to start'
+        """
+        attempt = self._test_exam_attempt_creation()
+        self._test_repeated_start_exam_callbacks(attempt)
+
+    def test_start_exam_callback_when_download_software_clicked(self):
+        """
+        Test that hitting software secure callback URL twice when the attempt state begins at
+        'download_software_clicked' does not change the state from 'started' back to 'ready to start'
         """
         # Create an exam.
-        proctored_exam = ProctoredExam.objects.create(
-            course_id='a/b/c',
-            content_id='test_content',
-            exam_name='Test Exam',
-            external_id='123aXqe3',
-            time_limit_mins=90,
-            is_proctored=True
-        )
-        attempt_id = create_exam_attempt(proctored_exam.id, self.user.id)
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertEqual(attempt['status'], "created")
+        attempt = self._test_exam_attempt_creation()
 
-        # hit callback and verify that exam status is 'ready to start'
-        code = attempt['attempt_code']
-        self.client.get(
-            reverse('edx_proctoring.anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
-        )
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertEqual(attempt['status'], "ready_to_start")
-
-        # update exam status to 'started'
+        # Update attempt status to 'download_software_clicked'
         exam_id = attempt['proctored_exam']['id']
         user_id = attempt['user']['id']
-        update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.started)
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertEqual(attempt['status'], "started")
+        update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.download_software_clicked)
 
-        # hit callback again and verify that status is still 'started' and not 'ready to start'
-        self.client.get(
-            reverse('edx_proctoring.anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
-        )
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertEqual(attempt['status'], "started")
-        self.assertFalse(attempt['status'] == "ready_to_start")
+        self._test_repeated_start_exam_callbacks(attempt)
 
     def test_attempt_readback(self):
         """

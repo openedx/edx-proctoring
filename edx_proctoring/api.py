@@ -1563,7 +1563,8 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
         return None
-    elif attempt_status == ProctoredExamStudentAttemptStatus.created:
+    elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
+                            ProctoredExamStudentAttemptStatus.download_software_clicked]:
         provider = get_backend_provider()
         student_view_template = 'proctored_exam/instructions.html'
         context.update({

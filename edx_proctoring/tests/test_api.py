@@ -1625,12 +1625,16 @@ class ProctoredExamApiTests(LoggedInTestCase):
             )
             self.assertIn(self.practice_exam_submitted_msg, rendered_response)
 
-    def test_get_studentview_created_status_practiceexam(self):
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
+    )
+    def test_get_studentview_created_status_practiceexam(self, status):
         """
         Test for get_student_view practice exam which has been created.
         """
         exam_attempt = self._create_started_practice_exam_attempt()
-        exam_attempt.status = ProctoredExamStudentAttemptStatus.created
+        exam_attempt.status = status
         exam_attempt.save()
 
         rendered_response = get_student_view(
