@@ -7,7 +7,12 @@
   </h3>
   <p>
     {% blocktrans %}
-      Make sure your answers are ready to be submitted, and then submit your exam. Your exam will then be graded.
+      Make sure that you have selected "Check" or "Final Check" for each problem before you submit your exam.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+      After you submit your exam, your exam will be graded.
     {% endblocktrans %}
   </p>
   <button type="button" name="submit-proctored-exam" class="exam-action-button btn btn-pl-primary btn-base" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
