@@ -857,7 +857,7 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     """
 
     # which student attempt is this feedback for?
-    attempt_code = models.CharField(max_length=255, db_index=True)
+    attempt_code = models.CharField(max_length=255, db_index=True, unique=True)
 
     # overall status of the review
     review_status = models.CharField(max_length=255)
