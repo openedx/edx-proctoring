@@ -18,6 +18,16 @@
         </tr>
         <tr>
             <td>
+                <label><%- gettext("Exam Type") %></label>
+            </td>
+            <td>
+                <label id='exam_type_label'>
+                    <%- gettext("Timed Exam") %>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <label><%- gettext("Allowance Type") %></label>
             </td>
             <td>
@@ -28,14 +38,19 @@
                     </option>
                     <% }); %>
                 </select>
+
+                <label id='additional_time_label'>
+                    <%- gettext("Additional Time (minutes)") %>
+                </label>
             </td>
         </tr>
         <tr>
             <td>
-                <label><%- gettext("Value") %></label>
+                <label id='allowance_value_label'><%- gettext("Value") %></label>
             </td>
             <td>
                 <input type="text" id="allowance_value" />
+                <label id='minutes_label'><%- gettext("minutes") %></label>
             </td>
         </tr>
         <tr>
