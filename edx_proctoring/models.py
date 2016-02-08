@@ -91,7 +91,8 @@ class ProctoredExam(TimeStampedModel):
         return proctored_exam
 
     @classmethod
-    def get_all_exams_for_course(cls, course_id, active_only=False, timed_exams_only=False):
+    def get_all_exams_for_course(cls, course_id, active_only=False, timed_exams_only=False,
+                                 proctored_exams_only=False):
         """
         Returns all exams for a give course
         """
@@ -101,6 +102,8 @@ class ProctoredExam(TimeStampedModel):
             filtered_query = filtered_query & Q(is_active=True)
         if timed_exams_only:
             filtered_query = filtered_query & Q(is_proctored=False)
+        if proctored_exams_only:
+            filtered_query = filtered_query & Q(is_proctored=True) & Q(is_practice_exam=False)
 
         return cls.objects.filter(filtered_query)
 
@@ -393,6 +396,17 @@ class ProctoredExamStudentAttemptManager(models.Manager):
             filtered_query = filtered_query & Q(proctored_exam__is_proctored=False)
 
         return self.filter(filtered_query).order_by('-created')  # pylint: disable=no-member
+
+    def get_proctored_exam_attempts(self, course_id, username):
+        """
+        Returns the Student's Proctored Exam Attempts for the given course_id.
+        """
+        return self.filter(
+            proctored_exam__course_id=course_id,
+            user__username=username,
+            taking_as_proctored=True,
+            is_sample_attempt=False,
+        ).order_by('-completed_at')
 
     def get_active_student_attempts(self, user_id, course_id=None):
         """

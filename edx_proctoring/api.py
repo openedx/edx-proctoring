@@ -1054,6 +1054,23 @@ def get_filtered_exam_attempts(course_id, search_by):
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
 
 
+def get_last_exam_completion_date(course_id, username):
+    """
+    return the completion date of last proctoring exam for the given course and username if
+    all the proctored exams are attempted and completed otherwise None
+    """
+    exam_attempts = ProctoredExamStudentAttempt.objects.get_proctored_exam_attempts(course_id, username)
+    proctored_exams_count = ProctoredExam.get_all_exams_for_course(course_id, proctored_exams_only=True).count()
+    are_all_exams_attempted = len(exam_attempts) == proctored_exams_count
+    if are_all_exams_attempted:
+        for attempt in exam_attempts:
+            if not attempt.completed_at:
+                return None
+
+    # Last proctored exam will be at first index, because attempts are sorted descending on completed_at
+    return exam_attempts[0].completed_at if exam_attempts and are_all_exams_attempted else None
+
+
 def get_active_exams_for_user(user_id, course_id=None):
     """
     This method will return a list of active exams for the user,
