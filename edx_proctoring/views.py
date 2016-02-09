@@ -595,13 +595,15 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         exam_id = request.data.get('exam_id', None)
         attempt_proctored = request.data.get('attempt_proctored', 'false').lower() == 'true'
         try:
+            exam = get_exam_by_id(exam_id)
+            if exam['due_date'] and exam['due_date'] <= datetime.now(pytz.UTC):
+                raise ProctoredExamPermissionDenied('Attempted to access expired exam')
+
             exam_attempt_id = create_exam_attempt(
                 exam_id=exam_id,
                 user_id=request.user.id,
                 taking_as_proctored=attempt_proctored
             )
-
-            exam = get_exam_by_id(exam_id)
 
             # if use elected not to take as proctored exam, then
             # use must take as open book, and loose credit eligibility
