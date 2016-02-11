@@ -905,6 +905,33 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             response_data = json.loads(response.content)
             self.assertEqual(response_data['status'], 'submitted')
 
+    def test_attempt_with_duedate_expired(self):
+        """
+        Tests that an exam with duedate passed cannot be accessed
+        """
+        # create an exam with duedate passed
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            due_date=datetime.now(pytz.UTC) - timedelta(minutes=10),
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+
+        # Starting exam attempt
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertRaises(ProctoredExamPermissionDenied)
+
     def test_remove_attempt(self):
         """
         Confirms that an attempt can be removed
