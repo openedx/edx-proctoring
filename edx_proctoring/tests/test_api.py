@@ -31,6 +31,7 @@ from edx_proctoring.api import (
     remove_exam_attempt,
     get_all_exam_attempts,
     get_filtered_exam_attempts,
+    get_last_exam_completion_date,
     mark_exam_attempt_timeout,
     mark_exam_attempt_as_ready,
     update_attempt_status,
@@ -276,6 +277,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         return create_exam(
             course_id=self.course_id,
+            is_proctored=False,
             content_id=self.disabled_content_id,
             exam_name=self.exam_name,
             time_limit_mins=self.default_time_limit,
@@ -590,7 +592,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(timed_exam['exam_name'], self.exam_name)
 
         exams = get_all_exams_for_course(self.course_id, True)
-        self.assertEqual(len(exams), 1)
+        self.assertEqual(len(exams), 2)
 
     def test_get_invalid_proctored_exam(self):
         """
@@ -961,6 +963,24 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(len(filtered_attempts), 2)
         self.assertEqual(filtered_attempts[0]['id'], new_exam_attempt)
         self.assertEqual(filtered_attempts[1]['id'], exam_attempt.id)
+
+    def test_get_last_exam_completion_date_when_course_is_incomplete(self):
+        """
+        Test to get the last proctored exam's completion date when course is not complete
+        """
+        self._create_started_exam_attempt()
+        completion_date = get_last_exam_completion_date(self.course_id, self.user.username)
+        self.assertIsNone(completion_date)
+
+    def test_get_last_exam_completion_date_when_course_is_complete(self):
+        """
+        Test to get the last proctored exam's completion date when course is complete
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        exam_attempt.completed_at = datetime.now(pytz.UTC)
+        exam_attempt.save()
+        completion_date = get_last_exam_completion_date(self.course_id, self.user.username)
+        self.assertIsNotNone(completion_date)
 
     def test_get_all_exam_attempts(self):
         """
