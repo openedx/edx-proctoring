@@ -477,7 +477,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         message = str(message)
 
         log_msg = (
-            'About to send payload to SoftwareSecure:\n{message}'.format(message=message)
+            'About to send payload to SoftwareSecure: examCode: {examCode}, courseID: {courseID}'.
+            format(examCode=body_json.get('examCode'), courseID=body_json.get('orgExtra').get('courseID'))
         )
         log.info(log_msg)
 
