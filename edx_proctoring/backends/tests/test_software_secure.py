@@ -84,7 +84,8 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
             "exam_register_endpoint": "http://test",
             "organization": "edx",
             "exam_sponsor": "edX LMS",
-            "software_download_url": "http://example.com"
+            "software_download_url": "http://example.com",
+            "send_email": True
         }
     }
 )

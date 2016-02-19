@@ -557,11 +557,13 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
 
         # get the name of the user, if the service is available
         full_name = None
+        email = None
 
         credit_service = get_runtime_service('credit')
         if credit_service:
             credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
             full_name = credit_state['profile_fullname']
+            email = credit_state['student_email']
 
         context = {
             'time_limit_mins': allowed_time_limit_mins,
@@ -569,6 +571,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             'is_sample_attempt': exam['is_practice_exam'],
             'callback_url': callback_url,
             'full_name': full_name,
+            'email': email
         }
 
         # see if there is an exam review policy for this exam
