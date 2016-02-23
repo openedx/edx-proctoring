@@ -30,7 +30,8 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     remove_exam_attempt,
     update_attempt_status,
-    update_exam_attempt
+    update_exam_attempt,
+    has_due_date_passed,
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
@@ -596,8 +597,13 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         attempt_proctored = request.data.get('attempt_proctored', 'false').lower() == 'true'
         try:
             exam = get_exam_by_id(exam_id)
-            if exam['due_date'] and exam['due_date'] <= datetime.now(pytz.UTC):
-                raise ProctoredExamPermissionDenied('Attempted to access expired exam')
+
+            # Bypassing the due date check for practice exam
+            # because student can attempt the practice after the due date
+            if not exam.get("is_practice_exam") and has_due_date_passed(exam.get('due_date')):
+                raise ProctoredExamPermissionDenied(
+                    'Attempted to access expired exam with exam_id {exam_id}'.format(exam_id=exam_id)
+                )
 
             exam_attempt_id = create_exam_attempt(
                 exam_id=exam_id,
