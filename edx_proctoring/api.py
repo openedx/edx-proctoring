@@ -463,7 +463,7 @@ def update_exam_attempt(attempt_id, **kwargs):
     exam_attempt_obj.save()
 
 
-def _has_due_date_passed(due_datetime):
+def has_due_date_passed(due_datetime):
     """
     return True if due date is lesser than current datetime, otherwise False
     and if due_datetime is None then we don't have to consider the due date for return False
@@ -478,7 +478,7 @@ def _was_review_status_acknowledged(is_status_acknowledged, due_datetime):
     """
     return True if review status has been acknowledged and due date has been passed
     """
-    return is_status_acknowledged and _has_due_date_passed(due_datetime)
+    return is_status_acknowledged and has_due_date_passed(due_datetime)
 
 
 def _create_and_decline_attempt(exam_id, user_id):
@@ -1421,7 +1421,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     attempt_status = attempt['status'] if attempt else None
     has_due_date = True if exam['due_date'] is not None else False
     if not attempt_status:
-        if _has_due_date_passed(exam['due_date']):
+        if has_due_date_passed(exam['due_date']):
             student_view_template = 'timed_exam/expired.html'
         else:
             student_view_template = 'timed_exam/entrance.html'
@@ -1433,7 +1433,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
         # check if the exam's due_date has passed then we return None
         # so that the user can see his exam answers in read only mode.
-        if _has_due_date_passed(exam['due_date']):
+        if has_due_date_passed(exam['due_date']):
             return None
 
         student_view_template = 'timed_exam/submitted.html'
@@ -1512,7 +1512,7 @@ def _calculate_allowed_mins(due_datetime, allowed_mins):
     actual_allowed_mins = allowed_mins
 
     if due_datetime:
-        if _has_due_date_passed(due_datetime):
+        if has_due_date_passed(due_datetime):
             is_exam_past_due_date = True
         elif current_datetime + timedelta(minutes=allowed_mins) > due_datetime:
 
@@ -1549,7 +1549,7 @@ def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False
         'progress_page_url': progress_page_url,
         'is_sample_attempt': is_practice_exam,
         'has_due_date': has_due_date,
-        'has_due_date_passed': _has_due_date_passed(exam['due_date']),
+        'has_due_date_passed': has_due_date_passed(exam['due_date']),
         'does_time_remain': _does_time_remain(attempt),
         'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
         'exam_started_poll_url': reverse(
@@ -1669,7 +1669,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         })
 
         # if exam due date has passed, then we can't take the exam
-        if _has_due_date_passed(exam['due_date']):
+        if has_due_date_passed(exam['due_date']):
             student_view_template = 'proctored_exam/expired.html'
         elif not prerequisite_status['are_prerequisites_satisifed']:
             # do we have any declined prerequisites, if so, then we
