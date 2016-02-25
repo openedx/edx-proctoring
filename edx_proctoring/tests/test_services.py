@@ -18,7 +18,7 @@ class MockCreditService(object):
     """
 
     def __init__(self, enrollment_mode='verified', profile_fullname='Wolfgang von Strucker',
-                 course_name='edx demo'):
+                 course_name='edx demo', student_email='foo@bar'):
         """
         Initializer
         """
@@ -27,6 +27,7 @@ class MockCreditService(object):
             'course_name': course_name,
             'enrollment_mode': enrollment_mode,
             'profile_fullname': profile_fullname,
+            'student_email': student_email,
             'credit_requirement_status': []
         }
 

@@ -47,7 +47,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     """
 
     def __init__(self, organization, exam_sponsor, exam_register_endpoint,
-                 secret_key_id, secret_key, crypto_key, software_download_url):
+                 secret_key_id, secret_key, crypto_key, software_download_url,
+                 send_email=False):
         """
         Class initializer
         """
@@ -60,6 +61,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.crypto_key = crypto_key
         self.timeout = 10
         self.software_download_url = software_download_url
+        self.send_email = send_email
         self.passing_review_status = ['Clean', 'Rules Violation']
         self.failing_review_status = ['Not Reviewed', 'Suspicious']
 
@@ -392,6 +394,18 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         if not exam_name:
             exam_name = 'Proctored Exam'
 
+        org_extra = {
+            "examStartDate": start_time_str,
+            "examEndDate": end_time_str,
+            "noOfStudents": 1,
+            "examID": exam['id'],
+            "courseID": exam['course_id'],
+            "firstName": first_name,
+            "lastName": last_name
+        }
+        if self.send_email:
+            org_extra["email"] = context['email']
+
         return {
             "examCode": attempt_code,
             "organization": self.organization,
@@ -406,15 +420,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             "ssiProduct": 'rp-now',
             # need to pass in a URL to the LMS?
             "examUrl": callback_url,
-            "orgExtra": {
-                "examStartDate": start_time_str,
-                "examEndDate": end_time_str,
-                "noOfStudents": 1,
-                "examID": exam['id'],
-                "courseID": exam['course_id'],
-                "firstName": first_name,
-                "lastName": last_name,
-            }
+            "orgExtra": org_extra
         }
 
     def _header_string(self, headers, date):
