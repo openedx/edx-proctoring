@@ -193,9 +193,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             )
             raise ProctoredExamSuspiciousLookup(err_msg)
 
-        # do some limited parsing of the JSON payload
-        review_status = payload['reviewStatus']
-
         # do we already have a review for this attempt?!? We may not allow updates
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
 
@@ -252,10 +249,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
             self.on_review_saved(review, allow_rejects=allow_rejects)
 
-        # emit an event for 'review-received'
+        # emit an event for 'review_received'
         data = {
             'review_attempt_code': review.attempt_code,
-            'review_raw_data': review.raw_data,
             'review_status': review.review_status,
         }
 
@@ -263,7 +259,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         attempt = serialized_attempt_obj.data
         serialized_exam_object = ProctoredExamSerializer(attempt_obj.proctored_exam)
         exam = serialized_exam_object.data
-        emit_event(exam, 'review-received', attempt=attempt, override_data=data)
+        emit_event(exam, 'review_received', attempt=attempt, override_data=data)
 
     def on_review_saved(self, review, allow_rejects=False):  # pylint: disable=arguments-differ
         """

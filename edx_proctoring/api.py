@@ -607,6 +607,9 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         review_policy_id=review_policy.id if review_policy else None,
     )
 
+    # Emit event when exam attempt created
+    emit_event(exam, attempt.status, attempt=_get_exam_attempt(attempt))
+
     log_msg = (
         'Created exam attempt ({attempt_id}) for exam_id {exam_id} for '
         'user_id {user_id} with taking as proctored = {taking_as_proctored} '
