@@ -638,6 +638,47 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
             self.assertEqual(response_data['accessibility_time_string'], 'you have less than a minute remaining')
 
+    def test_timer_remaining_time(self):
+        """
+        Test that remaining time is calculated correctly
+        """
+        # Create an exam with 30 hours ( 30 * 60)  total time
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=1800
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        attempt_id = response_data['exam_attempt_id']
+        self.assertGreater(attempt_id, 0)
+
+        response = self.client.get(
+            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['id'], attempt_id)
+        self.assertEqual(response_data['proctored_exam']['id'], proctored_exam.id)
+        self.assertIsNotNone(response_data['started_at'])
+        self.assertIsNone(response_data['completed_at'])
+        # check that we get timer arround 30 hours minus some seconds
+        self.assertTrue(107990 <= response_data['time_remaining_seconds'] <= 108000)
+        # check that humanized time
+        self.assertEqual(response_data['accessibility_time_string'], 'you have 30 hours remaining')
+
     def test_attempt_ready_to_start(self):
         """
         Test to get an attempt with ready_to_start status

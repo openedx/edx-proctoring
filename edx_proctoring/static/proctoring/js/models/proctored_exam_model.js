@@ -22,7 +22,7 @@
             if (secondsLeft < 0)
                 secondsLeft = 0;
 
-            var hours = parseInt(secondsLeft / 3600) % 24;
+            var hours = parseInt(secondsLeft / 3600);
             var minutes = parseInt(secondsLeft / 60) % 60;
             var seconds = Math.floor(secondsLeft % 60);
 
