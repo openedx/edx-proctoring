@@ -31,7 +31,8 @@ class MockCreditService(object):
             'credit_requirement_status': []
         }
 
-    def get_credit_state(self, user_id, course_key, return_course_name=False):  # pylint: disable=unused-argument
+    def get_credit_state(self, user_id, course_key, return_course_name=False,
+                         return_is_self_paced_course=False):  # pylint: disable=unused-argument
         """
         Mock implementation
         """

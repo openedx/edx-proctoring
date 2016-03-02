@@ -1424,7 +1424,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     attempt_status = attempt['status'] if attempt else None
     has_due_date = True if exam['due_date'] is not None else False
     if not attempt_status:
-        if has_due_date_passed(exam['due_date']):
+        if has_due_date_passed(exam['due_date']) and not _is_self_paced_course(user_id, course_id):
             student_view_template = 'timed_exam/expired.html'
         else:
             student_view_template = 'timed_exam/entrance.html'
@@ -1524,6 +1524,23 @@ def _calculate_allowed_mins(due_datetime, allowed_mins):
 
             actual_allowed_mins = int((due_datetime - current_datetime).seconds / 60)
     return actual_allowed_mins, is_exam_past_due_date
+
+
+def _is_self_paced_course(user_id, course_id):
+    """
+    Returns whether the course if self-paced or not
+    Args:
+        user_id:
+        course_id:
+    """
+    credit_service = get_runtime_service('credit')
+
+    credit_state = credit_service.get_credit_state(
+        user_id,
+        course_id,
+        return_is_self_paced_course=True
+    )
+    return credit_state.get('is_self_paced_course', False)
 
 
 def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False):
@@ -1672,7 +1689,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         })
 
         # if exam due date has passed, then we can't take the exam
-        if has_due_date_passed(exam['due_date']):
+        if has_due_date_passed(exam['due_date']) and not _is_self_paced_course(user_id, course_id):
             student_view_template = 'proctored_exam/expired.html'
         elif not prerequisite_status['are_prerequisites_satisifed']:
             # do we have any declined prerequisites, if so, then we
