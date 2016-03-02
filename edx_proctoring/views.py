@@ -464,7 +464,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 )
                 raise StudentExamAttemptDoesNotExistsException(err_msg)
 
-            remove_exam_attempt(attempt_id)
+            remove_exam_attempt(attempt_id, request.user)
             return Response()
 
         except ProctoredBaseException, ex:

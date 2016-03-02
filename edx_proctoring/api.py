@@ -962,9 +962,9 @@ def send_proctoring_attempt_status_email(exam_attempt_obj, course_name):
     email.send()
 
 
-def remove_exam_attempt(attempt_id):
+def remove_exam_attempt(attempt_id, requesting_user):
     """
-    Removes an exam attempt given the attempt id.
+    Removes an exam attempt given the attempt id. requesting_user is passed through to the instructor_service.
     """
 
     log_msg = (
@@ -991,7 +991,7 @@ def remove_exam_attempt(attempt_id):
     instructor_service = get_runtime_service('instructor')
 
     if instructor_service:
-        instructor_service.delete_student_attempt(username, course_id, content_id)
+        instructor_service.delete_student_attempt(username, course_id, content_id, requesting_user=requesting_user)
 
     # see if the status transition this changes credit requirement status
     if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):

@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from edx_proctoring.services import (
     ProctoringService
 )
+from edx_proctoring.exceptions import UserNotFoundException
 from edx_proctoring import api as edx_proctoring_api
 import types
 
@@ -111,10 +112,14 @@ class MockInstructorService(object):
         """
         self.is_user_course_staff = is_user_course_staff
 
-    def delete_student_attempt(self, student_identifier, course_id, content_id):  # pylint: disable=unused-argument
+    # pylint: disable=unused-argument
+    def delete_student_attempt(self, student_identifier, course_id, content_id, requesting_user):
         """
         Mock implementation
         """
+        # Ensure that this method was called with a real user object
+        if not hasattr(requesting_user, 'id'):
+            raise UserNotFoundException
         return True
 
     def is_course_staff(self, user, course_id):
