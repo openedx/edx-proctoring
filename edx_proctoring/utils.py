@@ -47,7 +47,7 @@ def get_time_remaining_for_attempt(attempt):
     now_utc = datetime.now(pytz.UTC)
 
     if expires_at > now_utc:
-        time_remaining_seconds = (expires_at - now_utc).seconds
+        time_remaining_seconds = (expires_at - now_utc).total_seconds()
     else:
         time_remaining_seconds = 0
 
