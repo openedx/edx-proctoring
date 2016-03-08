@@ -71,7 +71,7 @@ from .utils import (
 )
 
 from edx_proctoring.tests.test_services import (
-    MockCreditService,
+    MockCreditService, MockCreditServiceWithCourseEndDate,
     MockInstructorService,
 )
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
@@ -1179,6 +1179,52 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'is_practice_exam': True,
                 'display_name': self.exam_name,
                 'default_time_limit_mins': 90
+            },
+            user_role='student'
+        )
+        self.assertIsNone(rendered_response)
+
+    def test_proctored_exam_passed_end_date(self):
+        """
+        Verify that we get a None back on a proctored exam
+        if the course end date is passed
+        """
+
+        set_runtime_service('credit', MockCreditServiceWithCourseEndDate())
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id='foo',
+            content_id='bar',
+            context={
+                'is_proctored': True,
+                'is_practice_exam': False,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'due_date': None
+            },
+            user_role='student'
+        )
+        self.assertIsNone(rendered_response)
+
+    def test_practice_exam_passed_end_date(self):
+        """
+        Verify that we get a None back on a practice exam
+        if the course end date is passed
+        """
+
+        set_runtime_service('credit', MockCreditServiceWithCourseEndDate())
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id='foo',
+            content_id='bar',
+            context={
+                'is_proctored': True,
+                'is_practice_exam': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'due_date': None
             },
             user_role='student'
         )

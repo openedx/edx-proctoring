@@ -893,7 +893,7 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
         credit_state = credit_service.get_credit_state(
             exam_attempt_obj.user_id,
             exam_attempt_obj.proctored_exam.course_id,
-            return_course_name=True
+            return_course_info=True
         )
 
         send_proctoring_attempt_status_email(
@@ -1770,6 +1770,12 @@ def get_student_view(user_id, course_id, content_id,
     if user_role != 'student':
         return None
 
+    credit_service = get_runtime_service('credit')
+
+    # call service to get course end date.
+    credit_state = credit_service.get_credit_state(user_id, course_id, return_course_info=True)
+    course_end_date = credit_state.get('course_end_date', None)
+
     exam_id = None
     try:
         exam = get_exam_by_content_id(course_id, content_id)
@@ -1808,11 +1814,15 @@ def get_student_view(user_id, course_id, content_id,
     is_proctored_exam = exam['is_proctored'] and not exam['is_practice_exam']
     is_timed_exam = not exam['is_proctored'] and not exam['is_practice_exam']
 
+    sub_view_func = None
     if is_timed_exam:
-        return _get_timed_exam_view(exam, context, exam_id, user_id, course_id)
-    elif is_practice_exam:
-        return _get_practice_exam_view(exam, context, exam_id, user_id, course_id)
-    elif is_proctored_exam:
-        return _get_proctored_exam_view(exam, context, exam_id, user_id, course_id)
+        sub_view_func = _get_timed_exam_view
+    elif is_practice_exam and not has_due_date_passed(course_end_date):
+        sub_view_func = _get_practice_exam_view
+    elif is_proctored_exam and not has_due_date_passed(course_end_date):
+        sub_view_func = _get_proctored_exam_view
 
-    return None
+    if sub_view_func:
+        return sub_view_func(exam, context, exam_id, user_id, course_id)
+    else:
+        return None
