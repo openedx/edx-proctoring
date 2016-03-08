@@ -1385,7 +1385,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             context={
                 'is_proctored': False,
                 'display_name': self.exam_name,
-                'default_time_limit_mins': 10
+                'default_time_limit_mins': 10,
+                'due_date': due_date,
             }
         )
         if not has_due_date_passed:
@@ -1414,7 +1415,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 context={
                     'is_proctored': True,
                     'display_name': self.exam_name,
-                    'default_time_limit_mins': self.default_time_limit
+                    'default_time_limit_mins': self.default_time_limit,
+                    'due_date': due_date,
                 }
             )
             self.assertIn(self.exam_expired_msg, rendered_response)
@@ -1429,7 +1431,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                     'is_proctored': True,
                     'is_practice_exam': True,
                     'display_name': self.exam_name,
-                    'default_time_limit_mins': self.default_time_limit
+                    'default_time_limit_mins': self.default_time_limit,
+                    'due_date': due_date,
                 }
             )
             self.assertIn(self.exam_expired_msg, rendered_response)
@@ -1458,7 +1461,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 context={
                     'is_proctored': False,
                     'display_name': self.exam_name,
-                    'default_time_limit_mins': self.default_time_limit
+                    'default_time_limit_mins': self.default_time_limit,
+                    'due_date': due_date,
                 }
             )
             self.assertIn(self.exam_expired_msg, rendered_response)
@@ -1473,7 +1477,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                     'is_proctored': True,
                     'is_practice_exam': True,
                     'display_name': self.exam_name,
-                    'default_time_limit_mins': self.default_time_limit
+                    'default_time_limit_mins': self.default_time_limit,
+                    'due_date': due_date,
                 }
             )
             self.assertIn(self.exam_expired_msg, rendered_response)

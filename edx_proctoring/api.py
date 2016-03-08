@@ -1779,6 +1779,16 @@ def get_student_view(user_id, course_id, content_id,
             # data
             return None
 
+        # Just in case the due date has been changed because of the
+        # self-paced courses, use the due date from the context and
+        # update the local exam object if necessary.
+        if exam['due_date'] != context.get('due_date', None):
+            update_exam(
+                exam_id=exam['id'],
+                due_date=context.get('due_date', None)
+            )
+            exam['due_date'] = context.get('due_date', None)
+
         exam_id = exam['id']
     except ProctoredExamNotFoundException:
         # This really shouldn't happen
