@@ -1522,7 +1522,7 @@ def _calculate_allowed_mins(due_datetime, allowed_mins):
             # e.g current_datetime=09:00, due_datetime=10:00 and allowed_mins=120(2hours)
             # then allowed_mins should be 60(1hour)
 
-            actual_allowed_mins = int((due_datetime - current_datetime).seconds / 60)
+            actual_allowed_mins = int((due_datetime - current_datetime).total_seconds() / 60)
     return actual_allowed_mins, is_exam_past_due_date
 
 

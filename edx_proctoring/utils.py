@@ -170,7 +170,7 @@ def emit_event(exam, event_short_name, attempt=None, override_data=None):
         # This can be used to determine how far into an attempt a given
         # event occured (e.g. "time to complete exam")
         attempt_event_elapsed_time_secs = (
-            (datetime.now(pytz.UTC) - attempt['started_at']).seconds if attempt['started_at'] else
+            (datetime.now(pytz.UTC) - attempt['started_at']).total_seconds() if attempt['started_at'] else
             None
         )
 

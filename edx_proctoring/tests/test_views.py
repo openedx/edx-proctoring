@@ -29,6 +29,7 @@ from edx_proctoring.api import (
     create_exam_attempt,
     get_exam_attempt_by_id,
     update_attempt_status,
+    _calculate_allowed_mins
 )
 
 from .utils import (
@@ -674,10 +675,32 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response_data['proctored_exam']['id'], proctored_exam.id)
         self.assertIsNotNone(response_data['started_at'])
         self.assertIsNone(response_data['completed_at'])
-        # check that we get timer arround 30 hours minus some seconds
+        # check that we get timer around 30 hours minus some seconds
         self.assertTrue(107990 <= response_data['time_remaining_seconds'] <= 108000)
         # check that humanized time
         self.assertEqual(response_data['accessibility_time_string'], 'you have 30 hours remaining')
+
+    def test_time_due_date_between_two_days(self):
+        """
+        Test that we get correct total time left to attempt if due date is 24+ hours from now and we have set 24+ hours
+        time_limit_mins ( 27 hours ) i.e it is like 1 day and 3 hours total time left to attempt the exam.
+        """
+        # Create an exam with 30 hours ( 1800 minutes ) total time with expected 27 hours time left to attempt.
+        expected_total_minutes = 27 * 60
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=1800,
+            due_date=datetime.now(pytz.UTC) + timedelta(minutes=expected_total_minutes),
+        )
+        total_minutes, __ = _calculate_allowed_mins(proctored_exam.due_date, proctored_exam.time_limit_mins)
+
+        # Check that timer has > 24 hours
+        self.assertTrue(total_minutes / 60 > 24)
+        # Get total_minutes around 27 hours. We are checking range here because while testing some seconds have passed.
+        self.assertTrue(expected_total_minutes - 1 <= total_minutes <= expected_total_minutes)
 
     def test_attempt_ready_to_start(self):
         """
