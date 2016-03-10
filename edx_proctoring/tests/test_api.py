@@ -827,13 +827,21 @@ class ProctoredExamApiTests(LoggedInTestCase):
         Calling the api remove function removes the attempt.
         """
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            remove_exam_attempt(9999)
+            remove_exam_attempt(9999, requesting_user=self.user)
 
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
-        remove_exam_attempt(proctored_exam_student_attempt.id)
+        remove_exam_attempt(proctored_exam_student_attempt.id, requesting_user=self.user)
 
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            remove_exam_attempt(proctored_exam_student_attempt.id)
+            remove_exam_attempt(proctored_exam_student_attempt.id, requesting_user=self.user)
+
+    def test_remove_no_user(self):
+        """
+        Attempting to remove an exam attempt without providing a requesting user will fail.
+        """
+        proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
+        with self.assertRaises(UserNotFoundException):
+            remove_exam_attempt(proctored_exam_student_attempt.id, requesting_user={})
 
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.verified, 'satisfied'),
@@ -868,7 +876,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             )
 
             # now remove exam attempt which calls the credit service method 'remove_credit_requirement_status'
-            remove_exam_attempt(exam_attempt.proctored_exam_id)
+            remove_exam_attempt(exam_attempt.proctored_exam_id, requesting_user=self.user)
 
             # make sure the credit requirement status is no longer there
             credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)

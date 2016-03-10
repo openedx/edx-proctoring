@@ -649,7 +649,7 @@ class SoftwareSecureTests(TestCase):
         )
 
         # now delete the attempt, which puts it into the archive table
-        remove_exam_attempt(attempt_id)
+        remove_exam_attempt(attempt_id, requesting_user=self.user)
 
         # now process the report
         provider.on_review_callback(json.loads(test_payload))
@@ -873,7 +873,7 @@ class SoftwareSecureTests(TestCase):
         self.assertEqual(attempt['status'], attempt['status'])
 
         # now delete the attempt, which puts it into the archive table
-        remove_exam_attempt(attempt_id)
+        remove_exam_attempt(attempt_id, requesting_user=self.user)
 
         review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=attempt['attempt_code'])
 
