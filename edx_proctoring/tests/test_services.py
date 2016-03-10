@@ -5,6 +5,8 @@ Test for the xBlock service
 """
 
 import unittest
+import pytz
+from datetime import datetime, timedelta
 from edx_proctoring.services import (
     ProctoringService
 )
@@ -31,11 +33,10 @@ class MockCreditService(object):
             'credit_requirement_status': []
         }
 
-    def get_credit_state(self, user_id, course_key, return_course_name=False):  # pylint: disable=unused-argument
+    def get_credit_state(self, user_id, course_key, return_course_info=False):  # pylint: disable=unused-argument
         """
         Mock implementation
         """
-
         return self.status
 
     # pylint: disable=unused-argument
@@ -85,6 +86,19 @@ class MockCreditService(object):
                 break
 
         return True
+
+
+class MockCreditServiceWithCourseEndDate(MockCreditService):
+    """
+    mock of the Credit Service but overrides get_credit_state to return a past course_end_date
+    """
+
+    def get_credit_state(self, user_id, course_key, return_course_info=False):  # pylint: disable=unused-argument
+        """
+        Mock implementation
+        """
+        self.status['course_end_date'] = datetime.now(pytz.UTC) + timedelta(days=-1)
+        return self.status
 
 
 class MockInstructorService(object):
