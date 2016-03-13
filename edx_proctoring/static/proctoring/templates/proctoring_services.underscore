@@ -1,0 +1,6 @@
+<select name='proctoring' id='proctoring-select'>
+    <% _.each(data.list, function(proctor){ %>
+        <option <% if (data.current == proctor) { %>selected="selected"<% } %>
+        value="<%= proctor %>"><%= proctor %></option>
+    <% }); %>
+</select>

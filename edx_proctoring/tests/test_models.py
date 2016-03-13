@@ -130,6 +130,18 @@ class ProctoredExamModelTests(LoggedInTestCase):
         proctored_exam_student_history = ProctoredExamStudentAllowanceHistory.objects.filter(user_id=1)
         self.assertEqual(len(proctored_exam_student_history), 1)
 
+    def test_generate_hash(self):
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='test_course',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        result = proctored_exam.generate_hash()
+        self.assertEqual(type(result), str)
+        self.assertRegexpMatches(result, r"([a-fA-F\d]{32})")
+
 
 class ProctoredExamStudentAttemptTests(LoggedInTestCase):
     """

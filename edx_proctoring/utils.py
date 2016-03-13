@@ -7,6 +7,8 @@ import logging
 from datetime import datetime, timedelta
 
 from django.utils.translation import ugettext as _
+from edx_proctoring.backends import get_provider_name_by_course_id, \
+    get_proctoring_settings
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -130,9 +132,10 @@ def has_client_app_shutdown(attempt):
     # we never heard from the client, so it must not have started
     if not attempt['last_poll_timestamp']:
         return True
-
     elapsed_time = (datetime.now(pytz.UTC) - attempt['last_poll_timestamp']).total_seconds()
-    return elapsed_time > constants.SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD
+    provider_name = get_provider_name_by_course_id(attempt['proctored_exam']['course_id'])
+    proctoring_settings = get_proctoring_settings(provider_name)
+    return elapsed_time > proctoring_settings.get('SHUT_DOWN_GRACEPERIOD')
 
 
 def emit_event(exam, event_short_name, attempt=None, override_data=None):
@@ -224,3 +227,11 @@ def _emit_event(name, context, data):
             'Analytics tracker not properly configured. '
             'If this message appears in a production environment, please investigate'
         )
+
+
+def modulestore():
+    """
+    Import modulstore from xmodule for testing.
+    """
+    from xmodule.modulestore.django import modulestore as xmodulestore
+    return xmodulestore()

@@ -8,15 +8,15 @@ import sys
 import os
 BASE_DIR = os.path.dirname(__file__)
 
-DEBUG=True
-TEST_MODE=True
+DEBUG = True
+TEST_MODE = True
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 TEST_ROOT = "tests"
 TRANSACTIONS_MANAGED = {}
 USE_TZ = True
 TIME_ZONE = {}
-SECRET_KEY='SHHHHHH'
-PLATFORM_NAME='Open edX'
+SECRET_KEY = 'SHHHHHH'
+PLATFORM_NAME = 'Open edX'
 FEATURES = {}
 HTTPS = 'off'
 
@@ -74,22 +74,33 @@ ROOT_URLCONF = 'edx_proctoring.urls'
 COURSE_ID_REGEX = r'[^/+]+(/|\+)[^/+]+(/|\+)[^/]+'
 COURSE_ID_PATTERN = r'(?P<course_id>%s)' % COURSE_ID_REGEX
 
-PROCTORING_BACKEND_PROVIDER = {
-    "class": "edx_proctoring.backends.tests.test_backend.TestBackendProvider",
-    "options": {}
+PROCTORING_SETTINGS = {
+    "ALLOW_CALLBACK_SIMULATION": False,
+    "CLIENT_TIMEOUT": 30,
+    "DEFAULT_REVIEW_POLICY": "Closed Book",
+    "REQUIRE_FAILURE_SECOND_REVIEWS": False,
 }
 
-PROCTORING_SETTINGS = {
-    'MUST_BE_VERIFIED_TRACK': True,
-    'MUST_COMPLETE_ICRV': True,
-    'LINK_URLS': {
-        'online_proctoring_rules': '',
-        'faq': '',
-        'contact_us': '',
-        'tech_requirements': '',
-    },
-    'ALLOW_CALLBACK_SIMULATION': False
+PROCTORING_BACKEND_PROVIDERS = {
+    "TEST": {
+        "class": "edx_proctoring.backends.tests.test_backend.TestBackendProvider",
+        "options": {},
+        "settings": {
+            "LINK_URLS": {
+                "contact_us": "{add link here}",
+                "faq": "{add link here}",
+                "online_proctoring_rules": "{add link here}",
+                "tech_requirements": "{add link here}"
+            },
+            "SHUT_DOWN_GRACEPERIOD" : 10
+        }
+    }
 }
 
 DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 CONTACT_EMAIL = 'info@edx.org'
+
+import logging
+
+south_logger = logging.getLogger('south')
+south_logger.setLevel(logging.INFO)
