@@ -1309,6 +1309,11 @@ STATUS_SUMMARY_MAP = {
         'short_description': _('Failed Proctoring'),
         'suggested_icon': 'fa-exclamation-triangle',
         'in_completed_state': True
+    },
+    ProctoredExamStudentAttemptStatus.expired: {
+        'short_description': _('Proctored Option No Longer Available'),
+        'suggested_icon': 'fa-times-circle',
+        'in_completed_state': False
     }
 }
 
@@ -1375,12 +1380,17 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     # practice exams always has an attempt status regardless of
     # eligibility
     if credit_service and not exam['is_practice_exam']:
-        credit_state = credit_service.get_credit_state(user_id, unicode(course_id))
+        credit_state = credit_service.get_credit_state(user_id, unicode(course_id), return_course_info=True)
         if not _check_eligibility_of_enrollment_mode(credit_state):
             return None
 
     attempt = get_exam_attempt(exam['id'], user_id)
-    status = attempt['status'] if attempt else ProctoredExamStudentAttemptStatus.eligible
+    if attempt:
+        status = attempt['status']
+    elif not exam['is_practice_exam'] and has_due_date_passed(credit_state.get('course_end_date', None)):
+        status = ProctoredExamStudentAttemptStatus.expired
+    else:
+        status = ProctoredExamStudentAttemptStatus.eligible
 
     status_map = STATUS_SUMMARY_MAP if not exam['is_practice_exam'] else PRACTICE_STATUS_SUMMARY_MAP
 

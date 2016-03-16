@@ -165,6 +165,9 @@ class ProctoredExamStudentAttemptStatus(object):
     # the exam is believed to be in error
     error = 'error'
 
+    # the course end date has passed
+    expired = 'expired'
+
     # status alias for sending email
     status_alias_mapping = {
         submitted: _('pending'),
