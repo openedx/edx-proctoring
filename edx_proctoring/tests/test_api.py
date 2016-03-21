@@ -43,7 +43,7 @@ from edx_proctoring.api import (
     create_exam_review_policy,
     get_review_policy_by_exam_id,
     update_review_policy,
-    remove_review_policy,
+    remove_review_policy
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -68,6 +68,7 @@ from edx_proctoring.models import (
 
 from .utils import (
     LoggedInTestCase,
+    get_provider_name_test
 )
 
 from edx_proctoring.tests.test_services import (
@@ -788,6 +789,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
             start_exam_attempt_by_code('foobar')
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_start_a_created_attempt(self):
         """
         Test to attempt starting an attempt which has been created but not started.
@@ -795,6 +797,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self._create_unstarted_exam_attempt()
         start_exam_attempt(self.proctored_exam_id, self.user_id)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_start_by_code(self):
         """
         Test to attempt starting an attempt which has been created but not started.
@@ -802,6 +805,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         attempt = self._create_unstarted_exam_attempt()
         start_exam_attempt_by_code(attempt.attempt_code)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_restart_a_started_attempt(self):
         """
         Test to attempt starting an attempt which has been created but not started.
@@ -811,10 +815,22 @@ class ProctoredExamApiTests(LoggedInTestCase):
         with self.assertRaises(StudentExamAttemptedAlreadyStarted):
             start_exam_attempt(self.proctored_exam_id, self.user_id)
 
-    def test_stop_exam_attempt(self):
+    @patch('edx_proctoring.api.get_exam_by_id', return_value={
+        'course_id': "org/course/id",
+        'is_proctored': True,
+        'is_practice_exam': False,
+        'id': 1,
+        'content_id': 1,
+        'exam_name': 'test',
+        'time_limit_mins': 10,
+        'is_active': True
+    })
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    def test_stop_exam_attempt(self, exam):
         """
         Stop an exam attempt.
         """
+        exam.update()
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = stop_exam_attempt(
@@ -846,11 +862,10 @@ class ProctoredExamApiTests(LoggedInTestCase):
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.verified, 'satisfied'),
         (ProctoredExamStudentAttemptStatus.submitted, 'submitted'),
-        (ProctoredExamStudentAttemptStatus.declined, 'declined'),
-        (ProctoredExamStudentAttemptStatus.error, 'failed'),
-        (ProctoredExamStudentAttemptStatus.second_review_required, None),
+        (ProctoredExamStudentAttemptStatus.error, 'failed')
     )
     @ddt.unpack
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_remove_exam_attempt_with_status(self, to_status, requirement_status):
         """
         Test to remove the exam attempt which calls
@@ -867,6 +882,11 @@ class ProctoredExamApiTests(LoggedInTestCase):
         # make sure the credit requirement status is there
         credit_service = get_runtime_service('credit')
         credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            requirement_status
+        )
 
         if requirement_status:
             self.assertEqual(len(credit_status['credit_requirement_status']), 1)
@@ -878,15 +898,12 @@ class ProctoredExamApiTests(LoggedInTestCase):
             # now remove exam attempt which calls the credit service method 'remove_credit_requirement_status'
             remove_exam_attempt(exam_attempt.proctored_exam_id, requesting_user=self.user)
 
-            # make sure the credit requirement status is no longer there
-            credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
+        # make sure the credit requirement status is no longer there
+        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
 
-            self.assertEqual(len(credit_status['credit_requirement_status']), 0)
-        else:
-            # There is not an expected changed to the credit requirement table
-            # given the attempt status
-            self.assertEqual(len(credit_status['credit_requirement_status']), 0)
+        self.assertEqual(len(credit_status['credit_requirement_status']), 0)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_stop_a_non_started_exam(self):
         """
         Stop an exam attempt that had not started yet.
@@ -894,6 +911,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
             stop_exam_attempt(self.proctored_exam_id, self.user_id)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_mark_exam_attempt_timeout(self):
         """
         Tests the mark exam as timed out
@@ -909,7 +927,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
-    def test_mark_exam_attempt_as_ready(self):
+    @patch('edx_proctoring.api.get_exam_by_id', return_value={
+        'course_id': "org/course/id",
+        'is_proctored': True,
+        'is_practice_exam': False,
+        'id': 1,
+        'content_id': 1,
+        'exam_name': 'test',
+        'time_limit_mins': 10,
+        'is_active': True
+    })
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    def test_mark_exam_attempt_as_ready(self, exam):  # pylint: disable=unused-argument
         """
         Tests the mark exam as timed out
         """
@@ -924,6 +953,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_active_exams_for_user(self):
         """
         Test to get the all the active
@@ -1010,6 +1040,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(all_exams[0]['id'], updated_exam_attempt_id)
         self.assertEqual(all_exams[1]['id'], exam_attempt.id)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_student_view(self):
         """
         Test for get_student_view prompting the user to take the exam
@@ -1045,6 +1076,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.start_a_practice_exam_msg.format(exam_name=self.exam_name), rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_honor_view_with_practice_exam(self):
         """
         Test for get_student_view prompting when the student is enrolled in non-verified
@@ -1067,6 +1099,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIsNotNone(rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_honor_view(self):
         """
         Test for get_student_view prompting when the student is enrolled in non-verified
@@ -1104,6 +1137,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ('grade', 'declined', 'To be eligible to earn credit for this course', False),
     )
     @ddt.unpack
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_prereq_scenarios(self, namespace, req_status, expected_content, should_see_prereq):
         """
         This test asserts that proctoring will not be displayed under the following
@@ -1274,6 +1308,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             )
         )
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_unstarted_exam(self):
         """
         Test for get_student_view proctored exam which has not started yet.
@@ -1315,6 +1350,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIn(self.chose_proctored_exam_msg, rendered_response)
         self.assertIn(self.proctored_exam_optout_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_unstarted_practice_exam(self):
         """
         Test for get_student_view Practice exam which has not started yet.
@@ -1336,6 +1372,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIn(self.chose_proctored_exam_msg, rendered_response)
         self.assertNotIn(self.proctored_exam_optout_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_declined_attempt(self):
         """
         Make sure that a declined attempt does not show proctoring
@@ -1356,6 +1393,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIsNone(rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_ready(self):
         """
         Assert that we get the right content
@@ -1377,6 +1415,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.ready_to_start_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_started_exam(self):
         """
         Test for get_student_view proctored exam which has started.
@@ -1439,6 +1478,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (datetime.now(pytz.UTC) - timedelta(days=1), True),
     )
     @ddt.unpack
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_submitted_timed_exam_with_past_due_date(self, due_date, has_due_date_passed):
         """
         Test for get_student_view timed exam with the due date.
@@ -1466,6 +1506,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         else:
             self.assertIsNone(None)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_proctored_exam_attempt_with_past_due_datetime(self):
         """
         Test for get_student_view for proctored exam with past due datetime
@@ -1509,6 +1550,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             )
             self.assertIn(self.exam_expired_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_timed_exam_attempt_with_past_due_datetime(self):
         """
         Test for get_student_view for timed exam with past due datetime
@@ -1555,8 +1597,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
             )
             self.assertIn(self.exam_expired_msg, rendered_response)
 
-    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
-    def test_get_studentview_timedout(self):
+    @patch('edx_proctoring.api.get_proctoring_settings', return_value={'ALLOW_TIMED_OUT_STATE': True})
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    def test_get_studentview_timedout(self, proctoring_settings):  # pylint: disable=unused-argument
         """
         Verifies that if we call get_studentview when the timer has expired
         it will automatically state transition into timed_out
@@ -1578,6 +1621,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                     }
                 )
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    @patch('edx_proctoring.utils.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_submitted_status(self):
         """
         Test for get_student_view proctored exam which has been submitted.
@@ -1632,6 +1677,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             )
             self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    @patch('edx_proctoring.utils.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_submitted_status_with_duedate(self):
         """
         Test for get_student_view proctored exam which has been submitted
@@ -1687,6 +1734,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             )
             self.assertIsNotNone(rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    @patch('edx_proctoring.utils.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_submitted_status_practiceexam(self):
         """
         Test for get_student_view practice exam which has been submitted.
@@ -1708,30 +1757,13 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.proctored_exam_waiting_for_app_shutdown_msg, rendered_response)
 
-        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
-        with freeze_time(reset_time):
-            rendered_response = get_student_view(
-                user_id=self.user_id,
-                course_id=self.course_id,
-                content_id=self.content_id_practice,
-                context={
-                    'is_proctored': True,
-                    'display_name': self.exam_name,
-                    'default_time_limit_mins': 90
-                }
-            )
-            self.assertIn(self.practice_exam_submitted_msg, rendered_response)
-
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.created,
-        ProctoredExamStudentAttemptStatus.download_software_clicked,
-    )
-    def test_get_studentview_created_status_practiceexam(self, status):
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    def test_get_studentview_created_status_practiceexam(self):
         """
         Test for get_student_view practice exam which has been created.
         """
         exam_attempt = self._create_started_practice_exam_attempt()
-        exam_attempt.status = status
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.created
         exam_attempt.save()
 
         rendered_response = get_student_view(
@@ -1746,6 +1778,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.practice_exam_created_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_ready_to_start_status_practiceexam(self):
         """
         Test for get_student_view practice exam which is ready to start.
@@ -1766,6 +1799,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.ready_to_start_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_compelete_status_practiceexam(self):
         """
         Test for get_student_view practice exam when it is complete/ready to submit.
@@ -1786,6 +1820,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.practice_exam_completion_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_rejected_status(self):
         """
         Test for get_student_view proctored exam which has been rejected.
@@ -1806,6 +1841,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.proctored_exam_rejected_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_verified_status(self):
         """
         Test for get_student_view proctored exam which has been verified.
@@ -1826,6 +1862,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.proctored_exam_verified_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_completed_status(self):
         """
         Test for get_student_view proctored exam which has been completed.
@@ -1846,8 +1883,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.proctored_exam_completed_msg, rendered_response)
 
-    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
-    def test_get_studentview_expired(self):
+    @patch('edx_proctoring.api.get_proctoring_settings', return_value={'ALLOW_TIMED_OUT_STATE': True})
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    def test_get_studentview_expired(self, proctoring_settings):  # pylint: disable=unused-argument
         """
         Test for get_student_view proctored exam which has expired. Since we don't have a template
         for that view rendering, it will throw a NotImplementedError
@@ -1867,6 +1905,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 }
             )
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_erroneous_exam(self):
         """
         Test for get_student_view proctored exam which has exam status error.
@@ -1893,6 +1932,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.exam_time_error_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_erroneous_practice_exam(self):
         """
         Test for get_student_view practice exam which has exam status error.
@@ -1914,6 +1954,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(self.practice_exam_failed_msg, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_unstarted_timed_exam(self):
         """
         Test for get_student_view Timed exam which is not proctored and has not started yet.
@@ -1936,6 +1977,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIn('1 hour and 30 minutes', rendered_response)
         self.assertNotIn(self.start_an_exam_msg.format(exam_name=self.exam_name), rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_unstarted_timed_exam_with_allowance(self):
         """
         Test for get_student_view Timed exam which is not proctored and has not started yet.
@@ -1975,6 +2017,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ),
     )
     @ddt.unpack
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_get_studentview_completed_timed_exam(self, status, expected_content):
         """
         Test for get_student_view timed exam which has completed.
@@ -1996,6 +2039,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIn(expected_content, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_expired_exam(self):
         """
         Test that an expired exam shows a difference message when the exam is expired just recently
@@ -2034,6 +2078,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         self.assertIn(self.timed_exam_submitted, rendered_response)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_submitted_credit_state(self):
         """
         Verify that putting an attempt into the submitted state will also mark
@@ -2055,6 +2100,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
             'submitted'
         )
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_error_credit_state(self):
         """
         Verify that putting an attempt into the error state will also mark
@@ -2109,6 +2155,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ),
     )
     @ddt.unpack
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_cascading(self, to_status, create_attempt, second_attempt_status, expected_second_status):
         """
         Make sure that when we decline/reject one attempt all other exams in the course
@@ -2194,8 +2241,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
         (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error),
     )
     @ddt.unpack
-    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
-    def test_illegal_status_transition(self, from_status, to_status):
+    @patch('edx_proctoring.api.get_proctoring_settings', return_value={'ALLOW_TIMED_OUT_STATE': True})
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    def test_illegal_status_transition(self, from_status, to_status, proctoring_settings):  # pylint: disable=unused-argument
         """
         Verify that we cannot reset backwards an attempt status
         once it is in a completed state
@@ -2215,6 +2263,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 to_status
             )
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_alias_timed_out(self):
         """
         Verified that timed_out will automatically state transition
@@ -2235,11 +2284,12 @@ class ProctoredExamApiTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.submitted
         )
 
-    def test_update_unexisting_attempt(self):
+    @patch('edx_proctoring.api.get_exam_by_id', return_value={'course_id': 1})
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    def test_update_unexisting_attempt(self, exam):  # pylint: disable=unused-argument
         """
         Tests updating an non-existing attempt
         """
-
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
             update_attempt_status(0, 0, ProctoredExamStudentAttemptStatus.timed_out)
 
@@ -2360,6 +2410,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
     )
     @ddt.unpack
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_attempt_status_summary(self, status, expected):
         """
         Assert that we get the expected status summaries
@@ -2407,6 +2458,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
     )
     @ddt.unpack
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_practice_status_summary(self, status, expected):
         """
         Assert that we get the expected status summaries
@@ -2478,6 +2530,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
     )
     @ddt.unpack
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_practice_status_honor(self, status, expected):
         """
         Assert that we get the expected status summaries
@@ -2597,6 +2650,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.verified,
         ProctoredExamStudentAttemptStatus.rejected
     )
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_send_email(self, status):
         """
         Assert that email is sent on the following statuses of proctoring attempt.
@@ -2619,6 +2673,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.second_review_required,
         ProctoredExamStudentAttemptStatus.error
     )
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_email_not_sent(self, status):
         """
         Assert than email is not sent on the following statuses of proctoring attempt
@@ -2632,11 +2687,11 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertEquals(len(mail.outbox), 0)
 
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_send_email_unicode(self):
         """
         Assert that email can be sent with a unicode course name.
         """
-
         course_name = u'अआईउऊऋऌ अआईउऊऋऌ'
         set_runtime_service('credit', MockCreditService(course_name=course_name))
 
@@ -2670,8 +2725,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.timed_out,
         ProctoredExamStudentAttemptStatus.error
     )
-    @patch.dict('settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
-    def test_not_send_email(self, status):
+    @patch('edx_proctoring.api.get_proctoring_settings', return_value={'ALLOW_TIMED_OUT_STATE': True})
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    def test_not_send_email(self, status, proctoring_settings):  # pylint: disable=unused-argument
         """
         Assert that email is not sent on the following statuses of proctoring attempt.
         """
@@ -2689,6 +2745,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.verified,
         ProctoredExamStudentAttemptStatus.rejected
     )
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_not_send_email_sample_exam(self, status):
         """
         Assert that email is not sent when there is practice/sample exam
@@ -2707,6 +2764,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.verified,
         ProctoredExamStudentAttemptStatus.rejected
     )
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
     def test_not_send_email_timed_exam(self, status):
         """
         Assert that email is not sent when exam is timed/not-proctoring
@@ -2728,6 +2786,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         ProctoredExamStudentAttemptStatus.verified,
         ProctoredExamStudentAttemptStatus.rejected,
     )
+    @patch('edx_proctoring.api.get_provider_name_by_course_id', get_provider_name_test)
+    @patch('edx_proctoring.utils.get_provider_name_by_course_id', get_provider_name_test)
     def test_footer_present(self, status):
         """
         Make sure the footer content is visible in the rendered output

@@ -1,15 +1,15 @@
-ECHO 'Beginning Test Run...'
-ECHO ''
-ECHO 'Removing *.pyc files'
+echo 'Beginning Test Run...'
+echo ''
+echo 'Removing *.pyc files'
 find . -name "*.pyc" -exec rm -rf {} \;
 
-ECHO 'Running test suite'
+echo 'Running test suite'
 coverage run manage.py test edx_proctoring --verbosity=3
 coverage report -m
 coverage html
-pep8 edx_proctoring
-pylint edx_proctoring --report=no
-ECHO ''
-ECHO 'View the full coverage report at {CODE_PATH}/edx-proctoring/htmlcov/index.html'
-ECHO ''
-ECHO 'Testing Complete!'
+#pep8 edx_proctoring
+#pylint edx_proctoring --report=no
+echo ''
+echo 'View the full coverage report at {CODE_PATH}/edx-proctoring/htmlcov/index.html'
+echo ''
+echo 'Testing Complete!'
