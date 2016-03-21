@@ -1215,6 +1215,24 @@ class ProctoredExamApiTests(LoggedInTestCase):
         )
         self.assertIsNone(rendered_response)
 
+    def test_proctored_status_summary_passed_end_date(self):
+        """
+        Assert that we get the expected status summaries
+        """
+
+        set_runtime_service('credit', MockCreditServiceWithCourseEndDate())
+
+        exam = get_exam_by_id(self.proctored_exam_id)
+        summary = get_attempt_status_summary(self.user.id, exam['course_id'], exam['content_id'])
+
+        expected = {
+            'status': ProctoredExamStudentAttemptStatus.expired,
+            'short_description': 'Proctored Option No Longer Available',
+            'suggested_icon': 'fa-times-circle',
+            'in_completed_state': False
+        }
+        self.assertIn(summary, [expected])
+
     def test_practice_exam_passed_end_date(self):
         """
         Verify that we get a None back on a practice exam
@@ -2329,6 +2347,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'status': ProctoredExamStudentAttemptStatus.ready_to_submit,
                 'short_description': 'Taking As Proctored Exam',
                 'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.expired, {
+                'status': ProctoredExamStudentAttemptStatus.expired,
+                'short_description': 'Proctored Option No Longer Available',
+                'suggested_icon': 'fa-times-circle',
                 'in_completed_state': False
             }
         )
