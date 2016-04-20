@@ -413,6 +413,18 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(update_proctored_exam.course_id, 'test_course')
         self.assertEqual(update_proctored_exam.content_id, 'test_content_id')
 
+    def test_update_timed_exam(self):
+        """
+        test update the existing timed exam
+        """
+        updated_timed_exam_id = update_exam(self.timed_exam_id, hide_after_due=True)
+
+        self.assertEqual(self.timed_exam_id, updated_timed_exam_id)
+
+        update_timed_exam = ProctoredExam.objects.get(id=updated_timed_exam_id)
+
+        self.assertEqual(update_timed_exam.hide_after_due, True)
+
     def test_update_non_existing_exam(self):
         """
         test to update the non-existing proctored exam
@@ -1022,7 +1034,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             context={
                 'is_proctored': True,
                 'display_name': self.exam_name,
-                'default_time_limit_mins': 90
+                'default_time_limit_mins': 90,
+                'hide_after_due': False,
             }
         )
         self.assertIn(
@@ -1041,6 +1054,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'display_name': self.exam_name,
                 'default_time_limit_mins': 90,
                 'is_practice_exam': True,
+                'hide_after_due': False,
             }
         )
         self.assertIn(self.start_a_practice_exam_msg.format(exam_name=self.exam_name), rendered_response)
@@ -1186,7 +1200,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'is_proctored': False,
                 'is_practice_exam': True,
                 'display_name': self.exam_name,
-                'default_time_limit_mins': 90
+                'default_time_limit_mins': 90,
+                'hide_after_due': False,
             },
             user_role='student'
         )
@@ -1209,7 +1224,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'is_practice_exam': False,
                 'display_name': self.exam_name,
                 'default_time_limit_mins': 90,
-                'due_date': None
+                'due_date': None,
+                'hide_after_due': False,
             },
             user_role='student'
         )
@@ -1250,7 +1266,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'is_practice_exam': True,
                 'display_name': self.exam_name,
                 'default_time_limit_mins': 90,
-                'due_date': None
+                'due_date': None,
+                'hide_after_due': False,
             },
             user_role='student'
         )
@@ -1436,16 +1453,19 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
     @ddt.data(
         (datetime.now(pytz.UTC) + timedelta(days=1), False),
+        (datetime.now(pytz.UTC) - timedelta(days=1), False),
         (datetime.now(pytz.UTC) - timedelta(days=1), True),
     )
     @ddt.unpack
-    def test_get_studentview_submitted_timed_exam_with_past_due_date(self, due_date, has_due_date_passed):
+    def test_get_studentview_submitted_timed_exam_with_past_due_date(self, due_date, hide_after_due):
         """
         Test for get_student_view timed exam with the due date.
         """
 
         # exam is created with due datetime which has already passed
         exam_id = self._create_exam_with_due_time(is_proctored=False, due_date=due_date)
+        if hide_after_due:
+            update_exam(exam_id, hide_after_due=hide_after_due)
 
         # now create the timed_exam attempt in the submitted state
         self._create_exam_attempt(exam_id, status='submitted')
@@ -1461,10 +1481,14 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'due_date': due_date,
             }
         )
-        if not has_due_date_passed:
+        if datetime.now(pytz.UTC) < due_date:
+            self.assertIn(self.timed_exam_submitted, rendered_response)
             self.assertIn(self.submitted_timed_exam_msg_with_due_date, rendered_response)
+        elif hide_after_due:
+            self.assertIn(self.timed_exam_submitted, rendered_response)
+            self.assertNotIn(self.submitted_timed_exam_msg_with_due_date, rendered_response)
         else:
-            self.assertIsNone(None)
+            self.assertIsNone(rendered_response)
 
     def test_proctored_exam_attempt_with_past_due_datetime(self):
         """
@@ -1925,7 +1949,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
             context={
                 'is_proctored': False,
                 'display_name': self.exam_name,
-                'default_time_limit_mins': 90
+                'default_time_limit_mins': 90,
+                'hide_after_due': False,
             }
         )
         self.assertNotIn(

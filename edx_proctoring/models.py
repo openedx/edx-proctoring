@@ -50,6 +50,9 @@ class ProctoredExam(TimeStampedModel):
     # Whether this exam will be active.
     is_active = models.BooleanField(default=False)
 
+    # Whether to hide this exam after the due date
+    hide_after_due = models.BooleanField(default=False)
+
     class Meta:
         """ Meta class for this Django model """
         unique_together = (('course_id', 'content_id'),)
