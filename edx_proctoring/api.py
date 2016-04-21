@@ -57,7 +57,7 @@ SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
-                is_proctored=True, is_practice_exam=False, external_id=None, is_active=True):
+                is_proctored=True, is_practice_exam=False, external_id=None, is_active=True, hide_after_due=False):
     """
     Creates a new ProctoredExam entity, if the course_id/content_id pair do not already exist.
     If that pair already exists, then raise exception.
@@ -77,19 +77,20 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
         due_date=due_date,
         is_proctored=is_proctored,
         is_practice_exam=is_practice_exam,
-        is_active=is_active
+        is_active=is_active,
+        hide_after_due=hide_after_due,
     )
 
     log_msg = (
         u'Created exam ({exam_id}) with parameters: course_id={course_id}, '
         u'content_id={content_id}, exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
         u'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
-        u'external_id={external_id}, is_active={is_active}'.format(
+        u'external_id={external_id}, is_active={is_active}, hide_after_due={hide_after_due}'.format(
             exam_id=proctored_exam.id,
             course_id=course_id, content_id=content_id,
             exam_name=exam_name, time_limit_mins=time_limit_mins,
             is_proctored=is_proctored, is_practice_exam=is_practice_exam,
-            external_id=external_id, is_active=is_active
+            external_id=external_id, is_active=is_active, hide_after_due=hide_after_due
         )
     )
     log.info(log_msg)
@@ -202,7 +203,7 @@ def get_review_policy_by_exam_id(exam_id):
 
 
 def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constants.MINIMUM_TIME,
-                is_proctored=None, is_practice_exam=None, external_id=None, is_active=None):
+                is_proctored=None, is_practice_exam=None, external_id=None, is_active=None, hide_after_due=None):
     """
     Given a Django ORM id, update the existing record, otherwise raise exception if not found.
     If an argument is not passed in, then do not change it's current value.
@@ -214,10 +215,10 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constant
         u'Updating exam_id {exam_id} with parameters '
         u'exam_name={exam_name}, time_limit_mins={time_limit_mins}, due_date={due_date}'
         u'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
-        u'external_id={external_id}, is_active={is_active}'.format(
+        u'external_id={external_id}, is_active={is_active}, hide_after_due={hide_after_due}'.format(
             exam_id=exam_id, exam_name=exam_name, time_limit_mins=time_limit_mins,
             due_date=due_date, is_proctored=is_proctored, is_practice_exam=is_practice_exam,
-            external_id=external_id, is_active=is_active
+            external_id=external_id, is_active=is_active, hide_after_due=hide_after_due
         )
     )
     log.info(log_msg)
@@ -240,6 +241,8 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constant
         proctored_exam.external_id = external_id
     if is_active is not None:
         proctored_exam.is_active = is_active
+    if hide_after_due is not None:
+        proctored_exam.hide_after_due = hide_after_due
     proctored_exam.save()
 
     # read back exam so we can emit an event on it
@@ -1444,9 +1447,10 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'timed_exam/ready_to_submit.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
-        # check if the exam's due_date has passed then we return None
+        # If we are not hiding the exam after the due_date has passed,
+        # check if the exam's due_date has passed. If so, return None
         # so that the user can see his exam answers in read only mode.
-        if has_due_date_passed(exam['due_date']):
+        if not exam['hide_after_due'] and has_due_date_passed(exam['due_date']):
             return None
 
         student_view_template = 'timed_exam/submitted.html'
@@ -1500,7 +1504,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
 
         django_context.update({
             'total_time': total_time,
-            'has_due_date': has_due_date,
+            'will_be_revealed': has_due_date and not exam['hide_after_due'],
             'exam_id': exam_id,
             'exam_name': exam['exam_name'],
             'progress_page_url': progress_page_url,
@@ -1816,7 +1820,8 @@ def get_student_view(user_id, course_id, content_id,
             time_limit_mins=context['default_time_limit_mins'],
             is_proctored=context.get('is_proctored', False),
             is_practice_exam=context.get('is_practice_exam', False),
-            due_date=context.get('due_date', None)
+            due_date=context.get('due_date', None),
+            hide_after_due=context.get('hide_after_due', None),
         )
         exam = get_exam_by_content_id(course_id, content_id)
 

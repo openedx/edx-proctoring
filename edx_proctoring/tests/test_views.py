@@ -101,7 +101,8 @@ class ProctoredExamViewTests(LoggedInTestCase):
             'external_id': '123',
             'is_proctored': True,
             'is_practice_exam': False,
-            'is_active': True
+            'is_active': True,
+            'hide_after_due': False,
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.exam'),
@@ -136,7 +137,8 @@ class ProctoredExamViewTests(LoggedInTestCase):
             'external_id': '123',
             'is_proctored': True,
             'is_practice_exam': False,
-            'is_active': True
+            'is_active': True,
+            'hide_after_due': False,
         }
         response = self.client.post(
             reverse('edx_proctoring.proctored_exam.exam'),

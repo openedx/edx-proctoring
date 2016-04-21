@@ -189,7 +189,8 @@ class ProctoredExamView(AuthenticatedAPIView):
                 is_proctored=request.data.get('is_proctored', None),
                 is_practice_exam=request.data.get('is_practice_exam', None),
                 external_id=request.data.get('external_id', None),
-                is_active=request.data.get('is_active', None)
+                is_active=request.data.get('is_active', None),
+                hide_after_due=request.data.get('hide_after_due', None),
             )
             return Response({'exam_id': exam_id})
         else:
@@ -213,6 +214,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                 is_practice_exam=request.data.get('is_practice_exam', None),
                 external_id=request.data.get('external_id', None),
                 is_active=request.data.get('is_active', None),
+                hide_after_due=request.data.get('hide_after_due', None),
             )
             return Response({'exam_id': exam_id})
         except ProctoredExamNotFoundException, ex:
