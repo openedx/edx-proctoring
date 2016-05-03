@@ -30,7 +30,7 @@
   });
 
   function poll_exam_started() {
-    var url = '{{ exam_started_poll_url }}';
+    var url = '{{ exam_started_poll_url }}' + '?sourceid=app_shutdown';
     $.ajax(url).success(function(data){
       if (data.status === 'submitted') {
         // Do we believe the client proctoring app has shut down
