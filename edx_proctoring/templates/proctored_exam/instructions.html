@@ -95,7 +95,7 @@
   });
 
   function poll_exam_started() {
-    var url = $('.instructions').data('exam-started-poll-url');
+    var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
     $.ajax(url).success(function(data){
       if (data.status === 'ready_to_start') {
         if (_waiting_for_proctored_interval != null) {

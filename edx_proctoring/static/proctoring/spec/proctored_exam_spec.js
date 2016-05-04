@@ -62,7 +62,7 @@ describe('ProctoredExamView', function () {
         expect(reloadPage).toHaveBeenCalled();
     });
     it("resets the remainig exam time after the ajax response", function(){
-        this.server.respondWith("GET", "/api/edx_proctoring/v1/proctored_exam/attempt/" + this.proctored_exam_view.model.get('attempt_id'),
+        this.server.respondWith("GET", "/api/edx_proctoring/v1/proctored_exam/attempt/" + this.proctored_exam_view.model.get('attempt_id') + '?sourceid=in_exam',
             [
                 200,
                 {"Content-Type": "application/json"},
@@ -71,7 +71,7 @@ describe('ProctoredExamView', function () {
                 })
             ]
         );
-        this.proctored_exam_view.timerTick = 4; // to make the ajax call.
+        this.proctored_exam_view.timerTick = 29; // to make the ajax call.
         var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         this.server.respond();
