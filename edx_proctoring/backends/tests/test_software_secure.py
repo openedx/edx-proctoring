@@ -45,7 +45,7 @@ from edx_proctoring.backends.tests.test_review_payload import (
     TEST_REVIEW_PAYLOAD
 )
 
-from edx_proctoring.tests.test_services import MockCreditService
+from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService
 from edx_proctoring.backends.software_secure import SOFTWARE_SECURE_INVALID_CHARS
 
 
@@ -104,6 +104,7 @@ class SoftwareSecureTests(TestCase):
         self.user.save()
 
         set_runtime_service('credit', MockCreditService())
+        set_runtime_service('instructor', MockInstructorService())
 
     def tearDown(self):
         """

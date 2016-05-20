@@ -128,6 +128,12 @@ class MockInstructorService(object):
         """
         return self.is_user_course_staff
 
+    def send_support_notification(self, course_id, exam_name, student_username, review_status):
+        """
+        Mocked implementation of send_support_notification
+        """
+        pass
+
 
 class TestProctoringService(unittest.TestCase):
     """
