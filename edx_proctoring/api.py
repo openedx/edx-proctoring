@@ -1490,6 +1490,10 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
             )
 
         total_time = humanized_time(allowed_time_limit_mins)
+
+        # According to WCAG, there is no need to allow for extra time if > 20 hours allowed
+        hide_extra_time_footer = exam['time_limit_mins'] > 20 * 60
+
         progress_page_url = ''
         try:
             progress_page_url = reverse(
@@ -1504,6 +1508,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
 
         django_context.update({
             'total_time': total_time,
+            'hide_extra_time_footer': hide_extra_time_footer,
             'will_be_revealed': has_due_date and not exam['hide_after_due'],
             'exam_id': exam_id,
             'exam_name': exam['exam_name'],

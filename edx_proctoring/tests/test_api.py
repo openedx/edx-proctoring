@@ -143,6 +143,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.proctored_exam_email_subject = 'Proctoring Session Results Update'
         self.proctored_exam_email_body = 'the status of your proctoring session review'
         self.footer_msg = 'About Proctored Exams'
+        self.timed_footer_msg = 'Can I request additional time to complete my exam?'
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
@@ -1450,6 +1451,30 @@ class ProctoredExamApiTests(LoggedInTestCase):
             }
         )
         self.assertIsNone(rendered_response)
+
+    @ddt.data(True, False)
+    def test_get_studentview_long_limit(self, under_exception):
+        """
+        Test for hide_extra_time_footer on exams with > 20 hours time limit
+        """
+        exam_id = self._create_exam_with_due_time(is_proctored=False, )
+        if under_exception:
+            update_exam(exam_id, time_limit_mins=((20 * 60)))  # exactly 20 hours
+        else:
+            update_exam(exam_id, time_limit_mins=((20 * 60) + 1))  # 1 minute greater than 20 hours
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_for_exam_with_due_date,
+            context={
+                'is_proctored': False,
+                'display_name': self.exam_name,
+            }
+        )
+        if under_exception:
+            self.assertIn(self.timed_footer_msg, rendered_response)
+        else:
+            self.assertNotIn(self.timed_footer_msg, rendered_response)
 
     @ddt.data(
         (datetime.now(pytz.UTC) + timedelta(days=1), False),

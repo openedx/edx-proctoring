@@ -25,7 +25,9 @@
     </a>
   </button>
 </div>
-{% include 'timed_exam/footer.html' %}
+{% if not hide_extra_time_footer %}
+  {% include 'timed_exam/footer.html' %}
+{% endif %}
 
 <script type="text/javascript">
 
