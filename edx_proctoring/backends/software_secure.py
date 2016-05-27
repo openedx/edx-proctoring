@@ -24,6 +24,7 @@ from edx_proctoring.exceptions import (
     ProctoredExamReviewAlreadyExists,
     ProctoredExamBadReviewStatus,
 )
+from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.utils import locate_attempt_by_attempt_code, emit_event
 from edx_proctoring. models import (
     ProctoredExamSoftwareSecureReview,
@@ -64,6 +65,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.send_email = send_email
         self.passing_review_status = ['Clean', 'Rules Violation']
         self.failing_review_status = ['Not Reviewed', 'Suspicious']
+        self.notify_support_for_status = ['Suspicious']
 
     def register_exam_attempt(self, exam, context):
         """
@@ -261,6 +263,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         exam = serialized_exam_object.data
         emit_event(exam, 'review_received', attempt=attempt, override_data=data)
 
+        self._create_zendesk_ticket(review, serialized_exam_object, serialized_attempt_obj)
+
     def on_review_saved(self, review, allow_rejects=False):  # pylint: disable=arguments-differ
         """
         called when a review has been save - either through API (on_review_callback) or via Django Admin panel
@@ -348,6 +352,20 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             last_name = ' '.join(name_elements[1:])
 
         return (first_name, last_name)
+
+    def _create_zendesk_ticket(self, review, serialized_exam_object, serialized_attempt_obj):
+        """
+        Creates a Zendesk ticket for reviews with status listed in self.notify_support_for_status
+        """
+        if review.review_status in self.notify_support_for_status:
+            instructor_service = get_runtime_service('instructor')
+            if instructor_service:
+                instructor_service.send_support_notification(
+                    course_id=serialized_exam_object["course_id"],
+                    exam_name=serialized_exam_object["exam_name"],
+                    student_username=serialized_attempt_obj["user"]["username"],
+                    review_status=review.review_status
+                )
 
     def _get_payload(self, exam, context):
         """
