@@ -257,13 +257,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             'review_status': review.review_status,
         }
 
-        serialized_attempt_obj = ProctoredExamStudentAttemptSerializer(attempt_obj)
-        attempt = serialized_attempt_obj.data
-        serialized_exam_object = ProctoredExamSerializer(attempt_obj.proctored_exam)
-        exam = serialized_exam_object.data
+        attempt = ProctoredExamStudentAttemptSerializer(attempt_obj).data
+        exam = ProctoredExamSerializer(attempt_obj.proctored_exam).data
         emit_event(exam, 'review_received', attempt=attempt, override_data=data)
 
-        self._create_zendesk_ticket(review, serialized_exam_object, serialized_attempt_obj)
+        self._create_zendesk_ticket(review, exam, attempt)
 
     def on_review_saved(self, review, allow_rejects=False):  # pylint: disable=arguments-differ
         """
