@@ -1843,6 +1843,9 @@ def get_student_view(user_id, course_id, content_id,
         sub_view_func = _get_proctored_exam_view
 
     if sub_view_func:
-        return sub_view_func(exam, context, exam_id, user_id, course_id)
+        ret_value = sub_view_func(exam, context, exam_id, user_id, course_id)
+        if ret_value and context.get('staff_masquerade', None):
+            return 'masquerade_hidden'
+        return ret_value
     else:
         return None
