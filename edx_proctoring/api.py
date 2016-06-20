@@ -1844,9 +1844,8 @@ def get_student_view(user_id, course_id, content_id,
 
     if sub_view_func:
         ret_value = sub_view_func(exam, context, exam_id, user_id, course_id)
-        if ret_value:
-            return {
-                'masquerade_hidden': context.get('staff_masquerade', False),
-                'html': ret_value,
-            }
-    return None
+        if ret_value and context.get('staff_masquerade', None):
+            return 'masquerade_hidden'
+        return ret_value
+    else:
+        return None
