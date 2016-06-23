@@ -138,7 +138,7 @@ var edx = edx || {};
             self.secondsLeft --;
             if (self.timerTick % 30 === 0){
                 var url = self.model.url + '/' + self.model.get('attempt_id');
-                var queryString = '?sourceid=in_exam&proctored=' + this.model.get('taking_as_proctored');
+                var queryString = '?sourceid=in_exam&proctored=' + self.model.get('taking_as_proctored');
                 $.ajax(url + queryString).success(function(data) {
                     if (data.status === 'error') {
                         // The proctoring session is in error state
