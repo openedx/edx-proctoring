@@ -2,20 +2,16 @@
 <div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
-      There was a problem with your proctoring session
+      Error with proctored exam
     {% endblocktrans %}
   </h3>
 
-  <h4>
-    {% blocktrans %}
-      Your proctoring session results: <b class="failure"> Unsatisfactory </b>
-    {% endblocktrans %}
-  </h4>
-
   <p>
     {% blocktrans %}
-      Your proctoring session ended before you completed this exam, so your proctoring results are incomplete.
-      You will not be eligible to use this course for academic credit, even if you achieve a passing grade.
+      A technical error has occurred with your proctored exam. To resolve this problem, contact
+      <a href="mailto:{{tech_support_email}}">technical support</a>. All exam data, including answers
+      for completed problems, has been lost. When the problem is resolved you will need to restart
+      the exam and complete all problems again.
     {% endblocktrans %}
   </p>
   <hr>

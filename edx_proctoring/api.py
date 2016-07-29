@@ -1587,6 +1587,7 @@ def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False
             args=[attempt['id']]
         ) if attempt else '',
         'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
+        'tech_support_email': settings.TECH_SUPPORT_EMAIL,
     }
 
 
