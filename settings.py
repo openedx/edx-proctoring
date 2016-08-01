@@ -93,3 +93,4 @@ PROCTORING_SETTINGS = {
 
 DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 CONTACT_EMAIL = 'info@edx.org'
+TECH_SUPPORT_EMAIL = 'technical@example.com'

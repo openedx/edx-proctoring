@@ -126,7 +126,7 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.timed_exam_expired = 'The time allotted for this exam has expired.'
         self.submitted_timed_exam_msg_with_due_date = 'After the due date has passed,'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
-        self.exam_time_error_msg = 'There was a problem with your proctoring session'
+        self.exam_time_error_msg = 'A technical error has occurred with your proctored exam'
         self.chose_proctored_exam_msg = 'Follow these steps to set up and start your proctored exam'
         self.proctored_exam_optout_msg = 'Take this exam as an open exam instead'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
