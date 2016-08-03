@@ -923,12 +923,12 @@ def send_proctoring_attempt_status_email(exam_attempt_obj, course_name):
     course_info_url = ''
     email_template = loader.get_template('emails/proctoring_attempt_status_email.html')
     try:
-        course_info_url = reverse('courseware.views.course_info', args=[exam_attempt_obj.proctored_exam.course_id])
+        course_info_url = reverse(
+            'courseware.views.views.course_info',
+            args=[exam_attempt_obj.proctored_exam.course_id]
+        )
     except NoReverseMatch:
-        # we are allowing a failure here since we can't guarantee
-        # that we are running in-proc with the edx-platform LMS
-        # (for example unit tests)
-        pass
+        log.exception("Can't find Course Info url for course %s", exam_attempt_obj.proctored_exam.course_id)
 
     scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
     course_url = '{scheme}://{site_name}{course_info_url}'.format(
@@ -1258,14 +1258,11 @@ def _resolve_prerequisite_links(exam, prerequisites):
         if prerequisite['namespace'] in JUMPTO_SUPPORTED_NAMESPACES and prerequisite['name']:
             try:
                 jumpto_url = reverse(
-                    'courseware.views.jump_to',
+                    'courseware.views.views.jump_to',
                     args=[exam['course_id'], prerequisite['name']]
                 )
             except NoReverseMatch:
-                # we are allowing a failure here since we can't guarantee
-                # that we are running in-proc with the edx-platform LMS
-                # (for example unit tests)
-                pass
+                log.exception("Can't find jumpto url for course %s", exam['course_id'])
 
         prerequisite['jumpto_url'] = jumpto_url
 
@@ -1497,14 +1494,11 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         progress_page_url = ''
         try:
             progress_page_url = reverse(
-                'courseware.views.progress',
+                'courseware.views.views.progress',
                 args=[course_id]
             )
         except NoReverseMatch:
-            # we are allowing a failure here since we can't guarantee
-            # that we are running in-proc with the edx-platform LMS
-            # (for example unit tests)
-            pass
+            log.exception("Can't find progress url for course %s", course_id)
 
         django_context.update({
             'total_time': total_time,
@@ -1555,14 +1549,11 @@ def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False
     progress_page_url = ''
     try:
         progress_page_url = reverse(
-            'courseware.views.progress',
+            'courseware.views.views.progress',
             args=[course_id]
         )
     except NoReverseMatch:
-        # we are allowing a failure here since we can't guarantee
-        # that we are running in-proc with the edx-platform LMS
-        # (for example unit tests)
-        pass
+        log.exception("Can't find progress url for course %s", course_id)
 
     return {
         'platform_name': settings.PLATFORM_NAME,
