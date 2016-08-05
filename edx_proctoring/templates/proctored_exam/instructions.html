@@ -38,8 +38,44 @@
         You will be asked to verify your identity before you begin the exam. Make sure you have valid photo identification, such as a driver's license or passport, before you continue.
       {% endblocktrans %}
     </p>
+    <p>
+        {% blocktrans %}
+          3. When you have finished setting up proctoring, start the exam.
+        {% endblocktrans %}
+    </p>
+    <div>
+        <button type="button" class="exam-action-button btn-pl-primary start-proctored-exam">
+            {% trans "Start Proctored Exam" %}
+        </button>
+    </div>
   </div>
 </div>
+<div id="accessible-error-modal" class="modal" aria-hidden="true">
+  <div class="inner-wrapper" role="dialog" aria-labelledby="accessible-error-title">
+    <button class="close-modal">
+      <span class="icon fa fa-remove" aria-hidden="true"></span>
+      <span class="sr">
+          {% trans "Close" %}
+      </span>
+    </button>
+
+    <header>
+        <h2 id="acessible-error-title">{% trans "Cannot Start Proctored Exam" %}</h2>
+        <span class="sr">,
+            {% trans "modal open"}
+        </span>
+    <hr aria-hidden="true" />
+    </header>
+    <div role="alertdialog" class="status message" tabindex="-1">
+        <p class="message-title" style="text-align: center; font-size: 16px;"></p>
+    </div>
+    <div class="actions" style="text-align: center;">
+        <button class="dismiss ok-button"></button>
+    </div>
+  </div>
+  <a href="#accessible-error-modal" rel="leanModal" id="confirm_open_button" style="display:none">{% trans "open"}</a>
+</div>
+
 <div class="footer-sequence border-b-0 padding-b-0">
   {% if not is_sample_attempt %}
   <p class="proctored-exam-instruction">
@@ -53,7 +89,14 @@
 
 <script type="text/javascript">
 
-  var _waiting_for_proctored_interval = null;
+  var accessible_error = function(message) {
+
+      accessible_modal("#accessible-error-modal #confirm_open_button",
+              "#accessible-error-modal .close-modal", "#accessible-error-modal", ".content-wrapper");
+      $("#accessible-error-modal #confirm_open_button").click();
+      $("#accessible-error-modal .message-title").html(message);
+      $("#accessible-error-modal .ok-button").html(gettext("OK"));
+  };
 
   $('.proctored-decline-exam').click(
     function(e) {
@@ -87,26 +130,30 @@
     }
   );
 
-  $(document).ready(function(){
-    _waiting_for_proctored_interval = setInterval(
-      poll_exam_started,
-      5000
-    );
-  });
 
-  function poll_exam_started() {
+  function check_exam_started() {
     var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
     $.ajax(url).success(function(data){
       if (data.status === 'ready_to_start') {
-        if (_waiting_for_proctored_interval != null) {
-          clearInterval(_waiting_for_proctored_interval)
-        }
         // we've state transitioned, so refresh the page
         // to reflect the new state (which will expose the test)
         location.reload();
       }
+      else {
+          // The proctoring setup is not yet complete.
+          // Show a modal indicating that the user is not done yet.
+          accessible_error(gettext("You must complete the proctoring setup before you can start the exam."));
+      }
     });
   }
+
+  $("#accessible-error-modal .cancel-button").click(function(){
+      $("#accessible-error-modal .close-modal").click();
+  });
+  $("#accessible-error-modal .ok-button").click(function(){
+      $("#accessible-error-modal .close-modal").click();
+  });
+  $('.start-proctored-exam').click(check_exam_started);
 
   $("#software_download_link").click(function (e) {
     e.preventDefault();
