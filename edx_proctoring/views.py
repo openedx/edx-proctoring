@@ -554,11 +554,11 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 # resolve the LMS url, note we can't assume we're running in
                 # a same process as the LMS
                 exam_url_path = reverse(
-                    'courseware.views.jump_to',
+                    'courseware.views.views.jump_to',
                     args=[exam['course_id'], exam['content_id']]
                 )
             except NoReverseMatch:
-                pass
+                LOG.exception("Can't find exam url for course %s", exam['course_id'])
 
             response_dict = {
                 'in_timed_exam': True,
