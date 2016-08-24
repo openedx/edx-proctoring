@@ -72,7 +72,7 @@ from .utils import (
 
 from edx_proctoring.tests.test_services import (
     MockCreditService, MockCreditServiceWithCourseEndDate,
-    MockInstructorService,
+    MockInstructorService, MockCreditServiceNone,
 )
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 from eventtracking import tracker
@@ -2302,6 +2302,20 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 raise_if_not_found=False
             )
         )
+
+    def test_update_attempt_without_credit_state(self):
+        """
+        Test updating an attempt that does not have a corresponding credit state.
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        set_runtime_service('credit', MockCreditServiceNone())
+        new_attempt = update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.verified
+        )
+
+        self.assertEqual(new_attempt, exam_attempt.id)
 
     @ddt.data(
         (
