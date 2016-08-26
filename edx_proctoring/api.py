@@ -899,9 +899,19 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
             return_course_info=True
         )
 
+        default_name = _('your course')
+        if credit_state:
+            course_name = credit_state.get('course_name', default_name)
+        else:
+            course_name = default_name
+            log.info(
+                "Could not find credit_state for user id %r in the course %r.",
+                exam_attempt_obj.user_id,
+                exam_attempt_obj.proctored_exam.course_id
+            )
         send_proctoring_attempt_status_email(
             exam_attempt_obj,
-            credit_state.get('course_name', _('your course'))
+            course_name
         )
 
     # emit an anlytics event based on the state transition

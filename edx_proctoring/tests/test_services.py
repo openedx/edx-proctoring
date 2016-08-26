@@ -102,6 +102,18 @@ class MockCreditServiceWithCourseEndDate(MockCreditService):
         return self.status
 
 
+class MockCreditServiceNone(MockCreditService):
+    """
+    Mock Credit Service that returns None for the credit state every time.
+    """
+
+    def get_credit_state(self, user_id, course_key, return_course_info=False):  # pylint: disable=unused-argument
+        """
+        Mock implementation
+        """
+        return None
+
+
 class MockInstructorService(object):
     """
     Simple mock of the Instructor Service
