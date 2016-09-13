@@ -1,10 +1,12 @@
 """
 Tests for backend.py
 """
-
+import time
+from mock import patch
 from django.test import TestCase
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.backends.null import NullBackendProvider
+from edx_proctoring.backends.mock import MockProctoringBackendProvider
 
 
 class TestBackendProvider(ProctoringBackendProvider):
@@ -147,5 +149,30 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
         self.assertIsNone(provider.get_software_download_url())
+        self.assertIsNone(provider.on_review_callback(None))
+        self.assertIsNone(provider.on_review_saved(None))
+
+    def test_mock_provider(self):
+        """
+        Test that the mock backend provider does what we expect it to do.
+        """
+        provider = MockProctoringBackendProvider()
+        attempt_code = "test_code"
+        with patch('edx_proctoring.backends.mock.start_exam_callback') as exam_callback_mock:
+            exam_callback_mock.return_value = '5'
+            self.assertEqual(
+                attempt_code,
+                provider.register_exam_attempt(None, {'attempt_code': attempt_code})
+            )
+            # Wait for the thread to run.
+            time.sleep(2)
+            self.assertTrue(exam_callback_mock.called)
+
+        self.assertEqual(
+            "mockurl",
+            provider.get_software_download_url()
+        )
+        self.assertIsNone(provider.start_exam_attempt(None, None))
+        self.assertIsNone(provider.stop_exam_attempt(None, None))
         self.assertIsNone(provider.on_review_callback(None))
         self.assertIsNone(provider.on_review_saved(None))
