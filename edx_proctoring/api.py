@@ -1641,6 +1641,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     student_view_template = None
 
     credit_state = context.get('credit_state')
+    verification_status = context.get('verification_status')
 
     # see if only 'verified' track students should see this *except* if it is a practice exam
     check_mode = (
@@ -1720,6 +1721,8 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
                     prerequisite_status['pending_prerequisites']
                 )
                 student_view_template = 'proctored_exam/pending-prerequisites.html'
+        elif verification_status is not 'approved':
+            student_view_template = 'proctored_exam/id_verification.html'
         else:
             student_view_template = 'proctored_exam/entrance.html'
             # emit an event that the user was presented with the option
