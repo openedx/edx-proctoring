@@ -82,6 +82,8 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 'display_name': self.exam_name,
                 'default_time_limit_mins': 90,
                 'hide_after_due': False,
+                'verification_status': 'approved',
+                'verification_url': '/reverify',
             }
         )
         self.assertIn(
@@ -149,6 +151,42 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.assertIsNone(rendered_response)
 
     @ddt.data(
+        (None, 'Make sure you are on a computer with a webcam, and that you have valid photo identification'),
+        ('pending', 'Your verification is pending'),
+        ('must_reverify', 'Your verification attempt failed'),
+        ('expired', 'Your verification has expired'),
+    )
+    @ddt.unpack
+    def test_verification_status(self, verification_status, expected_message):
+        """
+        This test asserts that the correct id verification message is shown
+        to the user for their current status.
+        """
+
+        exam = get_exam_by_id(self.proctored_exam_id)
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=exam['course_id'],
+            content_id=exam['content_id'],
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'is_practice_exam': False,
+                'credit_state': {
+                    'enrollment_mode': 'verified',
+                    'credit_requirement_status': [
+                    ]
+                },
+                'verification_status': verification_status,
+                'verification_url': '/reverify',
+            }
+        )
+
+        self.assertIn(expected_message, rendered_response)
+
+    @ddt.data(
         ('reverification', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('reverification', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('reverification', 'failed', 'You did not satisfy the following prerequisites', True),
@@ -196,6 +234,8 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                         }
                     ]
                 },
+                'verification_status': 'approved',
+                'verification_url': '/reverify',
             }
         )
 
