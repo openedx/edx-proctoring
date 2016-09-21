@@ -1037,6 +1037,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'display_name': self.exam_name,
                 'default_time_limit_mins': 90,
                 'hide_after_due': False,
+                'verification_status': 'approved',
+                'verification_url': '/reverify',
             }
         )
         self.assertIn(
@@ -1150,7 +1152,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
                             'order': 0
                         }
                     ]
-                }
+                },
+                'verification_status': 'approved',
+                'verification_url': '/reverify',
             }
         )
 

@@ -414,6 +414,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.student_taking_exam = User()
         self.student_taking_exam.save()
 
+        set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
     def _create_exam_attempt(self):
