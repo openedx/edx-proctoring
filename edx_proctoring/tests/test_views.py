@@ -1996,6 +1996,22 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    @patch(
+        'django.conf.settings.PROCTORING_BACKEND_PROVIDER',
+        {
+            "class": "edx_proctoring.backends.software_secure.SoftwareSecureBackendProvider",
+            "options": {
+                "secret_key_id": "foo",
+                "secret_key": "4B230FA45A6EC5AE8FDE2AFFACFABAA16D8A3D0B",
+                "crypto_key": "123456789123456712345678",
+                "exam_register_endpoint": "http://test",
+                "organization": "edx",
+                "exam_sponsor": "edX LMS",
+                "software_download_url": "http://example.com",
+                "send_email": True
+            }
+        }
+    )
     def test_review_mismatch(self):
         """
         Simulates a callback from the proctoring service with the
