@@ -54,3 +54,7 @@ htmlcov/
 acceptance_tests/*.png
 
 node_modules/
+
+# Devstack
+edx-proctoring
+edx_proctoring.egg-info
