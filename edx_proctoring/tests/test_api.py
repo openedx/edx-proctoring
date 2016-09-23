@@ -6,7 +6,6 @@ All tests for the api.py
 """
 import ddt
 from datetime import datetime, timedelta
-from django.core import mail
 from mock import patch
 import pytz
 from freezegun import freeze_time
@@ -67,297 +66,22 @@ from edx_proctoring.models import (
 )
 
 from .utils import (
-    LoggedInTestCase,
+    ProctoredExamTestCase,
 )
 
 from edx_proctoring.tests.test_services import (
-    MockCreditService, MockCreditServiceWithCourseEndDate,
-    MockInstructorService, MockCreditServiceNone,
+    MockCreditService,
+    MockCreditServiceWithCourseEndDate,
+    MockCreditServiceNone,
 )
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
-from eventtracking import tracker
-from eventtracking.tracker import Tracker, TRACKERS
-
-
-class MockTracker(Tracker):
-    """
-    A mocked out tracker which implements the emit method
-    """
-    def emit(self, name=None, data=None):
-        """
-        Overload this method to do nothing
-        """
-        pass
 
 
 @ddt.ddt
-class ProctoredExamApiTests(LoggedInTestCase):
+class ProctoredExamApiTests(ProctoredExamTestCase):
     """
     All tests for the models.py
     """
-
-    def setUp(self):
-        """
-        Build out test harnessing
-        """
-        super(ProctoredExamApiTests, self).setUp()
-        self.default_time_limit = 21
-        self.course_id = 'test_course'
-        self.content_id_for_exam_with_due_date = 'test_content_due_date_id'
-        self.content_id = 'test_content_id'
-        self.content_id_timed = 'test_content_id_timed'
-        self.content_id_practice = 'test_content_id_practice'
-        self.disabled_content_id = 'test_disabled_content_id'
-        self.exam_name = 'Test Exam'
-        self.user_id = self.user.id
-        self.key = 'additional_time_granted'
-        self.value = '10'
-        self.external_id = 'test_external_id'
-        self.proctored_exam_id = self._create_proctored_exam()
-        self.timed_exam_id = self._create_timed_exam()
-        self.practice_exam_id = self._create_practice_exam()
-        self.disabled_exam_id = self._create_disabled_exam()
-
-        # Messages for get_student_view
-        self.start_an_exam_msg = 'This exam is proctored'
-        self.exam_expired_msg = 'The due date for this exam has passed'
-        self.timed_exam_msg = '{exam_name} is a Timed Exam'
-        self.timed_exam_submitted = 'You have submitted your timed exam.'
-        self.timed_exam_expired = 'The time allotted for this exam has expired.'
-        self.submitted_timed_exam_msg_with_due_date = 'After the due date has passed,'
-        self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
-        self.exam_time_error_msg = 'A technical error has occurred with your proctored exam'
-        self.chose_proctored_exam_msg = 'Follow these steps to set up and start your proctored exam'
-        self.proctored_exam_optout_msg = 'Take this exam as an open exam instead'
-        self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
-        self.proctored_exam_waiting_for_app_shutdown_msg = 'You are about to complete your proctored exam'
-        self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
-        self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
-        self.proctored_exam_rejected_msg = 'Your proctoring session was reviewed and did not pass requirements'
-        self.start_a_practice_exam_msg = 'Get familiar with proctoring for real exams later in the course'
-        self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
-        self.practice_exam_created_msg = 'Follow these steps to set up and start your proctored exam'
-        self.practice_exam_completion_msg = 'Are you sure you want to end your proctored exam'
-        self.ready_to_start_msg = 'Follow these instructions'
-        self.practice_exam_failed_msg = 'There was a problem with your practice proctoring session'
-        self.proctored_exam_email_subject = 'Proctoring Session Results Update'
-        self.proctored_exam_email_body = 'the status of your proctoring session review'
-        self.footer_msg = 'About Proctored Exams'
-        self.timed_footer_msg = 'Can I request additional time to complete my exam?'
-
-        set_runtime_service('credit', MockCreditService())
-        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
-
-        tracker.register_tracker(MockTracker())
-
-        self.prerequisites = [
-            {
-                'namespace': 'proctoring',
-                'name': 'proc1',
-                'order': 2,
-                'status': 'satisfied',
-            },
-            {
-                'namespace': 'reverification',
-                'name': 'rever1',
-                'order': 1,
-                'status': 'satisfied',
-            },
-            {
-                'namespace': 'grade',
-                'name': 'grade1',
-                'order': 0,
-                'status': 'pending',
-            },
-            {
-                'namespace': 'reverification',
-                'name': 'rever2',
-                'order': 3,
-                'status': 'failed',
-            },
-            {
-                'namespace': 'proctoring',
-                'name': 'proc2',
-                'order': 4,
-                'status': 'pending',
-            },
-        ]
-
-        self.declined_prerequisites = [
-            {
-                'namespace': 'proctoring',
-                'name': 'proc1',
-                'order': 2,
-                'status': 'satisfied',
-            },
-            {
-                'namespace': 'reverification',
-                'name': 'rever1',
-                'order': 1,
-                'status': 'satisfied',
-            },
-            {
-                'namespace': 'grade',
-                'name': 'grade1',
-                'order': 0,
-                'status': 'pending',
-            },
-            {
-                'namespace': 'reverification',
-                'name': 'rever2',
-                'order': 3,
-                'status': 'declined',
-            },
-            {
-                'namespace': 'proctoring',
-                'name': 'proc2',
-                'order': 4,
-                'status': 'pending',
-            },
-        ]
-
-    def tearDown(self):
-        """
-        Cleanup
-        """
-        del TRACKERS['default']
-
-    def _create_proctored_exam(self):
-        """
-        Calls the api's create_exam to create an exam object.
-        """
-        return create_exam(
-            course_id=self.course_id,
-            content_id=self.content_id,
-            exam_name=self.exam_name,
-            time_limit_mins=self.default_time_limit
-        )
-
-    def _create_exam_with_due_time(self, is_proctored=True, is_practice_exam=False, due_date=None):
-        """
-        Calls the api's create_exam to create an exam object.
-        """
-        return create_exam(
-            course_id=self.course_id,
-            content_id=self.content_id_for_exam_with_due_date,
-            exam_name=self.exam_name,
-            time_limit_mins=self.default_time_limit,
-            is_proctored=is_proctored,
-            is_practice_exam=is_practice_exam,
-            due_date=due_date
-        )
-
-    def _create_timed_exam(self):
-        """
-        Calls the api's create_exam to create an exam object.
-        """
-        return create_exam(
-            course_id=self.course_id,
-            content_id=self.content_id_timed,
-            exam_name=self.exam_name,
-            time_limit_mins=self.default_time_limit,
-            is_proctored=False
-        )
-
-    def _create_practice_exam(self):
-        """
-        Calls the api's create_exam to create a practice exam object.
-        """
-        return create_exam(
-            course_id=self.course_id,
-            content_id=self.content_id_practice,
-            exam_name=self.exam_name,
-            time_limit_mins=self.default_time_limit,
-            is_practice_exam=True,
-            is_proctored=True
-        )
-
-    def _create_disabled_exam(self):
-        """
-        Calls the api's create_exam to create an exam object.
-        """
-        return create_exam(
-            course_id=self.course_id,
-            is_proctored=False,
-            content_id=self.disabled_content_id,
-            exam_name=self.exam_name,
-            time_limit_mins=self.default_time_limit,
-            is_active=False
-        )
-
-    def _create_exam_attempt(self, exam_id, status='created'):
-        """
-        Creates the ProctoredExamStudentAttempt object.
-        """
-
-        attempt = ProctoredExamStudentAttempt(
-            proctored_exam_id=exam_id,
-            user_id=self.user_id,
-            external_id=self.external_id,
-            allowed_time_limit_mins=10,
-            status=status
-        )
-
-        if status in (ProctoredExamStudentAttemptStatus.started,
-                      ProctoredExamStudentAttemptStatus.ready_to_submit, ProctoredExamStudentAttemptStatus.submitted):
-            attempt.started_at = datetime.now(pytz.UTC)
-
-        if ProctoredExamStudentAttemptStatus.is_completed_status(status):
-            attempt.completed_at = datetime.now(pytz.UTC)
-
-        attempt.save()
-
-        return attempt
-
-    def _create_unstarted_exam_attempt(self, is_proctored=True, is_practice=False):
-        """
-        Creates the ProctoredExamStudentAttempt object.
-        """
-        if is_proctored:
-            if is_practice:
-                exam_id = self.practice_exam_id
-            else:
-                exam_id = self.proctored_exam_id
-        else:
-            exam_id = self.timed_exam_id
-
-        return ProctoredExamStudentAttempt.objects.create(
-            proctored_exam_id=exam_id,
-            user_id=self.user_id,
-            external_id=self.external_id,
-            allowed_time_limit_mins=10,
-            status='created'
-        )
-
-    def _create_started_exam_attempt(self, started_at=None, is_proctored=True, is_sample_attempt=False):
-        """
-        Creates the ProctoredExamStudentAttempt object.
-        """
-        return ProctoredExamStudentAttempt.objects.create(
-            proctored_exam_id=self.proctored_exam_id if is_proctored else self.timed_exam_id,
-            user_id=self.user_id,
-            external_id=self.external_id,
-            started_at=started_at if started_at else datetime.now(pytz.UTC),
-            status=ProctoredExamStudentAttemptStatus.started,
-            allowed_time_limit_mins=10,
-            taking_as_proctored=is_proctored,
-            is_sample_attempt=is_sample_attempt
-        )
-
-    def _create_started_practice_exam_attempt(self, started_at=None):
-        """
-        Creates the ProctoredExamStudentAttempt object.
-        """
-        return ProctoredExamStudentAttempt.objects.create(
-            proctored_exam_id=self.practice_exam_id,
-            taking_as_proctored=True,
-            user_id=self.user_id,
-            external_id=self.external_id,
-            started_at=started_at if started_at else datetime.now(pytz.UTC),
-            is_sample_attempt=True,
-            status=ProctoredExamStudentAttemptStatus.started,
-            allowed_time_limit_mins=10
-        )
 
     def _add_allowance_for_user(self):
         """
@@ -1023,6 +747,731 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertEqual(all_exams[0]['id'], updated_exam_attempt_id)
         self.assertEqual(all_exams[1]['id'], exam_attempt.id)
 
+    def test_proctored_status_summary_passed_end_date(self):
+        """
+        Assert that we get the expected status summaries
+        """
+
+        set_runtime_service('credit', MockCreditServiceWithCourseEndDate())
+
+        exam = get_exam_by_id(self.proctored_exam_id)
+        summary = get_attempt_status_summary(self.user.id, exam['course_id'], exam['content_id'])
+
+        expected = {
+            'status': ProctoredExamStudentAttemptStatus.expired,
+            'short_description': 'Proctored Option No Longer Available',
+            'suggested_icon': 'fa-times-circle',
+            'in_completed_state': False
+        }
+        self.assertIn(summary, [expected])
+
+    def test_submitted_credit_state(self):
+        """
+        Verify that putting an attempt into the submitted state will also mark
+        the credit requirement as submitted
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.submitted
+        )
+
+        credit_service = get_runtime_service('credit')
+        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
+
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            'submitted'
+        )
+
+    def test_error_credit_state(self):
+        """
+        Verify that putting an attempt into the error state will also mark
+        the credit requirement as failed
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.error
+        )
+
+        credit_service = get_runtime_service('credit')
+        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
+
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            'failed'
+        )
+
+    @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.declined,
+            False,
+            None,
+            ProctoredExamStudentAttemptStatus.declined
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            False,
+            None,
+            None
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            True,
+            ProctoredExamStudentAttemptStatus.created,
+            ProctoredExamStudentAttemptStatus.created
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            True,
+            ProctoredExamStudentAttemptStatus.verified,
+            ProctoredExamStudentAttemptStatus.verified
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.declined,
+            True,
+            ProctoredExamStudentAttemptStatus.submitted,
+            ProctoredExamStudentAttemptStatus.submitted
+        ),
+    )
+    @ddt.unpack
+    def test_cascading(self, to_status, create_attempt, second_attempt_status, expected_second_status):
+        """
+        Make sure that when we decline/reject one attempt all other exams in the course
+        are auto marked as declined
+        """
+
+        # create other exams in course
+        second_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="2nd exam",
+            exam_name="2nd exam",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=False,
+            is_proctored=True
+        )
+
+        practice_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="practice",
+            exam_name="practice",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True
+        )
+
+        timed_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="timed",
+            exam_name="timed",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=False,
+            is_proctored=False
+        )
+
+        inactive_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id="inactive",
+            exam_name="inactive",
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=False,
+            is_proctored=True,
+            is_active=False
+        )
+
+        if create_attempt:
+            create_exam_attempt(second_exam_id, self.user_id, taking_as_proctored=False)
+
+            if second_attempt_status:
+                update_attempt_status(second_exam_id, self.user_id, second_attempt_status)
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            to_status
+        )
+
+        # make sure we reamain in the right status
+        read_back = get_exam_attempt(exam_attempt.proctored_exam_id, self.user.id)
+        self.assertEqual(read_back['status'], to_status)
+
+        # make sure an attempt was made for second_exam
+        second_exam_attempt = get_exam_attempt(second_exam_id, self.user_id)
+        if expected_second_status:
+            self.assertIsNotNone(second_exam_attempt)
+            self.assertEqual(second_exam_attempt['status'], expected_second_status)
+        else:
+            self.assertIsNone(second_exam_attempt)
+
+        # no auto-generated attempts for practice and timed exams
+        self.assertIsNone(get_exam_attempt(practice_exam_id, self.user_id))
+        self.assertIsNone(get_exam_attempt(timed_exam_id, self.user_id))
+        self.assertIsNone(get_exam_attempt(inactive_exam_id, self.user_id))
+
+    @ddt.data(
+        (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
+        (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.created),
+        (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.download_software_clicked),
+        (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.ready_to_start),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started),
+        (ProctoredExamStudentAttemptStatus.error, ProctoredExamStudentAttemptStatus.started),
+        (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error),
+    )
+    @ddt.unpack
+    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
+    def test_illegal_status_transition(self, from_status, to_status):
+        """
+        Verify that we cannot reset backwards an attempt status
+        once it is in a completed state
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            from_status
+        )
+
+        with self.assertRaises(ProctoredExamIllegalStatusTransition):
+            update_attempt_status(
+                exam_attempt.proctored_exam_id,
+                self.user.id,
+                to_status
+            )
+
+    def test_alias_timed_out(self):
+        """
+        Verified that timed_out will automatically state transition
+        to submitted
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.timed_out
+        )
+
+        exam_attempt = get_exam_attempt_by_id(exam_attempt.id)
+
+        self.assertEqual(
+            exam_attempt['status'],
+            ProctoredExamStudentAttemptStatus.submitted
+        )
+
+    def test_update_unexisting_attempt(self):
+        """
+        Tests updating an non-existing attempt
+        """
+
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            update_attempt_status(0, 0, ProctoredExamStudentAttemptStatus.timed_out)
+
+        # also check the raise_if_not_found flag
+        self.assertIsNone(
+            update_attempt_status(
+                0,
+                0,
+                ProctoredExamStudentAttemptStatus.timed_out,
+                raise_if_not_found=False
+            )
+        )
+
+    def test_update_attempt_without_credit_state(self):
+        """
+        Test updating an attempt that does not have a corresponding credit state.
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        set_runtime_service('credit', MockCreditServiceNone())
+        new_attempt = update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.verified
+        )
+
+        self.assertEqual(new_attempt, exam_attempt.id)
+
+    @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.eligible, {
+                'status': ProctoredExamStudentAttemptStatus.eligible,
+                'short_description': 'Proctored Option Available',
+                'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.declined, {
+                'status': ProctoredExamStudentAttemptStatus.declined,
+                'short_description': 'Taking As Open Exam',
+                'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.submitted, {
+                'status': ProctoredExamStudentAttemptStatus.submitted,
+                'short_description': 'Pending Session Review',
+                'suggested_icon': 'fa-spinner fa-spin',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.second_review_required, {
+                'status': ProctoredExamStudentAttemptStatus.second_review_required,
+                'short_description': 'Pending Session Review',
+                'suggested_icon': 'fa-spinner fa-spin',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.verified, {
+                'status': ProctoredExamStudentAttemptStatus.verified,
+                'short_description': 'Passed Proctoring',
+                'suggested_icon': 'fa-check',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.rejected, {
+                'status': ProctoredExamStudentAttemptStatus.rejected,
+                'short_description': 'Failed Proctoring',
+                'suggested_icon': 'fa-exclamation-triangle',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.error, {
+                'status': ProctoredExamStudentAttemptStatus.error,
+                'short_description': 'Failed Proctoring',
+                'suggested_icon': 'fa-exclamation-triangle',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.created, {
+                'status': ProctoredExamStudentAttemptStatus.created,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.download_software_clicked, {
+                'status': ProctoredExamStudentAttemptStatus.download_software_clicked,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.ready_to_start, {
+                'status': ProctoredExamStudentAttemptStatus.ready_to_start,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.started, {
+                'status': ProctoredExamStudentAttemptStatus.started,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.ready_to_submit, {
+                'status': ProctoredExamStudentAttemptStatus.ready_to_submit,
+                'short_description': 'Taking As Proctored Exam',
+                'suggested_icon': 'fa-pencil-square-o',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.expired, {
+                'status': ProctoredExamStudentAttemptStatus.expired,
+                'short_description': 'Proctored Option No Longer Available',
+                'suggested_icon': 'fa-times-circle',
+                'in_completed_state': False
+            }
+        )
+    )
+    @ddt.unpack
+    def test_attempt_status_summary(self, status, expected):
+        """
+        Assert that we get the expected status summaries
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam_attempt.proctored_exam.course_id,
+            exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIn(summary, [expected])
+
+    @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.eligible, {
+                'status': ProctoredExamStudentAttemptStatus.eligible,
+                'short_description': 'Ungraded Practice Exam',
+                'suggested_icon': '',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.submitted, {
+                'status': ProctoredExamStudentAttemptStatus.submitted,
+                'short_description': 'Practice Exam Completed',
+                'suggested_icon': 'fa-check',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.error, {
+                'status': ProctoredExamStudentAttemptStatus.error,
+                'short_description': 'Practice Exam Failed',
+                'suggested_icon': 'fa-exclamation-triangle',
+                'in_completed_state': True
+            }
+        )
+    )
+    @ddt.unpack
+    def test_practice_status_summary(self, status, expected):
+        """
+        Assert that we get the expected status summaries
+        """
+
+        exam_attempt = self._create_started_practice_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam_attempt.proctored_exam.course_id,
+            exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIn(summary, [expected])
+
+    @ddt.data(
+        (
+            {
+                'short_description': 'Timed Exam',
+                'suggested_icon': 'fa-clock-o',
+                'in_completed_state': False
+            },
+        )
+    )
+    @ddt.unpack
+    def test_timed_exam_status_summary(self, expected):
+        """
+        Assert that we get the expected status summaries
+        for the timed exams.
+        """
+        timed_exam = get_exam_by_id(self.timed_exam_id)
+        summary = get_attempt_status_summary(
+            self.user.id,
+            timed_exam['course_id'],
+            timed_exam['content_id']
+        )
+
+        self.assertIn(summary, [expected])
+
+    @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.eligible, {
+                'status': ProctoredExamStudentAttemptStatus.eligible,
+                'short_description': 'Ungraded Practice Exam',
+                'suggested_icon': '',
+                'in_completed_state': False
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.submitted, {
+                'status': ProctoredExamStudentAttemptStatus.submitted,
+                'short_description': 'Practice Exam Completed',
+                'suggested_icon': 'fa-check',
+                'in_completed_state': True
+            }
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.error, {
+                'status': ProctoredExamStudentAttemptStatus.error,
+                'short_description': 'Practice Exam Failed',
+                'suggested_icon': 'fa-exclamation-triangle',
+                'in_completed_state': True
+            }
+        )
+    )
+    @ddt.unpack
+    def test_practice_status_honor(self, status, expected):
+        """
+        Assert that we get the expected status summaries
+        """
+
+        set_runtime_service('credit', MockCreditService(enrollment_mode='honor'))
+
+        exam_attempt = self._create_started_practice_exam_attempt()
+
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam_attempt.proctored_exam.course_id,
+            exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIn(summary, [expected])
+
+    def test_practice_no_attempt(self):
+        """
+        Assert that we get the expected status summaries
+        """
+        set_runtime_service('credit', MockCreditService(course_name=''))
+        expected = {
+            'status': ProctoredExamStudentAttemptStatus.eligible,
+            'short_description': 'Ungraded Practice Exam',
+            'suggested_icon': '',
+            'in_completed_state': False
+        }
+
+        exam = get_exam_by_id(self.practice_exam_id)
+
+        set_runtime_service('credit', MockCreditService(enrollment_mode='honor'))
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam['course_id'],
+            exam['content_id']
+        )
+        self.assertIn(summary, [expected])
+
+        set_runtime_service('credit', MockCreditService())
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam['course_id'],
+            exam['content_id']
+        )
+        self.assertIn(summary, [expected])
+
+    @ddt.data(
+        'honor', 'staff'
+    )
+    def test_status_summary_honor(self, enrollment_mode):
+        """
+        Make sure status summary is None for a non-verified person
+        """
+
+        set_runtime_service('credit', MockCreditService(enrollment_mode=enrollment_mode))
+
+        exam_attempt = self._create_started_exam_attempt()
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam_attempt.proctored_exam.course_id,
+            exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIsNone(summary)
+
+    def test_status_summary_bad(self):
+        """
+        Make sure we get back a None when getting summary for content that does not
+        exist
+        """
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            'foo',
+            'foo'
+        )
+
+        self.assertIsNone(summary)
+
+    def test_update_exam_attempt(self):
+        """
+        Make sure we restrict which fields we can update
+        """
+
+        exam_attempt = self._create_started_exam_attempt()
+
+        with self.assertRaises(ProctoredExamPermissionDenied):
+            update_exam_attempt(
+                exam_attempt.id,
+                last_poll_timestamp=datetime.utcnow(),
+                last_poll_ipaddr='1.1.1.1',
+                status='foo'
+            )
+
+        now = datetime.now(pytz.UTC)
+        update_exam_attempt(
+            exam_attempt.id,
+            last_poll_timestamp=now,
+            last_poll_ipaddr='1.1.1.1',
+        )
+
+        attempt = get_exam_attempt_by_id(exam_attempt.id)
+
+        self.assertEquals(attempt['last_poll_timestamp'], now)
+        self.assertEquals(attempt['last_poll_ipaddr'], '1.1.1.1')
+
+    def test_requirement_status_order(self):
+        """
+        Make sure that we get a correct ordered list of all statuses sorted in the correct
+        order
+        """
+
+        # try unfiltered version first
+        ordered_list = _get_ordered_prerequisites(self.prerequisites)
+
+        self.assertEqual(len(ordered_list), 5)
+
+        # check the ordering
+        for idx in range(5):
+            self.assertEqual(ordered_list[idx]['order'], idx)
+
+        # now filter out the 'grade' namespace
+        ordered_list = _get_ordered_prerequisites(self.prerequisites, ['grade'])
+
+        self.assertEqual(len(ordered_list), 4)
+
+        # check the ordering
+        for idx in range(4):
+            # we +1 on the idx because we know we filtered out one
+            self.assertEqual(ordered_list[idx]['order'], idx + 1)
+
+        # check other expected ordering
+        self.assertEqual(ordered_list[0]['namespace'], 'reverification')
+        self.assertEqual(ordered_list[0]['name'], 'rever1')
+        self.assertEqual(ordered_list[1]['namespace'], 'proctoring')
+        self.assertEqual(ordered_list[1]['name'], 'proc1')
+        self.assertEqual(ordered_list[2]['namespace'], 'reverification')
+        self.assertEqual(ordered_list[2]['name'], 'rever2')
+        self.assertEqual(ordered_list[3]['namespace'], 'proctoring')
+        self.assertEqual(ordered_list[3]['name'], 'proc2')
+
+    @ddt.data(
+        ('rever1', True, 0, 0, 0, 0),
+        ('proc1', True, 1, 0, 0, 0),
+        ('rever2', True, 2, 0, 0, 0),
+        ('proc2', False, 2, 1, 0, 0),
+        ('unknown', False, 2, 1, 1, 0),
+        (None, False, 2, 1, 1, 0),
+    )
+    @ddt.unpack
+    def test_are_prerequisite_satisifed(self, content_id,
+                                        expected_are_prerequisites_satisifed,
+                                        expected_len_satisfied_prerequisites,
+                                        expected_len_failed_prerequisites,
+                                        expected_len_pending_prerequisites,
+                                        expected_len_declined_prerequisites):
+        """
+        verify proper operation of the logic when computing is prerequisites are satisfied
+        """
+
+        results = _are_prerequirements_satisfied(
+            self.prerequisites,
+            content_id,
+            filter_out_namespaces=['grade']
+        )
+
+        self.assertEqual(results['are_prerequisites_satisifed'], expected_are_prerequisites_satisifed)
+        self.assertEqual(len(results['satisfied_prerequisites']), expected_len_satisfied_prerequisites)
+        self.assertEqual(len(results['failed_prerequisites']), expected_len_failed_prerequisites)
+        self.assertEqual(len(results['pending_prerequisites']), expected_len_pending_prerequisites)
+        self.assertEqual(len(results['declined_prerequisites']), expected_len_declined_prerequisites)
+
+    @ddt.data(
+        ('rever1', True, 0, 0, 0, 0),
+        ('proc1', True, 1, 0, 0, 0),
+        ('rever2', True, 2, 0, 0, 0),
+        ('proc2', False, 2, 0, 0, 1),
+        ('unknown', False, 2, 0, 1, 1),
+        (None, False, 2, 0, 1, 1),
+    )
+    @ddt.unpack
+    def test_declined_prerequisites(self, content_id,
+                                    expected_are_prerequisites_satisifed,
+                                    expected_len_satisfied_prerequisites,
+                                    expected_len_failed_prerequisites,
+                                    expected_len_pending_prerequisites,
+                                    expected_len_declined_prerequisites):
+        """
+        verify proper operation of the logic when computing is prerequisites are satisfied
+        """
+
+        results = _are_prerequirements_satisfied(
+            self.declined_prerequisites,
+            content_id,
+            filter_out_namespaces=['grade']
+        )
+
+        self.assertEqual(results['are_prerequisites_satisifed'], expected_are_prerequisites_satisifed)
+        self.assertEqual(len(results['satisfied_prerequisites']), expected_len_satisfied_prerequisites)
+        self.assertEqual(len(results['failed_prerequisites']), expected_len_failed_prerequisites)
+        self.assertEqual(len(results['pending_prerequisites']), expected_len_pending_prerequisites)
+        self.assertEqual(len(results['declined_prerequisites']), expected_len_declined_prerequisites)
+
+
+@ddt.ddt
+class ProctoredExamStudentViewTests(ProctoredExamTestCase):
+    """
+    All tests for the student view
+    """
+
+    def setUp(self):
+        """
+        Build out test harnessing
+        """
+        super(ProctoredExamStudentViewTests, self).setUp()
+
+        # Messages for get_student_view
+        self.start_an_exam_msg = 'This exam is proctored'
+        self.exam_expired_msg = 'The due date for this exam has passed'
+        self.timed_exam_msg = '{exam_name} is a Timed Exam'
+        self.timed_exam_submitted = 'You have submitted your timed exam.'
+        self.timed_exam_expired = 'The time allotted for this exam has expired.'
+        self.submitted_timed_exam_msg_with_due_date = 'After the due date has passed,'
+        self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
+        self.exam_time_error_msg = 'A technical error has occurred with your proctored exam'
+        self.chose_proctored_exam_msg = 'Follow these steps to set up and start your proctored exam'
+        self.proctored_exam_optout_msg = 'Take this exam as an open exam instead'
+        self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
+        self.proctored_exam_waiting_for_app_shutdown_msg = 'You are about to complete your proctored exam'
+        self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
+        self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
+        self.proctored_exam_rejected_msg = 'Your proctoring session was reviewed and did not pass requirements'
+        self.start_a_practice_exam_msg = 'Get familiar with proctoring for real exams later in the course'
+        self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
+        self.practice_exam_created_msg = 'Follow these steps to set up and start your proctored exam'
+        self.practice_exam_completion_msg = 'Are you sure you want to end your proctored exam'
+        self.ready_to_start_msg = 'Follow these instructions'
+        self.practice_exam_failed_msg = 'There was a problem with your practice proctoring session'
+        self.footer_msg = 'About Proctored Exams'
+        self.timed_footer_msg = 'Can I request additional time to complete my exam?'
+
     def test_get_student_view(self):
         """
         Test for get_student_view prompting the user to take the exam
@@ -1037,6 +1486,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 'display_name': self.exam_name,
                 'default_time_limit_mins': 90,
                 'hide_after_due': False,
+                'verification_status': 'approved',
+                'verification_url': '/reverify',
             }
         )
         self.assertIn(
@@ -1104,6 +1555,42 @@ class ProctoredExamApiTests(LoggedInTestCase):
         self.assertIsNone(rendered_response)
 
     @ddt.data(
+        (None, 'Make sure you have valid photo identification'),
+        ('pending', 'Your verification is currently pending'),
+        ('must_reverify', 'Your verification attempt failed. Please retry verification'),
+        ('expired', 'Your verification has expired'),
+    )
+    @ddt.unpack
+    def test_verification_status(self, verification_status, expected_message):
+        """
+        This test asserts that the correct id verification message is shown
+        to the user for their current status.
+        """
+
+        exam = get_exam_by_id(self.proctored_exam_id)
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=exam['course_id'],
+            content_id=exam['content_id'],
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90,
+                'is_practice_exam': False,
+                'credit_state': {
+                    'enrollment_mode': 'verified',
+                    'credit_requirement_status': [
+                    ]
+                },
+                'verification_status': verification_status,
+                'verification_url': '/reverify',
+            }
+        )
+
+        self.assertIn(expected_message, rendered_response)
+
+    @ddt.data(
         ('reverification', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('reverification', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('reverification', 'failed', 'You did not satisfy the following prerequisites', True),
@@ -1150,7 +1637,9 @@ class ProctoredExamApiTests(LoggedInTestCase):
                             'order': 0
                         }
                     ]
-                }
+                },
+                'verification_status': 'approved',
+                'verification_url': '/reverify',
             }
         )
 
@@ -1231,24 +1720,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
             user_role='student'
         )
         self.assertIsNone(rendered_response)
-
-    def test_proctored_status_summary_passed_end_date(self):
-        """
-        Assert that we get the expected status summaries
-        """
-
-        set_runtime_service('credit', MockCreditServiceWithCourseEndDate())
-
-        exam = get_exam_by_id(self.proctored_exam_id)
-        summary = get_attempt_status_summary(self.user.id, exam['course_id'], exam['content_id'])
-
-        expected = {
-            'status': ProctoredExamStudentAttemptStatus.expired,
-            'short_description': 'Proctored Option No Longer Available',
-            'suggested_icon': 'fa-times-circle',
-            'in_completed_state': False
-        }
-        self.assertIn(summary, [expected])
 
     def test_practice_exam_passed_end_date(self):
         """
@@ -2084,706 +2555,6 @@ class ProctoredExamApiTests(LoggedInTestCase):
 
         self.assertIn(self.timed_exam_submitted, rendered_response)
 
-    def test_submitted_credit_state(self):
-        """
-        Verify that putting an attempt into the submitted state will also mark
-        the credit requirement as submitted
-        """
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            ProctoredExamStudentAttemptStatus.submitted
-        )
-
-        credit_service = get_runtime_service('credit')
-        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
-
-        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
-        self.assertEqual(
-            credit_status['credit_requirement_status'][0]['status'],
-            'submitted'
-        )
-
-    def test_error_credit_state(self):
-        """
-        Verify that putting an attempt into the error state will also mark
-        the credit requirement as failed
-        """
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            ProctoredExamStudentAttemptStatus.error
-        )
-
-        credit_service = get_runtime_service('credit')
-        credit_status = credit_service.get_credit_state(self.user.id, exam_attempt.proctored_exam.course_id)
-
-        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
-        self.assertEqual(
-            credit_status['credit_requirement_status'][0]['status'],
-            'failed'
-        )
-
-    @ddt.data(
-        (
-            ProctoredExamStudentAttemptStatus.declined,
-            False,
-            None,
-            ProctoredExamStudentAttemptStatus.declined
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.rejected,
-            False,
-            None,
-            None
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.rejected,
-            True,
-            ProctoredExamStudentAttemptStatus.created,
-            ProctoredExamStudentAttemptStatus.created
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.rejected,
-            True,
-            ProctoredExamStudentAttemptStatus.verified,
-            ProctoredExamStudentAttemptStatus.verified
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.declined,
-            True,
-            ProctoredExamStudentAttemptStatus.submitted,
-            ProctoredExamStudentAttemptStatus.submitted
-        ),
-    )
-    @ddt.unpack
-    def test_cascading(self, to_status, create_attempt, second_attempt_status, expected_second_status):
-        """
-        Make sure that when we decline/reject one attempt all other exams in the course
-        are auto marked as declined
-        """
-
-        # create other exams in course
-        second_exam_id = create_exam(
-            course_id=self.course_id,
-            content_id="2nd exam",
-            exam_name="2nd exam",
-            time_limit_mins=self.default_time_limit,
-            is_practice_exam=False,
-            is_proctored=True
-        )
-
-        practice_exam_id = create_exam(
-            course_id=self.course_id,
-            content_id="practice",
-            exam_name="practice",
-            time_limit_mins=self.default_time_limit,
-            is_practice_exam=True,
-            is_proctored=True
-        )
-
-        timed_exam_id = create_exam(
-            course_id=self.course_id,
-            content_id="timed",
-            exam_name="timed",
-            time_limit_mins=self.default_time_limit,
-            is_practice_exam=False,
-            is_proctored=False
-        )
-
-        inactive_exam_id = create_exam(
-            course_id=self.course_id,
-            content_id="inactive",
-            exam_name="inactive",
-            time_limit_mins=self.default_time_limit,
-            is_practice_exam=False,
-            is_proctored=True,
-            is_active=False
-        )
-
-        if create_attempt:
-            create_exam_attempt(second_exam_id, self.user_id, taking_as_proctored=False)
-
-            if second_attempt_status:
-                update_attempt_status(second_exam_id, self.user_id, second_attempt_status)
-
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            to_status
-        )
-
-        # make sure we reamain in the right status
-        read_back = get_exam_attempt(exam_attempt.proctored_exam_id, self.user.id)
-        self.assertEqual(read_back['status'], to_status)
-
-        # make sure an attempt was made for second_exam
-        second_exam_attempt = get_exam_attempt(second_exam_id, self.user_id)
-        if expected_second_status:
-            self.assertIsNotNone(second_exam_attempt)
-            self.assertEqual(second_exam_attempt['status'], expected_second_status)
-        else:
-            self.assertIsNone(second_exam_attempt)
-
-        # no auto-generated attempts for practice and timed exams
-        self.assertIsNone(get_exam_attempt(practice_exam_id, self.user_id))
-        self.assertIsNone(get_exam_attempt(timed_exam_id, self.user_id))
-        self.assertIsNone(get_exam_attempt(inactive_exam_id, self.user_id))
-
-    @ddt.data(
-        (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
-        (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.created),
-        (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.download_software_clicked),
-        (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.ready_to_start),
-        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started),
-        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started),
-        (ProctoredExamStudentAttemptStatus.error, ProctoredExamStudentAttemptStatus.started),
-        (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error),
-    )
-    @ddt.unpack
-    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
-    def test_illegal_status_transition(self, from_status, to_status):
-        """
-        Verify that we cannot reset backwards an attempt status
-        once it is in a completed state
-        """
-
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            from_status
-        )
-
-        with self.assertRaises(ProctoredExamIllegalStatusTransition):
-            update_attempt_status(
-                exam_attempt.proctored_exam_id,
-                self.user.id,
-                to_status
-            )
-
-    def test_alias_timed_out(self):
-        """
-        Verified that timed_out will automatically state transition
-        to submitted
-        """
-
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            ProctoredExamStudentAttemptStatus.timed_out
-        )
-
-        exam_attempt = get_exam_attempt_by_id(exam_attempt.id)
-
-        self.assertEqual(
-            exam_attempt['status'],
-            ProctoredExamStudentAttemptStatus.submitted
-        )
-
-    def test_update_unexisting_attempt(self):
-        """
-        Tests updating an non-existing attempt
-        """
-
-        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            update_attempt_status(0, 0, ProctoredExamStudentAttemptStatus.timed_out)
-
-        # also check the raise_if_not_found flag
-        self.assertIsNone(
-            update_attempt_status(
-                0,
-                0,
-                ProctoredExamStudentAttemptStatus.timed_out,
-                raise_if_not_found=False
-            )
-        )
-
-    def test_update_attempt_without_credit_state(self):
-        """
-        Test updating an attempt that does not have a corresponding credit state.
-        """
-        exam_attempt = self._create_started_exam_attempt()
-        set_runtime_service('credit', MockCreditServiceNone())
-        new_attempt = update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            ProctoredExamStudentAttemptStatus.verified
-        )
-
-        self.assertEqual(new_attempt, exam_attempt.id)
-
-    @ddt.data(
-        (
-            ProctoredExamStudentAttemptStatus.eligible, {
-                'status': ProctoredExamStudentAttemptStatus.eligible,
-                'short_description': 'Proctored Option Available',
-                'suggested_icon': 'fa-pencil-square-o',
-                'in_completed_state': False
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.declined, {
-                'status': ProctoredExamStudentAttemptStatus.declined,
-                'short_description': 'Taking As Open Exam',
-                'suggested_icon': 'fa-pencil-square-o',
-                'in_completed_state': False
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.submitted, {
-                'status': ProctoredExamStudentAttemptStatus.submitted,
-                'short_description': 'Pending Session Review',
-                'suggested_icon': 'fa-spinner fa-spin',
-                'in_completed_state': True
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.second_review_required, {
-                'status': ProctoredExamStudentAttemptStatus.second_review_required,
-                'short_description': 'Pending Session Review',
-                'suggested_icon': 'fa-spinner fa-spin',
-                'in_completed_state': True
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.verified, {
-                'status': ProctoredExamStudentAttemptStatus.verified,
-                'short_description': 'Passed Proctoring',
-                'suggested_icon': 'fa-check',
-                'in_completed_state': True
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.rejected, {
-                'status': ProctoredExamStudentAttemptStatus.rejected,
-                'short_description': 'Failed Proctoring',
-                'suggested_icon': 'fa-exclamation-triangle',
-                'in_completed_state': True
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.error, {
-                'status': ProctoredExamStudentAttemptStatus.error,
-                'short_description': 'Failed Proctoring',
-                'suggested_icon': 'fa-exclamation-triangle',
-                'in_completed_state': True
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.created, {
-                'status': ProctoredExamStudentAttemptStatus.created,
-                'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-pencil-square-o',
-                'in_completed_state': False
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.download_software_clicked, {
-                'status': ProctoredExamStudentAttemptStatus.download_software_clicked,
-                'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-pencil-square-o',
-                'in_completed_state': False
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.ready_to_start, {
-                'status': ProctoredExamStudentAttemptStatus.ready_to_start,
-                'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-pencil-square-o',
-                'in_completed_state': False
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.started, {
-                'status': ProctoredExamStudentAttemptStatus.started,
-                'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-pencil-square-o',
-                'in_completed_state': False
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.ready_to_submit, {
-                'status': ProctoredExamStudentAttemptStatus.ready_to_submit,
-                'short_description': 'Taking As Proctored Exam',
-                'suggested_icon': 'fa-pencil-square-o',
-                'in_completed_state': False
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.expired, {
-                'status': ProctoredExamStudentAttemptStatus.expired,
-                'short_description': 'Proctored Option No Longer Available',
-                'suggested_icon': 'fa-times-circle',
-                'in_completed_state': False
-            }
-        )
-    )
-    @ddt.unpack
-    def test_attempt_status_summary(self, status, expected):
-        """
-        Assert that we get the expected status summaries
-        """
-
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-
-        summary = get_attempt_status_summary(
-            self.user.id,
-            exam_attempt.proctored_exam.course_id,
-            exam_attempt.proctored_exam.content_id
-        )
-
-        self.assertIn(summary, [expected])
-
-    @ddt.data(
-        (
-            ProctoredExamStudentAttemptStatus.eligible, {
-                'status': ProctoredExamStudentAttemptStatus.eligible,
-                'short_description': 'Ungraded Practice Exam',
-                'suggested_icon': '',
-                'in_completed_state': False
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.submitted, {
-                'status': ProctoredExamStudentAttemptStatus.submitted,
-                'short_description': 'Practice Exam Completed',
-                'suggested_icon': 'fa-check',
-                'in_completed_state': True
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.error, {
-                'status': ProctoredExamStudentAttemptStatus.error,
-                'short_description': 'Practice Exam Failed',
-                'suggested_icon': 'fa-exclamation-triangle',
-                'in_completed_state': True
-            }
-        )
-    )
-    @ddt.unpack
-    def test_practice_status_summary(self, status, expected):
-        """
-        Assert that we get the expected status summaries
-        """
-
-        exam_attempt = self._create_started_practice_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-
-        summary = get_attempt_status_summary(
-            self.user.id,
-            exam_attempt.proctored_exam.course_id,
-            exam_attempt.proctored_exam.content_id
-        )
-
-        self.assertIn(summary, [expected])
-
-    @ddt.data(
-        (
-            {
-                'short_description': 'Timed Exam',
-                'suggested_icon': 'fa-clock-o',
-                'in_completed_state': False
-            },
-        )
-    )
-    @ddt.unpack
-    def test_timed_exam_status_summary(self, expected):
-        """
-        Assert that we get the expected status summaries
-        for the timed exams.
-        """
-        timed_exam = get_exam_by_id(self.timed_exam_id)
-        summary = get_attempt_status_summary(
-            self.user.id,
-            timed_exam['course_id'],
-            timed_exam['content_id']
-        )
-
-        self.assertIn(summary, [expected])
-
-    @ddt.data(
-        (
-            ProctoredExamStudentAttemptStatus.eligible, {
-                'status': ProctoredExamStudentAttemptStatus.eligible,
-                'short_description': 'Ungraded Practice Exam',
-                'suggested_icon': '',
-                'in_completed_state': False
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.submitted, {
-                'status': ProctoredExamStudentAttemptStatus.submitted,
-                'short_description': 'Practice Exam Completed',
-                'suggested_icon': 'fa-check',
-                'in_completed_state': True
-            }
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.error, {
-                'status': ProctoredExamStudentAttemptStatus.error,
-                'short_description': 'Practice Exam Failed',
-                'suggested_icon': 'fa-exclamation-triangle',
-                'in_completed_state': True
-            }
-        )
-    )
-    @ddt.unpack
-    def test_practice_status_honor(self, status, expected):
-        """
-        Assert that we get the expected status summaries
-        """
-
-        set_runtime_service('credit', MockCreditService(enrollment_mode='honor'))
-
-        exam_attempt = self._create_started_practice_exam_attempt()
-
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-
-        summary = get_attempt_status_summary(
-            self.user.id,
-            exam_attempt.proctored_exam.course_id,
-            exam_attempt.proctored_exam.content_id
-        )
-
-        self.assertIn(summary, [expected])
-
-    def test_practice_no_attempt(self):
-        """
-        Assert that we get the expected status summaries
-        """
-        set_runtime_service('credit', MockCreditService(course_name=''))
-        expected = {
-            'status': ProctoredExamStudentAttemptStatus.eligible,
-            'short_description': 'Ungraded Practice Exam',
-            'suggested_icon': '',
-            'in_completed_state': False
-        }
-
-        exam = get_exam_by_id(self.practice_exam_id)
-
-        set_runtime_service('credit', MockCreditService(enrollment_mode='honor'))
-        summary = get_attempt_status_summary(
-            self.user.id,
-            exam['course_id'],
-            exam['content_id']
-        )
-        self.assertIn(summary, [expected])
-
-        set_runtime_service('credit', MockCreditService())
-        summary = get_attempt_status_summary(
-            self.user.id,
-            exam['course_id'],
-            exam['content_id']
-        )
-        self.assertIn(summary, [expected])
-
-    @ddt.data(
-        'honor', 'staff'
-    )
-    def test_status_summary_honor(self, enrollment_mode):
-        """
-        Make sure status summary is None for a non-verified person
-        """
-
-        set_runtime_service('credit', MockCreditService(enrollment_mode=enrollment_mode))
-
-        exam_attempt = self._create_started_exam_attempt()
-
-        summary = get_attempt_status_summary(
-            self.user.id,
-            exam_attempt.proctored_exam.course_id,
-            exam_attempt.proctored_exam.content_id
-        )
-
-        self.assertIsNone(summary)
-
-    def test_status_summary_bad(self):
-        """
-        Make sure we get back a None when getting summary for content that does not
-        exist
-        """
-
-        summary = get_attempt_status_summary(
-            self.user.id,
-            'foo',
-            'foo'
-        )
-
-        self.assertIsNone(summary)
-
-    def test_update_exam_attempt(self):
-        """
-        Make sure we restrict which fields we can update
-        """
-
-        exam_attempt = self._create_started_exam_attempt()
-
-        with self.assertRaises(ProctoredExamPermissionDenied):
-            update_exam_attempt(
-                exam_attempt.id,
-                last_poll_timestamp=datetime.utcnow(),
-                last_poll_ipaddr='1.1.1.1',
-                status='foo'
-            )
-
-        now = datetime.now(pytz.UTC)
-        update_exam_attempt(
-            exam_attempt.id,
-            last_poll_timestamp=now,
-            last_poll_ipaddr='1.1.1.1',
-        )
-
-        attempt = get_exam_attempt_by_id(exam_attempt.id)
-
-        self.assertEquals(attempt['last_poll_timestamp'], now)
-        self.assertEquals(attempt['last_poll_ipaddr'], '1.1.1.1')
-
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.submitted,
-        ProctoredExamStudentAttemptStatus.verified,
-        ProctoredExamStudentAttemptStatus.rejected
-    )
-    def test_send_email(self, status):
-        """
-        Assert that email is sent on the following statuses of proctoring attempt.
-        """
-
-        exam_attempt = self._create_started_exam_attempt()
-        credit_state = get_runtime_service('credit').get_credit_state(self.user_id, self.course_id)
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-        self.assertEquals(len(mail.outbox), 1)
-        self.assertIn(self.proctored_exam_email_subject, mail.outbox[0].subject)
-        self.assertIn(self.proctored_exam_email_body, mail.outbox[0].body)
-        self.assertIn(ProctoredExamStudentAttemptStatus.get_status_alias(status), mail.outbox[0].body)
-        self.assertIn(credit_state['course_name'], mail.outbox[0].body)
-
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.second_review_required,
-        ProctoredExamStudentAttemptStatus.error
-    )
-    def test_email_not_sent(self, status):
-        """
-        Assert than email is not sent on the following statuses of proctoring attempt
-        """
-
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-        self.assertEquals(len(mail.outbox), 0)
-
-    def test_send_email_unicode(self):
-        """
-        Assert that email can be sent with a unicode course name.
-        """
-
-        course_name = u'अआईउऊऋऌ अआईउऊऋऌ'
-        set_runtime_service('credit', MockCreditService(course_name=course_name))
-
-        exam_attempt = self._create_started_exam_attempt()
-        credit_state = get_runtime_service('credit').get_credit_state(self.user_id, self.course_id)
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            ProctoredExamStudentAttemptStatus.submitted
-        )
-        self.assertEquals(len(mail.outbox), 1)
-        self.assertIn(self.proctored_exam_email_subject, mail.outbox[0].subject)
-        self.assertIn(course_name, mail.outbox[0].subject)
-        self.assertIn(self.proctored_exam_email_body, mail.outbox[0].body)
-        self.assertIn(
-            ProctoredExamStudentAttemptStatus.get_status_alias(
-                ProctoredExamStudentAttemptStatus.submitted
-            ),
-            mail.outbox[0].body
-        )
-        self.assertIn(credit_state['course_name'], mail.outbox[0].body)
-
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.eligible,
-        ProctoredExamStudentAttemptStatus.created,
-        ProctoredExamStudentAttemptStatus.download_software_clicked,
-        ProctoredExamStudentAttemptStatus.ready_to_start,
-        ProctoredExamStudentAttemptStatus.started,
-        ProctoredExamStudentAttemptStatus.ready_to_submit,
-        ProctoredExamStudentAttemptStatus.declined,
-        ProctoredExamStudentAttemptStatus.timed_out,
-        ProctoredExamStudentAttemptStatus.error
-    )
-    @patch.dict('settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
-    def test_not_send_email(self, status):
-        """
-        Assert that email is not sent on the following statuses of proctoring attempt.
-        """
-
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-        self.assertEquals(len(mail.outbox), 0)
-
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.submitted,
-        ProctoredExamStudentAttemptStatus.verified,
-        ProctoredExamStudentAttemptStatus.rejected
-    )
-    def test_not_send_email_sample_exam(self, status):
-        """
-        Assert that email is not sent when there is practice/sample exam
-        """
-
-        exam_attempt = self._create_started_exam_attempt(is_sample_attempt=True)
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-        self.assertEquals(len(mail.outbox), 0)
-
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.submitted,
-        ProctoredExamStudentAttemptStatus.verified,
-        ProctoredExamStudentAttemptStatus.rejected
-    )
-    def test_not_send_email_timed_exam(self, status):
-        """
-        Assert that email is not sent when exam is timed/not-proctoring
-        """
-
-        exam_attempt = self._create_started_exam_attempt(is_proctored=False)
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-        self.assertEquals(len(mail.outbox), 0)
-
     @ddt.data(
         ProctoredExamStudentAttemptStatus.eligible,
         ProctoredExamStudentAttemptStatus.created,
@@ -2832,100 +2603,3 @@ class ProctoredExamApiTests(LoggedInTestCase):
                 self.assertIn(self.footer_msg, rendered_response)
         else:
             self.assertIn(self.footer_msg, rendered_response)
-
-    def test_requirement_status_order(self):
-        """
-        Make sure that we get a correct ordered list of all statuses sorted in the correct
-        order
-        """
-
-        # try unfiltered version first
-        ordered_list = _get_ordered_prerequisites(self.prerequisites)
-
-        self.assertEqual(len(ordered_list), 5)
-
-        # check the ordering
-        for idx in range(5):
-            self.assertEqual(ordered_list[idx]['order'], idx)
-
-        # now filter out the 'grade' namespace
-        ordered_list = _get_ordered_prerequisites(self.prerequisites, ['grade'])
-
-        self.assertEqual(len(ordered_list), 4)
-
-        # check the ordering
-        for idx in range(4):
-            # we +1 on the idx because we know we filtered out one
-            self.assertEqual(ordered_list[idx]['order'], idx + 1)
-
-        # check other expected ordering
-        self.assertEqual(ordered_list[0]['namespace'], 'reverification')
-        self.assertEqual(ordered_list[0]['name'], 'rever1')
-        self.assertEqual(ordered_list[1]['namespace'], 'proctoring')
-        self.assertEqual(ordered_list[1]['name'], 'proc1')
-        self.assertEqual(ordered_list[2]['namespace'], 'reverification')
-        self.assertEqual(ordered_list[2]['name'], 'rever2')
-        self.assertEqual(ordered_list[3]['namespace'], 'proctoring')
-        self.assertEqual(ordered_list[3]['name'], 'proc2')
-
-    @ddt.data(
-        ('rever1', True, 0, 0, 0, 0),
-        ('proc1', True, 1, 0, 0, 0),
-        ('rever2', True, 2, 0, 0, 0),
-        ('proc2', False, 2, 1, 0, 0),
-        ('unknown', False, 2, 1, 1, 0),
-        (None, False, 2, 1, 1, 0),
-    )
-    @ddt.unpack
-    def test_are_prerequisite_satisifed(self, content_id,
-                                        expected_are_prerequisites_satisifed,
-                                        expected_len_satisfied_prerequisites,
-                                        expected_len_failed_prerequisites,
-                                        expected_len_pending_prerequisites,
-                                        expected_len_declined_prerequisites):
-        """
-        verify proper operation of the logic when computing is prerequisites are satisfied
-        """
-
-        results = _are_prerequirements_satisfied(
-            self.prerequisites,
-            content_id,
-            filter_out_namespaces=['grade']
-        )
-
-        self.assertEqual(results['are_prerequisites_satisifed'], expected_are_prerequisites_satisifed)
-        self.assertEqual(len(results['satisfied_prerequisites']), expected_len_satisfied_prerequisites)
-        self.assertEqual(len(results['failed_prerequisites']), expected_len_failed_prerequisites)
-        self.assertEqual(len(results['pending_prerequisites']), expected_len_pending_prerequisites)
-        self.assertEqual(len(results['declined_prerequisites']), expected_len_declined_prerequisites)
-
-    @ddt.data(
-        ('rever1', True, 0, 0, 0, 0),
-        ('proc1', True, 1, 0, 0, 0),
-        ('rever2', True, 2, 0, 0, 0),
-        ('proc2', False, 2, 0, 0, 1),
-        ('unknown', False, 2, 0, 1, 1),
-        (None, False, 2, 0, 1, 1),
-    )
-    @ddt.unpack
-    def test_declined_prerequisites(self, content_id,
-                                    expected_are_prerequisites_satisifed,
-                                    expected_len_satisfied_prerequisites,
-                                    expected_len_failed_prerequisites,
-                                    expected_len_pending_prerequisites,
-                                    expected_len_declined_prerequisites):
-        """
-        verify proper operation of the logic when computing is prerequisites are satisfied
-        """
-
-        results = _are_prerequirements_satisfied(
-            self.declined_prerequisites,
-            content_id,
-            filter_out_namespaces=['grade']
-        )
-
-        self.assertEqual(results['are_prerequisites_satisifed'], expected_are_prerequisites_satisifed)
-        self.assertEqual(len(results['satisfied_prerequisites']), expected_len_satisfied_prerequisites)
-        self.assertEqual(len(results['failed_prerequisites']), expected_len_failed_prerequisites)
-        self.assertEqual(len(results['pending_prerequisites']), expected_len_pending_prerequisites)
-        self.assertEqual(len(results['declined_prerequisites']), expected_len_declined_prerequisites)
