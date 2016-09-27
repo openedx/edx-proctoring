@@ -43,6 +43,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
 
     attempt = get_exam_attempt_by_code(attempt_code)
     if not attempt:
+        log.warn("Attempt code %r cannot be found.", attempt_code)
         return HttpResponse(
             content='You have entered an exam code that is not valid.',
             status=404
@@ -52,6 +53,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
                              ProctoredExamStudentAttemptStatus.download_software_clicked]:
         mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
 
+    log.info("Exam %r has been marked as ready", attempt['proctored_exam']['id'])
     template = loader.get_template('proctored_exam/proctoring_launch_callback.html')
 
     poll_url = reverse(
