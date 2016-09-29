@@ -1721,8 +1721,6 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
                     prerequisite_status['pending_prerequisites']
                 )
                 student_view_template = 'proctored_exam/pending-prerequisites.html'
-        elif verification_status is not 'approved':
-            student_view_template = 'proctored_exam/id_verification.html'
         else:
             student_view_template = 'proctored_exam/entrance.html'
             # emit an event that the user was presented with the option
@@ -1733,12 +1731,16 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
-        provider = get_backend_provider()
-        student_view_template = 'proctored_exam/instructions.html'
-        context.update({
-            'exam_code': attempt['attempt_code'],
-            'software_download_url': provider.get_software_download_url(),
-        })
+        if verification_status is not 'approved':
+            # if the user has not id verified yet, show them the page that requires them to do so
+            student_view_template = 'proctored_exam/id_verification.html'
+        else:
+            provider = get_backend_provider()
+            student_view_template = 'proctored_exam/instructions.html'
+            context.update({
+                'exam_code': attempt['attempt_code'],
+                'software_download_url': provider.get_software_download_url(),
+            })
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_start:
         student_view_template = 'proctored_exam/ready_to_start.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.error:

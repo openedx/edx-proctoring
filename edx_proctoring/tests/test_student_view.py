@@ -160,15 +160,15 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
     def test_verification_status(self, verification_status, expected_message):
         """
         This test asserts that the correct id verification message is shown
-        to the user for their current status.
+        to the user when they choose to take a proctored exam.
         """
 
-        exam = get_exam_by_id(self.proctored_exam_id)
+        self._create_unstarted_exam_attempt()
 
         rendered_response = get_student_view(
             user_id=self.user_id,
-            course_id=exam['course_id'],
-            content_id=exam['content_id'],
+            course_id=self.course_id,
+            content_id=self.content_id,
             context={
                 'is_proctored': True,
                 'display_name': self.exam_name,
@@ -373,7 +373,9 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             context={
                 'is_proctored': True,
                 'display_name': self.exam_name,
-                'default_time_limit_mins': 90
+                'default_time_limit_mins': 90,
+                'verification_status': 'approved',
+                'verification_url': '/reverify',
             }
         )
         self.assertIn(self.chose_proctored_exam_msg, rendered_response)
@@ -394,7 +396,9 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             context={
                 'is_proctored': True,
                 'display_name': self.exam_name,
-                'default_time_limit_mins': 90
+                'default_time_limit_mins': 90,
+                'verification_status': 'approved',
+                'verification_url': '/reverify',
             }
         )
         self.assertIn(self.chose_proctored_exam_msg, rendered_response)
