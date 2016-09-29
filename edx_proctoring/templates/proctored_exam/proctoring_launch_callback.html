@@ -190,10 +190,7 @@
       var _poll_interval = null;
 
       $(document).ready(function() {
-        _poll_interval = setInterval(
-          poll_exam_status,
-          5000
-        );
+        poll_exam_status();
       });
 
       function poll_exam_status() {
@@ -206,6 +203,9 @@
             // NOTE: This is per the API documentation from SoftwareSecure
             window.external.quitApplication();
           }
+          clearInterval(_poll_interval);
+          // The polling interval is returned in seconds, so we need to multiply by 1000.
+          _poll_interval = setInterval(poll_exam_status, parseInt(data.polling_interval) * 1000);
         });
       }
 

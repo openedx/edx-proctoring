@@ -23,6 +23,9 @@ from edx_proctoring.api import (
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import ProctoredBaseException
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus
+from edx_proctoring.utils import get_time_remaining_for_attempt
+
+from edx_proctoring import constants
 
 log = logging.getLogger(__name__)
 
@@ -154,12 +157,17 @@ class AttemptStatus(APIView):
             )
 
         update_exam_attempt(attempt['id'], last_poll_timestamp=timestamp, last_poll_ipaddr=ip_address)
+        time_remaining_seconds = get_time_remaining_for_attempt(attempt)
+        polling_interval = constants.DEFAULT_CLIENT_POLLING_INTERVAL
+        if time_remaining_seconds < constants.EXAM_CONCLUDING_INTERVAL:
+            polling_interval = constants.REDUCED_CLIENT_POLLING_INTERVAL
 
         return Response(
             data={
                 # IMPORTANT: Don't add more information to this as it is an
                 # unauthenticated endpoint
                 'status': attempt['status'],
+                'polling_interval': polling_interval,
             },
             status=200
         )

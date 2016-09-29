@@ -36,6 +36,7 @@ from .utils import (
     LoggedInTestCase
 )
 
+from edx_proctoring import constants
 from edx_proctoring.urls import urlpatterns
 from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
@@ -835,6 +836,29 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
                     reverse('edx_proctoring.proctored_exam.attempt', args=[exam_attempt.id])
                 )
                 self.assertEqual(response.status_code, 200)
+
+    @patch('edx_proctoring.callbacks.get_time_remaining_for_attempt')
+    def test_attempt_status_poll_interval(self, time_remaining_mock):
+        """
+        Test that the poll interval is correct depending on the amount of time remaining.
+        """
+        exam_attempt = self._create_exam_attempt()
+        # test the polling callback point
+        polling_status_endpoint = reverse(
+            'edx_proctoring.anonymous.proctoring_poll_status',
+            args=[exam_attempt.attempt_code]
+        )
+
+        # When the exam has not reached the concluding interval.
+        time_remaining_mock.return_value = constants.EXAM_CONCLUDING_INTERVAL + 5
+        response = self.client.get(polling_status_endpoint)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['polling_interval'], constants.DEFAULT_CLIENT_POLLING_INTERVAL)
+
+        time_remaining_mock.return_value = constants.EXAM_CONCLUDING_INTERVAL - 5
+        response = self.client.get(polling_status_endpoint)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['polling_interval'], constants.REDUCED_CLIENT_POLLING_INTERVAL)
 
     def test_attempt_status_stickiness(self):
         """
