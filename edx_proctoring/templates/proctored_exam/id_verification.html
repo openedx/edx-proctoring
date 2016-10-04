@@ -1,0 +1,62 @@
+{% load i18n %}
+<div class="sequence proctored-exam instructions message-left-bar" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
+
+    <div class="">
+        <h3>
+            {% blocktrans %}
+                Complete your verification before starting the proctored exam.
+            {% endblocktrans %}
+        </h3>
+        <p>
+            {% blocktrans %}
+                You must successfully complete identity verification before you can start the proctored exam.
+            {% endblocktrans %}
+        </p>
+        {% if verification_status == 'pending' %}
+            <p>
+                {% blocktrans %}
+                    Your verification is pending. Results should be available 2-3 days after you
+                    submit your verification.
+                {% endblocktrans %}
+            </p>
+        {% elif verification_status == 'must_reverify' %}
+            <p>
+                {% blocktrans %}
+                    Your verification attempt failed. Please read our guidelines to make
+                    sure you understand the requirements for successfully completing verification,
+                    then try again.
+                {% endblocktrans %}
+            </p>
+            <div>
+                <a href="{{ reverify_url }}" class="reverify-url btn-pl-primary">
+                    {% trans "Retry Verification" %}
+                </a>
+            </div>
+        {% elif verification_status == 'expired' %}
+            <p>
+                {% blocktrans %}
+                    Your verification has expired. You must successfully complete a new identity verification
+                    before you can start the proctored exam.
+                {% endblocktrans %}
+            </p>
+            <div>
+                <a href="{{ reverify_url }}" class="reverify-url btn-pl-primary">
+                    {% trans "Continue to Verification" %}
+                </a>
+            </div>
+        {% else %}
+            <p>
+                {% blocktrans %}
+                    Make sure you are on a computer with a webcam, and that you have valid photo identification
+                    such as a driver's license or passport, before you continue.
+                {% endblocktrans %}
+            </p>
+            <div>
+                <a href="{{ reverify_url }}" class="reverify-url btn-pl-primary">
+                    {% trans "Continue to Verification" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% include 'proctored_exam/footer.html' %}
