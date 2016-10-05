@@ -24,6 +24,8 @@ from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import ProctoredBaseException
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus
 
+from edx_proctoring import constants
+
 log = logging.getLogger(__name__)
 
 
@@ -66,7 +68,8 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
             Context({
                 'exam_attempt_status_url': poll_url,
                 'platform_name': settings.PLATFORM_NAME,
-                'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {})
+                'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
+                'default_polling_interval': constants.DEFAULT_CLIENT_POLLING_INTERVAL,
             })
         )
     )
@@ -154,12 +157,16 @@ class AttemptStatus(APIView):
             )
 
         update_exam_attempt(attempt['id'], last_poll_timestamp=timestamp, last_poll_ipaddr=ip_address)
+        polling_interval = constants.DEFAULT_CLIENT_POLLING_INTERVAL
+        if ProctoredExamStudentAttemptStatus.is_completed_status(attempt['status']):
+            polling_interval = constants.REDUCED_CLIENT_POLLING_INTERVAL
 
         return Response(
             data={
                 # IMPORTANT: Don't add more information to this as it is an
                 # unauthenticated endpoint
                 'status': attempt['status'],
+                'polling_interval': polling_interval,
             },
             status=200
         )
