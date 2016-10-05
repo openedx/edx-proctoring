@@ -187,11 +187,24 @@
     </div>
 
     <script type="text/javascript">
-      var _poll_interval = null;
+      var _poll_interval_id = null;
+      var _current_interval;
 
       $(document).ready(function() {
-        poll_exam_status();
+          set_poll_interval({{default_polling_interval}});
+          poll_exam_status();
       });
+
+      function set_poll_interval(new_polling_interval) {
+
+          // The polling interval will be in seconds, so we need to multiply by 1000 to get the interval in miliseconds.
+          new_pollint_interval = new_polling_interval * 1000;
+          if (new_polling_interval != _current_interval) {
+              clearInterval(_poll_interval_id);
+              _poll_interval_id = setInterval(poll_exam_status, new_polling_interval);
+          }
+
+      }
 
       function poll_exam_status() {
         var url = '{{exam_attempt_status_url}}';
@@ -203,9 +216,9 @@
             // NOTE: This is per the API documentation from SoftwareSecure
             window.external.quitApplication();
           }
-          clearInterval(_poll_interval);
+
           // The polling interval is returned in seconds, so we need to multiply by 1000.
-          _poll_interval = setInterval(poll_exam_status, parseInt(data.polling_interval) * 1000);
+          set_poll_interval(parseInt(data.polling_intervall));
         });
       }
 
