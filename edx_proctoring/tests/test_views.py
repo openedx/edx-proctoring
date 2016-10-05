@@ -837,8 +837,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
                 )
                 self.assertEqual(response.status_code, 200)
 
-    @patch('edx_proctoring.callbacks.get_time_remaining_for_attempt')
-    def test_attempt_status_poll_interval(self, time_remaining_mock):
+    def test_attempt_status_poll_interval(self):
         """
         Test that the poll interval is correct depending on the amount of time remaining.
         """
@@ -850,12 +849,14 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         # When the exam has not reached the concluding interval.
-        time_remaining_mock.return_value = constants.EXAM_CONCLUDING_INTERVAL + 5
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.started
+        exam_attempt.save()
         response = self.client.get(polling_status_endpoint)
         response_data = json.loads(response.content)
         self.assertEqual(response_data['polling_interval'], constants.DEFAULT_CLIENT_POLLING_INTERVAL)
 
-        time_remaining_mock.return_value = constants.EXAM_CONCLUDING_INTERVAL - 5
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
+        exam_attempt.save()
         response = self.client.get(polling_status_endpoint)
         response_data = json.loads(response.content)
         self.assertEqual(response_data['polling_interval'], constants.REDUCED_CLIENT_POLLING_INTERVAL)
