@@ -197,11 +197,12 @@
 
       function set_poll_interval(new_polling_interval) {
 
-          // The polling interval will be in seconds, so we need to multiply by 1000 to get the interval in miliseconds.
-          new_pollint_interval = new_polling_interval * 1000;
+          // The polling interval will be in seconds, so we need to multiply by 1000 to get the interval in milliseconds.
+          new_polling_interval = new_polling_interval * 1000;
           if (new_polling_interval != _current_interval) {
               clearInterval(_poll_interval_id);
               _poll_interval_id = setInterval(poll_exam_status, new_polling_interval);
+              _current_interval = new_polling_interval;
           }
 
       }
@@ -217,8 +218,7 @@
             window.external.quitApplication();
           }
 
-          // The polling interval is returned in seconds, so we need to multiply by 1000.
-          set_poll_interval(parseInt(data.polling_intervall));
+          set_poll_interval(parseInt(data.polling_interval));
         });
       }
 
