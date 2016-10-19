@@ -422,11 +422,17 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                     exam_id=attempt['proctored_exam']['id'],
                     user_id=request.user.id
                 )
-            elif action == 'submit':
+            elif action == 'timed_submit' or action == 'client_close':
                 exam_attempt_id = update_attempt_status(
                     attempt['proctored_exam']['id'],
                     request.user.id,
                     ProctoredExamStudentAttemptStatus.submitted
+                )
+            elif action == 'proctored_submit':
+                exam_attempt_id = update_attempt_status(
+                    attempt['proctored_exam']['id'],
+                    request.user.id,
+                    ProctoredExamStudentAttemptStatus.exam_submitted_client_open
                 )
             elif action == 'click_download_software':
                 exam_attempt_id = update_attempt_status(

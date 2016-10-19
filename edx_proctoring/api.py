@@ -44,7 +44,6 @@ from edx_proctoring.serializers import (
 )
 from edx_proctoring.utils import (
     humanized_time,
-    has_client_app_shutdown,
     emit_event
 )
 
@@ -1619,11 +1618,10 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/ready_to_start.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.error:
         student_view_template = 'practice_exam/error.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.exam_submitted_client_open:
+        student_view_template = 'proctored_exam/waiting_for_app_shutdown.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
-        if has_client_app_shutdown(attempt):
-            student_view_template = 'practice_exam/submitted.html'
-        else:
-            student_view_template = 'proctored_exam/waiting_for_app_shutdown.html'
+        student_view_template = 'practice_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
@@ -1747,14 +1745,13 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/error.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.timed_out:
         raise NotImplementedError('There is no defined rendering for ProctoredExamStudentAttemptStatus.timed_out!')
+    elif attempt_status == ProctoredExamStudentAttemptStatus.exam_submitted_client_open:
+        student_view_template = 'proctored_exam/waiting_for_app_shutdown.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
-        if has_client_app_shutdown(attempt):
-            student_view_template = None if _was_review_status_acknowledged(
-                attempt['is_status_acknowledged'],
-                exam['due_date']
-            ) else 'proctored_exam/submitted.html'
-        else:
-            student_view_template = 'proctored_exam/waiting_for_app_shutdown.html'
+        student_view_template = None if _was_review_status_acknowledged(
+            attempt['is_status_acknowledged'],
+            exam['due_date']
+        ) else 'proctored_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.second_review_required:
         # the student should still see a 'submitted'
         # rendering even if the review needs a 2nd review

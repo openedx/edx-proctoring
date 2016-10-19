@@ -153,6 +153,9 @@ class ProctoredExamStudentAttemptStatus(object):
     # the exam has timed out
     timed_out = 'timed_out'
 
+    # student has finished exam and needs to close client
+    exam_submitted_client_open = 'exam_submitted_client_open'
+
     # the student has submitted the exam for proctoring review
     submitted = 'submitted'
 
@@ -186,7 +189,7 @@ class ProctoredExamStudentAttemptStatus(object):
         """
         return status in [
             cls.declined, cls.timed_out, cls.submitted, cls.second_review_required,
-            cls.verified, cls.rejected, cls.error
+            cls.verified, cls.rejected, cls.error, cls.exam_submitted_client_open,
         ]
 
     @classmethod

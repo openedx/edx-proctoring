@@ -1245,7 +1245,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.download_software_clicked)
 
     @ddt.data(
-        ('submit', ProctoredExamStudentAttemptStatus.submitted),
+        ('proctored_submit', ProctoredExamStudentAttemptStatus.exam_submitted_client_open),
+        ('client_close', ProctoredExamStudentAttemptStatus.submitted),
         ('decline', ProctoredExamStudentAttemptStatus.declined)
     )
     @ddt.unpack

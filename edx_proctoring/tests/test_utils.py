@@ -2,7 +2,11 @@
 File that contains tests for the util methods.
 """
 import unittest
-from edx_proctoring.utils import humanized_time, _emit_event
+import pytz
+from datetime import datetime, timedelta
+
+from edx_proctoring import constants
+from edx_proctoring.utils import humanized_time, _emit_event, has_client_app_shutdown
 
 
 class TestHumanizedTime(unittest.TestCase):
@@ -66,3 +70,18 @@ class TestUtils(unittest.TestCase):
                 'one': 'two'
             }
         )
+
+    def test_has_client_app_shutdown(self):
+        """
+        Check the client app shutdown code.
+        """
+
+        mock_attempt = {'last_poll_timestamp': None}
+        self.assertTrue(has_client_app_shutdown(mock_attempt))
+
+        mock_attempt = {'last_poll_timestamp': datetime.now(pytz.UTC)}
+        self.assertFalse(has_client_app_shutdown(mock_attempt))
+
+        shutdown_timedelta = timedelta(seconds=(constants.SOFTWARE_SECURE_SHUT_DOWN_GRACEPERIOD + 1))
+        mock_attempt['last_poll_timestamp'] = datetime.now(pytz.UTC) - shutdown_timedelta
+        self.assertTrue(has_client_app_shutdown(mock_attempt))
