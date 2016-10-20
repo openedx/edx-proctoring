@@ -17,35 +17,37 @@
       If you have questions about the status of your proctored exam results, contact {{ platform_name }} Support.
     {% endblocktrans %}
   </p>
+
+  <button type="button" name="submit-proctored-exam" class="exam-action-button btn btn-pl-primary btn-base" data-action="client_close" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+    {% blocktrans %}
+      I have closed the proctoring client.
+    {% endblocktrans %}
+  </button>
 </div>
 
 <script type="text/javascript">
-  var _waiting_for_app_timeout = null;
+  $('.exam-action-button').click(
+    function(event) {
 
-  $(document).ready(function(){
-    _waiting_for_app_timeout = setInterval(
-      poll_exam_started,
-      1000
-    );
-  });
+      // cancel any warning messages to end user about leaving timed exam
+      $(window).unbind('beforeunload');
 
-  function poll_exam_started() {
-    var url = '{{ exam_started_poll_url }}' + '?sourceid=app_shutdown';
-    $.ajax(url).success(function(data){
-      if (data.status === 'submitted') {
-        // Do we believe the client proctoring app has shut down
-        // if so, then refresh the page which will expose
-        // other content
-        if (data.client_has_shutdown !== undefined && data.client_has_shutdown) {
-          if (_waiting_for_app_timeout != null) {
-            clearInterval(_waiting_for_app_timeout)
-          }
-          // we've state transitioned, so refresh the page
-          // to reflect the new state (which will expose the test)
+      var action_url = $(this).data('change-state-url');
+      var exam_id = $(this).data('exam-id');
+      var action = $(this).data('action');
+
+      // Update the state of the attempt
+      $.ajax({
+        url: action_url,
+        type: 'PUT',
+        data: {
+          action: action
+        },
+        success: function() {
+          // Reloading page will reflect the new state of the attempt
           location.reload();
         }
-      }
-    });
-  }
-
+      });
+    }
+  );
 </script>

@@ -703,7 +703,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         Test for get_student_view proctored exam which has been submitted.
         """
         exam_attempt = self._create_started_exam_attempt()
-        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.exam_submitted_client_open
         exam_attempt.last_poll_timestamp = datetime.now(pytz.UTC)
         exam_attempt.save()
 
@@ -719,38 +719,39 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         )
         self.assertIn(self.proctored_exam_waiting_for_app_shutdown_msg, rendered_response)
 
-        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
-        with freeze_time(reset_time):
-            rendered_response = get_student_view(
-                user_id=self.user_id,
-                course_id=self.course_id,
-                content_id=self.content_id,
-                context={
-                    'is_proctored': True,
-                    'display_name': self.exam_name,
-                    'default_time_limit_mins': 90
-                }
-            )
-            self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
+        exam_attempt.save()
 
-            # now make sure if this status transitions to 'second_review_required'
-            # the student will still see a 'submitted' message
-            update_attempt_status(
-                exam_attempt.proctored_exam_id,
-                exam_attempt.user_id,
-                ProctoredExamStudentAttemptStatus.second_review_required
-            )
-            rendered_response = get_student_view(
-                user_id=self.user_id,
-                course_id=self.course_id,
-                content_id=self.content_id,
-                context={
-                    'is_proctored': True,
-                    'display_name': self.exam_name,
-                    'default_time_limit_mins': 90
-                }
-            )
-            self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
+
+        # now make sure if this status transitions to 'second_review_required'
+        # the student will still see a 'submitted' message
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            exam_attempt.user_id,
+            ProctoredExamStudentAttemptStatus.second_review_required
+        )
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
 
     def test_get_studentview_submitted_status_with_duedate(self):
         """
@@ -812,7 +813,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         Test for get_student_view practice exam which has been submitted.
         """
         exam_attempt = self._create_started_practice_exam_attempt()
-        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.exam_submitted_client_open
         exam_attempt.last_poll_timestamp = datetime.now(pytz.UTC)
         exam_attempt.save()
 
@@ -828,19 +829,19 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         )
         self.assertIn(self.proctored_exam_waiting_for_app_shutdown_msg, rendered_response)
 
-        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
-        with freeze_time(reset_time):
-            rendered_response = get_student_view(
-                user_id=self.user_id,
-                course_id=self.course_id,
-                content_id=self.content_id_practice,
-                context={
-                    'is_proctored': True,
-                    'display_name': self.exam_name,
-                    'default_time_limit_mins': 90
-                }
-            )
-            self.assertIn(self.practice_exam_submitted_msg, rendered_response)
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
+        exam_attempt.save()
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_practice,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            }
+        )
+        self.assertIn(self.practice_exam_submitted_msg, rendered_response)
 
     @ddt.data(
         ProctoredExamStudentAttemptStatus.created,
