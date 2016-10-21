@@ -85,10 +85,5 @@ urlpatterns = patterns(  # pylint: disable=invalid-name
         callbacks.ExamReviewCallback.as_view(),
         name='edx_proctoring.anonymous.proctoring_review_callback'
     ),
-    url(
-        r'edx_proctoring/proctoring_poll_status/(?P<attempt_code>[-\w]+)$',
-        callbacks.AttemptStatus.as_view(),
-        name='edx_proctoring.anonymous.proctoring_poll_status'
-    ),
     url(r'^', include('rest_framework.urls', namespace='rest_framework'))
 )

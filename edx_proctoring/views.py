@@ -3,8 +3,6 @@ Proctored Exams HTTP-based API endpoints
 """
 
 import logging
-import pytz
-from datetime import datetime
 
 from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
@@ -39,11 +37,9 @@ from edx_proctoring.exceptions import (
     UserNotFoundException,
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException,
-    ProctoredExamIllegalStatusTransition,
     ProctoredExamNotActiveException,
     AllowanceValueNotAllowedException
 )
-from edx_proctoring import constants
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt, ProctoredExam
@@ -52,7 +48,6 @@ from edx_proctoring.utils import (
     AuthenticatedAPIView,
     get_time_remaining_for_attempt,
     humanized_time,
-    has_client_app_shutdown,
 )
 
 ATTEMPTS_PER_PAGE = 25
@@ -328,36 +323,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 )
                 raise ProctoredExamPermissionDenied(err_msg)
 
-            # check if the last_poll_timestamp is not None
-            # and if it is older than SOFTWARE_SECURE_CLIENT_TIMEOUT
-            # then attempt status should be marked as error.
-            last_poll_timestamp = attempt['last_poll_timestamp']
-
-            # if we never heard from the client, then we assume it is shut down
-            attempt['client_has_shutdown'] = last_poll_timestamp is None
-
-            if last_poll_timestamp is not None:
-                # Let's pass along information if we think the SoftwareSecure has completed
-                # a healthy shutdown which is when our attempt is in a 'submitted' status
-                if attempt['status'] == ProctoredExamStudentAttemptStatus.submitted:
-                    attempt['client_has_shutdown'] = has_client_app_shutdown(attempt)
-                else:
-                    # otherwise, let's see if the shutdown happened in error
-                    # e.g. a crash
-                    time_passed_since_last_poll = (datetime.now(pytz.UTC) - last_poll_timestamp).total_seconds()
-                    if time_passed_since_last_poll > constants.SOFTWARE_SECURE_CLIENT_TIMEOUT:
-                        try:
-                            update_attempt_status(
-                                attempt['proctored_exam']['id'],
-                                attempt['user']['id'],
-                                ProctoredExamStudentAttemptStatus.error
-                            )
-                            attempt['status'] = ProctoredExamStudentAttemptStatus.error
-                        except ProctoredExamIllegalStatusTransition:
-                            # don't transition a completed state to an error state
-                            pass
-
-            # add in the computed time remaining as a helper to a client app
+            # add in the computed time remaining as a helper
             time_remaining_seconds = get_time_remaining_for_attempt(attempt)
 
             attempt['time_remaining_seconds'] = time_remaining_seconds

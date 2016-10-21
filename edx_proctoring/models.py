@@ -443,6 +443,8 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # completed_at means when the attempt was 'submitted'
     completed_at = models.DateTimeField(null=True)
 
+    # These two fields have been deprecated.
+    # They were used in client polling that no longer exists.
     last_poll_timestamp = models.DateTimeField(null=True)
     last_poll_ipaddr = models.CharField(max_length=32, null=True)
 
@@ -558,6 +560,8 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     # this ID might point to a record that is in the History table
     review_policy_id = models.IntegerField(null=True)
 
+    # These two fields have been deprecated.
+    # They were used in client polling that no longer exists.
     last_poll_timestamp = models.DateTimeField(null=True)
     last_poll_ipaddr = models.CharField(max_length=32, null=True)
 
