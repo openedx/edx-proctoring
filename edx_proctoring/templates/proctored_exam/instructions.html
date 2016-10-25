@@ -79,12 +79,13 @@
 </div>
 
 <div class="footer-sequence border-b-0 padding-b-0">
-  {% if not is_sample_attempt %}
-  <p class="proctored-exam-instruction">
-      {% trans "Don't want to take this exam with online proctoring?" %}<a class="proctored-decline-exam" href='#' data-action="decline" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
-        {% trans "Take this exam as an open exam instead." %}
+  {% if not is_sample_attempt and allow_proctoring_opt_out %}
+    <p class="proctored-exam-instruction">
+      <a href="#" class="proctored-decline-exam" data-action="decline" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
+        {% trans "Take this exam without proctoring." %}
       </a>
-  </p>
+      {% trans "Doing so means that you are no longer eligible for academic credit." %}
+    </p>
   {% endif %}
 </div>
 {% include 'proctored_exam/footer.html' %}
