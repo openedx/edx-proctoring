@@ -736,94 +736,11 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertIsNone(response_data['completed_at'])
         self.assertEqual(response_data['time_remaining_seconds'], 0)
 
-    def test_attempt_status_error(self):
-        """
-        Test to confirm that attempt status is marked as error, because client
-        has stopped sending it's polling timestamp
-        """
-        # Create an exam.
-        proctored_exam = ProctoredExam.objects.create(
-            course_id='a/b/c',
-            content_id='test_content',
-            exam_name='Test Exam',
-            external_id='123aXqe3',
-            time_limit_mins=90
-        )
-        attempt_data = {
-            'exam_id': proctored_exam.id,
-            'external_id': proctored_exam.external_id,
-            'start_clock': True,
-        }
-        response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
-            attempt_data
-        )
-
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        attempt_id = response_data['exam_attempt_id']
-        self.assertEqual(attempt_id, 1)
-
-        response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
-        )
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        self.assertEqual(response_data['status'], ProctoredExamStudentAttemptStatus.started)
-        attempt_code = response_data['attempt_code']
-
-        # test the polling callback point
-        response = self.client.get(
-            reverse(
-                'edx_proctoring.anonymous.proctoring_poll_status',
-                args=[attempt_code]
-            )
-        )
-        self.assertEqual(response.status_code, 200)
-
-        # now reset the time to 2 minutes in the future.
-        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
-        with freeze_time(reset_time):
-            response = self.client.get(
-                reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
-            )
-            self.assertEqual(response.status_code, 200)
-            response_data = json.loads(response.content)
-            self.assertEqual(response_data['status'], ProctoredExamStudentAttemptStatus.error)
-
-    def test_attempt_status_waiting_for_app_shutdown(self):
-        """
-        Test to confirm that attempt status is submitted when proctored client is shutdown
-        """
-
-        exam_attempt = self._create_exam_attempt()
-        exam_attempt.last_poll_timestamp = datetime.now(pytz.UTC)
-        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
-        exam_attempt.save()
-
-        response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[exam_attempt.id])
-        )
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        self.assertFalse(response_data['client_has_shutdown'])
-
-        # now reset the time to 2 minutes in the future.
-        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
-        with freeze_time(reset_time):
-            response = self.client.get(
-                reverse('edx_proctoring.proctored_exam.attempt', args=[exam_attempt.id])
-            )
-            self.assertEqual(response.status_code, 200)
-            response_data = json.loads(response.content)
-            self.assertTrue(response_data['client_has_shutdown'])
-
     def test_attempt_status_for_exception(self):
         """
         Test to confirm that exception will not effect the API call
         """
         exam_attempt = self._create_exam_attempt()
-        exam_attempt.last_poll_timestamp = datetime.now(pytz.UTC)
         exam_attempt.status = ProctoredExamStudentAttemptStatus.verified
         exam_attempt.save()
 
@@ -869,16 +786,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertEqual(response_data['status'], ProctoredExamStudentAttemptStatus.started)
-        attempt_code = response_data['attempt_code']
-
-        # test the polling callback point
-        response = self.client.get(
-            reverse(
-                'edx_proctoring.anonymous.proctoring_poll_status',
-                args=[attempt_code]
-            )
-        )
-        self.assertEqual(response.status_code, 200)
 
         # now switched to a submitted state
         update_attempt_status(
@@ -900,77 +807,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
                 response_data['status'],
                 ProctoredExamStudentAttemptStatus.submitted
             )
-
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.created,
-        ProctoredExamStudentAttemptStatus.ready_to_start,
-        ProctoredExamStudentAttemptStatus.started,
-        ProctoredExamStudentAttemptStatus.ready_to_submit
-    )
-    def test_attempt_callback_timeout(self, running_status):
-        """
-        Ensures that the polling from the client will cause the
-        server to transition to timed_out if the user runs out of time
-        """
-
-        # Create an exam.
-        proctored_exam = ProctoredExam.objects.create(
-            course_id='a/b/c',
-            content_id='test_content',
-            exam_name='Test Exam',
-            external_id='123aXqe3',
-            time_limit_mins=90
-        )
-        attempt_data = {
-            'exam_id': proctored_exam.id,
-            'external_id': proctored_exam.external_id,
-            'start_clock': True,
-        }
-        response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
-            attempt_data
-        )
-
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        attempt_id = response_data['exam_attempt_id']
-        self.assertEqual(attempt_id, 1)
-
-        response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
-        )
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        self.assertEqual(response_data['status'], 'started')
-        attempt_code = response_data['attempt_code']
-
-        # now set status to what we want per DDT
-        update_attempt_status(proctored_exam.id, self.user.id, running_status)
-
-        # test the polling callback point
-        response = self.client.get(
-            reverse(
-                'edx_proctoring.anonymous.proctoring_poll_status',
-                args=[attempt_code]
-            )
-        )
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        self.assertEqual(response_data['status'], running_status)
-
-        # set time to be in future
-        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=180)
-        with freeze_time(reset_time):
-            # Now the callback should transition us away from started
-            response = self.client.get(
-                reverse(
-                    'edx_proctoring.anonymous.proctoring_poll_status',
-                    args=[attempt_code]
-                )
-            )
-            self.assertEqual(response.status_code, 200)
-            response_data = json.loads(response.content)
-            self.assertEqual(response_data['status'], 'submitted')
 
     def test_attempt_with_duedate_expired(self):
         """
@@ -1852,17 +1688,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], 'ready_to_start')
 
-        # test the polling callback point
-        response = self.client.get(
-            reverse(
-                'edx_proctoring.anonymous.proctoring_poll_status',
-                args=[attempt_code]
-            )
-        )
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        self.assertEqual(response_data['status'], 'ready_to_start')
-
     def test_bad_exam_code_callback(self):
         """
         Assert that we get a 404 when doing a callback on an exam code that does not exist
@@ -1870,15 +1695,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response = self.client.get(
             reverse(
                 'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
-                args=['foo']
-            )
-        )
-        self.assertEqual(response.status_code, 404)
-
-        # test the polling callback point as well
-        response = self.client.get(
-            reverse(
-                'edx_proctoring.anonymous.proctoring_poll_status',
                 args=['foo']
             )
         )

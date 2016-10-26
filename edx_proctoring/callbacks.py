@@ -6,10 +6,6 @@ import logging
 from django.template import Context, loader
 from django.conf import settings
 from django.http import HttpResponse
-import pytz
-from datetime import datetime
-from ipware.ip import get_ip
-from django.core.urlresolvers import reverse
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -18,7 +14,6 @@ from rest_framework.negotiation import BaseContentNegotiation
 from edx_proctoring.api import (
     get_exam_attempt_by_code,
     mark_exam_attempt_as_ready,
-    update_exam_attempt
 )
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import ProctoredBaseException
@@ -56,15 +51,9 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     log.info("Exam %r has been marked as ready", attempt['proctored_exam']['id'])
     template = loader.get_template('proctored_exam/proctoring_launch_callback.html')
 
-    poll_url = reverse(
-        'edx_proctoring.anonymous.proctoring_poll_status',
-        args=[attempt_code]
-    )
-
     return HttpResponse(
         template.render(
             Context({
-                'exam_attempt_status_url': poll_url,
                 'platform_name': settings.PLATFORM_NAME,
                 'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {})
             })
@@ -124,42 +113,5 @@ class ExamReviewCallback(APIView):
 
         return Response(
             data='OK',
-            status=200
-        )
-
-
-class AttemptStatus(APIView):
-    """
-    This endpoint is called by a 3rd party proctoring review service to determine
-    status of an exam attempt.
-
-    IMPORTANT: This is an unauthenticated endpoint, so be VERY CAREFUL about extending
-    this endpoint
-    """
-
-    def get(self, request, attempt_code):  # pylint: disable=unused-argument
-        """
-        Returns the status of an exam attempt. Given that this is an unauthenticated
-        caller, we will only return the status string, no additional information
-        about the exam
-        """
-
-        attempt = get_exam_attempt_by_code(attempt_code)
-        ip_address = get_ip(request)
-        timestamp = datetime.now(pytz.UTC)
-        if not attempt:
-            return HttpResponse(
-                content='You have entered an exam code that is not valid.',
-                status=404
-            )
-
-        update_exam_attempt(attempt['id'], last_poll_timestamp=timestamp, last_poll_ipaddr=ip_address)
-
-        return Response(
-            data={
-                # IMPORTANT: Don't add more information to this as it is an
-                # unauthenticated endpoint
-                'status': attempt['status'],
-            },
             status=200
         )
