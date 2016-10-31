@@ -26,23 +26,16 @@
     {% endfor %}
     </ol>
   </p>
-  <p>
-    {% blocktrans %}
-    Due to unsatisfied prerequisites, you can only take this exam without proctoring.
-    {% endblocktrans %}
-  </p>
 
-  <button class="gated-sequence start-timed-exam" data-attempt-proctored=false>
-    <a>
-      {% trans "Take this exam without proctoring." %}
-    </a>
-      <i class="fa fa-arrow-circle-right"></i>
+  {% if allow_proctoring_opt_out %}
     <p>
       {% blocktrans %}
-        I understand that I am not eligible for academic credit.
+        Due to unsatisfied prerequisites, you can only take this exam without proctoring.
       {% endblocktrans %}
     </p>
-  </button>
+
+    {% include 'proctored_exam/proctoring_opt_out_button.html' %}
+  {% endif %}
   <p>
     {% blocktrans %}
       If you have questions about the status of your requirements for course credit, contact {{ platform_name }} Support.

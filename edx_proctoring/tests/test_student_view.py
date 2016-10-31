@@ -53,38 +53,85 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
         self.exam_time_error_msg = 'A technical error has occurred with your proctored exam'
         self.chose_proctored_exam_msg = 'Follow these steps to set up and start your proctored exam'
-        self.proctored_exam_optout_msg = 'Take this exam as an open exam instead'
+        self.proctored_exam_optout_msg = 'Take this exam without proctoring'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
-        self.proctored_exam_verified_msg = 'Your proctoring session was reviewed and passed all requirements'
-        self.proctored_exam_rejected_msg = 'Your proctoring session was reviewed and did not pass requirements'
-        self.start_a_practice_exam_msg = 'Get familiar with proctoring for real exams later in the course'
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
-        self.practice_exam_created_msg = 'Follow these steps to set up and start your proctored exam'
-        self.practice_exam_completion_msg = 'Are you sure you want to end your proctored exam'
+        self.take_exam_without_proctoring_msg = 'Take this exam without proctoring'
         self.ready_to_start_msg = 'Follow these instructions'
-        self.practice_exam_failed_msg = 'There was a problem with your practice proctoring session'
         self.footer_msg = 'About Proctored Exams'
         self.timed_footer_msg = 'Can I request additional time to complete my exam?'
+
+    def _render_exam(self, content_id, context_overrides=None):
+        """
+        Renders a test exam.
+        """
+        exam = get_exam_by_id(content_id)
+        context = {
+            'is_proctored': True,
+            'allow_proctoring_opt_out': True,
+            'display_name': self.exam_name,
+            'default_time_limit_mins': 90,
+            'is_practice_exam': False,
+            'credit_state': {
+                'enrollment_mode': 'verified',
+                'credit_requirement_status': [],
+            },
+            'verification_status': 'approved',
+            'verification_url': '/reverify',
+        }
+        if context_overrides:
+            context.update(context_overrides)
+        return get_student_view(
+            user_id=self.user_id,
+            course_id=exam['course_id'],
+            content_id=exam['content_id'],
+            context=context,
+        )
+
+    def render_proctored_exam(self, context_overrides=None):
+        """
+        Renders a test proctored exam.
+        """
+        exam_context_overrides = {
+            'is_proctored': True,
+            'allow_proctoring_opt_out': True,
+            'is_practice_exam': False,
+            'credit_state': {
+                'enrollment_mode': 'verified',
+                'credit_requirement_status': [],
+            },
+            'verification_status': 'approved',
+            'verification_url': '/reverify',
+        }
+        if context_overrides:
+            exam_context_overrides.update(context_overrides)
+        return self._render_exam(
+            self.proctored_exam_id,
+            context_overrides=exam_context_overrides
+        )
+
+    def render_practice_exam(self, context_overrides=None):
+        """
+        Renders a test practice exam.
+        """
+        exam_context_overrides = {
+            'is_proctored': True,
+            'is_practice_exam': True,
+        }
+        if context_overrides:
+            exam_context_overrides.update(context_overrides)
+        return self._render_exam(
+            self.practice_exam_id,
+            context_overrides=exam_context_overrides
+        )
 
     def test_get_student_view(self):
         """
         Test for get_student_view prompting the user to take the exam
         as a timed exam or a proctored exam.
         """
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'hide_after_due': False,
-                'verification_status': 'approved',
-                'verification_url': '/reverify',
-            }
-        )
+        rendered_response = self.render_proctored_exam()
         self.assertIn(
             'data-exam-id="{proctored_exam_id}"'.format(proctored_exam_id=self.proctored_exam_id),
             rendered_response
@@ -92,19 +139,11 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.assertIn(self.start_an_exam_msg.format(exam_name=self.exam_name), rendered_response)
 
         # try practice exam variant
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id + 'foo',
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'is_practice_exam': True,
-                'hide_after_due': False,
-            }
+        rendered_response = self.render_practice_exam()
+        self.assertIn(
+            'Get familiar with proctoring for real exams later in the course'.format(exam_name=self.exam_name),
+            rendered_response
         )
-        self.assertIn(self.start_a_practice_exam_msg.format(exam_name=self.exam_name), rendered_response)
 
     def test_get_honor_view_with_practice_exam(self):
         """
@@ -112,20 +151,11 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         track for a practice exam, this should return not None, meaning
         student will see proctored content
         """
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id_practice,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'credit_state': {
-                    'enrollment_mode': 'honor'
-                },
-                'is_practice_exam': True
-            }
-        )
+        rendered_response = self.render_practice_exam({
+            'credit_state': {
+                'enrollment_mode': 'honor',
+            },
+        })
         self.assertIsNotNone(rendered_response)
 
     def test_get_honor_view(self):
@@ -133,20 +163,11 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         Test for get_student_view prompting when the student is enrolled in non-verified
         track, this should return None
         """
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'credit_state': {
-                    'enrollment_mode': 'honor'
-                },
-                'is_practice_exam': False
-            }
-        )
+        rendered_response = self.render_proctored_exam({
+            'credit_state': {
+                'enrollment_mode': 'honor'
+            },
+        })
         self.assertIsNone(rendered_response)
 
     @ddt.data(
@@ -161,29 +182,48 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         This test asserts that the correct id verification message is shown
         to the user when they choose to take a proctored exam.
         """
-
         self._create_unstarted_exam_attempt()
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'is_practice_exam': False,
-                'credit_state': {
-                    'enrollment_mode': 'verified',
-                    'credit_requirement_status': [
-                    ]
-                },
-                'verification_status': verification_status,
-                'verification_url': '/reverify',
-            }
-        )
-
+        rendered_response = self.render_proctored_exam({
+            'verification_status': verification_status,
+        })
         self.assertIn(expected_message, rendered_response)
+
+    def test_proctored_only_entrance(self):
+        """
+        This test verifies that learners are not given the option to take
+        an exam without proctoring if allow_proctoring_opt_out is false.
+        """
+        rendered_response = self.render_proctored_exam({
+            'allow_proctoring_opt_out': False,
+        })
+        self.assertNotIn(self.take_exam_without_proctoring_msg, rendered_response)
+
+    @ddt.data(
+        'pending',
+        'failed',
+    )
+    def test_proctored_only_with_prereqs(self, status):
+        """
+        This test verifies that learners are not given the option to take
+        an exam without proctoring when they have prerequisites and when
+        the setting allow_proctoring_opt_out is false.
+        """
+        rendered_response = self.render_proctored_exam({
+            'allow_proctoring_opt_out': False,
+            'credit_state': {
+                'enrollment_mode': 'verified',
+                'credit_requirement_status': [
+                    {
+                        'namespace': 'proctored_exam',
+                        'name': 'foo',
+                        'display_name': 'Mock Requirement',
+                        'status': status,
+                        'order': 0
+                    }
+                ]
+            },
+        })
+        self.assertNotIn(self.take_exam_without_proctoring_msg, rendered_response)
 
     @ddt.data(
         ('reverification', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
@@ -197,7 +237,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         ('proctored_exam', 'satisfied', 'To be eligible to earn credit for this course', False),
         ('proctored_exam', 'declined', None, False),
         ('grade', 'failed', 'To be eligible to earn credit for this course', False),
-        # this is nonesense, but let's double check it
+        # this is nonsense, but let's double check it
         ('grade', 'declined', 'To be eligible to earn credit for this course', False),
     )
     @ddt.unpack
@@ -209,34 +249,21 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         - Verified student has not completed all 'reverification' requirements
         """
 
-        exam = get_exam_by_id(self.proctored_exam_id)
-
         # user hasn't attempted reverifications
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=exam['course_id'],
-            content_id=exam['content_id'],
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'is_practice_exam': False,
-                'credit_state': {
-                    'enrollment_mode': 'verified',
-                    'credit_requirement_status': [
-                        {
-                            'namespace': namespace,
-                            'name': 'foo',
-                            'display_name': 'Foo Requirement',
-                            'status': req_status,
-                            'order': 0
-                        }
-                    ]
-                },
-                'verification_status': 'approved',
-                'verification_url': '/reverify',
-            }
-        )
+        rendered_response = self.render_proctored_exam({
+            'credit_state': {
+                'enrollment_mode': 'verified',
+                'credit_requirement_status': [
+                    {
+                        'namespace': namespace,
+                        'name': 'foo',
+                        'display_name': 'Foo Requirement',
+                        'status': req_status,
+                        'order': 0
+                    }
+                ]
+            },
+        })
 
         if expected_content:
             self.assertIn(expected_content, rendered_response)
@@ -245,7 +272,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
 
         if req_status == 'declined' and not expected_content:
             # also we should have auto-declined if a pre-requisite was declined
-            attempt = get_exam_attempt(exam['id'], self.user_id)
+            attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
             self.assertIsNotNone(attempt)
             self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
 
@@ -358,48 +385,32 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             )
         )
 
-    def test_get_studentview_unstarted_exam(self):
+    @ddt.data(False, True)
+    def test_get_studentview_unstarted_exam(self, allow_proctoring_opt_out):
         """
         Test for get_student_view proctored exam which has not started yet.
         """
 
         self._create_unstarted_exam_attempt()
 
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'verification_status': 'approved',
-                'verification_url': '/reverify',
-            }
-        )
+        # Verify that the option to skip proctoring is shown if allowed
+        rendered_response = self.render_proctored_exam({
+            'allow_proctoring_opt_out': allow_proctoring_opt_out,
+        })
         self.assertIn(self.chose_proctored_exam_msg, rendered_response)
-        self.assertIn(self.proctored_exam_optout_msg, rendered_response)
+        if allow_proctoring_opt_out:
+            self.assertIn(self.proctored_exam_optout_msg, rendered_response)
+        else:
+            self.assertNotIn(self.proctored_exam_optout_msg, rendered_response)
 
-        # now make sure content remains the same if
-        # the status transitions to 'download_software_clicked'
+        # Now make sure content remains the same if the status transitions
+        # to 'download_software_clicked'.
         update_attempt_status(
             self.proctored_exam_id,
             self.user_id,
             ProctoredExamStudentAttemptStatus.download_software_clicked
         )
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90,
-                'verification_status': 'approved',
-                'verification_url': '/reverify',
-            }
-        )
+        rendered_response = self.render_proctored_exam()
         self.assertIn(self.chose_proctored_exam_msg, rendered_response)
         self.assertIn(self.proctored_exam_optout_msg, rendered_response)
 
@@ -407,20 +418,8 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         """
         Test for get_student_view Practice exam which has not started yet.
         """
-
         self._create_unstarted_exam_attempt(is_practice=True)
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id_practice,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'is_practice_exam': True,
-                'default_time_limit_mins': 90
-            }
-        )
+        rendered_response = self.render_practice_exam()
         self.assertIn(self.chose_proctored_exam_msg, rendered_response)
         self.assertNotIn(self.proctored_exam_optout_msg, rendered_response)
 
@@ -432,16 +431,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         attempt_obj.status = ProctoredExamStudentAttemptStatus.declined
         attempt_obj.save()
 
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
+        rendered_response = self.render_proctored_exam()
         self.assertIsNone(rendered_response)
 
     def test_get_studentview_ready(self):
@@ -453,61 +443,29 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt.status = ProctoredExamStudentAttemptStatus.ready_to_start
         exam_attempt.save()
 
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
+        rendered_response = self.render_proctored_exam()
         self.assertIn(self.ready_to_start_msg, rendered_response)
 
     def test_get_studentview_started_exam(self):
         """
         Test for get_student_view proctored exam which has started.
         """
-
         self._create_started_exam_attempt()
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
+        rendered_response = self.render_proctored_exam()
         self.assertIsNone(rendered_response)
 
     def test_get_studentview_started_practice_exam(self):
         """
         Test for get_student_view practice proctored exam which has started.
         """
-
         self._create_started_practice_exam_attempt()
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id_practice,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
+        rendered_response = self.render_practice_exam()
         self.assertIsNone(rendered_response)
 
     def test_get_studentview_started_timed_exam(self):
         """
         Test for get_student_view timed exam which has started.
         """
-
         self._create_started_exam_attempt(is_proctored=False)
 
         rendered_response = get_student_view(
@@ -686,16 +644,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         reset_time = datetime.now(pytz.UTC) + timedelta(days=1)
         with freeze_time(reset_time):
             with self.assertRaises(NotImplementedError):
-                get_student_view(
-                    user_id=self.user_id,
-                    course_id=self.course_id,
-                    content_id=self.content_id,
-                    context={
-                        'is_proctored': True,
-                        'display_name': self.exam_name,
-                        'default_time_limit_mins': 90
-                    }
-                )
+                self.render_proctored_exam()
 
     def test_get_studentview_submitted_status(self):
         """
@@ -705,16 +654,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
         exam_attempt.save()
 
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
+        rendered_response = self.render_proctored_exam()
         self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
 
         # now make sure if this status transitions to 'second_review_required'
@@ -724,16 +664,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             exam_attempt.user_id,
             ProctoredExamStudentAttemptStatus.second_review_required
         )
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
+        rendered_response = self.render_proctored_exam()
         self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
 
     def test_get_studentview_submitted_status_with_duedate(self):
@@ -798,17 +729,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
         exam_attempt.save()
 
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id_practice,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
-
+        rendered_response = self.render_practice_exam()
         self.assertIn(self.practice_exam_submitted_msg, rendered_response)
 
     @ddt.data(
@@ -822,18 +743,8 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt = self._create_started_practice_exam_attempt()
         exam_attempt.status = status
         exam_attempt.save()
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id_practice,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
-        self.assertIn(self.practice_exam_created_msg, rendered_response)
+        rendered_response = self.render_practice_exam()
+        self.assertIn('Follow these steps to set up and start your proctored exam', rendered_response)
 
     def test_get_studentview_ready_to_start_status_practiceexam(self):
         """
@@ -842,17 +753,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt = self._create_started_practice_exam_attempt()
         exam_attempt.status = ProctoredExamStudentAttemptStatus.ready_to_start
         exam_attempt.save()
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id_practice,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
+        rendered_response = self.render_practice_exam()
         self.assertIn(self.ready_to_start_msg, rendered_response)
 
     def test_get_studentview_complete_status_practiceexam(self):
@@ -862,78 +763,33 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt = self._create_started_practice_exam_attempt()
         exam_attempt.status = ProctoredExamStudentAttemptStatus.ready_to_submit
         exam_attempt.save()
+        rendered_response = self.render_practice_exam()
+        self.assertIn('Are you sure you want to end your proctored exam', rendered_response)
 
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id_practice,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
-        self.assertIn(self.practice_exam_completion_msg, rendered_response)
-
-    def test_get_studentview_rejected_status(self):
+    @ddt.data(
+        (
+            ProctoredExamStudentAttemptStatus.rejected,
+            'Your proctoring session was reviewed and did not pass requirements'
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.verified,
+            'Your proctoring session was reviewed and passed all requirements'
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.ready_to_submit,
+            'Are you sure you want to end your proctored exam'
+        ),
+    )
+    @ddt.unpack
+    def test_get_studentview_status_message(self, status, expected_message):
         """
-        Test for get_student_view proctored exam which has been rejected.
-        """
-        exam_attempt = self._create_started_exam_attempt()
-        exam_attempt.status = ProctoredExamStudentAttemptStatus.rejected
-        exam_attempt.save()
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
-        self.assertIn(self.proctored_exam_rejected_msg, rendered_response)
-
-    def test_get_studentview_verified_status(self):
-        """
-        Test for get_student_view proctored exam which has been verified.
+        Test for get_student_view proctored exam messages for each state
         """
         exam_attempt = self._create_started_exam_attempt()
-        exam_attempt.status = ProctoredExamStudentAttemptStatus.verified
+        exam_attempt.status = status
         exam_attempt.save()
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
-        self.assertIn(self.proctored_exam_verified_msg, rendered_response)
-
-    def test_get_studentview_completed_status(self):
-        """
-        Test for get_student_view proctored exam which has been completed.
-        """
-        exam_attempt = self._create_started_exam_attempt()
-        exam_attempt.status = ProctoredExamStudentAttemptStatus.ready_to_submit
-        exam_attempt.save()
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
-        self.assertIn(self.proctored_exam_completed_msg, rendered_response)
+        rendered_response = self.render_proctored_exam()
+        self.assertIn(expected_message, rendered_response)
 
     @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
     def test_get_studentview_expired(self):
@@ -945,22 +801,12 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self._create_started_exam_attempt(started_at=datetime.now(pytz.UTC).replace(year=2010))
 
         with self.assertRaises(NotImplementedError):
-            get_student_view(
-                user_id=self.user_id,
-                course_id=self.course_id,
-                content_id=self.content_id,
-                context={
-                    'is_proctored': True,
-                    'display_name': self.exam_name,
-                    'default_time_limit_mins': 90
-                }
-            )
+            self.render_proctored_exam()
 
     def test_get_studentview_erroneous_exam(self):
         """
         Test for get_student_view proctored exam which has exam status error.
         """
-
         ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=self.proctored_exam_id,
             user_id=self.user_id,
@@ -969,39 +815,19 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             allowed_time_limit_mins=10,
             status='error'
         )
-
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 10
-            }
-        )
+        rendered_response = self.render_proctored_exam()
         self.assertIn(self.exam_time_error_msg, rendered_response)
 
     def test_get_studentview_erroneous_practice_exam(self):
         """
         Test for get_student_view practice exam which has exam status error.
         """
-
         exam_attempt = self._create_started_practice_exam_attempt()
         exam_attempt.status = ProctoredExamStudentAttemptStatus.error
         exam_attempt.save()
 
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id_practice,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
-        self.assertIn(self.practice_exam_failed_msg, rendered_response)
+        rendered_response = self.render_practice_exam()
+        self.assertIn('There was a problem with your practice proctoring session', rendered_response)
 
     def test_get_studentview_unstarted_timed_exam(self):
         """
@@ -1055,14 +881,8 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.assertNotIn(self.start_an_exam_msg.format(exam_name=self.exam_name), rendered_response)
 
     @ddt.data(
-        (
-            ProctoredExamStudentAttemptStatus.ready_to_submit,
-            'Are you sure that you want to submit your timed exam?'
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.submitted,
-            'You have submitted your timed exam'
-        ),
+        (ProctoredExamStudentAttemptStatus.ready_to_submit, 'Are you sure that you want to submit your timed exam?'),
+        (ProctoredExamStudentAttemptStatus.submitted, 'You have submitted your timed exam'),
     )
     @ddt.unpack
     def test_get_studentview_completed_timed_exam(self, status, expected_content):
@@ -1142,31 +962,13 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             exam_attempt.status = status
             exam_attempt.save()
 
-        rendered_response = get_student_view(
-            user_id=self.user_id,
-            course_id=self.course_id,
-            content_id=self.content_id,
-            context={
-                'is_proctored': True,
-                'display_name': self.exam_name,
-                'default_time_limit_mins': 90
-            }
-        )
+        rendered_response = self.render_proctored_exam()
         self.assertIsNotNone(rendered_response)
         if status == ProctoredExamStudentAttemptStatus.submitted:
 
             reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
             with freeze_time(reset_time):
-                rendered_response = get_student_view(
-                    user_id=self.user_id,
-                    course_id=self.course_id,
-                    content_id=self.content_id,
-                    context={
-                        'is_proctored': True,
-                        'display_name': self.exam_name,
-                        'default_time_limit_mins': 90
-                    }
-                )
+                rendered_response = self.render_proctored_exam()
                 self.assertIn(self.footer_msg, rendered_response)
         else:
             self.assertIn(self.footer_msg, rendered_response)

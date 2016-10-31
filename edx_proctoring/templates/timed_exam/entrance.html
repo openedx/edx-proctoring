@@ -16,12 +16,12 @@
     </strong>
     {% trans "you will have "%} {{total_time|lower}} {% trans " to complete and submit the exam." %}
   </p>
-  <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
+  <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}">
     <a>
       {% blocktrans %}
         I am ready to start this timed exam.
       {% endblocktrans %}
-      <i class="fa fa-arrow-circle-right"></i>
+      <span class="icon fa fa-arrow-circle-right" aria-hidden="true"></span>
     </a>
   </button>
 </div>

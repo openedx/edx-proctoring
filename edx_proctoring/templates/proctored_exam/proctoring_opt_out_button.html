@@ -1,0 +1,13 @@
+{% load i18n %}
+
+{% if allow_proctoring_opt_out %}
+  <button class="gated-sequence start-timed-exam" data-attempt-proctored=false>
+    {% trans "Take this exam without proctoring." %}
+    <span class="icon fa fa-arrow-circle-right" aria-hidden="true"></span>
+    <p>
+      {% blocktrans %}
+        I am not interested in academic credit.
+      {% endblocktrans %}
+    </p>
+  </button>
+{% endif %}

@@ -32,17 +32,9 @@
     {% endblocktrans %}
   </p>
 
-  <button class="gated-sequence start-timed-exam" data-attempt-proctored=false>
-    <a>
-      {% trans "Take this exam without proctoring." %}
-    </a>
-      <i class="fa fa-arrow-circle-right"></i>
-    <p>
-      {% blocktrans %}
-        I am not interested in academic credit.
-      {% endblocktrans %}
-    </p>
-  </button>
+  {% if allow_proctoring_opt_out %}
+    {% include 'proctored_exam/proctoring_opt_out_button.html' %}
+  {% endif %}
 </div>
 {% include 'proctored_exam/confirm-decline.html' %}
 {% include 'proctored_exam/footer.html' %}

@@ -11,7 +11,7 @@
       on your grade in the course.
     {% endblocktrans %}
   </p>
-  <button class="gated-sequence start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
+  <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
       {% trans "Continue to my practice exam" %}
     <p>
       {% blocktrans %}
@@ -19,7 +19,7 @@
       {% endblocktrans %}
     </p>
 
-    <i class="fa fa-arrow-circle-right practice-exam start-timed-exam" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></i>
+    <span class="icon fa fa-arrow-circle-right" aria-hidden="true" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></span>
   </button>
 </div>
 {% include 'proctored_exam/footer.html' %}
