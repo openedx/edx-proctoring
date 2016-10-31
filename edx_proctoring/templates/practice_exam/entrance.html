@@ -12,14 +12,13 @@
     {% endblocktrans %}
   </p>
   <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-      {% trans "Continue to my practice exam" %}
+    {% trans "Continue to my practice exam" %}
+    <span class="icon fa fa-arrow-circle-right" aria-hidden="true" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></span>
     <p>
       {% blocktrans %}
         You will be guided through steps to set up online proctoring software and to perform various checks.
       {% endblocktrans %}
     </p>
-
-    <span class="icon fa fa-arrow-circle-right" aria-hidden="true" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></span>
   </button>
 </div>
 {% include 'proctored_exam/footer.html' %}
