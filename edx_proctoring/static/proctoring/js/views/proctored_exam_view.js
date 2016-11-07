@@ -20,6 +20,7 @@ var edx = edx || {};
             this.secondsLeft = 0;
             /* give an extra 5 seconds where the timer holds at 00:00 before page refreshes */
             this.grace_period_secs = 5;
+            this.poll_interval = 60;
             this.first_time_rendering = true;
 
             // we need to keep a copy here because the model will
@@ -136,7 +137,7 @@ var edx = edx || {};
         updateRemainingTime: function (self) {
             self.timerTick ++;
             self.secondsLeft --;
-            if (self.timerTick % 30 === 0){
+            if (self.timerTick % self.poll_interval === 0) {
                 var url = self.model.url + '/' + self.model.get('attempt_id');
                 var queryString = '?sourceid=in_exam&proctored=' + self.model.get('taking_as_proctored');
                 $.ajax(url + queryString).success(function(data) {

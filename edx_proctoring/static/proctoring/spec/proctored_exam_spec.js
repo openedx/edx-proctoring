@@ -75,7 +75,7 @@ describe('ProctoredExamView', function () {
                 })
             ]
         );
-        this.proctored_exam_view.timerTick = 29; // to make the ajax call.
+        this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval-1; // to make the ajax call.
         var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         this.server.respond();
