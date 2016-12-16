@@ -229,16 +229,16 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         ('reverification', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('reverification', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('reverification', 'failed', 'You did not satisfy the following prerequisites', True),
-        ('reverification', 'satisfied', 'To be eligible to earn credit for this course', False),
+        ('reverification', 'satisfied', 'To be eligible for course credit', False),
         ('reverification', 'declined', None, False),
         ('proctored_exam', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('proctored_exam', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('proctored_exam', 'failed', 'You did not satisfy the following prerequisites', True),
-        ('proctored_exam', 'satisfied', 'To be eligible to earn credit for this course', False),
+        ('proctored_exam', 'satisfied', 'To be eligible for course credit', False),
         ('proctored_exam', 'declined', None, False),
-        ('grade', 'failed', 'To be eligible to earn credit for this course', False),
+        ('grade', 'failed', 'To be eligible for course credit', False),
         # this is nonsense, but let's double check it
-        ('grade', 'declined', 'To be eligible to earn credit for this course', False),
+        ('grade', 'declined', 'To be eligible for course credit', False),
     )
     @ddt.unpack
     def test_prereq_scenarios(self, namespace, req_status, expected_content, should_see_prereq):
