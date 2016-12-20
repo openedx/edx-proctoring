@@ -3,6 +3,8 @@
 All tests for proctored exam emails.
 """
 
+from __future__ import absolute_import
+
 import ddt
 from django.core import mail
 from mock import patch
@@ -117,7 +119,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         ProctoredExamStudentAttemptStatus.timed_out,
         ProctoredExamStudentAttemptStatus.error
     )
-    @patch.dict('settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
+    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
     def test_not_send_email(self, status):
         """
         Assert that email is not sent on the following statuses of proctoring attempt.

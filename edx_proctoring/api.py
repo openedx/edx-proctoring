@@ -4,13 +4,14 @@
 In-Proc API (aka Library) for the edx_proctoring subsystem. This is not to be confused with a HTTP REST
 API which is in the views.py file, per edX coding standards
 """
-import pytz
-import uuid
-import logging
+from __future__ import absolute_import
 
 from datetime import datetime, timedelta
+import logging
+import uuid
+import pytz
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext_noop
 from django.conf import settings
 from django.template import Context, loader
 from django.core.urlresolvers import reverse, NoReverseMatch
@@ -1280,47 +1281,47 @@ def _resolve_prerequisite_links(exam, prerequisites):
 
 STATUS_SUMMARY_MAP = {
     '_default': {
-        'short_description': _('Taking As Proctored Exam'),
+        'short_description': ugettext_noop('Taking As Proctored Exam'),
         'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.eligible: {
-        'short_description': _('Proctored Option Available'),
+        'short_description': ugettext_noop('Proctored Option Available'),
         'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.declined: {
-        'short_description': _('Taking As Open Exam'),
+        'short_description': ugettext_noop('Taking As Open Exam'),
         'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.submitted: {
-        'short_description': _('Pending Session Review'),
+        'short_description': ugettext_noop('Pending Session Review'),
         'suggested_icon': 'fa-spinner fa-spin',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.second_review_required: {
-        'short_description': _('Pending Session Review'),
+        'short_description': ugettext_noop('Pending Session Review'),
         'suggested_icon': 'fa-spinner fa-spin',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.verified: {
-        'short_description': _('Passed Proctoring'),
+        'short_description': ugettext_noop('Passed Proctoring'),
         'suggested_icon': 'fa-check',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.rejected: {
-        'short_description': _('Failed Proctoring'),
+        'short_description': ugettext_noop('Failed Proctoring'),
         'suggested_icon': 'fa-exclamation-triangle',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.error: {
-        'short_description': _('Failed Proctoring'),
+        'short_description': ugettext_noop('Failed Proctoring'),
         'suggested_icon': 'fa-exclamation-triangle',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.expired: {
-        'short_description': _('Proctored Option No Longer Available'),
+        'short_description': ugettext_noop('Proctored Option No Longer Available'),
         'suggested_icon': 'fa-times-circle',
         'in_completed_state': False
     }
@@ -1329,17 +1330,17 @@ STATUS_SUMMARY_MAP = {
 
 PRACTICE_STATUS_SUMMARY_MAP = {
     '_default': {
-        'short_description': _('Ungraded Practice Exam'),
+        'short_description': ugettext_noop('Ungraded Practice Exam'),
         'suggested_icon': '',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.submitted: {
-        'short_description': _('Practice Exam Completed'),
+        'short_description': ugettext_noop('Practice Exam Completed'),
         'suggested_icon': 'fa-check',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.error: {
-        'short_description': _('Practice Exam Failed'),
+        'short_description': ugettext_noop('Practice Exam Failed'),
         'suggested_icon': 'fa-exclamation-triangle',
         'in_completed_state': True
     }
@@ -1347,7 +1348,7 @@ PRACTICE_STATUS_SUMMARY_MAP = {
 
 TIMED_EXAM_STATUS_SUMMARY_MAP = {
     '_default': {
-        'short_description': _('Timed Exam'),
+        'short_description': ugettext_noop('Timed Exam'),
         'suggested_icon': 'fa-clock-o',
         'in_completed_state': False
     }
@@ -1382,7 +1383,13 @@ def get_attempt_status_summary(user_id, course_id, content_id):
 
     # check if the exam is not proctored
     if not exam['is_proctored']:
-        return TIMED_EXAM_STATUS_SUMMARY_MAP['_default']
+        summary = {}
+        summary.update(TIMED_EXAM_STATUS_SUMMARY_MAP['_default'])
+        # Note: translate the short description as it was stored unlocalized
+        summary.update({
+            'short_description': _(summary['short_description'])  # pylint: disable=translation-of-non-string
+        })
+        return summary
 
     # let's check credit eligibility
     credit_service = get_runtime_service('credit')
@@ -1403,13 +1410,17 @@ def get_attempt_status_summary(user_id, course_id, content_id):
 
     status_map = STATUS_SUMMARY_MAP if not exam['is_practice_exam'] else PRACTICE_STATUS_SUMMARY_MAP
 
-    summary = None
+    summary = {}
     if status in status_map:
-        summary = status_map[status]
+        summary.update(status_map[status])
     else:
-        summary = status_map['_default']
+        summary.update(status_map['_default'])
 
-    summary.update({"status": status})
+    # Note: translate the short description as it was stored unlocalized
+    summary.update({
+        'status': status,
+        'short_description': _(summary['short_description'])  # pylint: disable=translation-of-non-string
+    })
 
     return summary
 

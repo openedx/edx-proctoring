@@ -2,6 +2,8 @@
 Defines the abstract base class that all backends should derive from
 """
 
+from __future__ import absolute_import
+
 import abc
 
 

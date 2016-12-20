@@ -4,9 +4,10 @@
 Tests for the software_secure module
 """
 
+from __future__ import absolute_import
+
 import json
 import ddt
-from string import Template  # pylint: disable=deprecated-module
 from mock import patch
 from httmock import all_requests, HTTMock
 
@@ -41,10 +42,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptHistory,
     ProctoredExamStudentAllowance
 )
-from edx_proctoring.backends.tests.test_review_payload import (
-    TEST_REVIEW_PAYLOAD
-)
-
+from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService
 from edx_proctoring.backends.software_secure import SOFTWARE_SECURE_INVALID_CHARS
 
@@ -110,6 +108,7 @@ class SoftwareSecureTests(TestCase):
         """
         When tests are done
         """
+        super(SoftwareSecureTests, self).tearDown()
         set_runtime_service('credit', None)
 
     def test_provider_instance(self):
@@ -229,7 +228,7 @@ class SoftwareSecureTests(TestCase):
             self.assertNotIn('review_policy', context)
 
             # call into real implementation
-            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)  # pylint: disable=protected-access
+            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)
 
             # assert that we use the default that is defined in system configuration
             self.assertEqual(result['reviewerNotes'], constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
@@ -256,7 +255,7 @@ class SoftwareSecureTests(TestCase):
                 # patch the _get_payload method on the backend provider
                 # so that we can assert that we are called with the review policy
                 # undefined and that we use the system default
-                with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_no_policy):  # pylint: disable=protected-access
+                with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_no_policy):
                     attempt_id = create_exam_attempt(
                         exam_id,
                         self.user.id,
@@ -291,7 +290,7 @@ class SoftwareSecureTests(TestCase):
             """
 
             # call into real implementation
-            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)  # pylint: disable=protected-access
+            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)
             self.assertFalse(isinstance(result['examName'], unicode))
             self.assertTrue(is_ascii(result['examName']))
             self.assertGreater(len(result['examName']), 0)
@@ -308,7 +307,7 @@ class SoftwareSecureTests(TestCase):
             )
 
             # patch the _get_payload method on the backend provider
-            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_unicode_characters):  # pylint: disable=protected-access
+            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_unicode_characters):
                 attempt_id = create_exam_attempt(
                     exam_id,
                     self.user.id,
@@ -326,7 +325,7 @@ class SoftwareSecureTests(TestCase):
             )
 
             # patch the _get_payload method on the backend provider
-            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_unicode_characters):  # pylint: disable=protected-access
+            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_unicode_characters):
                 attempt_id = create_exam_attempt(
                     exam_id,
                     self.user.id,
@@ -475,7 +474,7 @@ class SoftwareSecureTests(TestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )
@@ -515,7 +514,7 @@ class SoftwareSecureTests(TestCase):
         """
 
         provider = get_backend_provider()
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code='not-here',
             external_id='also-not-here'
         )
@@ -530,7 +529,7 @@ class SoftwareSecureTests(TestCase):
         """
 
         provider = get_backend_provider()
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code='not-here',
             external_id='also-not-here'
         )
@@ -567,7 +566,7 @@ class SoftwareSecureTests(TestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id='bogus'
         )
@@ -604,7 +603,7 @@ class SoftwareSecureTests(TestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id='bogus'
         )
@@ -644,7 +643,7 @@ class SoftwareSecureTests(TestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )
@@ -698,7 +697,7 @@ class SoftwareSecureTests(TestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )
@@ -736,7 +735,7 @@ class SoftwareSecureTests(TestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )
@@ -801,7 +800,7 @@ class SoftwareSecureTests(TestCase):
 
         attempt = get_exam_attempt_by_id(attempt_id)
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )
@@ -859,7 +858,7 @@ class SoftwareSecureTests(TestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )

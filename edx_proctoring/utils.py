@@ -2,24 +2,27 @@
 Helpers for the HTTP APIs
 """
 
-import pytz
-import logging
+from __future__ import absolute_import
+
 from datetime import datetime, timedelta
+import logging
+import pytz
 
 from django.utils.translation import ugettext as _
+
+from opaque_keys.edx.keys import CourseKey
+from opaque_keys import InvalidKeyError
+
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+
+from eventtracking import tracker
 
 from edx_proctoring.models import (
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptHistory,
 )
-
-# import dependent libraries (in local_requirements.txt otherwise pick up from running Open edX LMS runtime)
-from eventtracking import tracker
-from opaque_keys.edx.keys import CourseKey
-from opaque_keys import InvalidKeyError
 
 log = logging.getLogger(__name__)
 

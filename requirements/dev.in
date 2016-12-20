@@ -1,0 +1,12 @@
+# Additional requirements for development of this application
+
+diff-cover                # Changeset diff test coverage
+edx-lint                  # For updating pylintrc
+edx-i18n-tools            # For i18n_tool dummy
+pip-tools                 # Requirements file management
+tox                       # virtualenv management for tests
+tox-battery               # Makes tox aware of requirements file changes
+twine                     # Utility for PyPI package uploads
+wheel                     # For generation of wheels for PyPI
+
+django>=1.8,<1.9a

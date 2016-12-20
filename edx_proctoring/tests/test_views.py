@@ -2,14 +2,17 @@
 """
 All tests for the proctored_exams.py
 """
+
+from __future__ import absolute_import
+
+from datetime import datetime, timedelta
 import json
-import pytz
 import ddt
-from mock import Mock, patch
 from freezegun import freeze_time
 from httmock import HTTMock
-from string import Template  # pylint: disable=deprecated-module
-from datetime import datetime, timedelta
+from mock import Mock, patch
+import pytz
+
 from django.test.client import Client
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib.auth.models import User
@@ -32,15 +35,13 @@ from edx_proctoring.api import (
     _calculate_allowed_mins
 )
 
-from .utils import (
-    LoggedInTestCase
-)
-
-from edx_proctoring.urls import urlpatterns
-from edx_proctoring.backends.tests.test_review_payload import TEST_REVIEW_PAYLOAD
+from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
-from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
+from edx_proctoring.urls import urlpatterns
+
+from .test_services import MockCreditService, MockInstructorService
+from .utils import LoggedInTestCase
 
 
 class ProctoredExamsApiTests(LoggedInTestCase):
@@ -493,7 +494,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], "started")
-        self.assertFalse(attempt['status'] == "ready_to_start")
+        self.assertNotEqual(attempt['status'], "ready_to_start")
 
     def test_start_exam_create(self):
         """
@@ -679,7 +680,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertIsNotNone(response_data['started_at'])
         self.assertIsNone(response_data['completed_at'])
         # check that we get timer around 30 hours minus some seconds
-        self.assertTrue(107990 <= response_data['time_remaining_seconds'] <= 108000)
+        self.assertLessEqual(107990, response_data['time_remaining_seconds'])
+        self.assertLessEqual(response_data['time_remaining_seconds'], 108000)
         # check that humanized time
         self.assertEqual(response_data['accessibility_time_string'], 'you have 30 hours remaining')
 
@@ -701,9 +703,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         total_minutes, __ = _calculate_allowed_mins(proctored_exam.due_date, proctored_exam.time_limit_mins)
 
         # Check that timer has > 24 hours
-        self.assertTrue(total_minutes / 60 > 24)
+        self.assertGreater(total_minutes / 60, 24)
         # Get total_minutes around 27 hours. We are checking range here because while testing some seconds have passed.
-        self.assertTrue(expected_total_minutes - 1 <= total_minutes <= expected_total_minutes)
+        self.assertLessEqual(expected_total_minutes - 1, total_minutes)
+        self.assertLessEqual(total_minutes, expected_total_minutes)
 
     def test_attempt_ready_to_start(self):
         """
@@ -1668,7 +1671,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
 
-        self.assertTrue('exam_attempt_id' in response_data)
+        self.assertIn('exam_attempt_id', response_data)
 
         attempt_id = response_data['exam_attempt_id']
 
@@ -1725,7 +1728,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )
@@ -1763,7 +1766,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id'].upper()
         )
@@ -1800,7 +1803,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id'].upper()
         )
@@ -1837,7 +1840,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertIsNotNone(attempt['external_id'])
 
-        test_payload = Template(TEST_REVIEW_PAYLOAD).substitute(
+        test_payload = create_test_review_payload(
             attempt_code=attempt['attempt_code'],
             external_id='mismatch'
         )

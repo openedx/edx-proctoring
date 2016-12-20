@@ -2,18 +2,22 @@
 Integration with Software Secure's proctoring system
 """
 
-from Crypto.Cipher import DES3
+from __future__ import absolute_import
+
 import base64
-from hashlib import sha256
-import requests
-import hmac
 import binascii
 import datetime
+from hashlib import sha256
+import hmac
 import json
 import logging
 import unicodedata
 
+import requests
+
 from django.conf import settings
+
+from Crypto.Cipher import DES3
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring import constants
