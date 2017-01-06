@@ -59,7 +59,7 @@ describe('ProctoredExamAttemptView', function () {
         '<div class="search-attempts">' +
         '<input type="text" id="search_attempt_id" placeholder="e.g johndoe or john.doe@gmail.com"' +
         '<% if (inSearchMode) { %> value="<%= searchText %>" <%} %>' +
-        '/> <span class="search"><i class="fa fa-search"></i></span> <span class="clear-search"><i class="fa fa-remove"></i></i></span>' +
+        '/> <span class="search"><span class="icon fa fa-search" aria-hidden="true"></span></span> <span class="clear-search"><span class="icon fa fa-remove" aria-hidden="true"></span></span>' +
         '</div>' +
         '<ul class="pagination">' +
         '<% if (!pagination_info.has_previous){ %>' +
