@@ -15,4 +15,6 @@ script:
   - make test-all
   - gulp test
 after_success:
-  - coveralls
+  - coverage xml
+  - bash <(curl -s https://codecov.io/bash) -cF python -f coverage.xml
+  - bash <(curl -s https://codecov.io/bash) -cF javascript -f build/coverage-js/coverage.xml

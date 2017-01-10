@@ -9,8 +9,8 @@ django-component-views
     :target: https://travis-ci.org/edx/edx-proctoring
     :alt: Travis
 
-.. image:: http://codecov.io/github/edx/edx-proctoring/coverage.svg?branch=master
-    :target: http://codecov.io/github/edx/edx-proctoring?branch=master
+.. image:: https://codecov.io/gh/edx/edx-proctoring/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/edx/edx-proctoring
     :alt: Codecov
 
 .. image:: https://img.shields.io/pypi/pyversions/edx-proctoring.svg
