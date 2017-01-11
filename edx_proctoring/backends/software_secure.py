@@ -38,7 +38,7 @@ from edx_proctoring.serializers import (
 log = logging.getLogger(__name__)
 
 
-SOFTWARE_SECURE_INVALID_CHARS = '[]<>#:|?/\'"*\\'
+SOFTWARE_SECURE_INVALID_CHARS = '[]<>#:|!?/\'"*\\'
 
 
 class SoftwareSecureBackendProvider(ProctoringBackendProvider):
