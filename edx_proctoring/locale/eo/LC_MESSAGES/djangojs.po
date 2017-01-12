@@ -1,0 +1,130 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-09 18:32-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_add_allowance_view.js
+msgid "Required field"
+msgstr "Réqüïréd fïéld Ⱡ'σяєм ιρѕυм ∂σłσя ѕιт#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_add_allowance_view.js
+msgid "Practice Exam"
+msgstr "Präçtïçé Éxäm Ⱡ'σяєм ιρѕυм ∂σłσя ѕι#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_add_allowance_view.js
+msgid "Proctored Exam"
+msgstr "Pröçtöréd Éxäm Ⱡ'σяєм ιρѕυм ∂σłσя ѕιт#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_add_allowance_view.js
+msgid "Timed Exam"
+msgstr "Tïméd Éxäm Ⱡ'σяєм ιρѕυм ∂σłσ#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_add_allowance_view.js
+msgid "Additional Time"
+msgstr "Àddïtïönäl Tïmé Ⱡ'σяєм ιρѕυм ∂σłσя ѕιт α#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_add_allowance_view.js
+msgid "Value"
+msgstr "Välüé Ⱡ'σяєм ιρѕ#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_allowance_view.js
+#: edx_proctoring/static/proctoring/spec/proctored_exam_add_allowance_spec.js
+msgid "Additional Time (minutes)"
+msgstr "Àddïtïönäl Tïmé (mïnütés) Ⱡ'σяєм ιρѕυм ∂σłσя ѕιт αмєт, ¢σηѕ#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_allowance_view.js
+#: edx_proctoring/static/proctoring/spec/proctored_exam_add_allowance_spec.js
+msgid "Review Policy Exception"
+msgstr "Révïéw Pölïçý Éxçéptïön Ⱡ'σяєм ιρѕυм ∂σłσя ѕιт αмєт, ¢σ#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Eligible"
+msgstr "Élïgïßlé Ⱡ'σяєм ιρѕυм ∂#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Created"
+msgstr "Çréätéd Ⱡ'σяєм ιρѕυм #"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Download Software Clicked"
+msgstr "Döwnlöäd Söftwäré Çlïçkéd Ⱡ'σяєм ιρѕυм ∂σłσя ѕιт αмєт, ¢σηѕ#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Ready to start"
+msgstr "Réädý tö stärt Ⱡ'σяєм ιρѕυм ∂σłσя ѕιт#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Started"
+msgstr "Stärtéd Ⱡ'σяєм ιρѕυм #"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Ready to submit"
+msgstr "Réädý tö süßmït Ⱡ'σяєм ιρѕυм ∂σłσя ѕιт α#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Declined"
+msgstr "Déçlïnéd Ⱡ'σяєм ιρѕυм ∂#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Timed out"
+msgstr "Tïméd öüt Ⱡ'σяєм ιρѕυм ∂σł#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Second Review Required"
+msgstr "Séçönd Révïéw Réqüïréd Ⱡ'σяєм ιρѕυм ∂σłσя ѕιт αмєт, ¢#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Submitted"
+msgstr "Süßmïttéd Ⱡ'σяєм ιρѕυм ∂σł#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Verified"
+msgstr "Vérïfïéd Ⱡ'σяєм ιρѕυм ∂#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Rejected"
+msgstr "Réjéçtéd Ⱡ'σяєм ιρѕυм ∂#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Error"
+msgstr "Érrör Ⱡ'σяєм ιρѕ#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Practice"
+msgstr "Präçtïçé Ⱡ'σяєм ιρѕυм ∂#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Proctored"
+msgstr "Pröçtöréd Ⱡ'σяєм ιρѕυм ∂σł#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Timed"
+msgstr "Tïméd Ⱡ'σяєм ιρѕ#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_attempt_view.js
+msgid "Are you sure you want to remove this student's exam attempt?"
+msgstr ""
+"Àré ýöü süré ýöü wänt tö rémövé thïs stüdént's éxäm ättémpt? Ⱡ'σяєм ιρѕυм "
+"∂σłσя ѕιт αмєт, ¢σηѕє¢тєтυя α#"
+
+#: edx_proctoring/static/proctoring/js/views/proctored_exam_view.js
+msgid ""
+"Are you sure you want to leave this page? \n"
+"To pass your proctored exam you must also pass the online proctoring session review."
+msgstr ""
+"Àré ýöü süré ýöü wänt tö léävé thïs pägé? \n"
+"Tö päss ýöür pröçtöréd éxäm ýöü müst älsö päss thé önlïné pröçtörïng séssïön révïéw. Ⱡ'σяє#"
