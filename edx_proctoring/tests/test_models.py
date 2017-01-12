@@ -3,6 +3,9 @@
 """
 All tests for the models.py
 """
+
+from __future__ import absolute_import
+
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
@@ -43,6 +46,14 @@ class ProctoredExamModelTests(LoggedInTestCase):
         )
         output = unicode(proctored_exam)
         self.assertEquals(output, u"test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive)")
+
+        policy = ProctoredExamReviewPolicy.objects.create(
+            set_by_user_id=self.user.id,
+            proctored_exam=proctored_exam,
+            review_policy='Foo Policy'
+        )
+        output = unicode(policy)
+        self.assertEquals(output, u"ProctoredExamReviewPolicy: tester (test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive))")
 
     def test_save_proctored_exam_student_allowance_history(self):  # pylint: disable=invalid-name
         """

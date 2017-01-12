@@ -6,6 +6,7 @@
 
 # Installation artifacts
 src
+requirements/*.txt
 
 # Sphinx docs:
 build
@@ -47,10 +48,13 @@ Desktop.ini
 
 # Test Artifacts
 .coverage
+coverage.xml
 nosetests.xml
 reports/
 coverage/
 htmlcov/
+.cache/
+.tox/
 acceptance_tests/*.png
 
 node_modules/

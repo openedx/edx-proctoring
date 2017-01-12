@@ -5,6 +5,8 @@
 Subclasses Django test client to allow for easy login
 """
 
+from __future__ import absolute_import
+
 from datetime import datetime
 from importlib import import_module
 import pytz
@@ -80,7 +82,7 @@ class LoggedInTestCase(TestCase):
         """
         Setup for tests
         """
-
+        super(LoggedInTestCase, self).setUp()
         self.client = TestClient()
         self.user = User(username='tester', email='tester@test.com')
         self.user.save()
@@ -200,6 +202,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
         """
         Cleanup
         """
+        super(ProctoredExamTestCase, self).tearDown()
         del TRACKERS['default']
 
     def _create_proctored_exam(self):

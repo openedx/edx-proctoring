@@ -5,11 +5,13 @@
 All tests for the api.py
 """
 
-import ddt
+from __future__ import absolute_import
+
 from datetime import datetime, timedelta
+import ddt
+from freezegun import freeze_time
 from mock import patch
 import pytz
-from freezegun import freeze_time
 
 from edx_proctoring.api import (
     update_exam,

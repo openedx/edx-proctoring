@@ -1,28 +1,20 @@
 language: python
+cache: pip
 python:
-  - "2.7"
+  - 2.7
 env:
-  - DJANGO_SETTINGS_MODULE=settings
-
+  - DJANGO_SETTINGS_MODULE=test_settings
 before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-
-# Set Travis builds to use docker container
-sudo: false
-
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - pip install --upgrade pip  # pip-tools requires pip >= 6.1
 install:
-    - npm install
-    - "pip install -r local_requirements.txt"
-    - "pip install -r requirements.txt"
-    - "pip install -r test_requirements.txt"
-    - "pip install coveralls"
-
+  - pip install setuptools==32.3.1  # need newer version than Travis default
+  - make install
 script:
-    - coverage run ./manage.py test edx_proctoring
-    - coverage report -m
-    - gulp test
-    - pep8 edx_proctoring
-    - pylint edx_proctoring --report=no
-
-after_success: coveralls
+  - make test-all
+  - gulp test
+after_success:
+  - coverage xml
+  - bash <(curl -s https://codecov.io/bash) -cF python -f coverage.xml
+  - bash <(curl -s https://codecov.io/bash) -cF javascript -f build/coverage-js/coverage.xml

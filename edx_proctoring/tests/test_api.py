@@ -4,11 +4,14 @@
 """
 All tests for the api.py
 """
-import ddt
+
+from __future__ import absolute_import
+
 from datetime import datetime, timedelta
+import ddt
+from freezegun import freeze_time
 from mock import patch
 import pytz
-from freezegun import freeze_time
 
 from edx_proctoring.api import (
     create_exam,
@@ -62,17 +65,14 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptStatus,
     ProctoredExamReviewPolicy,
 )
-
-from .utils import (
-    ProctoredExamTestCase,
-)
+from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 from .test_services import (
     MockCreditService,
     MockCreditServiceNone,
     MockCreditServiceWithCourseEndDate,
 )
-from edx_proctoring.runtime import set_runtime_service, get_runtime_service
+from .utils import ProctoredExamTestCase
 
 
 @ddt.ddt
@@ -427,9 +427,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         with freeze_time(reset_time):
             attempt_id = create_exam_attempt(exam_id, self.user_id)
             attempt = get_exam_attempt_by_id(attempt_id)
-            self.assertTrue(
-                minutes_before_past_due_date - 1 <= attempt['allowed_time_limit_mins'] <= minutes_before_past_due_date
-            )
+            self.assertLessEqual(minutes_before_past_due_date - 1, attempt['allowed_time_limit_mins'])
+            self.assertLessEqual(attempt['allowed_time_limit_mins'], minutes_before_past_due_date)
 
     def test_create_an_exam_attempt(self):
         """

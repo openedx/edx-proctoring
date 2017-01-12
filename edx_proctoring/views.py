@@ -2,16 +2,19 @@
 Proctored Exams HTTP-based API endpoints
 """
 
+from __future__ import absolute_import
+
 import logging
 
+from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
-from django.conf import settings
-from django.core.urlresolvers import reverse, NoReverseMatch
 
 from rest_framework import status
 from rest_framework.response import Response
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 from edx_proctoring.api import (
     create_exam,
     update_exam,

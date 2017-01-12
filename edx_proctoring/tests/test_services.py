@@ -4,15 +4,18 @@
 Test for the xBlock service
 """
 
+from __future__ import absolute_import
+
+from datetime import datetime, timedelta
+import types
 import unittest
 import pytz
-from datetime import datetime, timedelta
+
 from edx_proctoring.services import (
     ProctoringService
 )
 from edx_proctoring.exceptions import UserNotFoundException
 from edx_proctoring import api as edx_proctoring_api
-import types
 
 
 class MockCreditService(object):

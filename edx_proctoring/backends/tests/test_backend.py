@@ -1,9 +1,14 @@
 """
 Tests for backend.py
 """
+
+from __future__ import absolute_import
+
 import time
 from mock import patch
+
 from django.test import TestCase
+
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.backends.null import NullBackendProvider
 from edx_proctoring.backends.mock import MockProctoringBackendProvider

@@ -2,6 +2,8 @@
 All supporting Proctoring backends
 """
 
+from __future__ import absolute_import
+
 from importlib import import_module
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -21,7 +23,7 @@ def get_backend_provider(emphemeral=False):
 
     provider = _BACKEND_PROVIDER
     if not _BACKEND_PROVIDER or emphemeral:
-        config = getattr(settings, 'PROCTORING_BACKEND_PROVIDER')
+        config = getattr(settings, 'PROCTORING_BACKEND_PROVIDER')  # pylint: disable=literal-used-as-attribute
         if not config:
             raise ImproperlyConfigured("Settings not configured with PROCTORING_BACKEND_PROVIDER!")
 

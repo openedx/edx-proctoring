@@ -2,8 +2,11 @@
 Lists of constants that can be used in the edX proctoring
 """
 
-from django.conf import settings
+from __future__ import absolute_import
+
 import datetime
+
+from django.conf import settings
 
 SITE_NAME = (
     settings.PROCTORING_SETTINGS['SITE_NAME'] if

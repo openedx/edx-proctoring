@@ -1,7 +1,12 @@
 """Defines serializers used by the Proctoring API."""
+
+from __future__ import absolute_import
+
+from django.contrib.auth.models import User
+
 from rest_framework import serializers
 from rest_framework.fields import DateTimeField
-from django.contrib.auth.models import User
+
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAttempt,
@@ -14,7 +19,7 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
     """
     Serializer for the ProctoredExam Model.
     """
-    id = serializers.IntegerField(required=False)
+    id = serializers.IntegerField(required=False)  # pylint: disable=invalid-name
     course_id = serializers.CharField(required=True)
     content_id = serializers.CharField(required=True)
     external_id = serializers.CharField(required=True)
@@ -44,7 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the User Model.
     """
-    id = serializers.IntegerField(required=False)
+    id = serializers.IntegerField(required=False)  # pylint: disable=invalid-name
     username = serializers.CharField(required=True)
     email = serializers.CharField(required=True)
 

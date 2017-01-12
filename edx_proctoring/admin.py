@@ -3,8 +3,10 @@ Django Admin pages
 """
 # pylint: disable=no-self-argument, no-member
 
-import pytz
+from __future__ import absolute_import
+
 from datetime import datetime, timedelta
+import pytz
 
 from django import forms
 from django.db.models import Q
@@ -475,6 +477,7 @@ def prettify_course_id(course_id):
     Prettify the COURSE ID string
     """
     return course_id.replace('+', ' ').replace('/', ' ').replace('course-v1:', '')
+
 
 admin.site.register(ProctoredExamStudentAttempt, ProctoredExamStudentAttemptAdmin)
 admin.site.register(ProctoredExamReviewPolicy, ProctoredExamReviewPolicyAdmin)

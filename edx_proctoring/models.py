@@ -2,22 +2,30 @@
 """
 Data models for the proctoring subsystem
 """
-from django.db import models
-from django.db.models import Q
-from django.db.models.signals import pre_save, pre_delete
-from django.dispatch import receiver
-from model_utils.models import TimeStampedModel
-from django.utils.translation import ugettext as _
+
+# pylint: disable=model-missing-unicode
+
+from __future__ import absolute_import
+import six
 
 from django.contrib.auth.models import User
+from django.db import models
+from django.db.models import Q
+from django.db.models.base import ObjectDoesNotExist
+from django.db.models.signals import pre_save, pre_delete
+from django.dispatch import receiver
+from django.utils.translation import ugettext as _, ugettext_noop
+
+from model_utils.models import TimeStampedModel
+
 from edx_proctoring.exceptions import (
     UserNotFoundException,
     ProctoredExamNotActiveException,
     AllowanceValueNotAllowedException
 )
-from django.db.models.base import ObjectDoesNotExist
 
 
+@six.python_2_unicode_compatible
 class ProctoredExam(TimeStampedModel):
     """
     Information about the Proctored Exam.
@@ -58,11 +66,8 @@ class ProctoredExam(TimeStampedModel):
         unique_together = (('course_id', 'content_id'),)
         db_table = 'proctoring_proctoredexam'
 
-    def __unicode__(self):
-        """
-        How to serialize myself as a string
-        """
-
+    def __str__(self):
+        # pragma: no cover
         return u"{course_id}: {exam_name} ({active})".format(
             course_id=self.course_id,
             exam_name=self.exam_name,
@@ -173,9 +178,9 @@ class ProctoredExamStudentAttemptStatus(object):
 
     # status alias for sending email
     status_alias_mapping = {
-        submitted: _('pending'),
-        verified: _('satisfactory'),
-        rejected: _('unsatisfactory')
+        submitted: ugettext_noop('pending'),
+        verified: ugettext_noop('satisfactory'),
+        rejected: ugettext_noop('unsatisfactory')
     }
 
     @classmethod
@@ -233,8 +238,10 @@ class ProctoredExamStudentAttemptStatus(object):
         """
         Returns status alias used in email
         """
+        status_alias = cls.status_alias_mapping.get(status, None)
 
-        return cls.status_alias_mapping.get(status, '')
+        # Note that the alias is localized here as it is untranslated in the model
+        return _(status_alias) if status_alias else ''  # pylint: disable=translation-of-non-string
 
     @classmethod
     def is_valid_status(cls, status):
@@ -244,6 +251,7 @@ class ProctoredExamStudentAttemptStatus(object):
         return cls.is_completed_status(status) or cls.is_incomplete_status(status)
 
 
+@six.python_2_unicode_compatible
 class ProctoredExamReviewPolicy(TimeStampedModel):
     """
     This is how an instructor can set review policies for a proctored exam
@@ -257,6 +265,13 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
 
     # policy that will be passed to reviewers
     review_policy = models.TextField()
+
+    def __str__(self):
+        # pragma: no cover
+        return u"ProctoredExamReviewPolicy: {set_by_user} ({proctored_exam})".format(
+            set_by_user=self.set_by_user,
+            proctored_exam=self.proctored_exam,
+        )
 
     class Meta:
         """ Meta class for this Django model """
@@ -463,11 +478,11 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     # if the user is attempting this as a proctored exam
     # in case there is an option to opt-out
-    taking_as_proctored = models.BooleanField(default=False, verbose_name=_("Taking as Proctored"))
+    taking_as_proctored = models.BooleanField(default=False, verbose_name=ugettext_noop("Taking as Proctored"))
 
     # Whether this attempt is considered a sample attempt, e.g. to try out
     # the proctoring software
-    is_sample_attempt = models.BooleanField(default=False, verbose_name=_("Is Sample Attempt"))
+    is_sample_attempt = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Sample Attempt"))
 
     student_name = models.CharField(max_length=255)
 
@@ -682,8 +697,8 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
     # DONT EDIT THE KEYS - THE FIRST VALUE OF THE TUPLE - AS ARE THEY ARE STORED IN THE DATABASE
     # THE SECOND ELEMENT OF THE TUPLE IS A DISPLAY STRING AND CAN BE EDITED
-    ADDITIONAL_TIME_GRANTED = ('additional_time_granted', _('Additional Time (minutes)'))
-    REVIEW_POLICY_EXCEPTION = ('review_policy_exception', _('Review Policy Exception'))
+    ADDITIONAL_TIME_GRANTED = ('additional_time_granted', ugettext_noop('Additional Time (minutes)'))
+    REVIEW_POLICY_EXCEPTION = ('review_policy_exception', ugettext_noop('Review Policy Exception'))
 
     all_allowances = [
         ADDITIONAL_TIME_GRANTED + REVIEW_POLICY_EXCEPTION

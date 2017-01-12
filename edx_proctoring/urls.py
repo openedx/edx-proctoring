@@ -1,10 +1,13 @@
 """
 URL mappings for edX Proctoring Server.
 """
-from edx_proctoring import views, callbacks
-from django.conf import settings
 
+from __future__ import absolute_import
+
+from django.conf import settings
 from django.conf.urls import patterns, url, include
+
+from edx_proctoring import views, callbacks
 
 urlpatterns = patterns(  # pylint: disable=invalid-name
     '',

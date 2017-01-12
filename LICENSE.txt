@@ -1,4 +1,5 @@
-                    GNU AFFERO GENERAL PUBLIC LICENSE
+
+GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
  Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
@@ -669,3 +670,5 @@ of the license. "Corresponding Source" of this work, or works based on this
 work, as defined by the terms of this license do not include source code
 files for programs used solely to provide those public, independently
 available web services.
+
+

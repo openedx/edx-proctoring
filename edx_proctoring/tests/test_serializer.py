@@ -2,7 +2,10 @@
 Tests for the custom StrictBooleanField serializer used by the ProctoredExamSerializer
 """
 
+from __future__ import absolute_import
+
 import unittest
+
 from edx_proctoring.serializers import ProctoredExamSerializer
 
 
