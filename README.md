@@ -1,29 +1,25 @@
-edx-proctoring [![Build Status](https://travis-ci.org/edx/edx-proctoring.svg?branch=master)](https://travis-ci.org/edx/edx-proctoring) [![Coverage Status](https://coveralls.io/repos/edx/edx-proctoring/badge.svg?branch=master&service=github)](https://coveralls.io/github/edx/edx-proctoring?branch=master)
+#Special Exams
 
-========================
+## edx-proctoring [![Build Status](https://travis-ci.org/edx/edx-proctoring.svg?branch=master)](https://travis-ci.org/edx/edx-proctoring) [![Coverage Status](https://coveralls.io/repos/edx/edx-proctoring/badge.svg?branch=master&service=github)](https://coveralls.io/github/edx/edx-proctoring?branch=master)
+
+[User docs - Proctored Exams](http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/course_features/credit_courses/proctored_exams.html)
+
+[User docs - Timed Exams](http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/course_features/timed_exams.html)
+
+## Description:
 
 This is the Exam Proctoring subsystem for the Open edX platform.
 
-
-While technical and developer documentation is forthcoming, here are basic instructions on how to use this
-in an Open edX installation.
-
-NOTE: Proctoring will not be available in the Open edX named releases until Dogwood. However, you can use this if you use a copy of edx-platform (master) after 8/20/2015.
-
-In order to use edx-proctoring, you must obtain an account (and secret configuration - see below) with SoftwareSecure, which provides the proctoring review services that edx-proctoring integrates with.
-
-
-CONFIGURATION:
+## Configuration:
 
 You will need to turn on the ENABLE_SPECIAL_EXAMS in lms.env.json and cms.env.json FEATURES dictionary:
 
 ```
-:
-"FEATURES": {
-    :
-    "ENABLE_SPECIAL_EXAMS": true,
-    :
-}
+    "FEATURES": {
+        :
+        "ENABLE_SPECIAL_EXAMS": true,
+        :
+    }
 ```
 
 Also in your lms.env.json and cms.env.json file please add the following:
@@ -57,3 +53,70 @@ In your lms.auth.json file, please add the following *secure* information:
 ```
 
 You will need to restart services after these configuration changes for them to take effect.
+
+
+## Installation
+
+The intent of this project is to be installed as Django apps that will be included in `edx-platform <https://github.com/edx/edx-platform>`_.
+
+Clone the repo:
+
+```
+    mkdir proctoring
+    cd proctoring
+    git clone git@github.com:Edraak/edx-proctoring.git
+```
+
+Create the Virtual Environment:
+
+```
+    mkvirtualenv development
+    workon development
+```
+
+To install all dependencies:
+
+```
+    make install-sys-requirements
+    make install
+    make install-dev
+```
+
+## Running Tests
+
+To run all python unit tests:
+
+```
+    make test
+```
+
+To run just the JavaScript tests:
+
+```
+    gulp test
+```
+
+## i18n
+
+You will need to:
+
+1. Install [i18n-tools](https://github.com/edx/i18n-tools)
+
+    ```
+        pip install git+git://github.com/edx/i18n-tools
+    ```
+
+2. Configure Transifex, as described in the [docs](http://docs.transifex.com/developer/client/setup)
+3. Install [gettext](http://www.gnu.org/software/gettext/)
+
+To extract strings and push to Transifex
+
+```
+    make i18n-push
+```
+
+To pull strings from Transifex
+
+```
+    make i18n-pull
+```

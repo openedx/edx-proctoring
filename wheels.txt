@@ -1,0 +1,8 @@
+# These packages require compilation, so they take a long time to install.
+# To speed up the test builds, we create binary "wheel" archives.
+# http://pip.readthedocs.org/en/latest/reference/pip_wheel.html
+
+lxml==3.4.4
+numpy==1.6.2
+scikit-learn==0.12.1
+scipy==0.14.0
