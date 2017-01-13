@@ -71,14 +71,3 @@ locales:
 # The locales used for fake-accented English, for testing.
 dummy_locales:
     - eo
-
-# Directories we don't search for strings.
-ignore_dirs:
-    - docs
-    - edx-proctoring
-    - logs
-    - node_modules
-    - performance
-    - requirements
-    - scripts
-    - settings
