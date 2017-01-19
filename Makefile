@@ -57,27 +57,6 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	tox -e docs
 	$(BROWSER) docs/_build/html/index.html
 
-compile_translations: ## compile translation files, outputting .po files for each supported language
-	./manage.py compilemessages
-
-dummy_translations: ## generate dummy translation (.po) files
-	i18n_tool dummy --config ./edx_proctoring/locale/config.yaml
-
-extract_translations: ## extract strings to be translated, outputting .mo files
-	rm -rf docs/_build
-	./manage.py makemessages -l en -v1 -d django --ignore="edx-proctoring/*"
-	./manage.py makemessages -l en -v1 -d djangojs --ignore="edx-proctoring/*"
-
-fake_translations: extract_translations dummy_translations compile_translations ## generate and compile dummy translation files
-
-pull_translations: ## pull translations from Transifex
-	tx pull -a
-
-push_translations: ## push source translation files (.po) from Transifex
-	tx push -s
-
-validate_translations: fake_translations detect_changed_source_translations
-
 quality: ## check coding style with pycodestyle and pylint
 	tox -e quality
 
@@ -93,3 +72,28 @@ test-all: ## run tests on every supported Python/Django combination
 
 diff_cover: test
 	diff-cover coverage.xml
+
+## Localization targets
+
+extract_translations: ## extract strings to be translated, outputting .mo files
+	cd edx_proctoring && ../manage.py makemessages -l en -v1 -d django
+	cd edx_proctoring && ../manage.py makemessages -l en -v1 -d djangojs
+
+compile_translations: ## compile translation files, outputting .po files for each supported language
+	cd edx_proctoring && ../manage.py compilemessages
+
+detect_changed_source_translations:
+	cd edx_proctoring && i18n_tool changed
+
+pull_translations: ## pull translations from Transifex
+	tx pull -af
+
+push_translations: ## push source translation files (.po) from Transifex
+	tx push -s
+
+dummy_translations: ## generate dummy translation (.po) files
+	cd edx_proctoring && i18n_tool dummy
+
+build_dummy_translations: extract_translations dummy_translations compile_translations ## generate and compile dummy translation files
+
+validate_translations: build_dummy_translations detect_changed_source_translations ## validate translations
