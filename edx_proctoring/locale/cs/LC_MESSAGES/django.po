@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-09 18:32-0500\n"
+"POT-Creation-Date: 2017-01-12 15:05-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Jiří Šedý <jsedy7@gmail.com>, 2016\n"
 "Language-Team: Czech (https://www.transifex.com/open-edx/teams/6205/cs/)\n"
@@ -143,31 +143,31 @@ msgstr ""
 msgid "Timed Exam"
 msgstr ""
 
-#: edx_proctoring/models.py:180
+#: edx_proctoring/models.py:181
 msgid "pending"
 msgstr ""
 
-#: edx_proctoring/models.py:181
+#: edx_proctoring/models.py:182
 msgid "satisfactory"
 msgstr ""
 
-#: edx_proctoring/models.py:182
+#: edx_proctoring/models.py:183
 msgid "unsatisfactory"
 msgstr ""
 
-#: edx_proctoring/models.py:484
+#: edx_proctoring/models.py:481
 msgid "Taking as Proctored"
 msgstr ""
 
-#: edx_proctoring/models.py:488
+#: edx_proctoring/models.py:485
 msgid "Is Sample Attempt"
 msgstr ""
 
-#: edx_proctoring/models.py:709
+#: edx_proctoring/models.py:700
 msgid "Additional Time (minutes)"
 msgstr ""
 
-#: edx_proctoring/models.py:710
+#: edx_proctoring/models.py:701
 msgid "Review Policy Exception"
 msgstr ""
 
@@ -287,7 +287,7 @@ msgstr ""
 #: edx_proctoring/templates/proctored_exam/entrance.html:9
 msgid ""
 "\n"
-"      To be eligible to earn credit for this course, you must take and pass the proctoring review for this exam.\n"
+"      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
 
