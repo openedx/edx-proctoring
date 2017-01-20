@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-09 18:32-0500\n"
+"POT-Creation-Date: 2017-01-12 15:05-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ned Weitzman <nweitzman@edx.org>, 2016\n"
 "Language-Team: Spanish (Latin America) (https://www.transifex.com/open-edx/teams/6205/es_419/)\n"
@@ -145,31 +145,31 @@ msgstr "Examen de práctica no aprobado"
 msgid "Timed Exam"
 msgstr "Examen cronometrado"
 
-#: edx_proctoring/models.py:180
+#: edx_proctoring/models.py:181
 msgid "pending"
 msgstr "pendiente"
 
-#: edx_proctoring/models.py:181
+#: edx_proctoring/models.py:182
 msgid "satisfactory"
 msgstr "adecuado"
 
-#: edx_proctoring/models.py:182
+#: edx_proctoring/models.py:183
 msgid "unsatisfactory"
 msgstr "inadecuado"
 
-#: edx_proctoring/models.py:484
+#: edx_proctoring/models.py:481
 msgid "Taking as Proctored"
 msgstr "Haciendo como examen supervisado"
 
-#: edx_proctoring/models.py:488
+#: edx_proctoring/models.py:485
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "Es intento ejemplar"
 
-#: edx_proctoring/models.py:709
+#: edx_proctoring/models.py:700
 msgid "Additional Time (minutes)"
 msgstr "Tiempo adicional (minutos)"
 
-#: edx_proctoring/models.py:710
+#: edx_proctoring/models.py:701
 msgid "Review Policy Exception"
 msgstr "Revisar excepción a política"
 
@@ -320,11 +320,9 @@ msgstr ""
 #: edx_proctoring/templates/proctored_exam/entrance.html:9
 msgid ""
 "\n"
-"      To be eligible to earn credit for this course, you must take and pass the proctoring review for this exam.\n"
+"      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
-"\n"
-"Para ser elegible para crédito académico en este curso, hay que hacer y aprobar la revisión de supervisión para este examen."
 
 #: edx_proctoring/templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
@@ -565,7 +563,7 @@ msgstr ""
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
-msgstr ""
+msgstr "Empezar chequeo del sistema"
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:32
 msgid ""
@@ -826,6 +824,9 @@ msgid ""
 "      &#8226; Proctoring results are usually available within 5 business days after you submit your exam.\n"
 "    "
 msgstr ""
+"\n"
+"&#8226; Después de que Ud. salga de la sesión supervisada, los datos grabados son subidos para revisión. </br>\n"
+"&#8226; Los resultados de la sesión supervisada normalmente están disponibles entre 5 día hábiles después de que Ud. envía su examen."
 
 #: edx_proctoring/templates/proctored_exam/submitted.html:23
 #, python-format
@@ -834,6 +835,8 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"Si tiene preguntas sobre el estado de los resultados de su examen supervisada, contáctese con el equipo de apoyo de %(platform_name)s."
 
 #: edx_proctoring/templates/proctored_exam/verified.html:4
 msgid ""
@@ -841,6 +844,8 @@ msgid ""
 "      Your proctoring session was reviewed and passed all requirements\n"
 "    "
 msgstr ""
+"\n"
+"Su sesión supervisada fue revisada y cumplió con todos los requisitos"
 
 #: edx_proctoring/templates/proctored_exam/verified.html:10
 msgid ""
@@ -849,6 +854,9 @@ msgid ""
 "      and also achieve a final grade that meets the credit requirements for the course.\n"
 "    "
 msgstr ""
+"\n"
+"Ud. será eligible para comprar crédito académico en este curso si completa todos los exámenes requisitos\n"
+"y si también logra una nota final que cumpla con los requisitos para crédito en este curso."
 
 #: edx_proctoring/templates/proctored_exam/visit_exam_content.html:5
 msgid ""
@@ -856,10 +864,12 @@ msgid ""
 "      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
 "    "
 msgstr ""
+"\n"
+"Para ver las preguntas y respuestas de su examen, seleccione <strong>Ver mi examen</strong>. El estado de revisión del examen se muestra en el panel de navegación a la izquierda."
 
 #: edx_proctoring/templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "Ver mi examen"
 
 #: edx_proctoring/templates/proctored_exam/visit_exam_content.html:40
 msgid ""
