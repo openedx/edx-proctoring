@@ -141,7 +141,7 @@ msgstr ""
 
 #: edx_proctoring/api.py:1351
 msgid "Timed Exam"
-msgstr "Examen chronométré"
+msgstr "Examen minuté"
 
 #: edx_proctoring/models.py:181
 msgid "pending"
@@ -884,7 +884,7 @@ msgstr ""
 
 #: edx_proctoring/views.py:536
 msgid "timed"
-msgstr "chronométré"
+msgstr "minuté"
 
 #: edx_proctoring/views.py:537
 msgid "practice"
