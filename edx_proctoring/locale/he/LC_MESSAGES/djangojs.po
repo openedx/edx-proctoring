@@ -20,23 +20,23 @@ msgstr ""
 
 #: edx_proctoring/admin.py:88
 msgid "internally reviewed"
-msgstr ""
+msgstr "ביקורת פנימית"
 
 #: edx_proctoring/admin.py:97
 msgid "All Unreviewed"
-msgstr ""
+msgstr "כל אלה שלא נבדקו"
 
 #: edx_proctoring/admin.py:98
 msgid "All Unreviewed Failures"
-msgstr ""
+msgstr "כל הכשלים שלא נבדקו"
 
 #: edx_proctoring/admin.py:119
 msgid "active proctored exams"
-msgstr ""
+msgstr "מבחנים תחת פיקוח פעיל"
 
 #: edx_proctoring/admin.py:177
 msgid "courses with active proctored exams"
-msgstr ""
+msgstr "קורסים עם מבחנים תחת פיקוח פעיל"
 
 #: edx_proctoring/admin.py:342
 msgid "Course Id"
@@ -48,27 +48,27 @@ msgstr "נוצר"
 
 #: edx_proctoring/admin.py:381
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "הורד את התוכנה שנבחרה"
 
 #: edx_proctoring/admin.py:382
 msgid "Ready To Start"
-msgstr ""
+msgstr "מוכן להתחלה"
 
 #: edx_proctoring/admin.py:383
 msgid "Started"
-msgstr ""
+msgstr "התחיל"
 
 #: edx_proctoring/admin.py:384
 msgid "Ready To Submit"
-msgstr ""
+msgstr "מוכן להגשה"
 
 #: edx_proctoring/admin.py:385
 msgid "Declined"
-msgstr ""
+msgstr "נדחה"
 
 #: edx_proctoring/admin.py:386
 msgid "Timed Out"
-msgstr ""
+msgstr "תוזמן"
 
 #: edx_proctoring/admin.py:387
 msgid "Submitted"
@@ -76,7 +76,7 @@ msgstr "הוגש"
 
 #: edx_proctoring/admin.py:388
 msgid "Second Review Required"
-msgstr ""
+msgstr "דרושה סקירה נוספת"
 
 #: edx_proctoring/admin.py:389
 msgid "Verified"
@@ -84,7 +84,7 @@ msgstr "מאומת"
 
 #: edx_proctoring/admin.py:390
 msgid "Rejected"
-msgstr ""
+msgstr "נדחה"
 
 #: edx_proctoring/admin.py:391
 msgid "Error"
@@ -92,52 +92,52 @@ msgstr "שגיאה"
 
 #: edx_proctoring/api.py:902
 msgid "your course"
-msgstr ""
+msgstr "הקורס שלך"
 
 #: edx_proctoring/api.py:962
 #, python-brace-format
 msgid "Proctoring Session Results Update for {course_name} {exam_name}"
-msgstr ""
+msgstr "תוצאות מפגש תחת פיקוח מעודכן עבור {course_name} {exam_name}"
 
 #: edx_proctoring/api.py:1284
 msgid "Taking As Proctored Exam"
-msgstr ""
+msgstr "בחירה כמבחן תחת פיקוח"
 
 #: edx_proctoring/api.py:1289
 msgid "Proctored Option Available"
-msgstr ""
+msgstr "אפשרות תחת פיקוח זמינה"
 
 #: edx_proctoring/api.py:1294
 msgid "Taking As Open Exam"
-msgstr ""
+msgstr " בחירה במבחן פתוח"
 
 #: edx_proctoring/api.py:1299 edx_proctoring/api.py:1304
 msgid "Pending Session Review"
-msgstr ""
+msgstr "סקירת מפגש בהמתנה"
 
 #: edx_proctoring/api.py:1309
 msgid "Passed Proctoring"
-msgstr ""
+msgstr "פיקוח שעבר"
 
 #: edx_proctoring/api.py:1314 edx_proctoring/api.py:1319
 msgid "Failed Proctoring"
-msgstr ""
+msgstr "פיקוח שנכשל"
 
 #: edx_proctoring/api.py:1324
 msgid "Proctored Option No Longer Available"
-msgstr ""
+msgstr "האופציה תחת פיקוח אינה זמינה עוד."
 
 #: edx_proctoring/api.py:1333
 msgid "Ungraded Practice Exam"
-msgstr ""
+msgstr "מבחן תחת פיקוח ללא ציון"
 
 #: edx_proctoring/api.py:1338
 msgid "Practice Exam Completed"
-msgstr ""
+msgstr "הושלם מבחן תרגול"
 
 #: edx_proctoring/api.py:1343
 msgid "Practice Exam Failed"
-msgstr ""
+msgstr "מבחן תרגול שנכשל"
 
 #: edx_proctoring/api.py:1351
 msgid "Timed Exam"
@@ -149,19 +149,19 @@ msgstr "ממתין לאישור"
 
 #: edx_proctoring/models.py:182
 msgid "satisfactory"
-msgstr ""
+msgstr "שביעות רצון"
 
 #: edx_proctoring/models.py:183
 msgid "unsatisfactory"
-msgstr ""
+msgstr "חוסר שביעות רצון"
 
 #: edx_proctoring/models.py:481
 msgid "Taking as Proctored"
-msgstr ""
+msgstr "בחירה בפיקוח"
 
 #: edx_proctoring/models.py:485
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "דוגמת ניסיון"
 
 #: edx_proctoring/models.py:700
 msgid "Additional Time (minutes)"
@@ -169,7 +169,7 @@ msgstr "תוספת זמן (דקות)"
 
 #: edx_proctoring/models.py:701
 msgid "Review Policy Exception"
-msgstr ""
+msgstr "סקירת מדיניות בנוגע למקרים חריגים"
 
 #: edx_proctoring/templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
@@ -181,6 +181,10 @@ msgid ""
 "contact %(platform)s support at %(contact_email)s.\n"
 "\n"
 msgstr ""
+"\n"
+"הודעת דואר אלקטרוני זו נועדה ליידע אותך על הסטטוס של סקירת המפגש תחת פיקוח שלך  %(exam_name)s ב\n"
+"<a href=\"%(course_url)s\">%(course_name)s </a>  הוא %(status). במידה ויש לך שאלות על הפיקוח,\n"
+"פנה לתמיכה של %(platform)s ב %(contact_email)s.\n"
 
 #: edx_proctoring/templates/practice_exam/entrance.html:4
 msgid ""
@@ -188,6 +192,8 @@ msgid ""
 "      Try a proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"נסה מבחן תחת פיקוח"
 
 #: edx_proctoring/templates/practice_exam/entrance.html:9
 msgid ""
@@ -196,10 +202,13 @@ msgid ""
 "      on your grade in the course.\n"
 "    "
 msgstr ""
+"\n"
+"הכר את המבחנים תחת פיקוח מאוחר יותר בקורס. מבחן תרגול זה אינו משפיע\n"
+"על ציונך בקורס."
 
 #: edx_proctoring/templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
-msgstr ""
+msgstr "המשך למבחן התרגול שלי"
 
 #: edx_proctoring/templates/practice_exam/entrance.html:18
 msgid ""
@@ -207,6 +216,8 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
 "      "
 msgstr ""
+"\n"
+"תינתן לך הדרכה שלב אחר שלב כיצד להתקין את תוכנת הפיקוח ולבצע בדיקות ביצוע שונות."
 
 #: edx_proctoring/templates/practice_exam/error.html:4
 msgid ""
@@ -214,6 +225,8 @@ msgid ""
 "      There was a problem with your practice proctoring session\n"
 "    "
 msgstr ""
+"\n"
+"התעוררה בעיה במפגש התרגול תחת פיקוח שלך."
 
 #: edx_proctoring/templates/practice_exam/error.html:10
 msgid ""
@@ -221,6 +234,8 @@ msgid ""
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
 "    "
 msgstr ""
+"\n"
+"תוצאות התרגול תחת פיקוח: <b class=\"failure\">  חוסר שביעות רצון </b>"
 
 #: edx_proctoring/templates/practice_exam/error.html:16
 msgid ""
@@ -229,10 +244,13 @@ msgid ""
 "      You can retry this practice exam if you had problems setting up the online proctoring software.\n"
 "    "
 msgstr ""
+"\n"
+"מפגש הפיקוח הסתיים לפני שהשלמת את מבחן התרגול.\n"
+"אתה יכול לנסות שוב את מבחן התרגול הזה אם נתקלת בבעיות התקנת תוכנת הפיקוח און ליין."
 
 #: edx_proctoring/templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
-msgstr ""
+msgstr "נסה שוב את מבחן התרגול הזה."
 
 #: edx_proctoring/templates/practice_exam/submitted.html:4
 msgid ""
@@ -240,6 +258,8 @@ msgid ""
 "      You have submitted this practice proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"הגשת את מבחן התרגול תחת פיקוח הזה"
 
 #: edx_proctoring/templates/practice_exam/submitted.html:10
 msgid ""
@@ -248,10 +268,13 @@ msgid ""
 "      You have completed this practice exam and can continue with your course work.\n"
 "    "
 msgstr ""
+"\n"
+"מבחני תרגול אינם משפיעים על ציונך או נקודות הזכות שלך.\n"
+"השלמת את מבחן התרגול הזה. ניתן להמשיך בעבודת הקורס שלך."
 
 #: edx_proctoring/templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
-msgstr ""
+msgstr "אתה יכול נסות גם את מבחן התרגול הזה."
 
 #: edx_proctoring/templates/proctored_exam/confirm-decline.html:5
 msgid ""
@@ -259,6 +282,8 @@ msgid ""
 "        Are you sure you want to take this exam without proctoring?\n"
 "      "
 msgstr ""
+"\n"
+"האם אתה בטוח שאתה רוצה להיבחן במבחן זה ללא פיקוח?"
 
 #: edx_proctoring/templates/proctored_exam/confirm-decline.html:10
 msgid ""
@@ -266,10 +291,12 @@ msgid ""
 "        If you take this exam without proctoring, you will <strong> no longer be eligible for academic credit. </strong>\n"
 "      "
 msgstr ""
+"\n"
+"אם תיבחן במבחן זה ללא פיקוח, לא תוכל <strong> להיות זכאי לניקוד אקדמי. </strong>"
 
 #: edx_proctoring/templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
-msgstr ""
+msgstr "המשך במבחן ללא פיקוח"
 
 #: edx_proctoring/templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
@@ -283,6 +310,8 @@ msgid ""
 "      This exam is proctored\n"
 "    "
 msgstr ""
+"\n"
+"מבחן זה נמצא תחת פיקוח."
 
 #: edx_proctoring/templates/proctored_exam/entrance.html:9
 msgid ""
@@ -290,10 +319,12 @@ msgid ""
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
+"\n"
+"על מנת להיות זכאי לנקודות על הקורס או לתעודת MicroMasters, עליך לעבור את סקירת הפיקוח של מבחן זה."
 
 #: edx_proctoring/templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
-msgstr ""
+msgstr "המשך למבחן תחת פיקוח שלי. אני מעוניין להיות זכאי בנקודות זכות."
 
 #: edx_proctoring/templates/proctored_exam/entrance.html:17
 msgid ""
@@ -301,6 +332,8 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
 "      "
 msgstr ""
+"\n"
+"תינתן לך הדרכה שלב אחר שלב כיצד להתקין את תוכנת הפיקוח ולבצע בדיקות ביצוע שונות. </br>"
 
 #: edx_proctoring/templates/proctored_exam/error.html:4
 msgid ""
@@ -308,6 +341,8 @@ msgid ""
 "      Error with proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"טעות במבחן תחת פיקוח"
 
 #: edx_proctoring/templates/proctored_exam/error.html:10
 #, python-format
@@ -319,6 +354,10 @@ msgid ""
 "      the exam and complete all problems again.\n"
 "    "
 msgstr ""
+"\n"
+"אירעה טעות טכנית ב'מבחן תחת פיקוח' שלך. על מנת לפתור את הבעיה הזו, צור קשר\n"
+"עם <a href=\"mailto:%(tech_support_email)s\">צוות התמיכה הטכני </a>. כל המידע אודות המבחן כולל תשובות\n"
+"עבור בעיות שהושלמו, אבד. כאשר תיפתר הבעיה יהיה עליך להתחיל שוב מחדש את המבחן ולפתור שוב את כל הבעיות."
 
 #: edx_proctoring/templates/proctored_exam/error.html:19
 #: edx_proctoring/templates/proctored_exam/expired.html:15
@@ -331,6 +370,8 @@ msgid ""
 "      View your credit eligibility status on your <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 msgstr ""
+"\n"
+"צפה בסטטוס נקות הזכות שלך בדף ההתקדמות שלך <a href=\"%(progress_page_url)s\"> </a>."
 
 #: edx_proctoring/templates/proctored_exam/error.html:26
 #: edx_proctoring/templates/proctored_exam/rejected.html:26
@@ -339,6 +380,8 @@ msgid ""
 "      If you have concerns about your proctoring session results, contact your course team.\n"
 "    "
 msgstr ""
+"\n"
+"במידה ויש לך הסתייגויות בנוגע לתוצאות המפגש תחת פיקוח, צור קשר עם צוות הקורס."
 
 #: edx_proctoring/templates/proctored_exam/expired.html:4
 #: edx_proctoring/templates/timed_exam/expired.html:4
@@ -347,6 +390,8 @@ msgid ""
 "      The due date for this exam has passed\n"
 "    "
 msgstr ""
+"\n"
+"תאריך היעד למבחן זה עבר."
 
 #: edx_proctoring/templates/proctored_exam/expired.html:9
 #: edx_proctoring/templates/timed_exam/expired.html:9
@@ -355,6 +400,8 @@ msgid ""
 "      Because the due date has passed, you are no longer able to take this exam.\n"
 "    "
 msgstr ""
+"\n"
+"היות ותאריך היעד עבר, אינך זכאי עוד להיבחן במבחן זה."
 
 #: edx_proctoring/templates/proctored_exam/failed-prerequisites.html:9
 #, python-format
@@ -363,6 +410,8 @@ msgid ""
 "    You did not satisfy the requirements for taking this exam with proctoring, and are not eligible for credit. See your <a href=\"%(progress_page_url)s\">Progress</a> page for a list of requirements and your status for each.\n"
 "    "
 msgstr ""
+"\n"
+"לא ענית על הדרישות לצורך בחינה במבחן תחת פיקוח זה. ראה בדף ההתקדמות שלך <a href=\"%(progress_page_url)s\"> </a> את רשימת הדרישות ואת הסטטוס שלך בכל אחת מהן."
 
 #: edx_proctoring/templates/proctored_exam/failed-prerequisites.html:14
 msgid ""
@@ -370,6 +419,8 @@ msgid ""
 "    You did not satisfy the following prerequisites:\n"
 "    "
 msgstr ""
+"\n"
+"לא ענית על הדרישות המקדימות הבאות:"
 
 #: edx_proctoring/templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
@@ -377,6 +428,8 @@ msgid ""
 "        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
 "      "
 msgstr ""
+"\n"
+"הודות לחוסר שביעות בדרישות מקדימות, תוכל להיבחן במבחן זה ללא פיקוח."
 
 #: edx_proctoring/templates/proctored_exam/failed-prerequisites.html:40
 #, python-format
@@ -385,6 +438,8 @@ msgid ""
 "      If you have questions about the status of your requirements for course credit, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"אם יש לך שאלות סטטוס הדרישות לנקודות הקורס שלך, צור קשר עם צוות התמיכה של %(platform_name)s."
 
 #: edx_proctoring/templates/proctored_exam/footer.html:5
 msgid ""
@@ -392,6 +447,8 @@ msgid ""
 "        About Proctored Exams\n"
 "        "
 msgstr ""
+"\n"
+"אודות המבחנים תחת פיקוח"
 
 #: edx_proctoring/templates/proctored_exam/id_verification.html:6
 msgid ""
@@ -399,6 +456,8 @@ msgid ""
 "                Complete your verification before starting the proctored exam.\n"
 "            "
 msgstr ""
+"\n"
+"השלם את האימות שלך לפני שתתחיל את המבחן תחת פיקוח"
 
 #: edx_proctoring/templates/proctored_exam/id_verification.html:11
 msgid ""
@@ -406,6 +465,8 @@ msgid ""
 "                You must successfully complete identity verification before you can start the proctored exam.\n"
 "            "
 msgstr ""
+"\n"
+"עליך להשלים בהצלחה אימות זהות לפני שתוכל להתחיל את המבחן תחת פיקוח."
 
 #: edx_proctoring/templates/proctored_exam/id_verification.html:17
 msgid ""
@@ -414,6 +475,8 @@ msgid ""
 "                    submit your verification.\n"
 "                "
 msgstr ""
+"\n"
+"האימות שלך נמצא בבדיקה. התוצאות יהיו זמינות  2-3 ימים לאחר הגשת האימות שלך."
 
 #: edx_proctoring/templates/proctored_exam/id_verification.html:24
 msgid ""
@@ -423,6 +486,10 @@ msgid ""
 "                    then try again.\n"
 "                "
 msgstr ""
+"\n"
+"ניסיון האימות שלך נכשל. קרא בבקשה את הוראותינו על מנת להבטיח \n"
+"שהבנת את הדרישות לצורך השלמת האימות בהצלחה,\n"
+"ואז נסה שנית."
 
 #: edx_proctoring/templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
@@ -435,11 +502,14 @@ msgid ""
 "                    before you can start the proctored exam.\n"
 "                "
 msgstr ""
+"\n"
+"פג תוקפו של האימות. עליך להשלים בהצלחה אימות זהות חדשה\n"
+"לפני שתוכל להתחיל את המבחן תחת פיקוח."
 
 #: edx_proctoring/templates/proctored_exam/id_verification.html:44
 #: edx_proctoring/templates/proctored_exam/id_verification.html:56
 msgid "Continue to Verification"
-msgstr ""
+msgstr "המשך לאימות"
 
 #: edx_proctoring/templates/proctored_exam/id_verification.html:49
 msgid ""
@@ -448,6 +518,10 @@ msgid ""
 "                    such as a driver's license or passport, before you continue.\n"
 "                "
 msgstr ""
+"\n"
+"לפני שתתחיל\n"
+"וודא שלמחשבך יש מצלמת אינטרנט ויש לך תמונת זיהוי מעודכנת\n"
+"כגון רישיון נהיגה או דרכון."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:6
 msgid ""
@@ -455,6 +529,8 @@ msgid ""
 "      Follow these steps to set up and start your proctored exam.\n"
 "    "
 msgstr ""
+"\n"
+"עקוב אחר צעדים אלה להתקנה והתחל במבחן תחת פיקוח."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:11
 msgid ""
@@ -462,6 +538,8 @@ msgid ""
 "        1. Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
 "      "
 msgstr ""
+"\n"
+"1. העתק את קוד המבחן הייחודי הזה. לאחר מכן תתבקש להדביק את הקוד הזה לפני התחלת המבחן."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:19
 msgid ""
@@ -469,6 +547,8 @@ msgid ""
 "        Select the exam code, then copy it using Command+C (Mac) or Control+C (Windows).\n"
 "      "
 msgstr ""
+"\n"
+"בחר את קוד המבחן ואז הדבק אותו בעזרת Command+C (מק) או Control+C (ווינדוס)."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:24
 msgid ""
@@ -476,10 +556,12 @@ msgid ""
 "        2. Follow the link below to set up proctoring.\n"
 "      "
 msgstr ""
+"\n"
+"2. עקוב אחר הקישור מטה כדי להגדיר את הפיקוח."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
-msgstr ""
+msgstr "התחל בבדיקת מערכת"
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:32
 msgid ""
@@ -487,6 +569,8 @@ msgid ""
 "        A new window will open. You will run a system check before downloading the proctoring application.\n"
 "      "
 msgstr ""
+"\n"
+"חלון חדש ייפתח. עליך להריץ בדיקת מערכת לפני הורדת אפליקציית הפיקוח."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:37
 msgid ""
@@ -496,6 +580,10 @@ msgid ""
 "        such as a driver's license or passport, before you continue.\n"
 "      "
 msgstr ""
+"\n"
+"תתבקש לאמת את זהותך כחלק מהגדרת המבחן תחת פיקוח.\n"
+"לפני שתתחיל, וודא שלמחשבך יש מצלמת אינטרנט ויש לך תמונת זיהוי\n"
+"כגון רישיון נהיגה או דרכון."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:44
 msgid ""
@@ -503,10 +591,12 @@ msgid ""
 "          3. When you have finished setting up proctoring, start the exam.\n"
 "        "
 msgstr ""
+"\n"
+"3. כאשר תסיים את הגדרת הפיקוח, התחל את המבחן."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:50
 msgid "Start Proctored Exam"
-msgstr ""
+msgstr "התחל במבחן תחת פיקוח"
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:60
 msgid "Close"
@@ -514,16 +604,16 @@ msgstr "סגור"
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
-msgstr ""
+msgstr "לא ניתן להתחיל במבחן תחת פיקוח"
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:85
 #: edx_proctoring/templates/proctored_exam/proctoring_opt_out_button.html:5
 msgid "Take this exam without proctoring."
-msgstr ""
+msgstr "היבחן במבחן זה ללא פיקוח."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:87
 msgid "Doing so means that you are no longer eligible for academic credit."
-msgstr ""
+msgstr "בפעולה זו אינך שכאי עוד לניקוד אקדמי."
 
 #: edx_proctoring/templates/proctored_exam/pending-prerequisites.html:9
 #, python-format
@@ -532,6 +622,8 @@ msgid ""
 "    You have not completed the prerequisites for this exam. All requirements must be satisfied before you can take this proctored exam and be eligible for credit. See your <a href=\"%(progress_page_url)s\">Progress</a> page for a list of requirements in the order that they must be completed.\n"
 "    "
 msgstr ""
+"\n"
+"לא השלמת את הדרישות המקדימות למבחן הזה. כל הדרישות המקדימות חייבות להיות משביעות רצון לפני שתוכל להיבחן במבחן תחת פיקוח ולקבל ניקוד. ראה <a href=\"%(progress_page_url)s\"> בעמוד התקדמות </a> את רשימת הדרישות המקדימות לצורך השלמתן."
 
 #: edx_proctoring/templates/proctored_exam/pending-prerequisites.html:14
 msgid ""
@@ -539,6 +631,8 @@ msgid ""
 "    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
 "    "
 msgstr ""
+"\n"
+"הדרישות המקדימות שלהלן נמצאות <strong> בתהליך </strong> בדיקה וחייבות להסתיים בהצלחה לפני שתוכל להמשיך:"
 
 #: edx_proctoring/templates/proctored_exam/pending-prerequisites.html:30
 #, python-format
@@ -547,10 +641,12 @@ msgid ""
 "    You can take this exam with proctoring only when all prerequisites have been successfully completed. Check your <a href=\"%(progress_page_url)s\">Progress</a>  page to see if prerequisite results have been updated. You can also take this exam now without proctoring, but you will not be eligible for credit.\n"
 "    "
 msgstr ""
+"\n"
+"תוכל להיבחן במבחן זה עם פיקוח בלבד רק כאשר כל הדרישות המקדימות יושלמו בהצלחה. בדוק את <a href=\"%(progress_page_url)s\"> עמוד ההתקדמות </a> כדי לראות אם תוצאות הדרישות המקדימות עודכנו. תוכל גם להיבחן כעת במבחן זה ללא פיקוח, אך לא תהיה זכאי לניקוד."
 
 #: edx_proctoring/templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
-msgstr ""
+msgstr "מפגש הפיקוח שלך התחיל."
 
 #: edx_proctoring/templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
@@ -559,6 +655,9 @@ msgid ""
 "href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
 "proctoring rules</a> to pass the proctoring review for your exam. "
 msgstr ""
+"מרגע זה ואילך, עליך לעקוב אחר <a "
+"href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\"> חוקי "
+"הפיקוח הנמצאים און ליין </a> על מנת לעבור את הסקירה תחת פיקוח עבור מבחנך."
 
 #: edx_proctoring/templates/proctored_exam/proctoring_launch_callback.html:168
 msgid ""
@@ -566,6 +665,8 @@ msgid ""
 "            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
 "          "
 msgstr ""
+"\n"
+"אל תסגור חלון זה לפני סיום מבחנך. אם תסגור חלון זה, יסתיים ה'מפגש תחת פיקוח' שלך ולא תוכל להשלים בהצלחה את ה'מבחן תחת פיקוח'."
 
 #: edx_proctoring/templates/proctored_exam/proctoring_launch_callback.html:173
 #, python-format
@@ -576,6 +677,10 @@ msgid ""
 "            and upload your proctoring session data for review.\n"
 "          "
 msgstr ""
+"\n"
+"חזור לחלון קורס  %(platform_name)s כדי להתחיל את מבחנך. כאשר תסיים את מבחנך\n"
+"ותסמן אותו כגמור, תוכל לסגור את החלון הזה על מנת לסיים את המפגש תחת פיקוח\n"
+"ולהעלות את המידע על המפגש תחת פיקוח לצורך סקירה."
 
 #: edx_proctoring/templates/proctored_exam/proctoring_opt_out_button.html:8
 msgid ""
@@ -583,6 +688,8 @@ msgid ""
 "        I am not interested in academic credit.\n"
 "      "
 msgstr ""
+"\n"
+"אינני מעוניין בניקוד אקדמי."
 
 #: edx_proctoring/templates/proctored_exam/ready_to_start.html:5
 msgid ""
@@ -590,6 +697,8 @@ msgid ""
 "      Follow these instructions\n"
 "    "
 msgstr ""
+"\n"
+"ערוב אחר ההוראות האלה"
 
 #: edx_proctoring/templates/proctored_exam/ready_to_start.html:10
 #, python-format
@@ -601,6 +710,11 @@ msgid ""
 "                submitted for review. </br>\n"
 "      "
 msgstr ""
+"\n"
+"&#8226; כאשר תתחיל את מבחנך, יהיה לך %(total_time)s להשלים אותו.</br>\n"
+"&#8226; אינך יכול לעצור את שעון העצר ברגע שהתחלת.\n"
+"&#8226; אם יסתיים הזמן לפני שסיימת את מבחנך, תשובותיך השלמות\n"
+"יוגשו לסקירה.</br>"
 
 #: edx_proctoring/templates/proctored_exam/ready_to_start.html:19
 msgid ""
@@ -608,6 +722,8 @@ msgid ""
 "          Start my exam\n"
 "        "
 msgstr ""
+"\n"
+"התחל את המבחן שלי"
 
 #: edx_proctoring/templates/proctored_exam/ready_to_submit.html:4
 msgid ""
@@ -615,6 +731,8 @@ msgid ""
 "      Are you sure you want to end your proctored exam?\n"
 "    "
 msgstr ""
+"\n"
+"האם אתה בטוח שאתה רוצה לסיים את ה'מבחן תחת פיקוח' שלך?"
 
 #: edx_proctoring/templates/proctored_exam/ready_to_submit.html:9
 #: edx_proctoring/templates/timed_exam/ready_to_submit.html:9
@@ -623,6 +741,8 @@ msgid ""
 "      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
 "    "
 msgstr ""
+"\n"
+"וודא שבחרת \"הגשה\" עבור כל בעיה לפני שאתה מגיש את המבחן שלך."
 
 #: edx_proctoring/templates/proctored_exam/ready_to_submit.html:14
 msgid ""
@@ -632,6 +752,10 @@ msgid ""
 "      as well as achieve a final grade that meets credit requirements for the course.\n"
 "    "
 msgstr ""
+"\n"
+"לאחר הגשת מבחנך, יקבלו תשובותיך ציונים וייסקר המפגש תחת פיקוח שלך.\n"
+"תוכל להיות זכאי לניקוד אקדמי עבור קורס זה אם תשלים את כל המבחנים הנדרשים,\n"
+"וכן תוכל לקבל ציון סופי שיענה על דרישות זיכוי עבור קורס זה."
 
 #: edx_proctoring/templates/proctored_exam/ready_to_submit.html:21
 msgid ""
@@ -639,6 +763,8 @@ msgid ""
 "      Yes, end my proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"כן, סיים את ה'מבחן ללא פיקוח' שלי"
 
 #: edx_proctoring/templates/proctored_exam/ready_to_submit.html:27
 msgid ""
@@ -646,6 +772,8 @@ msgid ""
 "        No, I'd like to continue working\n"
 "      "
 msgstr ""
+"\n"
+"לא, אני רוצה להמשיך לעבוד."
 
 #: edx_proctoring/templates/proctored_exam/rejected.html:4
 msgid ""
@@ -653,6 +781,8 @@ msgid ""
 "      Your proctoring session was reviewed and did not pass requirements\n"
 "    "
 msgstr ""
+"\n"
+"המפגש תחת פיקוח שלך עבר סקירה ולא עבר את הדרישות."
 
 #: edx_proctoring/templates/proctored_exam/rejected.html:10
 #, python-format
@@ -662,6 +792,9 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"אינך זכאי עוד לניקוד אקדמי עבור קורס זה, ללא קשר לציונך הסופי.\n"
+"במידה ויש לך שאלות על סטטוס תוצאות ה'מבחן תחת פיקוח' שלך, צור קשר עם צוות התמיכה של  %(platform_name)s."
 
 #: edx_proctoring/templates/proctored_exam/submitted.html:4
 msgid ""
@@ -669,6 +802,8 @@ msgid ""
 "      You have submitted this proctored exam for review\n"
 "    "
 msgstr ""
+"\n"
+"הגשת לסקירה את ה'מבחן תחת פיקוח' שלך."
 
 #: edx_proctoring/templates/proctored_exam/submitted.html:9
 msgid ""
@@ -676,6 +811,8 @@ msgid ""
 "      If the proctoring software window is still open, you can close it now. Confirm that you want to quit the application when you are prompted.\n"
 "    "
 msgstr ""
+"\n"
+"אם חלון תכונת הפיקוח עדיין תפוחה, תוכל לסגור אותה כעת. אשר שאתה מעוניין לעזוב את האפליקציה כאשר אתה מתבקש."
 
 #: edx_proctoring/templates/proctored_exam/submitted.html:14
 msgid ""
@@ -684,6 +821,9 @@ msgid ""
 "      &#8226; Proctoring results are usually available within 5 business days after you submit your exam.\n"
 "    "
 msgstr ""
+"\n"
+"&#8226; לאחר שתעזוב את המפגש תחת פיקוח, המידע שהוקלט יועלה לסקירה.</br>\n"
+"&#8226; לרוב, תוצאות תחת פיקוח זמינות  תוך 5 ימי עסקים לאחר הגשת המבחן."
 
 #: edx_proctoring/templates/proctored_exam/submitted.html:23
 #, python-format
@@ -692,6 +832,8 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"במידה ויש לך שאלות אודות סטטוס תוצאות המבחן תחת פיקוח שלך, צור קשר עם צוות התמיכה של  %(platform_name)s."
 
 #: edx_proctoring/templates/proctored_exam/verified.html:4
 msgid ""
@@ -699,6 +841,8 @@ msgid ""
 "      Your proctoring session was reviewed and passed all requirements\n"
 "    "
 msgstr ""
+"\n"
+"המפגש תחת פיקוח שלך עבר סקירה ועבר את כל הדרישות."
 
 #: edx_proctoring/templates/proctored_exam/verified.html:10
 msgid ""
@@ -707,6 +851,9 @@ msgid ""
 "      and also achieve a final grade that meets the credit requirements for the course.\n"
 "    "
 msgstr ""
+"\n"
+"אתה זכאי לרכוש ניקוד אקדמי עבור קורס זה אם השלמת את כל המבחנים הדרושים\n"
+"והשגת בנוסף ציון סופי העונה את כל הדרישות לקורס זה."
 
 #: edx_proctoring/templates/proctored_exam/visit_exam_content.html:5
 msgid ""
@@ -714,10 +861,12 @@ msgid ""
 "      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
 "    "
 msgstr ""
+"\n"
+"על מנת לצפות בשאלות ותשובות מבחנך, בחר <strong> צפה במבחן שלי </strong>.  סטטוס סקירת המבחן יוצג משמאל בחלונית הניווט."
 
 #: edx_proctoring/templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "הצג את המבחן שלי"
 
 #: edx_proctoring/templates/proctored_exam/visit_exam_content.html:40
 msgid ""
@@ -725,6 +874,8 @@ msgid ""
 "      After the due date for this exam has passed, you will be able to review your answers on this page.\n"
 "    "
 msgstr ""
+"\n"
+"לאחר שיעבור תאריך היעד עבור מבחן זה, תוכל לסקור את תשובותיך בעמוד זה."
 
 #: edx_proctoring/templates/timed_exam/entrance.html:4
 #, python-format
@@ -733,30 +884,32 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
+"\n"
+"%(exam_name)s הוא מבחן מתוזמן (%(total_time)s)"
 
 #: edx_proctoring/templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr ""
+msgstr "למבחן זה יש מגבלת זמן."
 
 #: edx_proctoring/templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
-msgstr ""
+msgstr "על מנת לעבור מבחן זה, עליך להשלים את הבעיות בזמן המוקצב."
 
 #: edx_proctoring/templates/timed_exam/entrance.html:13
 msgid "After you select "
-msgstr ""
+msgstr "לאחר בחירתך"
 
 #: edx_proctoring/templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr ""
+msgstr "אני מוכל להתחיל את המבחן המתוזמן הזה."
 
 #: edx_proctoring/templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr ""
+msgstr "עליך"
 
 #: edx_proctoring/templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
-msgstr ""
+msgstr "להשלים ולהגיש את המבחן."
 
 #: edx_proctoring/templates/timed_exam/entrance.html:21
 msgid ""
@@ -764,10 +917,12 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"אני מוכל להתחיל את המבחן המתוזמן הזה."
 
 #: edx_proctoring/templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
-msgstr ""
+msgstr "האם אני יכול לבקש הארכת זמן על מנת להשלים את המבחן שלי?"
 
 #: edx_proctoring/templates/timed_exam/footer.html:4
 msgid ""
@@ -777,6 +932,10 @@ msgid ""
 "      Ask your course team for information about additional time allowances.\n"
 "    "
 msgstr ""
+"\n"
+"אם יש לך מגבלות כלשהן,\n"
+"אתה עשוי להיות זכאי להארכת זמן נוספת במבחנים מתוזמנים.\n"
+"שאל את צוות הקורס על מידע אודות הארכות זמן נוספות."
 
 #: edx_proctoring/templates/timed_exam/ready_to_submit.html:4
 msgid ""
@@ -784,6 +943,8 @@ msgid ""
 "      Are you sure that you want to submit your timed exam?\n"
 "    "
 msgstr ""
+"\n"
+"האם את הבטוח שאת הרומה להגיש את המבחן המתוזמן שלך?"
 
 #: edx_proctoring/templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -791,6 +952,8 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
+"\n"
+"לאחר שתגיש את מבחנך, יקבל מבחנך ציון."
 
 #: edx_proctoring/templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -798,6 +961,8 @@ msgid ""
 "      Yes, submit my timed exam.\n"
 "    "
 msgstr ""
+"\n"
+"כן, הגש את המבחן המתוזמן שלי."
 
 #: edx_proctoring/templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -805,6 +970,8 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
+"\n"
+"לא, אני מעוניין להמשיך לעבוד."
 
 #: edx_proctoring/templates/timed_exam/submitted.html:6
 msgid ""
@@ -812,6 +979,8 @@ msgid ""
 "        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.\n"
 "      "
 msgstr ""
+"\n"
+"הזמן, המוקצה למבחן זה, עבר. מבחנך הוגש וכל עבודה שתשלים, יקבל ציון."
 
 #: edx_proctoring/templates/timed_exam/submitted.html:10
 msgid ""
@@ -819,6 +988,8 @@ msgid ""
 "        You have submitted your timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"הגשת את המבחן המתוזמן שלך."
 
 #: edx_proctoring/templates/timed_exam/submitted.html:18
 #, python-format
@@ -827,6 +998,8 @@ msgid ""
 "      Your grade for this timed exam will be immediately available on the <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 msgstr ""
+"\n"
+"ציונך עבור המבחן המתוזמן הזה יהיה זמין מיד בעמוד <a href=\"%(progress_page_url)s\"> ההתקדמות </a>."
 
 #: edx_proctoring/templates/timed_exam/submitted.html:22
 msgid ""
@@ -834,53 +1007,55 @@ msgid ""
 "        After the due date has passed, you can review the exam, but you cannot change your answers.\n"
 "      "
 msgstr ""
+"\n"
+"לאחר שעבר תאריך היעד, תוכל לסקור את המבחן אך לא תוכל לשנות את תשובותיך."
 
 #: edx_proctoring/utils.py:76
 #, python-brace-format
 msgid "{num_of_hours} hour"
-msgstr ""
+msgstr "{num_of_hours} שעה"
 
 #: edx_proctoring/utils.py:79
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr ""
+msgstr "{num_of_hours}  שעות"
 
 #: edx_proctoring/utils.py:87 edx_proctoring/utils.py:97
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
-msgstr ""
+msgstr "{num_of_minutes}  דקות"
 
 #: edx_proctoring/utils.py:90
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr ""
+msgstr "ו- {num_of_minutes} דקה"
 
 #: edx_proctoring/utils.py:92
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr ""
+msgstr " {num_of_minutes} דקה"
 
 #: edx_proctoring/utils.py:95
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr ""
+msgstr "ו-  {num_of_minutes} דקות"
 
 #: edx_proctoring/views.py:92
 msgid "could not determine the course_id"
-msgstr ""
+msgstr "לא ניתן להגדיר את מזהה הקורס"
 
 #: edx_proctoring/views.py:102
 msgid "Must be a Staff User to Perform this request."
-msgstr ""
+msgstr "חייב להיות משתמש צוות על מנת לבצע בקשה זו."
 
 #: edx_proctoring/views.py:334 edx_proctoring/views.py:546
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
-msgstr ""
+msgstr "נותרה לך {remaining_time}"
 
 #: edx_proctoring/views.py:340
 msgid "you have less than a minute remaining"
-msgstr ""
+msgstr "נותרה לך פחות מדקה"
 
 #: edx_proctoring/views.py:536
 msgid "timed"
@@ -888,8 +1063,8 @@ msgstr "מתוזמן"
 
 #: edx_proctoring/views.py:537
 msgid "practice"
-msgstr ""
+msgstr "תרגול"
 
 #: edx_proctoring/views.py:537
 msgid "proctored"
-msgstr ""
+msgstr "תחת פיקוח"
