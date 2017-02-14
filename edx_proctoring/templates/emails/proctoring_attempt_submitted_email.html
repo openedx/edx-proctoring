@@ -1,0 +1,25 @@
+{% load i18n %}
+
+<p>
+    {% blocktrans %}
+        Hi {{ username }},
+    {% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+        Your proctored exam "{{ exam_name }}" in
+        <a href="{{ course_url }}">{{ course_name }}</a> was submitted
+        successfully and will now be reviewed to ensure all proctoring exam
+        rules were followed. You should receive an email with your updated exam
+        status within 5 business days.
+    {% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+        If you have any questions about proctoring, contact {{ platform }}
+        support at
+        <a href="mailto:{{ contact_email }}?Subject={{ support_email_subject }}">
+            {{ contact_email }}
+        </a>.
+    {% endblocktrans %}
+</p>

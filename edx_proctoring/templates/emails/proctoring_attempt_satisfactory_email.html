@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<p>
+    {% blocktrans %}
+        Hi {{ username }},
+    {% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+        Your proctored exam "{{ exam_name }}" in
+        <a href="{{ course_url }}">{{ course_name }}</a> was reviewed and you
+        met all exam requirements. You can view your grade on the course
+        progress page.
+    {% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+        If you have any questions about your results, contact {{ platform }}
+        support at
+        <a href="mailto:{{ contact_email }}?Subject={{ support_email_subject }}">
+            {{ contact_email }}
+        </a>.
+    {% endblocktrans %}
+</p>

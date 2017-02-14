@@ -31,22 +31,25 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
     All tests for proctored exam emails.
     """
 
-    def setUp(self):
-        """
-        Build out test harnessing
-        """
-        super(ProctoredExamEmailTests, self).setUp()
-
-        # Messages for get_student_view
-        self.proctored_exam_email_subject = 'Proctoring Session Results Update'
-        self.proctored_exam_email_body = 'the status of your proctoring session review'
-
     @ddt.data(
-        ProctoredExamStudentAttemptStatus.submitted,
-        ProctoredExamStudentAttemptStatus.verified,
-        ProctoredExamStudentAttemptStatus.rejected
+        [
+            ProctoredExamStudentAttemptStatus.submitted,
+            'Proctoring Review In Progress',
+            'was submitted successfully',
+        ],
+        [
+            ProctoredExamStudentAttemptStatus.verified,
+            'Proctoring Results',
+            'was reviewed and you met all exam requirements',
+        ],
+        [
+            ProctoredExamStudentAttemptStatus.rejected,
+            'Proctoring Results',
+            'the team found one or more violations',
+        ]
     )
-    def test_send_email(self, status):
+    @ddt.unpack
+    def test_send_email(self, status, expected_subject, expected_message_string):
         """
         Assert that email is sent on the following statuses of proctoring attempt.
         """
@@ -59,27 +62,18 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
             status
         )
         self.assertEquals(len(mail.outbox), 1)
-        self.assertIn(self.proctored_exam_email_subject, mail.outbox[0].subject)
-        self.assertIn(self.proctored_exam_email_body, mail.outbox[0].body)
-        self.assertIn(ProctoredExamStudentAttemptStatus.get_status_alias(status), mail.outbox[0].body)
-        self.assertIn(credit_state['course_name'], mail.outbox[0].body)
 
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.second_review_required,
-        ProctoredExamStudentAttemptStatus.error
-    )
-    def test_email_not_sent(self, status):
-        """
-        Assert than email is not sent on the following statuses of proctoring attempt
-        """
+        # Verify the subject
+        actual_subject = self._normalize_whitespace(mail.outbox[0].subject)
+        self.assertIn(expected_subject, actual_subject)
+        self.assertIn(self.exam_name, actual_subject)
 
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-        self.assertEquals(len(mail.outbox), 0)
+        # Verify the body
+        actual_body = self._normalize_whitespace(mail.outbox[0].body)
+        self.assertIn('Hi tester,', actual_body)
+        self.assertIn('Your proctored exam "Test Exam"', actual_body)
+        self.assertIn(credit_state['course_name'], actual_body)
+        self.assertIn(expected_message_string, actual_body)
 
     def test_send_email_unicode(self):
         """
@@ -97,16 +91,16 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
             ProctoredExamStudentAttemptStatus.submitted
         )
         self.assertEquals(len(mail.outbox), 1)
-        self.assertIn(self.proctored_exam_email_subject, mail.outbox[0].subject)
-        self.assertIn(course_name, mail.outbox[0].subject)
-        self.assertIn(self.proctored_exam_email_body, mail.outbox[0].body)
-        self.assertIn(
-            ProctoredExamStudentAttemptStatus.get_status_alias(
-                ProctoredExamStudentAttemptStatus.submitted
-            ),
-            mail.outbox[0].body
-        )
-        self.assertIn(credit_state['course_name'], mail.outbox[0].body)
+
+        # Verify the subject
+        actual_subject = self._normalize_whitespace(mail.outbox[0].subject)
+        self.assertIn('Proctoring Review In Progress', actual_subject)
+        self.assertIn(course_name, actual_subject)
+
+        # Verify the body
+        actual_body = self._normalize_whitespace(mail.outbox[0].body)
+        self.assertIn('was submitted successfully', actual_body)
+        self.assertIn(credit_state['course_name'], actual_body)
 
     @ddt.data(
         ProctoredExamStudentAttemptStatus.eligible,
@@ -117,12 +111,13 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         ProctoredExamStudentAttemptStatus.ready_to_submit,
         ProctoredExamStudentAttemptStatus.declined,
         ProctoredExamStudentAttemptStatus.timed_out,
-        ProctoredExamStudentAttemptStatus.error
+        ProctoredExamStudentAttemptStatus.second_review_required,
+        ProctoredExamStudentAttemptStatus.error,
     )
     @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
-    def test_not_send_email(self, status):
+    def test_email_not_sent(self, status):
         """
-        Assert that email is not sent on the following statuses of proctoring attempt.
+        Assert that an email is not sent for the following attempt status codes.
         """
 
         exam_attempt = self._create_started_exam_attempt()
