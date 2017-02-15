@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-12 15:05-0500\n"
+"POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,160 +17,160 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: \n"
 
-#: edx_proctoring/admin.py:88
+#: admin.py:88
 msgid "internally reviewed"
 msgstr "internally reviewed"
 
-#: edx_proctoring/admin.py:97
+#: admin.py:97
 msgid "All Unreviewed"
 msgstr "All Unreviewed"
 
-#: edx_proctoring/admin.py:98
+#: admin.py:98
 msgid "All Unreviewed Failures"
 msgstr "All Unreviewed Failures"
 
-#: edx_proctoring/admin.py:119
+#: admin.py:119
 msgid "active proctored exams"
 msgstr "active proctored exams"
 
-#: edx_proctoring/admin.py:177
+#: admin.py:177
 msgid "courses with active proctored exams"
 msgstr "courses with active proctored exams"
 
-#: edx_proctoring/admin.py:342
+#: admin.py:342
 msgid "Course Id"
 msgstr "Course Id"
 
-#: edx_proctoring/admin.py:380
+#: admin.py:380
 msgid "Created"
 msgstr "Created"
 
-#: edx_proctoring/admin.py:381
+#: admin.py:381
 msgid "Download Software Clicked"
 msgstr "Download Software Clicked"
 
-#: edx_proctoring/admin.py:382
+#: admin.py:382
 msgid "Ready To Start"
 msgstr "Ready To Start"
 
-#: edx_proctoring/admin.py:383
+#: admin.py:383
 msgid "Started"
 msgstr "Started"
 
-#: edx_proctoring/admin.py:384
+#: admin.py:384
 msgid "Ready To Submit"
 msgstr "Ready To Submit"
 
-#: edx_proctoring/admin.py:385
+#: admin.py:385
 msgid "Declined"
 msgstr "Declined"
 
-#: edx_proctoring/admin.py:386
+#: admin.py:386
 msgid "Timed Out"
 msgstr "Timed Out"
 
-#: edx_proctoring/admin.py:387
+#: admin.py:387
 msgid "Submitted"
 msgstr "Submitted"
 
-#: edx_proctoring/admin.py:388
+#: admin.py:388
 msgid "Second Review Required"
 msgstr "Second Review Required"
 
-#: edx_proctoring/admin.py:389
+#: admin.py:389
 msgid "Verified"
 msgstr "Verified"
 
-#: edx_proctoring/admin.py:390
+#: admin.py:390
 msgid "Rejected"
 msgstr "Rejected"
 
-#: edx_proctoring/admin.py:391
+#: admin.py:391
 msgid "Error"
 msgstr "Error"
 
-#: edx_proctoring/api.py:902
+#: api.py:902
 msgid "your course"
 msgstr "your course"
 
-#: edx_proctoring/api.py:962
+#: api.py:962
 #, python-brace-format
 msgid "Proctoring Session Results Update for {course_name} {exam_name}"
 msgstr "Proctoring Session Results Update for {course_name} {exam_name}"
 
-#: edx_proctoring/api.py:1284
+#: api.py:1284
 msgid "Taking As Proctored Exam"
 msgstr "Taking As Proctored Exam"
 
-#: edx_proctoring/api.py:1289
+#: api.py:1289
 msgid "Proctored Option Available"
 msgstr "Proctored Option Available"
 
-#: edx_proctoring/api.py:1294
+#: api.py:1294
 msgid "Taking As Open Exam"
 msgstr "Taking As Open Exam"
 
-#: edx_proctoring/api.py:1299 edx_proctoring/api.py:1304
+#: api.py:1299 api.py:1304
 msgid "Pending Session Review"
 msgstr "Pending Session Review"
 
-#: edx_proctoring/api.py:1309
+#: api.py:1309
 msgid "Passed Proctoring"
 msgstr "Passed Proctoring"
 
-#: edx_proctoring/api.py:1314 edx_proctoring/api.py:1319
+#: api.py:1314 api.py:1319
 msgid "Failed Proctoring"
 msgstr "Failed Proctoring"
 
-#: edx_proctoring/api.py:1324
+#: api.py:1324
 msgid "Proctored Option No Longer Available"
 msgstr "Proctored Option No Longer Available"
 
-#: edx_proctoring/api.py:1333
+#: api.py:1333
 msgid "Ungraded Practice Exam"
 msgstr "Ungraded Practice Exam"
 
-#: edx_proctoring/api.py:1338
+#: api.py:1338
 msgid "Practice Exam Completed"
 msgstr "Practice Exam Completed"
 
-#: edx_proctoring/api.py:1343
+#: api.py:1343
 msgid "Practice Exam Failed"
 msgstr "Practice Exam Failed"
 
-#: edx_proctoring/api.py:1351
+#: api.py:1351
 msgid "Timed Exam"
 msgstr "Timed Exam"
 
-#: edx_proctoring/models.py:181
+#: models.py:181
 msgid "pending"
 msgstr "pending"
 
-#: edx_proctoring/models.py:182
+#: models.py:182
 msgid "satisfactory"
 msgstr "satisfactory"
 
-#: edx_proctoring/models.py:183
+#: models.py:183
 msgid "unsatisfactory"
 msgstr "unsatisfactory"
 
-#: edx_proctoring/models.py:481
+#: models.py:481
 msgid "Taking as Proctored"
 msgstr "Taking as Proctored"
 
-#: edx_proctoring/models.py:485
+#: models.py:485
 msgid "Is Sample Attempt"
 msgstr "Is Sample Attempt"
 
-#: edx_proctoring/models.py:700
+#: models.py:700
 msgid "Additional Time (minutes)"
 msgstr "Additional Time (minutes)"
 
-#: edx_proctoring/models.py:701
+#: models.py:701
 msgid "Review Policy Exception"
 msgstr "Review Policy Exception"
 
-#: edx_proctoring/templates/emails/proctoring_attempt_status_email.html:3
+#: templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
 msgid ""
 "\n"
@@ -187,7 +187,7 @@ msgstr ""
 "contact %(platform)s support at %(contact_email)s.\n"
 "\n"
 
-#: edx_proctoring/templates/practice_exam/entrance.html:4
+#: templates/practice_exam/entrance.html:4
 msgid ""
 "\n"
 "      Try a proctored exam\n"
@@ -197,7 +197,7 @@ msgstr ""
 "      Try a proctored exam\n"
 "    "
 
-#: edx_proctoring/templates/practice_exam/entrance.html:9
+#: templates/practice_exam/entrance.html:9
 msgid ""
 "\n"
 "      Get familiar with proctoring for real exams later in the course. This practice exam has no impact\n"
@@ -209,11 +209,11 @@ msgstr ""
 "      on your grade in the course.\n"
 "    "
 
-#: edx_proctoring/templates/practice_exam/entrance.html:15
+#: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
 msgstr "Continue to my practice exam"
 
-#: edx_proctoring/templates/practice_exam/entrance.html:18
+#: templates/practice_exam/entrance.html:18
 msgid ""
 "\n"
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
@@ -223,7 +223,7 @@ msgstr ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
 "      "
 
-#: edx_proctoring/templates/practice_exam/error.html:4
+#: templates/practice_exam/error.html:4
 msgid ""
 "\n"
 "      There was a problem with your practice proctoring session\n"
@@ -233,7 +233,7 @@ msgstr ""
 "      There was a problem with your practice proctoring session\n"
 "    "
 
-#: edx_proctoring/templates/practice_exam/error.html:10
+#: templates/practice_exam/error.html:10
 msgid ""
 "\n"
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
@@ -243,7 +243,7 @@ msgstr ""
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
 "    "
 
-#: edx_proctoring/templates/practice_exam/error.html:16
+#: templates/practice_exam/error.html:16
 msgid ""
 "\n"
 "      Your proctoring session ended before you completed this practice exam.\n"
@@ -255,11 +255,11 @@ msgstr ""
 "      You can retry this practice exam if you had problems setting up the online proctoring software.\n"
 "    "
 
-#: edx_proctoring/templates/practice_exam/error.html:25
+#: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
 msgstr "Try this practice exam again"
 
-#: edx_proctoring/templates/practice_exam/submitted.html:4
+#: templates/practice_exam/submitted.html:4
 msgid ""
 "\n"
 "      You have submitted this practice proctored exam\n"
@@ -269,7 +269,7 @@ msgstr ""
 "      You have submitted this practice proctored exam\n"
 "    "
 
-#: edx_proctoring/templates/practice_exam/submitted.html:10
+#: templates/practice_exam/submitted.html:10
 msgid ""
 "\n"
 "      Practice exams do not affect your grade or your credit eligibility.\n"
@@ -281,11 +281,11 @@ msgstr ""
 "      You have completed this practice exam and can continue with your course work.\n"
 "    "
 
-#: edx_proctoring/templates/practice_exam/submitted.html:18
+#: templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
 msgstr "You can also retry this practice exam"
 
-#: edx_proctoring/templates/proctored_exam/confirm-decline.html:5
+#: templates/proctored_exam/confirm-decline.html:5
 msgid ""
 "\n"
 "        Are you sure you want to take this exam without proctoring?\n"
@@ -295,7 +295,7 @@ msgstr ""
 "        Are you sure you want to take this exam without proctoring?\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/confirm-decline.html:10
+#: templates/proctored_exam/confirm-decline.html:10
 msgid ""
 "\n"
 "        If you take this exam without proctoring, you will <strong> no longer be eligible for academic credit. </strong>\n"
@@ -305,17 +305,17 @@ msgstr ""
 "        If you take this exam without proctoring, you will <strong> no longer be eligible for academic credit. </strong>\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/confirm-decline.html:16
+#: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
 msgstr "Continue Exam Without Proctoring"
 
-#: edx_proctoring/templates/proctored_exam/confirm-decline.html:19
+#: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
 msgstr "Go Back"
 
-#: edx_proctoring/templates/proctored_exam/entrance.html:4
-#: edx_proctoring/templates/proctored_exam/failed-prerequisites.html:4
-#: edx_proctoring/templates/proctored_exam/pending-prerequisites.html:4
+#: templates/proctored_exam/entrance.html:4
+#: templates/proctored_exam/failed-prerequisites.html:4
+#: templates/proctored_exam/pending-prerequisites.html:4
 msgid ""
 "\n"
 "      This exam is proctored\n"
@@ -325,7 +325,7 @@ msgstr ""
 "      This exam is proctored\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/entrance.html:9
+#: templates/proctored_exam/entrance.html:9
 msgid ""
 "\n"
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
@@ -335,11 +335,11 @@ msgstr ""
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/entrance.html:14
+#: templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
 msgstr "Continue to my proctored exam. I want to be eligible for credit."
 
-#: edx_proctoring/templates/proctored_exam/entrance.html:17
+#: templates/proctored_exam/entrance.html:17
 msgid ""
 "\n"
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
@@ -349,7 +349,7 @@ msgstr ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/error.html:4
+#: templates/proctored_exam/error.html:4
 msgid ""
 "\n"
 "      Error with proctored exam\n"
@@ -359,7 +359,7 @@ msgstr ""
 "      Error with proctored exam\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/error.html:10
+#: templates/proctored_exam/error.html:10
 #, python-format
 msgid ""
 "\n"
@@ -376,11 +376,11 @@ msgstr ""
 "      the exam and complete all problems again.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/error.html:19
-#: edx_proctoring/templates/proctored_exam/expired.html:15
-#: edx_proctoring/templates/proctored_exam/rejected.html:19
-#: edx_proctoring/templates/proctored_exam/submitted.html:29
-#: edx_proctoring/templates/proctored_exam/verified.html:18
+#: templates/proctored_exam/error.html:19
+#: templates/proctored_exam/expired.html:15
+#: templates/proctored_exam/rejected.html:19
+#: templates/proctored_exam/submitted.html:29
+#: templates/proctored_exam/verified.html:18
 #, python-format
 msgid ""
 "\n"
@@ -391,8 +391,8 @@ msgstr ""
 "      View your credit eligibility status on your <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/error.html:26
-#: edx_proctoring/templates/proctored_exam/rejected.html:26
+#: templates/proctored_exam/error.html:26
+#: templates/proctored_exam/rejected.html:26
 msgid ""
 "\n"
 "      If you have concerns about your proctoring session results, contact your course team.\n"
@@ -402,8 +402,7 @@ msgstr ""
 "      If you have concerns about your proctoring session results, contact your course team.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/expired.html:4
-#: edx_proctoring/templates/timed_exam/expired.html:4
+#: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
 msgid ""
 "\n"
 "      The due date for this exam has passed\n"
@@ -413,8 +412,7 @@ msgstr ""
 "      The due date for this exam has passed\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/expired.html:9
-#: edx_proctoring/templates/timed_exam/expired.html:9
+#: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
 "\n"
 "      Because the due date has passed, you are no longer able to take this exam.\n"
@@ -424,7 +422,7 @@ msgstr ""
 "      Because the due date has passed, you are no longer able to take this exam.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/failed-prerequisites.html:9
+#: templates/proctored_exam/failed-prerequisites.html:9
 #, python-format
 msgid ""
 "\n"
@@ -435,7 +433,7 @@ msgstr ""
 "    You did not satisfy the requirements for taking this exam with proctoring, and are not eligible for credit. See your <a href=\"%(progress_page_url)s\">Progress</a> page for a list of requirements and your status for each.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/failed-prerequisites.html:14
+#: templates/proctored_exam/failed-prerequisites.html:14
 msgid ""
 "\n"
 "    You did not satisfy the following prerequisites:\n"
@@ -445,7 +443,7 @@ msgstr ""
 "    You did not satisfy the following prerequisites:\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/failed-prerequisites.html:32
+#: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
 "\n"
 "        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
@@ -455,7 +453,7 @@ msgstr ""
 "        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/failed-prerequisites.html:40
+#: templates/proctored_exam/failed-prerequisites.html:40
 #, python-format
 msgid ""
 "\n"
@@ -466,7 +464,7 @@ msgstr ""
 "      If you have questions about the status of your requirements for course credit, contact %(platform_name)s Support.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/footer.html:5
+#: templates/proctored_exam/footer.html:5
 msgid ""
 "\n"
 "        About Proctored Exams\n"
@@ -476,7 +474,7 @@ msgstr ""
 "        About Proctored Exams\n"
 "        "
 
-#: edx_proctoring/templates/proctored_exam/id_verification.html:6
+#: templates/proctored_exam/id_verification.html:6
 msgid ""
 "\n"
 "                Complete your verification before starting the proctored exam.\n"
@@ -486,7 +484,7 @@ msgstr ""
 "                Complete your verification before starting the proctored exam.\n"
 "            "
 
-#: edx_proctoring/templates/proctored_exam/id_verification.html:11
+#: templates/proctored_exam/id_verification.html:11
 msgid ""
 "\n"
 "                You must successfully complete identity verification before you can start the proctored exam.\n"
@@ -496,7 +494,7 @@ msgstr ""
 "                You must successfully complete identity verification before you can start the proctored exam.\n"
 "            "
 
-#: edx_proctoring/templates/proctored_exam/id_verification.html:17
+#: templates/proctored_exam/id_verification.html:17
 msgid ""
 "\n"
 "                    Your verification is pending. Results should be available 2-3 days after you\n"
@@ -508,7 +506,7 @@ msgstr ""
 "                    submit your verification.\n"
 "                "
 
-#: edx_proctoring/templates/proctored_exam/id_verification.html:24
+#: templates/proctored_exam/id_verification.html:24
 msgid ""
 "\n"
 "                    Your verification attempt failed. Please read our guidelines to make\n"
@@ -522,11 +520,11 @@ msgstr ""
 "                    then try again.\n"
 "                "
 
-#: edx_proctoring/templates/proctored_exam/id_verification.html:32
+#: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
 msgstr "Retry Verification"
 
-#: edx_proctoring/templates/proctored_exam/id_verification.html:37
+#: templates/proctored_exam/id_verification.html:37
 msgid ""
 "\n"
 "                    Your verification has expired. You must successfully complete a new identity verification\n"
@@ -538,12 +536,12 @@ msgstr ""
 "                    before you can start the proctored exam.\n"
 "                "
 
-#: edx_proctoring/templates/proctored_exam/id_verification.html:44
-#: edx_proctoring/templates/proctored_exam/id_verification.html:56
+#: templates/proctored_exam/id_verification.html:44
+#: templates/proctored_exam/id_verification.html:56
 msgid "Continue to Verification"
 msgstr "Continue to Verification"
 
-#: edx_proctoring/templates/proctored_exam/id_verification.html:49
+#: templates/proctored_exam/id_verification.html:49
 msgid ""
 "\n"
 "                    Make sure you are on a computer with a webcam, and that you have valid photo identification\n"
@@ -555,7 +553,7 @@ msgstr ""
 "                    such as a driver's license or passport, before you continue.\n"
 "                "
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:6
+#: templates/proctored_exam/instructions.html:6
 msgid ""
 "\n"
 "      Follow these steps to set up and start your proctored exam.\n"
@@ -565,7 +563,7 @@ msgstr ""
 "      Follow these steps to set up and start your proctored exam.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:11
+#: templates/proctored_exam/instructions.html:11
 msgid ""
 "\n"
 "        1. Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
@@ -575,7 +573,7 @@ msgstr ""
 "        1. Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:19
+#: templates/proctored_exam/instructions.html:19
 msgid ""
 "\n"
 "        Select the exam code, then copy it using Command+C (Mac) or Control+C (Windows).\n"
@@ -585,7 +583,7 @@ msgstr ""
 "        Select the exam code, then copy it using Command+C (Mac) or Control+C (Windows).\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:24
+#: templates/proctored_exam/instructions.html:24
 msgid ""
 "\n"
 "        2. Follow the link below to set up proctoring.\n"
@@ -595,11 +593,11 @@ msgstr ""
 "        2. Follow the link below to set up proctoring.\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:29
+#: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
 msgstr "Start System Check"
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:32
+#: templates/proctored_exam/instructions.html:32
 msgid ""
 "\n"
 "        A new window will open. You will run a system check before downloading the proctoring application.\n"
@@ -609,7 +607,7 @@ msgstr ""
 "        A new window will open. You will run a system check before downloading the proctoring application.\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:37
+#: templates/proctored_exam/instructions.html:37
 msgid ""
 "\n"
 "        You will be asked to verify your identity as part of the proctoring exam set up.\n"
@@ -623,7 +621,7 @@ msgstr ""
 "        such as a driver's license or passport, before you continue.\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:44
+#: templates/proctored_exam/instructions.html:44
 msgid ""
 "\n"
 "          3. When you have finished setting up proctoring, start the exam.\n"
@@ -633,28 +631,28 @@ msgstr ""
 "          3. When you have finished setting up proctoring, start the exam.\n"
 "        "
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:50
+#: templates/proctored_exam/instructions.html:50
 msgid "Start Proctored Exam"
 msgstr "Start Proctored Exam"
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:60
+#: templates/proctored_exam/instructions.html:60
 msgid "Close"
 msgstr "Close"
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:65
+#: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
 msgstr "Cannot Start Proctored Exam"
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:85
-#: edx_proctoring/templates/proctored_exam/proctoring_opt_out_button.html:5
+#: templates/proctored_exam/instructions.html:85
+#: templates/proctored_exam/proctoring_opt_out_button.html:5
 msgid "Take this exam without proctoring."
 msgstr "Take this exam without proctoring."
 
-#: edx_proctoring/templates/proctored_exam/instructions.html:87
+#: templates/proctored_exam/instructions.html:87
 msgid "Doing so means that you are no longer eligible for academic credit."
 msgstr "Doing so means that you are no longer eligible for academic credit."
 
-#: edx_proctoring/templates/proctored_exam/pending-prerequisites.html:9
+#: templates/proctored_exam/pending-prerequisites.html:9
 #, python-format
 msgid ""
 "\n"
@@ -665,7 +663,7 @@ msgstr ""
 "    You have not completed the prerequisites for this exam. All requirements must be satisfied before you can take this proctored exam and be eligible for credit. See your <a href=\"%(progress_page_url)s\">Progress</a> page for a list of requirements in the order that they must be completed.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/pending-prerequisites.html:14
+#: templates/proctored_exam/pending-prerequisites.html:14
 msgid ""
 "\n"
 "    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
@@ -675,7 +673,7 @@ msgstr ""
 "    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/pending-prerequisites.html:30
+#: templates/proctored_exam/pending-prerequisites.html:30
 #, python-format
 msgid ""
 "\n"
@@ -686,11 +684,11 @@ msgstr ""
 "    You can take this exam with proctoring only when all prerequisites have been successfully completed. Check your <a href=\"%(progress_page_url)s\">Progress</a>  page to see if prerequisite results have been updated. You can also take this exam now without proctoring, but you will not be eligible for credit.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/proctoring_launch_callback.html:164
+#: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
 msgstr " Your Proctoring Session Has Started "
 
-#: edx_proctoring/templates/proctored_exam/proctoring_launch_callback.html:165
+#: templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
 msgid ""
 " From this point in time, you must follow the <a "
@@ -701,7 +699,7 @@ msgstr ""
 "href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
 "proctoring rules</a> to pass the proctoring review for your exam. "
 
-#: edx_proctoring/templates/proctored_exam/proctoring_launch_callback.html:168
+#: templates/proctored_exam/proctoring_launch_callback.html:168
 msgid ""
 "\n"
 "            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
@@ -711,7 +709,7 @@ msgstr ""
 "            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
 "          "
 
-#: edx_proctoring/templates/proctored_exam/proctoring_launch_callback.html:173
+#: templates/proctored_exam/proctoring_launch_callback.html:173
 #, python-format
 msgid ""
 "\n"
@@ -726,7 +724,7 @@ msgstr ""
 "            and upload your proctoring session data for review.\n"
 "          "
 
-#: edx_proctoring/templates/proctored_exam/proctoring_opt_out_button.html:8
+#: templates/proctored_exam/proctoring_opt_out_button.html:8
 msgid ""
 "\n"
 "        I am not interested in academic credit.\n"
@@ -736,7 +734,7 @@ msgstr ""
 "        I am not interested in academic credit.\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/ready_to_start.html:5
+#: templates/proctored_exam/ready_to_start.html:5
 msgid ""
 "\n"
 "      Follow these instructions\n"
@@ -746,7 +744,7 @@ msgstr ""
 "      Follow these instructions\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/ready_to_start.html:10
+#: templates/proctored_exam/ready_to_start.html:10
 #, python-format
 msgid ""
 "\n"
@@ -763,7 +761,7 @@ msgstr ""
 "                submitted for review. </br>\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/ready_to_start.html:19
+#: templates/proctored_exam/ready_to_start.html:19
 msgid ""
 "\n"
 "          Start my exam\n"
@@ -773,7 +771,7 @@ msgstr ""
 "          Start my exam\n"
 "        "
 
-#: edx_proctoring/templates/proctored_exam/ready_to_submit.html:4
+#: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
 "\n"
 "      Are you sure you want to end your proctored exam?\n"
@@ -783,8 +781,8 @@ msgstr ""
 "      Are you sure you want to end your proctored exam?\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/ready_to_submit.html:9
-#: edx_proctoring/templates/timed_exam/ready_to_submit.html:9
+#: templates/proctored_exam/ready_to_submit.html:9
+#: templates/timed_exam/ready_to_submit.html:9
 msgid ""
 "\n"
 "      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
@@ -794,7 +792,7 @@ msgstr ""
 "      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/ready_to_submit.html:14
+#: templates/proctored_exam/ready_to_submit.html:14
 msgid ""
 "\n"
 "      After you submit your exam, your responses are graded and your proctoring session is reviewed.\n"
@@ -808,7 +806,7 @@ msgstr ""
 "      as well as achieve a final grade that meets credit requirements for the course.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/ready_to_submit.html:21
+#: templates/proctored_exam/ready_to_submit.html:21
 msgid ""
 "\n"
 "      Yes, end my proctored exam\n"
@@ -818,7 +816,7 @@ msgstr ""
 "      Yes, end my proctored exam\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/ready_to_submit.html:27
+#: templates/proctored_exam/ready_to_submit.html:27
 msgid ""
 "\n"
 "        No, I'd like to continue working\n"
@@ -828,7 +826,7 @@ msgstr ""
 "        No, I'd like to continue working\n"
 "      "
 
-#: edx_proctoring/templates/proctored_exam/rejected.html:4
+#: templates/proctored_exam/rejected.html:4
 msgid ""
 "\n"
 "      Your proctoring session was reviewed and did not pass requirements\n"
@@ -838,7 +836,7 @@ msgstr ""
 "      Your proctoring session was reviewed and did not pass requirements\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/rejected.html:10
+#: templates/proctored_exam/rejected.html:10
 #, python-format
 msgid ""
 "\n"
@@ -851,7 +849,7 @@ msgstr ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/submitted.html:4
+#: templates/proctored_exam/submitted.html:4
 msgid ""
 "\n"
 "      You have submitted this proctored exam for review\n"
@@ -861,7 +859,7 @@ msgstr ""
 "      You have submitted this proctored exam for review\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/submitted.html:9
+#: templates/proctored_exam/submitted.html:9
 msgid ""
 "\n"
 "      If the proctoring software window is still open, you can close it now. Confirm that you want to quit the application when you are prompted.\n"
@@ -871,7 +869,7 @@ msgstr ""
 "      If the proctoring software window is still open, you can close it now. Confirm that you want to quit the application when you are prompted.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/submitted.html:14
+#: templates/proctored_exam/submitted.html:14
 msgid ""
 "\n"
 "      &#8226; After you quit the proctoring session, the recorded data is uploaded for review. </br>\n"
@@ -883,7 +881,7 @@ msgstr ""
 "      &#8226; Proctoring results are usually available within 5 business days after you submit your exam.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/submitted.html:23
+#: templates/proctored_exam/submitted.html:23
 #, python-format
 msgid ""
 "\n"
@@ -894,7 +892,7 @@ msgstr ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/verified.html:4
+#: templates/proctored_exam/verified.html:4
 msgid ""
 "\n"
 "      Your proctoring session was reviewed and passed all requirements\n"
@@ -904,7 +902,7 @@ msgstr ""
 "      Your proctoring session was reviewed and passed all requirements\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/verified.html:10
+#: templates/proctored_exam/verified.html:10
 msgid ""
 "\n"
 "      You are eligible to purchase academic credit for this course if you complete all required exams\n"
@@ -916,7 +914,7 @@ msgstr ""
 "      and also achieve a final grade that meets the credit requirements for the course.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/visit_exam_content.html:5
+#: templates/proctored_exam/visit_exam_content.html:5
 msgid ""
 "\n"
 "      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
@@ -926,11 +924,11 @@ msgstr ""
 "      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
 "    "
 
-#: edx_proctoring/templates/proctored_exam/visit_exam_content.html:11
+#: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
 msgstr "View my exam"
 
-#: edx_proctoring/templates/proctored_exam/visit_exam_content.html:40
+#: templates/proctored_exam/visit_exam_content.html:40
 msgid ""
 "\n"
 "      After the due date for this exam has passed, you will be able to review your answers on this page.\n"
@@ -940,7 +938,7 @@ msgstr ""
 "      After the due date for this exam has passed, you will be able to review your answers on this page.\n"
 "    "
 
-#: edx_proctoring/templates/timed_exam/entrance.html:4
+#: templates/timed_exam/entrance.html:4
 #, python-format
 msgid ""
 "\n"
@@ -951,32 +949,32 @@ msgstr ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 
-#: edx_proctoring/templates/timed_exam/entrance.html:9
+#: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
 msgstr "This exam has a time limit associated with it."
 
-#: edx_proctoring/templates/timed_exam/entrance.html:11
+#: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
 msgstr ""
 "To pass this exam, you must complete the problems in the time allowed."
 
-#: edx_proctoring/templates/timed_exam/entrance.html:13
+#: templates/timed_exam/entrance.html:13
 msgid "After you select "
 msgstr "After you select "
 
-#: edx_proctoring/templates/timed_exam/entrance.html:15
+#: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
 msgstr "I am ready to start this timed exam,"
 
-#: edx_proctoring/templates/timed_exam/entrance.html:17
+#: templates/timed_exam/entrance.html:17
 msgid "you will have "
 msgstr "you will have "
 
-#: edx_proctoring/templates/timed_exam/entrance.html:17
+#: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
 msgstr " to complete and submit the exam."
 
-#: edx_proctoring/templates/timed_exam/entrance.html:21
+#: templates/timed_exam/entrance.html:21
 msgid ""
 "\n"
 "        I am ready to start this timed exam.\n"
@@ -986,11 +984,11 @@ msgstr ""
 "        I am ready to start this timed exam.\n"
 "      "
 
-#: edx_proctoring/templates/timed_exam/footer.html:3
+#: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
 msgstr "Can I request additional time to complete my exam?"
 
-#: edx_proctoring/templates/timed_exam/footer.html:4
+#: templates/timed_exam/footer.html:4
 msgid ""
 "\n"
 "      If you have disabilities,\n"
@@ -1004,7 +1002,7 @@ msgstr ""
 "      Ask your course team for information about additional time allowances.\n"
 "    "
 
-#: edx_proctoring/templates/timed_exam/ready_to_submit.html:4
+#: templates/timed_exam/ready_to_submit.html:4
 msgid ""
 "\n"
 "      Are you sure that you want to submit your timed exam?\n"
@@ -1014,7 +1012,7 @@ msgstr ""
 "      Are you sure that you want to submit your timed exam?\n"
 "    "
 
-#: edx_proctoring/templates/timed_exam/ready_to_submit.html:14
+#: templates/timed_exam/ready_to_submit.html:14
 msgid ""
 "\n"
 "      After you submit your exam, your exam will be graded.\n"
@@ -1024,7 +1022,7 @@ msgstr ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 
-#: edx_proctoring/templates/timed_exam/ready_to_submit.html:19
+#: templates/timed_exam/ready_to_submit.html:19
 msgid ""
 "\n"
 "      Yes, submit my timed exam.\n"
@@ -1034,7 +1032,7 @@ msgstr ""
 "      Yes, submit my timed exam.\n"
 "    "
 
-#: edx_proctoring/templates/timed_exam/ready_to_submit.html:25
+#: templates/timed_exam/ready_to_submit.html:25
 msgid ""
 "\n"
 "        No, I want to continue working.\n"
@@ -1044,7 +1042,7 @@ msgstr ""
 "        No, I want to continue working.\n"
 "      "
 
-#: edx_proctoring/templates/timed_exam/submitted.html:6
+#: templates/timed_exam/submitted.html:6
 msgid ""
 "\n"
 "        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.\n"
@@ -1054,7 +1052,7 @@ msgstr ""
 "        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.\n"
 "      "
 
-#: edx_proctoring/templates/timed_exam/submitted.html:10
+#: templates/timed_exam/submitted.html:10
 msgid ""
 "\n"
 "        You have submitted your timed exam.\n"
@@ -1064,7 +1062,7 @@ msgstr ""
 "        You have submitted your timed exam.\n"
 "      "
 
-#: edx_proctoring/templates/timed_exam/submitted.html:18
+#: templates/timed_exam/submitted.html:18
 #, python-format
 msgid ""
 "\n"
@@ -1075,7 +1073,7 @@ msgstr ""
 "      Your grade for this timed exam will be immediately available on the <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 
-#: edx_proctoring/templates/timed_exam/submitted.html:22
+#: templates/timed_exam/submitted.html:22
 msgid ""
 "\n"
 "        After the due date has passed, you can review the exam, but you cannot change your answers.\n"
@@ -1085,61 +1083,61 @@ msgstr ""
 "        After the due date has passed, you can review the exam, but you cannot change your answers.\n"
 "      "
 
-#: edx_proctoring/utils.py:76
+#: utils.py:76
 #, python-brace-format
 msgid "{num_of_hours} hour"
 msgstr "{num_of_hours} hour"
 
-#: edx_proctoring/utils.py:79
+#: utils.py:79
 #, python-brace-format
 msgid "{num_of_hours} hours"
 msgstr "{num_of_hours} hours"
 
-#: edx_proctoring/utils.py:87 edx_proctoring/utils.py:97
+#: utils.py:87 utils.py:97
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
 msgstr "{num_of_minutes} minutes"
 
-#: edx_proctoring/utils.py:90
+#: utils.py:90
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
 msgstr " and {num_of_minutes} minute"
 
-#: edx_proctoring/utils.py:92
+#: utils.py:92
 #, python-brace-format
 msgid "{num_of_minutes} minute"
 msgstr "{num_of_minutes} minute"
 
-#: edx_proctoring/utils.py:95
+#: utils.py:95
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
 msgstr " and {num_of_minutes} minutes"
 
-#: edx_proctoring/views.py:92
+#: views.py:92
 msgid "could not determine the course_id"
 msgstr "could not determine the course_id"
 
-#: edx_proctoring/views.py:102
+#: views.py:102
 msgid "Must be a Staff User to Perform this request."
 msgstr "Must be a Staff User to Perform this request."
 
-#: edx_proctoring/views.py:334 edx_proctoring/views.py:546
+#: views.py:334 views.py:546
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "you have {remaining_time} remaining"
 
-#: edx_proctoring/views.py:340
+#: views.py:340
 msgid "you have less than a minute remaining"
 msgstr "you have less than a minute remaining"
 
-#: edx_proctoring/views.py:536
+#: views.py:536
 msgid "timed"
 msgstr "timed"
 
-#: edx_proctoring/views.py:537
+#: views.py:537
 msgid "practice"
 msgstr "practice"
 
-#: edx_proctoring/views.py:537
+#: views.py:537
 msgid "proctored"
 msgstr "proctored"
