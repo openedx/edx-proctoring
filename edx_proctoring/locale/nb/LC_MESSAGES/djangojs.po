@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-12 15:05-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Geir Gåsodden <geir.gasodden@pythonia.no>, 2016\n"
+"Last-Translator: Joakim S. Johnson <joakim.s.johnson@gmail.com>, 2016\n"
 "Language-Team: Norwegian Bokmål (https://www.transifex.com/open-edx/teams/6205/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -52,23 +52,23 @@ msgstr ""
 
 #: edx_proctoring/admin.py:382
 msgid "Ready To Start"
-msgstr ""
+msgstr "Klar for å starte"
 
 #: edx_proctoring/admin.py:383
 msgid "Started"
-msgstr ""
+msgstr "Startet"
 
 #: edx_proctoring/admin.py:384
 msgid "Ready To Submit"
-msgstr ""
+msgstr "Klar for innlevering"
 
 #: edx_proctoring/admin.py:385
 msgid "Declined"
-msgstr ""
+msgstr "Avslått"
 
 #: edx_proctoring/admin.py:386
 msgid "Timed Out"
-msgstr ""
+msgstr "Timet ut"
 
 #: edx_proctoring/admin.py:387
 msgid "Submitted"
@@ -76,7 +76,7 @@ msgstr "Levert"
 
 #: edx_proctoring/admin.py:388
 msgid "Second Review Required"
-msgstr ""
+msgstr "Ytterligere gjennomgang nødvendig"
 
 #: edx_proctoring/admin.py:389
 msgid "Verified"
@@ -92,7 +92,7 @@ msgstr "Feil"
 
 #: edx_proctoring/api.py:902
 msgid "your course"
-msgstr ""
+msgstr "ditt kurs"
 
 #: edx_proctoring/api.py:962
 #, python-brace-format
@@ -133,11 +133,11 @@ msgstr ""
 
 #: edx_proctoring/api.py:1338
 msgid "Practice Exam Completed"
-msgstr ""
+msgstr "Prøveeksamen er gjennomført"
 
 #: edx_proctoring/api.py:1343
 msgid "Practice Exam Failed"
-msgstr ""
+msgstr "Prøveeksamen ikke bestått"
 
 #: edx_proctoring/api.py:1351
 msgid "Timed Exam"
@@ -145,15 +145,15 @@ msgstr "Eksamen med tidsfrist"
 
 #: edx_proctoring/models.py:181
 msgid "pending"
-msgstr "Venter"
+msgstr "venter"
 
 #: edx_proctoring/models.py:182
 msgid "satisfactory"
-msgstr ""
+msgstr "tilfredsstillende"
 
 #: edx_proctoring/models.py:183
 msgid "unsatisfactory"
-msgstr ""
+msgstr "ikke tilfredsstillende"
 
 #: edx_proctoring/models.py:481
 msgid "Taking as Proctored"
