@@ -13,7 +13,7 @@ install:
   - make install
 script:
   - make test-all
-  - gulp test
+  - make test-js
 after_success:
   - coverage xml
   - bash <(curl -s https://codecov.io/bash) -cF python -f coverage.xml

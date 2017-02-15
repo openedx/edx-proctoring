@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-12 15:05-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Bentsi Magidovich <magidovich@gmail.com>, 2016\n"
+"Last-Translator: Andy Armstrong <andya@edx.org>, 2017\n"
 "Language-Team: Hebrew (https://www.transifex.com/open-edx/teams/6205/he/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -161,7 +161,7 @@ msgstr "בחירה בפיקוח"
 
 #: edx_proctoring/models.py:485
 msgid "Is Sample Attempt"
-msgstr "דוגמת ניסיון"
+msgstr "הוא דוגמת ניסיון"
 
 #: edx_proctoring/models.py:700
 msgid "Additional Time (minutes)"
@@ -182,9 +182,11 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"הודעת דואר אלקטרוני זו נועדה ליידע אותך על הסטטוס של סקירת המפגש תחת פיקוח שלך  %(exam_name)s ב\n"
-"<a href=\"%(course_url)s\">%(course_name)s </a>  הוא %(status). במידה ויש לך שאלות על הפיקוח,\n"
-"פנה לתמיכה של %(platform)s ב %(contact_email)s.\n"
+"\n"
+"This email is to let you know that the status of your proctoring session review for %(exam_name)s in\n"
+"<a href=\"%(course_url)s\">%(course_name)s </a> is %(status)s. If you have any questions about proctoring,\n"
+"contact %(platform)s support at %(contact_email)s.\n"
+"\n"
 
 #: edx_proctoring/templates/practice_exam/entrance.html:4
 msgid ""
@@ -371,7 +373,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"צפה בסטטוס נקות הזכות שלך בדף ההתקדמות שלך <a href=\"%(progress_page_url)s\"> </a>."
+"צפה בסטטוס נקות הזכות שלך בעמוד ההתקדמות שלך <a href=\"%(progress_page_url)s\"> </a>."
 
 #: edx_proctoring/templates/proctored_exam/error.html:26
 #: edx_proctoring/templates/proctored_exam/rejected.html:26
@@ -613,7 +615,7 @@ msgstr "היבחן במבחן זה ללא פיקוח."
 
 #: edx_proctoring/templates/proctored_exam/instructions.html:87
 msgid "Doing so means that you are no longer eligible for academic credit."
-msgstr "בפעולה זו אינך שכאי עוד לניקוד אקדמי."
+msgstr "בפעולה זו אינך זכאי עוד לניקוד אקדמי."
 
 #: edx_proctoring/templates/proctored_exam/pending-prerequisites.html:9
 #, python-format
@@ -678,9 +680,9 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"חזור לחלון קורס  %(platform_name)s כדי להתחיל את מבחנך. כאשר תסיים את מבחנך\n"
-"ותסמן אותו כגמור, תוכל לסגור את החלון הזה על מנת לסיים את המפגש תחת פיקוח\n"
-"ולהעלות את המידע על המפגש תחת פיקוח לצורך סקירה."
+"חזור לחלון קורס  %(platform_name)s כדי להתחיל את מבחנך. כאשר תסיים ותסמן אותו כגמור,\n"
+"תוכל לסגור את החלון הזה על מנת לסיים את המפגש תחת פיקוח\n"
+"ולהעלות את המידע עליו לצורך סקירה."
 
 #: edx_proctoring/templates/proctored_exam/proctoring_opt_out_button.html:8
 msgid ""
@@ -698,7 +700,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"ערוב אחר ההוראות האלה"
+"עקוב אחר ההוראות האלה"
 
 #: edx_proctoring/templates/proctored_exam/ready_to_start.html:10
 #, python-format
@@ -742,7 +744,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"וודא שבחרת \"הגשה\" עבור כל בעיה לפני שאתה מגיש את המבחן שלך."
+"ודא שבחרת \"הגשה\" עבור כל בעיה לפני שאתה מגיש את המבחן שלך."
 
 #: edx_proctoring/templates/proctored_exam/ready_to_submit.html:14
 msgid ""
@@ -812,7 +814,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"אם חלון תכונת הפיקוח עדיין תפוחה, תוכל לסגור אותה כעת. אשר שאתה מעוניין לעזוב את האפליקציה כאשר אתה מתבקש."
+"אם חלון תוכנת הפיקוח עדיין פתוחה, תוכל לסגור אותה כעת. אשר כי אתה מעוניין לעזוב את האפליקציה כאשר אתה מתבקש."
 
 #: edx_proctoring/templates/proctored_exam/submitted.html:14
 msgid ""
@@ -862,7 +864,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"על מנת לצפות בשאלות ותשובות מבחנך, בחר <strong> צפה במבחן שלי </strong>.  סטטוס סקירת המבחן יוצג משמאל בחלונית הניווט."
+"על מנת לצפות בשאלות ותשובות מבחנך, בחר ב<strong> צפה במבחן שלי </strong>.  סטטוס סקירת המבחן יוצג משמאל בחלונית הניווט."
 
 #: edx_proctoring/templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
@@ -918,7 +920,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"אני מוכל להתחיל את המבחן המתוזמן הזה."
+"אני מוכן להתחיל את המבחן המתוזמן הזה."
 
 #: edx_proctoring/templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
@@ -944,7 +946,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"האם את הבטוח שאת הרומה להגיש את המבחן המתוזמן שלך?"
+"האם אתה בטוח שאתה רוצה להגיש את המבחן המתוזמן שלך?"
 
 #: edx_proctoring/templates/timed_exam/ready_to_submit.html:14
 msgid ""
