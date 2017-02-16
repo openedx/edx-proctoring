@@ -1,0 +1,27 @@
+{% load i18n %}
+
+<p>
+    {% blocktrans %}
+        Hi {{ username }},
+    {% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+        Your proctored exam "{{ exam_name }}" in
+        <a href="{{ course_url }}">{{ course_name }}</a> was reviewed and the
+        team found one or more violations of the proctored exam rules. Examples
+        of behaviors that may result in a rules violation include browsing
+        the internet, using a phone, or getting help from another person. As a
+        result of the violation(s), you did not successfully meet the proctored
+        exam requirements.
+    {% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+        If you have any questions about your results, contact {{ platform }}
+        support at
+        <a href="mailto:{{ contact_email }}?Subject={{ support_email_subject }}">
+            {{ contact_email }}
+        </a>.
+    {% endblocktrans %}
+</p>

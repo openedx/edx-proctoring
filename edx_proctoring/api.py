@@ -13,6 +13,7 @@ import pytz
 
 from django.utils.translation import ugettext as _, ugettext_noop
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.template import Context, loader
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.core.mail.message import EmailMessage
@@ -885,38 +886,31 @@ def update_attempt_status(exam_id, user_id, to_status,
                 cascade_effects=False
             )
 
-    # email will be send when the exam is proctored and not practice exam
-    # and the status is verified, submitted or rejected
-    should_send_status_email = (
-        exam_attempt_obj.taking_as_proctored and
-        not exam_attempt_obj.is_sample_attempt and
-        ProctoredExamStudentAttemptStatus.needs_status_change_email(exam_attempt_obj.status)
+    # call service to get course name.
+    credit_service = get_runtime_service('credit')
+    credit_state = credit_service.get_credit_state(
+        exam_attempt_obj.user_id,
+        exam_attempt_obj.proctored_exam.course_id,
+        return_course_info=True
     )
-    if should_send_status_email:
-        # trigger credit workflow, as needed
-        credit_service = get_runtime_service('credit')
 
-        # call service to get course name.
-        credit_state = credit_service.get_credit_state(
+    default_name = _('your course')
+    if credit_state:
+        course_name = credit_state.get('course_name', default_name)
+    else:
+        course_name = default_name
+        log.info(
+            "Could not find credit_state for user id %r in the course %r.",
             exam_attempt_obj.user_id,
-            exam_attempt_obj.proctored_exam.course_id,
-            return_course_info=True
+            exam_attempt_obj.proctored_exam.course_id
         )
-
-        default_name = _('your course')
-        if credit_state:
-            course_name = credit_state.get('course_name', default_name)
-        else:
-            course_name = default_name
-            log.info(
-                "Could not find credit_state for user id %r in the course %r.",
-                exam_attempt_obj.user_id,
-                exam_attempt_obj.proctored_exam.course_id
-            )
-        send_proctoring_attempt_status_email(
-            exam_attempt_obj,
-            course_name
-        )
+    email = create_proctoring_attempt_status_email(
+        user_id,
+        exam_attempt_obj,
+        course_name
+    )
+    if email:
+        email.send()
 
     # emit an anlytics event based on the state transition
     # we re-read this from the database in case fields got updated
@@ -929,20 +923,46 @@ def update_attempt_status(exam_id, user_id, to_status,
     return attempt['id']
 
 
-def send_proctoring_attempt_status_email(exam_attempt_obj, course_name):
+def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_name):
     """
-    Sends an email about change in proctoring attempt status.
+    Creates an email about change in proctoring attempt status.
     """
+    # Don't send an email unless this is a non-practice proctored exam
+    if not exam_attempt_obj.taking_as_proctored or exam_attempt_obj.is_sample_attempt:
+        return None
 
+    user = User.objects.get(id=user_id)
     course_info_url = ''
-    email_template = loader.get_template('emails/proctoring_attempt_status_email.html')
+    email_subject = (
+        _('Proctoring Results For {course_name} {exam_name}').format(
+            course_name=course_name,
+            exam_name=exam_attempt_obj.proctored_exam.exam_name
+        )
+    )
+    status = exam_attempt_obj.status
+    if status == ProctoredExamStudentAttemptStatus.submitted:
+        email_template_path = 'emails/proctoring_attempt_submitted_email.html'
+        email_subject = (
+            _('Proctoring Review In Progress For {course_name} {exam_name}').format(
+                course_name=course_name,
+                exam_name=exam_attempt_obj.proctored_exam.exam_name
+            )
+        )
+    elif status == ProctoredExamStudentAttemptStatus.verified:
+        email_template_path = 'emails/proctoring_attempt_satisfactory_email.html'
+    elif status == ProctoredExamStudentAttemptStatus.rejected:
+        email_template_path = 'emails/proctoring_attempt_unsatisfactory_email.html'
+    else:
+        # Don't send an email for any other attempt status codes
+        return None
+    email_template = loader.get_template(email_template_path)
     try:
         course_info_url = reverse(
             'courseware.views.views.course_info',
             args=[exam_attempt_obj.proctored_exam.course_id]
         )
     except NoReverseMatch:
-        log.exception("Can't find Course Info url for course %s", exam_attempt_obj.proctored_exam.course_id)
+        log.exception("Can't find course info url for course %s", exam_attempt_obj.proctored_exam.course_id)
 
     scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
     course_url = '{scheme}://{site_name}{course_info_url}'.format(
@@ -950,33 +970,34 @@ def send_proctoring_attempt_status_email(exam_attempt_obj, course_name):
         site_name=constants.SITE_NAME,
         course_info_url=course_info_url
     )
+    exam_name = exam_attempt_obj.proctored_exam.exam_name
+    support_email_subject = _('Proctored exam {exam_name} in {course_name} for user {username}').format(
+        exam_name=exam_name,
+        course_name=course_name,
+        username=user.username,
+    )
 
     body = email_template.render(
         Context({
+            'username': user.username,
             'course_url': course_url,
             'course_name': course_name,
-            'exam_name': exam_attempt_obj.proctored_exam.exam_name,
-            'status': ProctoredExamStudentAttemptStatus.get_status_alias(exam_attempt_obj.status),
+            'exam_name': exam_name,
+            'status': status,
             'platform': constants.PLATFORM_NAME,
             'contact_email': constants.CONTACT_EMAIL,
+            'support_email_subject': support_email_subject,
         })
-    )
-
-    subject = (
-        _('Proctoring Session Results Update for {course_name} {exam_name}').format(
-            course_name=course_name,
-            exam_name=exam_attempt_obj.proctored_exam.exam_name
-        )
     )
 
     email = EmailMessage(
         body=body,
         from_email=constants.FROM_EMAIL,
         to=[exam_attempt_obj.user.email],
-        subject=subject
+        subject=email_subject,
     )
-    email.content_subtype = "html"
-    email.send()
+    email.content_subtype = 'html'
+    return email
 
 
 def remove_exam_attempt(attempt_id, requesting_user):

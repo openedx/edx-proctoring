@@ -224,16 +224,6 @@ class ProctoredExamStudentAttemptStatus(object):
         ]
 
     @classmethod
-    def needs_status_change_email(cls, to_status):
-        """
-        We need to send out emails for rejected, verified and submitted statuses.
-        """
-
-        return to_status in [
-            cls.rejected, cls.submitted, cls.verified
-        ]
-
-    @classmethod
     def get_status_alias(cls, status):
         """
         Returns status alias used in email

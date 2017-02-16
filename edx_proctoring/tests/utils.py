@@ -341,3 +341,10 @@ class ProctoredExamTestCase(LoggedInTestCase):
             status=ProctoredExamStudentAttemptStatus.started,
             allowed_time_limit_mins=10
         )
+
+    @staticmethod
+    def _normalize_whitespace(string):
+        """
+        Replaces newlines and multiple spaces with a single space.
+        """
+        return ' '.join(string.replace('\n', '').split())
