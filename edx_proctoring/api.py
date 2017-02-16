@@ -391,7 +391,8 @@ def _check_for_attempt_timeout(attempt):
             update_attempt_status(
                 attempt['proctored_exam']['id'],
                 attempt['user']['id'],
-                ProctoredExamStudentAttemptStatus.timed_out
+                ProctoredExamStudentAttemptStatus.timed_out,
+                timeout_timestamp=expires_at
             )
             attempt = get_exam_attempt_by_id(attempt['id'])
 
@@ -715,7 +716,8 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
     return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_start)
 
 
-def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, cascade_effects=True):
+def update_attempt_status(exam_id, user_id, to_status,
+                          raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None):
     """
     Internal helper to handle state transitions of attempt status
     """
@@ -730,11 +732,11 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
 
     # In some configuration we may treat timeouts the same
     # as the user saying he/she wises to submit the exam
-    alias_timeout = (
+    treat_timeout_as_submitted = (
         to_status == ProctoredExamStudentAttemptStatus.timed_out and
         not settings.PROCTORING_SETTINGS.get('ALLOW_TIMED_OUT_STATE', False)
     )
-    if alias_timeout:
+    if treat_timeout_as_submitted:
         to_status = ProctoredExamStudentAttemptStatus.submitted
 
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
@@ -792,6 +794,8 @@ def update_attempt_status(exam_id, user_id, to_status, raise_if_not_found=True, 
     )
     if add_start_time:
         exam_attempt_obj.started_at = datetime.now(pytz.UTC)
+    elif treat_timeout_as_submitted:
+        exam_attempt_obj.completed_at = timeout_timestamp
     elif to_status == ProctoredExamStudentAttemptStatus.submitted:
         # likewise, when we transition to submitted mark
         # when the exam has been completed

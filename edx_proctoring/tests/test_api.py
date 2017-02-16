@@ -943,17 +943,19 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
                 to_status
             )
 
-    def test_alias_timed_out(self):
+    def test_time_out_as_submitted(self):
         """
         Verified that timed_out will automatically state transition
         to submitted
         """
 
         exam_attempt = self._create_started_exam_attempt()
+        random_timestamp = datetime.now(pytz.UTC) - timedelta(hours=4)
         update_attempt_status(
             exam_attempt.proctored_exam_id,
             self.user.id,
-            ProctoredExamStudentAttemptStatus.timed_out
+            ProctoredExamStudentAttemptStatus.timed_out,
+            timeout_timestamp=random_timestamp
         )
 
         exam_attempt = get_exam_attempt_by_id(exam_attempt.id)
@@ -961,6 +963,37 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(
             exam_attempt['status'],
             ProctoredExamStudentAttemptStatus.submitted
+        )
+
+        self.assertEqual(
+            exam_attempt['completed_at'],
+            random_timestamp
+        )
+
+    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
+    def test_timeout_not_submitted(self):
+        """
+        Test that when the setting is disabled, the status remains timed_out
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        random_timestamp = datetime.now(pytz.UTC) - timedelta(hours=4)
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.timed_out,
+            timeout_timestamp=random_timestamp
+        )
+
+        exam_attempt = get_exam_attempt_by_id(exam_attempt.id)
+
+        self.assertEqual(
+            exam_attempt['status'],
+            ProctoredExamStudentAttemptStatus.timed_out
+        )
+
+        self.assertNotEqual(
+            exam_attempt['completed_at'],
+            random_timestamp
         )
 
     def test_update_unexisting_attempt(self):
