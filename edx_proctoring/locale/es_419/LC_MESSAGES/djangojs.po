@@ -323,6 +323,8 @@ msgid ""
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
+"\n"
+"Para ser elegible para crédito académico o una credencial MicroMasters™, hay que hacer y aprobar la revisión de supervisión para este examen."
 
 #: templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
@@ -875,6 +877,8 @@ msgid ""
 "      After the due date for this exam has passed, you will be able to review your answers on this page.\n"
 "    "
 msgstr ""
+"\n"
+"Después de la fecha límite de esta tarea, Ud. podrá revisar sus respuestas en esta página."
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -883,30 +887,34 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
+"\n"
+"%(exam_name)s es un examen cronometrado (%(total_time)s)"
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr ""
+msgstr "Esta examen tiene un límite de tiempo."
 
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
 msgstr ""
+"Para aprobar esta examen, hay que completar las problemas durante el tiempo "
+"permitido."
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
-msgstr ""
+msgstr "Después de seleccionar"
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr ""
+msgstr "Estoy listo/a para empezar este examen cronometrado"
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr ""
+msgstr "Ud. tendrá"
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
-msgstr ""
+msgstr "para completar y enviar el examen."
 
 #: templates/timed_exam/entrance.html:21
 msgid ""
@@ -914,10 +922,12 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"Estoy listo/a para empezar este examen cronometrado."
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
-msgstr ""
+msgstr "¿Puedo pedir tiempo adicional para completar mi examen?"
 
 #: templates/timed_exam/footer.html:4
 msgid ""
@@ -927,6 +937,10 @@ msgid ""
 "      Ask your course team for information about additional time allowances.\n"
 "    "
 msgstr ""
+"\n"
+"Si tiene una incapacidad,\n"
+"puede ser eligible para un permiso de tiempo adicional en los exámenes cronometrados.\n"
+"Pida información sobre tiempo adicional al equipo del curso."
 
 #: templates/timed_exam/ready_to_submit.html:4
 msgid ""
@@ -934,6 +948,8 @@ msgid ""
 "      Are you sure that you want to submit your timed exam?\n"
 "    "
 msgstr ""
+"\n"
+"¿Está seguro de que quiere enviar su examen cronometrado?"
 
 #: templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -941,6 +957,8 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
+"\n"
+"Después de que Ud. envíe su examen, el examen será calificado."
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -948,6 +966,8 @@ msgid ""
 "      Yes, submit my timed exam.\n"
 "    "
 msgstr ""
+"\n"
+"Sí, enviar my examen cronometrado."
 
 #: templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -955,6 +975,8 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
+"\n"
+"No, quiero seguir trabajando."
 
 #: templates/timed_exam/submitted.html:6
 msgid ""
@@ -962,6 +984,8 @@ msgid ""
 "        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.\n"
 "      "
 msgstr ""
+"\n"
+"El tiempo permitido para este examen ha vencido. Su examen ha sido enviado y el trabajo que Ud. completó será calificado."
 
 #: templates/timed_exam/submitted.html:10
 msgid ""
@@ -969,6 +993,8 @@ msgid ""
 "        You have submitted your timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"Ud. ha enviado su examen cronometrado."
 
 #: templates/timed_exam/submitted.html:18
 #, python-format
@@ -977,6 +1003,8 @@ msgid ""
 "      Your grade for this timed exam will be immediately available on the <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 msgstr ""
+"\n"
+"Su calificación de este examen cronometrado será disponible inmediatamente el la <a href=\"%(progress_page_url)s\">página de progreso</a>."
 
 #: templates/timed_exam/submitted.html:22
 msgid ""
@@ -984,53 +1012,55 @@ msgid ""
 "        After the due date has passed, you can review the exam, but you cannot change your answers.\n"
 "      "
 msgstr ""
+"\n"
+"Después de la fecha límite, Ud. podrá revisar el examen, pero no podrá cambiar sus respuestas."
 
 #: utils.py:76
 #, python-brace-format
 msgid "{num_of_hours} hour"
-msgstr ""
+msgstr "{num_of_hours} hora"
 
 #: utils.py:79
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr ""
+msgstr "{num_of_hours} horas"
 
 #: utils.py:87 utils.py:97
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
-msgstr ""
+msgstr "{num_of_minutes} minutos"
 
 #: utils.py:90
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr ""
+msgstr "y {num_of_minutes} minuto"
 
 #: utils.py:92
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr ""
+msgstr "{num_of_minutes} minuto"
 
 #: utils.py:95
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr ""
+msgstr "y {num_of_minutes} minutos"
 
 #: views.py:92
 msgid "could not determine the course_id"
-msgstr ""
+msgstr "No se pudo determinar la ID del curso"
 
 #: views.py:102
 msgid "Must be a Staff User to Perform this request."
-msgstr ""
+msgstr "Hay que ser un usuario del equipo para cumplir esta pedida."
 
 #: views.py:334 views.py:546
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
-msgstr ""
+msgstr "Hay {remaining_time} restante"
 
 #: views.py:340
 msgid "you have less than a minute remaining"
-msgstr ""
+msgstr "Queda menos de un minuto"
 
 #: views.py:536
 msgid "timed"
@@ -1038,8 +1068,8 @@ msgstr "cronometrado"
 
 #: views.py:537
 msgid "practice"
-msgstr ""
+msgstr "práctica"
 
 #: views.py:537
 msgid "proctored"
-msgstr ""
+msgstr "supervisado"
