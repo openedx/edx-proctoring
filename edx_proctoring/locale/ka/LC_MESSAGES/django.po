@@ -424,7 +424,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr "კიდევ სცადეთ დამოწმება"
+msgstr "ხელახლა სცადეთ დამოწმება"
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
