@@ -20,23 +20,23 @@ msgstr ""
 
 #: admin.py:88
 msgid "internally reviewed"
-msgstr ""
+msgstr "Intern begutachtet / reviewed"
 
 #: admin.py:97
 msgid "All Unreviewed"
-msgstr ""
+msgstr "Alle mit fehlendem Review"
 
 #: admin.py:98
 msgid "All Unreviewed Failures"
-msgstr ""
+msgstr "Alle nicht Bestandenen mit fehlendem Review"
 
 #: admin.py:119
 msgid "active proctored exams"
-msgstr ""
+msgstr "aktiv betreute Prüfungen"
 
 #: admin.py:177
 msgid "courses with active proctored exams"
-msgstr ""
+msgstr "Kurse mit aktiv betreuten Prüfungen"
 
 #: admin.py:342
 msgid "Course Id"

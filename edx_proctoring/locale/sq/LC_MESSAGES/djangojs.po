@@ -40,7 +40,7 @@ msgstr ""
 
 #: admin.py:342
 msgid "Course Id"
-msgstr ""
+msgstr "Course Id"
 
 #: admin.py:380
 msgid "Created"
