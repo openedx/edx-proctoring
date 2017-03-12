@@ -76,7 +76,7 @@ msgstr "উপস্থাপিত"
 
 #: admin.py:388
 msgid "Second Review Required"
-msgstr ""
+msgstr "দ্বিতীয় পর্যালোচনা করা প্রয়োজন "
 
 #: admin.py:389
 msgid "Verified"
@@ -101,11 +101,11 @@ msgstr ""
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
-msgstr ""
+msgstr "সুরক্ষিত পরীক্ষা হিসেবে গ্রহণ করা "
 
 #: api.py:1289
 msgid "Proctored Option Available"
-msgstr ""
+msgstr "সুরক্ষিত অপশনটি উপলব্ধ "
 
 #: api.py:1294
 msgid "Taking As Open Exam"
@@ -129,15 +129,15 @@ msgstr ""
 
 #: api.py:1333
 msgid "Ungraded Practice Exam"
-msgstr ""
+msgstr "Ungraded  পরীক্ষার প্র্যাকটিস "
 
 #: api.py:1338
 msgid "Practice Exam Completed"
-msgstr ""
+msgstr "প্র্যাকটিস পরীক্ষার সমাপ্ত "
 
 #: api.py:1343
 msgid "Practice Exam Failed"
-msgstr ""
+msgstr "প্র্যাকটিস পরীক্ষার ব্যর্থ "
 
 #: api.py:1351
 msgid "Timed Exam"
@@ -145,15 +145,15 @@ msgstr "উপযুক্ত ক্ষণে পরীক্ষা "
 
 #: models.py:181
 msgid "pending"
-msgstr ""
+msgstr "বিচারাধীন "
 
 #: models.py:182
 msgid "satisfactory"
-msgstr ""
+msgstr "সন্তোষজনক "
 
 #: models.py:183
 msgid "unsatisfactory"
-msgstr ""
+msgstr "সন্তোষজনক "
 
 #: models.py:481
 msgid "Taking as Proctored"
@@ -161,15 +161,15 @@ msgstr ""
 
 #: models.py:485
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "নমুনা প্রচেষ্টা "
 
 #: models.py:700
 msgid "Additional Time (minutes)"
-msgstr ""
+msgstr "অতিরিক্ত সময় (মিনিট) "
 
 #: models.py:701
 msgid "Review Policy Exception"
-msgstr ""
+msgstr "পর্যালোচনা নীতি ব্যতিক্রম "
 
 #: templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
@@ -269,11 +269,11 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
-msgstr ""
+msgstr "Proctoring ছাড়া পরীক্ষার চালিয়ে যান "
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr ""
+msgstr "পিছনে যান "
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -283,6 +283,8 @@ msgid ""
 "      This exam is proctored\n"
 "    "
 msgstr ""
+"\n"
+"এই পরীক্ষা proctored হয় "
 
 #: templates/proctored_exam/entrance.html:9
 msgid ""
@@ -290,10 +292,12 @@ msgid ""
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
+"\n"
+"কোর্স ক্রেডিট জন্য বা একটি MicroMasters প্রমাণপত্রের জন্য যোগ্য হতে, আপনাকে এই exam.এর proctoring পর্যালোচনা পাস করতে হবে "
 
 #: templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
-msgstr ""
+msgstr "আমার সুরক্ষিত পরীক্ষা চালিয়ে যাও. আমি ক্রেডিট জন্য যোগ্য হতে চাই. "
 
 #: templates/proctored_exam/entrance.html:17
 msgid ""
@@ -308,6 +312,8 @@ msgid ""
 "      Error with proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"সুরক্ষিত exam ত্রুটি "
 
 #: templates/proctored_exam/error.html:10
 #, python-format
@@ -424,7 +430,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr ""
+msgstr "যাচাইকরণ পুনরায় চেষ্টা করুন "
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""

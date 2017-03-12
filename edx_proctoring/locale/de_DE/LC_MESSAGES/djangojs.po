@@ -48,7 +48,7 @@ msgstr "Erstellt"
 
 #: admin.py:381
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "Software Download gewählt"
 
 #: admin.py:382
 msgid "Ready To Start"
@@ -98,38 +98,40 @@ msgstr "Ihr Kurs"
 #, python-brace-format
 msgid "Proctoring Session Results Update for {course_name} {exam_name}"
 msgstr ""
+"Aktualisierung der beaufsichtigten Sitzungsergebnisse für {course_name} "
+"{exam_name}"
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
-msgstr ""
+msgstr "Als eine beaufsichtigten Prüfung teilnehmen"
 
 #: api.py:1289
 msgid "Proctored Option Available"
-msgstr ""
+msgstr "Option Beaufsichtigt verfügbar"
 
 #: api.py:1294
 msgid "Taking As Open Exam"
-msgstr ""
+msgstr "Als eine Freie Prüfung teilnehmen"
 
 #: api.py:1299 api.py:1304
 msgid "Pending Session Review"
-msgstr ""
+msgstr "Laufende Begutachtung der Sitzung"
 
 #: api.py:1309
 msgid "Passed Proctoring"
-msgstr ""
+msgstr "Bestanden unter Beaufsichtigung"
 
 #: api.py:1314 api.py:1319
 msgid "Failed Proctoring"
-msgstr ""
+msgstr "Nicht bestanden unter Beaufsichtigung"
 
 #: api.py:1324
 msgid "Proctored Option No Longer Available"
-msgstr ""
+msgstr "Die Option Beaufsichtigt steht nicht länger zur Verfügung"
 
 #: api.py:1333
 msgid "Ungraded Practice Exam"
-msgstr ""
+msgstr "Upgrade auf Praktische Prüfung"
 
 #: api.py:1338
 msgid "Practice Exam Completed"
@@ -157,11 +159,11 @@ msgstr "ungenügend"
 
 #: models.py:481
 msgid "Taking as Proctored"
-msgstr ""
+msgstr "Als Beaufsichtigt teilnehmen"
 
 #: models.py:485
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "Ist ein Probeversuch"
 
 #: models.py:700
 msgid "Additional Time (minutes)"
@@ -188,6 +190,9 @@ msgid ""
 "      Try a proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"      Starte eine Betreute Prüfung\n"
+"    "
 
 #: templates/practice_exam/entrance.html:9
 msgid ""
