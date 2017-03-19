@@ -167,11 +167,11 @@ msgstr "Ist ein Probeversuch"
 
 #: models.py:700
 msgid "Additional Time (minutes)"
-msgstr ""
+msgstr "Zusätzliche Zeit (Minuten)"
 
 #: models.py:701
 msgid "Review Policy Exception"
-msgstr ""
+msgstr "Ausnahme bei der Begutachtungsrichtlinine"
 
 #: templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
@@ -183,6 +183,12 @@ msgid ""
 "contact %(platform)s support at %(contact_email)s.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"In dieser E-Mail erfahren Sie den Stand Ihrer Aufsichtssitzung der Reviews für %(exam_name)s in\n"
+"<a href=\"%(course_url)s\">%(course_name)s </a> is %(status)s. Falls Sie weitere Fragen zur Aufsicht haben,\n"
+"kontaktieren Sie den %(platform)s Support unter %(contact_email)s.\n"
+"\n"
 
 #: templates/practice_exam/entrance.html:4
 msgid ""
@@ -204,7 +210,7 @@ msgstr ""
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
-msgstr ""
+msgstr "Weiter zu meiner Übungsprüfung"
 
 #: templates/practice_exam/entrance.html:18
 msgid ""
@@ -237,7 +243,7 @@ msgstr ""
 
 #: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
-msgstr ""
+msgstr "Diese Übungsprüfung noch einmal versuchen"
 
 #: templates/practice_exam/submitted.html:4
 msgid ""
@@ -274,7 +280,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
-msgstr ""
+msgstr "Diese Prüfung ohne Aufsicht fortsetzen"
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
@@ -288,6 +294,8 @@ msgid ""
 "      This exam is proctored\n"
 "    "
 msgstr ""
+"\n"
+"Diese Prüfung geschieht unter Aufsicht"
 
 #: templates/proctored_exam/entrance.html:9
 msgid ""
@@ -295,10 +303,14 @@ msgid ""
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
+"\n"
+"Um für Kurs-Kreditpunkte oder MicroMaster Credentials berechtigt zu sein, müssen Sie den beaufsichtigten Review für diese Prüfung bestehen."
 
 #: templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
 msgstr ""
+"Weiter zu meiner beaufsichtigten Prüfung. Ich möchte zu Kreditpunkten "
+"berechtigt sein."
 
 #: templates/proctored_exam/entrance.html:17
 msgid ""
@@ -306,6 +318,9 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
 "      "
 msgstr ""
+"\n"
+"        Sie werden nun durch erforderliche Schritte geführt um die Online-Aufsichtssoftware aufzusetzen und eine Reihe von Tests und Überprüfungen durchzuführen.</br>\n"
+"      "
 
 #: templates/proctored_exam/error.html:4
 msgid ""
@@ -417,6 +432,10 @@ msgid ""
 "                    submit your verification.\n"
 "                "
 msgstr ""
+"\n"
+"                    Ihre Verifizierung in Bearbeitung. DIe Ergebnisse sollten 2-3 Tage\n"
+"nach Einreichung zur Verifikation verfügbar sein.\n"
+"                "
 
 #: templates/proctored_exam/id_verification.html:24
 msgid ""
@@ -426,6 +445,11 @@ msgid ""
 "                    then try again.\n"
 "                "
 msgstr ""
+"\n"
+"                    Ihr Versuch zur Verifikation ist fehlgeschlagen. Bitte Lesen Sie\n"
+"unsere Richtlinien um sicher zu gehen, dass Sie die Anforderungen für eine erfolgreiche Durchführung der verifikation verstanden haben.\n"
+"Bitte versuchen Sie es dann noch einmal.\n"
+"                "
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
@@ -458,6 +482,9 @@ msgid ""
 "      Follow these steps to set up and start your proctored exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Folgen Sie diesen Schritten um Ihre beaufsichtigte Prüfung aufzusetzen und zu beginnen.\n"
+"    "
 
 #: templates/proctored_exam/instructions.html:11
 msgid ""
@@ -482,7 +509,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
-msgstr ""
+msgstr "Beginne mit Systemcheck"
 
 #: templates/proctored_exam/instructions.html:32
 msgid ""
@@ -509,7 +536,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:50
 msgid "Start Proctored Exam"
-msgstr ""
+msgstr "Beaufsichtigte Prüfung beginnen"
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
@@ -517,12 +544,12 @@ msgstr "Schließen"
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
-msgstr ""
+msgstr "Beaufsichtigte Prüfung kann nicht begonnen werden"
 
 #: templates/proctored_exam/instructions.html:85
 #: templates/proctored_exam/proctoring_opt_out_button.html:5
 msgid "Take this exam without proctoring."
-msgstr ""
+msgstr "An diese Prüfung ohne Aufsicht teilnehmen."
 
 #: templates/proctored_exam/instructions.html:87
 msgid "Doing so means that you are no longer eligible for academic credit."
@@ -593,6 +620,9 @@ msgid ""
 "      Follow these instructions\n"
 "    "
 msgstr ""
+"\n"
+"      Befolgen Sie diese Anweisungen\n"
+"    "
 
 #: templates/proctored_exam/ready_to_start.html:10
 #, python-format
@@ -611,6 +641,9 @@ msgid ""
 "          Start my exam\n"
 "        "
 msgstr ""
+"\n"
+"          Beginne mit meiner Prüfung\n"
+"        "
 
 #: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
@@ -618,6 +651,9 @@ msgid ""
 "      Are you sure you want to end your proctored exam?\n"
 "    "
 msgstr ""
+"\n"
+"      Sind Sie sicher, dass sie Ihre beaufsichtigte Prüfung beenden wollen?\n"
+"    "
 
 #: templates/proctored_exam/ready_to_submit.html:9
 #: templates/timed_exam/ready_to_submit.html:9
@@ -720,7 +756,7 @@ msgstr ""
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "Meine Prüfung anzeigen"
 
 #: templates/proctored_exam/visit_exam_content.html:40
 msgid ""
@@ -747,15 +783,15 @@ msgstr ""
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
-msgstr ""
+msgstr "Nach Ihrer Auswahl"
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr ""
+msgstr "Ich bin bereit diese zeitlich begrenzte Prüfung zu beginnen, "
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr ""
+msgstr "Sie haben in Zukunft"
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
@@ -841,12 +877,12 @@ msgstr ""
 #: utils.py:76
 #, python-brace-format
 msgid "{num_of_hours} hour"
-msgstr ""
+msgstr "{num_of_hours} Stunde"
 
 #: utils.py:79
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr ""
+msgstr "{num_of_hours} Stunden"
 
 #: utils.py:87 utils.py:97
 #, python-brace-format
@@ -866,11 +902,11 @@ msgstr ""
 #: utils.py:95
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr ""
+msgstr " und {num_of_minutes} Minuten"
 
 #: views.py:92
 msgid "could not determine the course_id"
-msgstr ""
+msgstr "Konnte course_id nicht feststellen"
 
 #: views.py:102
 msgid "Must be a Staff User to Perform this request."
