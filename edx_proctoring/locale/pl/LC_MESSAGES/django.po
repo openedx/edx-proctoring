@@ -882,7 +882,7 @@ msgstr ""
 
 #: views.py:536
 msgid "timed"
-msgstr ""
+msgstr "czasowy"
 
 #: views.py:537
 msgid "practice"

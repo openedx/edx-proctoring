@@ -48,7 +48,7 @@ msgstr "Créée"
 
 #: admin.py:381
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "Téléchargement du logiciel cliqué"
 
 #: admin.py:382
 msgid "Ready To Start"
@@ -98,6 +98,8 @@ msgstr "votre cours"
 #, python-brace-format
 msgid "Proctoring Session Results Update for {course_name} {exam_name}"
 msgstr ""
+"Mise à jour pour des résultats de la session surveillée pour {course_name} "
+"{exam_name}"
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
@@ -109,11 +111,11 @@ msgstr "Option surveillée disponible"
 
 #: api.py:1294
 msgid "Taking As Open Exam"
-msgstr ""
+msgstr "Prendre comme examen ouvert"
 
 #: api.py:1299 api.py:1304
 msgid "Pending Session Review"
-msgstr ""
+msgstr "Examen de la session en attente"
 
 #: api.py:1309
 msgid "Passed Proctoring"
@@ -157,11 +159,11 @@ msgstr "insatisfaisant"
 
 #: models.py:481
 msgid "Taking as Proctored"
-msgstr ""
+msgstr "Prendre comme examen surveillé"
 
 #: models.py:485
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "Tentative d'échantillonnage"
 
 #: models.py:700
 msgid "Additional Time (minutes)"
@@ -169,7 +171,7 @@ msgstr "Temps additionnel (minutes)"
 
 #: models.py:701
 msgid "Review Policy Exception"
-msgstr ""
+msgstr "Examen de la politique d'exception"
 
 #: templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
@@ -188,6 +190,8 @@ msgid ""
 "      Try a proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"Essayez un examen surveillé"
 
 #: templates/practice_exam/entrance.html:9
 msgid ""
@@ -214,6 +218,8 @@ msgid ""
 "      There was a problem with your practice proctoring session\n"
 "    "
 msgstr ""
+"\n"
+"Il y a eu un problème avec votre séance d'examen surveillé de pratique"
 
 #: templates/practice_exam/error.html:10
 msgid ""
@@ -221,6 +227,8 @@ msgid ""
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
 "    "
 msgstr ""
+"\n"
+"Les résultats de votre examen surveillé de pratique : <b class=\"failure\"> Insatisfaisant </b>"
 
 #: templates/practice_exam/error.html:16
 msgid ""
@@ -240,6 +248,8 @@ msgid ""
 "      You have submitted this practice proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"Vous avez soumis cet examen surveillé de pratique."
 
 #: templates/practice_exam/submitted.html:10
 msgid ""
@@ -658,6 +668,8 @@ msgid ""
 "      Yes, end my proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"Oui, terminez mon examen surveillé"
 
 #: templates/proctored_exam/ready_to_submit.html:27
 msgid ""
@@ -665,6 +677,8 @@ msgid ""
 "        No, I'd like to continue working\n"
 "      "
 msgstr ""
+"\n"
+"Non, je veux continuer à travailler"
 
 #: templates/proctored_exam/rejected.html:4
 msgid ""
@@ -672,6 +686,8 @@ msgid ""
 "      Your proctoring session was reviewed and did not pass requirements\n"
 "    "
 msgstr ""
+"\n"
+"Votre séance surveillée a été examinée et n'a répondue aux exigences"
 
 #: templates/proctored_exam/rejected.html:10
 #, python-format
@@ -688,6 +704,8 @@ msgid ""
 "      You have submitted this proctored exam for review\n"
 "    "
 msgstr ""
+"\n"
+"Vous avez soumis cet examen surveillé pour révision"
 
 #: templates/proctored_exam/submitted.html:9
 msgid ""
@@ -711,6 +729,8 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"Si vous avez des questions sur l'état des résultats de votre examen surveillé, contactez le support %(platform_name)s."
 
 #: templates/proctored_exam/verified.html:4
 msgid ""
@@ -718,6 +738,8 @@ msgid ""
 "      Your proctoring session was reviewed and passed all requirements\n"
 "    "
 msgstr ""
+"\n"
+"Votre séance surveillée a été examinée et a répondu à toutes les exigences"
 
 #: templates/proctored_exam/verified.html:10
 msgid ""
@@ -752,6 +774,8 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
+"\n"
+"%(exam_name)s est un examen chronométré (%(total_time)s)"
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
@@ -785,6 +809,8 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"Je suis prêt à commencer cet examen chronométré."
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
@@ -805,6 +831,8 @@ msgid ""
 "      Are you sure that you want to submit your timed exam?\n"
 "    "
 msgstr ""
+"\n"
+"Êtes-vous certain de vouloir soumettre votre examen chronométré?"
 
 #: templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -812,6 +840,8 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
+"\n"
+"Après avoir soumis votre examen, votre examen sera noté."
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -837,6 +867,8 @@ msgid ""
 "        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.\n"
 "      "
 msgstr ""
+"\n"
+"Le temps alloué pour cet examen a expiré. Votre examen a été soumis et tout travail que vous avez terminé sera évalué."
 
 #: templates/timed_exam/submitted.html:10
 msgid ""
@@ -844,6 +876,8 @@ msgid ""
 "        You have submitted your timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"Vous avez soumis votre examen chronométré."
 
 #: templates/timed_exam/submitted.html:18
 #, python-format
@@ -852,6 +886,8 @@ msgid ""
 "      Your grade for this timed exam will be immediately available on the <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 msgstr ""
+"\n"
+"Votre note pour cet examen chronométré sera immédiatement disponible sur la page <a href=\"%(progress_page_url)s\">Progression</a>."
 
 #: templates/timed_exam/submitted.html:22
 msgid ""
@@ -859,6 +895,8 @@ msgid ""
 "        After the due date has passed, you can review the exam, but you cannot change your answers.\n"
 "      "
 msgstr ""
+"\n"
+"Une fois la date d'échéance passée, vous pouvez passer en revue l'examen, mais vous ne pouvez pas modifier vos réponses."
 
 #: utils.py:76
 #, python-brace-format
