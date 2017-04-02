@@ -459,6 +459,9 @@ msgid ""
 "      If you have questions about the status of your requirements for course credit, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"      Falls Sie fragen zum Fortschritt der Anforderungen ihrer Kurskreditpunke haben, kontaktieren Sie den %(platform_name)s Support.\n"
+"    "
 
 #: templates/proctored_exam/footer.html:5
 msgid ""
@@ -476,6 +479,9 @@ msgid ""
 "                Complete your verification before starting the proctored exam.\n"
 "            "
 msgstr ""
+"\n"
+"                Schließen Sie die Verifikation ab, bevor Sie mit der beaufsichtigten Prüfung beginnen.\n"
+"            "
 
 #: templates/proctored_exam/id_verification.html:11
 msgid ""
@@ -483,6 +489,9 @@ msgid ""
 "                You must successfully complete identity verification before you can start the proctored exam.\n"
 "            "
 msgstr ""
+"\n"
+"                Sie müssen die Verifikation Ihrer Identität vollständig durchführen, bevor Sie die beaufsichtigte Prüfung beginnen können.\n"
+"            "
 
 #: templates/proctored_exam/id_verification.html:17
 msgid ""
@@ -512,7 +521,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr ""
+msgstr "Verifikation wiederholen"
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
