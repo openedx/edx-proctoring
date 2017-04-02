@@ -906,7 +906,7 @@ msgstr "Después de seleccionar"
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr "Estoy listo/a para empezar este examen cronometrado"
+msgstr "Estoy listo/a para empezar este examen cronometrado,"
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
