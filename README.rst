@@ -1,4 +1,4 @@
-django-component-views
+edx-proctoring
 =============================
 
 .. image:: https://img.shields.io/pypi/v/edx-proctoring.svg
