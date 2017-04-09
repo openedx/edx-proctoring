@@ -92,7 +92,7 @@ msgstr "Errorea"
 
 #: api.py:902
 msgid "your course"
-msgstr ""
+msgstr "zure ikastaroa"
 
 #: api.py:962
 #, python-brace-format
@@ -606,6 +606,9 @@ msgid ""
 "          Start my exam\n"
 "        "
 msgstr ""
+"\n"
+"          Hasi azterketa\n"
+"        "
 
 #: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
@@ -715,7 +718,7 @@ msgstr ""
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "Ikusi azterketa"
 
 #: templates/proctored_exam/visit_exam_content.html:40
 msgid ""
@@ -836,17 +839,17 @@ msgstr ""
 #: utils.py:76
 #, python-brace-format
 msgid "{num_of_hours} hour"
-msgstr ""
+msgstr " ordu {num_of_hours}"
 
 #: utils.py:79
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr ""
+msgstr "{num_of_hours} ordu"
 
 #: utils.py:87 utils.py:97
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
-msgstr ""
+msgstr "{num_of_minutes} minutu"
 
 #: utils.py:90
 #, python-brace-format
@@ -856,7 +859,7 @@ msgstr ""
 #: utils.py:92
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr ""
+msgstr "{num_of_minutes} minutu"
 
 #: utils.py:95
 #, python-brace-format
