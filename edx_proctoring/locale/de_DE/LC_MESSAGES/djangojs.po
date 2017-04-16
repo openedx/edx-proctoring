@@ -530,11 +530,15 @@ msgid ""
 "                    before you can start the proctored exam.\n"
 "                "
 msgstr ""
+"\n"
+"                    Ihre Verifikation ist abgelaufen. Sie müssen sich erneut erfolgreich verifizieren\n"
+"                    bevor Sie die beaufsichtigte Prüfung beginnen können.\n"
+"                "
 
 #: templates/proctored_exam/id_verification.html:44
 #: templates/proctored_exam/id_verification.html:56
 msgid "Continue to Verification"
-msgstr ""
+msgstr "Weiter zur Verifikation"
 
 #: templates/proctored_exam/id_verification.html:49
 msgid ""
