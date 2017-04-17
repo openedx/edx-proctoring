@@ -78,6 +78,10 @@ var edx = edx || {};
 
             this.render();
         },
+        hideCourseNavBar: function() {
+            $(".wrapper-course-material").addClass('invisible');
+            $('.course-wrapper > .course-index').addClass('hidden');
+        },
         render: function () {
             if (this.template !== null) {
                 if (
@@ -86,6 +90,7 @@ var edx = edx || {};
                     this.model.get('attempt_status') !== 'error'
                 ) {
                     // add callback on scroll event
+                    this.hideCourseNavBar();
                     $(window).bind('scroll', this.detectScroll);
 
                     var html = this.template(this.model.toJSON());
