@@ -21,6 +21,8 @@ from .utils import (
     LoggedInTestCase
 )
 
+# pragma pylint: disable=useless-super-delegation
+
 
 class ProctoredExamModelTests(LoggedInTestCase):
     """

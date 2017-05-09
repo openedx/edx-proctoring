@@ -63,11 +63,10 @@ def require_staff(func):
     def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
         if request.user.is_staff:
             return func(request, *args, **kwargs)
-        else:
-            return Response(
-                status=status.HTTP_403_FORBIDDEN,
-                data={"detail": "Must be a Staff User to Perform this request."}
-            )
+        return Response(
+            status=status.HTTP_403_FORBIDDEN,
+            data={"detail": "Must be a Staff User to Perform this request."}
+        )
     return wrapped
 
 
@@ -96,11 +95,10 @@ def require_course_or_global_staff(func):
                     )
             if instructor_service.is_course_staff(request.user, course_id):
                 return func(request, *args, **kwargs)
-            else:
-                return Response(
-                    status=status.HTTP_403_FORBIDDEN,
-                    data={"detail": _("Must be a Staff User to Perform this request.")}
-                )
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+                data={"detail": _("Must be a Staff User to Perform this request.")}
+            )
 
     return wrapped
 
@@ -191,11 +189,10 @@ class ProctoredExamView(AuthenticatedAPIView):
                 hide_after_due=request.data.get('hide_after_due', None),
             )
             return Response({'exam_id': exam_id})
-        else:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data=serializer.errors
-            )
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST,
+            data=serializer.errors
+        )
 
     @method_decorator(require_staff)
     def put(self, request):

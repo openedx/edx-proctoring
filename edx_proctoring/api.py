@@ -56,6 +56,8 @@ log = logging.getLogger(__name__)
 
 SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is shown for a timed-out exam
 
+APPROVED_STATUS = 'approved'
+
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True, hide_after_due=False):
@@ -1762,7 +1764,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
-        if context.get('verification_status') is not 'approved':
+        if context.get('verification_status') is not APPROVED_STATUS:
             # if the user has not id verified yet, show them the page that requires them to do so
             student_view_template = 'proctored_exam/id_verification.html'
         else:
@@ -1879,5 +1881,4 @@ def get_student_view(user_id, course_id, content_id,
 
     if sub_view_func:
         return sub_view_func(exam, context, exam_id, user_id, course_id)
-    else:
-        return None
+    return None

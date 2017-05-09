@@ -107,8 +107,7 @@ class ReviewListFilter(admin.SimpleListFilter):
             return queryset.filter(reviewed_by__isnull=True)
         elif self.value() == 'all_unreviewed_failures':
             return queryset.filter(reviewed_by__isnull=True, review_status='Suspicious')
-        else:
-            return queryset
+        return queryset
 
 
 class ProctoredExamListFilter(admin.SimpleListFilter):
@@ -252,25 +251,22 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         """Return course_id associated with review"""
         if obj.exam:
             return obj.exam.course_id
-        else:
-            exam = self._get_exam_from_attempt_code(obj.attempt_code)
-            return exam.exam_name if exam else '(none)'
+        exam = self._get_exam_from_attempt_code(obj.attempt_code)
+        return exam.exam_name if exam else '(none)'
 
     def exam_name_for_review(self, obj):
         """Return course_id associated with review"""
         if obj.exam:
             return obj.exam.exam_name
-        else:
-            exam = self._get_exam_from_attempt_code(obj.attempt_code)
-            return exam.exam_name if exam else '(none)'
+        exam = self._get_exam_from_attempt_code(obj.attempt_code)
+        return exam.exam_name if exam else '(none)'
 
     def student_username_for_review(self, obj):
         """Return username of student who took the test"""
         if obj.student:
             return obj.student.username
-        else:
-            (attempt_obj, __) = locate_attempt_by_attempt_code(obj.attempt_code)
-            return attempt_obj.user.username if attempt_obj else '(None)'
+        (attempt_obj, __) = locate_attempt_by_attempt_code(obj.attempt_code)
+        return attempt_obj.user.username if attempt_obj else '(None)'
 
     list_display = [
         'course_id_for_review',
@@ -290,7 +286,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         """ Allow deletes """
         return True
 
-    def save_model(self, request, review, form, change):
+    def save_model(self, request, review, form, change):  # pylint: disable=arguments-differ
         """
         Override callback so that we can inject the user_id that made the change
         """
@@ -306,7 +302,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
             del form.base_fields['video_url']
         return form
 
-    def lookup_allowed(self, key, value):
+    def lookup_allowed(self, key, value):  # pylint: disable=arguments-differ
         if key == 'exam__course_id':
             return True
         return super(ProctoredExamSoftwareSecureReviewAdmin, self).lookup_allowed(key, value)
@@ -363,8 +359,7 @@ class ExamAttemptFilterByCourseId(admin.SimpleListFilter):
         """
         if self.value():
             return queryset.filter(proctored_exam__course_id=self.value())
-        else:
-            return queryset
+        return queryset
 
 
 class ProctoredExamAttemptForm(forms.ModelForm):
