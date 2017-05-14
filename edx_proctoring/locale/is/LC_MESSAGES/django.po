@@ -72,7 +72,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr ""
+msgstr "Sent"
 
 #: admin.py:388
 msgid "Second Review Required"

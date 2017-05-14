@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Masoud Mohamed Ali <masoudali@camara.org>, 2016\n"
+"Last-Translator: ramadhani mwaimu <ramadhanimwaimu@camara.ie>, 2017\n"
 "Language-Team: Swahili (Kenya) (https://www.transifex.com/open-edx/teams/6205/sw_KE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,55 +20,55 @@ msgstr ""
 
 #: admin.py:88
 msgid "internally reviewed"
-msgstr ""
+msgstr "yaliyopitiwa ndani "
 
 #: admin.py:97
 msgid "All Unreviewed"
-msgstr ""
+msgstr "yote hayajapitiwa"
 
 #: admin.py:98
 msgid "All Unreviewed Failures"
-msgstr ""
+msgstr "makosa yote ambayo hayajapitiwa"
 
 #: admin.py:119
 msgid "active proctored exams"
-msgstr ""
+msgstr "mitihani hai iliyowekewa ulinzi"
 
 #: admin.py:177
 msgid "courses with active proctored exams"
-msgstr ""
+msgstr "kozi yenye mitihani hai yenye ulinzi "
 
 #: admin.py:342
 msgid "Course Id"
-msgstr "Kitambulisho cha Kozi"
+msgstr "utambulisho wa Kozi"
 
 #: admin.py:380
 msgid "Created"
-msgstr "Kubuniwa"
+msgstr "iliyotengenezwa"
 
 #: admin.py:381
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "pakua  programu uliyobofya"
 
 #: admin.py:382
 msgid "Ready To Start"
-msgstr ""
+msgstr "Tayari kuanza"
 
 #: admin.py:383
 msgid "Started"
-msgstr ""
+msgstr "Imeanza"
 
 #: admin.py:384
 msgid "Ready To Submit"
-msgstr ""
+msgstr "Tayari kwa kuwasilihwa"
 
 #: admin.py:385
 msgid "Declined"
-msgstr ""
+msgstr "Imekataliwa"
 
 #: admin.py:386
 msgid "Timed Out"
-msgstr ""
+msgstr "nje ya muda"
 
 #: admin.py:387
 msgid "Submitted"
@@ -76,7 +76,7 @@ msgstr "Fikishwa"
 
 #: admin.py:388
 msgid "Second Review Required"
-msgstr ""
+msgstr "Yanahitajika mapitio ya mara ya pili"
 
 #: admin.py:389
 msgid "Verified"
@@ -84,7 +84,7 @@ msgstr "Thibitishwa"
 
 #: admin.py:390
 msgid "Rejected"
-msgstr ""
+msgstr "Imekataliwa"
 
 #: admin.py:391
 msgid "Error"
@@ -92,52 +92,52 @@ msgstr "Hitlafu"
 
 #: api.py:902
 msgid "your course"
-msgstr ""
+msgstr "Kozi yako"
 
 #: api.py:962
 #, python-brace-format
 msgid "Proctoring Session Results Update for {course_name} {exam_name}"
-msgstr ""
+msgstr "Usimamizi wa kipindi cha otoaji matokeo kwa {course_name} {exam_name}"
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
-msgstr ""
+msgstr "Kuchukua kama mtihani uliosimamiwa"
 
 #: api.py:1289
 msgid "Proctored Option Available"
-msgstr ""
+msgstr "Chaguzi ya usimamizi inapatikana"
 
 #: api.py:1294
 msgid "Taking As Open Exam"
-msgstr ""
+msgstr "Kufanya kama mtihani huru"
 
 #: api.py:1299 api.py:1304
 msgid "Pending Session Review"
-msgstr ""
+msgstr " Kipindi kinayosubiriwa kupitiwa "
 
 #: api.py:1309
 msgid "Passed Proctoring"
-msgstr ""
+msgstr "Imepitishwa usimamizi"
 
 #: api.py:1314 api.py:1319
 msgid "Failed Proctoring"
-msgstr ""
+msgstr "imeshindwa uwangalizi"
 
 #: api.py:1324
 msgid "Proctored Option No Longer Available"
-msgstr ""
+msgstr "angalizo la chaguo Hairuhusu kupatikana "
 
 #: api.py:1333
 msgid "Ungraded Practice Exam"
-msgstr ""
+msgstr "mtihani wa majaribio ambao haujawekewa daraja"
 
 #: api.py:1338
 msgid "Practice Exam Completed"
-msgstr ""
+msgstr "Mtihani wa majaribio umekamilika"
 
 #: api.py:1343
 msgid "Practice Exam Failed"
-msgstr ""
+msgstr "mtihani wa majaribio ulioshindwa"
 
 #: api.py:1351
 msgid "Timed Exam"
@@ -145,15 +145,15 @@ msgstr "Mtihani Uliopewa Muda Maalum"
 
 #: models.py:181
 msgid "pending"
-msgstr "Inasubiri huduma"
+msgstr "Inayosubiria"
 
 #: models.py:182
 msgid "satisfactory"
-msgstr ""
+msgstr "Inaridhisha"
 
 #: models.py:183
 msgid "unsatisfactory"
-msgstr ""
+msgstr "Hairidhishi "
 
 #: models.py:481
 msgid "Taking as Proctored"
@@ -161,15 +161,15 @@ msgstr ""
 
 #: models.py:485
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "Ni mfano wa jaribio"
 
 #: models.py:700
 msgid "Additional Time (minutes)"
-msgstr ""
+msgstr "Ongezeko la muda (dakika)"
 
 #: models.py:701
 msgid "Review Policy Exception"
-msgstr ""
+msgstr "Kupitia tena Sera zilizobaguliwa"
 
 #: templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
@@ -865,7 +865,7 @@ msgstr ""
 
 #: views.py:92
 msgid "could not determine the course_id"
-msgstr ""
+msgstr "haikuweza kutambua utambulisho wa kozi"
 
 #: views.py:102
 msgid "Must be a Staff User to Perform this request."

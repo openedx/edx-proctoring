@@ -578,6 +578,9 @@ msgid ""
 "        2. Follow the link below to set up proctoring.\n"
 "      "
 msgstr ""
+"\n"
+"        2. Folgen Sie dem Link unten, um die Beaufsichtigungeinzurichten.\n"
+"      "
 
 #: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
@@ -626,6 +629,8 @@ msgstr "An diese Prüfung ohne Aufsicht teilnehmen."
 #: templates/proctored_exam/instructions.html:87
 msgid "Doing so means that you are no longer eligible for academic credit."
 msgstr ""
+"Die Konsequenz hieraus ist, dass Sie nicht länger zum Erwerb akademische "
+"Kreditpunkte berechtigt sind."
 
 #: templates/proctored_exam/pending-prerequisites.html:9
 #, python-format
@@ -652,7 +657,7 @@ msgstr ""
 
 #: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
-msgstr ""
+msgstr "Ihre beaufsichtigte Sitzung hat begonnen"
 
 #: templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
@@ -685,6 +690,9 @@ msgid ""
 "        I am not interested in academic credit.\n"
 "      "
 msgstr ""
+"\n"
+"        Ich bin nicht am Erwerb akademischer Kreditpunkte interessiert.\n"
+"      "
 
 #: templates/proctored_exam/ready_to_start.html:5
 msgid ""

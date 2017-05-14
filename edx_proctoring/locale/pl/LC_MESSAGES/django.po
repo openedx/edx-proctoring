@@ -165,7 +165,7 @@ msgstr ""
 
 #: models.py:700
 msgid "Additional Time (minutes)"
-msgstr ""
+msgstr "Dodatkowy czas (w minutach)"
 
 #: models.py:701
 msgid "Review Policy Exception"

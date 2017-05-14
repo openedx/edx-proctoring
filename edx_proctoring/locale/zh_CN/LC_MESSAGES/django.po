@@ -606,6 +606,8 @@ msgid ""
 "          Start my exam\n"
 "        "
 msgstr ""
+"\n"
+"开始我的测验"
 
 #: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
