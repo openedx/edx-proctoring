@@ -84,7 +84,6 @@
       <a href="#" class="proctored-decline-exam" data-action="decline" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
         {% trans "Take this exam without proctoring." %}
       </a>
-      {% trans "Doing so means that you are no longer eligible for academic credit." %}
     </p>
   {% endif %}
 </div>
@@ -111,8 +110,7 @@
       var action = $(this).data('action');
 
       var msg = gettext(
-        "Are you sure you want to take this exam without proctoring? " +
-        "You will no longer be eligible to use this course for academic credit."
+        "Are you sure you want to take this exam without proctoring?"
       );
       if (!confirm(msg)) {
         return;
