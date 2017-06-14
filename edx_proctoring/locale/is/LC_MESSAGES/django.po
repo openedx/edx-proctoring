@@ -40,7 +40,7 @@ msgstr ""
 
 #: admin.py:342
 msgid "Course Id"
-msgstr ""
+msgstr "Auðkenni námskeiðs"
 
 #: admin.py:380
 msgid "Created"
@@ -424,7 +424,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr ""
+msgstr "Reyna staðfestingu aftur"
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
