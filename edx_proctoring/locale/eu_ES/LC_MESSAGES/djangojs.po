@@ -56,7 +56,7 @@ msgstr ""
 
 #: admin.py:383
 msgid "Started"
-msgstr ""
+msgstr "Hasita"
 
 #: admin.py:384
 msgid "Ready To Submit"

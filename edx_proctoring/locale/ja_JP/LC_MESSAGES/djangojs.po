@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Shoji Kajita <kajita.shoji.5z@kyoto-u.ac.jp>, 2016\n"
+"Last-Translator: Kyoto University <edxkyotoux@gmail.com>, 2017\n"
 "Language-Team: Japanese (Japan) (https://www.transifex.com/open-edx/teams/6205/ja_JP/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -68,7 +68,7 @@ msgstr ""
 
 #: admin.py:386
 msgid "Timed Out"
-msgstr ""
+msgstr "時間切れ"
 
 #: admin.py:387
 msgid "Submitted"
@@ -92,7 +92,7 @@ msgstr "エラー"
 
 #: api.py:902
 msgid "your course"
-msgstr ""
+msgstr "講座"
 
 #: api.py:962
 #, python-brace-format
@@ -149,11 +149,11 @@ msgstr "ペンディング"
 
 #: models.py:182
 msgid "satisfactory"
-msgstr ""
+msgstr "満足"
 
 #: models.py:183
 msgid "unsatisfactory"
-msgstr ""
+msgstr "不満"
 
 #: models.py:481
 msgid "Taking as Proctored"
@@ -165,7 +165,7 @@ msgstr ""
 
 #: models.py:700
 msgid "Additional Time (minutes)"
-msgstr ""
+msgstr "追加時間(分)"
 
 #: models.py:701
 msgid "Review Policy Exception"
@@ -346,6 +346,8 @@ msgid ""
 "      The due date for this exam has passed\n"
 "    "
 msgstr ""
+"\n"
+"この試験の締切は既に過ぎています。"
 
 #: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
@@ -353,6 +355,8 @@ msgid ""
 "      Because the due date has passed, you are no longer able to take this exam.\n"
 "    "
 msgstr ""
+"\n"
+"締切日が過ぎたため、本試験を受けることができません。"
 
 #: templates/proctored_exam/failed-prerequisites.html:9
 #, python-format
@@ -368,6 +372,8 @@ msgid ""
 "    You did not satisfy the following prerequisites:\n"
 "    "
 msgstr ""
+"\n"
+"あなたは以下の前提条件を満たしていませんでした。"
 
 #: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
@@ -467,6 +473,8 @@ msgid ""
 "        Select the exam code, then copy it using Command+C (Mac) or Control+C (Windows).\n"
 "      "
 msgstr ""
+"\n"
+"試験コードを選択し、Command+C (Mac) または Control+C (Windows) を使ってコピーしてください。"
 
 #: templates/proctored_exam/instructions.html:24
 msgid ""
@@ -477,7 +485,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
-msgstr ""
+msgstr "システムチェック開始"
 
 #: templates/proctored_exam/instructions.html:32
 msgid ""

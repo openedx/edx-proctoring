@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Mariana Jó de Souza <mariana.jsouza@gmail.com>, 2016\n"
+"Last-Translator: Anderson Franca <anderson.frca@gmail.com>, 2017\n"
 "Language-Team: Portuguese (Brazil) (https://www.transifex.com/open-edx/teams/6205/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,23 +20,23 @@ msgstr ""
 
 #: admin.py:88
 msgid "internally reviewed"
-msgstr ""
+msgstr "Revisão interna"
 
 #: admin.py:97
 msgid "All Unreviewed"
-msgstr ""
+msgstr "Todos não revisados"
 
 #: admin.py:98
 msgid "All Unreviewed Failures"
-msgstr ""
+msgstr "Todas as falhas não revisadas"
 
 #: admin.py:119
 msgid "active proctored exams"
-msgstr ""
+msgstr "Exames práticos ativos"
 
 #: admin.py:177
 msgid "courses with active proctored exams"
-msgstr ""
+msgstr "Cursos com exames práticos ativos"
 
 #: admin.py:342
 msgid "Course Id"
@@ -48,11 +48,11 @@ msgstr "Criado"
 
 #: admin.py:381
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "Download do software clicado"
 
 #: admin.py:382
 msgid "Ready To Start"
-msgstr ""
+msgstr "Pronto para começar"
 
 #: admin.py:383
 msgid "Started"
@@ -60,15 +60,15 @@ msgstr "Iniciado"
 
 #: admin.py:384
 msgid "Ready To Submit"
-msgstr ""
+msgstr "Pronto para enviar"
 
 #: admin.py:385
 msgid "Declined"
-msgstr ""
+msgstr "Tempo esgotado"
 
 #: admin.py:386
 msgid "Timed Out"
-msgstr ""
+msgstr "Tempo esgotado"
 
 #: admin.py:387
 msgid "Submitted"
@@ -76,7 +76,7 @@ msgstr "Enviado"
 
 #: admin.py:388
 msgid "Second Review Required"
-msgstr ""
+msgstr "Segunda revisão requerida"
 
 #: admin.py:389
 msgid "Verified"
@@ -92,7 +92,7 @@ msgstr "Erro"
 
 #: api.py:902
 msgid "your course"
-msgstr ""
+msgstr "Seu curso"
 
 #: api.py:962
 #, python-brace-format
@@ -101,7 +101,7 @@ msgstr ""
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
-msgstr ""
+msgstr "Tomando como exame prático"
 
 #: api.py:1289
 msgid "Proctored Option Available"
@@ -109,7 +109,7 @@ msgstr ""
 
 #: api.py:1294
 msgid "Taking As Open Exam"
-msgstr ""
+msgstr "Tomando como exame aberto"
 
 #: api.py:1299 api.py:1304
 msgid "Pending Session Review"
@@ -129,15 +129,15 @@ msgstr ""
 
 #: api.py:1333
 msgid "Ungraded Practice Exam"
-msgstr ""
+msgstr "Não pontuado para exames práticos"
 
 #: api.py:1338
 msgid "Practice Exam Completed"
-msgstr ""
+msgstr "Falhou no exame prático"
 
 #: api.py:1343
 msgid "Practice Exam Failed"
-msgstr ""
+msgstr "Falhou no exame prático"
 
 #: api.py:1351
 msgid "Timed Exam"
@@ -149,11 +149,11 @@ msgstr "pendente"
 
 #: models.py:182
 msgid "satisfactory"
-msgstr ""
+msgstr "Satsifeito"
 
 #: models.py:183
 msgid "unsatisfactory"
-msgstr ""
+msgstr "Insatisfatório"
 
 #: models.py:481
 msgid "Taking as Proctored"
@@ -161,7 +161,7 @@ msgstr ""
 
 #: models.py:485
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "É uma tentativa simples"
 
 #: models.py:700
 msgid "Additional Time (minutes)"
@@ -199,7 +199,7 @@ msgstr ""
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
-msgstr ""
+msgstr "Continue para meu exame prático"
 
 #: templates/practice_exam/entrance.html:18
 msgid ""
@@ -232,7 +232,7 @@ msgstr ""
 
 #: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
-msgstr ""
+msgstr "Tente esse exame prático novamente"
 
 #: templates/practice_exam/submitted.html:4
 msgid ""
@@ -251,7 +251,7 @@ msgstr ""
 
 #: templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
-msgstr ""
+msgstr "Você também pode tentar novamente esse exame prático"
 
 #: templates/proctored_exam/confirm-decline.html:5
 msgid ""
@@ -346,6 +346,8 @@ msgid ""
 "      The due date for this exam has passed\n"
 "    "
 msgstr ""
+"\n"
+"A data final para esse exame passou"
 
 #: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
@@ -437,7 +439,7 @@ msgstr ""
 #: templates/proctored_exam/id_verification.html:44
 #: templates/proctored_exam/id_verification.html:56
 msgid "Continue to Verification"
-msgstr ""
+msgstr "Continue para a verificação"
 
 #: templates/proctored_exam/id_verification.html:49
 msgid ""
@@ -477,7 +479,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
-msgstr ""
+msgstr "Iniciar o sistema de verificação"
 
 #: templates/proctored_exam/instructions.html:32
 msgid ""
@@ -581,6 +583,8 @@ msgid ""
 "        I am not interested in academic credit.\n"
 "      "
 msgstr ""
+"\n"
+"Não estou interessado em créditos academicos"
 
 #: templates/proctored_exam/ready_to_start.html:5
 msgid ""
@@ -606,6 +610,8 @@ msgid ""
 "          Start my exam\n"
 "        "
 msgstr ""
+"\n"
+"Iniciar meu exame"
 
 #: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
@@ -715,7 +721,7 @@ msgstr ""
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "Visualizar meu exame"
 
 #: templates/proctored_exam/visit_exam_content.html:40
 msgid ""
@@ -723,6 +729,8 @@ msgid ""
 "      After the due date for this exam has passed, you will be able to review your answers on this page.\n"
 "    "
 msgstr ""
+"\n"
+"Depois que a data de vencimento para esse exame estiver passado, você conseguirá rever suas respostas nessa página"
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -750,7 +758,7 @@ msgstr ""
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr ""
+msgstr "Você terá"
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."

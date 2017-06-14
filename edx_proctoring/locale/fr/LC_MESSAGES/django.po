@@ -80,7 +80,7 @@ msgstr "Revue additionnelle requise"
 
 #: admin.py:389
 msgid "Verified"
-msgstr "Vérifié "
+msgstr "Vérifié"
 
 #: admin.py:390
 msgid "Rejected"
@@ -131,7 +131,7 @@ msgstr "Option Examen Surveillé Plus Disponible."
 
 #: api.py:1333
 msgid "Ungraded Practice Exam"
-msgstr "Examen d'essai non noté"
+msgstr "Examen d'entrainement non noté"
 
 #: api.py:1338
 msgid "Practice Exam Completed"
