@@ -72,7 +72,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr "Enviado"
+msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -88,7 +88,7 @@ msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "Error"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Cerrar"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"

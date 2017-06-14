@@ -145,7 +145,7 @@ msgstr ""
 
 #: models.py:181
 msgid "pending"
-msgstr "ootel"
+msgstr ""
 
 #: models.py:182
 msgid "satisfactory"
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Sulge"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"

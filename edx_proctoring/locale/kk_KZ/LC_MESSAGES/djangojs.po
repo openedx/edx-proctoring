@@ -44,7 +44,7 @@ msgstr ""
 
 #: admin.py:380
 msgid "Created"
-msgstr "Құрылды"
+msgstr ""
 
 #: admin.py:381
 msgid "Download Software Clicked"
@@ -72,7 +72,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr "Қарастырылуға жіберілген"
+msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -80,15 +80,15 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "Тексерілген"
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
-msgstr "Бас тартылды"
+msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "Қателік"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
@@ -141,11 +141,11 @@ msgstr ""
 
 #: api.py:1351
 msgid "Timed Exam"
-msgstr "Уақытша емтихан"
+msgstr ""
 
 #: models.py:181
 msgid "pending"
-msgstr "орындалу үстінде"
+msgstr ""
 
 #: models.py:182
 msgid "satisfactory"
@@ -273,7 +273,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr "Қайту"
+msgstr ""
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Жабу"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
@@ -882,7 +882,7 @@ msgstr ""
 
 #: views.py:536
 msgid "timed"
-msgstr "Уақытша"
+msgstr ""
 
 #: views.py:537
 msgid "practice"

@@ -320,8 +320,6 @@ msgid ""
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
-"\n"
-"על מנת להיות זכאי לנקודות על הקורס או לתעודת MicroMasters, עליך לעבור את סקירת הפיקוח של מבחן זה."
 
 #: templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."

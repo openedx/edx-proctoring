@@ -72,7 +72,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr "Илгээгдсэн"
+msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -80,7 +80,7 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "Баталгаажсан "
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
@@ -88,7 +88,7 @@ msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "Алдаа"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
@@ -273,7 +273,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr "Буцах "
+msgstr ""
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Хаах"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"

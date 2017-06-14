@@ -80,15 +80,15 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "Verificado"
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
-msgstr "Rechazado"
+msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "Error"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Cerrar"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"

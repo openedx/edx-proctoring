@@ -181,12 +181,6 @@ msgid ""
 "contact %(platform)s support at %(contact_email)s.\n"
 "\n"
 msgstr ""
-"\n"
-"\n"
-"This email is to let you know that the status of your proctoring session review for %(exam_name)s in\n"
-"<a href=\"%(course_url)s\">%(course_name)s </a> is %(status)s. If you have any questions about proctoring,\n"
-"contact %(platform)s support at %(contact_email)s.\n"
-"\n"
 
 #: templates/practice_exam/entrance.html:4
 msgid ""
@@ -321,8 +315,6 @@ msgid ""
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
-"\n"
-"על מנת להיות זכאי לנקודות על הקורס או לתעודת MicroMasters, עליך לעבור את סקירת הפיקוח של מבחן זה."
 
 #: templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
@@ -1067,4 +1059,4 @@ msgstr "תרגול"
 
 #: views.py:537
 msgid "proctored"
-msgstr "תחת פיקוח"
+msgstr ""
