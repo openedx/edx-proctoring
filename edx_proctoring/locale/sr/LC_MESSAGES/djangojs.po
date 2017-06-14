@@ -44,7 +44,7 @@ msgstr ""
 
 #: admin.py:380
 msgid "Created"
-msgstr "Kreiran"
+msgstr ""
 
 #: admin.py:381
 msgid "Download Software Clicked"
@@ -80,7 +80,7 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "Potvrđeno"
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
@@ -88,7 +88,7 @@ msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "Greška"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Zatvori"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"

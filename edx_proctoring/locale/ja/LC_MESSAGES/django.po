@@ -80,7 +80,7 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "照会済"
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"

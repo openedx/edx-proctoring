@@ -89,8 +89,6 @@ msgstr ""
 #: admin.py:391
 msgid "Error"
 msgstr ""
-"বিভ্রম\n"
-"ভুল"
 
 #: api.py:902
 msgid "your course"
@@ -510,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "বন্ধ করা "
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"

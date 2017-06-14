@@ -32,7 +32,7 @@ msgstr ""
 
 #: admin.py:119
 msgid "active proctored exams"
-msgstr "激活考试监考"
+msgstr ""
 
 #: admin.py:177
 msgid "courses with active proctored exams"
@@ -40,11 +40,11 @@ msgstr ""
 
 #: admin.py:342
 msgid "Course Id"
-msgstr "课程编号"
+msgstr ""
 
 #: admin.py:380
 msgid "Created"
-msgstr "创建"
+msgstr ""
 
 #: admin.py:381
 msgid "Download Software Clicked"
@@ -52,27 +52,27 @@ msgstr ""
 
 #: admin.py:382
 msgid "Ready To Start"
-msgstr "准备开始"
+msgstr ""
 
 #: admin.py:383
 msgid "Started"
-msgstr "已经开始"
+msgstr ""
 
 #: admin.py:384
 msgid "Ready To Submit"
-msgstr "准备提交"
+msgstr ""
 
 #: admin.py:385
 msgid "Declined"
-msgstr "拒绝"
+msgstr ""
 
 #: admin.py:386
 msgid "Timed Out"
-msgstr "时间到"
+msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr "已提交"
+msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -80,19 +80,19 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "已认证"
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
-msgstr "拒绝"
+msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "错误"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
-msgstr "您的课程"
+msgstr ""
 
 #: api.py:962
 #, python-brace-format
@@ -141,11 +141,11 @@ msgstr ""
 
 #: api.py:1351
 msgid "Timed Exam"
-msgstr "计时测验"
+msgstr ""
 
 #: models.py:181
 msgid "pending"
-msgstr "挂起"
+msgstr ""
 
 #: models.py:182
 msgid "satisfactory"
@@ -273,7 +273,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr "返回"
+msgstr ""
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -424,7 +424,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr "重试验证"
+msgstr ""
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "关闭"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
@@ -606,8 +606,6 @@ msgid ""
 "          Start my exam\n"
 "        "
 msgstr ""
-"\n"
-"开始我的测验"
 
 #: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
@@ -884,12 +882,12 @@ msgstr ""
 
 #: views.py:536
 msgid "timed"
-msgstr "定时"
+msgstr ""
 
 #: views.py:537
 msgid "practice"
-msgstr "练习"
+msgstr ""
 
 #: views.py:537
 msgid "proctored"
-msgstr "监考"
+msgstr ""

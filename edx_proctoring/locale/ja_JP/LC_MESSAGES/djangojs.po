@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Shoji Kajita <kajita.shoji.5z@kyoto-u.ac.jp>, 2016\n"
+"Last-Translator: Kyoto University <edxkyotoux@gmail.com>, 2017\n"
 "Language-Team: Japanese (Japan) (https://www.transifex.com/open-edx/teams/6205/ja_JP/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -40,11 +40,11 @@ msgstr ""
 
 #: admin.py:342
 msgid "Course Id"
-msgstr "講座ID"
+msgstr ""
 
 #: admin.py:380
 msgid "Created"
-msgstr "作成済"
+msgstr ""
 
 #: admin.py:381
 msgid "Download Software Clicked"
@@ -56,7 +56,7 @@ msgstr ""
 
 #: admin.py:383
 msgid "Started"
-msgstr "開始"
+msgstr ""
 
 #: admin.py:384
 msgid "Ready To Submit"
@@ -72,7 +72,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr "投稿日時"
+msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -80,15 +80,15 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "認証済み"
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
-msgstr "却下"
+msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "エラー"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
@@ -141,11 +141,11 @@ msgstr ""
 
 #: api.py:1351
 msgid "Timed Exam"
-msgstr "時間制限のあるテスト"
+msgstr ""
 
 #: models.py:181
 msgid "pending"
-msgstr "ペンディング"
+msgstr ""
 
 #: models.py:182
 msgid "satisfactory"
@@ -273,7 +273,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr "戻る"
+msgstr ""
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -424,7 +424,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr "認証を再実行"
+msgstr ""
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "閉じる"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"

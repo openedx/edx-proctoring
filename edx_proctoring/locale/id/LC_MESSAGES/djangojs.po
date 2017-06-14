@@ -72,7 +72,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr "Terkirim"
+msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -80,15 +80,15 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "Terverifikasi"
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
-msgstr "Ditolak"
+msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "Kesalahan"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
@@ -141,11 +141,11 @@ msgstr ""
 
 #: api.py:1351
 msgid "Timed Exam"
-msgstr "Ujian Terjadwal"
+msgstr ""
 
 #: models.py:181
 msgid "pending"
-msgstr "ditunda"
+msgstr ""
 
 #: models.py:182
 msgid "satisfactory"
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Tutup"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"

@@ -72,7 +72,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr "Palautettu"
+msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -84,11 +84,11 @@ msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
-msgstr "Hylätty"
+msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "Virhe"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
@@ -145,7 +145,7 @@ msgstr ""
 
 #: models.py:181
 msgid "pending"
-msgstr "odottaa"
+msgstr ""
 
 #: models.py:182
 msgid "satisfactory"
@@ -273,7 +273,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr "Takaisin"
+msgstr ""
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Sulje"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
@@ -882,7 +882,7 @@ msgstr ""
 
 #: views.py:536
 msgid "timed"
-msgstr "ajastettu"
+msgstr ""
 
 #: views.py:537
 msgid "practice"

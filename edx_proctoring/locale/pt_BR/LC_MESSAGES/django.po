@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Mariana Jó de Souza <mariana.jsouza@gmail.com>, 2016\n"
+"Last-Translator: Anderson Franca <anderson.frca@gmail.com>, 2017\n"
 "Language-Team: Portuguese (Brazil) (https://www.transifex.com/open-edx/teams/6205/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -40,11 +40,11 @@ msgstr ""
 
 #: admin.py:342
 msgid "Course Id"
-msgstr "Id do Curso"
+msgstr ""
 
 #: admin.py:380
 msgid "Created"
-msgstr "Criado"
+msgstr ""
 
 #: admin.py:381
 msgid "Download Software Clicked"
@@ -56,7 +56,7 @@ msgstr ""
 
 #: admin.py:383
 msgid "Started"
-msgstr "Iniciado"
+msgstr ""
 
 #: admin.py:384
 msgid "Ready To Submit"
@@ -72,7 +72,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr "Enviado"
+msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -80,15 +80,15 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "Verificado"
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
-msgstr "Recusado"
+msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "Erro"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
@@ -141,11 +141,11 @@ msgstr ""
 
 #: api.py:1351
 msgid "Timed Exam"
-msgstr "Exame cronometrado"
+msgstr ""
 
 #: models.py:181
 msgid "pending"
-msgstr "pendente"
+msgstr ""
 
 #: models.py:182
 msgid "satisfactory"
@@ -165,7 +165,7 @@ msgstr ""
 
 #: models.py:700
 msgid "Additional Time (minutes)"
-msgstr "Tempo Adicional (minutos)"
+msgstr ""
 
 #: models.py:701
 msgid "Review Policy Exception"
@@ -273,7 +273,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr "Voltar"
+msgstr ""
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -424,7 +424,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr "Tente novamente uma verificação"
+msgstr ""
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Fechar"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
@@ -882,7 +882,7 @@ msgstr ""
 
 #: views.py:536
 msgid "timed"
-msgstr "Cronometrado."
+msgstr ""
 
 #: views.py:537
 msgid "practice"
