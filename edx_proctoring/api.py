@@ -52,6 +52,8 @@ from edx_proctoring.utils import (
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.runtime import get_runtime_service
 
+from lms.djangoapps.grades.signals.tasks import clear_subsection_score
+
 log = logging.getLogger(__name__)
 
 SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is shown for a timed-out exam
@@ -805,6 +807,15 @@ def update_attempt_status(exam_id, user_id, to_status,
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
 
     exam_attempt_obj.save()
+
+    # EDU-409 WIP block start
+    if to_status == ProctoredExamStudentAttemptStatus.rejected:
+        clear_subsection_score.apply_async(
+            user_id_to_clear=unicode(user_id),
+            course_key=unicode(exam['course_id']),
+            subsection_id=unicode(exam_attempt_obj.proctored_exam.content_id)
+        )
+    # EDU-409 WIP block end
 
     # see if the status transition this changes credit requirement status
     if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
