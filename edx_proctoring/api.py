@@ -811,7 +811,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     # EDU-409 WIP block start
     kwargs={
         'user_id_to_clear': unicode(user_id),
-        'course_key': unicode(exam['course_id']),
+        'course_id': unicode(exam['course_id']),
         'subsection_id': unicode(exam_attempt_obj.proctored_exam.content_id)
     }
     log.info(kwargs)
