@@ -20,7 +20,7 @@ msgstr ""
 
 #: admin.py:88
 msgid "internally reviewed"
-msgstr "yaliyopitiwa ndani "
+msgstr "yaliyopitiwa ndani"
 
 #: admin.py:97
 msgid "All Unreviewed"
@@ -935,6 +935,8 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
+"\n"
+"    %(exam_name)sni Mtihani wenye Muda Maalum(%(total_time)s)"
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
