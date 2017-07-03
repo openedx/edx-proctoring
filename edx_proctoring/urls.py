@@ -5,12 +5,11 @@ URL mappings for edX Proctoring Server.
 from __future__ import absolute_import
 
 from django.conf import settings
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
 from edx_proctoring import views, callbacks
 
-urlpatterns = patterns(  # pylint: disable=invalid-name
-    '',
+urlpatterns = [
     url(
         r'edx_proctoring/v1/proctored_exam/exam$',
         views.ProctoredExamView.as_view(),
@@ -89,4 +88,4 @@ urlpatterns = patterns(  # pylint: disable=invalid-name
         name='edx_proctoring.anonymous.proctoring_review_callback'
     ),
     url(r'^', include('rest_framework.urls', namespace='rest_framework'))
-)
+]

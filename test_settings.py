@@ -100,3 +100,10 @@ PROCTORING_SETTINGS = {
 DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 CONTACT_EMAIL = 'info@edx.org'
 TECH_SUPPORT_EMAIL = 'technical@example.com'
+
+########## TEMPLATE CONFIGURATION
+TEMPLATES = [{
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'APP_DIRS': True,
+}]
+########## END TEMPLATE CONFIGURATION
