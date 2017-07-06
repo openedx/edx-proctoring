@@ -4,9 +4,7 @@ Django management command to manually set the attempt status for a user in a pro
 
 from __future__ import absolute_import
 
-from optparse import make_option
-
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus
 
@@ -16,20 +14,28 @@ class Command(BaseCommand):
     Django Management command to force a background check of all possible notifications
     """
 
-    option_list = BaseCommand.option_list + (
-        make_option('-e', '--exam',
-                    metavar='EXAM_ID',
-                    dest='exam_id',
-                    help='exam_id to change'),
-        make_option('-u', '--user',
-                    metavar='USER',
-                    dest='user_id',
-                    help="user_id of user to affect"),
-        make_option('-t', '--to',
-                    metavar='TO_STATUS',
-                    dest='to_status',
-                    help='the status to set'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '-e',
+            '--exam',
+            metavar='EXAM_ID',
+            dest='exam_id',
+            help='exam_id to change',
+        )
+        parser.add_argument(
+            '-u',
+            '--user',
+            metavar='USER',
+            dest='user_id',
+            help='user_id of user to affect',
+        )
+        parser.add_argument(
+            '-t',
+            '--to',
+            metavar='TO_STATUS',
+            dest='to_status',
+            help='the status to set',
+        )
 
     def handle(self, *args, **options):
         """
@@ -56,7 +62,7 @@ class Command(BaseCommand):
         print msg
 
         if not ProctoredExamStudentAttemptStatus.is_valid_status(to_status):
-            raise Exception('{to_status} is not a valid attempt status!'.format(to_status=to_status))
+            raise CommandError('{to_status} is not a valid attempt status!'.format(to_status=to_status))
 
         # get exam, this will throw exception if does not exist, so let it bomb out
         get_exam_by_id(exam_id)
