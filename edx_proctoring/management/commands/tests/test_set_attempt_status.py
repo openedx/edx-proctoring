@@ -5,6 +5,7 @@ Tests for the set_attempt_status management command
 from __future__ import absolute_import
 
 from datetime import datetime
+from mock import MagicMock, patch
 import pytz
 
 from edx_proctoring.tests.utils import LoggedInTestCase
@@ -18,6 +19,7 @@ from edx_proctoring.tests.test_services import (
 from edx_proctoring.runtime import set_runtime_service
 
 
+@patch('django.core.urlresolvers.reverse', MagicMock)
 class SetAttemptStatusTests(LoggedInTestCase):
     """
     Coverage of the set_attempt_status.py file

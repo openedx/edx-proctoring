@@ -10,7 +10,7 @@ from __future__ import absolute_import
 from datetime import datetime, timedelta
 import ddt
 from freezegun import freeze_time
-from mock import patch
+from mock import MagicMock, patch
 import pytz
 
 from edx_proctoring.api import (
@@ -75,6 +75,7 @@ from .test_services import (
 from .utils import ProctoredExamTestCase
 
 
+@patch('django.core.urlresolvers.reverse', MagicMock)
 @ddt.ddt
 class ProctoredExamApiTests(ProctoredExamTestCase):
     """

@@ -3,7 +3,7 @@ Various callback paths that support callbacks from SoftwareSecure
 """
 
 import logging
-from django.template import Context, loader
+from django.template import loader
 from django.conf import settings
 from django.http import HttpResponse
 
@@ -52,12 +52,10 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     template = loader.get_template('proctored_exam/proctoring_launch_callback.html')
 
     return HttpResponse(
-        template.render(
-            Context({
-                'platform_name': settings.PLATFORM_NAME,
-                'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {})
-            })
-        )
+        template.render({
+            'platform_name': settings.PLATFORM_NAME,
+            'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {})
+        })
     )
 
 

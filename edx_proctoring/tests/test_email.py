@@ -7,7 +7,7 @@ from __future__ import absolute_import
 
 import ddt
 from django.core import mail
-from mock import patch
+from mock import MagicMock, patch
 
 from edx_proctoring.api import (
     update_attempt_status,
@@ -25,6 +25,7 @@ from .utils import (
 )
 
 
+@patch('django.core.urlresolvers.reverse', MagicMock)
 @ddt.ddt
 class ProctoredExamEmailTests(ProctoredExamTestCase):
     """
