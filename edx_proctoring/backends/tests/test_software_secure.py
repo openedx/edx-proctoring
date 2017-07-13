@@ -8,7 +8,7 @@ from __future__ import absolute_import
 
 import json
 import ddt
-from mock import patch
+from mock import MagicMock, patch
 from httmock import all_requests, HTTMock
 
 from django.test import TestCase
@@ -87,6 +87,7 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
         }
     }
 )
+@patch('django.core.urlresolvers.reverse', MagicMock)
 @ddt.ddt
 class SoftwareSecureTests(TestCase):
     """

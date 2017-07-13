@@ -49,6 +49,9 @@ setup(
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
         'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.9',
+        'Framework :: Django :: 1.10',
+        'Framework :: Django :: 1.11',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Natural Language :: English',
@@ -60,6 +63,6 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        "Django>=1.8,<1.11"
+        "Django>=1.8,<2.0"
     ],
 )

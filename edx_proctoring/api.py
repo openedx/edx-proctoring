@@ -14,7 +14,7 @@ import pytz
 from django.utils.translation import ugettext as _, ugettext_noop
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.template import Context, loader
+from django.template import loader
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.core.mail.message import EmailMessage
 
@@ -979,18 +979,16 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         username=user.username,
     )
 
-    body = email_template.render(
-        Context({
-            'username': user.username,
-            'course_url': course_url,
-            'course_name': course_name,
-            'exam_name': exam_name,
-            'status': status,
-            'platform': constants.PLATFORM_NAME,
-            'contact_email': constants.CONTACT_EMAIL,
-            'support_email_subject': support_email_subject,
-        })
-    )
+    body = email_template.render({
+        'username': user.username,
+        'course_url': course_url,
+        'course_name': course_name,
+        'exam_name': exam_name,
+        'status': status,
+        'platform': constants.PLATFORM_NAME,
+        'contact_email': constants.CONTACT_EMAIL,
+        'support_email_subject': support_email_subject,
+    })
 
     email = EmailMessage(
         body=body,
@@ -1513,7 +1511,6 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
 
     if student_view_template:
         template = loader.get_template(student_view_template)
-        django_context = Context(context)
 
         allowed_time_limit_mins = attempt['allowed_time_limit_mins'] if attempt else None
 
@@ -1547,7 +1544,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         except NoReverseMatch:
             log.exception("Can't find progress url for course %s", course_id)
 
-        django_context.update({
+        context.update({
             'total_time': total_time,
             'hide_extra_time_footer': hide_extra_time_footer,
             'will_be_revealed': has_due_date and not exam['hide_after_due'],
@@ -1562,7 +1559,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
                 args=[attempt['id']]
             ) if attempt else '',
         })
-        return template.render(django_context)
+        return template.render(context)
 
 
 def _calculate_allowed_mins(due_datetime, allowed_mins):
@@ -1663,9 +1660,8 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
 
     if student_view_template:
         template = loader.get_template(student_view_template)
-        django_context = Context(context)
-        django_context.update(_get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=True))
-        return template.render(django_context)
+        context.update(_get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=True))
+        return template.render(context)
 
 
 def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
@@ -1807,9 +1803,8 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
 
     if student_view_template:
         template = loader.get_template(student_view_template)
-        django_context = Context(context)
-        django_context.update(_get_proctored_exam_context(exam, attempt, course_id))
-        return template.render(django_context)
+        context.update(_get_proctored_exam_context(exam, attempt, course_id))
+        return template.render(context)
 
 
 def get_student_view(user_id, course_id, content_id,
