@@ -273,7 +273,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr ""
+msgstr "戻る"
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -346,6 +346,8 @@ msgid ""
 "      The due date for this exam has passed\n"
 "    "
 msgstr ""
+"\n"
+"この試験の締切は既に過ぎています。"
 
 #: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
@@ -353,6 +355,8 @@ msgid ""
 "      Because the due date has passed, you are no longer able to take this exam.\n"
 "    "
 msgstr ""
+"\n"
+"締切日が過ぎたため、本試験を受けることができません。"
 
 #: templates/proctored_exam/failed-prerequisites.html:9
 #, python-format
