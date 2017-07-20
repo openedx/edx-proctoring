@@ -58,6 +58,8 @@ SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is
 
 APPROVED_STATUS = 'approved'
 
+REJECTED_GRADE_OVERRIDE_SCORE = 0
+
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True, hide_after_due=False):
@@ -887,6 +889,29 @@ def update_attempt_status(exam_id, user_id, to_status,
                 ProctoredExamStudentAttemptStatus.declined,
                 cascade_effects=False
             )
+
+    if ProctoredExamStudentAttemptStatus.needs_grade_override(to_status):
+        grades_service = get_runtime_service('grades')
+
+        log_msg = (
+            'Overriding exam subsection grade for '
+            'user_id {user_id} on {course_id} for '
+            'content_id {content_id}. Override '
+            'score: {score}'.format(
+                user_id=exam_attempt_obj.user_id,
+                course_id=exam['course_id'],
+                content_id=exam_attempt_obj.proctored_exam.content_id,
+                score=REJECTED_GRADE_OVERRIDE_SCORE
+            )
+        )
+        log.info(log_msg)
+
+        grades_service.override_subsection_grade(
+            user_id=exam_attempt_obj.user_id,
+            course_key_or_id=exam['course_id'],
+            subsection=exam_attempt_obj.proctored_exam.content_id,
+            score=REJECTED_GRADE_OVERRIDE_SCORE
+        )
 
     # call service to get course name.
     credit_service = get_runtime_service('credit')

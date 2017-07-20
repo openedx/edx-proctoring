@@ -71,6 +71,7 @@ from .test_services import (
     MockCreditService,
     MockCreditServiceNone,
     MockCreditServiceWithCourseEndDate,
+    MockGradesService
 )
 from .utils import ProctoredExamTestCase
 
@@ -844,6 +845,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         are auto marked as declined
         """
 
+        set_runtime_service('grades', MockGradesService())
         # create other exams in course
         second_exam_id = create_exam(
             course_id=self.course_id,
@@ -911,6 +913,26 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertIsNone(get_exam_attempt(practice_exam_id, self.user_id))
         self.assertIsNone(get_exam_attempt(timed_exam_id, self.user_id))
         self.assertIsNone(get_exam_attempt(inactive_exam_id, self.user_id))
+
+    def test_grade_override(self):
+        """
+        Verify that putting an attempt into the rejected state will also override
+        the learner's subsection grade for the exam
+        """
+        set_runtime_service('grades', MockGradesService())
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.rejected
+        )
+
+        grades_service = get_runtime_service('grades')
+        grades_status = grades_service.get_subsection_grade(user_id=self.user.id,
+                                                            course_key_or_id=exam_attempt.proctored_exam.course_id,
+                                                            subsection=exam_attempt.proctored_exam.content_id)
+
+        self.assertEqual(grades_status, 0)
 
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
@@ -1141,6 +1163,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         Assert that we get the expected status summaries
         """
 
+        set_runtime_service('grades', MockGradesService())
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
             exam_attempt.proctored_exam_id,

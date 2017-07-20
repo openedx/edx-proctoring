@@ -173,3 +173,20 @@ class TestProctoringService(unittest.TestCase):
         service1 = ProctoringService()
         service2 = ProctoringService()
         self.assertIs(service1, service2)
+
+
+class MockGradesService(object):
+    """
+    Simple mock of the Grades Service
+    """
+    def __init__(self):
+        """Initialize empty data store for grades (a dict)"""
+        self.grades = {}
+
+    def get_subsection_grade(self, user_id, course_key_or_id, subsection):
+        """Returns entered grade override for key (user_id + course_key + subsection) or None"""
+        return self.grades.get(str(user_id) + str(course_key_or_id) + str(subsection))
+
+    def override_subsection_grade(self, user_id, course_key_or_id, subsection, score):
+        """Sets grade override score for key (user_id + course_key + subsection)"""
+        self.grades[str(user_id) + str(course_key_or_id) + str(subsection)] = score
