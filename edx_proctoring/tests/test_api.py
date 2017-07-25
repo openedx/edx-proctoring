@@ -928,11 +928,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
 
         grades_service = get_runtime_service('grades')
-        grades_status = grades_service.get_subsection_grade(user_id=self.user.id,
-                                                            course_key_or_id=exam_attempt.proctored_exam.course_id,
-                                                            subsection=exam_attempt.proctored_exam.content_id)
+        grades = grades_service.get_subsection_grade(user_id=self.user.id,
+                                                     course_key_or_id=exam_attempt.proctored_exam.course_id,
+                                                     subsection=exam_attempt.proctored_exam.content_id)
 
-        self.assertEqual(grades_status, 0)
+        self.assertEqual(grades, {
+            'earned_all': 0.0,
+            'earned_graded': 0.0
+        })
 
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),

@@ -58,7 +58,7 @@ SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is
 
 APPROVED_STATUS = 'approved'
 
-REJECTED_GRADE_OVERRIDE_SCORE = 0
+REJECTED_GRADE_OVERRIDE_EARNED = 0.0
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
@@ -897,11 +897,13 @@ def update_attempt_status(exam_id, user_id, to_status,
             'Overriding exam subsection grade for '
             'user_id {user_id} on {course_id} for '
             'content_id {content_id}. Override '
-            'score: {score}'.format(
+            'earned_all: {earned_all}, '
+            'earned_graded: {earned_graded}.'.format(
                 user_id=exam_attempt_obj.user_id,
                 course_id=exam['course_id'],
                 content_id=exam_attempt_obj.proctored_exam.content_id,
-                score=REJECTED_GRADE_OVERRIDE_SCORE
+                earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
+                earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
             )
         )
         log.info(log_msg)
@@ -910,7 +912,8 @@ def update_attempt_status(exam_id, user_id, to_status,
             user_id=exam_attempt_obj.user_id,
             course_key_or_id=exam['course_id'],
             subsection=exam_attempt_obj.proctored_exam.content_id,
-            score=REJECTED_GRADE_OVERRIDE_SCORE
+            earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
+            earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
         )
 
     # call service to get course name.

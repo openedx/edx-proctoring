@@ -187,6 +187,9 @@ class MockGradesService(object):
         """Returns entered grade override for key (user_id + course_key + subsection) or None"""
         return self.grades.get(str(user_id) + str(course_key_or_id) + str(subsection))
 
-    def override_subsection_grade(self, user_id, course_key_or_id, subsection, score):
-        """Sets grade override score for key (user_id + course_key + subsection)"""
-        self.grades[str(user_id) + str(course_key_or_id) + str(subsection)] = score
+    def override_subsection_grade(self, user_id, course_key_or_id, subsection, earned_all=None, earned_graded=None):
+        """Sets grade override earned points for key (user_id + course_key + subsection)"""
+        self.grades[str(user_id) + str(course_key_or_id) + str(subsection)] = {
+            'earned_all': earned_all,
+            'earned_graded': earned_graded
+        }
