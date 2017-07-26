@@ -10,8 +10,8 @@ describe('ProctoredExamView', function () {
             '<a href="<%= exam_url_path %>"> <%= exam_display_name %> </a>' +
             '" as a proctored exam. The timer on the right shows the time remaining in the exam' +
             '<span class="exam-timer-clock"> <span id="time_remaining_id">' +
-            '<b> </b> <a id="toggle_timer" href="#" title="Hide Timer">' +
-            '<i class="fa fa-eye-slash" aria-hidden="true"></i></a>' +
+            '<b> </b> <button role="button" id="toggle_timer" aria-label="Hide Timer" aria-pressed="false">' +
+            '<i class="fa fa-eye-slash" aria-hidden="true"></i></button>' +
             '</span> </span>' +
             '</div>' +
             '</script>'+
@@ -46,8 +46,8 @@ describe('ProctoredExamView', function () {
     });
 
     it('renders items correctly', function () {
-        expect(this.proctored_exam_view.$el.find('a').not('#toggle_timer')).toHaveAttr('href',  this.model.get("exam_url_path"));
-        expect(this.proctored_exam_view.$el.find('a').not('#toggle_timer')).toContainHtml(this.model.get('exam_display_name'));
+        expect(this.proctored_exam_view.$el.find('a')).toHaveAttr('href',  this.model.get("exam_url_path"));
+        expect(this.proctored_exam_view.$el.find('a')).toContainHtml(this.model.get('exam_display_name'));
     });
     it('changes behavior when clock time decreases low threshold', function () {
         this.proctored_exam_view.secondsLeft = 25;

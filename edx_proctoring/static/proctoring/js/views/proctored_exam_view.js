@@ -181,11 +181,11 @@ var edx = edx || {};
             var timer = this.$el.find('span#time_remaining_id b');
             if (timer.hasClass('timer-hidden')) {
                 timer.removeClass('timer-hidden');
-                button.attr('title', gettext('Hide Timer'));
+                button.attr('aria-pressed', 'false');
                 icon.removeClass('fa-eye').addClass('fa-eye-slash');
             } else {
                 timer.addClass('timer-hidden');
-                button.attr('title', gettext('Show Timer'));
+                button.attr('aria-pressed', 'true');
                 icon.removeClass('fa-eye-slash').addClass('fa-eye');
             }
             event.stopPropagation();
