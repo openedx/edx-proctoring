@@ -9,7 +9,11 @@ describe('ProctoredExamView', function () {
             'You are taking "' +
             '<a href="<%= exam_url_path %>"> <%= exam_display_name %> </a>' +
             '" as a proctored exam. The timer on the right shows the time remaining in the exam' +
-            '<span id="time_remaining_id" class="pull-right"> <b> </b> </span> </div>' +
+            '<span class="exam-timer-clock"> <span id="time_remaining_id">' +
+            '<b> </b> <a id="toggle_timer" href="#" title="Hide Timer">' +
+            '<i class="fa fa-eye-slash" aria-hidden="true"></i></a>' +
+            '</span> </span>' +
+            '</div>' +
             '</script>'+
             '</div>'
         );
@@ -42,8 +46,8 @@ describe('ProctoredExamView', function () {
     });
 
     it('renders items correctly', function () {
-        expect(this.proctored_exam_view.$el.find('a')).toHaveAttr('href',  this.model.get("exam_url_path"));
-        expect(this.proctored_exam_view.$el.find('a')).toContainHtml(this.model.get('exam_display_name'));
+        expect(this.proctored_exam_view.$el.find('a').not('#toggle_timer')).toHaveAttr('href',  this.model.get("exam_url_path"));
+        expect(this.proctored_exam_view.$el.find('a').not('#toggle_timer')).toContainHtml(this.model.get('exam_display_name'));
     });
     it('changes behavior when clock time decreases low threshold', function () {
         this.proctored_exam_view.secondsLeft = 25;
@@ -54,6 +58,15 @@ describe('ProctoredExamView', function () {
         this.proctored_exam_view.secondsLeft = 5;
         this.proctored_exam_view.render();
         expect(this.proctored_exam_view.$el.find('div.exam-timer')).toHaveClass('low-time critical');
+    });
+    it('toggles timer visibility correctly', function() {
+        var button = this.proctored_exam_view.$el.find('#toggle_timer');
+        var timer = this.proctored_exam_view.$el.find('span#time_remaining_id b');
+        expect(timer).not.toHaveClass('timer-hidden');
+        button.click();
+        expect(timer).toHaveClass('timer-hidden');
+        button.click();
+        expect(timer).not.toHaveClass('timer-hidden');
     });
     it("reload the page when the exam time finishes", function(){
         this.proctored_exam_view.secondsLeft = -10;
