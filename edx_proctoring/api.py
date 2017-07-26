@@ -911,7 +911,7 @@ def update_attempt_status(exam_id, user_id, to_status,
         grades_service.override_subsection_grade(
             user_id=exam_attempt_obj.user_id,
             course_key_or_id=exam['course_id'],
-            subsection=exam_attempt_obj.proctored_exam.content_id,
+            usage_key_or_id=exam_attempt_obj.proctored_exam.content_id,
             earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
             earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
         )

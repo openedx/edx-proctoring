@@ -930,7 +930,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         grades_service = get_runtime_service('grades')
         grades = grades_service.get_subsection_grade(user_id=self.user.id,
                                                      course_key_or_id=exam_attempt.proctored_exam.course_id,
-                                                     subsection=exam_attempt.proctored_exam.content_id)
+                                                     usage_key_or_id=exam_attempt.proctored_exam.content_id)
 
         self.assertEqual(grades, {
             'earned_all': 0.0,

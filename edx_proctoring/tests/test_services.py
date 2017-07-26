@@ -183,13 +183,14 @@ class MockGradesService(object):
         """Initialize empty data store for grades (a dict)"""
         self.grades = {}
 
-    def get_subsection_grade(self, user_id, course_key_or_id, subsection):
+    def get_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id):
         """Returns entered grade override for key (user_id + course_key + subsection) or None"""
-        return self.grades.get(str(user_id) + str(course_key_or_id) + str(subsection))
+        return self.grades.get(str(user_id) + str(course_key_or_id) + str(usage_key_or_id))
 
-    def override_subsection_grade(self, user_id, course_key_or_id, subsection, earned_all=None, earned_graded=None):
+    def override_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all=None,
+                                  earned_graded=None):
         """Sets grade override earned points for key (user_id + course_key + subsection)"""
-        self.grades[str(user_id) + str(course_key_or_id) + str(subsection)] = {
+        self.grades[str(user_id) + str(course_key_or_id) + str(usage_key_or_id)] = {
             'earned_all': earned_all,
             'earned_graded': earned_graded
         }
