@@ -175,22 +175,62 @@ class TestProctoringService(unittest.TestCase):
         self.assertIs(service1, service2)
 
 
+class MockGrade(object):
+    """Fake PersistentSubsectionGrade instance."""
+    def __init__(self, earned_all=0.0, earned_graded=0.0):
+        self.earned_all = earned_all
+        self.earned_graded = earned_graded
+
+
+class MockGradeOverride(object):
+    """Fake PersistentSubsectionGradeOverride instance."""
+    def __init__(self, earned_all=0.0, earned_graded=0.0):
+        self.earned_all_override = earned_all
+        self.earned_graded_override = earned_graded
+
+
 class MockGradesService(object):
     """
     Simple mock of the Grades Service
     """
     def __init__(self):
-        """Initialize empty data store for grades (a dict)"""
+        """Initialize empty data stores for grades and overrides (just dicts)"""
         self.grades = {}
+        self.overrides = {}
+
+    def init_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all, earned_graded):
+        """Initialize a grade in MockGradesService for testing. Actual GradesService does not have this method."""
+        self.grades[str(user_id) + str(course_key_or_id) + str(usage_key_or_id)] = MockGrade(
+            earned_all=earned_all,
+            earned_graded=earned_graded
+        )
 
     def get_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id):
-        """Returns entered grade override for key (user_id + course_key + subsection) or None"""
+        """Returns entered grade for key (user_id + course_key + subsection) or None"""
+        key = str(user_id) + str(course_key_or_id) + str(usage_key_or_id)
+        if key in self.overrides:
+            # pretend override was applied
+            return MockGrade(
+                earned_all=self.overrides[key].earned_all_override,
+                earned_graded=self.overrides[key].earned_graded_override
+            )
         return self.grades.get(str(user_id) + str(course_key_or_id) + str(usage_key_or_id))
+
+    def get_subsection_grade_override(self, user_id, course_key_or_id, usage_key_or_id):
+        """Returns entered grade override for key (user_id + course_key + subsection) or None"""
+        return self.overrides.get(str(user_id) + str(course_key_or_id) + str(usage_key_or_id))
 
     def override_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all=None,
                                   earned_graded=None):
         """Sets grade override earned points for key (user_id + course_key + subsection)"""
-        self.grades[str(user_id) + str(course_key_or_id) + str(usage_key_or_id)] = {
-            'earned_all': earned_all,
-            'earned_graded': earned_graded
-        }
+        key = str(user_id) + str(course_key_or_id) + str(usage_key_or_id)
+        self.overrides[key] = MockGradeOverride(
+            earned_all=earned_all,
+            earned_graded=earned_graded
+        )
+
+    def undo_override_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id):
+        """Deletes grade override for key (user_id + course_key + subsection)"""
+        key = str(user_id) + str(course_key_or_id) + str(usage_key_or_id)
+        if key in self.overrides:
+            del self.overrides[key]

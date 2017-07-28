@@ -920,21 +920,85 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         the learner's subsection grade for the exam
         """
         set_runtime_service('grades', MockGradesService())
+
+        grades_service = get_runtime_service('grades')
         exam_attempt = self._create_started_exam_attempt()
+        # Pretend learner answered 5 graded questions in the exam correctly
+        grades_service.init_grade(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id,
+            earned_all=5.0,
+            earned_graded=5.0
+        )
+
         update_attempt_status(
             exam_attempt.proctored_exam_id,
             self.user.id,
             ProctoredExamStudentAttemptStatus.rejected
         )
 
-        grades_service = get_runtime_service('grades')
-        grades = grades_service.get_subsection_grade(user_id=self.user.id,
-                                                     course_key_or_id=exam_attempt.proctored_exam.course_id,
-                                                     usage_key_or_id=exam_attempt.proctored_exam.content_id)
+        # Rejected exam attempt should override learner's grade to 0
+        override = grades_service.get_subsection_grade_override(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id
+        )
 
-        self.assertEqual(grades, {
+        self.assertDictEqual({
+            'earned_all': override.earned_all_override,
+            'earned_graded': override.earned_graded_override
+        }, {
             'earned_all': 0.0,
             'earned_graded': 0.0
+        })
+
+        # The MockGradeService updates the PersistentSubsectionGrade synchronously, but in the real GradesService, this
+        # would be updated by an asynchronous recalculation celery task.
+
+        grade = grades_service.get_subsection_grade(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertDictEqual({
+            'earned_all': grade.earned_all,
+            'earned_graded': grade.earned_graded
+        }, {
+            'earned_all': 0.0,
+            'earned_graded': 0.0
+        })
+
+        # Verify that transitioning an attempt from the rejected state to the verified state
+        # will remove the override for the learner's subsection grade on the exam that was created
+        # when the attempt entered the rejected state.
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.verified
+        )
+
+        override = grades_service.get_subsection_grade_override(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id
+        )
+        self.assertIsNone(override)
+
+        grade = grades_service.get_subsection_grade(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id
+        )
+
+        # Grade has returned to original score
+        self.assertDictEqual({
+            'earned_all': grade.earned_all,
+            'earned_graded': grade.earned_graded
+        }, {
+            'earned_all': 5.0,
+            'earned_graded': 5.0
         })
 
     @ddt.data(
