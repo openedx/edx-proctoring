@@ -193,10 +193,11 @@ class MockGradesService(object):
     """
     Simple mock of the Grades Service
     """
-    def __init__(self):
+    def __init__(self, rejected_exam_overrides_grade=True):
         """Initialize empty data stores for grades and overrides (just dicts)"""
         self.grades = {}
         self.overrides = {}
+        self.rejected_exam_overrides_grade = rejected_exam_overrides_grade
 
     def init_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all, earned_graded):
         """Initialize a grade in MockGradesService for testing. Actual GradesService does not have this method."""
@@ -234,3 +235,7 @@ class MockGradesService(object):
         key = str(user_id) + str(course_key_or_id) + str(usage_key_or_id)
         if key in self.overrides:
             del self.overrides[key]
+
+    def should_override_grade_on_rejected_exam(self, course_key):
+        """Mock will always return instance variable: rejected_exam_overrides_grade"""
+        return self.rejected_exam_overrides_grade

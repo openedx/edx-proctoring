@@ -1001,6 +1001,82 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             'earned_graded': 5.0
         })
 
+    def test_disabled_grade_override(self):
+        """
+        Verify that when the REJECTED_EXAM_OVERRIDES_GRADE flag is disabled for a course,
+        the learner's subsection grade for the exam will not be overriden.
+        """
+        set_runtime_service('grades', MockGradesService(rejected_exam_overrides_grade=False))
+
+        grades_service = get_runtime_service('grades')
+        exam_attempt = self._create_started_exam_attempt()
+        # Pretend learner answered 5 graded questions in the exam correctly
+        grades_service.init_grade(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id,
+            earned_all=5.0,
+            earned_graded=5.0
+        )
+
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.rejected
+        )
+
+        # Rejected exam attempt should override learner's grade to 0
+        override = grades_service.get_subsection_grade_override(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id
+        )
+
+        self.assertIsNone(override)
+
+        grade = grades_service.get_subsection_grade(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id
+        )
+
+        # Grade is not overriden
+        self.assertDictEqual({
+            'earned_all': grade.earned_all,
+            'earned_graded': grade.earned_graded
+        }, {
+            'earned_all': 5.0,
+            'earned_graded': 5.0
+        })
+
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.verified
+        )
+
+        override = grades_service.get_subsection_grade_override(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id
+        )
+        self.assertIsNone(override)
+
+        grade = grades_service.get_subsection_grade(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id,
+            usage_key_or_id=exam_attempt.proctored_exam.content_id
+        )
+
+        # Grade has still the original score
+        self.assertDictEqual({
+            'earned_all': grade.earned_all,
+            'earned_graded': grade.earned_graded
+        }, {
+            'earned_all': 5.0,
+            'earned_graded': 5.0
+        })
+
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.eligible),
         (ProctoredExamStudentAttemptStatus.timed_out, ProctoredExamStudentAttemptStatus.created),
