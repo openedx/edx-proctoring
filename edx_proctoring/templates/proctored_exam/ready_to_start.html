@@ -12,8 +12,29 @@
         &#8226; You cannot stop the timer once you start. </br>
         &#8226; If time expires before you finish your exam, your completed answers will be
                 submitted for review. </br>
+        &#8226; If you have not taken a proctored exam before using {{ platform_name }} please read
+                the exam rules and guidelines first. Reading these will ensure you don't accidentally violate
+                any of the proctored exam rules. {% endblocktrans %}
+                <a href="{{link_urls.online_proctoring_rules}}" target="_blank">
+                  {% blocktrans %}
+                  Read the {{ platform_name }} Online Proctoring Rules for Learners
+                  {% endblocktrans %}
+                </a> </br>
+    </p>
+    {% if exam_review_policy %}
+    <h3>
+    {% blocktrans %}
+      Additional Exam Rules
+    {% endblocktrans %}
+    </h3>
+    <p>
+      {% blocktrans %}
+        In addition to the general exam rules above, the following additions or exceptions apply to this exam: </br> </br>
+
+        {{ exam_review_policy }} </br>
       {% endblocktrans %}
     </p>
+    {% endif %}
     <div>
       <button type="button" class="exam-action-button proctored-enter-exam btn btn-pl-primary btn-base" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
         {% blocktrans %}

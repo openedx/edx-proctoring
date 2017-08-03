@@ -43,6 +43,7 @@ from edx_proctoring.api import (
     _are_prerequirements_satisfied,
     create_exam_review_policy,
     get_review_policy_by_exam_id,
+    _get_review_policy_by_exam_id,
     update_review_policy,
     remove_review_policy,
 )
@@ -194,6 +195,23 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(exam_review_policy['proctored_exam']['id'], proctored_exam['id'])
         self.assertEqual(exam_review_policy['set_by_user']['id'], self.user_id)
         self.assertEqual(exam_review_policy['review_policy'], u'allow use of paper')
+
+    def test_get_exam_review_policy(self):
+        """
+        Test that creates a new exam policy and tests
+        that the policy can be properly retrieved
+        """
+        proctored_exam = get_exam_by_id(self.proctored_exam_id)
+        create_exam_review_policy(
+            exam_id=proctored_exam['id'],
+            set_by_user_id=self.user_id,
+            review_policy=u'allow use of paper'
+        )
+
+        # now get the exam review policy for the proctored exam
+        exam_review_policy_string = _get_review_policy_by_exam_id(proctored_exam['id'])
+
+        self.assertEqual(exam_review_policy_string, u'allow use of paper')
 
     def test_update_exam_review_policy(self):
         """
