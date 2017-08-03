@@ -1025,7 +1025,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             ProctoredExamStudentAttemptStatus.rejected
         )
 
-        # Rejected exam attempt should override learner's grade to 0
+        # Rejected exam attempt should not override learner's grade
         override = grades_service.get_subsection_grade_override(
             user_id=self.user.id,
             course_key_or_id=exam_attempt.proctored_exam.course_id,
@@ -1049,6 +1049,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             'earned_graded': 5.0
         })
 
+        # Transitioning from rejected to verified will also have no effect
         update_attempt_status(
             exam_attempt.proctored_exam_id,
             self.user.id,
@@ -1306,7 +1307,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         Assert that we get the expected status summaries
         """
 
-        set_runtime_service('grades', MockGradesService())
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
             exam_attempt.proctored_exam_id,
