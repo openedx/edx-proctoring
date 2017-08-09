@@ -205,6 +205,19 @@ def get_review_policy_by_exam_id(exam_id):
     return ProctoredExamReviewPolicySerializer(exam_review_policy).data
 
 
+def _get_review_policy_by_exam_id(exam_id):
+    """
+    Looks up exam by the primary key. Returns None if not found
+
+    Returns review_policy field of the Django ORM object
+    """
+    try:
+        exam_review_policy = get_review_policy_by_exam_id(exam_id)
+        return ProctoredExamReviewPolicySerializer(exam_review_policy).data['review_policy']
+    except ProctoredExamReviewPolicyNotFoundException:
+        return None
+
+
 def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constants.MINIMUM_TIME,
                 is_proctored=None, is_practice_exam=None, external_id=None, is_active=None, hide_after_due=None):
     """
@@ -1623,6 +1636,7 @@ def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False
         ) if attempt else '',
         'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
         'tech_support_email': settings.TECH_SUPPORT_EMAIL,
+        'exam_review_policy': _get_review_policy_by_exam_id(exam['id']),
     }
 
 
