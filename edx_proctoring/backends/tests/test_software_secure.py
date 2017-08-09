@@ -43,7 +43,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAllowance
 )
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
-from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService
+from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService, MockGradesService
 from edx_proctoring.backends.software_secure import SOFTWARE_SECURE_INVALID_CHARS
 
 
@@ -104,6 +104,7 @@ class SoftwareSecureTests(TestCase):
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService())
+        set_runtime_service('grades', MockGradesService())
 
     def tearDown(self):
         """
@@ -111,6 +112,7 @@ class SoftwareSecureTests(TestCase):
         """
         super(SoftwareSecureTests, self).tearDown()
         set_runtime_service('credit', None)
+        set_runtime_service('grades', None)
 
     def test_provider_instance(self):
         """

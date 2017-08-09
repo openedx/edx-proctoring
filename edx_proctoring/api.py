@@ -58,6 +58,8 @@ SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is
 
 APPROVED_STATUS = 'approved'
 
+REJECTED_GRADE_OVERRIDE_EARNED = 0.0
+
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True, hide_after_due=False):
@@ -762,6 +764,7 @@ def update_attempt_status(exam_id, user_id, to_status,
         else:
             return
 
+    from_status = exam_attempt_obj.status
     exam = get_exam_by_id(exam_id)
 
     #
@@ -776,7 +779,7 @@ def update_attempt_status(exam_id, user_id, to_status,
             'A status transition from {from_status} to {to_status} was attempted '
             'on exam_id {exam_id} for user_id {user_id}. This is not '
             'allowed!'.format(
-                from_status=exam_attempt_obj.status,
+                from_status=from_status,
                 to_status=to_status,
                 exam_id=exam_id,
                 user_id=user_id
@@ -791,7 +794,7 @@ def update_attempt_status(exam_id, user_id, to_status,
             'A status transition from {from_status} to {to_status} was attempted '
             'on exam_id {exam_id} for user_id {user_id}. This is not '
             'allowed!'.format(
-                from_status=exam_attempt_obj.status,
+                from_status=from_status,
                 to_status=to_status,
                 exam_id=exam_id,
                 user_id=user_id
@@ -899,6 +902,59 @@ def update_attempt_status(exam_id, user_id, to_status,
                 user_id,
                 ProctoredExamStudentAttemptStatus.declined,
                 cascade_effects=False
+            )
+
+    if ProctoredExamStudentAttemptStatus.needs_grade_override(to_status):
+        grades_service = get_runtime_service('grades')
+
+        if grades_service.should_override_grade_on_rejected_exam(exam['course_id']):
+            log_msg = (
+                'Overriding exam subsection grade for '
+                'user_id {user_id} on {course_id} for '
+                'content_id {content_id}. Override '
+                'earned_all: {earned_all}, '
+                'earned_graded: {earned_graded}.'.format(
+                    user_id=exam_attempt_obj.user_id,
+                    course_id=exam['course_id'],
+                    content_id=exam_attempt_obj.proctored_exam.content_id,
+                    earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
+                    earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
+                )
+            )
+            log.info(log_msg)
+
+            grades_service.override_subsection_grade(
+                user_id=exam_attempt_obj.user_id,
+                course_key_or_id=exam['course_id'],
+                usage_key_or_id=exam_attempt_obj.proctored_exam.content_id,
+                earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
+                earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
+            )
+
+    if (to_status == ProctoredExamStudentAttemptStatus.verified and
+            ProctoredExamStudentAttemptStatus.needs_grade_override(from_status)):
+        grades_service = get_runtime_service('grades')
+
+        if grades_service.should_override_grade_on_rejected_exam(exam['course_id']):
+            log_msg = (
+                'Deleting override of exam subsection grade for '
+                'user_id {user_id} on {course_id} for '
+                'content_id {content_id}. Override '
+                'earned_all: {earned_all}, '
+                'earned_graded: {earned_graded}.'.format(
+                    user_id=exam_attempt_obj.user_id,
+                    course_id=exam['course_id'],
+                    content_id=exam_attempt_obj.proctored_exam.content_id,
+                    earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
+                    earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
+                )
+            )
+            log.info(log_msg)
+
+            grades_service.undo_override_subsection_grade(
+                user_id=exam_attempt_obj.user_id,
+                course_key_or_id=exam['course_id'],
+                usage_key_or_id=exam_attempt_obj.proctored_exam.content_id,
             )
 
     # call service to get course name.

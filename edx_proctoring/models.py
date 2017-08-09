@@ -214,6 +214,15 @@ class ProctoredExamStudentAttemptStatus(object):
         ]
 
     @classmethod
+    def needs_grade_override(cls, to_status):
+        """
+        Returns a boolean if the passed in to_status calls for an override of the learner's grade.
+        """
+        return to_status in [
+            cls.rejected
+        ]
+
+    @classmethod
     def is_a_cascadable_failure(cls, to_status):
         """
         Returns a boolean if the passed in to_status has a failure that needs to be cascaded
