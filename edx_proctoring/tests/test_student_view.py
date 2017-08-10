@@ -61,7 +61,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
         self.take_exam_without_proctoring_msg = 'Take this exam without proctoring'
-        self.ready_to_start_msg = 'Follow these instructions'
+        self.ready_to_start_msg = 'Important'
         self.footer_msg = 'About Proctored Exams'
         self.timed_footer_msg = 'Can I request additional time to complete my exam?'
 

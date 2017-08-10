@@ -3,23 +3,32 @@
   <div>
     <h3>
     {% blocktrans %}
-      Follow these instructions
+      Important
     {% endblocktrans %}
     </h3>
     <p>
       {% blocktrans %}
-        &#8226; When you start your exam you will have {{ total_time }} to complete it. </br>
-        &#8226; You cannot stop the timer once you start. </br>
-        &#8226; If time expires before you finish your exam, your completed answers will be
-                submitted for review. </br>
-        &#8226; If you have not taken a proctored exam before using {{ platform_name }} please read
-                the exam rules and guidelines first. Reading these will ensure you don't accidentally violate
-                any of the proctored exam rules. {% endblocktrans %}
-                <a href="{{link_urls.online_proctoring_rules}}" target="_blank">
-                  {% blocktrans %}
-                  Read the {{ platform_name }} Online Proctoring Rules for Learners
-                  {% endblocktrans %}
-                </a> </br>
+        &#8226; You have {{ total_time }} to complete this exam. </br>
+        &#8226; You cannot stop the timer after you start the exam. </br>
+        &#8226; If time expires before you finish the exam, your completed answers will be submitted.
+      {% endblocktrans %}</br>
+    </p>
+    <h3>
+    {% blocktrans %}
+      Proctored Exam Rules
+    {% endblocktrans %}
+    </h3>
+    <p>
+      {% blocktrans %}
+         You must adhere to the following rules while you complete this exam.
+         <strong>If you violate these rules, you will receive a score of 0 on the exam, and you will not be eligible for academic course credit.
+         </strong></br>
+      {% endblocktrans %}
+        <a href="{{link_urls.online_proctoring_rules}}" target="_blank">
+      {% blocktrans %}
+          {{ platform_name }} Rules for Online Proctored Exams
+      {% endblocktrans %}
+        </a> </br>
     </p>
     {% if exam_review_policy %}
     <h3>
@@ -29,7 +38,7 @@
     </h3>
     <p>
       {% blocktrans %}
-        In addition to the general exam rules above, the following additions or exceptions apply to this exam: </br> </br>
+        The following additional rules apply to this exam. These rules take precedence over the Rules for Online Proctored Exams.</br> </br>
 
         {{ exam_review_policy }} </br>
       {% endblocktrans %}
