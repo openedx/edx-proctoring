@@ -269,6 +269,8 @@ msgid ""
 "        Are you sure you want to take this exam without proctoring?\n"
 "      "
 msgstr ""
+"\n"
+"Êtes-vous sûr de vouloir passer cet examen sans surveillance?"
 
 #: templates/proctored_exam/confirm-decline.html:10
 msgid ""
@@ -314,6 +316,8 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
 "      "
 msgstr ""
+"\n"
+"Vous serez guidé par des étapes pour configurer un logiciel de surveillance en ligne et effectuer divers contrôles</br>"
 
 #: templates/proctored_exam/error.html:4
 msgid ""
@@ -346,6 +350,8 @@ msgid ""
 "      View your credit eligibility status on your <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 msgstr ""
+"\n"
+"Consultez votre statut d'admissibilité au crédit sur votre page de <a href=\"%(progress_page_url)s\">Progression</a>."
 
 #: templates/proctored_exam/error.html:26
 #: templates/proctored_exam/rejected.html:26
@@ -427,6 +433,8 @@ msgid ""
 "                You must successfully complete identity verification before you can start the proctored exam.\n"
 "            "
 msgstr ""
+"\n"
+"Vous devez réussir la vérification de l'identité avant de pouvoir lancer l'examen supervisé."
 
 #: templates/proctored_exam/id_verification.html:17
 msgid ""
@@ -499,6 +507,8 @@ msgid ""
 "        2. Follow the link below to set up proctoring.\n"
 "      "
 msgstr ""
+"\n"
+"2. Suivez le lien ci-dessous pour configurer la surveillance."
 
 #: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
@@ -526,6 +536,8 @@ msgid ""
 "          3. When you have finished setting up proctoring, start the exam.\n"
 "        "
 msgstr ""
+"\n"
+"3. Lorsque vous avez terminé la configuration de la surveillance, commencez l'examen."
 
 #: templates/proctored_exam/instructions.html:50
 msgid "Start Proctored Exam"
@@ -573,7 +585,7 @@ msgstr ""
 
 #: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
-msgstr ""
+msgstr "Votre session surveillée a commencée"
 
 #: templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
@@ -606,6 +618,8 @@ msgid ""
 "        I am not interested in academic credit.\n"
 "      "
 msgstr ""
+"\n"
+"Je ne suis pas intéressé par un crédit académique."
 
 #: templates/proctored_exam/ready_to_start.html:5
 msgid ""

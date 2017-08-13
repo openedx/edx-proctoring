@@ -20,23 +20,23 @@ msgstr ""
 
 #: admin.py:88
 msgid "internally reviewed"
-msgstr ""
+msgstr "gjennomgått internt"
 
 #: admin.py:97
 msgid "All Unreviewed"
-msgstr ""
+msgstr "Alle som ikke er gjennomgått"
 
 #: admin.py:98
 msgid "All Unreviewed Failures"
-msgstr ""
+msgstr "Feil ved alle som ikke er gjennomgått"
 
 #: admin.py:119
 msgid "active proctored exams"
-msgstr ""
+msgstr "aktive overvåkete eksamener"
 
 #: admin.py:177
 msgid "courses with active proctored exams"
-msgstr ""
+msgstr "kurs med aktive overvåkete eksamener"
 
 #: admin.py:342
 msgid "Course Id"
@@ -48,7 +48,7 @@ msgstr "Opprettet"
 
 #: admin.py:381
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "Last ned programvare klikket"
 
 #: admin.py:382
 msgid "Ready To Start"
@@ -101,15 +101,15 @@ msgstr ""
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
-msgstr ""
+msgstr "Gjennomfører som overvåket eksamen"
 
 #: api.py:1289
 msgid "Proctored Option Available"
-msgstr ""
+msgstr "Overvåket alternativ tilgjengelig"
 
 #: api.py:1294
 msgid "Taking As Open Exam"
-msgstr ""
+msgstr "Tas som åpen eksamen"
 
 #: api.py:1299 api.py:1304
 msgid "Pending Session Review"
@@ -117,19 +117,19 @@ msgstr ""
 
 #: api.py:1309
 msgid "Passed Proctoring"
-msgstr ""
+msgstr "Bestått overvåkning"
 
 #: api.py:1314 api.py:1319
 msgid "Failed Proctoring"
-msgstr ""
+msgstr "Overvåkningen ikke godkjent"
 
 #: api.py:1324
 msgid "Proctored Option No Longer Available"
-msgstr ""
+msgstr "Overvåket alternativ ikke lenger tilgjengelig"
 
 #: api.py:1333
 msgid "Ungraded Practice Exam"
-msgstr ""
+msgstr "Prøveeksamen som ikke rettes"
 
 #: api.py:1338
 msgid "Practice Exam Completed"
@@ -157,15 +157,15 @@ msgstr "ikke tilfredsstillende"
 
 #: models.py:481
 msgid "Taking as Proctored"
-msgstr ""
+msgstr "Gjennomføres som overvåket"
 
 #: models.py:485
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "Er eksempel på gjennomføring"
 
 #: models.py:700
 msgid "Additional Time (minutes)"
-msgstr ""
+msgstr "Ekstra tid (minutter)"
 
 #: models.py:701
 msgid "Review Policy Exception"
@@ -188,6 +188,9 @@ msgid ""
 "      Try a proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"      Forsøk en overvåket eksamen\n"
+"    "
 
 #: templates/practice_exam/entrance.html:9
 msgid ""
@@ -199,7 +202,7 @@ msgstr ""
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
-msgstr ""
+msgstr "Fortsett til min prøveeksamen"
 
 #: templates/practice_exam/entrance.html:18
 msgid ""
@@ -232,7 +235,7 @@ msgstr ""
 
 #: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
-msgstr ""
+msgstr "Gjennomfør denne prøveeksamenen på nytt"
 
 #: templates/practice_exam/submitted.html:4
 msgid ""
@@ -251,7 +254,7 @@ msgstr ""
 
 #: templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
-msgstr ""
+msgstr "Du kan også forsøke denne prøveeksamenen på nytt"
 
 #: templates/proctored_exam/confirm-decline.html:5
 msgid ""
@@ -269,7 +272,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
-msgstr ""
+msgstr "Fortsett eksamen uten overvåkning"
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
@@ -283,6 +286,9 @@ msgid ""
 "      This exam is proctored\n"
 "    "
 msgstr ""
+"\n"
+"      Denne eksamenen er overvåket\n"
+"    "
 
 #: templates/proctored_exam/entrance.html:9
 msgid ""
@@ -308,6 +314,9 @@ msgid ""
 "      Error with proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"      Feil med overvåket eksamen\n"
+"    "
 
 #: templates/proctored_exam/error.html:10
 #, python-format
@@ -437,7 +446,7 @@ msgstr ""
 #: templates/proctored_exam/id_verification.html:44
 #: templates/proctored_exam/id_verification.html:56
 msgid "Continue to Verification"
-msgstr ""
+msgstr "Fortsett til verifisering"
 
 #: templates/proctored_exam/id_verification.html:49
 msgid ""
@@ -477,7 +486,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
-msgstr ""
+msgstr "Start systemsjekk"
 
 #: templates/proctored_exam/instructions.html:32
 msgid ""
@@ -548,7 +557,7 @@ msgstr ""
 
 #: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
-msgstr ""
+msgstr "Din overvåkede sesjon har startet"
 
 #: templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
@@ -588,6 +597,9 @@ msgid ""
 "      Follow these instructions\n"
 "    "
 msgstr ""
+"\n"
+"      Følg disse instruksjonene\n"
+"    "
 
 #: templates/proctored_exam/ready_to_start.html:10
 #, python-format
@@ -606,6 +618,9 @@ msgid ""
 "          Start my exam\n"
 "        "
 msgstr ""
+"\n"
+"          Start min eksamen\n"
+"        "
 
 #: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
@@ -637,6 +652,9 @@ msgid ""
 "      Yes, end my proctored exam\n"
 "    "
 msgstr ""
+"\n"
+" Ja, avslutt min overvåkete eksamen\n"
+" "
 
 #: templates/proctored_exam/ready_to_submit.html:27
 msgid ""
@@ -715,7 +733,7 @@ msgstr ""
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "Se min eksamen"
 
 #: templates/proctored_exam/visit_exam_content.html:40
 msgid ""
@@ -731,6 +749,9 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
+"\n"
+"    %(exam_name)s er en eksamen med tidsfrist (%(total_time)s)\n"
+"    "
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
