@@ -31,6 +31,7 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     remove_exam_attempt,
     get_all_exam_attempts,
+    get_exam_violation_report,
     get_filtered_exam_attempts,
     get_last_exam_completion_date,
     mark_exam_attempt_timeout,
@@ -62,7 +63,10 @@ from edx_proctoring.exceptions import (
 )
 from edx_proctoring.models import (
     ProctoredExam,
+    ProctoredExamSoftwareSecureReview,
+    ProctoredExamSoftwareSecureComment,
     ProctoredExamStudentAllowance,
+    ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptStatus,
     ProctoredExamReviewPolicy,
 )
@@ -1663,3 +1667,153 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             timed_exam['content_id']
         )
         self.assertIsNone(summary)
+
+    def test_get_exam_violation_report(self):
+        """
+        Test to get all the exam attempts.
+        """
+        # attempt with comments in multiple categories
+        exam1_id = create_exam(
+            course_id=self.course_id,
+            content_id='test_content_1',
+            exam_name='DDDDDD',
+            time_limit_mins=self.default_time_limit
+        )
+
+        exam1_attempt_id = create_exam_attempt(
+            exam_id=exam1_id,
+            user_id=self.user_id
+        )
+
+        exam1_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(
+            exam1_attempt_id
+        )
+
+        exam1_review = ProctoredExamSoftwareSecureReview.objects.create(
+            exam=ProctoredExam.get_exam_by_id(exam1_id),
+            attempt_code=exam1_attempt.attempt_code,
+            review_status="Suspicious"
+        )
+
+        ProctoredExamSoftwareSecureComment.objects.create(
+            review=exam1_review,
+            status="Rules Violation",
+            comment="foo",
+            start_time=0,
+            stop_time=1,
+            duration=1
+        )
+
+        ProctoredExamSoftwareSecureComment.objects.create(
+            review=exam1_review,
+            status="Suspicious",
+            comment="bar",
+            start_time=0,
+            stop_time=1,
+            duration=1
+        )
+
+        ProctoredExamSoftwareSecureComment.objects.create(
+            review=exam1_review,
+            status="Suspicious",
+            comment="baz",
+            start_time=0,
+            stop_time=1,
+            duration=1
+        )
+
+        # attempt with comments in only one category
+        exam2_id = create_exam(
+            course_id=self.course_id,
+            content_id='test_content_2',
+            exam_name='CCCCCC',
+            time_limit_mins=self.default_time_limit
+        )
+
+        exam2_attempt_id = create_exam_attempt(
+            exam_id=exam2_id,
+            user_id=self.user_id
+        )
+
+        exam2_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(
+            exam2_attempt_id
+        )
+
+        exam2_review = ProctoredExamSoftwareSecureReview.objects.create(
+            exam=ProctoredExam.get_exam_by_id(exam2_id),
+            attempt_code=exam2_attempt.attempt_code,
+            review_status="Rules Violation"
+        )
+
+        ProctoredExamSoftwareSecureComment.objects.create(
+            review=exam2_review,
+            status="Rules Violation",
+            comment="bar",
+            start_time=0,
+            stop_time=1,
+            duration=1
+        )
+
+        # attempt with no comments, on a different exam
+        exam3_id = create_exam(
+            course_id=self.course_id,
+            content_id='test_content_3',
+            exam_name='BBBBBB',
+            time_limit_mins=self.default_time_limit
+        )
+
+        exam3_attempt_id = create_exam_attempt(
+            exam_id=exam3_id,
+            user_id=self.user_id
+        )
+
+        exam3_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(
+            exam3_attempt_id
+        )
+
+        ProctoredExamSoftwareSecureReview.objects.create(
+            exam=ProctoredExam.get_exam_by_id(exam3_id),
+            attempt_code=exam3_attempt.attempt_code,
+            review_status="Clean"
+        )
+
+        # attempt with no comments or review
+        exam4_id = create_exam(
+            course_id=self.course_id,
+            content_id='test_content_4',
+            exam_name='AAAAAA',
+            time_limit_mins=self.default_time_limit
+        )
+
+        exam4_attempt_id = create_exam_attempt(
+            exam_id=exam4_id,
+            user_id=self.user_id
+        )
+
+        ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(
+            exam4_attempt_id
+        )
+
+        report = get_exam_violation_report(self.course_id)
+
+        self.assertEqual(len(report), 4)
+        self.assertEqual([attempt['exam_name'] for attempt in report], [
+            'AAAAAA',
+            'BBBBBB',
+            'CCCCCC',
+            'DDDDDD'
+        ])
+        self.assertTrue('Rules Violation Comments' in report[3])
+        self.assertEqual(len(report[3]['Rules Violation Comments']), 1)
+        self.assertTrue('Suspicious Comments' in report[3])
+        self.assertEqual(len(report[3]['Suspicious Comments']), 2)
+        self.assertEqual(report[3]['review_status'], 'Suspicious')
+
+        self.assertTrue('Suspicious Comments' not in report[2])
+        self.assertTrue('Rules Violation Comments' in report[2])
+        self.assertEqual(len(report[2]['Rules Violation Comments']), 1)
+        self.assertEqual(report[2]['review_status'], 'Rules Violation')
+
+        self.assertEqual(report[1]['review_status'], 'Clean')
+
+        self.assertIsNone(report[0]['review_status'])

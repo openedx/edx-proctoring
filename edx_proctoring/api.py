@@ -37,6 +37,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptStatus,
     ProctoredExamReviewPolicy,
+    ProctoredExamSoftwareSecureReview,
 )
 from edx_proctoring.serializers import (
     ProctoredExamSerializer,
@@ -1947,3 +1948,48 @@ def get_student_view(user_id, course_id, content_id,
     if sub_view_func:
         return sub_view_func(exam, context, exam_id, user_id, course_id)
     return None
+
+
+def get_exam_violation_report(course_id, include_practice_exams=False):
+    """
+    Returns proctored exam attempts for the course id, including review details.
+    Violation status messages are aggregated as a list per attempt for each
+    violation type.
+    """
+    attempts_by_code = {
+        attempt['attempt_code']: {
+            'course_id': attempt['proctored_exam']['course_id'],
+            'exam_name': attempt['proctored_exam']['exam_name'],
+            'username': attempt['user']['username'],
+            'email': attempt['user']['email'],
+            'attempt_code': attempt['attempt_code'],
+            'allowed_time_limit_mins': attempt['allowed_time_limit_mins'],
+            'is_sample_attempt': attempt['is_sample_attempt'],
+            'started_at': attempt['started_at'],
+            'completed_at': attempt['completed_at'],
+            'status': attempt['status'],
+            'review_status': None
+        } for attempt in get_all_exam_attempts(course_id)
+    }
+
+    reviews = ProctoredExamSoftwareSecureReview.objects.prefetch_related(
+        'proctoredexamsoftwaresecurecomment_set'
+    ).filter(
+        exam__course_id=course_id,
+        exam__is_practice_exam=include_practice_exams
+    )
+
+    for review in reviews:
+        attempt_code = review.attempt_code
+
+        attempts_by_code[attempt_code]['review_status'] = review.review_status
+
+        for comment in review.proctoredexamsoftwaresecurecomment_set.all():
+            comments_key = '{status} Comments'.format(status=comment.status)
+
+            if comments_key not in attempts_by_code[attempt_code]:
+                attempts_by_code[attempt_code][comments_key] = []
+
+            attempts_by_code[attempt_code][comments_key].append(comment.comment)
+
+    return sorted(attempts_by_code.values(), key=lambda a: a['exam_name'])
