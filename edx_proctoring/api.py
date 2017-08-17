@@ -1235,7 +1235,7 @@ def _check_eligibility_of_enrollment_mode(credit_state):
     # Also make an exception for the honor students to take the "practice exam" as a proctored exam.
     # For the rest of the enrollment modes, None is returned which shows the exam content
     # to the student rather than the proctoring prompt.
-    return credit_state['enrollment_mode'] == 'verified'
+    return credit_state and credit_state['enrollment_mode'] == 'verified'
 
 
 def _get_ordered_prerequisites(prerequisites_statuses, filter_out_namespaces=None):
