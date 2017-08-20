@@ -269,6 +269,9 @@ msgid ""
 "        If you take this exam without proctoring, you will <strong> no longer be eligible for academic credit. </strong>\n"
 "      "
 msgstr ""
+"\n"
+"        Dersom du gjennomfører denne eksamenen uten overvåkning, vil du <strong> ikke lenger ha grunnlag for  formell kompetanse \"academic credit\". </strong>\n"
+"      "
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
@@ -521,7 +524,7 @@ msgstr "Lukk"
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
-msgstr ""
+msgstr "Kan ikke starte overvåket eksamen"
 
 #: templates/proctored_exam/instructions.html:85
 #: templates/proctored_exam/proctoring_opt_out_button.html:5
@@ -628,6 +631,9 @@ msgid ""
 "      Are you sure you want to end your proctored exam?\n"
 "    "
 msgstr ""
+"\n"
+"      Er du sikker på at du vil avslutte din overvåkete eksamen?\n"
+"    "
 
 #: templates/proctored_exam/ready_to_submit.html:9
 #: templates/timed_exam/ready_to_submit.html:9
