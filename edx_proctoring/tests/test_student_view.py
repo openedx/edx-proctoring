@@ -29,7 +29,7 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.runtime import set_runtime_service
 
-from .test_services import MockCreditServiceWithCourseEndDate
+from .test_services import MockCreditServiceWithCourseEndDate, MockCreditServiceNone
 from .utils import ProctoredExamTestCase
 
 
@@ -387,6 +387,24 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 }
             )
         )
+
+    def test_student_response_without_credit_state(self):
+        """
+        Test that response is not None for users who are not enrolled.
+        """
+        set_runtime_service('credit', MockCreditServiceNone())
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id,
+            context={
+                'is_proctored': True,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 90
+            },
+            user_role='student'
+        )
+        self.assertIsNotNone(rendered_response)
 
     @ddt.data(False, True)
     def test_get_studentview_unstarted_exam(self, allow_proctoring_opt_out):
