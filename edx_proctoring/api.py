@@ -1896,7 +1896,7 @@ def get_student_view(user_id, course_id, content_id,
 
     # call service to get course end date.
     credit_state = credit_service.get_credit_state(user_id, course_id, return_course_info=True)
-    course_end_date = credit_state.get('course_end_date', None)
+    course_end_date = credit_state.get('course_end_date') if credit_state else None
 
     exam_id = None
     try:
