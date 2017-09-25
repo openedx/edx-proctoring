@@ -1817,3 +1817,37 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(report[1]['review_status'], 'Clean')
 
         self.assertIsNone(report[0]['review_status'])
+
+    def test_get_exam_violation_report_with_deleted_exam_attempt(self):
+        """
+        Tests that get_exam_violation_report does not fail in scenerio
+        where an exam attempt does not exist for related review.
+        """
+        test_exam_id = create_exam(
+            course_id=self.course_id,
+            content_id='test_content_1',
+            exam_name='test_exam',
+            time_limit_mins=self.default_time_limit
+        )
+
+        test_attempt_id = create_exam_attempt(
+            exam_id=test_exam_id,
+            user_id=self.user_id
+        )
+
+        exam1_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(test_attempt_id)
+
+        ProctoredExamSoftwareSecureReview.objects.create(
+            exam=ProctoredExam.get_exam_by_id(test_exam_id),
+            attempt_code=exam1_attempt.attempt_code,
+            review_status="Suspicious"
+        )
+
+        # exam attempt is deleted but corresponding review instance exists.
+        exam1_attempt.delete()
+
+        report = get_exam_violation_report(self.course_id)
+
+        # call to get_exam_violation_report did not fail. Assert that report is empty as
+        # the only exam atempt was deleted.
+        self.assertEqual(len(report), 0)
