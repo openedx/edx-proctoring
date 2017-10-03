@@ -313,6 +313,10 @@ def get_exam_by_content_id(course_id, content_id):
     """
     proctored_exam = ProctoredExam.get_exam_by_content_id(course_id, content_id)
     if proctored_exam is None:
+        log.exception(
+            'Cannot find the proctored exams in this course %s with content_id: %s',
+            course_id, content_id
+        )
         raise ProctoredExamNotFoundException
 
     serialized_exam_object = ProctoredExamSerializer(proctored_exam)
