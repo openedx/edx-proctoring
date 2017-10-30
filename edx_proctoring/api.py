@@ -17,6 +17,8 @@ from django.contrib.auth.models import User
 from django.template import loader
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.core.mail.message import EmailMessage
+from salalem.training.models import Enrollment
+from salalem.certificate.models import Certificate
 
 from edx_proctoring import constants
 from edx_proctoring.exceptions import (
@@ -86,6 +88,10 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
         is_active=is_active,
         hide_after_due=hide_after_due,
     )
+
+    print "000000000000000000000000"
+    print exam_name
+    print "000000000000000000000000"
 
     log_msg = (
         u'Created exam ({exam_id}) with parameters: course_id={course_id}, '
@@ -1567,6 +1573,13 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         # check if the exam's due_date has passed. If so, return None
         # so that the user can see his exam answers in read only mode.
         if not exam['hide_after_due'] and has_due_date_passed(exam['due_date']):
+            # if not exam['hide_after_due'] and has_due_date_passed(exam['due_date']):
+            #     student_view_template = 'timed_exam/submitted.html'
+            #     context = {
+            #         'enrollment': Enrollment.objects.get(user_id=user_id),
+            #     }
+            #     return render_to_response(student_view_template, context)
+
             return None
 
         student_view_template = 'timed_exam/submitted.html'
@@ -1618,11 +1631,31 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         except NoReverseMatch:
             log.exception("Can't find progress url for course %s", course_id)
 
+        #salalem enrollment data ...
+
+        enrollmentUser = Enrollment.objects.get(user_id=user_id,course_id=course_id)
+        if enrollmentUser.status == 'passed':
+            cert = Certificate.objects.get(user_id=user_id).download_url
+        else:
+            cert = ""
+
+        get_grade = enrollmentUser.get_grade()
+        print get_grade[:-1]
+        flage = False
+        if float(get_grade[:-1]) >= float(70):
+            flage = True
+
         context.update({
             'total_time': total_time,
             'hide_extra_time_footer': hide_extra_time_footer,
             'will_be_revealed': has_due_date and not exam['hide_after_due'],
             'exam_id': exam_id,
+            'user_id': user_id,
+            'flage': flage,
+            'download_url': cert,
+            'grade': enrollmentUser.get_grade(), #salalem user grade
+            'username': enrollmentUser.user.username, #salalem username
+            'course': enrollmentUser.course.get_display_name(), #salalem course
             'exam_name': exam['exam_name'],
             'progress_page_url': progress_page_url,
             'does_time_remain': _does_time_remain(attempt),

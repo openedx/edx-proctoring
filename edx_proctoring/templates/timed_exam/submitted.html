@@ -1,24 +1,42 @@
 {% load i18n %}
-<div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
-  <h3>
-
+<div class="sequence proctored-exam completed" >
     {% if has_time_expired %}
       {% blocktrans %}
-        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.
+        The tiyhyyume allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.
       {% endblocktrans %}
+
     {% else %}
+    <h1>النتيـــــجة</h1>
+    {% if flage %}
       {% blocktrans %}
-        You have submitted your timed exam.
+    <div>
+        مبــروك
+        لقد نجحت
+          في مساق  <strong> {{ course }} </strong>
+        ..  و سيتم ارسال كافة البيانات و الشهادة الي بريدك الألكتروني
+
+    </div>
+      {% endblocktrans %}
+      {% else %}
+       {% blocktrans %}
+    <div>
+        للاسف
+        لقد رسبت
+        في مساق <strong> دائرة الرقابة المالية في البنوك </strong>
+        ...ولكن يمكنك اعاده مراجعة المادة بعد مرور ساعة من الان وإعادة إجراء الأمتحان
+
+    </div>
       {% endblocktrans %}
     {% endif %}
+    {% endif %}
 
-  </h3>
   <hr>
   <p>
     {% if will_be_revealed %}
       {% blocktrans %}
-        After the due date has passed, you can review the exam, but you cannot change your answers.
+      يمكنك مراجعة الإمتحان بعد مرور الوقت المحدد ولكن لا يمكنك تغيير الإجابة ..
       {% endblocktrans %}
-    {% endif %}
+حيث أن نسبة النجاح هي %70
+      {% endif %}
   </p>
 </div>
