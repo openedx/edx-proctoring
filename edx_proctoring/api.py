@@ -353,12 +353,12 @@ def add_allowance_for_user(exam_id, user_info, key, value):
         emit_event(exam, 'allowance.{action}'.format(action=action), override_data=data)
 
 
-def get_allowances_for_course(course_id, timed_exams_only=False):
+def get_allowances_for_course(course_id):
     """
     Get all the allowances for the course.
     """
     student_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(
-        course_id, timed_exams_only=timed_exams_only
+        course_id
     )
     return [ProctoredExamStudentAllowanceSerializer(allowance).data for allowance in student_allowances]
 

@@ -1190,11 +1190,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content)
         self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
 
-    def test_exam_attempts_not_staff(self):
+    def test_exam_attempts_not_global_staff(self):
         """
-        Test to get the exam attempts in a course as a not
-        staff user but still we get the timed exams attempts
-        but not the proctored exam attempts
+        Test to get both timed and proctored exam attempts
+        in a course as a course staff
         """
         # Create an timed_exam.
         timed_exam = ProctoredExam.objects.create(
@@ -1241,11 +1240,15 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
-        # we should only get the timed exam attempt in this case
-        # so the len should be 1
-        self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
+        # assert that both timed and proctored exam attempts are in response data
+        # so the len should be 2
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 2)
         self.assertEqual(
             response_data['proctored_exam_attempts'][0]['proctored_exam']['is_proctored'],
+            proctored_exam.is_proctored
+        )
+        self.assertEqual(
+            response_data['proctored_exam_attempts'][1]['proctored_exam']['is_proctored'],
             timed_exam.is_proctored
         )
 
@@ -2317,9 +2320,9 @@ class TestExamAllowanceView(LoggedInTestCase):
 
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
-        # we should only get the timed exam allowance
-        # We are not logged in as a global user
-        self.assertEqual(len(response_data), 1)
+        # assert that both timed and proctored exams allowance are in response data
+        # so the len should be 2
+        self.assertEqual(len(response_data), 2)
         self.assertEqual(response_data[0]['proctored_exam']['course_id'], timed_exam.course_id)
         self.assertEqual(response_data[0]['proctored_exam']['content_id'], timed_exam.content_id)
         self.assertEqual(response_data[0]['key'], allowance_data['key'])
