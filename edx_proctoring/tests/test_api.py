@@ -409,7 +409,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         Test to get all the allowances for a course.
         """
         allowance = self._add_allowance_for_user()
-        course_allowances = get_allowances_for_course(self.course_id, False)
+        course_allowances = get_allowances_for_course(self.course_id)
         self.assertEqual(len(course_allowances), 1)
         self.assertEqual(course_allowances[0]['proctored_exam']['course_id'], allowance.proctored_exam.course_id)
 

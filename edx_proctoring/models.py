@@ -394,27 +394,20 @@ class ProctoredExamStudentAttemptManager(models.Manager):
             exam_attempt_obj = None
         return exam_attempt_obj
 
-    def get_all_exam_attempts(self, course_id, timed_exams_only=False):
+    def get_all_exam_attempts(self, course_id):
         """
         Returns the Student Exam Attempts for the given course_id.
         """
         filtered_query = Q(proctored_exam__course_id=course_id)
-
-        if timed_exams_only:
-            filtered_query = filtered_query & Q(proctored_exam__is_proctored=False)
-
         return self.filter(filtered_query).order_by('-created')
 
-    def get_filtered_exam_attempts(self, course_id, search_by, timed_exams_only=False):
+    def get_filtered_exam_attempts(self, course_id, search_by):
         """
         Returns the Student Exam Attempts for the given course_id filtered by search_by.
         """
         filtered_query = Q(proctored_exam__course_id=course_id) & (
             Q(user__username__contains=search_by) | Q(user__email__contains=search_by)
         )
-        if timed_exams_only:
-            filtered_query = filtered_query & Q(proctored_exam__is_proctored=False)
-
         return self.filter(filtered_query).order_by('-created')  # pylint: disable=no-member
 
     def get_proctored_exam_attempts(self, course_id, username):
@@ -720,14 +713,11 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         verbose_name = 'proctored allowance'
 
     @classmethod
-    def get_allowances_for_course(cls, course_id, timed_exams_only=False):
+    def get_allowances_for_course(cls, course_id):
         """
         Returns all the allowances for a course.
         """
         filtered_query = Q(proctored_exam__course_id=course_id)
-        if timed_exams_only:
-            filtered_query = filtered_query & Q(proctored_exam__is_proctored=False)
-
         return cls.objects.filter(filtered_query)
 
     @classmethod
