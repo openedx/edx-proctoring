@@ -611,18 +611,16 @@ class StudentProctoredExamAttemptsByCourse(AuthenticatedAPIView):
     def get(self, request, course_id, search_by=None):  # pylint: disable=unused-argument
         """
         HTTP GET Handler. Returns the status of the exam attempt.
+        Course and Global staff can view both timed and proctored exam attempts.
         """
-        # course staff only views attempts of timed exams. edx staff can view both timed and proctored attempts.
-        time_exams_only = not request.user.is_staff
-
         if search_by is not None:
             exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(
-                course_id, search_by, time_exams_only
+                course_id, search_by
             )
             attempt_url = reverse('edx_proctoring.proctored_exam.attempts.search', args=[course_id, search_by])
         else:
             exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(
-                course_id, time_exams_only
+                course_id
             )
             attempt_url = reverse('edx_proctoring.proctored_exam.attempts.course', args=[course_id])
 
@@ -701,13 +699,10 @@ class ExamAllowanceView(AuthenticatedAPIView):
     def get(self, request, course_id):  # pylint: disable=unused-argument
         """
         HTTP GET handler. Get all allowances for a course.
+        Course and Global staff can view both timed and proctored exam allowances.
         """
-        # course staff only views attempts of timed exams. edx staff can view both timed and proctored attempts.
-        time_exams_only = not request.user.is_staff
-
         result_set = get_allowances_for_course(
-            course_id=course_id,
-            timed_exams_only=time_exams_only
+            course_id=course_id
         )
         return Response(result_set)
 

@@ -313,6 +313,10 @@ def get_exam_by_content_id(course_id, content_id):
     """
     proctored_exam = ProctoredExam.get_exam_by_content_id(course_id, content_id)
     if proctored_exam is None:
+        log.exception(
+            'Cannot find the proctored exams in this course %s with content_id: %s',
+            course_id, content_id
+        )
         raise ProctoredExamNotFoundException
 
     serialized_exam_object = ProctoredExamSerializer(proctored_exam)
@@ -349,12 +353,12 @@ def add_allowance_for_user(exam_id, user_info, key, value):
         emit_event(exam, 'allowance.{action}'.format(action=action), override_data=data)
 
 
-def get_allowances_for_course(course_id, timed_exams_only=False):
+def get_allowances_for_course(course_id):
     """
     Get all the allowances for the course.
     """
     student_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(
-        course_id, timed_exams_only=timed_exams_only
+        course_id
     )
     return [ProctoredExamStudentAllowanceSerializer(allowance).data for allowance in student_allowances]
 
@@ -1981,15 +1985,15 @@ def get_exam_violation_report(course_id, include_practice_exams=False):
 
     for review in reviews:
         attempt_code = review.attempt_code
+        if attempt_code in attempts_by_code:
+            attempts_by_code[attempt_code]['review_status'] = review.review_status
 
-        attempts_by_code[attempt_code]['review_status'] = review.review_status
+            for comment in review.proctoredexamsoftwaresecurecomment_set.all():
+                comments_key = '{status} Comments'.format(status=comment.status)
 
-        for comment in review.proctoredexamsoftwaresecurecomment_set.all():
-            comments_key = '{status} Comments'.format(status=comment.status)
+                if comments_key not in attempts_by_code[attempt_code]:
+                    attempts_by_code[attempt_code][comments_key] = []
 
-            if comments_key not in attempts_by_code[attempt_code]:
-                attempts_by_code[attempt_code][comments_key] = []
-
-            attempts_by_code[attempt_code][comments_key].append(comment.comment)
+                attempts_by_code[attempt_code][comments_key].append(comment.comment)
 
     return sorted(attempts_by_code.values(), key=lambda a: a['exam_name'])

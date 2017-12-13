@@ -49,6 +49,9 @@ var edx = edx || {};
             /* will call into the rendering */
             this.model.fetch();
         },
+        events: {
+            'click #toggle_timer': 'toggleTimerVisibility'
+        },
         detectScroll: function(event) {
             if ($(event.currentTarget).scrollTop() > this.timerBarTopPosition) {
                 $(".proctored_exam_status").addClass('is-fixed');
@@ -171,6 +174,22 @@ var edx = edx || {};
                 // refresh the page when the timer expired
                 self.reloadPage();
             }
+        },
+        toggleTimerVisibility: function (event) {
+            var button = $(event.currentTarget);
+            var icon = button.find('i');
+            var timer = this.$el.find('span#time_remaining_id b');
+            if (timer.hasClass('timer-hidden')) {
+                timer.removeClass('timer-hidden');
+                button.attr('aria-pressed', 'false');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                timer.addClass('timer-hidden');
+                button.attr('aria-pressed', 'true');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+            event.stopPropagation();
+            event.preventDefault();
         }
     });
     this.edx.coursware.proctored_exam.ProctoredExamView = edx.coursware.proctored_exam.ProctoredExamView;
