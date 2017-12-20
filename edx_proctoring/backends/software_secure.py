@@ -17,7 +17,7 @@ import requests
 
 from django.conf import settings
 
-from Crypto.Cipher import DES3
+from Cryptodome.Cipher import DES3
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring import constants
