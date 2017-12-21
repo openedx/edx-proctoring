@@ -63,6 +63,18 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        "Django>=1.8,<2.0"
+        "Django>=1.8,<2.0",
+        "django-model-utils>=2.3.1",
+        "djangorestframework>=3.1,<3.7",
+        "django-ipware>=1.1.0",
+        "edx-opaque-keys>=0.4",
+        "pytz>=2012h",
+        "pycryptodomex>=3.4.7",
+        "python-dateutil>=2.1",
+        "requests",
+        "six",
     ],
+    dependency_links=[
+        "git+https://github.com/edx/event-tracking.git@0.2.2#egg=event-tracking==0.2.2",
+    ]
 )
