@@ -17,7 +17,7 @@ import requests
 
 from django.conf import settings
 
-from Crypto.Cipher import DES3
+from Cryptodome.Cipher import DES3
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring import constants
@@ -337,7 +337,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             """
             Apply padding
             """
-            return text + (block_size - len(text) % block_size) * chr(block_size - len(text) % block_size)
+            return (text + (block_size - len(text) % block_size) *
+                    chr(block_size - len(text) % block_size)).encode('utf-8')
         cipher = DES3.new(key, DES3.MODE_ECB)
         encrypted_text = cipher.encrypt(pad(pwd))
         return base64.b64encode(encrypted_text)
