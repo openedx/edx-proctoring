@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: baris <brscvs@gmail.com>, 2016\n"
+"Last-Translator: Ali Işıngör <ali@artistanbul.io>, 2017\n"
 "Language-Team: Turkish (Turkey) (https://www.transifex.com/open-edx/teams/6205/tr_TR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -40,11 +40,11 @@ msgstr ""
 
 #: admin.py:342
 msgid "Course Id"
-msgstr ""
+msgstr "Ders No"
 
 #: admin.py:380
 msgid "Created"
-msgstr ""
+msgstr "Oluşturuldu"
 
 #: admin.py:381
 msgid "Download Software Clicked"
@@ -52,11 +52,11 @@ msgstr ""
 
 #: admin.py:382
 msgid "Ready To Start"
-msgstr ""
+msgstr "Başlamaya Hazır"
 
 #: admin.py:383
 msgid "Started"
-msgstr ""
+msgstr "Başladı"
 
 #: admin.py:384
 msgid "Ready To Submit"
@@ -72,7 +72,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr ""
+msgstr "Girildi"
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -80,19 +80,19 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr ""
+msgstr "Onaylandı"
 
 #: admin.py:390
 msgid "Rejected"
-msgstr ""
+msgstr "Reddedildi"
 
 #: admin.py:391
 msgid "Error"
-msgstr ""
+msgstr "Hata"
 
 #: api.py:902
 msgid "your course"
-msgstr ""
+msgstr "dersiniz"
 
 #: api.py:962
 #, python-brace-format
@@ -141,11 +141,11 @@ msgstr ""
 
 #: api.py:1351
 msgid "Timed Exam"
-msgstr ""
+msgstr "Zamanlanmış Sınav"
 
 #: models.py:181
 msgid "pending"
-msgstr ""
+msgstr "beklemede"
 
 #: models.py:182
 msgid "satisfactory"
@@ -273,7 +273,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr ""
+msgstr "Geri Dön"
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -424,7 +424,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr ""
+msgstr "Yeniden Doğrulama"
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
@@ -477,7 +477,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
-msgstr ""
+msgstr "Sistem Denetimine Başla"
 
 #: templates/proctored_exam/instructions.html:32
 msgid ""
@@ -508,7 +508,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr ""
+msgstr "Kapat"
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
@@ -882,7 +882,7 @@ msgstr ""
 
 #: views.py:536
 msgid "timed"
-msgstr ""
+msgstr "zamanlanmış"
 
 #: views.py:537
 msgid "practice"
