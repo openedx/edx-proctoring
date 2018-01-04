@@ -15,7 +15,8 @@ from edx_proctoring.management.commands import set_attempt_status
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt
 from edx_proctoring.tests.test_services import (
     MockCreditService,
-    MockGradesService
+    MockGradesService,
+    MockCertificateService
 )
 from edx_proctoring.runtime import set_runtime_service
 
@@ -33,6 +34,7 @@ class SetAttemptStatusTests(LoggedInTestCase):
         super(SetAttemptStatusTests, self).setUp()
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('grades', MockGradesService())
+        set_runtime_service('certificates', MockCertificateService())
         self.exam_id = create_exam(
             course_id='foo',
             content_id='bar',

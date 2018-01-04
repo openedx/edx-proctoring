@@ -936,6 +936,22 @@ def update_attempt_status(exam_id, user_id, to_status,
                 earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
             )
 
+            certificates_service = get_runtime_service('certificates')
+
+            log.info(
+                'Invalidating certificate for user_id {user_id} in course {course_id} whose '
+                'grade dropped below passing threshold due to suspicious proctored exam'.format(
+                    user_id=exam_attempt_obj.user_id,
+                    course_id=exam['course_id']
+                )
+            )
+
+            # invalidate certificate after overriding subsection grade
+            certificates_service.invalidate_certificate(
+                user_id=exam_attempt_obj.user_id,
+                course_key_or_id=exam['course_id']
+            )
+
     if (to_status == ProctoredExamStudentAttemptStatus.verified and
             ProctoredExamStudentAttemptStatus.needs_grade_override(from_status)):
         grades_service = get_runtime_service('grades')
