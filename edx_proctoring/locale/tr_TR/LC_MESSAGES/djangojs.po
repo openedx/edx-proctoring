@@ -64,7 +64,7 @@ msgstr "Göndermeye Hazır"
 
 #: admin.py:385
 msgid "Declined"
-msgstr ""
+msgstr "Reddedildi"
 
 #: admin.py:386
 msgid "Timed Out"
@@ -202,7 +202,7 @@ msgstr ""
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
-msgstr ""
+msgstr "Alıştırma sınavıma devam et"
 
 #: templates/practice_exam/entrance.html:18
 msgid ""
@@ -210,6 +210,9 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
 "      "
 msgstr ""
+"\n"
+"        Gözetmen yazılımının ayarlanmasının her bir adamında size rehberlik edilecek ve çeşitli denetimler yapılacak.\n"
+"      "
 
 #: templates/practice_exam/error.html:4
 msgid ""
@@ -217,6 +220,9 @@ msgid ""
 "      There was a problem with your practice proctoring session\n"
 "    "
 msgstr ""
+"\n"
+"     Gözetmenli alıştırma oturumunuzda bir hata gerçekleşti\n"
+"    "
 
 #: templates/practice_exam/error.html:10
 msgid ""
@@ -235,7 +241,7 @@ msgstr ""
 
 #: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
-msgstr ""
+msgstr "Alıştırma sınavını tekrar dene"
 
 #: templates/practice_exam/submitted.html:4
 msgid ""
@@ -698,6 +704,9 @@ msgid ""
 "      You have submitted this proctored exam for review\n"
 "    "
 msgstr ""
+"\n"
+"      Gözetmenli sınavınızı inceleme için gönderdiniz\n"
+"    "
 
 #: templates/proctored_exam/submitted.html:9
 msgid ""
@@ -765,11 +774,12 @@ msgstr ""
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr ""
+msgstr "Bu sınava bağlı bir süre sınırı bulunmaktadır."
 
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
 msgstr ""
+"Bu sınavdan geçmek için, problemleri size tanınan sürede çözmelisiniz."
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
@@ -777,7 +787,7 @@ msgstr ""
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr ""
+msgstr "Süre sınırlı bu sınava başlamaya hazırım,"
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
@@ -793,6 +803,9 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"        Süre sınırlı bu sınava başlamaya hazırım.\n"
+"      "
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
@@ -827,6 +840,9 @@ msgid ""
 "      Yes, submit my timed exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Evet, süre sınırlı sınavımı gönder.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -834,6 +850,9 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
+"\n"
+"        Hayır, çalışmaya devam edeceğim.\n"
+"      "
 
 #: templates/timed_exam/submitted.html:6
 msgid ""
@@ -848,6 +867,9 @@ msgid ""
 "        You have submitted your timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"        Süre sınırlı sınavınızı gönderdiniz.\n"
+"      "
 
 #: templates/timed_exam/submitted.html:18
 #, python-format
