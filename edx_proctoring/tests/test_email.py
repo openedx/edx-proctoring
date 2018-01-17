@@ -19,6 +19,8 @@ from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 from .test_services import (
     MockCreditService,
+    MockGradesService,
+    MockCertificateService
 )
 from .utils import (
     ProctoredExamTestCase,
@@ -31,6 +33,23 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
     """
     All tests for proctored exam emails.
     """
+
+    def setUp(self):
+        """
+        Initialize
+        """
+        super(ProctoredExamEmailTests, self).setUp()
+
+        set_runtime_service('grades', MockGradesService())
+        set_runtime_service('certificates', MockCertificateService())
+
+    def tearDown(self):
+        """
+        When tests are done
+        """
+        super(ProctoredExamEmailTests, self).tearDown()
+        set_runtime_service('grades', None)
+        set_runtime_service('certificates', None)
 
     @ddt.data(
         [

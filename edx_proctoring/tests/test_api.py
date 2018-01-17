@@ -76,7 +76,8 @@ from .test_services import (
     MockCreditService,
     MockCreditServiceNone,
     MockCreditServiceWithCourseEndDate,
-    MockGradesService
+    MockGradesService,
+    MockCertificateService
 )
 from .utils import ProctoredExamTestCase
 
@@ -87,6 +88,20 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
     """
     All tests for the models.py
     """
+
+    def setUp(self):
+        """
+        Initialize
+        """
+        super(ProctoredExamApiTests, self).setUp()
+        set_runtime_service('certificates', MockCertificateService())
+
+    def tearDown(self):
+        """
+        When tests are done
+        """
+        super(ProctoredExamApiTests, self).tearDown()
+        set_runtime_service('certificates', None)
 
     def _add_allowance_for_user(self):
         """
@@ -938,12 +953,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
     def test_grade_override(self):
         """
-        Verify that putting an attempt into the rejected state will also override
-        the learner's subsection grade for the exam
+        Verify that putting an attempt into the rejected state will override
+        the learner's subsection grade for the exam and also invalidate the
+        learner's certificate
         """
         set_runtime_service('grades', MockGradesService())
 
         grades_service = get_runtime_service('grades')
+        certificates_service = get_runtime_service('certificates')
         exam_attempt = self._create_started_exam_attempt()
         # Pretend learner answered 5 graded questions in the exam correctly
         grades_service.init_grade(
@@ -973,6 +990,26 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         }, {
             'earned_all': 0.0,
             'earned_graded': 0.0
+        })
+
+        # Rejected exam attempt should invalidate learner's certificate
+        invalid_generated_certificate = certificates_service.get_invalidated_certificate(
+            user_id=self.user.id,
+            course_key_or_id=exam_attempt.proctored_exam.course_id
+        )
+
+        self.assertDictEqual({
+            'verify_uuid': invalid_generated_certificate.verify_uuid,
+            'download_uuid': invalid_generated_certificate.download_uuid,
+            'download_url': invalid_generated_certificate.download_url,
+            'grade': invalid_generated_certificate.grade,
+            'status': invalid_generated_certificate.status
+        }, {
+            'verify_uuid': '',
+            'download_uuid': '',
+            'download_url': '',
+            'grade': '',
+            'status': 'unavailable'
         })
 
         # The MockGradeService updates the PersistentSubsectionGrade synchronously, but in the real GradesService, this

@@ -189,6 +189,26 @@ class MockGradeOverride(object):
         self.earned_graded_override = earned_graded
 
 
+class MockGeneratedCertificate(object):
+    """Fake GeneratedCertificate instance."""
+    def __init__(self):
+        self.verify_uuid = 'test_verify_uuid'
+        self.download_uuid = 'test_download_uuid'
+        self.download_url = 'test_download_url'
+        self.grade = 1.0
+        self.status = 'downloadable'
+
+    def mock_invalidate(self):
+        """
+        Invalidate Generated Certificate by  marking it 'unavailable'.
+        """
+        self.verify_uuid = ''
+        self.download_uuid = ''
+        self.download_url = ''
+        self.grade = ''
+        self.status = 'unavailable'
+
+
 class MockGradesService(object):
     """
     Simple mock of the Grades Service
@@ -239,3 +259,29 @@ class MockGradesService(object):
     def should_override_grade_on_rejected_exam(self, course_key):
         """Mock will always return instance variable: rejected_exam_overrides_grade"""
         return self.rejected_exam_overrides_grade
+
+
+class MockCertificateService(object):
+    """
+    mock Certificate Service
+    """
+    def __init__(self):
+        """
+        Initialize empty data stores for generated certificate
+        """
+        self.generated_certificate = {}
+
+    def invalidate_certificate(self, user_id, course_key_or_id):
+        """
+        Get the generated certificate for key (user_id + course_key) and invalidate certificate
+        whose grade dropped below passing threshold due to suspicious proctored exam
+        """
+        key = str(user_id) + str(course_key_or_id)
+        self.generated_certificate[key] = MockGeneratedCertificate()
+        self.generated_certificate[key].mock_invalidate()
+
+    def get_invalidated_certificate(self, user_id, course_key_or_id):
+        """
+        Returns invalidated certificate for key (user_id + course_key)
+        """
+        return self.generated_certificate.get(str(user_id) + str(course_key_or_id))
