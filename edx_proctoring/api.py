@@ -1117,9 +1117,17 @@ def remove_exam_attempt(attempt_id, requesting_user):
 
     existing_attempt.delete_exam_attempt()
     instructor_service = get_runtime_service('instructor')
+    grades_service = get_runtime_service('grades')
 
     if instructor_service:
         instructor_service.delete_student_attempt(username, course_id, content_id, requesting_user=requesting_user)
+    if grades_service:
+        # EDUCATOR-2141: Also remove any grade overrides that may exist
+        grades_service.undo_override_subsection_grade(
+            user_id=user_id,
+            course_key_or_id=course_id,
+            usage_key_or_id=content_id,
+        )
 
     # see if the status transition this changes credit requirement status
     if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
