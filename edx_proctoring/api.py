@@ -1049,10 +1049,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         return None
     email_template = loader.get_template(email_template_path)
     try:
-        course_info_url = reverse(
-            'courseware.views.views.course_info',
-            args=[exam_attempt_obj.proctored_exam.course_id]
-        )
+        course_info_url = reverse('info', args=[exam_attempt_obj.proctored_exam.course_id])
     except NoReverseMatch:
         log.exception("Can't find course info url for course %s", exam_attempt_obj.proctored_exam.course_id)
 
@@ -1390,10 +1387,7 @@ def _resolve_prerequisite_links(exam, prerequisites):
         jumpto_url = None
         if prerequisite['namespace'] in JUMPTO_SUPPORTED_NAMESPACES and prerequisite['name']:
             try:
-                jumpto_url = reverse(
-                    'courseware.views.views.jump_to',
-                    args=[exam['course_id'], prerequisite['name']]
-                )
+                jumpto_url = reverse('jump_to', args=[exam['course_id'], prerequisite['name']])
             except NoReverseMatch:
                 log.exception("Can't find jumpto url for course %s", exam['course_id'])
 
@@ -1635,10 +1629,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
 
         progress_page_url = ''
         try:
-            progress_page_url = reverse(
-                'courseware.views.views.progress',
-                args=[course_id]
-            )
+            progress_page_url = reverse('progress', args=[course_id])
         except NoReverseMatch:
             log.exception("Can't find progress url for course %s", course_id)
 
@@ -1690,10 +1681,7 @@ def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False
     total_time = humanized_time(attempt_time)
     progress_page_url = ''
     try:
-        progress_page_url = reverse(
-            'courseware.views.views.progress',
-            args=[course_id]
-        )
+        progress_page_url = reverse('progress', args=[course_id])
     except NoReverseMatch:
         log.exception("Can't find progress url for course %s", course_id)
 
