@@ -745,7 +745,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Confirme que haya seleccionado \"Enviar\" para cada problema antes de enviar su examen."
+"Confirme que haya seleccionado \"Enviar\" para cada problema antes de enviar el examen completo.."
 
 #: templates/proctored_exam/ready_to_submit.html:14
 msgid ""
@@ -897,7 +897,7 @@ msgstr "Esta examen tiene un límite de tiempo."
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
 msgstr ""
-"Para aprobar este examen, hay que completar las problemas durante el tiempo "
+"Para aprobar este examen, hay que completar los problemas durante el tiempo "
 "permitido."
 
 #: templates/timed_exam/entrance.html:13
@@ -1004,7 +1004,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Su calificación de este examen cronometrado será disponible inmediatamente en la <a href=\"%(progress_page_url)s\">página de progreso</a>."
+"Su calificación de este examen cronometrado estará  disponible inmediatamente en la <a href=\"%(progress_page_url)s\">página de progreso</a>."
 
 #: templates/timed_exam/submitted.html:22
 msgid ""
