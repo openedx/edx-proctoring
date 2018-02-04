@@ -48,7 +48,7 @@ msgstr "Oluşturuldu"
 
 #: admin.py:381
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "Yazılım İndir'e Tıklandı"
 
 #: admin.py:382
 msgid "Ready To Start"
@@ -76,7 +76,7 @@ msgstr "Girildi"
 
 #: admin.py:388
 msgid "Second Review Required"
-msgstr ""
+msgstr "İkinci Bir İnceleme Gerekli"
 
 #: admin.py:389
 msgid "Verified"
@@ -98,6 +98,8 @@ msgstr "dersiniz"
 #, python-brace-format
 msgid "Proctoring Session Results Update for {course_name} {exam_name}"
 msgstr ""
+"{course_name} dersi {exam_name} sınavı için Gözetmenli Sınav Sonuçları "
+"Güncellemesi"
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
@@ -117,11 +119,11 @@ msgstr ""
 
 #: api.py:1309
 msgid "Passed Proctoring"
-msgstr ""
+msgstr "Başarılı Gözetmenli Sınav"
 
 #: api.py:1314 api.py:1319
 msgid "Failed Proctoring"
-msgstr ""
+msgstr "Başarısız Gözetmenli Sınav"
 
 #: api.py:1324
 msgid "Proctored Option No Longer Available"
@@ -199,6 +201,10 @@ msgid ""
 "      on your grade in the course.\n"
 "    "
 msgstr ""
+"\n"
+"      Ders sonrası gerçek sınavlar için gözetmenli sınavları deneyimleyin.\n"
+"      Alıştırma sınavı ders notunuzu etkilemeyecek.\n"
+"    "
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
@@ -230,6 +236,9 @@ msgid ""
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
 "    "
 msgstr ""
+"\n"
+"      Alıştırma sınavı sonucunuz: <b class=\"failure\"> Yetersiz </b>\n"
+"    "
 
 #: templates/practice_exam/error.html:16
 msgid ""
@@ -249,6 +258,9 @@ msgid ""
 "      You have submitted this practice proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"      Bu gözetmenli alıştırma sınavını gönderdiniz\n"
+"    "
 
 #: templates/practice_exam/submitted.html:10
 msgid ""
@@ -415,6 +427,9 @@ msgid ""
 "                Complete your verification before starting the proctored exam.\n"
 "            "
 msgstr ""
+"\n"
+"                Gözetmenli sınava başlamadan önce kimlik doğrulamanızı tamamlayın.\n"
+"            "
 
 #: templates/proctored_exam/id_verification.html:11
 msgid ""
@@ -809,7 +824,7 @@ msgstr ""
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
-msgstr ""
+msgstr "Sınavımı tamamlamak için ek süre isteyebilir miyim?"
 
 #: templates/timed_exam/footer.html:4
 msgid ""
@@ -819,6 +834,11 @@ msgid ""
 "      Ask your course team for information about additional time allowances.\n"
 "    "
 msgstr ""
+"\n"
+"      Bedensel engellerinizin olması halinde,\n"
+"      zaman sınırlı sınavlar için ek süre talep edebilirsiniz.\n"
+"      Ek süre talepleri için gerekli koşulları ders takımınızdan öğrenebilirsiniz.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:4
 msgid ""
