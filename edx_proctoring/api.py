@@ -553,25 +553,14 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
 
             raise StudentExamAttemptAlreadyExistsException(err_msg)
 
-    allowed_time_limit_mins = exam['time_limit_mins']
-
-    # add in the allowed additional time
-    allowance_extra_mins = ProctoredExamStudentAllowance.get_additional_time_granted(exam_id, user_id)
-    if allowance_extra_mins:
-        allowed_time_limit_mins += allowance_extra_mins
-
-    allowed_time_limit_mins, is_exam_past_due_date = _calculate_allowed_mins(
-        exam['due_date'],
-        allowed_time_limit_mins
-    )
-
+    allowed_time_limit_mins = _calculate_allowed_mins(exam, user_id)
     attempt_code = unicode(uuid.uuid4()).upper()
 
     external_id = None
     review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
     review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
 
-    if not is_exam_past_due_date and taking_as_proctored:
+    if not has_due_date_passed(exam['due_date']) and taking_as_proctored:
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         callback_url = '{scheme}://{hostname}{path}'.format(
             scheme=scheme,
@@ -626,7 +615,6 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         exam_id,
         user_id,
         '',  # student name is TBD
-        allowed_time_limit_mins,
         attempt_code,
         taking_as_proctored,
         exam['is_practice_exam'],
@@ -640,12 +628,10 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     log_msg = (
         'Created exam attempt ({attempt_id}) for exam_id {exam_id} for '
         'user_id {user_id} with taking as proctored = {taking_as_proctored} '
-        'with allowed time limit minutes of {allowed_time_limit_mins}. '
         'Attempt_code {attempt_code} was generated which has a '
         'external_id of {external_id}'.format(
             attempt_id=attempt.id, exam_id=exam_id, user_id=user_id,
             taking_as_proctored=taking_as_proctored,
-            allowed_time_limit_mins=allowed_time_limit_mins,
             attempt_code=attempt_code,
             external_id=external_id
         )
@@ -772,7 +758,6 @@ def update_attempt_status(exam_id, user_id, to_status,
     from_status = exam_attempt_obj.status
     exam = get_exam_by_id(exam_id)
 
-    #
     # don't allow state transitions from a completed state to an incomplete state
     # if a re-attempt is desired then the current attempt must be deleted
     #
@@ -811,13 +796,15 @@ def update_attempt_status(exam_id, user_id, to_status,
     exam_attempt_obj.status = to_status
 
     # if we have transitioned to started and haven't set our
-    # started_at timestamp, do so now
+    # started_at timestamp and calculate allowed minutes, do so now
     add_start_time = (
         to_status == ProctoredExamStudentAttemptStatus.started and
         not exam_attempt_obj.started_at
     )
     if add_start_time:
         exam_attempt_obj.started_at = datetime.now(pytz.UTC)
+        exam_attempt_obj.allowed_time_limit_mins = _calculate_allowed_mins(exam, exam_attempt_obj.user_id)
+
     elif treat_timeout_as_submitted:
         exam_attempt_obj.completed_at = timeout_timestamp
     elif to_status == ProctoredExamStudentAttemptStatus.submitted:
@@ -1603,24 +1590,12 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
 
     if student_view_template:
         template = loader.get_template(student_view_template)
-
-        allowed_time_limit_mins = attempt['allowed_time_limit_mins'] if attempt else None
+        allowed_time_limit_mins = attempt.get('allowed_time_limit_mins', None) if attempt else None
 
         if not allowed_time_limit_mins:
-            # no existing attempt, so compute the user's allowed
+            # no existing attempt or user has not started exam yet, so compute the user's allowed
             # time limit, including any accommodations
-
-            allowed_time_limit_mins = exam['time_limit_mins']
-            allowance_extra_mins = ProctoredExamStudentAllowance.get_additional_time_granted(exam_id, user_id)
-
-            if allowance_extra_mins:
-                allowed_time_limit_mins += int(allowance_extra_mins)
-
-            # apply any cut off times according to due dates
-            allowed_time_limit_mins, _ = _calculate_allowed_mins(
-                exam['due_date'],
-                allowed_time_limit_mins
-            )
+            allowed_time_limit_mins = _calculate_allowed_mins(exam, user_id)
 
         total_time = humanized_time(allowed_time_limit_mins)
 
@@ -1651,25 +1626,26 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         return template.render(context)
 
 
-def _calculate_allowed_mins(due_datetime, allowed_mins):
+def _calculate_allowed_mins(exam, user_id):
     """
-    Returns the allowed minutes w.r.t due date and has due date pass
+    Returns the allowed minutes w.r.t due date
     """
+    due_datetime = exam['due_date']
+    allowed_time_limit_mins = exam['time_limit_mins']
 
-    current_datetime = datetime.now(pytz.UTC)
-    is_exam_past_due_date = False
-    actual_allowed_mins = allowed_mins
+    # add in the allowed additional time
+    allowance_extra_mins = ProctoredExamStudentAllowance.get_additional_time_granted(exam.get('id'), user_id)
+    if allowance_extra_mins:
+        allowed_time_limit_mins += allowance_extra_mins
 
     if due_datetime:
-        if has_due_date_passed(due_datetime):
-            is_exam_past_due_date = True
-        elif current_datetime + timedelta(minutes=allowed_mins) > due_datetime:
-
+        current_datetime = datetime.now(pytz.UTC)
+        if current_datetime + timedelta(minutes=allowed_time_limit_mins) > due_datetime:
             # e.g current_datetime=09:00, due_datetime=10:00 and allowed_mins=120(2hours)
             # then allowed_mins should be 60(1hour)
+            allowed_time_limit_mins = int((due_datetime - current_datetime).total_seconds() / 60)
 
-            actual_allowed_mins = int((due_datetime - current_datetime).total_seconds() / 60)
-    return actual_allowed_mins, is_exam_past_due_date
+    return allowed_time_limit_mins
 
 
 def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False):

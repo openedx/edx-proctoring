@@ -282,7 +282,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         # create number of exam attempts
         for i in range(90):
             ProctoredExamStudentAttempt.create_exam_attempt(
-                proctored_exam.id, i, 'test_name{0}'.format(i), i + 1,
+                proctored_exam.id, i, 'test_name{0}'.format(i),
                 'test_attempt_code{0}'.format(i), True, False, 'test_external_id{0}'.format(i)
             )
 
@@ -314,7 +314,6 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
             proctored_exam.id,
             self.user.id,
             'test_name{0}'.format(self.user.id),
-            self.user.id + 1,
             'test_attempt_code{0}'.format(self.user.id),
             True,
             False,

@@ -446,25 +446,26 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         remove_allowance_for_user(student_allowance.proctored_exam.id, self.user_id, self.key)
         self.assertEqual(len(ProctoredExamStudentAllowance.objects.filter()), 0)
 
-    def test_create_exam_attempt_with_due_datetime(self):
+    def test_exam_attempt_with_due_datetime(self):
         """
-        Create the exam attempt with due date
+        Test the exam attempt with due date
         """
 
         due_date = datetime.now(pytz.UTC) + timedelta(days=1)
 
         # exam is created with due datetime > current_datetime and due_datetime < current_datetime + allowed_mins
         exam_id = self._create_exam_with_due_time(due_date=due_date)
+        attempt_id = create_exam_attempt(exam_id, self.user_id)
 
         # due_date is exactly after 24 hours, our exam's allowed minutes are 21
         # student will get full allowed minutes if student will start exam within next 23 hours and 39 minutes
         # otherwise allowed minutes = due_datetime - exam_attempt_datetime
-        # so if students arrives after 23 hours and 45 minutes later then he will get only 15 minutes
-
+        # so if students starts exam after 23 hours and 45 minutes later then he will get only 15 minutes
         minutes_before_past_due_date = 15
         reset_time = due_date - timedelta(minutes=minutes_before_past_due_date)
+
         with freeze_time(reset_time):
-            attempt_id = create_exam_attempt(exam_id, self.user_id)
+            __ = start_exam_attempt(exam_id, self.user_id)
             attempt = get_exam_attempt_by_id(attempt_id)
             self.assertLessEqual(minutes_before_past_due_date - 1, attempt['allowed_time_limit_mins'])
             self.assertLessEqual(attempt['allowed_time_limit_mins'], minutes_before_past_due_date)
@@ -506,6 +507,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             str(allowed_extra_time)
         )
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
+        start_exam_attempt(self.proctored_exam_id, self.user_id)
         self.assertGreater(attempt_id, 0)
 
         attempt = get_exam_attempt_by_id(attempt_id)
