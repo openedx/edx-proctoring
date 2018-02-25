@@ -171,7 +171,7 @@ msgstr "Ek Zaman (dakika)"
 
 #: models.py:701
 msgid "Review Policy Exception"
-msgstr ""
+msgstr "İnceleme Politikası İstisnası"
 
 #: templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
@@ -272,7 +272,7 @@ msgstr ""
 
 #: templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
-msgstr ""
+msgstr "Bu alıştırma sınavını aynı zamanda deneyebilirsiniz de"
 
 #: templates/proctored_exam/confirm-decline.html:5
 msgid ""
@@ -287,6 +287,9 @@ msgid ""
 "        If you take this exam without proctoring, you will <strong> no longer be eligible for academic credit. </strong>\n"
 "      "
 msgstr ""
+"\n"
+"        Bu sınavı gözetmensiz olarak almanız durumunda, <strong> akademik krediye hak kazanamayacaksınız.</strong>\n"
+"      "
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
@@ -373,6 +376,9 @@ msgid ""
 "      The due date for this exam has passed\n"
 "    "
 msgstr ""
+"\n"
+"      Bu sınav için teslim tarihi geçti\n"
+"    "
 
 #: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
@@ -395,6 +401,9 @@ msgid ""
 "    You did not satisfy the following prerequisites:\n"
 "    "
 msgstr ""
+"\n"
+"    Aşağıdki ön gereklilikleri karşılamıyorsunuz:\n"
+"    "
 
 #: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
@@ -402,6 +411,9 @@ msgid ""
 "        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
 "      "
 msgstr ""
+"\n"
+"        Karşılanmayan ön gerekliler yüzünden, bu sınavı sadece gözetmensiz olarak alabilirsiniz.\n"
+"      "
 
 #: templates/proctored_exam/failed-prerequisites.html:40
 #, python-format
@@ -466,6 +478,10 @@ msgid ""
 "                    before you can start the proctored exam.\n"
 "                "
 msgstr ""
+"\n"
+"                    Doğrulamanız geçerliliğini kaybetti. Gözetmenli sınava başlamadan önce\n"
+"                    yeni bir kimlik doğrulaması yapmalısınız.\n"
+"                "
 
 #: templates/proctored_exam/id_verification.html:44
 #: templates/proctored_exam/id_verification.html:56
@@ -618,6 +634,9 @@ msgid ""
 "        I am not interested in academic credit.\n"
 "      "
 msgstr ""
+"\n"
+"       Akademik krediyle ilgilenmiyorum.\n"
+"      "
 
 #: templates/proctored_exam/ready_to_start.html:5
 msgid ""
