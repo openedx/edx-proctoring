@@ -35,6 +35,7 @@ from edx_proctoring.api import (
     _calculate_allowed_mins
 )
 
+from edx_proctoring.serializers import ProctoredExamSerializer
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
@@ -700,7 +701,11 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             time_limit_mins=1800,
             due_date=datetime.now(pytz.UTC) + timedelta(minutes=expected_total_minutes),
         )
-        total_minutes, __ = _calculate_allowed_mins(proctored_exam.due_date, proctored_exam.time_limit_mins)
+        # _calculate_allowed_mins expects serialized object
+        serialized_exam_object = ProctoredExamSerializer(proctored_exam)
+        serialized_exam_object = serialized_exam_object.data
+
+        total_minutes = _calculate_allowed_mins(serialized_exam_object, self.user.id)
 
         # Check that timer has > 24 hours
         self.assertGreater(total_minutes / 60, 24)
@@ -722,7 +727,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             time_limit_mins=90
         )
         attempt = ProctoredExamStudentAttempt.create_exam_attempt(
-            proctored_exam.id, self.user.id, 'test_user', 1,
+            proctored_exam.id, self.user.id, 'test_user',
             'test_attempt_code', True, False, 'test_external_id'
         )
         attempt.status = ProctoredExamStudentAttemptStatus.ready_to_start
@@ -1379,7 +1384,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # create number of exam attempts
         for i in range(90):
             ProctoredExamStudentAttempt.create_exam_attempt(
-                proctored_exam.id, i, 'test_name{0}'.format(i), i + 1,
+                proctored_exam.id, i, 'test_name{0}'.format(i),
                 'test_attempt_code{0}'.format(i), True, False, 'test_external_id{0}'.format(i)
             )
 

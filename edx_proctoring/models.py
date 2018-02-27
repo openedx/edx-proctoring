@@ -463,7 +463,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     external_id = models.CharField(max_length=255, null=True, db_index=True)
 
     # this is the time limit allowed to the student
-    allowed_time_limit_mins = models.IntegerField()
+    allowed_time_limit_mins = models.IntegerField(null=True)
 
     # what is the status of this attempt
     status = models.CharField(max_length=64)
@@ -494,19 +494,17 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         unique_together = (('user', 'proctored_exam'),)
 
     @classmethod
-    def create_exam_attempt(cls, exam_id, user_id, student_name, allowed_time_limit_mins,
-                            attempt_code, taking_as_proctored, is_sample_attempt, external_id,
+    def create_exam_attempt(cls, exam_id, user_id, student_name, attempt_code,
+                            taking_as_proctored, is_sample_attempt, external_id,
                             review_policy_id=None):
         """
         Create a new exam attempt entry for a given exam_id and
         user_id.
         """
-
         return cls.objects.create(
             proctored_exam_id=exam_id,
             user_id=user_id,
             student_name=student_name,
-            allowed_time_limit_mins=allowed_time_limit_mins,
             attempt_code=attempt_code,
             taking_as_proctored=taking_as_proctored,
             is_sample_attempt=is_sample_attempt,
@@ -547,7 +545,7 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     external_id = models.CharField(max_length=255, null=True, db_index=True)
 
     # this is the time limit allowed to the student
-    allowed_time_limit_mins = models.IntegerField()
+    allowed_time_limit_mins = models.IntegerField(null=True)
 
     # what is the status of this attempt
     status = models.CharField(max_length=64)
