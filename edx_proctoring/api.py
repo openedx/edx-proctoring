@@ -1648,12 +1648,16 @@ def _calculate_allowed_mins(exam, user_id):
     return allowed_time_limit_mins
 
 
-def _get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=False):
+def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=False):
     """
     Common context variables for the Proctored and Practice exams' templates.
     """
     has_due_date = True if exam['due_date'] is not None else False
-    attempt_time = attempt['allowed_time_limit_mins'] if attempt else exam['time_limit_mins']
+    attempt_time = attempt.get('allowed_time_limit_mins', None) if attempt else None
+
+    if not attempt_time:
+        attempt_time = _calculate_allowed_mins(exam, user_id)
+
     total_time = humanized_time(attempt_time)
     progress_page_url = ''
     try:
@@ -1723,7 +1727,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
 
     if student_view_template:
         template = loader.get_template(student_view_template)
-        context.update(_get_proctored_exam_context(exam, attempt, course_id, is_practice_exam=True))
+        context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=True))
         return template.render(context)
 
 
@@ -1866,7 +1870,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
 
     if student_view_template:
         template = loader.get_template(student_view_template)
-        context.update(_get_proctored_exam_context(exam, attempt, course_id))
+        context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id))
         return template.render(context)
 
 
