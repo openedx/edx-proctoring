@@ -69,6 +69,7 @@ test-js:
 test-all: ## run tests on every supported Python/Django combination
 	tox -e quality
 	tox
+	cd edx_proctoring && i18n_tool validate
 
 diff_cover: test
 	diff-cover coverage.xml
