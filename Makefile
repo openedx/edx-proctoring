@@ -91,9 +91,12 @@ pull_translations: ## pull translations from Transifex
 push_translations: ## push source translation files (.po) from Transifex
 	tx push -s
 
+validate_translations: ## Test translation files
+	cd edx_proctoring && i18n_tool validate -v
+
 dummy_translations: ## generate dummy translation (.po) files
 	cd edx_proctoring && i18n_tool dummy
 
 build_dummy_translations: extract_translations dummy_translations compile_translations ## generate and compile dummy translation files
 
-validate_translations: build_dummy_translations detect_changed_source_translations ## validate translations
+check_translations_up_to_date: build_dummy_translations detect_changed_source_translations ## validate translations
