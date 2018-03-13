@@ -1,13 +1,22 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
 # 
-#, fuzzy
+# Translators:
+# Hakan Şenel <hgsenel@gmail.com>, 2016
+# iron_man <inactive+iron_man@transifex.com>, 2016
+# İlker IŞIK <m.ilkerisik@hotmail.com>, 2016
+# Muha Aliss <muhaaliss@gmail.com>, 2016
+# Burak Özalp <realburq@gmail.com>, 2016
+# baris <brscvs@gmail.com>, 2016
+# ali selek <aliselek01@gmail.com>, 2016
+# Ali Işıngör <ali@artistanbul.io>, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ali Işıngör <ali@artistanbul.io>, 2017\n"
