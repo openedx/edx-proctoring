@@ -1,15 +1,23 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
 # 
-#, fuzzy
+# Translators:
+# samdon <chdono@netravisi.com>, 2016
+# Rizky Ariestiyansyah <ariestiyansyah.rizky@gmail.com>, 2016
+# Mardiyanto Saahi <mardiyanto.z.saahi@gmail.com>, 2016
+# hafizhuddin amin, 2016
+# Al Firdaus, 2016
+# Ahmad Sofyan <asofyan@niskala.net>, 2016
+# Sari Rahmawati <kusuma.rahmawati@gmail.com>, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2018-03-14 17:16-0500\n"
 "Last-Translator: Sari Rahmawati <kusuma.rahmawati@gmail.com>, 2018\n"
 "Language-Team: Indonesian (https://www.transifex.com/open-edx/teams/6205/id/)\n"
 "MIME-Version: 1.0\n"
@@ -20,11 +28,11 @@ msgstr ""
 
 #: admin.py:88
 msgid "internally reviewed"
-msgstr ""
+msgstr "Telah diulas secara internal"
 
 #: admin.py:97
 msgid "All Unreviewed"
-msgstr ""
+msgstr "Semua yang belum diulas"
 
 #: admin.py:98
 msgid "All Unreviewed Failures"
@@ -32,43 +40,43 @@ msgstr ""
 
 #: admin.py:119
 msgid "active proctored exams"
-msgstr ""
+msgstr "Ujian proktor aktif"
 
 #: admin.py:177
 msgid "courses with active proctored exams"
-msgstr ""
+msgstr "Pelatihan dengan ujian proktor aktif"
 
 #: admin.py:342
 msgid "Course Id"
-msgstr ""
+msgstr "Id pelatihan"
 
 #: admin.py:380
 msgid "Created"
-msgstr ""
+msgstr "Telah dibuat"
 
 #: admin.py:381
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "Unduh software yang telah dipilih"
 
 #: admin.py:382
 msgid "Ready To Start"
-msgstr ""
+msgstr "Siap memulai"
 
 #: admin.py:383
 msgid "Started"
-msgstr ""
+msgstr "Dimulai"
 
 #: admin.py:384
 msgid "Ready To Submit"
-msgstr ""
+msgstr "Siap untuk mengirimkan"
 
 #: admin.py:385
 msgid "Declined"
-msgstr ""
+msgstr "Ditolak"
 
 #: admin.py:386
 msgid "Timed Out"
-msgstr ""
+msgstr "Waktu habis"
 
 #: admin.py:387
 msgid "Submitted"
@@ -76,7 +84,7 @@ msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
-msgstr ""
+msgstr "Diperlukan ulasan kedua"
 
 #: admin.py:389
 msgid "Verified"
@@ -92,12 +100,12 @@ msgstr ""
 
 #: api.py:902
 msgid "your course"
-msgstr ""
+msgstr "Pelatihan anda"
 
 #: api.py:962
 #, python-brace-format
 msgid "Proctoring Session Results Update for {course_name} {exam_name}"
-msgstr ""
+msgstr "Pembaruan hasil sesi proktoring {pelatihan_nama} {ujian_nama}"
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
@@ -105,39 +113,39 @@ msgstr ""
 
 #: api.py:1289
 msgid "Proctored Option Available"
-msgstr ""
+msgstr "Pilihan proktor tersedia"
 
 #: api.py:1294
 msgid "Taking As Open Exam"
-msgstr ""
+msgstr "Mengambil ujian terbuka"
 
 #: api.py:1299 api.py:1304
 msgid "Pending Session Review"
-msgstr ""
+msgstr "Ulasan sesi yang tertunda"
 
 #: api.py:1309
 msgid "Passed Proctoring"
-msgstr ""
+msgstr "Lulus proses proktoring"
 
 #: api.py:1314 api.py:1319
 msgid "Failed Proctoring"
-msgstr ""
+msgstr "Gagal dalam proses proktoring"
 
 #: api.py:1324
 msgid "Proctored Option No Longer Available"
-msgstr ""
+msgstr "Pilihan proktor tidak tersedia lagi"
 
 #: api.py:1333
 msgid "Ungraded Practice Exam"
-msgstr ""
+msgstr "Ujian sesi latihan yang tidak masuk dalam penilaian"
 
 #: api.py:1338
 msgid "Practice Exam Completed"
-msgstr ""
+msgstr "Sesi Latihan telah diselesaikan"
 
 #: api.py:1343
 msgid "Practice Exam Failed"
-msgstr ""
+msgstr "Gagal dalam ujian sesi latihan"
 
 #: api.py:1351
 msgid "Timed Exam"
@@ -149,11 +157,11 @@ msgstr ""
 
 #: models.py:182
 msgid "satisfactory"
-msgstr ""
+msgstr "Memuaskan"
 
 #: models.py:183
 msgid "unsatisfactory"
-msgstr ""
+msgstr "Tidak memuaskan"
 
 #: models.py:481
 msgid "Taking as Proctored"
@@ -169,7 +177,7 @@ msgstr ""
 
 #: models.py:701
 msgid "Review Policy Exception"
-msgstr ""
+msgstr "Tinjau kebijakan pengecualian"
 
 #: templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
@@ -199,7 +207,7 @@ msgstr ""
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
-msgstr ""
+msgstr "Lanjut ke ujian sesi latihan"
 
 #: templates/practice_exam/entrance.html:18
 msgid ""
@@ -734,11 +742,13 @@ msgstr ""
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr ""
+msgstr "Ujian ini memiliki batas waktu yang berkaitan dengan hal ini."
 
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
 msgstr ""
+"Untuk lulus ujian, Anda harus menyelesaikan masalah dalam waktu yang telah "
+"ditentukan."
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
@@ -789,6 +799,8 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
+"\n"
+"Setelah Anda mengirimkan jawaban ujian,  jawaban Anda akan dinilai."
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -803,6 +815,8 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
+"\n"
+"Tidak, saya ingin lanjut bekerja."
 
 #: templates/timed_exam/submitted.html:6
 msgid ""
@@ -856,29 +870,29 @@ msgstr ""
 #: utils.py:92
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr ""
+msgstr "{num_of_minutes} menit"
 
 #: utils.py:95
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr ""
+msgstr "dan {num_of_minutes} menit"
 
 #: views.py:92
 msgid "could not determine the course_id"
-msgstr ""
+msgstr "tidak dapat menentukan course_id"
 
 #: views.py:102
 msgid "Must be a Staff User to Perform this request."
-msgstr ""
+msgstr "Harus menjadi Staf untuk melakukan permintaan ini."
 
 #: views.py:334 views.py:546
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
-msgstr ""
+msgstr "Anda memiliki {remaining_time} tersisa"
 
 #: views.py:340
 msgid "you have less than a minute remaining"
-msgstr ""
+msgstr "Anda hanya memiliki sisa waktu kurang dari satu menit."
 
 #: views.py:536
 msgid "timed"
@@ -886,8 +900,8 @@ msgstr ""
 
 #: views.py:537
 msgid "practice"
-msgstr ""
+msgstr "Latihan"
 
 #: views.py:537
 msgid "proctored"
-msgstr ""
+msgstr "Proktor"
