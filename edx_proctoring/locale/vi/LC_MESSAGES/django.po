@@ -1,15 +1,23 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
 # 
-#, fuzzy
+# Translators:
+# NGUYEN HOANG AN <neyugn2909@gmail.com>, 2016
+# Trung V. Nguyen <trung.ngvan@gmail.com>, 2016
+# Theodora. Tôn Nữ Quý Thiện <thien.tonnu1001@gmail.com>, 2016
+# Hung The Hung <hoangthehung92@gmail.com>, 2016
+# Ha Ngoc Chung <ngocchung75@gmail.com>, 2016
+# Anh Phan <vietnamesel10n@gmail.com>, 2016
+# Hoà Lê Thanh <hoa.lethanh@gmail.com>, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2018-03-14 17:16-0500\n"
 "Last-Translator: Hoà Lê Thanh <hoa.lethanh@gmail.com>, 2017\n"
 "Language-Team: Vietnamese (https://www.transifex.com/open-edx/teams/6205/vi/)\n"
 "MIME-Version: 1.0\n"
