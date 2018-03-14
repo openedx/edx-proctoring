@@ -89,7 +89,7 @@ pull_translations: ## pull translations from Transifex
 	tx pull -af --mode reviewed
 
 push_translations: ## push source translation files (.po) from Transifex
-	tx push -s
+	cd edx_proctoring && i18n_tool transifex push
 
 dummy_translations: ## generate dummy translation (.po) files
 	cd edx_proctoring && i18n_tool dummy
