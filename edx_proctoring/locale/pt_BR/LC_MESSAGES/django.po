@@ -1,15 +1,30 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
 # 
-#, fuzzy
+# Translators:
+# Renata Barboza, 2016
+# Monica Farias <monifar.tp@gmail.com>, 2016
+# Allan Melo, 2016
+# Gisele Spolador Lopes <giiisa2@gmail.com>, 2016
+# Ana Paula D'Almeida <paulladalmeida@gmail.com>, 2016
+# Fernando Nunes <fernubr@gmail.com>, 2016
+# Leonardo Lehnemann <lehneman@gmail.com>, 2016
+# Ricardo Pietrobon <pietr007@gmail.com>, 2016
+# William Bellinazo Roca <williambr_1331@hotmail.com>, 2016
+# Mariana Jó de Souza <mariana.jsouza@gmail.com>, 2016
+# Anderson Franca <anderson.frca@gmail.com>, 2017
+# Abrantes Araújo Silva Filho <abrantesasf@gmail.com>, 2017
+# Matheus Gomes Correia, 2017
+# Paulo Romano <pauloromanocarvalho@gmail.com>, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2018-03-14 17:16-0500\n"
 "Last-Translator: Paulo Romano <pauloromanocarvalho@gmail.com>, 2017\n"
 "Language-Team: Portuguese (Brazil) (https://www.transifex.com/open-edx/teams/6205/pt_BR/)\n"
 "MIME-Version: 1.0\n"
