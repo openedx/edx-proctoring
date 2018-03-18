@@ -1,15 +1,24 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
 # 
-#, fuzzy
+# Translators:
+# LILLITH, 2016
+# David Asquino <inactive+davidas@transifex.com>, 2016
+# Pietro Lombardo <pietrolombardo1979@gmail.com>, 2016
+# Nicola Moretto <nicolamoretto88@gmail.com>, 2016
+# danicabliznakinja <dmbliznakinje@yahoo.co.uk>, 2016
+# Giulio Gratta, 2016
+# Tiziana Longeri <tiziana.longeri@polimi.it>, 2016
+# gianmarco <gianmarco.bonavolonta@tlc.uniroma3.it>, 2016
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2018-03-14 17:16-0500\n"
 "Last-Translator: gianmarco <gianmarco.bonavolonta@tlc.uniroma3.it>, 2016\n"
 "Language-Team: Italian (Italy) (https://www.transifex.com/open-edx/teams/6205/it_IT/)\n"
 "MIME-Version: 1.0\n"

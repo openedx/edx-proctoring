@@ -1,15 +1,23 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
 # 
-#, fuzzy
+# Translators:
+# samdon <chdono@netravisi.com>, 2016
+# Rizky Ariestiyansyah <ariestiyansyah.rizky@gmail.com>, 2016
+# Al Firdaus, 2016
+# hafizhuddin amin, 2016
+# Mardiyanto Saahi <mardiyanto.z.saahi@gmail.com>, 2016
+# Ahmad Sofyan <asofyan@niskala.net>, 2016
+# Sari Rahmawati <kusuma.rahmawati@gmail.com>, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2018-03-14 17:16-0500\n"
 "Last-Translator: Sari Rahmawati <kusuma.rahmawati@gmail.com>, 2018\n"
 "Language-Team: Indonesian (https://www.transifex.com/open-edx/teams/6205/id/)\n"
 "MIME-Version: 1.0\n"
