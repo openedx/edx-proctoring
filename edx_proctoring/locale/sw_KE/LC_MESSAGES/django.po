@@ -1,15 +1,22 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
 # 
-#, fuzzy
+# Translators:
+# swaleh amin <mkupuofirstnameswaleh@yahoo.com>, 2016
+# Isihaka Issa <translations_8@camara.ie>, 2016
+# YAHAYA MWAVURIZI <translations_1@camara.ie>, 2016
+# Masoud Mohamed Ali <masoudali@camara.org>, 2016
+# Anasikia Issa <anasikiaissa@camara.ie>, 2016
+# ramadhani mwaimu <ramadhanimwaimu@camara.ie>, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2018-03-14 17:16-0500\n"
 "Last-Translator: ramadhani mwaimu <ramadhanimwaimu@camara.ie>, 2017\n"
 "Language-Team: Swahili (Kenya) (https://www.transifex.com/open-edx/teams/6205/sw_KE/)\n"
 "MIME-Version: 1.0\n"
@@ -219,9 +226,6 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
 "      "
 msgstr ""
-"\n"
-"       Utaelekezwa hatua kwa hatua kuweka programu ya usimamizi wa mtihani mtandaoni na kufanya ukaguzi wa hatua mbalimbali.\n"
-"      "
 
 #: templates/practice_exam/error.html:4
 msgid ""
@@ -345,9 +349,6 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
 "      "
 msgstr ""
-"\n"
-"       Utaelekezwa kwa hatua kuweka programu ya usimamizi wa mtihani mtandaoni na kufanya ukaguzi wa hatua mbalimbali.\n"
-"      "
 
 #: templates/proctored_exam/error.html:4
 msgid ""

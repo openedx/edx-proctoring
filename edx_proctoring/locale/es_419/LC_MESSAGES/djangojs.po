@@ -1,15 +1,22 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
 # 
-#, fuzzy
+# Translators:
+# Antonio Pardo <apardo@alabs.org>, 2016
+# Nicolas CS <nicolascs23@gmail.com>, 2016
+# Juan Camilo Montoya Franco <juan.montoya@edunext.co>, 2016
+# Ernesto Franz Achá Mamani <fachaa2@hotmail.com>, 2016
+# Ned Weitzman <nweitzman@edx.org>, 2016
+# Albeiro Gonzalez <albeiro.gonzalez@edunext.co>, 2016
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2018-03-14 17:16-0500\n"
 "Last-Translator: Albeiro Gonzalez <albeiro.gonzalez@edunext.co>, 2016\n"
 "Language-Team: Spanish (Latin America) (https://www.transifex.com/open-edx/teams/6205/es_419/)\n"
 "MIME-Version: 1.0\n"
@@ -220,8 +227,6 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
 "      "
 msgstr ""
-"\n"
-"Será guiado en los pasos para establecer el programa de revisión online y como hacer varias verificaciones."
 
 #: templates/practice_exam/error.html:4
 msgid ""
@@ -336,8 +341,6 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
 "      "
 msgstr ""
-"\n"
-"Será guiado en los pasos para establecer el programa de revisión online y como hacer varias verificaciones."
 
 #: templates/proctored_exam/error.html:4
 msgid ""
