@@ -477,6 +477,13 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
         self.assertGreater(attempt_id, 0)
 
+    def test_create_an_exam_attempt_w(self):
+        """
+        Create an unstarted exam attempt.
+        """
+        attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
+        self.assertGreater(attempt_id, 0)
+
     def test_attempt_with_review_policy(self):
         """
         Create an unstarted exam attempt with a review policy associated with it.
