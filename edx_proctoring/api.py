@@ -571,15 +571,19 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             )
         )
 
-        # get the name of the user, if the service is available
+        # get the name of the user, if credit service and course is a credit course.
         full_name = None
         email = None
 
         credit_service = get_runtime_service('credit')
         if credit_service:
-            credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
-            full_name = credit_state['profile_fullname']
-            email = credit_state['student_email']
+            # Credit state will be None if user not found or is not enrolled or is
+            # not a credit course.
+            is_credit_course = credit_service.is_credit_course(exam['course_id'])
+            if is_credit_course:
+                credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
+                full_name = credit_state['profile_fullname']
+                email = credit_state['student_email']
 
         context = {
             'time_limit_mins': allowed_time_limit_mins,
