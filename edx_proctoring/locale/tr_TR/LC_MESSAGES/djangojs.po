@@ -29,15 +29,15 @@ msgstr ""
 
 #: admin.py:88
 msgid "internally reviewed"
-msgstr ""
+msgstr "dahili olarak gözden geçirildi"
 
 #: admin.py:97
 msgid "All Unreviewed"
-msgstr ""
+msgstr "Tüm İncelenmeyenler"
 
 #: admin.py:98
 msgid "All Unreviewed Failures"
-msgstr ""
+msgstr "Tüm İncelenmemiş Hatalar"
 
 #: admin.py:119
 msgid "active proctored exams"
@@ -124,7 +124,7 @@ msgstr "Açık Sınav Olarak Alınıyor"
 
 #: api.py:1299 api.py:1304
 msgid "Pending Session Review"
-msgstr ""
+msgstr "Bekleyen Oturum İncelemesi"
 
 #: api.py:1309
 msgid "Passed Proctoring"
@@ -172,7 +172,7 @@ msgstr "Gözetmenli Olarak Alınıyor"
 
 #: models.py:485
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "Bir Örnek Denemedir"
 
 #: models.py:700
 msgid "Additional Time (minutes)"
@@ -278,6 +278,10 @@ msgid ""
 "      You have completed this practice exam and can continue with your course work.\n"
 "    "
 msgstr ""
+"\n"
+"      Alıştırma sınavları ders notunuzu ya da kredilerinizi etkilemez.\n"
+"      Bu alıştırma sınavını tamamladınız ve dersinize kaldığınız yerden devam edebilirsiniz.\n"
+"    "
 
 #: templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
@@ -289,6 +293,9 @@ msgid ""
 "        Are you sure you want to take this exam without proctoring?\n"
 "      "
 msgstr ""
+"\n"
+"        Bu sınavı gözetmensiz olarak almak istediğinize emin misiniz?\n"
+"      "
 
 #: templates/proctored_exam/confirm-decline.html:10
 msgid ""
@@ -475,6 +482,11 @@ msgid ""
 "                    then try again.\n"
 "                "
 msgstr ""
+"\n"
+"                    Doğrulama denemeniz başarısız oldu. Lütfen başarılı bir doğrulama işlemi için\n"
+"                    yerine getirilmesi gerekenleri doğrulamak için kılavuz metinlerimizi yeniden okuyun,\n"
+"                    ve ardından tekrar deneyin.\n"
+"                "
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
@@ -511,6 +523,9 @@ msgid ""
 "      Follow these steps to set up and start your proctored exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Gözetmenli sınavınızı ayarlamak ve başlatmak için aşağıdaki adımları takip edin.\n"
+"    "
 
 #: templates/proctored_exam/instructions.html:11
 msgid ""
@@ -518,6 +533,9 @@ msgid ""
 "        1. Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
 "      "
 msgstr ""
+"\n"
+"        1. Bu eşsiz sınav kodunu kopyalayın. Sınava başlarken bu kodu girmenizi isteyen bir uyarı göreceksiniz.\n"
+"      "
 
 #: templates/proctored_exam/instructions.html:19
 msgid ""
@@ -525,6 +543,9 @@ msgid ""
 "        Select the exam code, then copy it using Command+C (Mac) or Control+C (Windows).\n"
 "      "
 msgstr ""
+"\n"
+"        Sınav kodunu seçin, ardından Command+C (Mac) veya Control+C (Windows) ile kopyalayın.\n"
+"      "
 
 #: templates/proctored_exam/instructions.html:24
 msgid ""
@@ -532,6 +553,9 @@ msgid ""
 "        2. Follow the link below to set up proctoring.\n"
 "      "
 msgstr ""
+"\n"
+"        2. Gözetmenli sınavı ayarlamak için aşağıdaki bağlantıyı kopyalayın.\n"
+"      "
 
 #: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
@@ -731,6 +755,9 @@ msgid ""
 "      Your proctoring session was reviewed and did not pass requirements\n"
 "    "
 msgstr ""
+"\n"
+"      Gözetmenli oturumunuz incelendi ve gereklilikleri yerine getirmediğiniz için geçemediniz\n"
+"    "
 
 #: templates/proctored_exam/rejected.html:10
 #, python-format
@@ -780,6 +807,9 @@ msgid ""
 "      Your proctoring session was reviewed and passed all requirements\n"
 "    "
 msgstr ""
+"\n"
+"      Gözetmenli oturumunuz incelendi ve tüm gereklilikleri yerine getirdiniz\n"
+"    "
 
 #: templates/proctored_exam/verified.html:10
 msgid ""
