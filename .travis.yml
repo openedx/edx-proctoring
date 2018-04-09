@@ -14,6 +14,7 @@ install:
 before_script:
 - npm install -g gulp-cli
 script:
+- make validate_translations
 - make test-all
 - make test-js
 after_success:
