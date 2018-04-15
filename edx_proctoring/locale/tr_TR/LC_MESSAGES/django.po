@@ -256,6 +256,10 @@ msgid ""
 "      You can retry this practice exam if you had problems setting up the online proctoring software.\n"
 "    "
 msgstr ""
+"\n"
+"      Alıştırma sınavını tamamlamanızdan önce gözetmenli oturumunuz sona erdi.\n"
+"      Çevrimiçi gözetmen yazılımının kurulumunda bir sorun yaşadıysanız bu alıştırma sınavını tekrar deneyebilirsiniz.\n"
+"    "
 
 #: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
@@ -856,7 +860,7 @@ msgstr ""
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
-msgstr ""
+msgstr "Seçtikten sonra"
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
@@ -864,11 +868,11 @@ msgstr "Süre sınırlı bu sınava başlamaya hazırım,"
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr ""
+msgstr "sınavı tamamlamak"
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
-msgstr ""
+msgstr "ve göndermek zorundasınız."
 
 #: templates/timed_exam/entrance.html:21
 msgid ""
