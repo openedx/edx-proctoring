@@ -99,8 +99,7 @@ class ProctoredExam(TimeStampedModel):
         return proctored_exam
 
     @classmethod
-    def get_all_exams_for_course(cls, course_id, active_only=False, timed_exams_only=False,
-                                 proctored_exams_only=False):
+    def get_all_exams_for_course(cls, course_id, active_only=False, proctored_exams_only=False):
         """
         Returns all exams for a give course
         """
@@ -108,8 +107,6 @@ class ProctoredExam(TimeStampedModel):
 
         if active_only:
             filtered_query = filtered_query & Q(is_active=True)
-        if timed_exams_only:
-            filtered_query = filtered_query & Q(is_proctored=False)
         if proctored_exams_only:
             filtered_query = filtered_query & Q(is_proctored=True) & Q(is_practice_exam=False)
 
