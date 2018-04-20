@@ -193,7 +193,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(proctored_exam['content_id'], self.content_id)
         self.assertEqual(proctored_exam['exam_name'], self.exam_name)
 
-        exams = get_all_exams_for_course(self.course_id, False)
+        exams = get_all_exams_for_course(self.course_id)
         self.assertEqual(len(exams), 4)
 
     def test_create_exam_review_policy(self):
@@ -365,8 +365,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(timed_exam['content_id'], self.content_id_timed)
         self.assertEqual(timed_exam['exam_name'], self.exam_name)
 
-        exams = get_all_exams_for_course(self.course_id, True)
-        self.assertEqual(len(exams), 2)
+        exams = get_all_exams_for_course(self.course_id)
+        self.assertEqual(len(exams), 4)
 
     def test_get_invalid_proctored_exam(self):
         """

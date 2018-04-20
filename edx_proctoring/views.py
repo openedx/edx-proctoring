@@ -256,10 +256,8 @@ class ProctoredExamView(AuthenticatedAPIView):
                             data={"detail": "The exam with course_id, content_id does not exist."}
                         )
                 else:
-                    timed_exams_only = not request.user.is_staff
                     result_set = get_all_exams_for_course(
                         course_id=course_id,
-                        timed_exams_only=timed_exams_only,
                         active_only=True
                     )
                     return Response(result_set)
