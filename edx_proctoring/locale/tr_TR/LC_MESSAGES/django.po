@@ -477,6 +477,10 @@ msgid ""
 "                    submit your verification.\n"
 "                "
 msgstr ""
+"\n"
+"                    Doğrulamanız beklemede. Doğrulamanızı gönderdikten 2-3 gün sonra\n"
+"                    sonuçlar açıklanacaktır.\n"
+"                "
 
 #: templates/proctored_exam/id_verification.html:24
 msgid ""
@@ -840,6 +844,9 @@ msgid ""
 "      After the due date for this exam has passed, you will be able to review your answers on this page.\n"
 "    "
 msgstr ""
+"\n"
+"      Bu sınavın son tarihi geçtiğinde, cevaplarınızı bu sayfada tekrar inceleyebileceksiniz.\n"
+"    "
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -848,6 +855,9 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
+"\n"
+"    %(exam_name)s bir Süre Sınırlı Sınav'dır (%(total_time)s)\n"
+"    "
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
@@ -908,6 +918,9 @@ msgid ""
 "      Are you sure that you want to submit your timed exam?\n"
 "    "
 msgstr ""
+"\n"
+"      Süre sınırlı sınavınızı göndermek istediğinize emin misiniz?\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -915,6 +928,9 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
+"\n"
+"     Sınavınızı gönderdikten sonra, sınavınız notlandırılacak.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -1005,6 +1021,7 @@ msgstr ""
 #: views.py:102
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
+"Bu isteği karşılayabilmek için Personel Kullanıcısı olmanız gerekiyor."
 
 #: views.py:334 views.py:546
 #, python-brace-format
