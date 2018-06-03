@@ -820,6 +820,9 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"      Gözetmenli sınavınızın sonucuna dair sorularınız varsa, lütfen %(platform_name)s Destek Ekibi ile iletişime geçin.\n"
+"    "
 
 #: templates/proctored_exam/verified.html:4
 msgid ""
@@ -1003,6 +1006,9 @@ msgid ""
 "        After the due date has passed, you can review the exam, but you cannot change your answers.\n"
 "      "
 msgstr ""
+"\n"
+"      Bu sınavın son tarihi geçtiğinde, cevaplarınızı gözden geçirebilecek ama değiştiremeyeceksiniz.\n"
+"    "
 
 #: utils.py:76
 #, python-brace-format
