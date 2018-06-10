@@ -227,6 +227,8 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
 "      "
 msgstr ""
+"\n"
+"Será guiado en los pasos para establecer el programa de revisión online y como hacer varias verificaciones."
 
 #: templates/practice_exam/error.html:4
 msgid ""
@@ -341,6 +343,8 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
 "      "
 msgstr ""
+"\n"
+"Será guiado en los pasos para establecer el programa de revisión online y como hacer varias verificaciones."
 
 #: templates/proctored_exam/error.html:4
 msgid ""

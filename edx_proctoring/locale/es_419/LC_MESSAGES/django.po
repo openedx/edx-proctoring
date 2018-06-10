@@ -11,13 +11,14 @@
 # Ernesto Franz Achá Mamani <fachaa2@hotmail.com>, 2016
 # Ned Weitzman <nweitzman@edx.org>, 2016
 # Albeiro Gonzalez <albeiro.gonzalez@edunext.co>, 2016
+# Farhanah Sheets <fsheets@edx.org>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: 2018-03-14 17:16-0500\n"
-"Last-Translator: Albeiro Gonzalez <albeiro.gonzalez@edunext.co>, 2016\n"
+"Last-Translator: Farhanah Sheets <fsheets@edx.org>, 2016\n"
 "Language-Team: Spanish (Latin America) (https://www.transifex.com/open-edx/teams/6205/es_419/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -227,6 +228,9 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
 "      "
 msgstr ""
+"\n"
+"        Será guiado en los pasos para establecer el programa de revisión online y como hacer varias verificaciones.\n"
+"      "
 
 #: templates/practice_exam/error.html:4
 msgid ""
@@ -341,6 +345,9 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
 "      "
 msgstr ""
+"\n"
+"        Será guiado en los pasos para establecer el programa de revisión online y como hacer varias verificaciones.</br>\n"
+"      "
 
 #: templates/proctored_exam/error.html:4
 msgid ""
