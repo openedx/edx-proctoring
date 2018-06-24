@@ -10,6 +10,7 @@
 # Juan Camilo Montoya Franco <juan.montoya@edunext.co>, 2016
 # Ernesto Franz Achá Mamani <fachaa2@hotmail.com>, 2016
 # Ned Weitzman <nweitzman@edx.org>, 2016
+# Farhanah Sheets <fsheets@edx.org>, 2016
 # Albeiro Gonzalez <albeiro.gonzalez@edunext.co>, 2016
 msgid ""
 msgstr ""
@@ -227,6 +228,9 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
 "      "
 msgstr ""
+"\n"
+"        Será guiado en los pasos para establecer el programa de revisión online y como hacer varias verificaciones.\n"
+"      "
 
 #: templates/practice_exam/error.html:4
 msgid ""
@@ -341,6 +345,9 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.</br>\n"
 "      "
 msgstr ""
+"\n"
+"        Será guiado en los pasos para establecer el programa de revisión online y como hacer varias verificaciones.</br>\n"
+"      "
 
 #: templates/proctored_exam/error.html:4
 msgid ""
