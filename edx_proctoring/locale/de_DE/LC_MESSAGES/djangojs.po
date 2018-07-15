@@ -573,6 +573,9 @@ msgid ""
 "        1. Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
 "      "
 msgstr ""
+"\n"
+"        1. Kopieren Sie den Individuellen Prüfungs-Code. Sie werden aufgefordert, diesen Code später einzufügen, bevor Sie mit der Prüfung beginnen.\n"
+"      "
 
 #: templates/proctored_exam/instructions.html:19
 msgid ""
@@ -580,6 +583,9 @@ msgid ""
 "        Select the exam code, then copy it using Command+C (Mac) or Control+C (Windows).\n"
 "      "
 msgstr ""
+"\n"
+"        Wählen Sie einen Prüfungs-Code und kopieren Sie diesen mit Command+C(Mac) oder Control+C(Windows).\n"
+"      "
 
 #: templates/proctored_exam/instructions.html:24
 msgid ""
@@ -601,6 +607,9 @@ msgid ""
 "        A new window will open. You will run a system check before downloading the proctoring application.\n"
 "      "
 msgstr ""
+"\n"
+"        Ein neues Fenster wird sich öffnen. Es wird ein System Kontrolle durchlaufen, bevor die Beaufsichtigungs-Applikation heruntergeladen wird.\n"
+"      "
 
 #: templates/proctored_exam/instructions.html:37
 msgid ""
@@ -610,6 +619,10 @@ msgid ""
 "        such as a driver's license or passport, before you continue.\n"
 "      "
 msgstr ""
+"\n"
+"        Im Rahmen der Beaufsichtigung werden Sie aufgefordert, sich zu identifizieren.\n"
+"        Stellen Sie sicher, dass Ihr Computer an einer funktionsfähigen Webcam angeschlossen ist und dass Sie einen validen Lichtbildausweis vorliegen haben.\n"
+"      Beispielsweise Personalausweis, Führerschein, Reisepass, etc."
 
 #: templates/proctored_exam/instructions.html:44
 msgid ""
@@ -617,6 +630,9 @@ msgid ""
 "          3. When you have finished setting up proctoring, start the exam.\n"
 "        "
 msgstr ""
+"\n"
+"          3. Wenn Sie die Beaufsichtigungseinstellungen beendet haben, starten Sie mit der Prüfung.\n"
+"        "
 
 #: templates/proctored_exam/instructions.html:50
 msgid "Start Proctored Exam"
@@ -648,6 +664,9 @@ msgid ""
 "    You have not completed the prerequisites for this exam. All requirements must be satisfied before you can take this proctored exam and be eligible for credit. See your <a href=\"%(progress_page_url)s\">Progress</a> page for a list of requirements in the order that they must be completed.\n"
 "    "
 msgstr ""
+"\n"
+"   Sie haben die Voraussetzungen für diese Prüfung. Alle Anforderungen müssen befriedigend sein, bevor Sie diese beaufsichtigte Prüfung machen können und einen Credit dafür erhlten. Schauen Sie sich Ihren <a href=\"%(progress_page_url)s\">Kursfortschritt</a> an, um zu kontrollieren, ob Sie alle Anforderungen bestehen. \n"
+"    "
 
 #: templates/proctored_exam/pending-prerequisites.html:14
 msgid ""
@@ -655,6 +674,9 @@ msgid ""
 "    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
 "    "
 msgstr ""
+"\n"
+"   Die folgenden Voraussetzungen sind in einem <strong>unvollständigen</strong> Status und müssen erfolgreich abgeschlossen sein bevor Sie starten können.\n"
+"    "
 
 #: templates/proctored_exam/pending-prerequisites.html:30
 #, python-format
@@ -663,6 +685,9 @@ msgid ""
 "    You can take this exam with proctoring only when all prerequisites have been successfully completed. Check your <a href=\"%(progress_page_url)s\">Progress</a>  page to see if prerequisite results have been updated. You can also take this exam now without proctoring, but you will not be eligible for credit.\n"
 "    "
 msgstr ""
+"\n"
+"   Sie können diese Prüfung nur starten, wenn alle Anforderungen erfolgreich abgeschlossen sind. Kontrollieren Sie Ihren <a href=\"%(progress_page_url)s\">Kursfortschritt</a>, um zu sehen ob dies der Fall ist. Sie können diese Prüfung dennoch starten, jedoch ohne Beaufsichtigung und ohne späteren Credit. \n"
+"    "
 
 #: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
@@ -675,6 +700,9 @@ msgid ""
 "href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
 "proctoring rules</a> to pass the proctoring review for your exam. "
 msgstr ""
+" Von jetzt an müssen Sie den <a "
+"href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
+"Beaufsichtigungsregeln</a> folgen, um damit Ihre Prüfung zugelassen wird."
 
 #: templates/proctored_exam/proctoring_launch_callback.html:168
 msgid ""
@@ -682,6 +710,9 @@ msgid ""
 "            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
 "          "
 msgstr ""
+"\n"
+"            Schließen Sie nicht das Fenster, solange Sie die Prüfung nicht abgeschlossen haben. Sollten Sie das Fenster trotzdem schlißen, ist Ihre Prüfung beendet und wird nicht gewertet.\n"
+"          "
 
 #: templates/proctored_exam/proctoring_launch_callback.html:173
 #, python-format
@@ -692,6 +723,10 @@ msgid ""
 "            and upload your proctoring session data for review.\n"
 "          "
 msgstr ""
+"\n"
+"            Zurück zum %(platform_name)s Kurs, um die Prüfung zu starten. Wenn Sie dieses beendet haben und\n"
+"            es als beendet markiert ist, können Sie das Fenster schließen, sodass die Session endet.\n"
+"Anschließend können Sie Ihre Daten zur Durchsicht hochladen.          "
 
 #: templates/proctored_exam/proctoring_opt_out_button.html:8
 msgid ""
@@ -751,6 +786,9 @@ msgid ""
 "      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Stellen Sie sicher, dass Sie jede Aufgabe  mit \"Abgabe\" markiert haben bevor Sie die Prüfung beenden.\n"
+"    "
 
 #: templates/proctored_exam/ready_to_submit.html:14
 msgid ""
@@ -767,6 +805,9 @@ msgid ""
 "      Yes, end my proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"      Ja, beaufsichtigung jetzt beenden.\n"
+"    "
 
 #: templates/proctored_exam/ready_to_submit.html:27
 msgid ""
@@ -774,6 +815,9 @@ msgid ""
 "        No, I'd like to continue working\n"
 "      "
 msgstr ""
+"\n"
+"        Nein, ich möchte noch weiterarbeiten.\n"
+"      "
 
 #: templates/proctored_exam/rejected.html:4
 msgid ""
@@ -797,6 +841,9 @@ msgid ""
 "      You have submitted this proctored exam for review\n"
 "    "
 msgstr ""
+"\n"
+"      Sie haben diese beaufsichtigte Prüfung zur Durchsicht hochgeladen.\n"
+"    "
 
 #: templates/proctored_exam/submitted.html:9
 msgid ""
