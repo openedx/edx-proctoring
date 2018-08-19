@@ -10,7 +10,7 @@
 # Omar Al-Ithawi <oithawi@qrf.org>, 2016
 # Najwan Al Rousan <najwanrousan@gmail.com>, 2016
 # may <may@qordoba.com>, 2016
-# Ahmed Jazzar <ajazzar@qrf.org>, 2016
+# Ahmed Jazzar <ahmed.mojaz@gmail.com>, 2016
 # Andy Armstrong <andya@edx.org>, 2017
 msgid ""
 msgstr ""
