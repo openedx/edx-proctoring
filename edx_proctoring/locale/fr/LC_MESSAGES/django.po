@@ -189,6 +189,12 @@ msgid ""
 "contact %(platform)s support at %(contact_email)s.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Cet email pour vous informer que le statut de votre examen  %(exam_name)s du cours\n"
+"<a href=\"%(course_url)s\">%(course_name)s </a> est %(status)s. Si vous avez des questions à propos des revues,\n"
+"contacter le support %(platform)s sur %(contact_email)s.\n"
+"\n"
 
 #: templates/practice_exam/entrance.html:4
 msgid ""
@@ -206,6 +212,10 @@ msgid ""
 "      on your grade in the course.\n"
 "    "
 msgstr ""
+"\n"
+"      Entrainez-vous à passer un examen surveillé. Cet examen surveillé d'entrainement n'est pas noté\n"
+"      et sans impact sur votre note finale.\n"
+"    "
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
@@ -235,6 +245,9 @@ msgid ""
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
 "    "
 msgstr ""
+"\n"
+"     Vos résultats d'examen surveillé d'entrainement: <b class=\"failure\"> Échec </b>\n"
+"    "
 
 #: templates/practice_exam/error.html:16
 msgid ""
@@ -243,10 +256,14 @@ msgid ""
 "      You can retry this practice exam if you had problems setting up the online proctoring software.\n"
 "    "
 msgstr ""
+"\n"
+"      Votre session surveillée s'est terminée avant que vous n'ayez pu compléter votre examen d'entrainement.\n"
+"      Vous pouvez reessayer cet examen d'entrainement si vous avez eu des problèmes pour configurer l'outil de surveillance à distance.\n"
+"    "
 
 #: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
-msgstr ""
+msgstr "Recommencer l'examen d'entrainement"
 
 #: templates/practice_exam/submitted.html:4
 msgid ""
@@ -254,6 +271,9 @@ msgid ""
 "      You have submitted this practice proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"      Vous avez envoyé votre examen d'entrainement surveillé\n"
+"    "
 
 #: templates/practice_exam/submitted.html:10
 msgid ""
@@ -262,10 +282,14 @@ msgid ""
 "      You have completed this practice exam and can continue with your course work.\n"
 "    "
 msgstr ""
+"\n"
+"      Les examens d'entrainement n'affectent pas votre note.\n"
+"      Vous avez terminé cet examen d'entrainement, vous pouvez continuer à parcourir le cours.\n"
+"    "
 
 #: templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
-msgstr ""
+msgstr "Vous pouvez aussi reessayer cet examen d'entrainement"
 
 #: templates/proctored_exam/confirm-decline.html:5
 msgid ""
