@@ -6,7 +6,7 @@
 # 
 # Translators:
 # Alexander Lundervold <alexander.lundervold@gmail.com>, 2016
-# Frode Arntsen <frode.arntsen@bibsys.no>, 2016
+# Frode Arntsen <frode.arntsen@unit.no>, 2016
 # Vangenplotz edx <edx@vangenplotz.no>, 2016
 # Espen Bye, 2016
 # Joakim S. Johnson, 2016
