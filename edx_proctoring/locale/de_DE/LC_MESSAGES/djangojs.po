@@ -825,6 +825,9 @@ msgid ""
 "      Your proctoring session was reviewed and did not pass requirements\n"
 "    "
 msgstr ""
+"\n"
+"      Ihre Beaufsichtigung wurde durchgesehen und nicht zugelassen.\n"
+"    "
 
 #: templates/proctored_exam/rejected.html:10
 #, python-format
@@ -908,6 +911,9 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
+"\n"
+"    %(exam_name)s ist eine terminierte Prüfung (%(total_time)s)\n"
+"    "
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
@@ -931,7 +937,7 @@ msgstr "Sie haben in Zukunft"
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
-msgstr ""
+msgstr "Zum Beenden und Einreichen der Prüfung."
 
 #: templates/timed_exam/entrance.html:21
 msgid ""
@@ -939,6 +945,9 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"        Ich bin bereit diese terminierte Prüfung zu starten.\n"
+"      "
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
@@ -959,6 +968,9 @@ msgid ""
 "      Are you sure that you want to submit your timed exam?\n"
 "    "
 msgstr ""
+"\n"
+"      Sind Sie sicher, dass Sie Ihre terminierte Prüfung einreichen möchten?\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -966,6 +978,9 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
+"\n"
+"      Nachdem Einreichen Ihrer Prüfung, folgt die Benotung.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -973,6 +988,9 @@ msgid ""
 "      Yes, submit my timed exam.\n"
 "    "
 msgstr ""
+"\n"
+"     Ja, meine terminierte Prüfung jetzt einreichen.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -980,6 +998,9 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
+"\n"
+"        Nein, ich möchte weiterarbeiten.\n"
+"      "
 
 #: templates/timed_exam/submitted.html:6
 msgid ""
@@ -987,6 +1008,9 @@ msgid ""
 "        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.\n"
 "      "
 msgstr ""
+"\n"
+"        Die angesetzte Zeit für diese Prüfung ist abgelaufen und Ihre Prüfung wurde nun eingereicht. Nur die von Ihnen bearbeiteten Aufgaben werden Benotet\n"
+"      "
 
 #: templates/timed_exam/submitted.html:10
 msgid ""
