@@ -16,6 +16,7 @@ from opaque_keys import InvalidKeyError
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+from edx_rest_framework_extensions.authentication import JwtAuthentication
 
 from eventtracking import tracker
 
@@ -31,7 +32,7 @@ class AuthenticatedAPIView(APIView):
     """
     Authenticate APi View.
     """
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, JwtAuthentication)
     permission_classes = (IsAuthenticated,)
 
 

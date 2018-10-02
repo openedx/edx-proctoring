@@ -82,11 +82,11 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 
 class ExamReviewCallback(APIView):
     """
-    This endpoint is called by a 3rd party proctoring review service when
+    This endpoint is called by a SoftwareSecure when
     there are results available for us to record
 
-    IMPORTANT: This is an unauthenticated endpoint, so be VERY CAREFUL about extending
-    this endpoint
+    NOTE: This endpoint is deprecated, in favor of using the authenticated endpoint at:
+    /edx_proctoring/v1/proctored_exam/attempt/123/reviewed
     """
 
     content_negotiation_class = IgnoreClientContentNegotiation
@@ -95,7 +95,7 @@ class ExamReviewCallback(APIView):
         """
         Post callback handler
         """
-        provider = get_backend_provider()
+        provider = get_backend_provider({'backend': 'software_secure'})
 
         # call down into the underlying provider code
         try:

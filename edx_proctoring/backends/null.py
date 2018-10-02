@@ -49,3 +49,10 @@ class NullBackendProvider(ProctoringBackendProvider):
         called when a review has been save - either through API or via Django Admin panel
         in order to trigger any workflow
         """
+
+    def on_exam_saved(self, exam):
+        """
+        Called after an exam is saved.
+        """
+        return None
+

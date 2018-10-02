@@ -313,6 +313,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             status
         )
 
+    def on_exam_saved(self, exam):
+        """
+        Called after an exam is saved.
+        """
+
     def _save_review_comment(self, review, comment):
         """
         Helper method to save a review comment

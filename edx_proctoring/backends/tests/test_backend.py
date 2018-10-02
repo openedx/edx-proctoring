@@ -59,6 +59,9 @@ class TestBackendProvider(ProctoringBackendProvider):
         in order to trigger any workflow
         """
 
+    def on_exam_saved(self, exam):
+        pass
+
 
 class PassthroughBackendProvider(ProctoringBackendProvider):
     """
@@ -113,6 +116,9 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
         in order to trigger any workflow
         """
         return super(PassthroughBackendProvider, self).on_review_saved(review)
+
+    def on_exam_saved(self, exam):
+        return super(PassthroughBackendProvider, self).on_exam_saved(exam)
 
 
 class TestBackends(TestCase):

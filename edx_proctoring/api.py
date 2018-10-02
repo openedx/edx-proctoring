@@ -63,7 +63,8 @@ REJECTED_GRADE_OVERRIDE_EARNED = 0.0
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
-                is_proctored=True, is_practice_exam=False, external_id=None, is_active=True, hide_after_due=False):
+                is_proctored=True, is_practice_exam=False, external_id=None, is_active=True, hide_after_due=False,
+                backend=settings.PROCTORING_BACKEND_PROVIDERS.get('DEFAULT', None)):
     """
     Creates a new ProctoredExam entity, if the course_id/content_id pair do not already exist.
     If that pair already exists, then raise exception.
@@ -85,6 +86,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
         is_practice_exam=is_practice_exam,
         is_active=is_active,
         hide_after_due=hide_after_due,
+        backend=backend
     )
 
     log_msg = (
@@ -104,6 +106,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
     # read back exam so we can emit an event on it
     exam = get_exam_by_id(proctored_exam.id)
     emit_event(exam, 'created')
+    get_backend_provider(exam).on_exam_saved(exam)
 
     return proctored_exam.id
 
@@ -222,7 +225,7 @@ def _get_review_policy_by_exam_id(exam_id):
 
 
 def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constants.MINIMUM_TIME,
-                is_proctored=None, is_practice_exam=None, external_id=None, is_active=None, hide_after_due=None):
+                is_proctored=None, is_practice_exam=None, external_id=None, is_active=None, hide_after_due=None, backend=None):
     """
     Given a Django ORM id, update the existing record, otherwise raise exception if not found.
     If an argument is not passed in, then do not change it's current value.
@@ -262,11 +265,14 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constant
         proctored_exam.is_active = is_active
     if hide_after_due is not None:
         proctored_exam.hide_after_due = hide_after_due
+    if backend is not None:
+        proctored_exam.backend = backend
     proctored_exam.save()
 
     # read back exam so we can emit an event on it
     exam = get_exam_by_id(proctored_exam.id)
     emit_event(exam, 'updated')
+    get_backend_provider(exam).on_exam_saved(exam)
 
     return proctored_exam.id
 
@@ -606,7 +612,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             })
 
         # now call into the backend provider to register exam attempt
-        external_id = get_backend_provider().register_exam_attempt(
+        external_id = get_backend_provider(exam).register_exam_attempt(
             exam,
             context=context,
         )
@@ -1709,7 +1715,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
-        provider = get_backend_provider()
+        provider = get_backend_provider(exam)
         student_view_template = 'proctored_exam/instructions.html'
         context.update({
             'exam_code': attempt['attempt_code'],
@@ -1830,7 +1836,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             # if the user has not id verified yet, show them the page that requires them to do so
             student_view_template = 'proctored_exam/id_verification.html'
         else:
-            provider = get_backend_provider()
+            provider = get_backend_provider(exam)
             student_view_template = 'proctored_exam/instructions.html'
             context.update({
                 'exam_code': attempt['attempt_code'],

@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
 from django.db.models.base import ObjectDoesNotExist
-from django.db.models.signals import pre_save, pre_delete
+from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext as _, ugettext_noop
 
@@ -60,6 +60,9 @@ class ProctoredExam(TimeStampedModel):
 
     # Whether to hide this exam after the due date
     hide_after_due = models.BooleanField(default=False)
+
+    # override the platform default backend choice
+    backend = models.CharField(max_length=255, null=True, default=None)
 
     class Meta:
         """ Meta class for this Django model """

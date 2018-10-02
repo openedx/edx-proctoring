@@ -56,7 +56,14 @@ class ProctoringBackendProvider(object):
     @abc.abstractmethod
     def on_review_saved(self, review):
         """
-        called when a review has been save - either through API or via Django Admin panel
+        Called when a review has been saved - either through API or via Django Admin panel
         in order to trigger any workflow.
+        """
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def on_exam_saved(self, exam):
+        """
+        Called after an exam is saved.
         """
         raise NotImplementedError()

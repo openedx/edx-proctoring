@@ -20,7 +20,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 TEST_ROOT = "tests"
 TRANSACTIONS_MANAGED = {}
 USE_TZ = True
-TIME_ZONE = {}
+TIME_ZONE = 'UTC'
 SECRET_KEY='SHHHHHH'
 PLATFORM_NAME='Open edX'
 FEATURES = {}
@@ -80,9 +80,19 @@ ROOT_URLCONF = 'edx_proctoring.urls'
 COURSE_ID_REGEX = r'[^/+]+(/|\+)[^/+]+(/|\+)[^/]+'
 COURSE_ID_PATTERN = r'(?P<course_id>%s)' % COURSE_ID_REGEX
 
-PROCTORING_BACKEND_PROVIDER = {
-    "class": "edx_proctoring.backends.tests.test_backend.TestBackendProvider",
-    "options": {}
+PROCTORING_BACKEND_PROVIDERS = {
+    'test': {},
+    'DEFAULT': 'test',
+    'software_secure': {
+        "secret_key_id": "foo",
+        "secret_key": "4B230FA45A6EC5AE8FDE2AFFACFABAA16D8A3D0B",
+        "crypto_key": "123456789123456712345678",
+        "exam_register_endpoint": "http://test",
+        "organization": "edx",
+        "exam_sponsor": "edX LMS",
+        "software_download_url": "http://example.com",
+        "send_email": True
+    },
 }
 
 PROCTORING_SETTINGS = {

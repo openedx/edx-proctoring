@@ -49,6 +49,7 @@ from edx_proctoring.tests.test_services import (
     MockGradesService,
     MockCertificateService
 )
+from edx_proctoring.tests.utils import setup_test_backends
 from edx_proctoring.backends.software_secure import SOFTWARE_SECURE_INVALID_CHARS
 
 
@@ -77,10 +78,9 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
 
 
 @patch(
-    'django.conf.settings.PROCTORING_BACKEND_PROVIDER',
+    'django.conf.settings.PROCTORING_BACKEND_PROVIDERS',
     {
-        "class": "edx_proctoring.backends.software_secure.SoftwareSecureBackendProvider",
-        "options": {
+        "software_secure": {
             "secret_key_id": "foo",
             "secret_key": "4B230FA45A6EC5AE8FDE2AFFACFABAA16D8A3D0B",
             "crypto_key": "123456789123456712345678",
@@ -89,7 +89,9 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
             "exam_sponsor": "edX LMS",
             "software_download_url": "http://example.com",
             "send_email": True
-        }
+        },
+        "DEFAULT": "software_secure",
+        "test": {},
     }
 )
 @patch('django.core.urlresolvers.reverse', MagicMock)
@@ -104,6 +106,7 @@ class SoftwareSecureTests(TestCase):
         Initialize
         """
         super(SoftwareSecureTests, self).setUp()
+        setup_test_backends()
         self.user = User(username='foo', email='foo@bar.com')
         self.user.save()
 
@@ -147,7 +150,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         with HTTMock(mock_response_content):
@@ -195,7 +199,7 @@ class SoftwareSecureTests(TestCase):
             self.assertEqual(policy.review_policy, context['review_policy'])
 
             # call into real implementation
-            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)
+            result = get_backend_provider()._get_payload(exam, context)
 
             # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
             expected = context['review_policy']
@@ -238,7 +242,7 @@ class SoftwareSecureTests(TestCase):
             self.assertNotIn('review_policy', context)
 
             # call into real implementation
-            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)
+            result = get_backend_provider()._get_payload(exam, context)
 
             # assert that we use the default that is defined in system configuration
             self.assertEqual(result['reviewerNotes'], constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
@@ -258,7 +262,8 @@ class SoftwareSecureTests(TestCase):
                 content_id='content with {}'.format(illegal_char),
                 exam_name='Sample Exam with {} character'.format(illegal_char),
                 time_limit_mins=10,
-                is_proctored=True
+                is_proctored=True,
+                backend='software_secure'
             )
 
             with HTTMock(mock_response_content):
@@ -300,7 +305,7 @@ class SoftwareSecureTests(TestCase):
             """
 
             # call into real implementation
-            result = get_backend_provider(emphemeral=True)._get_payload(exam, context)
+            result = get_backend_provider()._get_payload(exam, context)
             self.assertFalse(isinstance(result['examName'], unicode))
             self.assertTrue(is_ascii(result['examName']))
             self.assertGreater(len(result['examName']), 0)
@@ -313,7 +318,8 @@ class SoftwareSecureTests(TestCase):
                 content_id='content with unicode characters',
                 exam_name=u'Klüft skräms inför på fédéral électoral große',
                 time_limit_mins=10,
-                is_proctored=True
+                is_proctored=True,
+                backend='software_secure'
             )
 
             # patch the _get_payload method on the backend provider
@@ -331,7 +337,8 @@ class SoftwareSecureTests(TestCase):
                 content_id='content with chinese characters',
                 exam_name=u'到处群魔乱舞',
                 time_limit_mins=10,
-                is_proctored=True
+                is_proctored=True,
+                backend='software_secure'
             )
 
             # patch the _get_payload method on the backend provider
@@ -355,7 +362,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         with HTTMock(mock_response_content):
@@ -374,7 +382,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         with HTTMock(mock_response_content):
@@ -387,7 +396,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content_unicode_name',
             exam_name=u'अआईउऊऋऌ अआईउऊऋऌ',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         with HTTMock(mock_response_content):
@@ -404,7 +414,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         # now try a failing request
@@ -470,7 +481,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         # be sure to use the mocked out SoftwareSecure handlers
@@ -562,7 +574,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         # be sure to use the mocked out SoftwareSecure handlers
@@ -599,7 +612,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         # be sure to use the mocked out SoftwareSecure handlers
@@ -639,7 +653,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         # be sure to use the mocked out SoftwareSecure handlers
@@ -693,7 +708,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         # be sure to use the mocked out SoftwareSecure handlers
@@ -731,7 +747,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         # be sure to use the mocked out SoftwareSecure handlers
@@ -797,7 +814,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         # be sure to use the mocked out SoftwareSecure handlers
@@ -854,7 +872,8 @@ class SoftwareSecureTests(TestCase):
             content_id='content',
             exam_name='Sample Exam',
             time_limit_mins=10,
-            is_proctored=True
+            is_proctored=True,
+            backend='software_secure'
         )
 
         # be sure to use the mocked out SoftwareSecure handlers

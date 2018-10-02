@@ -84,9 +84,8 @@ Also in your lms.env.json and cms.env.json file please add the following::
 
 In your lms.auth.json file, please add the following *secure* information::
 
-    "PROCTORING_BACKEND_PROVIDER": {
-        "class": "edx_proctoring.backends.software_secure.SoftwareSecureBackendProvider",
-        "options": {
+    "PROCTORING_BACKEND_PROVIDERS": {
+        "software_secure": {
             "crypto_key": "{add SoftwareSecure crypto key here}",
             "exam_register_endpoint": "{add enpoint to SoftwareSecure}",
             "exam_sponsor": "{add SoftwareSecure sponsor}",

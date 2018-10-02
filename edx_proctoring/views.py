@@ -33,6 +33,7 @@ from edx_proctoring.api import (
     update_attempt_status,
     update_exam_attempt,
     has_due_date_passed,
+    get_backend_provider,
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
@@ -74,9 +75,9 @@ def require_course_or_global_staff(func):
     """View decorator that requires that the user have staff permissions. """
     def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
         instructor_service = get_runtime_service('instructor')
-        course_id = kwargs['course_id'] if 'course_id' in kwargs else None
+        course_id = kwargs.get('course_id', None)
         exam_id = request.data.get('exam_id', None)
-        attempt_id = kwargs['attempt_id'] if 'attempt_id' in kwargs else None
+        attempt_id = kwargs.get('attempt_id', None)
         if request.user.is_staff:
             return func(request, *args, **kwargs)
         else:
@@ -788,3 +789,28 @@ class ProctoredExamAttemptReviewStatus(AuthenticatedAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": str(ex)}
             )
+
+
+class ProctoredExamReviewCallback(AuthenticatedAPIView):
+    @method_decorator(require_course_or_global_staff)
+    def put(self, request, attempt_id):
+        try:
+            attempt = get_exam_attempt_by_id(attempt_id)
+
+            provider = get_backend_provider(attempt['proctored_exam'])
+
+            provider.on_review_callback(request.data)
+
+            return Response(
+                status=status.HTTP_200_OK,
+                data='OK',
+            )
+        except (StudentExamAttemptDoesNotExistsException, ProctoredBaseException) as ex:
+            LOG.exception(ex)
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": str(ex)}
+            )
+
+
+

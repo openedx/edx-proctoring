@@ -93,3 +93,10 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
         in order to trigger any workflow
         """
         return None
+
+    def on_exam_saved(self, exam):
+        """
+        Called after an exam is saved.
+        """
+        return None
+
