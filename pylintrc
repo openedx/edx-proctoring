@@ -124,7 +124,7 @@ ignore-imports = no
 
 [TYPECHECK]
 ignore-mixin-members = yes
-ignored-classes = SQLObject
+ignored-classes = SQLObject, responses
 unsafe-load-any-extension = yes
 generated-members = 
 	REQUEST,

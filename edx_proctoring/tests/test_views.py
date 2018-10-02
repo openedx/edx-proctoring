@@ -14,7 +14,7 @@ from mock import Mock, patch
 import pytz
 
 from django.test.client import Client
-from django.core.urlresolvers import reverse, NoReverseMatch
+from django.urls import reverse, NoReverseMatch
 from django.contrib.auth.models import User
 
 from edx_proctoring.models import (
@@ -371,7 +371,8 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data['detail'], 'The exam with course_id, content_id does not exist.')
+        message = 'The exam_id does not exist.'
+        self.assertEqual(response_data['detail'], message)
 
     def test_get_exam_insufficient_args(self):
         """
@@ -459,9 +460,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             exam_name='Test Exam',
             external_id='123aXqe3',
             time_limit_mins=90,
-            is_proctored=True
+            is_proctored=True,
+            backend='test',
         )
-        attempt_id = create_exam_attempt(proctored_exam.id, self.user.id)
+        attempt_id = create_exam_attempt(proctored_exam.id, self.user.id, True)
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], "created")
 
@@ -496,6 +498,22 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], "started")
         self.assertNotEqual(attempt['status'], "ready_to_start")
+
+    @ddt.data(
+        ('fakeexternalid', 404, ProctoredExamStudentAttemptStatus.created),
+        ('testexternalid', 200, ProctoredExamStudentAttemptStatus.ready_to_start)
+    )
+    @ddt.unpack
+    def test_authenticated_start_callback(self, ext_id, http_status, status):
+        attempt = self._test_exam_attempt_creation()
+
+        attempt_id = attempt['id']
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.ready_callback', kwargs={'external_id': ext_id})
+        )
+        self.assertEqual(response.status_code, http_status)
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], status)
 
     def test_start_exam_create(self):
         """
@@ -1740,7 +1758,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )
-
         response = self.client.post(
             reverse('edx_proctoring.anonymous.proctoring_review_callback'),
             data=test_payload,
@@ -1852,7 +1869,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             attempt_code=attempt['attempt_code'],
             external_id='mismatch'
         )
-
         response = self.client.post(
             reverse('edx_proctoring.anonymous.proctoring_review_callback'),
             data=test_payload,

@@ -1,8 +1,7 @@
 [run]
 branch = True
+parallel = True
 source = edx_proctoring
 omit =
-    **/__init__.py
-    **/migrations/*
-    **/tests/*
+    */migrations/*
     edx_proctoring/admin.py

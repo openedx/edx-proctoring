@@ -8,9 +8,10 @@ from datetime import datetime
 from mock import MagicMock, patch
 import pytz
 
+from django.core.management import call_command
+
 from edx_proctoring.tests.utils import LoggedInTestCase
 from edx_proctoring.api import create_exam, get_exam_attempt
-from edx_proctoring.management.commands import set_attempt_status
 
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt
 from edx_proctoring.tests.test_services import (
@@ -21,7 +22,7 @@ from edx_proctoring.tests.test_services import (
 from edx_proctoring.runtime import set_runtime_service
 
 
-@patch('django.core.urlresolvers.reverse', MagicMock)
+@patch('django.urls.reverse', MagicMock)
 class SetAttemptStatusTests(LoggedInTestCase):
     """
     Coverage of the set_attempt_status.py file
@@ -39,8 +40,7 @@ class SetAttemptStatusTests(LoggedInTestCase):
             course_id='foo',
             content_id='bar',
             exam_name='Test Exam',
-            time_limit_mins=90
-        )
+            time_limit_mins=90)
 
         ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=self.exam_id,
@@ -50,28 +50,25 @@ class SetAttemptStatusTests(LoggedInTestCase):
             status=ProctoredExamStudentAttemptStatus.started,
             allowed_time_limit_mins=10,
             taking_as_proctored=True,
-            is_sample_attempt=False
-        )
+            is_sample_attempt=False)
 
     def test_run_comand(self):
         """
         Run the management command
         """
 
-        set_attempt_status.Command().handle(
-            exam_id=self.exam_id,
-            user_id=self.user.id,
-            to_status=ProctoredExamStudentAttemptStatus.rejected
-        )
+        call_command('set_attempt_status',
+                     exam_id=self.exam_id,
+                     user_id=self.user.id,
+                     to_status=ProctoredExamStudentAttemptStatus.rejected)
 
         attempt = get_exam_attempt(self.exam_id, self.user.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.rejected)
 
-        set_attempt_status.Command().handle(
-            exam_id=self.exam_id,
-            user_id=self.user.id,
-            to_status=ProctoredExamStudentAttemptStatus.verified
-        )
+        call_command('set_attempt_status',
+                     exam_id=self.exam_id,
+                     user_id=self.user.id,
+                     to_status=ProctoredExamStudentAttemptStatus.verified)
 
         attempt = get_exam_attempt(self.exam_id, self.user.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.verified)
@@ -82,8 +79,7 @@ class SetAttemptStatusTests(LoggedInTestCase):
         """
 
         with self.assertRaises(Exception):
-            set_attempt_status.Command().handle(
-                exam_id=self.exam_id,
-                user_id=self.user.id,
-                to_status='bad'
-            )
+            call_command('set_attempt_status',
+                         exam_id=self.exam_id,
+                         user_id=self.user.id,
+                         to_status='bad')

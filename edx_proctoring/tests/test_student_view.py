@@ -13,6 +13,8 @@ from freezegun import freeze_time
 from mock import MagicMock, patch
 import pytz
 
+import six
+
 from edx_proctoring.api import (
     update_exam,
     get_exam_by_id,
@@ -33,7 +35,7 @@ from .test_services import MockCreditServiceWithCourseEndDate, MockCreditService
 from .utils import ProctoredExamTestCase
 
 
-@patch('django.core.urlresolvers.reverse', MagicMock)
+@patch('django.urls.reverse', MagicMock)
 @ddt.ddt
 class ProctoredExamStudentViewTests(ProctoredExamTestCase):
     """
@@ -884,7 +886,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             self.timed_exam_id,
             self.user.username,
             ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
-            str(allowed_extra_time)
+            six.text_type(allowed_extra_time)
         )
 
         rendered_response = get_student_view(

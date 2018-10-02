@@ -14,14 +14,15 @@ from django.db.models import Q
 from django.db.models.base import ObjectDoesNotExist
 from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
-from django.utils.translation import ugettext as _, ugettext_noop
+from django.utils.translation import ugettext_noop
 
 from model_utils.models import TimeStampedModel
 
 from edx_proctoring.exceptions import (
     UserNotFoundException,
     ProctoredExamNotActiveException,
-    AllowanceValueNotAllowedException
+    ProctoredExamBadReviewStatus,
+    AllowanceValueNotAllowedException,
 )
 
 
@@ -60,6 +61,9 @@ class ProctoredExam(TimeStampedModel):
 
     # Whether to hide this exam after the due date
     hide_after_due = models.BooleanField(default=False)
+
+    # override the platform default backend choice
+    backend = models.CharField(max_length=255, null=True, default=None)
 
     class Meta:
         """ Meta class for this Django model """
@@ -230,16 +234,6 @@ class ProctoredExamStudentAttemptStatus(object):
         ]
 
     @classmethod
-    def get_status_alias(cls, status):
-        """
-        Returns status alias used in email
-        """
-        status_alias = cls.status_alias_mapping.get(status, None)
-
-        # Note that the alias is localized here as it is untranslated in the model
-        return _(status_alias) if status_alias else ''  # pylint: disable=translation-of-non-string
-
-    @classmethod
     def is_valid_status(cls, status):
         """
         Makes sure that passed in status string is valid
@@ -387,6 +381,17 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         """
         try:
             exam_attempt_obj = self.get(attempt_code=attempt_code)  # pylint: disable=no-member
+        except ObjectDoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = None
+        return exam_attempt_obj
+
+    def get_exam_attempt_by_external_id(self, external_id):
+        """
+        Returns the Student Exam Attempt object if found
+        else Returns None.
+        """
+        try:
+            exam_attempt_obj = self.get(external_id=external_id)  # pylint: disable=no-member
         except ObjectDoesNotExist:  # pylint: disable=no-member
             exam_attempt_obj = None
         return exam_attempt_obj
@@ -750,7 +755,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
             ).format(value=value)
             raise AllowanceValueNotAllowedException(err_msg)
         # were we passed a PK?
-        if isinstance(user_info, (int, long)):
+        if isinstance(user_info, six.integer_types):
             user_id = user_info
         else:
             # we got a string, so try to resolve it
@@ -871,6 +876,72 @@ def _make_archive_copy(item):
         value=item.value
     )
     archive_object.save()
+
+
+class ReviewStatus(object):
+    """
+    Standard review statuses
+    """
+    passed = u'passed'
+    violation = u'violation'
+    suspicious = u'suspicious'
+    not_reviewed = u'not_reviewed'
+
+    @classmethod
+    def validate(cls, status):
+        """
+        Validate review status
+        """
+        if status not in [cls.passed, cls.violation, cls.suspicious, cls.not_reviewed]:
+            raise ProctoredExamBadReviewStatus(status)
+        return True
+
+
+class SoftwareSecureReviewStatus(object):
+    """
+    These are the valid review statuses from
+    SoftwareSecure
+    """
+
+    clean = u'Clean'
+    violation = u'Rules Violation'
+    suspicious = u'Suspicious'
+    not_reviewed = u'Not Reviewed'
+
+    passing_statuses = [
+        clean,
+        violation]
+    failing_statuses = [
+        not_reviewed,
+        suspicious]
+    notify_support_for_status = suspicious
+
+    from_standard_status = {
+        ReviewStatus.passed: clean,
+        ReviewStatus.violation: violation,
+        ReviewStatus.suspicious: suspicious,
+        ReviewStatus.not_reviewed: not_reviewed,
+    }
+
+    to_standard_status = {
+        clean: ReviewStatus.passed,
+        violation: ReviewStatus.violation,
+        suspicious: ReviewStatus.suspicious,
+        not_reviewed: ReviewStatus.not_reviewed,
+    }
+
+    @classmethod
+    def validate(cls, status):
+        """
+        Validates the status, or raises ProctoredExamBadReviewStatus
+        """
+        if status not in cls.passing_statuses + cls.failing_statuses:
+            err_msg = (
+                'Received unexpected reviewStatus field value from payload. '
+                'Was {review_status}.'.format(review_status=status)
+            )
+            raise ProctoredExamBadReviewStatus(err_msg)
+        return True
 
 
 class ProctoredExamSoftwareSecureReview(TimeStampedModel):

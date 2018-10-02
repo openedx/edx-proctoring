@@ -46,35 +46,44 @@ setup(
     zip_safe=False,
     keywords='Django edx',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 3 - Beta',
         'Framework :: Django',
-        'Framework :: Django :: 1.8',
-        'Framework :: Django :: 1.9',
-        'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     packages=[
         'edx_proctoring',
     ],
     include_package_data=True,
     install_requires=[
-        "Django>=1.8,<2.0",
+        "Django>=1.11,<2.0",
         "django-model-utils>=2.3.1",
+        "edx-drf-extensions",
         "djangorestframework>=3.1,<3.7",
         "django-ipware>=1.1.0",
         "edx-opaque-keys>=0.4",
-        "pytz>=2012h",
+        "pytz>=2018",
         "pycryptodomex>=3.4.7",
         "python-dateutil>=2.1",
         "requests",
+        "stevedore",
         "six",
     ],
     dependency_links=[
         "git+https://github.com/edx/event-tracking.git@0.2.2#egg=event-tracking==0.2.2",
-    ]
+    ],
+    entry_points={
+        'openedx.proctoring': [
+            'mock = edx_proctoring.backends.mock:MockProctoringBackendProvider',
+            'null = edx_proctoring.backends.null:NullBackendProvider',
+            'software_secure = edx_proctoring.backends.software_secure:SoftwareSecureBackendProvider',
+        ],
+    },
+
 )

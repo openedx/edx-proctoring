@@ -16,6 +16,7 @@ from opaque_keys import InvalidKeyError
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 
 from eventtracking import tracker
 
@@ -31,7 +32,7 @@ class AuthenticatedAPIView(APIView):
     """
     Authenticate APi View.
     """
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, JwtAuthentication)
     permission_classes = (IsAuthenticated,)
 
 
@@ -108,11 +109,9 @@ def locate_attempt_by_attempt_code(attempt_code):
     """
     attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
 
-    is_archived_attempt = False
     if not attempt_obj:
         # try archive table
         attempt_obj = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
-        is_archived_attempt = True
 
         if not attempt_obj:
             # still can't find, error out
@@ -120,8 +119,12 @@ def locate_attempt_by_attempt_code(attempt_code):
                 'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
             )
             log.error(err_msg)
-
-    return (attempt_obj, is_archived_attempt)
+            is_archived = None
+        else:
+            is_archived = True
+    else:
+        is_archived = False
+    return attempt_obj, is_archived
 
 
 def emit_event(exam, event_short_name, attempt=None, override_data=None):
