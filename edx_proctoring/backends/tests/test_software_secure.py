@@ -7,6 +7,7 @@ Tests for the software_secure module
 from __future__ import absolute_import
 
 import json
+import six
 import ddt
 from mock import MagicMock, patch
 from httmock import all_requests, HTTMock
@@ -306,7 +307,7 @@ class SoftwareSecureTests(TestCase):
 
             # call into real implementation
             result = get_backend_provider()._get_payload(exam, context)
-            self.assertFalse(isinstance(result['examName'], unicode))
+            self.assertFalse(isinstance(result['examName'], six.text_type))
             self.assertTrue(is_ascii(result['examName']))
             self.assertGreater(len(result['examName']), 0)
             return result

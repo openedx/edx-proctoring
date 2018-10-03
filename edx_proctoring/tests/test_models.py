@@ -6,6 +6,7 @@ All tests for the models.py
 
 from __future__ import absolute_import
 
+import six
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
@@ -46,16 +47,16 @@ class ProctoredExamModelTests(LoggedInTestCase):
             external_id='123aXqe3',
             time_limit_mins=90
         )
-        output = unicode(proctored_exam)
-        self.assertEquals(output, u"test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive)")
+        output = six.text_type(proctored_exam)
+        self.assertEqual(output, u"test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive)")
 
         policy = ProctoredExamReviewPolicy.objects.create(
             set_by_user_id=self.user.id,
             proctored_exam=proctored_exam,
             review_policy='Foo Policy'
         )
-        output = unicode(policy)
-        self.assertEquals(output, u"ProctoredExamReviewPolicy: tester (test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive))")
+        output = six.text_type(policy)
+        self.assertEqual(output, u"ProctoredExamReviewPolicy: tester (test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive))")
 
     def test_save_proctored_exam_student_allowance_history(self):  # pylint: disable=invalid-name
         """
@@ -161,7 +162,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
             time_limit_mins=90
         )
 
-        string = unicode(proctored_exam)
+        string = six.text_type(proctored_exam)
         self.assertEqual(string, "test_course: Test Exam (inactive)")
 
     def test_delete_proctored_exam_attempt(self):  # pylint: disable=invalid-name

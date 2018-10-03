@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import logging
 import uuid
 import pytz
+import six
 
 from django.utils.translation import ugettext as _, ugettext_noop
 from django.conf import settings
@@ -225,7 +226,8 @@ def _get_review_policy_by_exam_id(exam_id):
 
 
 def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constants.MINIMUM_TIME,
-                is_proctored=None, is_practice_exam=None, external_id=None, is_active=None, hide_after_due=None, backend=None):
+                is_proctored=None, is_practice_exam=None, external_id=None, is_active=None,
+                hide_after_due=None, backend=None):
     """
     Given a Django ORM id, update the existing record, otherwise raise exception if not found.
     If an argument is not passed in, then do not change it's current value.
@@ -560,7 +562,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             raise StudentExamAttemptAlreadyExistsException(err_msg)
 
     allowed_time_limit_mins = _calculate_allowed_mins(exam, user_id)
-    attempt_code = unicode(uuid.uuid4()).upper()
+    attempt_code = six.text_type(uuid.uuid4()).upper()
 
     external_id = None
     review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
@@ -1485,7 +1487,7 @@ def get_attempt_status_summary(user_id, course_id, content_id):
 
     try:
         exam = get_exam_by_content_id(course_id, content_id)
-    except ProctoredExamNotFoundException, ex:
+    except ProctoredExamNotFoundException as ex:
         # this really shouldn't happen, but log it at least
         log.exception(ex)
         return None
@@ -1505,7 +1507,7 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     # practice exams always has an attempt status regardless of
     # eligibility
     if credit_service and not exam['is_practice_exam']:
-        credit_state = credit_service.get_credit_state(user_id, unicode(course_id), return_course_info=True)
+        credit_state = credit_service.get_credit_state(user_id, six.text_type(course_id), return_course_info=True)
         if not _check_eligibility_of_enrollment_mode(credit_state):
             return None
 
@@ -1924,7 +1926,7 @@ def get_student_view(user_id, course_id, content_id,
         # as Studio will be setting this up
         exam_id = create_exam(
             course_id=course_id,
-            content_id=unicode(content_id),
+            content_id=six.text_type(content_id),
             exam_name=context['display_name'],
             time_limit_mins=context['default_time_limit_mins'],
             is_proctored=context.get('is_proctored', False),

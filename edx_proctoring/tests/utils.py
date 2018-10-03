@@ -55,7 +55,7 @@ def setup_test_backends():
         ]
 
         config.backends = ExtensionManager.make_test_instance(extensions)
-        config._mock_testing = True
+        config._mock_testing = True  # pylint: disable=protected-access
 
 
 class TestClient(Client):

@@ -12,6 +12,7 @@ import hmac
 import json
 import logging
 import unicodedata
+import six
 
 import requests
 
@@ -57,7 +58,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         Class initializer
         """
-
+        ProctoringBackendProvider.__init__(self)
         self.organization = organization
         self.exam_sponsor = exam_sponsor
         self.exam_register_endpoint = exam_register_endpoint
@@ -465,7 +466,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         Serializes out the HTTP body that SoftwareSecure expects
         """
-        keys = body_json.keys()
+        keys = list(body_json.keys())
         keys.sort()
         string = ""
         for key in keys:
@@ -478,15 +479,15 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             if isinstance(value, (list, tuple)):
                 for idx, arr in enumerate(value):
                     if isinstance(arr, dict):
-                        string += self._body_string(arr, key + '.' + str(idx) + '.')
+                        string += self._body_string(arr, key + '.' + bytes(idx) + '.')
                     else:
-                        string += key + '.' + str(idx) + ':' + arr + '\n'
+                        string += key + '.' + bytes(idx) + ':' + arr + '\n'
             elif isinstance(value, dict):
                 string += self._body_string(value, key + '.')
             else:
                 if value != "" and not value:
                     value = "null"
-                string += str(prefix) + str(key) + ":" + unicode(value).encode('utf-8') + '\n'
+                string += bytes(prefix) + bytes(key) + ":" + six.text_type(value).encode('utf-8') + '\n'
 
         return string
 
@@ -502,7 +503,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         message = method_string + headers_str + body_str
 
         # HMAC requires a string not a unicode
-        message = str(message)
+        message = bytes(message)
 
         log_msg = (
             'About to send payload to SoftwareSecure: examCode: {examCode}, courseID: {courseID}'.
@@ -510,7 +511,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         )
         log.info(log_msg)
 
-        hashed = hmac.new(str(self.secret_key), str(message), sha256)
+        hashed = hmac.new(bytes(self.secret_key), bytes(message), sha256)
         computed = binascii.b2a_base64(hashed.digest()).rstrip('\n')
 
         return 'SSI ' + self.secret_key_id + ':' + computed

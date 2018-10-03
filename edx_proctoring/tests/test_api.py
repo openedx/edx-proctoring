@@ -504,7 +504,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             self.proctored_exam_id,
             self.user.username,
             ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
-            str(allowed_extra_time)
+            bytes(allowed_extra_time)
         )
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
         start_exam_attempt(self.proctored_exam_id, self.user_id)
@@ -1592,8 +1592,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         attempt = get_exam_attempt_by_id(exam_attempt.id)
 
-        self.assertEquals(attempt['last_poll_timestamp'], now)
-        self.assertEquals(attempt['last_poll_ipaddr'], '1.1.1.1')
+        self.assertEqual(attempt['last_poll_timestamp'], now)
+        self.assertEqual(attempt['last_poll_ipaddr'], '1.1.1.1')
 
     def test_requirement_status_order(self):
         """

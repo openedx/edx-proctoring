@@ -63,7 +63,7 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        "Django>=1.8,<2.0",
+        "Django>=1.11,<2.0",
         "django-model-utils>=2.3.1",
         "edx-drf-extensions",
         "djangorestframework>=3.1,<3.7",
@@ -73,6 +73,7 @@ setup(
         "pycryptodomex>=3.4.7",
         "python-dateutil>=2.1",
         "requests",
+        "stevedore",
         "six",
     ],
     dependency_links=[

@@ -5,6 +5,7 @@ Proctored Exams HTTP-based API endpoints
 from __future__ import absolute_import
 
 import logging
+import six
 
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -213,7 +214,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                 hide_after_due=request.data.get('hide_after_due', None),
             )
             return Response({'exam_id': exam_id})
-        except ProctoredExamNotFoundException, ex:
+        except ProctoredExamNotFoundException as ex:
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
@@ -235,7 +236,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                     data=get_exam_by_id(exam_id),
                     status=status.HTTP_200_OK
                 )
-            except ProctoredExamNotFoundException, ex:
+            except ProctoredExamNotFoundException as ex:
                 LOG.exception(ex)
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
@@ -250,7 +251,7 @@ class ProctoredExamView(AuthenticatedAPIView):
                             data=get_exam_by_content_id(course_id, content_id),
                             status=status.HTTP_200_OK
                         )
-                    except ProctoredExamNotFoundException, ex:
+                    except ProctoredExamNotFoundException as ex:
                         LOG.exception(ex)
                         return Response(
                             status=status.HTTP_400_BAD_REQUEST,
@@ -342,11 +343,11 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 status=status.HTTP_200_OK
             )
 
-        except ProctoredBaseException, ex:
+        except ProctoredBaseException as ex:
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": str(ex)}
+                data={"detail": bytes(ex)}
             )
 
     def put(self, request, attempt_id):
@@ -407,11 +408,11 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 )
             return Response({"exam_attempt_id": exam_attempt_id})
 
-        except ProctoredBaseException, ex:
+        except ProctoredBaseException as ex:
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": str(ex)}
+                data={"detail": bytes(ex)}
             )
 
     @method_decorator(require_course_or_global_staff)
@@ -434,11 +435,11 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             remove_exam_attempt(attempt_id, request.user)
             return Response()
 
-        except ProctoredBaseException, ex:
+        except ProctoredBaseException as ex:
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": str(ex)}
+                data={"detail": bytes(ex)}
             )
 
 
@@ -588,11 +589,11 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
 
             return Response({'exam_attempt_id': exam_attempt_id})
 
-        except ProctoredBaseException, ex:
+        except ProctoredBaseException as ex:
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": unicode(ex)}
+                data={"detail": six.text_type(ex)}
             )
 
 
@@ -719,7 +720,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": str(ex)}
+                data={"detail": bytes(ex)}
             )
 
     @method_decorator(require_course_or_global_staff)
@@ -787,13 +788,20 @@ class ProctoredExamAttemptReviewStatus(AuthenticatedAPIView):
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": str(ex)}
+                data={"detail": bytes(ex)}
             )
 
 
 class ProctoredExamReviewCallback(AuthenticatedAPIView):
+    """
+    Authenticated callback from 3rd party proctoring service.
+    """
     @method_decorator(require_course_or_global_staff)
     def put(self, request, attempt_id):
+        """
+        Called when 3rd party proctoring service has finished its review of
+        an attempt.
+        """
         try:
             attempt = get_exam_attempt_by_id(attempt_id)
 
@@ -809,8 +817,5 @@ class ProctoredExamReviewCallback(AuthenticatedAPIView):
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": str(ex)}
+                data={"detail": bytes(ex)}
             )
-
-
-

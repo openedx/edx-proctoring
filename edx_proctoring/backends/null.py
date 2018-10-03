@@ -55,4 +55,3 @@ class NullBackendProvider(ProctoringBackendProvider):
         Called after an exam is saved.
         """
         return None
-

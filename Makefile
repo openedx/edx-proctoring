@@ -45,7 +45,6 @@ requirements: ## install development environment requirements
 	pip-sync requirements/*.txt requirements/private.*
 
 install: upgrade requirements
-	./manage.py syncdb --noinput --settings=test_settings
 	./manage.py migrate --settings=test_settings
 	npm install
 

@@ -17,6 +17,7 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
     """
 
     def __init__(self, *args, **kwargs):
+        ProctoringBackendProvider.__init__(self)
         self.args = args
         self.kwargs = kwargs
 
@@ -99,4 +100,3 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
         Called after an exam is saved.
         """
         return None
-

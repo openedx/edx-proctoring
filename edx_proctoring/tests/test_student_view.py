@@ -884,7 +884,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             self.timed_exam_id,
             self.user.username,
             ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
-            str(allowed_extra_time)
+            bytes(allowed_extra_time)
         )
 
         rendered_response = get_student_view(

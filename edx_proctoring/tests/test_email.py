@@ -81,7 +81,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
             self.user.id,
             status
         )
-        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 1)
 
         # Verify the subject
         actual_subject = self._normalize_whitespace(mail.outbox[0].subject)
@@ -110,7 +110,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
             self.user.id,
             ProctoredExamStudentAttemptStatus.submitted
         )
-        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 1)
 
         # Verify the subject
         actual_subject = self._normalize_whitespace(mail.outbox[0].subject)
@@ -146,7 +146,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
             self.user.id,
             status
         )
-        self.assertEquals(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 0)
 
     @ddt.data(
         ProctoredExamStudentAttemptStatus.submitted,
@@ -164,7 +164,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
             self.user.id,
             status
         )
-        self.assertEquals(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 0)
 
     @ddt.data(
         ProctoredExamStudentAttemptStatus.submitted,
@@ -182,4 +182,4 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
             self.user.id,
             status
         )
-        self.assertEquals(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 0)

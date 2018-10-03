@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
 from django.db.models.base import ObjectDoesNotExist
-from django.db.models.signals import pre_save, post_save, pre_delete
+from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext as _, ugettext_noop
 

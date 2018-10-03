@@ -3,6 +3,7 @@ Various callback paths that support callbacks from SoftwareSecure
 """
 
 import logging
+import six
 from django.template import loader
 from django.conf import settings
 from django.http import HttpResponse
@@ -100,11 +101,11 @@ class ExamReviewCallback(APIView):
         # call down into the underlying provider code
         try:
             provider.on_review_callback(request.data)
-        except ProctoredBaseException, ex:
+        except ProctoredBaseException as ex:
             log.exception(ex)
             return Response(
                 data={
-                    'reason': unicode(ex)
+                    'reason': six.text_type(ex)
                 },
                 status=400
             )

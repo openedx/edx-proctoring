@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import types
 import unittest
 import pytz
+import six
 
 from edx_proctoring.services import (
     ProctoringService
@@ -55,12 +56,12 @@ class MockCreditService(object):
             for requirement in self.status['credit_requirement_status']
             if requirement['name'] == req_name and
             requirement['namespace'] == req_namespace and
-            requirement['course_id'] == unicode(course_key_or_id)
+            requirement['course_id'] == six.text_type(course_key_or_id)
         ]
 
         if not found:
             self.status['credit_requirement_status'].append({
-                'course_id': unicode(course_key_or_id),
+                'course_id': six.text_type(course_key_or_id),
                 'req_namespace': req_namespace,
                 'namespace': req_namespace,
                 'name': req_name,
@@ -83,7 +84,7 @@ class MockCreditService(object):
             match = (
                 requirement['name'] == req_name and
                 requirement['namespace'] == req_namespace and
-                requirement['course_id'] == unicode(course_key_or_id)
+                requirement['course_id'] == six.text_type(course_key_or_id)
             )
             if match:
                 self.status['credit_requirement_status'].remove(requirement)
@@ -221,30 +222,30 @@ class MockGradesService(object):
 
     def init_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all, earned_graded):
         """Initialize a grade in MockGradesService for testing. Actual GradesService does not have this method."""
-        self.grades[str(user_id) + str(course_key_or_id) + str(usage_key_or_id)] = MockGrade(
+        self.grades[bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id)] = MockGrade(
             earned_all=earned_all,
             earned_graded=earned_graded
         )
 
     def get_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id):
         """Returns entered grade for key (user_id + course_key + subsection) or None"""
-        key = str(user_id) + str(course_key_or_id) + str(usage_key_or_id)
+        key = bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id)
         if key in self.overrides:
             # pretend override was applied
             return MockGrade(
                 earned_all=self.overrides[key].earned_all_override,
                 earned_graded=self.overrides[key].earned_graded_override
             )
-        return self.grades.get(str(user_id) + str(course_key_or_id) + str(usage_key_or_id))
+        return self.grades.get(bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id))
 
     def get_subsection_grade_override(self, user_id, course_key_or_id, usage_key_or_id):
         """Returns entered grade override for key (user_id + course_key + subsection) or None"""
-        return self.overrides.get(str(user_id) + str(course_key_or_id) + str(usage_key_or_id))
+        return self.overrides.get(bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id))
 
     def override_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all=None,
                                   earned_graded=None):
         """Sets grade override earned points for key (user_id + course_key + subsection)"""
-        key = str(user_id) + str(course_key_or_id) + str(usage_key_or_id)
+        key = bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id)
         self.overrides[key] = MockGradeOverride(
             earned_all=earned_all,
             earned_graded=earned_graded
@@ -252,7 +253,7 @@ class MockGradesService(object):
 
     def undo_override_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id):
         """Deletes grade override for key (user_id + course_key + subsection)"""
-        key = str(user_id) + str(course_key_or_id) + str(usage_key_or_id)
+        key = bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id)
         if key in self.overrides:
             del self.overrides[key]
 
@@ -276,7 +277,7 @@ class MockCertificateService(object):
         Get the generated certificate for key (user_id + course_key) and invalidate certificate
         whose grade dropped below passing threshold due to suspicious proctored exam
         """
-        key = str(user_id) + str(course_key_or_id)
+        key = bytes(user_id) + bytes(course_key_or_id)
         self.generated_certificate[key] = MockGeneratedCertificate()
         self.generated_certificate[key].mock_invalidate()
 
@@ -284,4 +285,4 @@ class MockCertificateService(object):
         """
         Returns invalidated certificate for key (user_id + course_key)
         """
-        return self.generated_certificate.get(str(user_id) + str(course_key_or_id))
+        return self.generated_certificate.get(bytes(user_id) + bytes(course_key_or_id))

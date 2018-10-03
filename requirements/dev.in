@@ -9,4 +9,4 @@ tox-battery               # Makes tox aware of requirements file changes
 twine                     # Utility for PyPI package uploads
 wheel                     # For generation of wheels for PyPI
 
-django==1.11.15
+django>=1.11,<2.0

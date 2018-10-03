@@ -5,7 +5,6 @@ edx_proctoring Django application initialization.
 
 from __future__ import absolute_import
 
-from collections import OrderedDict
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -38,11 +37,11 @@ class EdxProctoringConfig(AppConfig):
             options = options or config[name]
             return self.backends[name].plugin(**options)
         except KeyError:
-            raise NotImplementedError("No proctoring backend configured for '{}'.  "\
-                "Available: {} {}".format(name, self.backends.names(), config))
+            raise NotImplementedError("No proctoring backend configured for '{}'.  "
+                                      "Available: {} {}".format(name, self.backends.names(), config))
 
     def ready(self):
         """
         Loads the available proctoring backends
         """
-        self.backends = ExtensionManager(namespace='openedx.proctoring')
+        self.backends = ExtensionManager(namespace='openedx.proctoring')  # pylint: disable=W0201

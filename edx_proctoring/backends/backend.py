@@ -2,18 +2,14 @@
 Defines the abstract base class that all backends should derive from
 """
 
-from __future__ import absolute_import
-
 import abc
+import six
 
 
-class ProctoringBackendProvider(object):
+class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
     """
     The base abstract class for all proctoring service providers
     """
-
-    # don't allow instantiation of this class, it must be subclassed
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def register_exam_attempt(self, exam, context):
