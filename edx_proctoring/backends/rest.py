@@ -1,7 +1,9 @@
-from requests import Session
-from edx_proctoring.backends.backend import ProctoringBackendProvider
+import time
+import jwt
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from edx_proctoring.backends.backend import ProctoringBackendProvider
+from requests import Session
 
 
 class BaseRestProctoringProvider(ProctoringBackendProvider):
@@ -65,14 +67,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Called when the exam attempt has been created but not started
         """
         attempt_id = context['attempt_code']
-        callback_url = reverse('edx_proctoring.proctored_exam.attempt.callback', args=[attempt_id])
-        user_id = context['user_id']
         response = self._make_attempt_request(
                                             exam['id'],
                                             attempt_id,
                                             'created',
-                                            callback_url=callback_url,
-                                            user_id=user_id)
+                                            **context)
         return response['id']
 
     def start_exam_attempt(self, exam, attempt):

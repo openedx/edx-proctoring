@@ -579,6 +579,14 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
                 args=[attempt_code]
             )
         )
+        review_callback_url = '{scheme}://{hostname}{path}'.format(
+            scheme=scheme,
+            hostname=settings.SITE_NAME,
+            path=reverse(
+                'edx_proctoring.proctored_exam.attempt.callback',
+                args=[attempt_code]
+            )
+        )
 
         obs_user_id = hashlib.sha1(bytes(attempt_code) + bytes(user_id)).hexdigest()
 
@@ -597,8 +605,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             'attempt_code': attempt_code,
             'is_sample_attempt': exam['is_practice_exam'],
             'callback_url': callback_url,
-            'full_name': full_name,
-            'email': email,
+            'review_callback_url': review_callback_url,
             'user_id': obs_user_id
         }
 
