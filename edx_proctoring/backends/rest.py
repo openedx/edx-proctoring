@@ -20,6 +20,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         return self.base_url + '/v1/exam/{exam_id}/attempt/{attempt_id}/'
 
     @property
+    def create_exam_url(self):
+        return self.base_url + '/v1/exam/'
+
+    @property
     def exam_url(self):
         return self.base_url + '/v1/exam/{exam_id}/'
 
@@ -58,9 +62,12 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         response = self.session.get(url).json()
         return response
 
-    def get_exam_instructions(self, attempt):
-        exam = self.get_exam(attempt['proctored_exam'])
-        return exam.get('instructions', {})
+    def get_attempt_instructions(self, attempt):
+        response = self._make_attempt_request(
+                    attempt['proctored_exam']['external_id'],
+                    attempt['attempt_code'],
+                    method='GET')
+        return response.get('instructions', {})
 
     def register_exam_attempt(self, exam, context):
         """
@@ -68,9 +75,9 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         attempt_id = context['attempt_code']
         response = self._make_attempt_request(
-                                            exam['id'],
+                                            exam['external_id'],
                                             attempt_id,
-                                            'created',
+                                            status='created',
                                             **context)
         return response['id']
 
@@ -79,7 +86,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Method that is responsible for communicating with the backend provider
         to establish a new proctored exam
         """
-        response = self._make_attempt_request(exam['id'], attempt, 'start', method='PATCH')
+        response = self._make_attempt_request(exam['external_id'], attempt, status='start', method='PATCH')
         return response['status']
 
     def stop_exam_attempt(self, exam, attempt):
@@ -87,7 +94,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Method that is responsible for communicating with the backend provider
         to establish a new proctored exam
         """
-        response = self._make_attempt_request(exam['id'], attempt, 'stop', method='PATCH')
+        response = self._make_attempt_request(exam['external_id'], attempt, status='stop', method='PATCH')
         return response['status']
 
     def on_review_callback(self, attempt, payload):
@@ -107,13 +114,16 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         Called after an exam is saved.
         """
-        url = self.exam_url.format(exam_id=exam['id'])
+        url = self.create_exam_url
         response = self.session.post(url, json=exam).json()
-        return response
+        return response.get('id')
 
-    def _make_attempt_request(self, exam, attempt, status, method='POST', **payload):
-        payload['status'] = status
-        payload['callback_token'] = self._get_callback_token(attempt)
+    def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):
+        if status:
+            payload['status'] = status
+            payload['callback_token'] = self._get_callback_token(attempt)
+        else:
+            payload = None
         url = self.exam_attempt_url.format(exam_id=exam, attempt_id=attempt)
         response = self.session.request(method, url, json=payload).json()
         return response

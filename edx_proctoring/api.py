@@ -108,8 +108,10 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
     # read back exam so we can emit an event on it
     exam = get_exam_by_id(proctored_exam.id)
     emit_event(exam, 'created')
-    get_backend_provider(exam).on_exam_saved(exam)
-
+    external_id = get_backend_provider(exam).on_exam_saved(exam)
+    if external_id:
+        proctored_exam.external_id = external_id
+        proctored_exam.save()
     return proctored_exam.id
 
 
@@ -275,7 +277,10 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constant
     # read back exam so we can emit an event on it
     exam = get_exam_by_id(proctored_exam.id)
     emit_event(exam, 'updated')
-    get_backend_provider(exam).on_exam_saved(exam)
+    external_id = get_backend_provider(exam).on_exam_saved(exam)
+    if external_id:
+        proctored_exam.external_id = external_id
+        proctored_exam.save()
 
     return proctored_exam.id
 
@@ -1853,6 +1858,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             student_view_template = 'proctored_exam/instructions.html'
             context.update({
                 'exam_code': attempt['attempt_code'],
+                'backend_instructions': provider.get_attempt_instructions(attempt),
                 'software_download_url': provider.get_software_download_url(),
             })
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_start:

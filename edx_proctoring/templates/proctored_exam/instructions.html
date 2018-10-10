@@ -7,6 +7,11 @@
       Follow these steps to set up and start your proctored exam.
     {% endblocktrans %}
     </h3>
+    {% if backend_instructions %}
+      {% for instruction in backend_instructions %}
+      <p>{{instruction|safe}}</p>
+      {% endfor %}
+    {% else %}
     <p>
       {% blocktrans %}
         1. Copy this unique exam code. You will be prompted to paste this code later before you start the exam.
@@ -50,6 +55,7 @@
             {% trans "Start Proctored Exam" %}
         </button>
     </div>
+    {% endif %}
   </div>
 </div>
 <div id="accessible-error-modal" class="modal" aria-hidden="true">
