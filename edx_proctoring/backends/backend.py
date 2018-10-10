@@ -10,6 +10,7 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
     """
     The base abstract class for all proctoring service providers
     """
+    human_readable_name = u'Unknown'
 
     @abc.abstractmethod
     def register_exam_attempt(self, exam, context):
@@ -43,7 +44,7 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """

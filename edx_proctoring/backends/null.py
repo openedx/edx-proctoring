@@ -11,6 +11,7 @@ class NullBackendProvider(ProctoringBackendProvider):
     """
     Implementation of the ProctoringBackendProvider that does nothing
     """
+    human_readable_name = u'Null Backend'
 
     def register_exam_attempt(self, exam, context):
         """
@@ -39,7 +40,7 @@ class NullBackendProvider(ProctoringBackendProvider):
         """
         return None
 
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """

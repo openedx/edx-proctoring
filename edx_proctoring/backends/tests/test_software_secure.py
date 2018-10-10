@@ -503,7 +503,7 @@ class SoftwareSecureTests(TestCase):
         )
         test_payload = test_payload.replace('Clean', review_status)
 
-        provider.on_review_callback(json.loads(test_payload))
+        provider.on_review_callback(None, json.loads(test_payload))
 
         # make sure that what we have in the Database matches what we expect
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
@@ -543,7 +543,7 @@ class SoftwareSecureTests(TestCase):
         )
 
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            provider.on_review_callback(json.loads(test_payload))
+            provider.on_review_callback(None, json.loads(test_payload))
 
     def test_review_status_code(self):
         """
@@ -559,7 +559,7 @@ class SoftwareSecureTests(TestCase):
         test_payload = test_payload.replace('Clean', 'Unexpected')
 
         with self.assertRaises(ProctoredExamBadReviewStatus):
-            provider.on_review_callback(json.loads(test_payload))
+            provider.on_review_callback(None, json.loads(test_payload))
 
     def test_review_mistmatched_tokens(self):
         """
@@ -596,7 +596,7 @@ class SoftwareSecureTests(TestCase):
         )
 
         with self.assertRaises(ProctoredExamSuspiciousLookup):
-            provider.on_review_callback(json.loads(test_payload))
+            provider.on_review_callback(None, json.loads(test_payload))
 
     @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_CALLBACK_SIMULATION': True})
     @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
@@ -635,7 +635,7 @@ class SoftwareSecureTests(TestCase):
 
         # this should not raise an exception since we have
         # the ALLOW_CALLBACK_SIMULATION override
-        provider.on_review_callback(json.loads(test_payload))
+        provider.on_review_callback(None, json.loads(test_payload))
 
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.verified)
@@ -678,7 +678,7 @@ class SoftwareSecureTests(TestCase):
         remove_exam_attempt(attempt_id, requesting_user=self.user)
 
         # now process the report
-        provider.on_review_callback(json.loads(test_payload))
+        provider.on_review_callback(None, json.loads(test_payload))
 
         # make sure that what we have in the Database matches what we expect
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
@@ -729,11 +729,11 @@ class SoftwareSecureTests(TestCase):
             external_id=attempt['external_id']
         )
 
-        provider.on_review_callback(json.loads(test_payload))
+        provider.on_review_callback(None, json.loads(test_payload))
 
         # now call again
         with self.assertRaises(ProctoredExamReviewAlreadyExists):
-            provider.on_review_callback(json.loads(test_payload))
+            provider.on_review_callback(None, json.loads(test_payload))
 
     @patch('edx_proctoring.constants.ALLOW_REVIEW_UPDATES', True)
     def test_allow_review_resubmission(self):
@@ -768,7 +768,7 @@ class SoftwareSecureTests(TestCase):
             external_id=attempt['external_id']
         )
 
-        provider.on_review_callback(json.loads(test_payload))
+        provider.on_review_callback(None, json.loads(test_payload))
 
         # make sure history table is empty
         records = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt['attempt_code'])
@@ -776,7 +776,7 @@ class SoftwareSecureTests(TestCase):
 
         # now call again, this will not throw exception
         test_payload = test_payload.replace('Clean', 'Suspicious')
-        provider.on_review_callback(json.loads(test_payload))
+        provider.on_review_callback(None, json.loads(test_payload))
 
         # make sure that what we have in the Database matches what we expect
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
@@ -836,7 +836,7 @@ class SoftwareSecureTests(TestCase):
         test_payload = test_payload.replace('Clean', 'Suspicious')
 
         # submit a Suspicious review payload
-        provider.on_review_callback(json.loads(test_payload))
+        provider.on_review_callback(None, json.loads(test_payload))
 
         # now look at the attempt and make sure it did not
         # transition to failure on the callback,
@@ -894,7 +894,7 @@ class SoftwareSecureTests(TestCase):
         )
 
         # now process the report
-        provider.on_review_callback(json.loads(test_payload))
+        provider.on_review_callback(None, json.loads(test_payload))
 
         # now look at the attempt and make sure it did not
         # transition to failure on the callback,

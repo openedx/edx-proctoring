@@ -172,7 +172,7 @@
         action: action
       },
       success: function (data) {
-        newWindow.location = "{{software_download_url}}";
+        newWindow.location = "{{software_download_url}}?attempt={{exam_code}}";
       }
     }).fail(function(){
       newWindow.close();

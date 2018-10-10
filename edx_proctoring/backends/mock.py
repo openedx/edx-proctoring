@@ -15,6 +15,7 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
     """
     Implementation of the ProctoringBackendProvider that bypasses proctoring setup.
     """
+    human_readable_name = u'Mock Backend'
 
     def __init__(self, *args, **kwargs):
         ProctoringBackendProvider.__init__(self)
@@ -73,7 +74,7 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
         """
         return "mockurl"
 
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
 

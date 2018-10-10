@@ -48,7 +48,7 @@ class TestBackendProvider(ProctoringBackendProvider):
         """
         return None
 
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """
@@ -104,11 +104,11 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
         """
         return super(PassthroughBackendProvider, self).get_software_download_url()
 
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """
-        return super(PassthroughBackendProvider, self).on_review_callback(payload)
+        return super(PassthroughBackendProvider, self).on_review_callback(attempt, payload)
 
     def on_review_saved(self, review):
         """
@@ -146,7 +146,7 @@ class TestBackends(TestCase):
             provider.get_software_download_url()
 
         with self.assertRaises(NotImplementedError):
-            provider.on_review_callback(None)
+            provider.on_review_callback(None, None)
 
         with self.assertRaises(NotImplementedError):
             provider.on_review_saved(None)
@@ -162,7 +162,7 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
         self.assertIsNone(provider.get_software_download_url())
-        self.assertIsNone(provider.on_review_callback(None))
+        self.assertIsNone(provider.on_review_callback(None, None))
         self.assertIsNone(provider.on_review_saved(None))
 
     def test_mock_provider(self):
@@ -187,5 +187,5 @@ class TestBackends(TestCase):
         )
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
-        self.assertIsNone(provider.on_review_callback(None))
+        self.assertIsNone(provider.on_review_callback(None, None))
         self.assertIsNone(provider.on_review_saved(None))

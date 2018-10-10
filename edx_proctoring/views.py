@@ -807,7 +807,7 @@ class ProctoredExamReviewCallback(AuthenticatedAPIView):
 
             provider = get_backend_provider(attempt['proctored_exam'])
 
-            provider.on_review_callback(request.data)
+            provider.on_review_callback(attempt, request.data)
 
             return Response(
                 status=status.HTTP_200_OK,

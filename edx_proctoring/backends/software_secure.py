@@ -51,6 +51,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     Implementation of the ProctoringBackendProvider for Software Secure's
     RPNow product
     """
+    human_readable_name = u'RPNow'
 
     def __init__(self, organization, exam_sponsor, exam_register_endpoint,
                  secret_key_id, secret_key, crypto_key, software_download_url,
@@ -130,7 +131,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         return self.software_download_url
 
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
 

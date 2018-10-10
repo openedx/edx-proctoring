@@ -7,6 +7,7 @@ API which is in the views.py file, per edX coding standards
 from __future__ import absolute_import
 
 from datetime import datetime, timedelta
+import hashlib
 import logging
 import uuid
 import pytz
@@ -65,7 +66,7 @@ REJECTED_GRADE_OVERRIDE_EARNED = 0.0
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True, hide_after_due=False,
-                backend=settings.PROCTORING_BACKEND_PROVIDERS.get('DEFAULT', None)):
+                backend=getattr(settings, 'PROCTORING_BACKENDS', {}).get('DEFAULT', None)):
     """
     Creates a new ProctoredExam entity, if the course_id/content_id pair do not already exist.
     If that pair already exists, then raise exception.
@@ -579,6 +580,8 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             )
         )
 
+        obs_user_id = hashlib.sha1(bytes(attempt_code) + bytes(user_id)).hexdigest()
+
         # get the name of the user, if the service is available
         full_name = None
         email = None
@@ -595,7 +598,8 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             'is_sample_attempt': exam['is_practice_exam'],
             'callback_url': callback_url,
             'full_name': full_name,
-            'email': email
+            'email': email,
+            'user_id': obs_user_id
         }
 
         # see if there is an exam review policy for this exam

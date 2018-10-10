@@ -18,6 +18,10 @@ class EdxProctoringConfig(AppConfig):
 
     name = 'edx_proctoring'
 
+    def get_backend_choices(self):
+        for extension in self.backends:
+            yield extension.name, getattr(extension.plugin, 'human_readable_name', u'Unknown')
+
     def get_backend(self, name=None, options=None):
         """
         Returns an instance of the proctoring backend.
@@ -25,14 +29,14 @@ class EdxProctoringConfig(AppConfig):
         :param str name: Name of entrypoint in openedx.proctoring
         :param dict options: Keyword arguments to use when instantiating the backend
         """
-        config = getattr(settings, 'PROCTORING_BACKEND_PROVIDERS', None)  # pylint: disable=literal-used-as-attribute
+        config = getattr(settings, 'PROCTORING_BACKENDS', None)  # pylint: disable=literal-used-as-attribute
         if not config:
-            raise ImproperlyConfigured("Settings not configured with PROCTORING_BACKEND_PROVIDERS!")
+            raise ImproperlyConfigured("Settings not configured with PROCTORING_BACKENDS!")
         if name is None:
             try:
                 name = config['DEFAULT']
             except KeyError:
-                raise ImproperlyConfigured("No default proctoring backend set in settings.PROCTORING_BACKEND_PROVIDERS")
+                raise ImproperlyConfigured("No default proctoring backend set in settings.PROCTORING_BACKENDS")
         try:
             options = options or config[name]
             return self.backends[name].plugin(**options)
