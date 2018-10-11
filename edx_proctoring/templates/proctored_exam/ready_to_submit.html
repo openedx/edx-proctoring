@@ -35,22 +35,28 @@
       // cancel any warning messages to end user about leaving proctored exam
       $(window).unbind('beforeunload');
 
-      var action_url = $(this).data('change-state-url');
-      var exam_id = $(this).data('exam-id');
-      var action = $(this).data('action');
+      if ((backend_submission_callback !== undefined && backend_submission_callback()) || (backend_submission_callback == undefined)) {
+          var action_url = $(this).data('change-state-url');
+          var exam_id = $(this).data('exam-id');
+          var action = $(this).data('action');
 
-      // Update the state of the attempt
-      $.ajax({
-        url: action_url,
-        type: 'PUT',
-        data: {
-          action: action
-        },
-        success: function() {
-          // Reloading page will reflect the new state of the attempt
-          location.reload()
+          // Update the state of the attempt
+          $.ajax({
+            url: action_url,
+            type: 'PUT',
+            data: {
+              action: action
+            },
+            success: function() {
+              // Reloading page will reflect the new state of the attempt
+              location.reload()
+            }
+          });
         }
-      });
-    }
+      } else {
+        // TODO: better error message
+        alert('There was an error shutting off the proctoring software.');
+      }
   );
+  {{backend_js|safe}}
 </script>

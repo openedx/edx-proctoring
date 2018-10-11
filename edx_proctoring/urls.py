@@ -59,6 +59,11 @@ urlpatterns = [
         name='edx_proctoring.proctored_exam.attempt.review_status'
     ),
     url(
+        r'edx_proctoring/v1/proctored_exam/attempt/(?P<attempt_code>[-\w]+)/ready$',
+        callbacks.ExamReadyCallback.as_view(),
+        name='edx_proctoring.proctored_exam.attempt.ready_callback'
+    ),
+    url(
         r'edx_proctoring/v1/proctored_exam/attempt/(?P<attempt_code>[-\w]+)/reviewed$',
         views.ProctoredExamReviewCallback.as_view(),
         name='edx_proctoring.proctored_exam.attempt.callback'

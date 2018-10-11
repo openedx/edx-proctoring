@@ -580,7 +580,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             scheme=scheme,
             hostname=settings.SITE_NAME,
             path=reverse(
-                'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                'edx_proctoring.proctored_exam.attempt.ready_callback',
                 args=[attempt_code]
             )
         )
@@ -1020,6 +1020,12 @@ def update_attempt_status(exam_id, user_id, to_status,
     # via workflow
     attempt = get_exam_attempt(exam_id, user_id)
 
+    # call back to the backend to register the end of the exam, if necessary
+    backend = get_backend_provider(exam)
+    if to_status == ProctoredExamStudentAttemptStatus.started:
+        backend.start_exam_attempt(exam['external_id'], attempt['attempt_code'])
+    if to_status == ProctoredExamStudentAttemptStatus.submitted:
+        backend.stop_exam_attempt(exam['external_id'], attempt['attempt_code'])
     # we user the 'status' field as the name of the event 'verb'
     emit_event(exam, attempt['status'], attempt=attempt)
 
@@ -1725,6 +1731,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     attempt = get_exam_attempt(exam_id, user_id)
 
     attempt_status = attempt['status'] if attempt else None
+    provider = get_backend_provider(exam)
 
     if not attempt_status:
         student_view_template = 'practice_exam/entrance.html'
@@ -1733,11 +1740,12 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
-        provider = get_backend_provider(exam)
+        provider_attempt = provider.get_attempt(attempt)
         student_view_template = 'proctored_exam/instructions.html'
         context.update({
             'exam_code': attempt['attempt_code'],
-            'software_download_url': provider.get_software_download_url(),
+            'backend_instructions': provider_attempt.get('instructions', None),
+            'software_download_url': provider_attempt.get('download_url', None) or provider.get_software_download_url(),
         })
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_start:
         student_view_template = 'proctored_exam/ready_to_start.html'
@@ -1748,7 +1756,9 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
+
     if student_view_template:
+        context['backend_js'] = provider.get_javascript()
         template = loader.get_template(student_view_template)
         context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=True))
         return template.render(context)
@@ -1783,6 +1793,8 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     # proctored exam, a quick exit....
     if attempt_status == ProctoredExamStudentAttemptStatus.declined:
         return None
+
+    provider = get_backend_provider(exam)
 
     if not attempt_status:
         # student has not started an attempt
@@ -1854,12 +1866,12 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             # if the user has not id verified yet, show them the page that requires them to do so
             student_view_template = 'proctored_exam/id_verification.html'
         else:
-            provider = get_backend_provider(exam)
+            provider_attempt = provider.get_attempt(attempt)
             student_view_template = 'proctored_exam/instructions.html'
             context.update({
                 'exam_code': attempt['attempt_code'],
-                'backend_instructions': provider.get_attempt_instructions(attempt),
-                'software_download_url': provider.get_software_download_url(),
+                'backend_instructions': provider_attempt.get('instructions', None),
+                'software_download_url': provider_attempt.get('download_url', None) or provider.get_software_download_url(),
             })
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_start:
         student_view_template = 'proctored_exam/ready_to_start.html'
@@ -1893,6 +1905,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
     if student_view_template:
+        context['backend_js'] = provider.get_javascript()
         template = loader.get_template(student_view_template)
         context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id))
         return template.render(context)

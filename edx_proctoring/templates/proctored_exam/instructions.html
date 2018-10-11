@@ -11,6 +11,8 @@
       {% for instruction in backend_instructions %}
       <p>{{instruction|safe}}</p>
       {% endfor %}
+      <span><a href="#" id="software_download_link" data-action="click_download_software" target="_blank">{% trans "Start System Check" %}</a></span>
+
     {% else %}
     <p>
       {% blocktrans %}
@@ -145,11 +147,23 @@
         // we've state transitioned, so refresh the page
         // to reflect the new state (which will expose the test)
         location.reload();
-      }
-      else {
+      } else {
           // The proctoring setup is not yet complete.
           // Show a modal indicating that the user is not done yet.
           accessible_error(gettext("You must complete the proctoring setup before you can start the exam."));
+      }
+    });
+  }
+
+  function poll_until_ready() {
+    var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
+    $.ajax(url).success(function(data){
+      if (data.status === 'ready_to_start') {
+        // we've state transitioned, so refresh the page
+        // to reflect the new state (which will expose the test)
+        location.reload();
+      } else {
+        setTimeout(poll_until_ready, 5000);
       }
     });
   }
@@ -178,11 +192,12 @@
         action: action
       },
       success: function (data) {
-        newWindow.location = "{{software_download_url}}?attempt={{exam_code}}";
+        newWindow.location = "{{software_download_url}}";
+        setTimeout(poll_until_ready, 15000);
       }
     }).fail(function(){
       newWindow.close();
     });
   });
-
+{{backend_js|safe}}
 </script>

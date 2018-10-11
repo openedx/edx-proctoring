@@ -1,5 +1,6 @@
 import time
 import jwt
+import pkg_resources
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from edx_proctoring.backends.backend import ProctoringBackendProvider
@@ -39,6 +40,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         self.session = Session()
         self.session.auth = (self.client_id, self.client_secret)
 
+    def get_javascript(self):
+        package = self.__class__.__module__.split('.')[0]
+        return pkg_resources.resource_string(package, 'backend.js')
+
     def get_software_download_url(self):
         """
         Returns the URL that the user needs to go to in order to download
@@ -62,12 +67,15 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         response = self.session.get(url).json()
         return response
 
-    def get_attempt_instructions(self, attempt):
+    def get_attempt(self, attempt):
+        """
+        Returns the attempt object from the backend
+        """
         response = self._make_attempt_request(
                     attempt['proctored_exam']['external_id'],
                     attempt['attempt_code'],
                     method='GET')
-        return response.get('instructions', {})
+        return response
 
     def register_exam_attempt(self, exam, context):
         """
@@ -86,22 +94,25 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Method that is responsible for communicating with the backend provider
         to establish a new proctored exam
         """
-        response = self._make_attempt_request(exam['external_id'], attempt, status='start', method='PATCH')
-        return response['status']
+        response = self._make_attempt_request(exam, attempt, status='start', method='PATCH')
+        return response.get('status')
 
     def stop_exam_attempt(self, exam, attempt):
         """
         Method that is responsible for communicating with the backend provider
-        to establish a new proctored exam
+        to finish a proctored exam
         """
-        response = self._make_attempt_request(exam['external_id'], attempt, status='stop', method='PATCH')
-        return response['status']
+        response = self._make_attempt_request(exam, attempt, status='stop', method='PATCH')
+        return response.get('status')
 
     def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """
-        jwt.decode(payload['token'], audience=attempt['attempt_code'], key=settings.SECRET_KEY)
+        if self.is_valid_payload(attempt['attempt_code'], payload):
+            return payload
+        else:
+            return False
 
     def on_review_saved(self, review):
         """
@@ -117,6 +128,17 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         url = self.create_exam_url
         response = self.session.post(url, json=exam).json()
         return response.get('id')
+
+    def is_valid_payload(self, attempt_code, payload):
+        """
+        Returns whether the payload coming back from the provider is valid.
+        """
+        try:
+            token = payload['token']
+            decoded = jwt.decode(token, key=settings.SECRET_KEY, audience=attempt_code)
+            return True
+        except (KeyError, jwt.DecodeError):
+            return False
 
     def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):
         if status:

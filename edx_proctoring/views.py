@@ -4,6 +4,7 @@ Proctored Exams HTTP-based API endpoints
 
 from __future__ import absolute_import
 
+import json
 import logging
 import six
 
@@ -16,6 +17,7 @@ from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.response import Response
 
+from edx_proctoring import constants
 from edx_proctoring.api import (
     create_exam,
     update_exam,
@@ -30,6 +32,7 @@ from edx_proctoring.api import (
     get_allowances_for_course,
     get_all_exams_for_course,
     get_exam_attempt_by_id,
+    get_exam_attempt_by_code,
     remove_exam_attempt,
     update_attempt_status,
     update_exam_attempt,
@@ -47,9 +50,16 @@ from edx_proctoring.exceptions import (
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
-from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt, ProctoredExam
+from edx_proctoring.models import (
+    ProctoredExamStudentAttemptStatus,
+    ProctoredExamStudentAttempt,
+    ProctoredExam,
+    ProctoredExamSoftwareSecureComment,
+    ProctoredExamSoftwareSecureReview
+)
 
 from edx_proctoring.utils import (
+    APIView,
     AuthenticatedAPIView,
     get_time_remaining_for_attempt,
     humanized_time,
@@ -792,23 +802,101 @@ class ProctoredExamAttemptReviewStatus(AuthenticatedAPIView):
             )
 
 
-class ProctoredExamReviewCallback(AuthenticatedAPIView):
+class ProctoredExamReviewCallback(APIView):
     """
     Authenticated callback from 3rd party proctoring service.
     """
-    @method_decorator(require_course_or_global_staff)
-    def put(self, request, attempt_id):
+    def post(self, request, attempt_code):
         """
         Called when 3rd party proctoring service has finished its review of
         an attempt.
         """
         try:
-            attempt = get_exam_attempt_by_id(attempt_id)
+            attempt = get_exam_attempt_by_code(attempt_code)
 
-            provider = get_backend_provider(attempt['proctored_exam'])
+            backend = get_backend_provider(attempt['proctored_exam'])
 
-            provider.on_review_callback(attempt, request.data)
+            backend_review = backend.on_review_callback(attempt, request.data)
 
+            # do we already have a review for this attempt?!? We may not allow updates
+            review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
+
+            if review:
+                if not constants.ALLOW_REVIEW_UPDATES:
+                    err_msg = (
+                        'We already have a review submitted from SoftwareSecure regarding '
+                        'attempt_code {attempt_code}. We do not allow for updates!'.format(
+                            attempt_code=attempt_code
+                        )
+                    )
+                    raise ProctoredExamReviewAlreadyExists(err_msg)
+
+                # we allow updates
+                warn_msg = (
+                    'We already have a review submitted from SoftwareSecure regarding '
+                    'attempt_code {attempt_code}. We have been configured to allow for '
+                    'updates and will continue...'.format(
+                        attempt_code=attempt_code
+                    )
+                )
+                LOG.warn(warn_msg)
+            else:
+                # this is first time we've received this attempt_code, so
+                # make a new record in the review table
+                review = ProctoredExamSoftwareSecureReview()
+
+            review.attempt_code = attempt_code
+            review.raw_data = json.dumps(backend_review)
+            review.review_status = backend_review['status']
+            review.student_id = attempt['user']['id']
+            review.exam_id = attempt['proctored_exam']['id']
+            # set reviewed_by to None because it was reviewed by our 3rd party
+            # service provider, not a user in our database
+            review.reviewed_by = None
+
+            review.save()
+
+            # go through and populate all of the specific comments
+            for comment in backend_review.get('comments', []):
+                comment = ProctoredExamSoftwareSecureComment(
+                    review=review,
+                    start_time=comment.get('start', 0),
+                    stop_time=comment.get('stop', 0),
+                    duration=comment.get('duration', 0),
+                    comment=comment['comment'],
+                    status=comment['status']
+                )
+                comment.save()
+
+            # we could have gotten a review for an archived attempt
+            # this should *not* cause an update in our credit
+            # eligibility table
+            allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
+            attempt_status = (
+                ProctoredExamStudentAttemptStatus.verified
+                if review.review_status in ['pass', 'verified']
+                else (
+                    # if we are not allowed to store 'rejected' on this
+                    # code path, then put status into 'second_review_required'
+                    ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
+                    ProctoredExamStudentAttemptStatus.second_review_required
+                )
+            )
+
+            # updating attempt status will trigger workflow
+            # (i.e. updating credit eligibility table)
+
+            update_attempt_status(
+                attempt['proctored_exam']['id'],
+                attempt['user']['id'],
+                attempt_status
+            )
+
+            # emit an event for 'review_received'
+            data = {
+                'review_attempt_code': review.attempt_code,
+                'review_status': review.review_status,
+            }
             return Response(
                 status=status.HTTP_200_OK,
                 data='OK',
