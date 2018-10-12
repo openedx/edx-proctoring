@@ -580,7 +580,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             scheme=scheme,
             hostname=settings.SITE_NAME,
             path=reverse(
-                'edx_proctoring.proctored_exam.attempt.ready_callback',
+                'edx_proctoring.anonymous.proctored_exam.attempt.ready_callback',
                 args=[attempt_code]
             )
         )
@@ -588,7 +588,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             scheme=scheme,
             hostname=settings.SITE_NAME,
             path=reverse(
-                'edx_proctoring.proctored_exam.attempt.callback',
+                'edx_proctoring.anonymous.proctored_exam.attempt.callback',
                 args=[attempt_code]
             )
         )
@@ -611,7 +611,9 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             'is_sample_attempt': exam['is_practice_exam'],
             'callback_url': callback_url,
             'review_callback_url': review_callback_url,
-            'user_id': obs_user_id
+            'user_id': obs_user_id,
+            'full_name': full_name,
+            'email': email
         }
 
         # see if there is an exam review policy for this exam
@@ -1756,7 +1758,6 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
-
     if student_view_template:
         context['backend_js'] = provider.get_javascript()
         template = loader.get_template(student_view_template)
@@ -1868,10 +1869,11 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         else:
             provider_attempt = provider.get_attempt(attempt)
             student_view_template = 'proctored_exam/instructions.html'
+            download_url = provider_attempt.get('download_url', None) or provider.get_software_download_url()
             context.update({
                 'exam_code': attempt['attempt_code'],
                 'backend_instructions': provider_attempt.get('instructions', None),
-                'software_download_url': provider_attempt.get('download_url', None) or provider.get_software_download_url(),
+                'software_download_url': download_url
             })
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_start:
         student_view_template = 'proctored_exam/ready_to_start.html'

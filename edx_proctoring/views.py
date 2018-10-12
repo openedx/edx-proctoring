@@ -42,6 +42,7 @@ from edx_proctoring.api import (
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamNotFoundException,
+    ProctoredExamReviewAlreadyExists,
     UserNotFoundException,
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException,
@@ -63,6 +64,7 @@ from edx_proctoring.utils import (
     AuthenticatedAPIView,
     get_time_remaining_for_attempt,
     humanized_time,
+    emit_event,
 )
 
 ATTEMPTS_PER_PAGE = 25
@@ -897,6 +899,7 @@ class ProctoredExamReviewCallback(APIView):
                 'review_attempt_code': review.attempt_code,
                 'review_status': review.review_status,
             }
+            emit_event(attempt['proctored_exam'], 'review_received', attempt=attempt, override_data=data)
             return Response(
                 status=status.HTTP_200_OK,
                 data='OK',

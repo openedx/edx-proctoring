@@ -87,6 +87,9 @@ class ExamReadyCallback(APIView):
     proceed with the exam.
     """
     def post(self, request, attempt_code):
+        """
+        Post callback handler
+        """
         attempt = get_exam_attempt_by_code(attempt_code)
         if not attempt:
             log.warn("Attempt code %r cannot be found.", attempt_code)

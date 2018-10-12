@@ -64,3 +64,15 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
         Called after an exam is saved.
         """
         raise NotImplementedError()
+
+    def get_javascript(self):
+        """
+        Returns the backend javascript to embed on each proctoring page
+        """
+        return ""
+
+    def get_attempt(self, attempt):
+        """
+        Returns the attempt object from the backend
+        """
+        return attempt

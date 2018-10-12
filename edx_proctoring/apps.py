@@ -19,6 +19,10 @@ class EdxProctoringConfig(AppConfig):
     name = 'edx_proctoring'
 
     def get_backend_choices(self):
+        """
+        Returns an iterator of available backends:
+        backend_name, verbose name
+        """
         for extension in self.backends:
             yield extension.name, getattr(extension.plugin, 'human_readable_name', u'Unknown')
 

@@ -79,7 +79,7 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
 
 
 @patch(
-    'django.conf.settings.PROCTORING_BACKEND_PROVIDERS',
+    'django.conf.settings.PROCTORING_BACKENDS',
     {
         "software_secure": {
             "secret_key_id": "foo",
