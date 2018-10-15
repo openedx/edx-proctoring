@@ -10,7 +10,7 @@ import six
 
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import reverse, NoReverseMatch
+from django.urls import reverse, NoReverseMatch
 from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
 

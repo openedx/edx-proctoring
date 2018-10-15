@@ -17,7 +17,7 @@ from django.utils.translation import ugettext as _, ugettext_noop
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.template import loader
-from django.core.urlresolvers import reverse, NoReverseMatch
+from django.urls import reverse, NoReverseMatch
 from django.core.mail.message import EmailMessage
 
 from edx_proctoring import constants

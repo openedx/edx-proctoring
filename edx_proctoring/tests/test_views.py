@@ -14,7 +14,7 @@ from mock import Mock, patch
 import pytz
 
 from django.test.client import Client
-from django.core.urlresolvers import reverse, NoReverseMatch
+from django.urls import reverse, NoReverseMatch
 from django.contrib.auth.models import User
 
 from edx_proctoring.models import (
