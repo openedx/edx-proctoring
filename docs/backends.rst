@@ -8,7 +8,9 @@ REST API
 --------
 
 Implement the following endpoints. In order to authenticate requests from the OpenEdx server, the PS backend should
-enable Basic Authentication. The OpenEdx installation will be configured with a client key and a client secret provided by the PS and will authenticate each request to the PS.
+enable Oauth 2 authentication using JWT_. The OpenEdx installation will be configured with a client key and a client secret provided by the PS and will authenticate each request to the PS.
+
+To obtain a JWT_ token, the PS system must make an Oauth2 request to ``/oauth2/access_token``.
 
 SSL is required for all (production environment) requests.
 
@@ -65,7 +67,12 @@ Exam endpoint
         "config": {
             "allow_notes": false,
             "allow_multiple": true
-        }
+        },
+        "course_id": "myOrgX:Course101",
+        "is_practice": false,
+        "is_proctored": true,
+        "id": 123,
+        "name": "Course Final Exam"
     }
 
 The config object will match the config keys returned from the configuration endpoint above. Any options which aren't passed in should be set to default values by the proctoring provider.
@@ -80,15 +87,16 @@ The PS system should respond with an object containing at least the following fi
 Exam attempt endpoint
 ^^^^^^^^^^^^^^^^^^^^^
 
-    /v1/exam/{exam_id}/attempt/{attempt_id}/
+    /v1/exam/{exam_id}/attempt/
+
+``{exam_id}`` and ``{attempt_id}`` are the ids returned by the PS during creation.
+
 
 ``POST``: registers the exam attempt on the PS.::
 
     {
-        "callback_url": "https://edx.org/.....",
-        "review_callback_url": "https://edx.org/.....",
         "user_id": "ae0305a9427a91f6f63e55af0eaa1d9c4c02af07f672d15e4a77d99b65327822",
-        "callback_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdHRlbXB0X2lkIjoxfQ._VPnr2XS1Pf0FYU0qMW1LVzYcDOkBYuzFDeczX1QVrk"
+        "user_name": "Joe Smith"
     }
 
 The PS system should respond with an object containing at least the following fields::
@@ -97,50 +105,58 @@ The PS system should respond with an object containing at least the following fi
         "id": "<some opaque id for the attempt>",
     }
 
+    /v1/exam/{exam_id}/attempt/{attempt_id}/
+
 ``PATCH``: changes the status of the attempt::
 
     {
         "status": "start",
-        "callback_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdHRlbXB0X2lkIjoxfQ._VPnr2XS1Pf0FYU0qMW1LVzYcDOkBYuzFDeczX1QVrk",
     }
     {
         "status": "stop",
-        "callback_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdHRlbXB0X2lkIjoxfQ._VPnr2XS1Pf0FYU0qMW1LVzYcDOkBYuzFDeczX1QVrk",
     }
 
 OpenEdx will issue a ``PATCH`` request with a ``start`` status when the learner starts the proctored exam, and a ``stop`` status when the learner finishes the exam.
 
-The callback_token field in each JSON request is a JWT_ token, valid for a preconfigured amount of time. The token's payload contains the same attempt_id passed in the URL and thus is valid only for callback requests for a single attempt.
+``GET``: returns PS information about the attempt
 
-The PS system should save the token received in each request, updating it if it changes. 
+For convenience, the PS should return the exam instructions and the software download url in this response::
+
+    {
+        "status": "created",
+        "instructions": [
+            "Download software",
+            "Run software",
+            ...
+        ],
+        "download_url": "http://my-provider.com/download"
+    }
+
 
 Exam ready callback
 ^^^^^^^^^^^^^^^^^^^
 
-After the PS client software starts, the PS system should make a ``POST`` request to the ``callback_url`` with the following data::
+After the PS client software starts, the PS system should make a ``POST`` request to ``/api/v1/edx_proctoring/proctored_exam/attempt/{attempt_id}/ready`` with the following data::
 
     {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdHRlbXB0X2lkIjoxfQ._VPnr2XS1Pf0FYU0qMW1LVzYcDOkBYuzFDeczX1QVrk",
         "status": "ready"
     }
 
-``token`` is the ``callback_token`` from the initial attempt request.
 
 
 Exam review callback
 ^^^^^^^^^^^^^^^^^^^^
 
-After the PS system has reviewed an attempt, it must issue a POST request to the OpenEdx server at the ``review_callback_url`` passed in the attempt registration request.
+After the PS system has reviewed an attempt, it must issue a ``POST`` request to the OpenEdx server at ``/api/v1/edx_proctoring/v1/proctored_exam/attempt/{attempt_id}/reviewed``
 
 The expected JSON request must include::
 
     {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdHRlbXB0X2lkIjoxfQ._VPnr2XS1Pf0FYU0qMW1LVzYcDOkBYuzFDeczX1QVrk",
         "status": "verified",
         "comments": []
     }
 
-Token must match the last callback_token sent by OpenEdx for this attempt. Status must be one of ``["verified", "suspicious"]``.
+Status must be one of ``["verified", "suspicious"]``.
 
 There can be an arbitrary number of review comments, formatted with at least the following fields::
 

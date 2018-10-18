@@ -576,6 +576,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
 
     if not has_due_date_passed(exam['due_date']) and taking_as_proctored:
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
+        lms_host = '{scheme}://{hostname}'.format(scheme=scheme, hostname=settings.SITE_NAME)
         callback_url = '{scheme}://{hostname}{path}'.format(
             scheme=scheme,
             hostname=settings.SITE_NAME,
@@ -606,11 +607,10 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             email = credit_state['student_email']
 
         context = {
+            'lms_host': lms_host,
             'time_limit_mins': allowed_time_limit_mins,
             'attempt_code': attempt_code,
             'is_sample_attempt': exam['is_practice_exam'],
-            'callback_url': callback_url,
-            'review_callback_url': review_callback_url,
             'user_id': obs_user_id,
             'full_name': full_name,
             'email': email
@@ -636,6 +636,8 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             exam,
             context=context,
         )
+        if external_id:
+            attempt_code = external_id
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,
@@ -1025,9 +1027,9 @@ def update_attempt_status(exam_id, user_id, to_status,
     # call back to the backend to register the end of the exam, if necessary
     backend = get_backend_provider(exam)
     if to_status == ProctoredExamStudentAttemptStatus.started:
-        backend.start_exam_attempt(exam['external_id'], attempt['attempt_code'])
+        backend.start_exam_attempt(exam['external_id'], attempt['external_id'])
     if to_status == ProctoredExamStudentAttemptStatus.submitted:
-        backend.stop_exam_attempt(exam['external_id'], attempt['attempt_code'])
+        backend.stop_exam_attempt(exam['external_id'], attempt['external_id'])
     # we user the 'status' field as the name of the event 'verb'
     emit_event(exam, attempt['status'], attempt=attempt)
 

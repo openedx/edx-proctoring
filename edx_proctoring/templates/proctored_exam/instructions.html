@@ -192,7 +192,7 @@
         action: action
       },
       success: function (data) {
-        newWindow.location = "{{software_download_url}}";
+        newWindow.location = "{{software_download_url|safe}}";
         setTimeout(poll_until_ready, 15000);
       }
     }).fail(function(){

@@ -7,7 +7,7 @@ import jwt
 import pkg_resources
 from django.conf import settings
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from requests import Session
+from edx_rest_api_client.client import EdxSession
 
 
 class BaseRestProctoringProvider(ProctoringBackendProvider):
@@ -18,26 +18,31 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     """
     base_url = None
     expiration_time = 86400 * 2
+    needs_oauth = True
 
     @property
     def exam_attempt_url(self):
         "Returns exam attempt url"
-        return self.base_url + '/v1/exam/{exam_id}/attempt/{attempt_id}/'
+        return self.base_url + u'/v1/exam/{exam_id}/attempt/{attempt_id}/'
+
+    @property
+    def create_exam_attempt_url(self):
+        return self.base_url + u'/v1/exam/{exam_id}/attempt/'
 
     @property
     def create_exam_url(self):
         "Returns create exam url"
-        return self.base_url + '/v1/exam/'
+        return self.base_url + u'/v1/exam/'
 
     @property
     def exam_url(self):
         "Returns exam url"
-        return self.base_url + '/v1/exam/{exam_id}/'
+        return self.base_url + u'/v1/exam/{exam_id}/'
 
     @property
     def config_url(self):
         "Returns proctor config url"
-        return self.base_url + '/v1/config/'
+        return self.base_url + u'/v1/config/'
 
     def __init__(self, client_id=None, client_secret=None, **kwargs):
         """
@@ -50,8 +55,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         self.client_secret = client_secret
         for key, value in kwargs:
             setattr(self, key, value)
-        self.session = Session()
-        self.session.auth = (self.client_id, self.client_secret)
+        self.session = EdxSession(self.base_url, self.client_id, self.client_secret)
 
     def get_javascript(self):
         """
@@ -89,7 +93,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         response = self._make_attempt_request(
             attempt['proctored_exam']['external_id'],
-            attempt['attempt_code'],
+            attempt['external_id'],
             method='GET')
         return response
 
@@ -97,12 +101,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         Called when the exam attempt has been created but not started
         """
-        attempt_id = context['attempt_code']
-        response = self._make_attempt_request(
-            exam['external_id'],
-            attempt_id,
-            status='created',
-            **context)
+        url = self.create_exam_attempt_url.format(exam_id=exam['external_id'])
+        payload = context
+        payload['status'] = 'created'
+        response = self.session.post(url, json=payload).json()
         return response['id']
 
     def start_exam_attempt(self, exam, attempt):
@@ -161,33 +163,9 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         if status:
             payload['status'] = status
-            payload['callback_token'] = self._get_callback_token(attempt)
         else:
             payload = None
         url = self.exam_attempt_url.format(exam_id=exam, attempt_id=attempt)
         response = self.session.request(method, url, json=payload).json()
         return response
 
-    def _get_callback_token(self, attempt_code):
-        """
-        Creates callback token
-        """
-        return self._get_token(settings.SECRET_KEY, audience=attempt_code)
-
-    def _get_token(self, secret, audience=None, **kwargs):
-        """
-        Creates JWT token
-        """
-        iss = self.client_id
-        now = time.time()
-        exp = now + self.expiration_time
-
-        payload = {
-            'iss': iss,
-            'exp': exp,
-            'iat': now,
-            'aud': audience
-        }
-        payload.update(kwargs)
-        token = jwt.encode(payload, secret)
-        return token

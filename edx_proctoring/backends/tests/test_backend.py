@@ -7,11 +7,14 @@ from __future__ import absolute_import
 import time
 from mock import patch
 
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
+from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.backends.null import NullBackendProvider
 from edx_proctoring.backends.mock import MockProctoringBackendProvider
+from edx_proctoring.tests.utils import setup_test_backends
 
 # pragma pylint: disable=useless-super-delegation
 
@@ -189,3 +192,55 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.stop_exam_attempt(None, None))
         self.assertIsNone(provider.on_review_callback(None, None))
         self.assertIsNone(provider.on_review_saved(None))
+
+
+class BackendChooserTests(TestCase):
+    """
+    Tests for backend configuration
+    """
+    def setUp(self):
+        """
+        create the test backends
+        """
+        setup_test_backends()
+
+    def test_default_backend(self):
+        """
+        Test the default backend choice
+        """
+        backend = get_backend_provider()
+        self.assertIsInstance(backend, TestBackendProvider)
+
+    def test_get_different_backend(self):
+        """
+        Test that passing in a backend name returns the right backend
+        """
+        backend = get_backend_provider({'backend': 'null'})
+        self.assertIsInstance(backend, NullBackendProvider)
+
+    def test_backend_choices(self):
+        """
+        Test that we have a list of choices
+        """
+        from django.apps import apps
+        choices = list(apps.get_app_config('edx_proctoring').get_backend_choices())
+        expected = [
+            ('test', u'Unknown'),
+            ('null', u'Null Backend'),
+            ('mock', u'Mock Backend'),
+            ('software_secure', u'RPNow')
+        ]
+        self.assertEqual(choices, expected)
+
+    def test_invalid_configurations(self):
+        """
+        Test that invalid backends throw the right exceptions
+        """
+        with self.assertRaises(NotImplementedError):
+            get_backend_provider({'backend': 'foo'})
+        with patch('django.conf.settings.PROCTORING_BACKENDS', {}):
+            with self.assertRaises(ImproperlyConfigured):
+                get_backend_provider()
+        with patch('django.conf.settings.PROCTORING_BACKENDS', {'test': {}}):
+            with self.assertRaises(ImproperlyConfigured):
+                get_backend_provider({'backend': None})

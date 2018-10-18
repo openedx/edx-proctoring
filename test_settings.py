@@ -82,6 +82,7 @@ COURSE_ID_PATTERN = r'(?P<course_id>%s)' % COURSE_ID_REGEX
 
 PROCTORING_BACKENDS = {
     'test': {},
+    'null': {},
     'DEFAULT': 'test',
     'software_secure': {
         "secret_key_id": "foo",

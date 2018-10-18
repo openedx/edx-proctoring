@@ -13,3 +13,4 @@ edx-drf-extensions
 # edX packages
 -e git+https://github.com/edx/event-tracking.git@0.2.4#egg=event-tracking==0.2.4
 edx-opaque-keys>=0.4
+-e git+https://github.com/edx/edx-rest-api-client/@739c2f65e1520fecc3b6f7a596e1bb10533bd539#egg=edx_rest_api_client-1.9

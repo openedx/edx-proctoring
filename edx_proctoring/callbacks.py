@@ -81,41 +81,6 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
         return (renderers[0], renderers[0].media_type)
 
 
-class ExamReadyCallback(APIView):
-    """
-    Called by REST based proctoring backends to indicate that the learner is able to
-    proceed with the exam.
-    """
-    def post(self, request, attempt_code):
-        """
-        Post callback handler
-        """
-        attempt = get_exam_attempt_by_code(attempt_code)
-        if not attempt:
-            log.warn("Attempt code %r cannot be found.", attempt_code)
-            return HttpResponse(
-                content='You have entered an exam code that is not valid.',
-                status=404
-            )
-        backend = get_backend_provider(attempt['proctored_exam'])
-        if backend.is_valid_payload(attempt_code, request.data):
-            if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
-                                     ProctoredExamStudentAttemptStatus.download_software_clicked]:
-                mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
-            return Response(
-                data='OK',
-                status=200
-            )
-
-        else:
-            log.warn("Bad payload from backend provider!")
-            return Response(
-                data={
-                    'reason': request.data,
-                },
-                status=400)
-
-
 class ExamReviewCallback(APIView):
     """
     This endpoint is called by a SoftwareSecure when
