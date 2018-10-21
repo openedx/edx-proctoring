@@ -577,22 +577,6 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     if not has_due_date_passed(exam['due_date']) and taking_as_proctored:
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         lms_host = '{scheme}://{hostname}'.format(scheme=scheme, hostname=settings.SITE_NAME)
-        callback_url = '{scheme}://{hostname}{path}'.format(
-            scheme=scheme,
-            hostname=settings.SITE_NAME,
-            path=reverse(
-                'edx_proctoring.anonymous.proctored_exam.attempt.ready_callback',
-                args=[attempt_code]
-            )
-        )
-        review_callback_url = '{scheme}://{hostname}{path}'.format(
-            scheme=scheme,
-            hostname=settings.SITE_NAME,
-            path=reverse(
-                'edx_proctoring.anonymous.proctored_exam.attempt.callback',
-                args=[attempt_code]
-            )
-        )
 
         obs_user_id = hashlib.sha1(bytes(attempt_code) + bytes(user_id)).hexdigest()
 

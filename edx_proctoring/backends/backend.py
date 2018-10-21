@@ -10,7 +10,7 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
     """
     The base abstract class for all proctoring service providers
     """
-    human_readable_name = u'Unknown'
+    verbose_name = u'Unknown'
 
     @abc.abstractmethod
     def register_exam_attempt(self, exam, context):

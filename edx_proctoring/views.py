@@ -38,6 +38,7 @@ from edx_proctoring.api import (
     update_exam_attempt,
     has_due_date_passed,
     get_backend_provider,
+    mark_exam_attempt_as_ready,
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
@@ -60,7 +61,6 @@ from edx_proctoring.models import (
 )
 
 from edx_proctoring.utils import (
-    APIView,
     AuthenticatedAPIView,
     get_time_remaining_for_attempt,
     humanized_time,
@@ -803,23 +803,23 @@ class ProctoredExamAttemptReviewStatus(AuthenticatedAPIView):
                 data={"detail": bytes(ex)}
             )
 
+
 class ExamReadyCallback(AuthenticatedAPIView):
     """
     Called by REST based proctoring backends to indicate that the learner is able to
     proceed with the exam.
     """
-    def post(self, request, attempt_code):
+    def post(self, request, attempt_code):  # pylint: disable=unused-argument
         """
         Post callback handler
         """
         attempt = get_exam_attempt_by_code(attempt_code)
         if not attempt:
-            log.warn("Attempt code %r cannot be found.", attempt_code)
-            return HttpResponse(
-                content='You have entered an exam code that is not valid.',
+            LOG.warn("Attempt code %r cannot be found.", attempt_code)
+            return Response(
+                data='You have entered an exam code that is not valid.',
                 status=404
             )
-        backend = get_backend_provider(attempt['proctored_exam'])
         if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
                                  ProctoredExamStudentAttemptStatus.download_software_clicked]:
             mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
@@ -827,6 +827,7 @@ class ExamReadyCallback(AuthenticatedAPIView):
             data='OK',
             status=200
         )
+
 
 class ProctoredExamReviewCallback(AuthenticatedAPIView):
     """

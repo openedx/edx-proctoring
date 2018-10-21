@@ -17,6 +17,7 @@ import six
 import requests
 
 from django.conf import settings
+from django.urls import reverse
 
 from Cryptodome.Cipher import DES3
 
@@ -51,7 +52,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     Implementation of the ProctoringBackendProvider for Software Secure's
     RPNow product
     """
-    human_readable_name = u'RPNow'
+    verbose_name = u'RPNow'
 
     def __init__(self, organization, exam_sponsor, exam_register_endpoint,
                  secret_key_id, secret_key, crypto_key, software_download_url,
@@ -385,10 +386,18 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         attempt_code = context['attempt_code']
         time_limit_mins = context['time_limit_mins']
         is_sample_attempt = context['is_sample_attempt']
-        callback_url = context['callback_url']
         full_name = context['full_name']
         review_policy = context.get('review_policy', constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
         review_policy_exception = context.get('review_policy_exception')
+        scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
+        callback_url = '{scheme}://{hostname}{path}'.format(
+            scheme=scheme,
+            hostname=settings.SITE_NAME,
+            path=reverse(
+                'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                args=[attempt_code]
+            )
+        )
 
         # compile the notes to the reviewer
         # this is a combination of the Exam Policy which is for all students

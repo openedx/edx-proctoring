@@ -1,5 +1,7 @@
+"""
+Tests for the REST backend
+"""
 import json
-from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
@@ -7,11 +9,20 @@ from edx_proctoring.backends.rest import BaseRestProctoringProvider
 import responses
 
 
-
 class RESTBackendTests(TestCase):
+    """
+    Tests for the REST backend
+    """
     def setUp(self):
+        "setup tests"
+        BaseRestProctoringProvider.base_url = 'http://rr.fake'
         self.provider = BaseRestProctoringProvider()
-        self.provider.base_url = 'http://rr.com'
+        responses.add(
+            responses.POST,
+            url=self.provider.base_url + '/oauth2/access_token',
+            json={'access_token': 'abcd', 'expires_in': 600},
+            status=200
+        )
 
     @responses.activate
     def test_get_software_download_url(self):
@@ -93,20 +104,20 @@ class RESTBackendTests(TestCase):
         context = {
             'attempt_code': '2',
             'obs_user_id': 'abcdefghij',
-            'callback_url': 'http://example.com/callback',
-            'review_callback_url': 'http://example.com/review'
+            'full_name': 'user name',
+            'lms_host': 'http://lms.com'
         }
         responses.add(
             responses.POST,
-            url=self.provider.exam_attempt_url.format(exam_id=exam['external_id'], attempt_id=2),
+            url=self.provider.create_exam_attempt_url.format(exam_id=exam['external_id']),
             json={'id': 2}
         )
         attempt_external_id = self.provider.register_exam_attempt(exam, context)
-        request = json.loads(responses.calls[0].request.body)
-        self.assertIn('callback_url', request)
-        self.assertIn('review_callback_url', request)
-        self.assertIn('callback_token', request)
+        request = json.loads(responses.calls[1].request.body)
+        self.assertEqual(attempt_external_id, 2)
         self.assertEquals(request['status'], 'created')
+        self.assertIn('lms_host', request)
+        self.assertIn('full_name', request)
 
     @responses.activate
     def test_start_exam_attempt(self):
@@ -125,7 +136,7 @@ class RESTBackendTests(TestCase):
             url=self.provider.exam_attempt_url.format(exam_id=exam['external_id'], attempt_id=attempt_id),
             json={'id': 2, 'status': 'start'}
         )
-        status = self.provider.start_exam_attempt(exam, attempt_id)
+        status = self.provider.start_exam_attempt(exam['external_id'], attempt_id)
         self.assertEqual(status, 'start')
 
     @responses.activate
@@ -145,13 +156,9 @@ class RESTBackendTests(TestCase):
             url=self.provider.exam_attempt_url.format(exam_id=exam['external_id'], attempt_id=attempt_id),
             json={'id': 2, 'status': 'stop'}
         )
-        status = self.provider.stop_exam_attempt(exam, attempt_id)
+        status = self.provider.stop_exam_attempt(exam['external_id'], attempt_id)
         self.assertEqual(status, 'stop')
 
     @responses.activate
     def test_on_review_callback(self):
-        pass
-
-    @responses.activate
-    def test_stop_exam_attempt(self):
         pass

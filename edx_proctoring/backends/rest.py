@@ -2,7 +2,6 @@
 Base implementation of a REST backend, following the API documented in
 docs/backends.rst
 """
-import time
 import jwt
 import pkg_resources
 from django.conf import settings
@@ -27,6 +26,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
     @property
     def create_exam_attempt_url(self):
+        "Returns the create exam url"
         return self.base_url + u'/v1/exam/{exam_id}/attempt/'
 
     @property
@@ -168,4 +168,3 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         url = self.exam_attempt_url.format(exam_id=exam, attempt_id=attempt)
         response = self.session.request(method, url, json=payload).json()
         return response
-
