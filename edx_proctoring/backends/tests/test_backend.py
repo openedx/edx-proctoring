@@ -14,7 +14,6 @@ from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.backends.null import NullBackendProvider
 from edx_proctoring.backends.mock import MockProctoringBackendProvider
-# from edx_proctoring.tests.utils import setup_test_backends
 
 # pragma pylint: disable=useless-super-delegation
 

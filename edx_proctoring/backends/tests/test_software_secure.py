@@ -50,7 +50,6 @@ from edx_proctoring.tests.test_services import (
     MockGradesService,
     MockCertificateService
 )
-# from edx_proctoring.tests.utils import setup_test_backends
 from edx_proctoring.backends.software_secure import SOFTWARE_SECURE_INVALID_CHARS
 
 
