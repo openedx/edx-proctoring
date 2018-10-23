@@ -82,7 +82,7 @@ from .test_services import (
 from .utils import ProctoredExamTestCase
 
 
-@patch('django.core.urlresolvers.reverse', MagicMock)
+@patch('django.urls.reverse', MagicMock)
 @ddt.ddt
 class ProctoredExamApiTests(ProctoredExamTestCase):
     """
@@ -1367,6 +1367,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         Assert that we get the expected status summaries
         """
+        set_runtime_service('grades', MockGradesService())
 
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(

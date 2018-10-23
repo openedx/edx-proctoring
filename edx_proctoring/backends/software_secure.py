@@ -25,22 +25,11 @@ from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring import constants
 from edx_proctoring.exceptions import (
     BackendProvideCannotRegisterAttempt,
-    StudentExamAttemptDoesNotExistsException,
     ProctoredExamSuspiciousLookup,
-    ProctoredExamReviewAlreadyExists,
     ProctoredExamBadReviewStatus,
 )
 from edx_proctoring.runtime import get_runtime_service
-from edx_proctoring.utils import locate_attempt_by_attempt_code, emit_event
-from edx_proctoring. models import (
-    ProctoredExamSoftwareSecureReview,
-    ProctoredExamSoftwareSecureComment,
-    ProctoredExamStudentAttemptStatus,
-)
-from edx_proctoring.serializers import (
-    ProctoredExamSerializer,
-    ProctoredExamStudentAttemptSerializer,
-)
+
 log = logging.getLogger(__name__)
 
 
@@ -139,6 +128,19 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         Documentation on the data format can be found from SoftwareSecure's
         documentation named "Reviewer Data Transfer"
         """
+        received_id = payload['examMetaData']['ssiRecordLocator'].lower()
+        if attempt['external_id'].lower() != received_id and not\
+            settings.PROCTORING_SETTINGS.get('ALLOW_CALLBACK_SIMULATION', False):
+            err_msg = (
+                'Found attempt_code {attempt_code}, but the recorded external_id did not '
+                'match the ssiRecordLocator that had been recorded previously. Has {existing} '
+                'but received {received}!'.format(
+                    attempt_code=attempt['attempt_code'],
+                    existing=attempt['external_id'],
+                    received=received_id
+                )
+            )
+            raise ProctoredExamSuspiciousLookup(err_msg)
 
         # redact the videoReviewLink from the payload
         if 'videoReviewLink' in payload:
@@ -150,190 +152,40 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             )
         )
         log.info(log_msg)
-
-        # what we consider the external_id is SoftwareSecure's 'ssiRecordLocator'
-        external_id = payload['examMetaData']['ssiRecordLocator']
-
-        # what we consider the attempt_code is SoftwareSecure's 'examCode'
-        attempt_code = payload['examMetaData']['examCode']
-
-        # get the SoftwareSecure status on this attempt
         review_status = payload['reviewStatus']
 
-        bad_status = review_status not in self.passing_review_status + self.failing_review_status
-
-        if bad_status:
+        if review_status in self.passing_review_status:
+            review_status = 'pass'
+        elif review_status in self.failing_review_status:
+            review_status = 'fail'
+        else:
             err_msg = (
                 'Received unexpected reviewStatus field calue from payload. '
                 'Was {review_status}.'.format(review_status=review_status)
             )
             raise ProctoredExamBadReviewStatus(err_msg)
 
-        # do a lookup on the attempt by examCode, and compare the
-        # passed in ssiRecordLocator and make sure it matches
-        # what we recorded as the external_id. We need to look in both
-        # the attempt table as well as the archive table
-
-        (attempt_obj, is_archived_attempt) = locate_attempt_by_attempt_code(attempt_code)
-        if not attempt_obj:
-            # still can't find, error out
-            err_msg = (
-                'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
-            )
-            raise StudentExamAttemptDoesNotExistsException(err_msg)
-
-        # then make sure we have the right external_id
-        # note that SoftwareSecure might send a case insensitive
-        # ssiRecordLocator than what it returned when we registered the
-        # exam
-        match = (
-            attempt_obj.external_id.lower() == external_id.lower() or
-            settings.PROCTORING_SETTINGS.get('ALLOW_CALLBACK_SIMULATION', False)
-        )
-        if not match:
-            err_msg = (
-                'Found attempt_code {attempt_code}, but the recorded external_id did not '
-                'match the ssiRecordLocator that had been recorded previously. Has {existing} '
-                'but received {received}!'.format(
-                    attempt_code=attempt_code,
-                    existing=attempt_obj.external_id,
-                    received=external_id
-                )
-            )
-            raise ProctoredExamSuspiciousLookup(err_msg)
-
-        # do we already have a review for this attempt?!? We may not allow updates
-        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt_code)
-
-        if review:
-            if not constants.ALLOW_REVIEW_UPDATES:
-                err_msg = (
-                    'We already have a review submitted from SoftwareSecure regarding '
-                    'attempt_code {attempt_code}. We do not allow for updates!'.format(
-                        attempt_code=attempt_code
-                    )
-                )
-                raise ProctoredExamReviewAlreadyExists(err_msg)
-
-            # we allow updates
-            warn_msg = (
-                'We already have a review submitted from SoftwareSecure regarding '
-                'attempt_code {attempt_code}. We have been configured to allow for '
-                'updates and will continue...'.format(
-                    attempt_code=attempt_code
-                )
-            )
-            log.warn(warn_msg)
-        else:
-            # this is first time we've received this attempt_code, so
-            # make a new record in the review table
-            review = ProctoredExamSoftwareSecureReview()
-
-        review.attempt_code = attempt_code
-        review.raw_data = json.dumps(payload)
-        review.review_status = review_status
-        review.student = attempt_obj.user
-        review.exam = attempt_obj.proctored_exam
-        # set reviewed_by to None because it was reviewed by our 3rd party
-        # service provider, not a user in our database
-        review.reviewed_by = None
-
-        review.save()
-
-        # go through and populate all of the specific comments
-        for comment in payload.get('webCamComments', []):
-            self._save_review_comment(review, comment)
-
-        for comment in payload.get('desktopComments', []):
-            self._save_review_comment(review, comment)
-
-        # we could have gotten a review for an archived attempt
-        # this should *not* cause an update in our credit
-        # eligibility table
-        if not is_archived_attempt:
-            # update our attempt status, note we have to import api.py here because
-            # api.py imports software_secure.py, so we'll get an import circular reference
-
-            allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
-
-            self.on_review_saved(review, allow_rejects=allow_rejects)
-
-        # emit an event for 'review_received'
-        data = {
-            'review_attempt_code': review.attempt_code,
-            'review_status': review.review_status,
+        comments = []
+        converted = {
+            'status': review_status,
+            'comments': comments,
+            'payload': payload
         }
+        for comment in payload.get('webCamComments', []) + payload.get('desktopComments', []):
+            comments.append({
+                'start': comment['eventStart'],
+                'stop': comment['eventFinish'],
+                'duration': comment['duration'],
+                'comment': comment['comments'],
+                'status': comment['eventStatus']
+                })
 
-        attempt = ProctoredExamStudentAttemptSerializer(attempt_obj).data
-        exam = ProctoredExamSerializer(attempt_obj.proctored_exam).data
-        emit_event(exam, 'review_received', attempt=attempt, override_data=data)
-
-        self._create_zendesk_ticket(review, exam, attempt)
-
-    def on_review_saved(self, review, allow_rejects=False):  # pylint: disable=arguments-differ
-        """
-        called when a review has been save - either through API (on_review_callback) or via Django Admin panel
-        in order to trigger any workflow associated with proctoring review results
-        """
-
-        (attempt_obj, is_archived_attempt) = locate_attempt_by_attempt_code(review.attempt_code)
-
-        if not attempt_obj:
-            # This should not happen, but it is logged in the help
-            # method
-            return
-
-        if is_archived_attempt:
-            # we don't trigger workflow on reviews on archived attempts
-            err_msg = (
-                'Got on_review_save() callback for an archived attempt with '
-                'attempt_code {attempt_code}. Will not trigger workflow...'.format(
-                    attempt_code=review.attempt_code
-                )
-            )
-            log.warn(err_msg)
-            return
-
-        # only 'Clean' and 'Rules Violation' count as passing
-        status = (
-            ProctoredExamStudentAttemptStatus.verified
-            if review.review_status in self.passing_review_status
-            else (
-                # if we are not allowed to store 'rejected' on this
-                # code path, then put status into 'second_review_required'
-                ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
-                ProctoredExamStudentAttemptStatus.second_review_required
-            )
-        )
-
-        # updating attempt status will trigger workflow
-        # (i.e. updating credit eligibility table)
-        from edx_proctoring.api import update_attempt_status
-
-        update_attempt_status(
-            attempt_obj.proctored_exam_id,
-            attempt_obj.user_id,
-            status
-        )
+        return converted
 
     def on_exam_saved(self, exam):
         """
         Called after an exam is saved.
         """
-
-    def _save_review_comment(self, review, comment):
-        """
-        Helper method to save a review comment
-        """
-        comment = ProctoredExamSoftwareSecureComment(
-            review=review,
-            start_time=comment['eventStart'],
-            stop_time=comment['eventFinish'],
-            duration=comment['duration'],
-            comment=comment['comments'],
-            status=comment['eventStatus']
-        )
-        comment.save()
 
     def _encrypt_password(self, key, pwd):
         """

@@ -1740,7 +1740,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             attempt_code=attempt['attempt_code'],
             external_id=attempt['external_id']
         )
-
         response = self.client.post(
             reverse('edx_proctoring.anonymous.proctoring_review_callback'),
             data=test_payload,
@@ -1852,7 +1851,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             attempt_code=attempt['attempt_code'],
             external_id='mismatch'
         )
-
         response = self.client.post(
             reverse('edx_proctoring.anonymous.proctoring_review_callback'),
             data=test_payload,

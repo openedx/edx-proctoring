@@ -27,7 +27,7 @@ from .utils import (
 )
 
 
-@patch('django.core.urlresolvers.reverse', MagicMock)
+@patch('django.urls.reverse', MagicMock)
 @ddt.ddt
 class ProctoredExamEmailTests(ProctoredExamTestCase):
     """

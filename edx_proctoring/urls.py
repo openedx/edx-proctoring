@@ -59,12 +59,12 @@ urlpatterns = [
         name='edx_proctoring.proctored_exam.attempt.review_status'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/attempt/(?P<attempt_code>[-\w]+)/ready$',
+        r'edx_proctoring/v1/proctored_exam/attempt/(?P<external_id>[-\w]+)/ready$',
         views.ExamReadyCallback.as_view(),
         name='edx_proctoring.proctored_exam.attempt.ready_callback'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/attempt/(?P<attempt_code>[-\w]+)/reviewed$',
+        r'edx_proctoring/v1/proctored_exam/attempt/(?P<external_id>[-\w]+)/reviewed$',
         views.ProctoredExamReviewCallback.as_view(),
         name='edx_proctoring.proctored_exam.attempt.callback'
     ),
@@ -94,7 +94,7 @@ urlpatterns = [
     ),
     url(
         r'edx_proctoring/proctoring_review_callback/$',
-        callbacks.ExamReviewCallback.as_view(),
+        views.AnonymousReviewCallback.as_view(),
         name='edx_proctoring.anonymous.proctoring_review_callback'
     ),
     url(r'^', include('rest_framework.urls', namespace='rest_framework'))

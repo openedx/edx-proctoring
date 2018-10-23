@@ -21,7 +21,7 @@ from edx_proctoring.tests.test_services import (
 from edx_proctoring.runtime import set_runtime_service
 
 
-@patch('django.core.urlresolvers.reverse', MagicMock)
+@patch('django.urls.reverse', MagicMock)
 class SetAttemptStatusTests(LoggedInTestCase):
     """
     Coverage of the set_attempt_status.py file

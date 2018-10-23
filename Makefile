@@ -49,7 +49,7 @@ install: upgrade requirements
 	npm install
 
 coverage: clean ## generate and view HTML coverage report
-	py.test --cov=edx_proctoring --cov-report html
+	py.test --cov=edx_proctoring --cov-report html --ds=test_settings
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs

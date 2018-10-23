@@ -14,7 +14,7 @@ from httmock import all_requests, HTTMock
 
 from django.test import TestCase
 from django.contrib.auth.models import User
-from edx_proctoring.runtime import set_runtime_service, get_runtime_service
+from edx_proctoring.runtime import set_runtime_service
 
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import BackendProvideCannotRegisterAttempt
@@ -24,23 +24,13 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     create_exam,
     create_exam_attempt,
-    remove_exam_attempt,
     add_allowance_for_user
 
 )
-from edx_proctoring.exceptions import (
-    StudentExamAttemptDoesNotExistsException,
-    ProctoredExamSuspiciousLookup,
-    ProctoredExamReviewAlreadyExists,
-    ProctoredExamBadReviewStatus
-)
+
 from edx_proctoring.models import (
-    ProctoredExamSoftwareSecureReview,
-    ProctoredExamSoftwareSecureComment,
     ProctoredExamStudentAttemptStatus,
-    ProctoredExamSoftwareSecureReviewHistory,
     ProctoredExamReviewPolicy,
-    ProctoredExamStudentAttemptHistory,
     ProctoredExamStudentAllowance
 )
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
@@ -94,7 +84,7 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
         "test": {},
     }
 )
-@patch('django.core.urlresolvers.reverse', MagicMock)
+@patch('django.urls.reverse', MagicMock)
 @ddt.ddt
 class SoftwareSecureTests(TestCase):
     """
@@ -106,7 +96,6 @@ class SoftwareSecureTests(TestCase):
         Initialize
         """
         super(SoftwareSecureTests, self).setUp()
-        # setup_test_backends()
         self.user = User(username='foo', email='foo@bar.com')
         self.user.save()
 
@@ -161,6 +150,34 @@ class SoftwareSecureTests(TestCase):
             attempt = get_exam_attempt_by_id(attempt_id)
             self.assertEqual(attempt['external_id'], 'foobar')
             self.assertIsNone(attempt['started_at'])
+
+    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_CALLBACK_SIMULATION': True})
+    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
+    def test_allow_simulated_callbacks(self):
+        """
+        Verify that the configuration switch to
+        not do confirmation of external_id/ssiRecordLocators
+        """
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True,
+            backend='software_secure'
+        )
+
+        test_payload = create_test_review_payload(
+            attempt_code=attempt['attempt_code'],
+            external_id='bogus'
+        )
+
+        # this should not raise an exception since we have
+        # the ALLOW_CALLBACK_SIMULATION override
+        ProctoredExamReviewCallback().make_review(attempt, test_payload)
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.verified)
 
     @ddt.data(None, 'additional person allowed in room')
     def test_attempt_with_review_policy(self, review_policy_exception):
@@ -460,476 +477,6 @@ class SoftwareSecureTests(TestCase):
 
         provider = get_backend_provider()
         self.assertIsNone(provider.stop_exam_attempt(None, None))
-
-    @ddt.data(
-        ('Clean', 'satisfied'),
-        ('Rules Violation', 'satisfied'),
-        ('Suspicious', 'failed'),
-        ('Not Reviewed', 'failed'),
-    )
-    @ddt.unpack
-    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
-    def test_review_callback(self, review_status, credit_requirement_status):
-        """
-        Simulates callbacks from SoftwareSecure with various statuses
-        """
-
-        provider = get_backend_provider()
-
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True,
-            backend='software_secure'
-        )
-
-        # be sure to use the mocked out SoftwareSecure handlers
-        with HTTMock(mock_response_content):
-            attempt_id = create_exam_attempt(
-                exam_id,
-                self.user.id,
-                taking_as_proctored=True
-            )
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertIsNotNone(attempt['external_id'])
-
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id=attempt['external_id']
-        )
-        test_payload = test_payload.replace('Clean', review_status)
-
-        provider.on_review_callback(None, json.loads(test_payload))
-
-        # make sure that what we have in the Database matches what we expect
-        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
-
-        self.assertIsNotNone(review)
-        self.assertEqual(review.review_status, review_status)
-        self.assertFalse(review.video_url)
-
-        self.assertIsNotNone(review.raw_data)
-        self.assertIsNone(review.reviewed_by)
-
-        # now check the comments that were stored
-        comments = ProctoredExamSoftwareSecureComment.objects.filter(review_id=review.id)
-
-        self.assertEqual(len(comments), 6)
-
-        # check that we got credit requirement set appropriately
-
-        credit_service = get_runtime_service('credit')
-        credit_status = credit_service.get_credit_state(self.user.id, 'foo/bar/baz')
-
-        self.assertEqual(
-            credit_status['credit_requirement_status'][0]['status'],
-            credit_requirement_status
-        )
-
-    def test_review_bad_code(self):
-        """
-        Asserts raising of an exception if we get a report for
-        an attempt code which does not exist
-        """
-
-        provider = get_backend_provider()
-        test_payload = create_test_review_payload(
-            attempt_code='not-here',
-            external_id='also-not-here'
-        )
-
-        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            provider.on_review_callback(None, json.loads(test_payload))
-
-    def test_review_status_code(self):
-        """
-        Asserts raising of an exception if we get a report
-        with a reviewStatus which is unexpected
-        """
-
-        provider = get_backend_provider()
-        test_payload = create_test_review_payload(
-            attempt_code='not-here',
-            external_id='also-not-here'
-        )
-        test_payload = test_payload.replace('Clean', 'Unexpected')
-
-        with self.assertRaises(ProctoredExamBadReviewStatus):
-            provider.on_review_callback(None, json.loads(test_payload))
-
-    def test_review_mistmatched_tokens(self):
-        """
-        Asserts raising of an exception if we get a report for
-        an attempt code which has a external_id which does not
-        match the report
-        """
-
-        provider = get_backend_provider()
-
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True,
-            backend='software_secure'
-        )
-
-        # be sure to use the mocked out SoftwareSecure handlers
-        with HTTMock(mock_response_content):
-            attempt_id = create_exam_attempt(
-                exam_id,
-                self.user.id,
-                taking_as_proctored=True
-            )
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertIsNotNone(attempt['external_id'])
-
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id='bogus'
-        )
-
-        with self.assertRaises(ProctoredExamSuspiciousLookup):
-            provider.on_review_callback(None, json.loads(test_payload))
-
-    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_CALLBACK_SIMULATION': True})
-    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
-    def test_allow_simulated_callbacks(self):
-        """
-        Verify that the configuration switch to
-        not do confirmation of external_id/ssiRecordLocators
-        """
-
-        provider = get_backend_provider()
-
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True,
-            backend='software_secure'
-        )
-
-        # be sure to use the mocked out SoftwareSecure handlers
-        with HTTMock(mock_response_content):
-            attempt_id = create_exam_attempt(
-                exam_id,
-                self.user.id,
-                taking_as_proctored=True
-            )
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertIsNotNone(attempt['external_id'])
-
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id='bogus'
-        )
-
-        # this should not raise an exception since we have
-        # the ALLOW_CALLBACK_SIMULATION override
-        provider.on_review_callback(None, json.loads(test_payload))
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.verified)
-
-    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
-    def test_review_on_archived_attempt(self):
-        """
-        Make sure we can process a review report for
-        an attempt which has been archived
-        """
-
-        provider = get_backend_provider()
-
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True,
-            backend='software_secure'
-        )
-
-        # be sure to use the mocked out SoftwareSecure handlers
-        with HTTMock(mock_response_content):
-            attempt_id = create_exam_attempt(
-                exam_id,
-                self.user.id,
-                taking_as_proctored=True
-            )
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertIsNotNone(attempt['external_id'])
-
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id=attempt['external_id']
-        )
-
-        # now delete the attempt, which puts it into the archive table
-        remove_exam_attempt(attempt_id, requesting_user=self.user)
-
-        # now process the report
-        provider.on_review_callback(None, json.loads(test_payload))
-
-        # make sure that what we have in the Database matches what we expect
-        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
-
-        self.assertIsNotNone(review)
-        self.assertEqual(review.review_status, 'Clean')
-        self.assertFalse(review.video_url)
-
-        self.assertIsNotNone(review.raw_data)
-
-        # now check the comments that were stored
-        comments = ProctoredExamSoftwareSecureComment.objects.filter(review_id=review.id)
-
-        self.assertEqual(len(comments), 6)
-
-    @patch('edx_proctoring.constants.ALLOW_REVIEW_UPDATES', False)
-    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
-    def test_disallow_review_resubmission(self):
-        """
-        Tests that an exception is raised if a review report is resubmitted for the same
-        attempt
-        """
-
-        provider = get_backend_provider()
-
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True,
-            backend='software_secure'
-        )
-
-        # be sure to use the mocked out SoftwareSecure handlers
-        with HTTMock(mock_response_content):
-            attempt_id = create_exam_attempt(
-                exam_id,
-                self.user.id,
-                taking_as_proctored=True
-            )
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertIsNotNone(attempt['external_id'])
-
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id=attempt['external_id']
-        )
-
-        provider.on_review_callback(None, json.loads(test_payload))
-
-        # now call again
-        with self.assertRaises(ProctoredExamReviewAlreadyExists):
-            provider.on_review_callback(None, json.loads(test_payload))
-
-    @patch('edx_proctoring.constants.ALLOW_REVIEW_UPDATES', True)
-    def test_allow_review_resubmission(self):
-        """
-        Tests that an resubmission is allowed
-        """
-
-        provider = get_backend_provider()
-
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True,
-            backend='software_secure'
-        )
-
-        # be sure to use the mocked out SoftwareSecure handlers
-        with HTTMock(mock_response_content):
-            attempt_id = create_exam_attempt(
-                exam_id,
-                self.user.id,
-                taking_as_proctored=True
-            )
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertIsNotNone(attempt['external_id'])
-
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id=attempt['external_id']
-        )
-
-        provider.on_review_callback(None, json.loads(test_payload))
-
-        # make sure history table is empty
-        records = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt['attempt_code'])
-        self.assertEqual(len(records), 0)
-
-        # now call again, this will not throw exception
-        test_payload = test_payload.replace('Clean', 'Suspicious')
-        provider.on_review_callback(None, json.loads(test_payload))
-
-        # make sure that what we have in the Database matches what we expect
-        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
-
-        self.assertIsNotNone(review)
-        self.assertEqual(review.review_status, 'Suspicious')
-        self.assertFalse(review.video_url)
-
-        self.assertIsNotNone(review.raw_data)
-
-        # make sure history table is no longer empty
-        records = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt['attempt_code'])
-        self.assertEqual(len(records), 1)
-        self.assertEqual(records[0].review_status, 'Clean')
-
-        # now try to delete the record and make sure it was archived
-
-        review.delete()
-
-        records = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt['attempt_code'])
-        self.assertEqual(len(records), 2)
-        self.assertEqual(records[0].review_status, 'Clean')
-        self.assertEqual(records[1].review_status, 'Suspicious')
-
-    @ddt.data(False, True)
-    def test_failure_submission(self, allow_rejects):
-        """
-        Tests that a submission of a failed test and make sure that we
-        don't automatically update the status to failure
-        """
-
-        provider = get_backend_provider()
-
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True,
-            backend='software_secure'
-        )
-
-        # be sure to use the mocked out SoftwareSecure handlers
-        with HTTMock(mock_response_content):
-            attempt_id = create_exam_attempt(
-                exam_id,
-                self.user.id,
-                taking_as_proctored=True
-            )
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id=attempt['external_id']
-        )
-        test_payload = test_payload.replace('Clean', 'Suspicious')
-
-        # submit a Suspicious review payload
-        provider.on_review_callback(None, json.loads(test_payload))
-
-        # now look at the attempt and make sure it did not
-        # transition to failure on the callback,
-        # as we'll need a manual confirmation via Django Admin pages
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertNotEqual(attempt['status'], ProctoredExamStudentAttemptStatus.rejected)
-
-        review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=attempt['attempt_code'])
-
-        # now simulate a update via Django Admin table which will actually
-        # push through the failure into our attempt status (as well as trigger)
-        # other workflow
-        provider.on_review_saved(review, allow_rejects=allow_rejects)
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-
-        # if we don't allow rejects to be stored in attempt status
-        # then we should expect a 'second_review_required' status
-        expected_status = (
-            ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
-            ProctoredExamStudentAttemptStatus.second_review_required
-        )
-        self.assertEqual(attempt['status'], expected_status)
-
-    def test_update_archived_attempt(self):
-        """
-        Test calling the on_review_saved interface point with an attempt_code that was archived
-        """
-
-        provider = get_backend_provider()
-
-        exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True,
-            backend='software_secure'
-        )
-
-        # be sure to use the mocked out SoftwareSecure handlers
-        with HTTMock(mock_response_content):
-            attempt_id = create_exam_attempt(
-                exam_id,
-                self.user.id,
-                taking_as_proctored=True
-            )
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertIsNotNone(attempt['external_id'])
-
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id=attempt['external_id']
-        )
-
-        # now process the report
-        provider.on_review_callback(None, json.loads(test_payload))
-
-        # now look at the attempt and make sure it did not
-        # transition to failure on the callback,
-        # as we'll need a manual confirmation via Django Admin pages
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertEqual(attempt['status'], attempt['status'])
-
-        # now delete the attempt, which puts it into the archive table
-        remove_exam_attempt(attempt_id, requesting_user=self.user)
-
-        review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=attempt['attempt_code'])
-
-        # now simulate a update via Django Admin table which will actually
-        # push through the failure into our attempt status but
-        # as this is an archived attempt, we don't do anything
-        provider.on_review_saved(review, allow_rejects=True)
-
-        # look at the attempt again, since it moved into Archived state
-        # then it should still remain unchanged
-        archived_attempt = ProctoredExamStudentAttemptHistory.objects.filter(
-            attempt_code=attempt['attempt_code']
-        ).latest('created')
-
-        self.assertEqual(archived_attempt.status, attempt['status'])
-
-    def test_on_review_saved_bad_code(self):
-        """
-        Simulate calling on_review_saved() with an attempt code that cannot be found
-        """
-
-        provider = get_backend_provider()
-
-        review = ProctoredExamSoftwareSecureReview()
-        review.attempt_code = 'foo'
-
-        self.assertIsNone(provider.on_review_saved(review, allow_rejects=True))
 
     def test_split_fullname(self):
         """

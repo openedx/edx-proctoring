@@ -51,14 +51,6 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def on_review_saved(self, review):
-        """
-        Called when a review has been saved - either through API or via Django Admin panel
-        in order to trigger any workflow.
-        """
-        raise NotImplementedError()
-
-    @abc.abstractmethod
     def on_exam_saved(self, exam):
         """
         Called after an exam is saved.
@@ -70,6 +62,12 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
         Returns the backend javascript to embed on each proctoring page
         """
         return ""
+
+    def get_exam(self, exam):
+        """
+        Returns the exam object from the backend
+        """
+        return exam
 
     def get_attempt(self, attempt):
         """

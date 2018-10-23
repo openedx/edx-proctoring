@@ -394,6 +394,17 @@ class ProctoredExamStudentAttemptManager(models.Manager):
             exam_attempt_obj = None
         return exam_attempt_obj
 
+    def get_exam_attempt_by_external_id(self, external_id):
+        """
+        Returns the Student Exam Attempt object if found
+        else Returns None.
+        """
+        try:
+            exam_attempt_obj = self.get(external_id=external_id)  # pylint: disable=no-member
+        except ObjectDoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = None
+        return exam_attempt_obj
+
     def get_all_exam_attempts(self, course_id):
         """
         Returns the Student Exam Attempts for the given course_id.

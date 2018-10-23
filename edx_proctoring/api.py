@@ -466,6 +466,12 @@ def get_exam_attempt_by_id(attempt_id):
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
     return _get_exam_attempt(exam_attempt_obj)
 
+def get_exam_attempt_by_external_id(external_id):
+    """
+    Return an existing exam attempt for the given student
+    """
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_external_id(external_id)
+    return _get_exam_attempt(exam_attempt_obj)
 
 def get_exam_attempt_by_code(attempt_code):
     """

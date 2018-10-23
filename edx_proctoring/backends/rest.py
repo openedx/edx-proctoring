@@ -2,11 +2,9 @@
 Base implementation of a REST backend, following the API documented in
 docs/backends.rst
 """
-import jwt
 import pkg_resources
-from django.conf import settings
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_rest_api_client.client import EdxSession
+from edx_rest_api_client.client import OAuthAPIClient
 
 
 class BaseRestProctoringProvider(ProctoringBackendProvider):
@@ -55,7 +53,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         self.client_secret = client_secret
         for key, value in kwargs:
             setattr(self, key, value)
-        self.session = EdxSession(self.base_url, self.client_id, self.client_secret)
+        self.session = OAuthAPIClient(self.base_url, self.client_id, self.client_secret)
 
     def get_javascript(self):
         """
@@ -127,16 +125,8 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         Called when the reviewing 3rd party service posts back the results
         """
-        if self.is_valid_payload(attempt['attempt_code'], payload):
-            return payload
-        return False
-
-    def on_review_saved(self, review):
-        """
-        Called when a review has been saved - either through API or via Django Admin panel
-        in order to trigger any workflow.
-        """
-        raise NotImplementedError()
+        # REST backends should convert the payload into the expected data structure
+        return payload
 
     def on_exam_saved(self, exam):
         """
@@ -145,17 +135,6 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         url = self.create_exam_url
         response = self.session.post(url, json=exam).json()
         return response.get('id')
-
-    def is_valid_payload(self, attempt_code, payload):
-        """
-        Returns whether the payload coming back from the provider is valid.
-        """
-        try:
-            token = payload['token']
-            jwt.decode(token, key=settings.SECRET_KEY, audience=attempt_code)
-            return True
-        except (KeyError, jwt.DecodeError):
-            return False
 
     def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):
         """

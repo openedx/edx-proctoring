@@ -33,7 +33,7 @@ from .test_services import MockCreditServiceWithCourseEndDate, MockCreditService
 from .utils import ProctoredExamTestCase
 
 
-@patch('django.core.urlresolvers.reverse', MagicMock)
+@patch('django.urls.reverse', MagicMock)
 @ddt.ddt
 class ProctoredExamStudentViewTests(ProctoredExamTestCase):
     """

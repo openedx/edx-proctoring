@@ -3,21 +3,14 @@ Various callback paths that support callbacks from SoftwareSecure
 """
 
 import logging
-import six
 from django.template import loader
 from django.conf import settings
 from django.http import HttpResponse
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.negotiation import BaseContentNegotiation
 
 from edx_proctoring.api import (
     get_exam_attempt_by_code,
     mark_exam_attempt_as_ready,
 )
-from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.exceptions import ProctoredBaseException
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus
 
 log = logging.getLogger(__name__)
@@ -58,59 +51,3 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
             'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {})
         })
     )
-
-
-class IgnoreClientContentNegotiation(BaseContentNegotiation):
-    """
-    This specialized class allows for more tolerance regarding
-    what the passed in Content-Type is. This is taken directly
-    from the Django REST Framework:
-
-    http://tomchristie.github.io/rest-framework-2-docs/api-guide/content-negotiation
-    """
-    def select_parser(self, request, parsers):
-        """
-        Select the first parser in the `.parser_classes` list.
-        """
-        return parsers[0]
-
-    def select_renderer(self, request, renderers, format_suffix):  # pylint: disable=signature-differs
-        """
-        Select the first renderer in the `.renderer_classes` list.
-        """
-        return (renderers[0], renderers[0].media_type)
-
-
-class ExamReviewCallback(APIView):
-    """
-    This endpoint is called by a SoftwareSecure when
-    there are results available for us to record
-
-    NOTE: This endpoint is deprecated, in favor of using the authenticated endpoint at:
-    /edx_proctoring/v1/proctored_exam/attempt/123/reviewed
-    """
-
-    content_negotiation_class = IgnoreClientContentNegotiation
-
-    def post(self, request):
-        """
-        Post callback handler
-        """
-        provider = get_backend_provider({'backend': 'software_secure'})
-
-        # call down into the underlying provider code
-        try:
-            provider.on_review_callback(None, request.data)
-        except ProctoredBaseException as ex:
-            log.exception(ex)
-            return Response(
-                data={
-                    'reason': six.text_type(ex)
-                },
-                status=400
-            )
-
-        return Response(
-            data='OK',
-            status=200
-        )

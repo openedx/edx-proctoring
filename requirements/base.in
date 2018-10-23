@@ -8,9 +8,9 @@ django-ipware>=1.1.0
 pytz>=2018
 pycryptodomex>=3.4.7
 python-dateutil>=2.1
-edx-drf-extensions
 
 # edX packages
 -e git+https://github.com/edx/event-tracking.git@0.2.4#egg=event-tracking==0.2.4
 edx-opaque-keys>=0.4
--e git+https://github.com/edx/edx-rest-api-client/@374d436d977d2adaff415aee084a81d493ba3835#egg=edx_rest_api_client-1.9
+edx-drf-extensions
+edx-rest-api-client>=1.9
