@@ -51,7 +51,8 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         ProctoringBackendProvider.__init__(self)
         self.client_id = client_id
         self.client_secret = client_secret
-        for key, value in kwargs:
+        self.default_config = None
+        for key, value in kwargs.items():
             setattr(self, key, value)
         self.session = OAuthAPIClient(self.base_url, self.client_id, self.client_secret)
 
@@ -132,7 +133,14 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         Called after an exam is saved.
         """
-        url = self.create_exam_url
+        if 'config' not in exam and self.default_config:
+            # allows the platform to define a default configuration
+            exam['config'] = self.default_config
+        external_id = exam.get('external_id', None)
+        if external_id:
+            url = self.exam_url.format(exam_id=external_id)
+        else:
+            url = self.create_exam_url
         response = self.session.post(url, json=exam).json()
         return response.get('id')
 

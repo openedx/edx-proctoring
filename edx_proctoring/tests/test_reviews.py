@@ -3,8 +3,9 @@ Review callback tests
 """
 from __future__ import absolute_import
 
-from datetime import datetime
 import json
+from datetime import datetime
+
 import ddt
 from httmock import HTTMock
 from mock import Mock, patch
@@ -12,37 +13,19 @@ from mock import Mock, patch
 from django.test.client import Client
 
 from edx_proctoring import constants
-
-from edx_proctoring.models import (
-    ProctoredExamSoftwareSecureComment,
-    ProctoredExamSoftwareSecureReview,
-    ProctoredExamSoftwareSecureReviewHistory,
-    ProctoredExamStudentAttemptHistory,
-    ProctoredExamStudentAttemptStatus,
-)
-from edx_proctoring.exceptions import (
-    ProctoredExamReviewAlreadyExists,
-    ProctoredExamBadReviewStatus,
-    StudentExamAttemptDoesNotExistsException,
-)
-from edx_proctoring.views import AnonymousReviewCallback, ProctoredExamReviewCallback
-from edx_proctoring.api import (
-    create_exam,
-    create_exam_attempt,
-    get_exam_attempt_by_id,
-    remove_exam_attempt,
-)
-
+from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attempt_by_id, remove_exam_attempt
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
-from edx_proctoring.runtime import set_runtime_service, get_runtime_service
+from edx_proctoring.exceptions import (ProctoredExamBadReviewStatus, ProctoredExamReviewAlreadyExists,
+                                       StudentExamAttemptDoesNotExistsException)
+from edx_proctoring.models import (ProctoredExamSoftwareSecureComment, ProctoredExamSoftwareSecureReview,
+                                   ProctoredExamSoftwareSecureReviewHistory, ProctoredExamStudentAttemptHistory,
+                                   ProctoredExamStudentAttemptStatus)
+from edx_proctoring.runtime import get_runtime_service, set_runtime_service
+from edx_proctoring.tests.test_services import (MockCertificateService, MockCreditService, MockGradesService,
+                                                MockInstructorService)
+from edx_proctoring.views import AnonymousReviewCallback, ProctoredExamReviewCallback
 
-from edx_proctoring.tests.test_services import (
-    MockCreditService,
-    MockInstructorService,
-    MockGradesService,
-    MockCertificateService
-)
 from .utils import LoggedInTestCase
 
 

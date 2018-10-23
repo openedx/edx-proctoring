@@ -2,11 +2,12 @@
 Tests for the REST backend
 """
 import json
+
+import responses
+
 from django.test import TestCase
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
-
-import responses
 
 
 class RESTBackendTests(TestCase):
@@ -91,6 +92,31 @@ class RESTBackendTests(TestCase):
         responses.add(
             responses.POST,
             url=self.provider.create_exam_url,
+            json={'id': 'abcdefg'}
+        )
+        self.backend_exam.pop('external_id')
+        external_id = self.provider.on_exam_saved(self.backend_exam)
+        self.assertEqual(external_id, 'abcdefg')
+
+    @responses.activate
+    def test_create_exam_with_defaults(self):
+        provider = BaseRestProctoringProvider(default_config={'allow_grok': True})
+        responses.add(
+            responses.POST,
+            url=self.provider.create_exam_url,
+            json={'id': 'abcdefg'}
+        )
+        self.backend_exam.pop('external_id')
+        external_id = provider.on_exam_saved(self.backend_exam)
+        request = json.loads(responses.calls[1].request.body)
+        self.assertEqual(external_id, 'abcdefg')
+        self.assertTrue(request['config']['allow_grok'])
+
+    @responses.activate
+    def test_update_exam(self):
+        responses.add(
+            responses.POST,
+            url=self.provider.exam_url.format(exam_id=self.backend_exam['external_id']),
             json={'id': 'abcdefg'}
         )
         external_id = self.provider.on_exam_saved(self.backend_exam)
