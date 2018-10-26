@@ -44,7 +44,7 @@ requirements: ## install development environment requirements
 	pip install -qr requirements/dev.txt --exists-action w
 	pip-sync requirements/*.txt requirements/private.*
 
-install: upgrade requirements
+install: requirements
 	./manage.py migrate --settings=test_settings
 	npm install
 

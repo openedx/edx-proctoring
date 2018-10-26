@@ -2,6 +2,7 @@
 
 pytest-cov                # pytest extension for code coverage statistics
 pytest-django             # pytest extension for better Django support
+pytest-xdist              # pytest extension for parallel execution
 
 bok-choy>=0.3.1
 ddt>=0.8.0

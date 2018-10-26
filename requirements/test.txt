@@ -4,11 +4,8 @@
 #
 #    pip-compile --output-file requirements/test.txt requirements/base.in requirements/test.in
 #
---index-url http://edx.devstack.devpi:3141/root/pypi/+simple/
---extra-index-url https://pypi.python.org/simple
---trusted-host edx.devstack.devpi
-
 -e git+https://github.com/edx/event-tracking.git@0.2.4#egg=event-tracking==0.2.4
+apipkg==1.5               # via execnet
 atomicwrites==1.2.1       # via pytest
 attrs==18.2.0             # via pytest
 bok-choy==0.9.0
@@ -27,6 +24,7 @@ edx-django-utils==1.0.1   # via edx-drf-extensions
 edx-drf-extensions==2.0.0
 edx-opaque-keys==0.4.4
 edx-rest-api-client==1.9
+execnet==1.5.0            # via pytest-xdist
 freezegun==0.3.11
 funcsigs==1.0.2           # via mock, pytest
 future==0.17.0            # via pyjwkest
@@ -50,7 +48,9 @@ pyjwt==1.6.4              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.7.2            # via edx-opaque-keys
 pytest-cov==2.6.0
 pytest-django==3.4.3
-pytest==3.9.2             # via pytest-cov, pytest-django
+pytest-forked==0.2        # via pytest-xdist
+pytest-xdist==1.23.2
+pytest==3.9.2             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
 python-dateutil==2.7.4
 pytz==2018.6
 requests==2.20.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
@@ -59,7 +59,7 @@ rest-condition==1.0.3     # via edx-drf-extensions
 scandir==1.9.0            # via pathlib2
 selenium==3.14.1
 semantic-version==2.6.0   # via edx-drf-extensions
-six==1.11.0               # via bok-choy, edx-drf-extensions, edx-opaque-keys, freezegun, httpretty, logilab-common, mock, more-itertools, pathlib2, pyjwkest, pytest, python-dateutil, responses, stevedore
+six==1.11.0               # via bok-choy, edx-drf-extensions, edx-opaque-keys, freezegun, httpretty, logilab-common, mock, more-itertools, pathlib2, pyjwkest, pytest, pytest-xdist, python-dateutil, responses, stevedore
 slumber==0.7.1            # via edx-rest-api-client
 stevedore==1.30.0         # via edx-opaque-keys
 sure==1.2.7
