@@ -831,9 +831,15 @@ class ExamReadyCallback(AuthenticatedAPIView):
             status=200
         )
 
+
 class BaseReviewCallback(object):
+    """
+    Base class for review callbacks.
+    make_review handles saving reviews and review comments.
+    """
     def make_review(self, attempt, data, backend=None):
         """
+        Save the review and review comments
         """
         attempt_code = attempt['attempt_code']
         if not backend:
@@ -936,6 +942,8 @@ class ProctoredExamReviewCallback(BaseReviewCallback, AuthenticatedAPIView):
         """
         try:
             attempt = get_exam_attempt_by_external_id(external_id)
+            if attempt is None:
+                raise StudentExamAttemptDoesNotExistsException('not found')
             self.make_review(attempt, request.data)
             return Response(
                 status=status.HTTP_200_OK,
@@ -947,6 +955,7 @@ class ProctoredExamReviewCallback(BaseReviewCallback, AuthenticatedAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": bytes(ex)}
             )
+
 
 class IgnoreClientContentNegotiation(BaseContentNegotiation):
     """
@@ -989,7 +998,7 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
         # call down into the underlying provider code
         try:
             attempt_code = request.data.get('examMetaData', {}).get('examCode')
-            attempt_obj, is_archived_attempt = locate_attempt_by_attempt_code(attempt_code)  # pylint: disable=unused-variable
+            attempt_obj = locate_attempt_by_attempt_code(attempt_code)[0]
             if not attempt_obj:
                 # still can't find, error out
                 err_msg = (

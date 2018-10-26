@@ -14,6 +14,7 @@ from httmock import all_requests, HTTMock
 
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.urls import reverse
 from edx_proctoring.runtime import set_runtime_service
 
 from edx_proctoring.backends import get_backend_provider
@@ -167,17 +168,53 @@ class SoftwareSecureTests(TestCase):
             backend='software_secure'
         )
 
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id='bogus'
-        )
-
         # this should not raise an exception since we have
         # the ALLOW_CALLBACK_SIMULATION override
-        ProctoredExamReviewCallback().make_review(attempt, test_payload)
-
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
+            self.assertIsNotNone(attempt_id)
+            attempt = get_exam_attempt_by_id(attempt_id)
+            test_payload = create_test_review_payload(
+                attempt_code=attempt['attempt_code'],
+                external_id='bogus'
+            )
+            response = self.client.post(
+                reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+                data=test_payload,
+                content_type='application/json'
+            )
+            self.assertEqual(response.status_code, 200)
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.verified)
+
+    def test_missing_attempt_code(self):
+        """
+        Test that bad attept codes return errors
+        """
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True,
+            backend='software_secure'
+        )
+
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
+            self.assertIsNotNone(attempt_id)
+            test_payload = create_test_review_payload(
+                attempt_code='bag code',
+                external_id='bogus'
+            )
+            response = self.client.post(
+                reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+                data=test_payload,
+                content_type='application/json'
+            )
+            self.assertEqual(response.status_code, 400)
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.created)
 
     @ddt.data(None, 'additional person allowed in room')
     def test_attempt_with_review_policy(self, review_policy_exception):

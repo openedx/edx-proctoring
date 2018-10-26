@@ -4,27 +4,23 @@ Review callback tests
 from __future__ import absolute_import
 
 import json
-from datetime import datetime
 
 import ddt
-from httmock import HTTMock
-from mock import Mock, patch
+from mock import patch
 
-from django.test.client import Client
+from django.urls import reverse
 
 from edx_proctoring import constants
 from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attempt_by_id, remove_exam_attempt
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
-from edx_proctoring.backends.tests.test_software_secure import mock_response_content
-from edx_proctoring.exceptions import (ProctoredExamBadReviewStatus, ProctoredExamReviewAlreadyExists,
-                                       StudentExamAttemptDoesNotExistsException)
+from edx_proctoring.exceptions import (ProctoredExamBadReviewStatus, ProctoredExamReviewAlreadyExists)
 from edx_proctoring.models import (ProctoredExamSoftwareSecureComment, ProctoredExamSoftwareSecureReview,
                                    ProctoredExamSoftwareSecureReviewHistory, ProctoredExamStudentAttemptHistory,
                                    ProctoredExamStudentAttemptStatus)
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.tests.test_services import (MockCertificateService, MockCreditService, MockGradesService,
                                                 MockInstructorService)
-from edx_proctoring.views import AnonymousReviewCallback, ProctoredExamReviewCallback
+from edx_proctoring.views import ProctoredExamReviewCallback
 
 from .utils import LoggedInTestCase
 
@@ -64,6 +60,9 @@ class ReviewTests(LoggedInTestCase):
         set_runtime_service('certificates', None)
 
     def get_review_payload(self, status='pass', comments=None, **kwargs):
+        """
+        Returns a standard review payload
+        """
         review = {
             'status': status,
             'comments': [
@@ -96,112 +95,72 @@ class ReviewTests(LoggedInTestCase):
         return review
 
     @ddt.data(
-        ('Clean', 'satisfied'),
-        ('Rules Violation', 'satisfied'),
-        ('Suspicious', 'failed'),
-        ('Not Reviewed', 'failed'),
+        ('Bogus', None, None),
+        ('Clean', 'pass', 'satisfied'),
+        ('Rules Violation', 'pass', 'satisfied'),
+        ('Suspicious', 'fail', 'failed'),
+        ('Not Reviewed', 'fail', 'failed'),
     )
     @ddt.unpack
     @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
-    def test_review_callback(self, review_status, credit_requirement_status):
+    def test_review_callback(self, psi_review_status, review_status, credit_requirement_status):
         """
         Simulates callbacks from SoftwareSecure with various statuses
         """
         test_payload = json.loads(create_test_review_payload(
             attempt_code=self.attempt['attempt_code'],
             external_id=self.attempt['external_id'],
-            review_status=review_status
+            review_status=psi_review_status
         ))
-
         # test_payload = self.get_review_payload(review_status)
         self.attempt['proctored_exam']['backend'] = 'software_secure'
 
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
-
-        # make sure that what we have in the Database matches what we expect
-        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
-
-        self.assertIsNotNone(review)
-        self.assertEqual(review.review_status, review_status)
-        self.assertFalse(review.video_url)
-
-        self.assertIsNotNone(review.raw_data)
-        self.assertIsNone(review.reviewed_by)
-
-        # now check the comments that were stored
-        comments = ProctoredExamSoftwareSecureComment.objects.filter(review_id=review.id)
-
-        self.assertEqual(len(comments), 3)
-
-        # check that we got credit requirement set appropriately
-
-        credit_service = get_runtime_service('credit')
-        credit_status = credit_service.get_credit_state(self.user.id, 'foo/bar/baz')
-
-        self.assertEqual(
-            credit_status['credit_requirement_status'][0]['status'],
-            credit_requirement_status
-        )
-
-    def xtest_review_bad_code(self):
-        """
-        Asserts raising of an exception if we get a report for
-        an attempt code which does not exist
-        """
-
-        test_payload = create_test_review_payload(
-            attempt_code='not-here',
-            external_id='also-not-here'
-        )
-
-        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+        if review_status is None:
+            with self.assertRaises(ProctoredExamBadReviewStatus):
+                ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+        else:
             ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+            # make sure that what we have in the Database matches what we expect
+            review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
 
-    def xtest_review_status_code(self):
-        """
-        Asserts raising of an exception if we get a report
-        with a reviewStatus which is unexpected
-        """
-        test_payload = create_test_review_payload(
-            attempt_code='not-here',
-            external_id='also-not-here'
+            self.assertIsNotNone(review)
+            self.assertEqual(review.review_status, review_status)
+            self.assertFalse(review.video_url)
+
+            self.assertIsNotNone(review.raw_data)
+            self.assertIsNone(review.reviewed_by)
+
+            # now check the comments that were stored
+            comments = ProctoredExamSoftwareSecureComment.objects.filter(review_id=review.id)
+
+            self.assertEqual(len(comments), 6)
+
+            # check that we got credit requirement set appropriately
+
+            credit_service = get_runtime_service('credit')
+            credit_status = credit_service.get_credit_state(self.user.id, 'foo/bar/baz')
+
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                credit_requirement_status
+            )
+
+    @ddt.data(
+        ('bad', 400),
+        (None, 200),
+    )
+    @ddt.unpack
+    def test_post_review(self, external_id, status):
+        review = self.get_review_payload()
+        if not external_id:
+            external_id = self.attempt['external_id']
+        response = self.client.post(
+            reverse('edx_proctoring.proctored_exam.attempt.callback',
+                    kwargs={'external_id': external_id}),
+            json.dumps(review),
+            content_type='application/json'
         )
-        test_payload = test_payload.replace('Clean', 'Unexpected')
-
-        with self.assertRaises(ProctoredExamBadReviewStatus):
-            ProctoredExamReviewCallback().make_review(attempt, test_payload)
-
-    def xtest_review_mistmatched_tokens(self):
-        """
-        Asserts raising of an exception if we get a report for
-        an attempt code which has a external_id which does not
-        match the report
-        """
-        # exam_id = create_exam(
-        #     course_id='foo/bar/baz',
-        #     content_id='content',
-        #     exam_name='Sample Exam',
-        #     time_limit_mins=10,
-        #     is_proctored=True,
-        #     backend='test'
-        # )
-
-        # attempt_id = create_exam_attempt(
-        #         exam_id,
-        #         self.user.id,
-        #         taking_as_proctored=True
-        #     )
-
-        # attempt = get_exam_attempt_by_id(attempt_id)
-        # self.assertIsNotNone(attempt['external_id'])
-
-        test_payload = create_test_review_payload(
-            attempt_code=attempt['attempt_code'],
-            external_id='bogus'
-        )
-
-        with self.assertRaises(ProctoredExamSuspiciousLookup):
-            ProctoredExamReviewCallback().make_review(attempt, test_payload)
+        self.assertEqual(response.status_code, status)
 
     @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
     def test_review_on_archived_attempt(self):
@@ -314,6 +273,7 @@ class ReviewTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.second_review_required
         )
         self.assertEqual(attempt['status'], expected_status)
+        self.assertEqual(review.review_status, 'Suspicious')
 
     @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', True)
     def test_failure_submission_rejected(self):
@@ -343,6 +303,7 @@ class ReviewTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.second_review_required
         )
         self.assertEqual(attempt['status'], expected_status)
+        self.assertEqual(review.review_status, 'Suspicious')
 
     def test_update_archived_attempt(self):
         """
@@ -371,3 +332,4 @@ class ReviewTests(LoggedInTestCase):
         ).latest('created')
 
         self.assertEqual(archived_attempt.status, attempt['status'])
+        self.assertEqual(review.review_status, 'pass')

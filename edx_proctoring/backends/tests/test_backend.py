@@ -138,6 +138,11 @@ class TestBackends(TestCase):
         with self.assertRaises(NotImplementedError):
             provider.on_review_callback(None, None)
 
+        with self.assertRaises(NotImplementedError):
+            provider.on_exam_saved(None)
+
+        self.assertIsNone(provider.get_exam(None))
+
     def test_null_provider(self):
         """
         Assert that the Null provider does nothing
@@ -150,6 +155,7 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.stop_exam_attempt(None, None))
         self.assertIsNone(provider.get_software_download_url())
         self.assertIsNone(provider.on_review_callback(None, None))
+        self.assertIsNone(provider.on_exam_saved(None))
 
     def test_mock_provider(self):
         """
@@ -174,6 +180,7 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
         self.assertIsNone(provider.on_review_callback(None, None))
+        self.assertIsNone(provider.on_exam_saved(None))
 
 
 class BackendChooserTests(TestCase):

@@ -130,7 +130,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         received_id = payload['examMetaData']['ssiRecordLocator'].lower()
         if attempt['external_id'].lower() != received_id and not\
-            settings.PROCTORING_SETTINGS.get('ALLOW_CALLBACK_SIMULATION', False):
+                settings.PROCTORING_SETTINGS.get('ALLOW_CALLBACK_SIMULATION', False):
             err_msg = (
                 'Found attempt_code {attempt_code}, but the recorded external_id did not '
                 'match the ssiRecordLocator that had been recorded previously. Has {existing} '
@@ -155,12 +155,12 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review_status = payload['reviewStatus']
 
         if review_status in self.passing_review_status:
-            review_status = 'pass'
+            review_status = u'pass'
         elif review_status in self.failing_review_status:
-            review_status = 'fail'
+            review_status = u'fail'
         else:
             err_msg = (
-                'Received unexpected reviewStatus field calue from payload. '
+                'Received unexpected reviewStatus field value from payload. '
                 'Was {review_status}.'.format(review_status=review_status)
             )
             raise ProctoredExamBadReviewStatus(err_msg)
