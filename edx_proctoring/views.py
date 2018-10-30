@@ -797,16 +797,10 @@ class ProctoredExamAttemptReviewStatus(AuthenticatedAPIView):
 
             update_exam_attempt(attempt_id, is_status_acknowledged=True)
 
-            return Response(
-                status=status.HTTP_200_OK
-            )
-
+            return Response(status=status.HTTP_200_OK)
         except (StudentExamAttemptDoesNotExistsException, ProctoredExamPermissionDenied) as ex:
             LOG.exception(ex)
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": six.text_type(ex)}
-            )
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": six.text_type(ex)})
 
 
 class ExamReadyCallback(AuthenticatedAPIView):
@@ -821,17 +815,11 @@ class ExamReadyCallback(AuthenticatedAPIView):
         attempt = get_exam_attempt_by_external_id(external_id)
         if not attempt:
             LOG.warn("Attempt code %r cannot be found.", external_id)
-            return Response(
-                data='You have entered an exam code that is not valid.',
-                status=404
-            )
+            return Response(data='You have entered an exam code that is not valid.', status=404)
         if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
                                  ProctoredExamStudentAttemptStatus.download_software_clicked]:
             mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
-        return Response(
-            data='OK',
-            status=200
-        )
+        return Response(data='OK', status=200)
 
 
 class BaseReviewCallback(object):
@@ -909,17 +897,14 @@ class BaseReviewCallback(object):
         # we could have gotten a review for an archived attempt
         # this should *not* cause an update in our credit
         # eligibility table
-        allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
-        attempt_status = (
-            ProctoredExamStudentAttemptStatus.verified
-            if review.review_status in SoftwareSecureReviewStatus.passing_statuses
-            else (
-                # if we are not allowed to store 'rejected' on this
-                # code path, then put status into 'second_review_required'
-                ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
-                ProctoredExamStudentAttemptStatus.second_review_required
-            )
-        )
+        if review.review_status in SoftwareSecureReviewStatus.passing_statuses:
+            attempt_status = ProctoredExamStudentAttemptStatus.verified
+        elif not constants.REQUIRE_FAILURE_SECOND_REVIEWS:
+            attempt_status = ProctoredExamStudentAttemptStatus.rejected
+        else:
+            # if we are not allowed to store 'rejected' on this
+            # code path, then put status into 'second_review_required'
+            attempt_status = ProctoredExamStudentAttemptStatus.second_review_required
 
         # updating attempt status will trigger workflow
         # (i.e. updating credit eligibility table)
@@ -953,16 +938,10 @@ class ProctoredExamReviewCallback(BaseReviewCallback, AuthenticatedAPIView):
             if attempt is None:
                 raise StudentExamAttemptDoesNotExistsException('not found')
             self.make_review(attempt, request.data)
-            return Response(
-                status=status.HTTP_200_OK,
-                data='OK',
-            )
+            return Response(status=status.HTTP_200_OK, data='OK')
         except (StudentExamAttemptDoesNotExistsException, ProctoredBaseException) as ex:
             LOG.exception(ex)
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": six.text_type(ex)}
-            )
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": six.text_type(ex)})
 
 
 class IgnoreClientContentNegotiation(BaseContentNegotiation):
@@ -1018,14 +997,6 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
                              backend=provider)
         except ProctoredBaseException as ex:
             LOG.exception(ex)
-            return Response(
-                data={
-                    'reason': six.text_type(ex)
-                },
-                status=400
-            )
+            return Response(data={'reason': six.text_type(ex)}, status=400)
 
-        return Response(
-            data='OK',
-            status=200
-        )
+        return Response(data='OK', status=200)

@@ -66,7 +66,7 @@ REJECTED_GRADE_OVERRIDE_EARNED = 0.0
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True, hide_after_due=False,
-                backend=getattr(settings, 'PROCTORING_BACKENDS', {}).get('DEFAULT', None)):
+                backend=None):
     """
     Creates a new ProctoredExam entity, if the course_id/content_id pair do not already exist.
     If that pair already exists, then raise exception.
@@ -88,7 +88,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
         is_practice_exam=is_practice_exam,
         is_active=is_active,
         hide_after_due=hide_after_due,
-        backend=backend,
+        backend=backend or settings.PROCTORING_BACKENDS.get('DEFAULT', None),
     )
 
     log_msg = (

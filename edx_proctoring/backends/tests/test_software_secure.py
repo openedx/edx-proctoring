@@ -64,7 +64,7 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
     """
     return {
         'status_code': 404,
-        'content': 'Page not found'
+        'content': 'Page not found',
     }
 
 
@@ -79,7 +79,7 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
             "organization": "edx",
             "exam_sponsor": "edX LMS",
             "software_download_url": "http://example.com",
-            "send_email": True
+            "send_email": True,
         },
         "DEFAULT": "software_secure",
         "test": {},
@@ -141,7 +141,7 @@ class SoftwareSecureTests(TestCase):
             exam_name='Sample Exam',
             time_limit_mins=10,
             is_proctored=True,
-            backend='software_secure'
+            backend='software_secure',
         )
 
         with HTTMock(mock_response_content):
@@ -165,7 +165,7 @@ class SoftwareSecureTests(TestCase):
             exam_name='Sample Exam',
             time_limit_mins=10,
             is_proctored=True,
-            backend='software_secure'
+            backend='software_secure',
         )
 
         # this should not raise an exception since we have
@@ -197,7 +197,7 @@ class SoftwareSecureTests(TestCase):
             exam_name='Sample Exam',
             time_limit_mins=10,
             is_proctored=True,
-            backend='software_secure'
+            backend='software_secure',
         )
 
         with HTTMock(mock_response_content):
@@ -317,7 +317,7 @@ class SoftwareSecureTests(TestCase):
                 exam_name='Sample Exam with {} character'.format(illegal_char),
                 time_limit_mins=10,
                 is_proctored=True,
-                backend='software_secure'
+                backend='software_secure',
             )
 
             with HTTMock(mock_response_content):
@@ -373,7 +373,7 @@ class SoftwareSecureTests(TestCase):
                 exam_name=u'Klüft skräms inför på fédéral électoral große',
                 time_limit_mins=10,
                 is_proctored=True,
-                backend='software_secure'
+                backend='software_secure',
             )
 
             # patch the _get_payload method on the backend provider
@@ -392,7 +392,7 @@ class SoftwareSecureTests(TestCase):
                 exam_name=u'到处群魔乱舞',
                 time_limit_mins=10,
                 is_proctored=True,
-                backend='software_secure'
+                backend='software_secure',
             )
 
             # patch the _get_payload method on the backend provider
@@ -417,7 +417,7 @@ class SoftwareSecureTests(TestCase):
             exam_name='Sample Exam',
             time_limit_mins=10,
             is_proctored=True,
-            backend='software_secure'
+            backend='software_secure',
         )
 
         with HTTMock(mock_response_content):
@@ -437,7 +437,7 @@ class SoftwareSecureTests(TestCase):
             exam_name='Sample Exam',
             time_limit_mins=10,
             is_proctored=True,
-            backend='software_secure'
+            backend='software_secure',
         )
 
         with HTTMock(mock_response_content):
@@ -451,7 +451,7 @@ class SoftwareSecureTests(TestCase):
             exam_name=u'अआईउऊऋऌ अआईउऊऋऌ',
             time_limit_mins=10,
             is_proctored=True,
-            backend='software_secure'
+            backend='software_secure',
         )
 
         with HTTMock(mock_response_content):
@@ -469,7 +469,7 @@ class SoftwareSecureTests(TestCase):
             exam_name='Sample Exam',
             time_limit_mins=10,
             is_proctored=True,
-            backend='software_secure'
+            backend='software_secure',
         )
 
         # now try a failing request
