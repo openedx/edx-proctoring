@@ -5,6 +5,7 @@ docs/backends.rst
 import pkg_resources
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_rest_api_client.client import OAuthAPIClient
+from edx_proctoring.models import ProctoredExamStudentAttemptStatus
 
 
 class BaseRestProctoringProvider(ProctoringBackendProvider):
@@ -111,7 +112,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Method that is responsible for communicating with the backend provider
         to establish a new proctored exam
         """
-        response = self._make_attempt_request(exam, attempt, status='start', method='PATCH')
+        response = self._make_attempt_request(
+            exam,
+            attempt,
+            status=ProctoredExamStudentAttemptStatus.started,
+            method='PATCH')
         return response.get('status')
 
     def stop_exam_attempt(self, exam, attempt):
@@ -119,7 +124,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Method that is responsible for communicating with the backend provider
         to finish a proctored exam
         """
-        response = self._make_attempt_request(exam, attempt, status='stop', method='PATCH')
+        response = self._make_attempt_request(
+            exam,
+            attempt,
+            status=ProctoredExamStudentAttemptStatus.submitted,
+            method='PATCH')
         return response.get('status')
 
     def on_review_callback(self, attempt, payload):

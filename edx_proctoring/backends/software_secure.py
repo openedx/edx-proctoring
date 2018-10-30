@@ -26,8 +26,8 @@ from edx_proctoring import constants
 from edx_proctoring.exceptions import (
     BackendProvideCannotRegisterAttempt,
     ProctoredExamSuspiciousLookup,
-    ProctoredExamBadReviewStatus,
 )
+from edx_proctoring.models import SoftwareSecureReviewStatus
 from edx_proctoring.runtime import get_runtime_service
 
 log = logging.getLogger(__name__)
@@ -59,9 +59,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.timeout = 10
         self.software_download_url = software_download_url
         self.send_email = send_email
-        self.passing_review_status = ['Clean', 'Rules Violation']
-        self.failing_review_status = ['Not Reviewed', 'Suspicious']
-        self.notify_support_for_status = ['Suspicious']
 
     def register_exam_attempt(self, exam, context):
         """
@@ -152,18 +149,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             )
         )
         log.info(log_msg)
-        review_status = payload['reviewStatus']
-
-        if review_status in self.passing_review_status:
-            review_status = u'pass'
-        elif review_status in self.failing_review_status:
-            review_status = u'fail'
-        else:
-            err_msg = (
-                'Received unexpected reviewStatus field value from payload. '
-                'Was {review_status}.'.format(review_status=review_status)
-            )
-            raise ProctoredExamBadReviewStatus(err_msg)
+        SoftwareSecureReviewStatus.validate(payload['reviewStatus'])
+        review_status = SoftwareSecureReviewStatus.to_standard_status.get(payload['reviewStatus'], None)
 
         comments = []
         converted = {
@@ -220,7 +207,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         Creates a Zendesk ticket for reviews with status listed in self.notify_support_for_status
         """
-        if review.review_status in self.notify_support_for_status:
+        if review.review_status in SoftwareSecureReviewStatus.notify_support_for_status:
             instructor_service = get_runtime_service('instructor')
             if instructor_service:
                 instructor_service.send_support_notification(

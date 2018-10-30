@@ -16,7 +16,7 @@ from edx_proctoring.backends.tests.test_review_payload import create_test_review
 from edx_proctoring.exceptions import (ProctoredExamBadReviewStatus, ProctoredExamReviewAlreadyExists)
 from edx_proctoring.models import (ProctoredExamSoftwareSecureComment, ProctoredExamSoftwareSecureReview,
                                    ProctoredExamSoftwareSecureReviewHistory, ProctoredExamStudentAttemptHistory,
-                                   ProctoredExamStudentAttemptStatus)
+                                   ProctoredExamStudentAttemptStatus, ReviewStatus, SoftwareSecureReviewStatus)
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.tests.test_services import (MockCertificateService, MockCreditService, MockGradesService,
                                                 MockInstructorService)
@@ -59,7 +59,7 @@ class ReviewTests(LoggedInTestCase):
         set_runtime_service('grades', None)
         set_runtime_service('certificates', None)
 
-    def get_review_payload(self, status='pass', comments=None, **kwargs):
+    def get_review_payload(self, status=ReviewStatus.passed, comments=None, **kwargs):
         """
         Returns a standard review payload
         """
@@ -96,14 +96,14 @@ class ReviewTests(LoggedInTestCase):
 
     @ddt.data(
         ('Bogus', None, None),
-        ('Clean', 'pass', 'satisfied'),
-        ('Rules Violation', 'pass', 'satisfied'),
-        ('Suspicious', 'fail', 'failed'),
-        ('Not Reviewed', 'fail', 'failed'),
+        ('Clean', 'Clean', 'satisfied'),
+        ('Rules Violation', 'Rules Violation', 'satisfied'),
+        ('Suspicious', 'Suspicious', 'failed'),
+        ('Not Reviewed', 'Not Reviewed', 'failed'),
     )
     @ddt.unpack
     @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
-    def test_review_callback(self, psi_review_status, review_status, credit_requirement_status):
+    def test_psi_review_callback(self, psi_review_status, review_status, credit_requirement_status):
         """
         Simulates callbacks from SoftwareSecure with various statuses
         """
@@ -145,6 +145,15 @@ class ReviewTests(LoggedInTestCase):
                 credit_requirement_status
             )
 
+    def test_bad_review_status(self):
+        """
+        Tests that an exception is raised if the review has an invalid status
+        """
+        test_payload = self.get_review_payload('bogus')
+
+        with self.assertRaises(ProctoredExamBadReviewStatus):
+            ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+
     @ddt.data(
         ('bad', 400),
         (None, 200),
@@ -168,7 +177,7 @@ class ReviewTests(LoggedInTestCase):
         Make sure we can process a review report for
         an attempt which has been archived
         """
-        test_payload = self.get_review_payload('Clean')
+        test_payload = self.get_review_payload(ReviewStatus.passed)
 
         # now delete the attempt, which puts it into the archive table
         remove_exam_attempt(self.attempt_id, requesting_user=self.user)
@@ -180,7 +189,7 @@ class ReviewTests(LoggedInTestCase):
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
 
         self.assertIsNotNone(review)
-        self.assertEqual(review.review_status, 'Clean')
+        self.assertEqual(review.review_status, SoftwareSecureReviewStatus.clean)
         self.assertFalse(review.video_url)
 
         self.assertIsNotNone(review.raw_data)
@@ -197,7 +206,7 @@ class ReviewTests(LoggedInTestCase):
         Tests that an exception is raised if a review report is resubmitted for the same
         attempt
         """
-        test_payload = self.get_review_payload('ok')
+        test_payload = self.get_review_payload(ReviewStatus.passed)
 
         ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
 
@@ -210,7 +219,7 @@ class ReviewTests(LoggedInTestCase):
         """
         Tests that an resubmission is allowed
         """
-        test_payload = self.get_review_payload('Clean')
+        test_payload = self.get_review_payload(ReviewStatus.passed)
 
         ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
 
@@ -219,14 +228,14 @@ class ReviewTests(LoggedInTestCase):
         self.assertEqual(len(records), 0)
 
         # now call again, this will not throw exception
-        test_payload['status'] = 'Suspicious'
+        test_payload['status'] = ReviewStatus.suspicious
         ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
 
         # make sure that what we have in the Database matches what we expect
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
 
         self.assertIsNotNone(review)
-        self.assertEqual(review.review_status, 'Suspicious')
+        self.assertEqual(review.review_status, SoftwareSecureReviewStatus.suspicious)
         self.assertFalse(review.video_url)
 
         self.assertIsNotNone(review.raw_data)
@@ -242,8 +251,8 @@ class ReviewTests(LoggedInTestCase):
 
         records = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=self.attempt['attempt_code'])
         self.assertEqual(len(records), 2)
-        self.assertEqual(records[0].review_status, 'Clean')
-        self.assertEqual(records[1].review_status, 'Suspicious')
+        self.assertEqual(records[0].review_status, SoftwareSecureReviewStatus.clean)
+        self.assertEqual(records[1].review_status, SoftwareSecureReviewStatus.suspicious)
 
     @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', True)
     def test_failure_submission(self):
@@ -251,7 +260,7 @@ class ReviewTests(LoggedInTestCase):
         Tests that a submission of a failed test and make sure that we
         don't automatically update the status to failure
         """
-        test_payload = self.get_review_payload('Suspicious')
+        test_payload = self.get_review_payload(ReviewStatus.suspicious)
         allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
         # submit a Suspicious review payload
         ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
@@ -273,7 +282,7 @@ class ReviewTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.second_review_required
         )
         self.assertEqual(attempt['status'], expected_status)
-        self.assertEqual(review.review_status, 'Suspicious')
+        self.assertEqual(review.review_status, SoftwareSecureReviewStatus.suspicious)
 
     @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', True)
     def test_failure_submission_rejected(self):
@@ -281,7 +290,7 @@ class ReviewTests(LoggedInTestCase):
         Tests that a submission of a failed test and make sure that we
         don't automatically update the status to failure
         """
-        test_payload = self.get_review_payload('Suspicious')
+        test_payload = self.get_review_payload(ReviewStatus.suspicious)
         allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
         # submit a Suspicious review payload
         ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
@@ -303,7 +312,7 @@ class ReviewTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.second_review_required
         )
         self.assertEqual(attempt['status'], expected_status)
-        self.assertEqual(review.review_status, 'Suspicious')
+        self.assertEqual(review.review_status, SoftwareSecureReviewStatus.suspicious)
 
     def test_update_archived_attempt(self):
         """
@@ -332,4 +341,4 @@ class ReviewTests(LoggedInTestCase):
         ).latest('created')
 
         self.assertEqual(archived_attempt.status, attempt['status'])
-        self.assertEqual(review.review_status, 'pass')
+        self.assertEqual(review.review_status, SoftwareSecureReviewStatus.clean)

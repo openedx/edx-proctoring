@@ -60,7 +60,7 @@ quality: ## check coding style with pycodestyle and pylint
 	tox -e quality
 
 test-python: clean ## run tests in the current virtualenv
-	./manage.py test edx_proctoring --verbosity=3
+	py.test --cov=edx_proctoring --cov-report=html --ds=test_settings -n auto
 
 test-js:
 	gulp test

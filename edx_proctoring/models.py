@@ -21,7 +21,8 @@ from model_utils.models import TimeStampedModel
 from edx_proctoring.exceptions import (
     UserNotFoundException,
     ProctoredExamNotActiveException,
-    AllowanceValueNotAllowedException
+    ProctoredExamBadReviewStatus,
+    AllowanceValueNotAllowedException,
 )
 
 
@@ -885,6 +886,72 @@ def _make_archive_copy(item):
         value=item.value
     )
     archive_object.save()
+
+
+class ReviewStatus(object):
+    """
+    Standard review statuses
+    """
+    passed = u'passed'
+    violation = u'violation'
+    suspicious = u'suspicious'
+    not_reviewed = u'not_reviewed'
+
+    @classmethod
+    def validate(cls, status):
+        """
+        Validate review status
+        """
+        if status not in [cls.passed, cls.violation, cls.suspicious, cls.not_reviewed]:
+            raise ProctoredExamBadReviewStatus(status)
+        return True
+
+
+class SoftwareSecureReviewStatus(object):
+    """
+    These are the valid review statuses from
+    SoftwareSecure
+    """
+
+    clean = u'Clean'
+    violation = u'Rules Violation'
+    suspicious = u'Suspicious'
+    not_reviewed = u'Not Reviewed'
+
+    passing_statuses = [
+        clean,
+        violation]
+    failing_statuses = [
+        not_reviewed,
+        suspicious]
+    notify_support_for_status = suspicious
+
+    from_standard_status = {
+        ReviewStatus.passed: clean,
+        ReviewStatus.violation: violation,
+        ReviewStatus.suspicious: suspicious,
+        ReviewStatus.not_reviewed: not_reviewed,
+    }
+
+    to_standard_status = {
+        clean: ReviewStatus.passed,
+        violation: ReviewStatus.violation,
+        suspicious: ReviewStatus.suspicious,
+        not_reviewed: ReviewStatus.not_reviewed,
+    }
+
+    @classmethod
+    def validate(cls, status):
+        """
+        Validates the status, or raises ProctoredExamBadReviewStatus
+        """
+        if status not in cls.passing_statuses + cls.failing_statuses:
+            err_msg = (
+                'Received unexpected reviewStatus field value from payload. '
+                'Was {review_status}.'.format(review_status=status)
+            )
+            raise ProctoredExamBadReviewStatus(err_msg)
+        return True
 
 
 class ProctoredExamSoftwareSecureReview(TimeStampedModel):

@@ -50,7 +50,7 @@ from edx_proctoring.exceptions import (
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException,
     ProctoredExamNotActiveException,
-    AllowanceValueNotAllowedException
+    AllowanceValueNotAllowedException,
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
@@ -59,7 +59,9 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttempt,
     ProctoredExam,
     ProctoredExamSoftwareSecureComment,
-    ProctoredExamSoftwareSecureReview
+    ProctoredExamSoftwareSecureReview,
+    ReviewStatus,
+    SoftwareSecureReviewStatus,
 )
 
 from edx_proctoring.utils import (
@@ -875,9 +877,15 @@ class BaseReviewCallback(object):
             # make a new record in the review table
             review = ProctoredExamSoftwareSecureReview()
 
+        # first, validate that the backend review status is valid
+        ReviewStatus.validate(backend_review['status'])
+        # For now, we'll convert the standard review status to the old
+        # software secure review status.
+        # In the future, the old data should be standardized.
+        review.review_status = SoftwareSecureReviewStatus.from_standard_status.get(backend_review['status'])
+
         review.attempt_code = attempt_code
         review.raw_data = json.dumps(backend_review)
-        review.review_status = backend_review['status']
         review.student_id = attempt['user']['id']
         review.exam_id = attempt['proctored_exam']['id']
         # set reviewed_by to None because it was reviewed by our 3rd party
@@ -904,7 +912,7 @@ class BaseReviewCallback(object):
         allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
         attempt_status = (
             ProctoredExamStudentAttemptStatus.verified
-            if review.review_status in ['pass', 'verified']
+            if review.review_status in SoftwareSecureReviewStatus.passing_statuses
             else (
                 # if we are not allowed to store 'rejected' on this
                 # code path, then put status into 'second_review_required'

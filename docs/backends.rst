@@ -2,13 +2,13 @@
  Proctoring backend implementation
 ===================================
 
-Proctoring providers (PS) who wish to integrate with OpenEdx should implement a `REST API`_ and a thin `Python wrapper`_, as described below.
+Proctoring providers (PS) who wish to integrate with Open edX should implement a `REST API`_ and a thin `Python wrapper`_, as described below.
 
 REST API
 --------
 
-Implement the following endpoints. In order to authenticate requests from the OpenEdx server, the PS backend should
-enable Oauth 2 authentication using JWT_. The OpenEdx installation will be configured with a client key and a client secret provided by the PS and will authenticate each request to the PS.
+Implement the following endpoints. In order to authenticate requests from the Open edX server, the PS backend should
+enable Oauth 2 authentication using JWT_. The Open edX installation will be configured with a client key and a client secret provided by the PS and will authenticate each request to the PS.
 
 To obtain a JWT_ token, the PS system must make an Oauth2 request to ``/oauth2/access_token``.
 
@@ -43,7 +43,7 @@ Proctoring System configuration endpoint
 The keys in the config object should be machine readable. The values are human readable. PS should respect the HTTP request ``Accept-Language``
 header and translate all human readable configuration options into the requested language, if possible. 
 
-If a download_url is included in the response, OpenEdx will redirect learners to the the address before the proctoring session starts. The address will include ``attempt={attempt_id}`` in the query string.
+If a download_url is included in the response, Open edX will redirect learners to the the address before the proctoring session starts. The address will include ``attempt={attempt_id}`` in the query string.
 
 Exam endpoint
 ^^^^^^^^^^^^^
@@ -105,18 +105,19 @@ The PS system should respond with an object containing at least the following fi
         "id": "<some opaque id for the attempt>",
     }
 
+
     /v1/exam/{exam_id}/attempt/{attempt_id}/
 
 ``PATCH``: changes the status of the attempt::
 
     {
-        "status": "start",
+        "status": "started",
     }
     {
-        "status": "stop",
+        "status": "submitted",
     }
 
-OpenEdx will issue a ``PATCH`` request with a ``start`` status when the learner starts the proctored exam, and a ``stop`` status when the learner finishes the exam.
+Open edX will issue a ``PATCH`` request with a ``started`` status when the learner starts the proctored exam, and a ``submitted`` status when the learner finishes the exam.
 
 ``GET``: returns PS information about the attempt
 
@@ -147,16 +148,16 @@ After the PS client software starts, the PS system should make a ``POST`` reques
 Exam review callback
 ^^^^^^^^^^^^^^^^^^^^
 
-After the PS system has reviewed an attempt, it must issue a ``POST`` request to the OpenEdx server at ``/api/v1/edx_proctoring/v1/proctored_exam/attempt/{attempt_id}/reviewed``
+After the PS system has reviewed an attempt, it must issue a ``POST`` request to the Open edX server at ``/api/v1/edx_proctoring/v1/proctored_exam/attempt/{attempt_id}/reviewed``
 
 The expected JSON request must include::
 
     {
-        "status": "verified",
+        "status": "passed",
         "comments": []
     }
 
-Status must be one of ``["verified", "suspicious"]``.
+Status must be one of ``["passed", "violation", "suspicious", "not_reviewed"]``.
 
 There can be an arbitrary number of review comments, formatted with at least the following fields::
 

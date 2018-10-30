@@ -88,7 +88,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
         is_practice_exam=is_practice_exam,
         is_active=is_active,
         hide_after_due=hide_after_due,
-        backend=backend
+        backend=backend,
     )
 
     log_msg = (
