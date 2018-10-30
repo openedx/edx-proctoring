@@ -13,6 +13,8 @@ from freezegun import freeze_time
 from mock import MagicMock, patch
 import pytz
 
+import six
+
 from edx_proctoring.api import (
     create_exam,
     update_exam,
@@ -504,7 +506,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             self.proctored_exam_id,
             self.user.username,
             ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
-            bytes(allowed_extra_time)
+            six.text_type(allowed_extra_time)
         )
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
         start_exam_attempt(self.proctored_exam_id, self.user_id)
@@ -540,7 +542,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         practice_exam_student_attempt = self._create_started_practice_exam_attempt()
         new_attempt_id = create_exam_attempt(practice_exam_student_attempt.proctored_exam.id, self.user_id)
-        self.assertGreater(practice_exam_student_attempt, new_attempt_id, "New attempt not created.")
+        self.assertGreater(new_attempt_id, practice_exam_student_attempt.id, "New attempt not created.")
 
     def test_get_exam_attempt(self):
         """

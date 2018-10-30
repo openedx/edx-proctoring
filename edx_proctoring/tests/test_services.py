@@ -222,30 +222,32 @@ class MockGradesService(object):
 
     def init_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all, earned_graded):
         """Initialize a grade in MockGradesService for testing. Actual GradesService does not have this method."""
-        self.grades[bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id)] = MockGrade(
+        key = (user_id, course_key_or_id, usage_key_or_id)
+        self.grades[key] = MockGrade(
             earned_all=earned_all,
             earned_graded=earned_graded
         )
 
     def get_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id):
         """Returns entered grade for key (user_id + course_key + subsection) or None"""
-        key = bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id)
+        key = (user_id, course_key_or_id, usage_key_or_id)
         if key in self.overrides:
             # pretend override was applied
             return MockGrade(
                 earned_all=self.overrides[key].earned_all_override,
                 earned_graded=self.overrides[key].earned_graded_override
             )
-        return self.grades.get(bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id))
+        return self.grades.get(key)
 
     def get_subsection_grade_override(self, user_id, course_key_or_id, usage_key_or_id):
         """Returns entered grade override for key (user_id + course_key + subsection) or None"""
-        return self.overrides.get(bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id))
+        key = (user_id, course_key_or_id, usage_key_or_id)
+        return self.overrides.get(key)
 
     def override_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all=None,
                                   earned_graded=None):
         """Sets grade override earned points for key (user_id + course_key + subsection)"""
-        key = bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id)
+        key = (user_id, course_key_or_id, usage_key_or_id)
         self.overrides[key] = MockGradeOverride(
             earned_all=earned_all,
             earned_graded=earned_graded
@@ -253,7 +255,7 @@ class MockGradesService(object):
 
     def undo_override_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id):
         """Deletes grade override for key (user_id + course_key + subsection)"""
-        key = bytes(user_id) + bytes(course_key_or_id) + bytes(usage_key_or_id)
+        key = (user_id, course_key_or_id, usage_key_or_id)
         if key in self.overrides:
             del self.overrides[key]
 
@@ -277,7 +279,7 @@ class MockCertificateService(object):
         Get the generated certificate for key (user_id + course_key) and invalidate certificate
         whose grade dropped below passing threshold due to suspicious proctored exam
         """
-        key = bytes(user_id) + bytes(course_key_or_id)
+        key = (user_id, course_key_or_id)
         self.generated_certificate[key] = MockGeneratedCertificate()
         self.generated_certificate[key].mock_invalidate()
 
@@ -285,4 +287,4 @@ class MockCertificateService(object):
         """
         Returns invalidated certificate for key (user_id + course_key)
         """
-        return self.generated_certificate.get(bytes(user_id) + bytes(course_key_or_id))
+        return self.generated_certificate.get((user_id, course_key_or_id))

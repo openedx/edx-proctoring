@@ -4,8 +4,8 @@ docs/backends.rst
 """
 import pkg_resources
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_rest_api_client.client import OAuthAPIClient
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus
+from edx_rest_api_client.client import OAuthAPIClient
 
 
 class BaseRestProctoringProvider(ProctoringBackendProvider):

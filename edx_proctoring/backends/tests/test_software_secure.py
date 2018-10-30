@@ -487,15 +487,15 @@ class SoftwareSecureTests(TestCase):
             'foo': False,
             'none': None,
         })
-        self.assertIn('false', body)
-        self.assertIn('null', body)
+        self.assertIn(b'false', body)
+        self.assertIn(b'null', body)
 
         body = provider._body_string({  # pylint: disable=protected-access
             'foo': ['first', {'here': 'yes'}]
         })
-        self.assertIn('first', body)
-        self.assertIn('here', body)
-        self.assertIn('yes', body)
+        self.assertIn(b'first', body)
+        self.assertIn(b'here', body)
+        self.assertIn(b'yes', body)
 
     def test_start_proctored_exam(self):
         """

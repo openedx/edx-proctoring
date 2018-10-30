@@ -364,7 +364,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": bytes(ex)}
+                data={"detail": six.text_type(ex)}
             )
 
     def put(self, request, attempt_id):
@@ -429,7 +429,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": bytes(ex)}
+                data={"detail": six.text_type(ex)}
             )
 
     @method_decorator(require_course_or_global_staff)
@@ -456,7 +456,7 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": bytes(ex)}
+                data={"detail": six.text_type(ex)}
             )
 
 
@@ -737,7 +737,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": bytes(ex)}
+                data={"detail": six.text_type(ex)}
             )
 
     @method_decorator(require_course_or_global_staff)
@@ -805,7 +805,7 @@ class ProctoredExamAttemptReviewStatus(AuthenticatedAPIView):
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": bytes(ex)}
+                data={"detail": six.text_type(ex)}
             )
 
 
@@ -961,7 +961,7 @@ class ProctoredExamReviewCallback(BaseReviewCallback, AuthenticatedAPIView):
             LOG.exception(ex)
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": bytes(ex)}
+                data={"detail": six.text_type(ex)}
             )
 
 

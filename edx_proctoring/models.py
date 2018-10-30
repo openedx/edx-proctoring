@@ -765,7 +765,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
             ).format(value=value)
             raise AllowanceValueNotAllowedException(err_msg)
         # were we passed a PK?
-        if isinstance(user_info, (int, long)):
+        if isinstance(user_info, six.integer_types):
             user_id = user_info
         else:
             # we got a string, so try to resolve it

@@ -33,7 +33,7 @@ from edx_proctoring.runtime import get_runtime_service
 log = logging.getLogger(__name__)
 
 
-SOFTWARE_SECURE_INVALID_CHARS = '[]<>#:|!?/\'"*\\'
+SOFTWARE_SECURE_INVALID_CHARS = u'[]<>#:|!?/\'"*\\'
 
 
 class SoftwareSecureBackendProvider(ProctoringBackendProvider):
@@ -72,6 +72,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             exam,
             context
         )
+
         headers = {
             "Content-Type": 'application/json'
         }
@@ -188,7 +189,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                     chr(block_size - len(text) % block_size)).encode('utf-8')
         cipher = DES3.new(key, DES3.MODE_ECB)
         encrypted_text = cipher.encrypt(pad(pwd))
-        return base64.b64encode(encrypted_text)
+        return base64.b64encode(encrypted_text).decode('ascii')
 
     def _split_fullname(self, full_name):
         """
@@ -255,7 +256,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         end_time_str = (now + datetime.timedelta(minutes=time_limit_mins)).strftime("%a, %d %b %Y %H:%M:%S GMT")
         # remove all illegal characters from the exam name
         exam_name = exam['exam_name']
-        exam_name = unicodedata.normalize('NFKD', exam_name).encode('ascii', 'ignore')
+        exam_name = unicodedata.normalize('NFKD', exam_name).encode('ascii', 'ignore').decode('utf8')
 
         for character in SOFTWARE_SECURE_INVALID_CHARS:
             exam_name = exam_name.replace(character, '_')
@@ -309,34 +310,36 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             string += date
             string += '\n'
 
-        return string
+        return string.encode('utf8')
 
-    def _body_string(self, body_json, prefix=""):
+    def _body_string(self, body_json, prefix=b""):
         """
         Serializes out the HTTP body that SoftwareSecure expects
         """
         keys = list(body_json.keys())
         keys.sort()
-        string = ""
+        string = b""
         for key in keys:
             value = body_json[key]
             if isinstance(value, bool):
                 if value:
-                    value = 'true'
+                    value = b'true'
                 else:
-                    value = 'false'
+                    value = b'false'
+            key = key.encode('utf8')
             if isinstance(value, (list, tuple)):
                 for idx, arr in enumerate(value):
+                    pfx = b'%s.%d' % (key, idx)
                     if isinstance(arr, dict):
-                        string += self._body_string(arr, key + '.' + bytes(idx) + '.')
+                        string += self._body_string(arr, pfx + b'.')
                     else:
-                        string += key + '.' + bytes(idx) + ':' + arr + '\n'
+                        string += b'%s:%s\n' % (pfx, six.text_type(arr).encode('utf8'))
             elif isinstance(value, dict):
-                string += self._body_string(value, key + '.')
+                string += self._body_string(value, key + b'.')
             else:
                 if value != "" and not value:
                     value = "null"
-                string += bytes(prefix) + bytes(key) + ":" + six.text_type(value).encode('utf-8') + '\n'
+                string += b'%s%s:%s\n' % (prefix, key, six.text_type(value).encode('utf8'))
 
         return string
 
@@ -346,13 +349,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         body_str = self._body_string(body_json)
 
-        method_string = method + '\n\n'
+        method_string = method.encode('ascii') + b'\n\n'
 
         headers_str = self._header_string(headers, date)
         message = method_string + headers_str + body_str
-
-        # HMAC requires a string not a unicode
-        message = bytes(message)
 
         log_msg = (
             'About to send payload to SoftwareSecure: examCode: {examCode}, courseID: {courseID}'.
@@ -360,10 +360,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         )
         log.info(log_msg)
 
-        hashed = hmac.new(bytes(self.secret_key), bytes(message), sha256)
-        computed = binascii.b2a_base64(hashed.digest()).rstrip('\n')
+        hashed = hmac.new(self.secret_key.encode('ascii'), message, sha256)
+        computed = binascii.b2a_base64(hashed.digest()).rstrip(b'\n')
 
-        return 'SSI ' + self.secret_key_id + ':' + computed
+        return b'SSI %s:%s' % (self.secret_key_id.encode('ascii'), computed)
 
     def _send_request_to_ssi(self, data, sig, date):
         """

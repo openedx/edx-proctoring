@@ -586,7 +586,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         lms_host = '{scheme}://{hostname}'.format(scheme=scheme, hostname=settings.SITE_NAME)
 
-        obs_user_id = hashlib.sha1(bytes(attempt_code) + bytes(user_id)).hexdigest()
+        obs_user_id = hashlib.sha1((u'%s%s' % (attempt_code, user_id)).encode('ascii')).hexdigest()
 
         # get the name of the user, if the service is available
         full_name = None
