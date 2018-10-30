@@ -57,7 +57,7 @@ class TestBackendProvider(ProctoringBackendProvider):
         return payload
 
     def on_exam_saved(self, exam):
-        pass
+        return exam.get('external_id', 'examexternalid')
 
 
 class PassthroughBackendProvider(ProctoringBackendProvider):

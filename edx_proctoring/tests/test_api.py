@@ -126,7 +126,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         test update the existing practice exam to increase the time limit.
         """
         updated_practice_exam_id = update_exam(
-            self.practice_exam_id, time_limit_mins=31, is_practice_exam=True
+            self.practice_exam_id, time_limit_mins=31, is_practice_exam=True, backend='null'
         )
 
         # only those fields were updated, whose
@@ -138,6 +138,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(update_practice_exam.time_limit_mins, 31)
         self.assertEqual(update_practice_exam.course_id, 'test_course')
         self.assertEqual(update_practice_exam.content_id, 'test_content_id_practice')
+        self.assertEqual(update_practice_exam.backend, 'null')
 
     def test_update_proctored_exam(self):
         """
