@@ -260,6 +260,7 @@ class SoftwareSecureTests(TestCase):
             test_self.assertEqual(policy.review_policy, context['review_policy'])
 
             # call into real implementation
+            # pylint: disable=too-many-function-args
             result = test_self.software_secure_get_payload(self, exam, context)
 
             # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
@@ -309,6 +310,7 @@ class SoftwareSecureTests(TestCase):
             test_self.assertNotIn('review_policy', context)
 
             # call into real implementation
+            # pylint: disable=too-many-function-args
             result = test_self.software_secure_get_payload(self, exam, context)
 
             # assert that we use the default that is defined in system configuration
@@ -377,6 +379,7 @@ class SoftwareSecureTests(TestCase):
             assert_get_payload_mock_unicode_characters.called = True
 
             # call into real implementation
+            # pylint: disable=too-many-function-args
             result = test_self.software_secure_get_payload(self, exam, context)
             test_self.assertFalse(isinstance(result['examName'], six.text_type))
             test_self.assertTrue(is_ascii(result['examName']))
@@ -395,7 +398,8 @@ class SoftwareSecureTests(TestCase):
             )
 
             # patch the _get_payload method on the backend provider
-            with patch.object(SoftwareSecureBackendProvider, '_get_payload', assert_get_payload_mock_unicode_characters):
+            with patch.object(SoftwareSecureBackendProvider, '_get_payload',
+                              assert_get_payload_mock_unicode_characters):
                 assert_get_payload_mock_unicode_characters.called = False
                 attempt_id = create_exam_attempt(
                     exam_id,
@@ -416,7 +420,8 @@ class SoftwareSecureTests(TestCase):
             )
 
             # patch the _get_payload method on the backend provider
-            with patch.object(SoftwareSecureBackendProvider, '_get_payload', assert_get_payload_mock_unicode_characters):
+            with patch.object(SoftwareSecureBackendProvider, '_get_payload',
+                              assert_get_payload_mock_unicode_characters):
                 assert_get_payload_mock_unicode_characters.called = False
                 attempt_id = create_exam_attempt(
                     exam_id,
