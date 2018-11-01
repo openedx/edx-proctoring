@@ -265,7 +265,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # into something ascii-like, then we have use a default otherwise
         # SoftwareSecure will fail on the exam registration API call
         if not exam_name:
-            exam_name = 'Proctored Exam'
+            exam_name = u'Proctored Exam'
+
+        exam_name = exam_name.encode('utf8')
 
         org_extra = {
             "examStartDate": start_time_str,

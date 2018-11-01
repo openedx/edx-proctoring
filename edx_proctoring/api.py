@@ -595,8 +595,9 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         credit_service = get_runtime_service('credit')
         if credit_service:
             credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
-            full_name = credit_state['profile_fullname']
-            email = credit_state['student_email']
+            if credit_state:
+                full_name = credit_state['profile_fullname']
+                email = credit_state['student_email']
 
         context = {
             'lms_host': lms_host,

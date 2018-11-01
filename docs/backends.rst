@@ -2,7 +2,7 @@
  Proctoring backend implementation
 ===================================
 
-Proctoring providers (PS) who wish to integrate with Open edX should implement a `REST API`_ and a thin `Python wrapper`_, as described below.
+Proctoring services (PS) who wish to integrate with Open edX should implement a `REST API`_ and a thin `Python wrapper`_, as described below.
 
 REST API
 --------
@@ -31,8 +31,8 @@ Proctoring System configuration endpoint
             "allow_apps": "Allow other applications to be running",
             ...
         },
-        "name": "My Proctoring Provider",
-        "download_url": "https://my.provider.com/download/software",
+        "name": "My Proctoring Service",
+        "download_url": "https://my.proctoring.com/download/software",
         "instructions": [
             "Step one, download the software",
             "Next, run the software",
@@ -43,14 +43,14 @@ Proctoring System configuration endpoint
 The keys in the config object should be machine readable. The values are human readable. PS should respect the HTTP request ``Accept-Language``
 header and translate all human readable configuration options into the requested language.
 
-If a download_url is included in the response, Open edX will redirect learners to the the address before the proctoring session starts. The address will include ``attempt={attempt_id}`` in the query string.
+If a download_url is included in the response, Open edX will redirect learners to the address before the proctoring session starts. The address will include ``attempt={attempt_id}`` in the query string.
 
 Exam endpoint
 ^^^^^^^^^^^^^
 
     /v1/exam/{exam_id}/
 
-``GET``: returns an object about the exam. If no exam exists, return 404 error.::
+``GET``: returns an object describing the exam. If no exam exists, return 404 error.::
 
     {
         "config": {
@@ -75,7 +75,7 @@ Exam endpoint
         "name": "Course Final Exam"
     }
 
-The config object will match the config keys returned from the configuration endpoint above. Any options which aren't passed in should be set to default values by the proctoring provider.
+The config object will match the config keys returned from the configuration endpoint above. Any options which aren't passed in should be set to default values by the proctoring service.
 
 The PS system should respond with an object containing at least the following fields::
 
@@ -89,7 +89,7 @@ Exam attempt endpoint
 
     /v1/exam/{exam_id}/attempt/
 
-``{exam_id}`` and ``{attempt_id}`` are the ids returned by the PS during creation.
+``{exam_id}`` is the id returned by the PS during exam creation.
 
 
 ``POST``: registers the exam attempt on the PS.::
@@ -105,8 +105,11 @@ The PS system should respond with an object containing at least the following fi
         "id": "<some opaque id for the attempt>",
     }
 
+..
 
     /v1/exam/{exam_id}/attempt/{attempt_id}/
+
+``{exam_id}`` is the id returned by the PS at exam creation and ``{attempt_id}`` is the id returned by the PS during exam attempt creation.
 
 ``PATCH``: changes the status of the attempt::
 
@@ -130,7 +133,7 @@ For convenience, the PS should return the exam instructions and the software dow
             "Run software",
             ...
         ],
-        "download_url": "http://my-provider.com/download"
+        "download_url": "http://my-proctoring.com/download"
     }
 
 
