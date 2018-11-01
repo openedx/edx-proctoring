@@ -44,13 +44,9 @@ from edx_proctoring.api import (
 )
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
-    ProctoredExamNotFoundException,
     ProctoredExamReviewAlreadyExists,
-    UserNotFoundException,
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException,
-    ProctoredExamNotActiveException,
-    AllowanceValueNotAllowedException,
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
@@ -122,7 +118,30 @@ def require_course_or_global_staff(func):
     return wrapped
 
 
-class ProctoredExamView(AuthenticatedAPIView):
+def handle_proctored_exception(exc, name=None):
+    """
+    converts proctoring exceptions into standard restframework responses
+    """
+    if isinstance(exc, ProctoredBaseException):
+        LOG.exception(name)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': six.text_type(exc)})
+
+
+class ProctoredAPIView(AuthenticatedAPIView):
+    """
+    Overrides AuthenticatedAPIView to handle proctoring exceptions
+    """
+    def handle_exception(self, exc):
+        """
+        converts proctoring exceptions into standard restframework responses
+        """
+        resp = handle_proctored_exception(exc, name=self.__class__.__name__)
+        if not resp:
+            resp = super(ProctoredAPIView, self).handle_exception(exc)
+        return resp
+
+
+class ProctoredExamView(ProctoredAPIView):
     """
     Endpoint for the Proctored Exams
     /edx_proctoring/v1/proctored_exam/exam
@@ -207,11 +226,12 @@ class ProctoredExamView(AuthenticatedAPIView):
                 is_active=request.data.get('is_active', None),
                 hide_after_due=request.data.get('hide_after_due', None),
             )
-            return Response({'exam_id': exam_id})
-        return Response(
-            status=status.HTTP_400_BAD_REQUEST,
-            data=serializer.errors
-        )
+            rstat = status.HTTP_200_OK
+            data = {'exam_id': exam_id}
+        else:
+            rstat = status.HTTP_400_BAD_REQUEST
+            data = serializer.errors
+        return Response(status=rstat, data=data)
 
     @method_decorator(require_staff)
     def put(self, request):
@@ -219,24 +239,17 @@ class ProctoredExamView(AuthenticatedAPIView):
         HTTP PUT handler. To update an exam.
         calls the update_exam
         """
-        try:
-            exam_id = update_exam(
-                exam_id=request.data.get('exam_id', None),
-                exam_name=request.data.get('exam_name', None),
-                time_limit_mins=request.data.get('time_limit_mins', None),
-                is_proctored=request.data.get('is_proctored', None),
-                is_practice_exam=request.data.get('is_practice_exam', None),
-                external_id=request.data.get('external_id', None),
-                is_active=request.data.get('is_active', None),
-                hide_after_due=request.data.get('hide_after_due', None),
-            )
-            return Response({'exam_id': exam_id})
-        except ProctoredExamNotFoundException as ex:
-            LOG.exception(ex)
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "The exam_id does not exist."}
-            )
+        exam_id = update_exam(
+            exam_id=request.data.get('exam_id', None),
+            exam_name=request.data.get('exam_name', None),
+            time_limit_mins=request.data.get('time_limit_mins', None),
+            is_proctored=request.data.get('is_proctored', None),
+            is_practice_exam=request.data.get('is_practice_exam', None),
+            external_id=request.data.get('external_id', None),
+            is_active=request.data.get('is_active', None),
+            hide_after_due=request.data.get('hide_after_due', None),
+        )
+        return Response({'exam_id': exam_id})
 
     def get(self, request, exam_id=None, course_id=None, content_id=None):  # pylint: disable=unused-argument
         """
@@ -246,43 +259,21 @@ class ProctoredExamView(AuthenticatedAPIView):
                 by course_id, content_id: get_exam_by_content_id()
 
         """
-
         if exam_id:
-            try:
-                return Response(
-                    data=get_exam_by_id(exam_id),
-                    status=status.HTTP_200_OK
+            data = get_exam_by_id(exam_id)
+        elif course_id is not None:
+            if content_id is not None:
+                # get by course_id & content_id
+                data = get_exam_by_content_id(course_id, content_id)
+            else:
+                data = get_all_exams_for_course(
+                    course_id=course_id,
+                    active_only=True
                 )
-            except ProctoredExamNotFoundException as ex:
-                LOG.exception(ex)
-                return Response(
-                    status=status.HTTP_400_BAD_REQUEST,
-                    data={"detail": "The exam_id does not exist."}
-                )
-        else:
-            if course_id is not None:
-                if content_id is not None:
-                    # get by course_id & content_id
-                    try:
-                        return Response(
-                            data=get_exam_by_content_id(course_id, content_id),
-                            status=status.HTTP_200_OK
-                        )
-                    except ProctoredExamNotFoundException as ex:
-                        LOG.exception(ex)
-                        return Response(
-                            status=status.HTTP_400_BAD_REQUEST,
-                            data={"detail": "The exam with course_id, content_id does not exist."}
-                        )
-                else:
-                    result_set = get_all_exams_for_course(
-                        course_id=course_id,
-                        active_only=True
-                    )
-                    return Response(result_set)
+        return Response(data)
 
 
-class StudentProctoredExamAttempt(AuthenticatedAPIView):
+class StudentProctoredExamAttempt(ProctoredAPIView):
     """
     Endpoint for the StudentProctoredExamAttempt
     /edx_proctoring/v1/proctored_exam/attempt
@@ -315,21 +306,17 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
+        attempt = get_exam_attempt_by_id(attempt_id)
 
-        try:
-            attempt = get_exam_attempt_by_id(attempt_id)
-
-            if not attempt:
-                err_msg = (
-                    'Attempted to access attempt_id {attempt_id} but '
-                    'it does not exist.'.format(
-                        attempt_id=attempt_id
-                    )
+        if not attempt:
+            err_msg = (
+                'Attempted to access attempt_id {attempt_id} but '
+                'it does not exist.'.format(
+                    attempt_id=attempt_id
                 )
-                return Response(
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
+            )
+            raise StudentExamAttemptDoesNotExistsException(err_msg)
+        else:
             # make sure the the attempt belongs to the calling user_id
             if attempt['user']['id'] != request.user.id:
                 err_msg = (
@@ -354,113 +341,87 @@ class StudentProctoredExamAttempt(AuthenticatedAPIView):
                 accessibility_time_string = _('you have less than a minute remaining')
 
             attempt['accessibility_time_string'] = accessibility_time_string
-
-            return Response(
-                data=attempt,
-                status=status.HTTP_200_OK
-            )
-
-        except ProctoredBaseException as ex:
-            LOG.exception(ex)
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": six.text_type(ex)}
-            )
+        return Response(attempt)
 
     def put(self, request, attempt_id):
         """
         HTTP POST handler. To stop an exam.
         """
-        try:
-            attempt = get_exam_attempt_by_id(attempt_id)
+        attempt = get_exam_attempt_by_id(attempt_id)
 
-            if not attempt:
-                err_msg = (
-                    'Attempted to access attempt_id {attempt_id} but '
-                    'it does not exist.'.format(
-                        attempt_id=attempt_id
-                    )
+        if not attempt:
+            err_msg = (
+                'Attempted to access attempt_id {attempt_id} but '
+                'it does not exist.'.format(
+                    attempt_id=attempt_id
                 )
-                raise StudentExamAttemptDoesNotExistsException(err_msg)
-
-            # make sure the the attempt belongs to the calling user_id
-            if attempt['user']['id'] != request.user.id:
-                err_msg = (
-                    'Attempted to access attempt_id {attempt_id} but '
-                    'does not have access to it.'.format(
-                        attempt_id=attempt_id
-                    )
-                )
-                raise ProctoredExamPermissionDenied(err_msg)
-
-            action = request.data.get('action')
-
-            if action == 'stop':
-                exam_attempt_id = stop_exam_attempt(
-                    exam_id=attempt['proctored_exam']['id'],
-                    user_id=request.user.id
-                )
-            elif action == 'start':
-                exam_attempt_id = start_exam_attempt(
-                    exam_id=attempt['proctored_exam']['id'],
-                    user_id=request.user.id
-                )
-            elif action == 'submit':
-                exam_attempt_id = update_attempt_status(
-                    attempt['proctored_exam']['id'],
-                    request.user.id,
-                    ProctoredExamStudentAttemptStatus.submitted
-                )
-            elif action == 'click_download_software':
-                exam_attempt_id = update_attempt_status(
-                    attempt['proctored_exam']['id'],
-                    request.user.id,
-                    ProctoredExamStudentAttemptStatus.download_software_clicked
-                )
-            elif action == 'decline':
-                exam_attempt_id = update_attempt_status(
-                    attempt['proctored_exam']['id'],
-                    request.user.id,
-                    ProctoredExamStudentAttemptStatus.declined
-                )
-            return Response({"exam_attempt_id": exam_attempt_id})
-
-        except ProctoredBaseException as ex:
-            LOG.exception(ex)
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": six.text_type(ex)}
             )
+            raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+        # make sure the the attempt belongs to the calling user_id
+        if attempt['user']['id'] != request.user.id:
+            err_msg = (
+                'Attempted to access attempt_id {attempt_id} but '
+                'does not have access to it.'.format(
+                    attempt_id=attempt_id
+                )
+            )
+            raise ProctoredExamPermissionDenied(err_msg)
+
+        action = request.data.get('action')
+
+        if action == 'stop':
+            exam_attempt_id = stop_exam_attempt(
+                exam_id=attempt['proctored_exam']['id'],
+                user_id=request.user.id
+            )
+        elif action == 'start':
+            exam_attempt_id = start_exam_attempt(
+                exam_id=attempt['proctored_exam']['id'],
+                user_id=request.user.id
+            )
+        elif action == 'submit':
+            exam_attempt_id = update_attempt_status(
+                attempt['proctored_exam']['id'],
+                request.user.id,
+                ProctoredExamStudentAttemptStatus.submitted
+            )
+        elif action == 'click_download_software':
+            exam_attempt_id = update_attempt_status(
+                attempt['proctored_exam']['id'],
+                request.user.id,
+                ProctoredExamStudentAttemptStatus.download_software_clicked
+            )
+        elif action == 'decline':
+            exam_attempt_id = update_attempt_status(
+                attempt['proctored_exam']['id'],
+                request.user.id,
+                ProctoredExamStudentAttemptStatus.declined
+            )
+        data = {"exam_attempt_id": exam_attempt_id}
+        return Response(data)
 
     @method_decorator(require_course_or_global_staff)
     def delete(self, request, attempt_id):  # pylint: disable=unused-argument
         """
         HTTP DELETE handler. Removes an exam attempt.
         """
-        try:
-            attempt = get_exam_attempt_by_id(attempt_id)
+        attempt = get_exam_attempt_by_id(attempt_id)
 
-            if not attempt:
-                err_msg = (
-                    'Attempted to access attempt_id {attempt_id} but '
-                    'it does not exist.'.format(
-                        attempt_id=attempt_id
-                    )
+        if not attempt:
+            err_msg = (
+                'Attempted to access attempt_id {attempt_id} but '
+                'it does not exist.'.format(
+                    attempt_id=attempt_id
                 )
-                raise StudentExamAttemptDoesNotExistsException(err_msg)
-
-            remove_exam_attempt(attempt_id, request.user)
-            return Response()
-
-        except ProctoredBaseException as ex:
-            LOG.exception(ex)
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": six.text_type(ex)}
             )
+            raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+        remove_exam_attempt(attempt_id, request.user)
+        return Response()
 
 
-class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
+class StudentProctoredExamAttemptCollection(ProctoredAPIView):
     """
     Endpoint for the StudentProctoredExamAttempt
     /edx_proctoring/v1/proctored_exam/attempt
@@ -565,10 +526,7 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
                 'is_proctored': False
             }
 
-        return Response(
-            data=response_dict,
-            status=status.HTTP_200_OK
-        )
+        return Response(data=response_dict, status=status.HTTP_200_OK)
 
     def post(self, request):
         """
@@ -577,44 +535,37 @@ class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         start_immediately = request.data.get('start_clock', 'false').lower() == 'true'
         exam_id = request.data.get('exam_id', None)
         attempt_proctored = request.data.get('attempt_proctored', 'false').lower() == 'true'
-        try:
-            exam = get_exam_by_id(exam_id)
+        exam = get_exam_by_id(exam_id)
 
-            # Bypassing the due date check for practice exam
-            # because student can attempt the practice after the due date
-            if not exam.get("is_practice_exam") and has_due_date_passed(exam.get('due_date')):
-                raise ProctoredExamPermissionDenied(
-                    'Attempted to access expired exam with exam_id {exam_id}'.format(exam_id=exam_id)
-                )
-
-            exam_attempt_id = create_exam_attempt(
-                exam_id=exam_id,
-                user_id=request.user.id,
-                taking_as_proctored=attempt_proctored
+        # Bypassing the due date check for practice exam
+        # because student can attempt the practice after the due date
+        if not exam.get("is_practice_exam") and has_due_date_passed(exam.get('due_date')):
+            raise ProctoredExamPermissionDenied(
+                'Attempted to access expired exam with exam_id {exam_id}'.format(exam_id=exam_id)
             )
 
-            # if use elected not to take as proctored exam, then
-            # use must take as open book, and loose credit eligibility
-            if exam['is_proctored'] and not attempt_proctored:
-                update_attempt_status(
-                    exam_id,
-                    request.user.id,
-                    ProctoredExamStudentAttemptStatus.declined
-                )
-            elif start_immediately:
-                start_exam_attempt(exam_id, request.user.id)
+        exam_attempt_id = create_exam_attempt(
+            exam_id=exam_id,
+            user_id=request.user.id,
+            taking_as_proctored=attempt_proctored
+        )
 
-            return Response({'exam_attempt_id': exam_attempt_id})
-
-        except ProctoredBaseException as ex:
-            LOG.exception(ex)
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": six.text_type(ex)}
+        # if use elected not to take as proctored exam, then
+        # use must take as open book, and loose credit eligibility
+        if exam['is_proctored'] and not attempt_proctored:
+            update_attempt_status(
+                exam_id,
+                request.user.id,
+                ProctoredExamStudentAttemptStatus.declined
             )
+        elif start_immediately:
+            start_exam_attempt(exam_id, request.user.id)
+
+        data = {'exam_attempt_id': exam_attempt_id}
+        return Response(data)
 
 
-class StudentProctoredExamAttemptsByCourse(AuthenticatedAPIView):
+class StudentProctoredExamAttemptsByCourse(ProctoredAPIView):
     """
     This endpoint is called by the Instructor Dashboard to get
     paginated attempts in a course
@@ -663,13 +614,10 @@ class StudentProctoredExamAttemptsByCourse(AuthenticatedAPIView):
             'attempt_url': attempt_url
 
         }
-        return Response(
-            data=data,
-            status=status.HTTP_200_OK
-        )
+        return Response(data)
 
 
-class ExamAllowanceView(AuthenticatedAPIView):
+class ExamAllowanceView(ProctoredAPIView):
     """
     Endpoint for the Exam Allowance
     /edx_proctoring/v1/proctored_exam/allowance
@@ -725,20 +673,12 @@ class ExamAllowanceView(AuthenticatedAPIView):
         """
         HTTP GET handler. Adds or updates Allowance
         """
-        try:
-            return Response(add_allowance_for_user(
-                exam_id=request.data.get('exam_id', None),
-                user_info=request.data.get('user_info', None),
-                key=request.data.get('key', None),
-                value=request.data.get('value', None)
-            ))
-
-        except (AllowanceValueNotAllowedException, UserNotFoundException, ProctoredExamNotActiveException) as ex:
-            LOG.exception(ex)
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": six.text_type(ex)}
-            )
+        return Response(add_allowance_for_user(
+            exam_id=request.data.get('exam_id', None),
+            user_info=request.data.get('user_info', None),
+            key=request.data.get('key', None),
+            value=request.data.get('value', None)
+        ))
 
     @method_decorator(require_course_or_global_staff)
     def delete(self, request):
@@ -752,7 +692,7 @@ class ExamAllowanceView(AuthenticatedAPIView):
         ))
 
 
-class ActiveExamsForUserView(AuthenticatedAPIView):
+class ActiveExamsForUserView(ProctoredAPIView):
     """
     Endpoint for the Active Exams for a user.
     /edx_proctoring/v1/proctored_exam/active_exams_for_user
@@ -770,7 +710,7 @@ class ActiveExamsForUserView(AuthenticatedAPIView):
         ))
 
 
-class ProctoredExamAttemptReviewStatus(AuthenticatedAPIView):
+class ProctoredExamAttemptReviewStatus(ProctoredAPIView):
     """
     Endpoint for updating exam attempt's review status to acknowledged.
     edx_proctoring/v1/proctored_exam/attempt/(<attempt_id>)/review_status$
@@ -782,28 +722,24 @@ class ProctoredExamAttemptReviewStatus(AuthenticatedAPIView):
         """
         Update the is_status_acknowledge flag for the specific attempt
         """
-        try:
-            attempt = get_exam_attempt_by_id(attempt_id)
+        attempt = get_exam_attempt_by_id(attempt_id)
 
-            # make sure the the attempt belongs to the calling user_id
-            if attempt and attempt['user']['id'] != request.user.id:
-                err_msg = (
-                    'Attempted to access attempt_id {attempt_id} but '
-                    'does not have access to it.'.format(
-                        attempt_id=attempt_id
-                    )
+        # make sure the the attempt belongs to the calling user_id
+        if attempt and attempt['user']['id'] != request.user.id:
+            err_msg = (
+                'Attempted to access attempt_id {attempt_id} but '
+                'does not have access to it.'.format(
+                    attempt_id=attempt_id
                 )
-                raise ProctoredExamPermissionDenied(err_msg)
+            )
+            raise ProctoredExamPermissionDenied(err_msg)
 
-            update_exam_attempt(attempt_id, is_status_acknowledged=True)
+        update_exam_attempt(attempt_id, is_status_acknowledged=True)
 
-            return Response(status=status.HTTP_200_OK)
-        except (StudentExamAttemptDoesNotExistsException, ProctoredExamPermissionDenied) as ex:
-            LOG.exception(ex)
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": six.text_type(ex)})
+        return Response()
 
 
-class ExamReadyCallback(AuthenticatedAPIView):
+class ExamReadyCallback(ProctoredAPIView):
     """
     Called by REST based proctoring backends to indicate that the learner is able to
     proceed with the exam.
@@ -819,7 +755,7 @@ class ExamReadyCallback(AuthenticatedAPIView):
         if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
                                  ProctoredExamStudentAttemptStatus.download_software_clicked]:
             mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
-        return Response(data='OK', status=200)
+        return Response(data='OK')
 
 
 class BaseReviewCallback(object):
@@ -924,7 +860,7 @@ class BaseReviewCallback(object):
         emit_event(attempt['proctored_exam'], 'review_received', attempt=attempt, override_data=data)
 
 
-class ProctoredExamReviewCallback(BaseReviewCallback, AuthenticatedAPIView):
+class ProctoredExamReviewCallback(ProctoredAPIView, BaseReviewCallback):
     """
     Authenticated callback from 3rd party proctoring service.
     """
@@ -933,15 +869,11 @@ class ProctoredExamReviewCallback(BaseReviewCallback, AuthenticatedAPIView):
         Called when 3rd party proctoring service has finished its review of
         an attempt.
         """
-        try:
-            attempt = get_exam_attempt_by_external_id(external_id)
-            if attempt is None:
-                raise StudentExamAttemptDoesNotExistsException('not found')
-            self.make_review(attempt, request.data)
-            return Response(status=status.HTTP_200_OK, data='OK')
-        except (StudentExamAttemptDoesNotExistsException, ProctoredBaseException) as ex:
-            LOG.exception(ex)
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": six.text_type(ex)})
+        attempt = get_exam_attempt_by_external_id(external_id)
+        if attempt is None:
+            raise StudentExamAttemptDoesNotExistsException('not found')
+        self.make_review(attempt, request.data)
+        return Response(data='OK')
 
 
 class IgnoreClientContentNegotiation(BaseContentNegotiation):
@@ -976,6 +908,12 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
 
     content_negotiation_class = IgnoreClientContentNegotiation
 
+    def handle_exception(self, exc):
+        resp = handle_proctored_exception(exc, name=self.__class__.__name__)
+        if not resp:
+            resp = APIView.handle_exception(self, exc)
+        return resp
+
     def post(self, request):
         """
         Post callback handler
@@ -983,20 +921,15 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
         provider = get_backend_provider({'backend': 'software_secure'})
 
         # call down into the underlying provider code
-        try:
-            attempt_code = request.data.get('examMetaData', {}).get('examCode')
-            attempt_obj = locate_attempt_by_attempt_code(attempt_code)[0]
-            if not attempt_obj:
-                # still can't find, error out
-                err_msg = (
-                    'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
-                )
-                raise StudentExamAttemptDoesNotExistsException(err_msg)
-            self.make_review(ProctoredExamStudentAttemptSerializer(attempt_obj).data,
-                             request.data,
-                             backend=provider)
-        except ProctoredBaseException as ex:
-            LOG.exception(ex)
-            return Response(data={'reason': six.text_type(ex)}, status=400)
-
-        return Response(data='OK', status=200)
+        attempt_code = request.data.get('examMetaData', {}).get('examCode')
+        attempt_obj = locate_attempt_by_attempt_code(attempt_code)[0]
+        if not attempt_obj:
+            # still can't find, error out
+            err_msg = (
+                'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
+            )
+            raise StudentExamAttemptDoesNotExistsException(err_msg)
+        self.make_review(ProctoredExamStudentAttemptSerializer(attempt_obj).data,
+                         request.data,
+                         backend=provider)
+        return Response('OK')

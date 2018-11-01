@@ -371,7 +371,8 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
-        self.assertEqual(response_data['detail'], 'The exam with course_id, content_id does not exist.')
+        message = 'The exam_id does not exist.'
+        self.assertEqual(response_data['detail'], message)
 
     def test_get_exam_insufficient_args(self):
         """
