@@ -41,7 +41,7 @@ from edx_proctoring.tests.test_services import (
     MockGradesService,
     MockCertificateService
 )
-from edx_proctoring.backends.software_secure import SOFTWARE_SECURE_INVALID_CHARS
+from edx_proctoring.backends.software_secure import SoftwareSecureBackendProvider, SOFTWARE_SECURE_INVALID_CHARS
 
 
 @all_requests
@@ -91,6 +91,9 @@ class SoftwareSecureTests(TestCase):
     """
     All tests for the SoftwareSecureBackendProvider
     """
+
+    # Save the real implementation for use in mocks.
+    software_secure_get_payload = SoftwareSecureBackendProvider._get_payload
 
     def setUp(self):
         """
@@ -244,16 +247,20 @@ class SoftwareSecureTests(TestCase):
             review_policy='Foo Policy'
         )
 
-        def assert_get_payload_mock(exam, context):
+        test_self = self        # So that we can access test methods in nested function.
+
+        def assert_get_payload_mock(self, exam, context):
             """
             Add a mock shim so we can assert that the _get_payload has been called with the right
             review policy
             """
-            self.assertIn('review_policy', context)
-            self.assertEqual(policy.review_policy, context['review_policy'])
+            assert_get_payload_mock.called = True
+
+            test_self.assertIn('review_policy', context)
+            test_self.assertEqual(policy.review_policy, context['review_policy'])
 
             # call into real implementation
-            result = get_backend_provider()._get_payload(exam, context)
+            result = test_self.software_secure_get_payload(self, exam, context)
 
             # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
             expected = context['review_policy']
@@ -263,7 +270,7 @@ class SoftwareSecureTests(TestCase):
                     exception=review_policy_exception
                 )
 
-            self.assertEqual(result['reviewerNotes'], expected)
+            test_self.assertEqual(result['reviewerNotes'], expected)
             return result
 
         with HTTMock(mock_response_content):
@@ -271,7 +278,8 @@ class SoftwareSecureTests(TestCase):
             # so that we can assert that we are called with the review policy
             # as well as asserting that _get_payload includes that review policy
             # that was passed in
-            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock):
+            with patch.object(SoftwareSecureBackendProvider, '_get_payload', assert_get_payload_mock):
+                assert_get_payload_mock.called = False
                 attempt_id = create_exam_attempt(
                     exam_id,
                     self.user.id,
@@ -282,31 +290,36 @@ class SoftwareSecureTests(TestCase):
                 # make sure we recorded the policy id at the time this was created
                 attempt = get_exam_attempt_by_id(attempt_id)
                 self.assertEqual(attempt['review_policy_id'], policy.id)
+                self.assertTrue(assert_get_payload_mock.called)
 
     def test_attempt_with_no_review_policy(self):
         """
         Create an unstarted proctoring attempt with no review policy associated with it.
         """
 
-        def assert_get_payload_mock_no_policy(exam, context):
+        test_self = self        # So that we can access test methods in nested function.
+
+        def assert_get_payload_mock_no_policy(self, exam, context):
             """
             Add a mock shim so we can assert that the _get_payload has been called with the right
             review policy
             """
-            self.assertNotIn('review_policy', context)
+            assert_get_payload_mock_no_policy.called = True
+
+            test_self.assertNotIn('review_policy', context)
 
             # call into real implementation
-            result = get_backend_provider()._get_payload(exam, context)
+            result = test_self.software_secure_get_payload(self, exam, context)
 
             # assert that we use the default that is defined in system configuration
-            self.assertEqual(result['reviewerNotes'], constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
+            test_self.assertEqual(result['reviewerNotes'], constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
 
             # the check that if a colon was passed in for the exam name, then the colon was changed to
             # a dash. This is because SoftwareSecure cannot handle a colon in the exam name
             for illegal_char in SOFTWARE_SECURE_INVALID_CHARS:
                 if illegal_char in exam['exam_name']:
-                    self.assertNotIn(illegal_char, result['examName'])
-                    self.assertIn('_', result['examName'])
+                    test_self.assertNotIn(illegal_char, result['examName'])
+                    test_self.assertIn('_', result['examName'])
 
             return result
 
@@ -324,7 +337,8 @@ class SoftwareSecureTests(TestCase):
                 # patch the _get_payload method on the backend provider
                 # so that we can assert that we are called with the review policy
                 # undefined and that we use the system default
-                with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_no_policy):
+                with patch.object(SoftwareSecureBackendProvider, '_get_payload', assert_get_payload_mock_no_policy):
+                    assert_get_payload_mock_no_policy.called = False
                     attempt_id = create_exam_attempt(
                         exam_id,
                         self.user.id,
@@ -335,6 +349,7 @@ class SoftwareSecureTests(TestCase):
                     # make sure we recorded that there is no review policy
                     attempt = get_exam_attempt_by_id(attempt_id)
                     self.assertIsNone(attempt['review_policy_id'])
+                    self.assertTrue(assert_get_payload_mock_no_policy.called)
 
     def test_attempt_with_unicode_characters(self):
         """
@@ -353,16 +368,19 @@ class SoftwareSecureTests(TestCase):
             except UnicodeEncodeError:
                 return False
 
-        def assert_get_payload_mock_unicode_characters(exam, context):
+        test_self = self        # So that we can access test methods in nested function.
+
+        def assert_get_payload_mock_unicode_characters(self, exam, context):
             """
             Add a mock so we can assert that the _get_payload call removes unicode characters.
             """
+            assert_get_payload_mock_unicode_characters.called = True
 
             # call into real implementation
-            result = get_backend_provider()._get_payload(exam, context)
-            self.assertFalse(isinstance(result['examName'], six.text_type))
-            self.assertTrue(is_ascii(result['examName']))
-            self.assertGreater(len(result['examName']), 0)
+            result = test_self.software_secure_get_payload(self, exam, context)
+            test_self.assertFalse(isinstance(result['examName'], six.text_type))
+            test_self.assertTrue(is_ascii(result['examName']))
+            test_self.assertGreater(len(result['examName']), 0)
             return result
 
         with HTTMock(mock_response_content):
@@ -377,13 +395,15 @@ class SoftwareSecureTests(TestCase):
             )
 
             # patch the _get_payload method on the backend provider
-            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_unicode_characters):
+            with patch.object(SoftwareSecureBackendProvider, '_get_payload', assert_get_payload_mock_unicode_characters):
+                assert_get_payload_mock_unicode_characters.called = False
                 attempt_id = create_exam_attempt(
                     exam_id,
                     self.user.id,
                     taking_as_proctored=True
                 )
                 self.assertGreater(attempt_id, 0)
+                self.assertTrue(assert_get_payload_mock_unicode_characters.called)
 
             # now try with an eastern language (Chinese)
             exam_id = create_exam(
@@ -396,13 +416,15 @@ class SoftwareSecureTests(TestCase):
             )
 
             # patch the _get_payload method on the backend provider
-            with patch.object(get_backend_provider(), '_get_payload', assert_get_payload_mock_unicode_characters):
+            with patch.object(SoftwareSecureBackendProvider, '_get_payload', assert_get_payload_mock_unicode_characters):
+                assert_get_payload_mock_unicode_characters.called = False
                 attempt_id = create_exam_attempt(
                     exam_id,
                     self.user.id,
                     taking_as_proctored=True
                 )
                 self.assertGreater(attempt_id, 0)
+                self.assertTrue(assert_get_payload_mock_unicode_characters.called)
 
     def test_single_name_attempt(self):
         """
