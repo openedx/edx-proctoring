@@ -365,7 +365,7 @@ class SoftwareSecureTests(TestCase):
             try:
                 value.encode('ascii')
                 return True
-            except UnicodeEncodeError:
+            except UnicodeEncodeError:      # pragma: no cover (only run if test fails)
                 return False
 
         test_self = self        # So that we can access test methods in nested function.
