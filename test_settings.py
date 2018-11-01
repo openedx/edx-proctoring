@@ -16,7 +16,6 @@ BASE_DIR = os.path.dirname(__file__)
 
 DEBUG=True
 TEST_MODE=True
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 TEST_ROOT = "tests"
 TRANSACTIONS_MANAGED = {}
 USE_TZ = True
@@ -45,7 +44,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'edx_proctoring',
-    'django_nose'
 )
 
 # Static files (CSS, JavaScript, Images)
