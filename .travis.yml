@@ -10,6 +10,7 @@ install:
 - pip install tox
 - pip install edx-i18n-tools
 before_script:
+- npm install
 - npm install -g gulp-cli
 script:
 - make validate_translations
