@@ -7,7 +7,6 @@ Tests for the software_secure module
 from __future__ import absolute_import
 
 import json
-import six
 import ddt
 from mock import MagicMock, patch
 from httmock import all_requests, HTTMock

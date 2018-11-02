@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.db.models.base import ObjectDoesNotExist
 from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
-from django.utils.translation import ugettext as _, ugettext_noop
+from django.utils.translation import ugettext_noop
 
 from model_utils.models import TimeStampedModel
 
@@ -232,16 +232,6 @@ class ProctoredExamStudentAttemptStatus(object):
         return to_status in [
             cls.declined
         ]
-
-    @classmethod
-    def get_status_alias(cls, status):
-        """
-        Returns status alias used in email
-        """
-        status_alias = cls.status_alias_mapping.get(status, None)
-
-        # Note that the alias is localized here as it is untranslated in the model
-        return _(status_alias) if status_alias else ''  # pylint: disable=translation-of-non-string
 
     @classmethod
     def is_valid_status(cls, status):

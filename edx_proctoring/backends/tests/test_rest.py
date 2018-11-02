@@ -180,3 +180,8 @@ class RESTBackendTests(TestCase):
         }
         new_payload = self.provider.on_review_callback(attempt, payload)
         self.assertEqual(payload, new_payload)
+
+    def test_get_javascript(self):
+        # A real backend would return real javascript from backend.js
+        with self.assertRaises(IOError):
+            self.provider.get_javascript()

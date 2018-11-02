@@ -49,7 +49,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         Class initializer
         """
-        super(ProctoringBackendProvider, self).__init__()
+        # pylint: disable=no-member
+        super(SoftwareSecureBackendProvider, self).__init__()
         self.organization = organization
         self.exam_sponsor = exam_sponsor
         self.exam_register_endpoint = exam_register_endpoint
