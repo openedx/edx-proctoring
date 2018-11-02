@@ -750,7 +750,7 @@ class ExamReadyCallback(ProctoredAPIView):
         """
         attempt = get_exam_attempt_by_external_id(external_id)
         if not attempt:
-            LOG.warn("Attempt code %r cannot be found.", external_id)
+            LOG.warning("Attempt code %r cannot be found.", external_id)
             return Response(data='You have entered an exam code that is not valid.', status=404)
         if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
                                  ProctoredExamStudentAttemptStatus.download_software_clicked]:
@@ -795,7 +795,7 @@ class BaseReviewCallback(object):
                     attempt_code=attempt_code
                 )
             )
-            LOG.warn(warn_msg)
+            LOG.warning(warn_msg)
         else:
             # this is first time we've received this attempt_code, so
             # make a new record in the review table

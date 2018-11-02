@@ -138,7 +138,7 @@ class RESTBackendTests(TestCase):
         attempt_external_id = self.provider.register_exam_attempt(self.backend_exam, context)
         request = json.loads(responses.calls[1].request.body)
         self.assertEqual(attempt_external_id, 2)
-        self.assertEquals(request['status'], 'created')
+        self.assertEqual(request['status'], 'created')
         self.assertIn('lms_host', request)
         self.assertIn('full_name', request)
 

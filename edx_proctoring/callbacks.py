@@ -32,7 +32,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
 
     attempt = get_exam_attempt_by_code(attempt_code)
     if not attempt:
-        log.warn("Attempt code %r cannot be found.", attempt_code)
+        log.warning("Attempt code %r cannot be found.", attempt_code)
         return HttpResponse(
             content='You have entered an exam code that is not valid.',
             status=404
