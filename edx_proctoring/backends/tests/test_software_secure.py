@@ -68,6 +68,10 @@ def mock_response_error(url, request):  # pylint: disable=unused-argument
     }
 
 
+# Save the real implementation for use in mocks.
+software_secure_get_payload = SoftwareSecureBackendProvider._get_payload
+
+
 @patch(
     'django.conf.settings.PROCTORING_BACKENDS',
     {
@@ -91,9 +95,6 @@ class SoftwareSecureTests(TestCase):
     """
     All tests for the SoftwareSecureBackendProvider
     """
-
-    # Save the real implementation for use in mocks.
-    software_secure_get_payload = SoftwareSecureBackendProvider._get_payload
 
     def setUp(self):
         """
@@ -261,7 +262,7 @@ class SoftwareSecureTests(TestCase):
 
             # call into real implementation
             # pylint: disable=too-many-function-args
-            result = test_self.software_secure_get_payload(self, exam, context)
+            result = software_secure_get_payload(self, exam, context)
 
             # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
             expected = context['review_policy']
@@ -311,7 +312,7 @@ class SoftwareSecureTests(TestCase):
 
             # call into real implementation
             # pylint: disable=too-many-function-args
-            result = test_self.software_secure_get_payload(self, exam, context)
+            result = software_secure_get_payload(self, exam, context)
 
             # assert that we use the default that is defined in system configuration
             test_self.assertEqual(result['reviewerNotes'], constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
@@ -380,8 +381,7 @@ class SoftwareSecureTests(TestCase):
 
             # call into real implementation
             # pylint: disable=too-many-function-args
-            result = test_self.software_secure_get_payload(self, exam, context)
-            test_self.assertFalse(isinstance(result['examName'], six.text_type))
+            result = software_secure_get_payload(self, exam, context)
             test_self.assertTrue(is_ascii(result['examName']))
             test_self.assertGreater(len(result['examName']), 0)
             return result

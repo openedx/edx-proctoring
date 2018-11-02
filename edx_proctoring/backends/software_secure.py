@@ -49,7 +49,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         Class initializer
         """
-        ProctoringBackendProvider.__init__(self)
+        super(ProctoringBackendProvider, self).__init__()
         self.organization = organization
         self.exam_sponsor = exam_sponsor
         self.exam_register_endpoint = exam_register_endpoint
@@ -266,8 +266,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # SoftwareSecure will fail on the exam registration API call
         if not exam_name:
             exam_name = u'Proctored Exam'
-
-        exam_name = exam_name.encode('utf8')
 
         org_extra = {
             "examStartDate": start_time_str,
