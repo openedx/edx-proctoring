@@ -5,20 +5,21 @@
 # EdX Team <info@edx.org>, 2018.
 # 
 # Translators:
-# Nabeel El-Dughailib <nabeel@qordoba.com>, 2016
 # may <may@qordoba.com>, 2016
-# shefaa abu jabel <shefaa.aj@gmail.com>, 2016
+# Nabeel El-Dughailib <nabeel@qordoba.com>, 2016
 # Najwan Al Rousan <najwanrousan@gmail.com>, 2016
-# Omar Al-Ithawi <oithawi@qrf.org>, 2016
 # Ahmed Jazzar <ahmed.mojaz@gmail.com>, 2016
+# Omar Al-Ithawi <oithawi@qrf.org>, 2017
 # Andy Armstrong <andya@edx.org>, 2017
+# shefaa abu jabel <shefaa.aj@gmail.com>, 2017
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
-"PO-Revision-Date: 2018-03-14 17:16-0500\n"
-"Last-Translator: Andy Armstrong <andya@edx.org>, 2017\n"
+"PO-Revision-Date: 2016-12-20 19:52+0000\n"
+"Last-Translator: shefaa abu jabel <shefaa.aj@gmail.com>, 2017\n"
 "Language-Team: Arabic (https://www.transifex.com/open-edx/teams/6205/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
