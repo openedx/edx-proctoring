@@ -20,6 +20,7 @@ from edx_proctoring.models import (ProctoredExamSoftwareSecureComment, Proctored
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.tests.test_services import (MockCertificateService, MockCreditService, MockGradesService,
                                                 MockInstructorService)
+from edx_proctoring.utils import locate_attempt_by_attempt_code
 from edx_proctoring.views import ProctoredExamReviewCallback
 
 from .utils import LoggedInTestCase
@@ -59,7 +60,7 @@ class ReviewTests(LoggedInTestCase):
         set_runtime_service('grades', None)
         set_runtime_service('certificates', None)
 
-    def get_review_payload(self, status=ReviewStatus.passed, comments=None, **kwargs):
+    def get_review_payload(self, status=ReviewStatus.passed, **kwargs):
         """
         Returns a standard review payload
         """
@@ -90,8 +91,6 @@ class ReviewTests(LoggedInTestCase):
             ]
         }
         review.update(kwargs)
-        if comments:
-            review['comments'].extend(comments)
         return review
 
     @ddt.data(
@@ -356,3 +355,11 @@ class ReviewTests(LoggedInTestCase):
 
         self.assertEqual(archived_attempt.status, attempt['status'])
         self.assertEqual(review.review_status, SoftwareSecureReviewStatus.clean)
+
+        # now we'll make another review for the archived attempt. It should NOT update the status
+        test_payload = self.get_review_payload(ReviewStatus.suspicious)
+        self.attempt['is_archived'] = True
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+        attempt, is_archived = locate_attempt_by_attempt_code(self.attempt['attempt_code'])
+        self.assertTrue(is_archived)
+        self.assertEqual(attempt.status, 'verified')

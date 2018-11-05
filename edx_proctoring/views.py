@@ -852,15 +852,16 @@ class BaseReviewCallback(object):
                     review_status=review.review_status
                 )
 
-        # updating attempt status will trigger workflow
-        # (i.e. updating credit eligibility table)
-
-        update_attempt_status(
-            attempt['proctored_exam']['id'],
-            attempt['user']['id'],
-            attempt_status,
-            raise_if_not_found=False
-        )
+        if not attempt.get('is_archived', False):
+            # updating attempt status will trigger workflow
+            # (i.e. updating credit eligibility table)
+            # archived attempts should not trigger the workflow
+            update_attempt_status(
+                attempt['proctored_exam']['id'],
+                attempt['user']['id'],
+                attempt_status,
+                raise_if_not_found=False
+            )
 
         # emit an event for 'review_received'
         data = {
@@ -932,14 +933,16 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
 
         # call down into the underlying provider code
         attempt_code = request.data.get('examMetaData', {}).get('examCode')
-        attempt_obj = locate_attempt_by_attempt_code(attempt_code)
+        attempt_obj, is_archived = locate_attempt_by_attempt_code(attempt_code)
         if not attempt_obj:
             # still can't find, error out
             err_msg = (
                 'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
-        self.make_review(ProctoredExamStudentAttemptSerializer(attempt_obj).data,
+        serialized = ProctoredExamStudentAttemptSerializer(attempt_obj).data
+        serialized['is_archived'] = is_archived
+        self.make_review(serialized,
                          request.data,
                          backend=provider)
         return Response('OK')

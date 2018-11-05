@@ -119,8 +119,12 @@ def locate_attempt_by_attempt_code(attempt_code):
                 'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
             )
             log.error(err_msg)
-
-    return attempt_obj
+            is_archived = None
+        else:
+            is_archived = True
+    else:
+        is_archived = False
+    return attempt_obj, is_archived
 
 
 def emit_event(exam, event_short_name, attempt=None, override_data=None):
