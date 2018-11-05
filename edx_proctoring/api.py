@@ -453,7 +453,11 @@ def _get_exam_attempt(exam_attempt_obj):
 
 def get_exam_attempt(exam_id, user_id):
     """
-    Return an existing exam attempt for the given student
+    Args:
+        int: exam id
+        int: user_id
+    Returns:
+        dict: our exam attempt
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
     return _get_exam_attempt(exam_attempt_obj)
@@ -461,7 +465,10 @@ def get_exam_attempt(exam_id, user_id):
 
 def get_exam_attempt_by_id(attempt_id):
     """
-    Return an existing exam attempt for the given student
+    Args:
+        int: exam attempt id
+    Returns:
+        dict: our exam attempt
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
     return _get_exam_attempt(exam_attempt_obj)
@@ -469,7 +476,10 @@ def get_exam_attempt_by_id(attempt_id):
 
 def get_exam_attempt_by_external_id(external_id):
     """
-    Return an existing exam attempt for the given student
+    Args:
+        str: exam attempt external_id
+    Returns:
+        dict: our exam attempt
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_external_id(external_id)
     return _get_exam_attempt(exam_attempt_obj)
@@ -477,10 +487,11 @@ def get_exam_attempt_by_external_id(external_id):
 
 def get_exam_attempt_by_code(attempt_code):
     """
-    Signals the beginning of an exam attempt when we only have
-    an attempt code
+    Args:
+        str: exam attempt attempt_code
+    Returns:
+        dict: our exam attempt
     """
-
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
     return _get_exam_attempt(exam_attempt_obj)
 

@@ -28,7 +28,6 @@ from edx_proctoring.exceptions import (
     ProctoredExamSuspiciousLookup,
 )
 from edx_proctoring.models import SoftwareSecureReviewStatus
-from edx_proctoring.runtime import get_runtime_service
 
 log = logging.getLogger(__name__)
 
@@ -128,8 +127,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         documentation named "Reviewer Data Transfer"
         """
         received_id = payload['examMetaData']['ssiRecordLocator'].lower()
-        if attempt['external_id'].lower() != received_id and not\
-                settings.PROCTORING_SETTINGS.get('ALLOW_CALLBACK_SIMULATION', False):
+        match = (
+            attempt['external_id'].lower() == received_id.lower() or
+            settings.PROCTORING_SETTINGS.get('ALLOW_CALLBACK_SIMULATION', False)
+        )
+        if not match:
             err_msg = (
                 'Found attempt_code {attempt_code}, but the recorded external_id did not '
                 'match the ssiRecordLocator that had been recorded previously. Has {existing} '
@@ -155,11 +157,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review_status = SoftwareSecureReviewStatus.to_standard_status.get(payload['reviewStatus'], None)
 
         comments = []
-        converted = {
-            'status': review_status,
-            'comments': comments,
-            'payload': payload
-        }
         for comment in payload.get('webCamComments', []) + payload.get('desktopComments', []):
             comments.append({
                 'start': comment['eventStart'],
@@ -169,6 +166,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                 'status': comment['eventStatus']
                 })
 
+        converted = {
+            'status': review_status,
+            'comments': comments,
+            'payload': payload
+        }
         return converted
 
     def on_exam_saved(self, exam):
@@ -204,20 +206,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             last_name = ' '.join(name_elements[1:])
 
         return (first_name, last_name)
-
-    def _create_zendesk_ticket(self, review, serialized_exam_object, serialized_attempt_obj):
-        """
-        Creates a Zendesk ticket for reviews with status listed in self.notify_support_for_status
-        """
-        if review.review_status in SoftwareSecureReviewStatus.notify_support_for_status:
-            instructor_service = get_runtime_service('instructor')
-            if instructor_service:
-                instructor_service.send_support_notification(
-                    course_id=serialized_exam_object["course_id"],
-                    exam_name=serialized_exam_object["exam_name"],
-                    student_username=serialized_attempt_obj["user"]["username"],
-                    review_status=review.review_status
-                )
 
     def _get_payload(self, exam, context):
         """

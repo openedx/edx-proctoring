@@ -145,6 +145,20 @@ class ReviewTests(LoggedInTestCase):
                 credit_requirement_status
             )
 
+            instructor_service = get_runtime_service('instructor')
+            notifications = instructor_service.notifications
+            if psi_review_status == SoftwareSecureReviewStatus.suspicious:
+                # check to see whether the zendesk ticket was created
+                self.assertEqual(len(notifications), 1)
+                exam = self.attempt['proctored_exam']
+                self.assertEqual(notifications,
+                                 [(exam['course_id'],
+                                   exam['exam_name'],
+                                   self.attempt['user']['username'],
+                                   review.review_status)])
+            else:
+                self.assertEqual(len(notifications), 0)
+
     def test_bad_review_status(self):
         """
         Tests that an exception is raised if the review has an invalid status

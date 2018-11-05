@@ -127,6 +127,7 @@ class MockInstructorService(object):
         Initializer
         """
         self.is_user_course_staff = is_user_course_staff
+        self.notifications = []
 
     # pylint: disable=unused-argument
     def delete_student_attempt(self, student_identifier, course_id, content_id, requesting_user):
@@ -148,7 +149,7 @@ class MockInstructorService(object):
         """
         Mocked implementation of send_support_notification
         """
-        pass
+        self.notifications.append((course_id, exam_name, student_username, review_status))
 
 
 class TestProctoringService(unittest.TestCase):

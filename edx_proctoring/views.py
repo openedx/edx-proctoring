@@ -842,6 +842,16 @@ class BaseReviewCallback(object):
             # code path, then put status into 'second_review_required'
             attempt_status = ProctoredExamStudentAttemptStatus.second_review_required
 
+        if review.review_status in SoftwareSecureReviewStatus.notify_support_for_status:
+            instructor_service = get_runtime_service('instructor')
+            if instructor_service:
+                instructor_service.send_support_notification(
+                    course_id=attempt['proctored_exam']['course_id'],
+                    exam_name=attempt['proctored_exam']['exam_name'],
+                    student_username=attempt['user']['username'],
+                    review_status=review.review_status
+                )
+
         # updating attempt status will trigger workflow
         # (i.e. updating credit eligibility table)
 
@@ -922,7 +932,7 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
 
         # call down into the underlying provider code
         attempt_code = request.data.get('examMetaData', {}).get('examCode')
-        attempt_obj = locate_attempt_by_attempt_code(attempt_code)[0]
+        attempt_obj = locate_attempt_by_attempt_code(attempt_code)
         if not attempt_obj:
             # still can't find, error out
             err_msg = (

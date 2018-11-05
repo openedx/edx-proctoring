@@ -109,11 +109,9 @@ def locate_attempt_by_attempt_code(attempt_code):
     """
     attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
 
-    is_archived_attempt = False
     if not attempt_obj:
         # try archive table
         attempt_obj = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
-        is_archived_attempt = True
 
         if not attempt_obj:
             # still can't find, error out
@@ -122,7 +120,7 @@ def locate_attempt_by_attempt_code(attempt_code):
             )
             log.error(err_msg)
 
-    return (attempt_obj, is_archived_attempt)
+    return attempt_obj
 
 
 def emit_event(exam, event_short_name, attempt=None, override_data=None):

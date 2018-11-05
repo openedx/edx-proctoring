@@ -65,12 +65,20 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
 
     def get_exam(self, exam):
         """
-        Returns the exam object from the backend
+        Returns the backend's representation of the exam
+        Args:
+            dict: our exam object
+        Returns:
+            dict: backend exam object
         """
         return exam
 
     def get_attempt(self, attempt):
         """
-        Returns the attempt object from the backend
+        Returns the backend's representation of the exam attempt
+        Args:
+            dict: our exam attempt object
+        Returns:
+            dict: backend exam attempt object
         """
         return attempt

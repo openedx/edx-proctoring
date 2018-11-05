@@ -40,7 +40,7 @@ class SetAttemptStatusTests(LoggedInTestCase):
             course_id='foo',
             content_id='bar',
             exam_name='Test Exam',
-            time_limit_mins=90,)
+            time_limit_mins=90)
 
         ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=self.exam_id,
@@ -50,7 +50,7 @@ class SetAttemptStatusTests(LoggedInTestCase):
             status=ProctoredExamStudentAttemptStatus.started,
             allowed_time_limit_mins=10,
             taking_as_proctored=True,
-            is_sample_attempt=False,)
+            is_sample_attempt=False)
 
     def test_run_comand(self):
         """
