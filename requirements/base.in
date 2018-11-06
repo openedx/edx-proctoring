@@ -10,7 +10,7 @@ pycryptodomex>=3.4.7
 python-dateutil>=2.1
 
 # edX packages
--e git+https://github.com/edx/event-tracking.git@0.2.4#egg=event-tracking==0.2.4
+event-tracking>=0.2.5
 edx-opaque-keys>=0.4
 edx-drf-extensions
 edx-rest-api-client>=1.9

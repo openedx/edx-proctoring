@@ -28,10 +28,10 @@ pylint-celery==0.3        # via edx-lint
 pylint-django==0.7.2      # via edx-lint
 pylint-plugin-utils==0.4  # via pylint-celery, pylint-django
 pylint==1.7.1             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
-pyparsing==2.2.2          # via packaging
+pyparsing==2.3.0          # via packaging
 requests==2.20.0          # via caniusepython3
 singledispatch==3.4.0.3   # via astroid, pylint
 six==1.11.0               # via astroid, edx-lint, packaging, pydocstyle, pylint, singledispatch
 snowballstemmer==1.2.1    # via pydocstyle
-urllib3==1.24             # via requests
+urllib3==1.24.1           # via requests
 wrapt==1.10.11            # via astroid
