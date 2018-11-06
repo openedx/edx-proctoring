@@ -7,10 +7,9 @@ before_install:
 - sh -e /etc/init.d/xvfb start
 - pip install --upgrade pip setuptools wheel
 install:
-- pip install tox
-- pip install edx-i18n-tools
-before_script:
+- pip install tox edx-i18n-tools
 - npm install
+before_script:
 - npm install -g gulp-cli
 script:
 - make validate_translations
