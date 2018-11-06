@@ -11,6 +11,7 @@ class NullBackendProvider(ProctoringBackendProvider):
     """
     Implementation of the ProctoringBackendProvider that does nothing
     """
+    verbose_name = u'Null Backend'
 
     def register_exam_attempt(self, exam, context):
         """
@@ -39,13 +40,13 @@ class NullBackendProvider(ProctoringBackendProvider):
         """
         return None
 
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """
 
-    def on_review_saved(self, review):
+    def on_exam_saved(self, exam):
         """
-        called when a review has been save - either through API or via Django Admin panel
-        in order to trigger any workflow
+        Called after an exam is saved.
         """
+        return None

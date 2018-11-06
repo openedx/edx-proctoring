@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 to_status=to_status
             )
         )
-        print msg
+        self.stdout.write(msg)
 
         if not ProctoredExamStudentAttemptStatus.is_valid_status(to_status):
             raise CommandError('{to_status} is not a valid attempt status!'.format(to_status=to_status))
@@ -69,4 +69,4 @@ class Command(BaseCommand):
 
         update_attempt_status(exam_id, user_id, to_status)
 
-        print 'Completed!'
+        self.stdout.write('Completed!')

@@ -37,20 +37,19 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 	pip-compile --upgrade -o requirements/quality.txt requirements/quality.in
 	pip-compile --upgrade -o requirements/test.txt requirements/base.in requirements/test.in
 	# Let tox control the Django version for tests
-	sed '/django==/d' requirements/test.txt > requirements/test.tmp
+	sed '/^django==/d' requirements/test.txt > requirements/test.tmp
 	mv requirements/test.tmp requirements/test.txt
 
 requirements: ## install development environment requirements
 	pip install -qr requirements/dev.txt --exists-action w
 	pip-sync requirements/*.txt requirements/private.*
 
-install: upgrade requirements
-	./manage.py syncdb --noinput --settings=test_settings
+install: requirements
 	./manage.py migrate --settings=test_settings
 	npm install
 
 coverage: clean ## generate and view HTML coverage report
-	py.test --cov-report html
+	py.test --cov=edx_proctoring --cov-report html --ds=test_settings
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
@@ -61,7 +60,7 @@ quality: ## check coding style with pycodestyle and pylint
 	tox -e quality
 
 test-python: clean ## run tests in the current virtualenv
-	./manage.py test edx_proctoring --verbosity=3
+	py.test --cov=edx_proctoring --cov-report=html --ds=test_settings -n auto
 
 test-js:
 	gulp test

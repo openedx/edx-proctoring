@@ -15,8 +15,10 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
     """
     Implementation of the ProctoringBackendProvider that bypasses proctoring setup.
     """
+    verbose_name = u'Mock Backend'
 
     def __init__(self, *args, **kwargs):
+        ProctoringBackendProvider.__init__(self)
         self.args = args
         self.kwargs = kwargs
 
@@ -72,7 +74,7 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
         """
         return "mockurl"
 
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
 
@@ -87,9 +89,8 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
         """
         return None
 
-    def on_review_saved(self, review):
+    def on_exam_saved(self, exam):
         """
-        called when a review has been save - either through API or via Django Admin panel
-        in order to trigger any workflow
+        Called after an exam is saved.
         """
         return None

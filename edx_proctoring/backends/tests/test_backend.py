@@ -7,8 +7,10 @@ from __future__ import absolute_import
 import time
 from mock import patch
 
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
+from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.backends.null import NullBackendProvider
 from edx_proctoring.backends.mock import MockProctoringBackendProvider
@@ -48,16 +50,14 @@ class TestBackendProvider(ProctoringBackendProvider):
         """
         return None
 
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """
+        return payload
 
-    def on_review_saved(self, review):
-        """
-        called when a review has been save - either through API or via Django Admin panel
-        in order to trigger any workflow
-        """
+    def on_exam_saved(self, exam):
+        return exam.get('external_id', 'examexternalid')
 
 
 class PassthroughBackendProvider(ProctoringBackendProvider):
@@ -101,18 +101,14 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
         """
         return super(PassthroughBackendProvider, self).get_software_download_url()
 
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """
-        return super(PassthroughBackendProvider, self).on_review_callback(payload)
+        return super(PassthroughBackendProvider, self).on_review_callback(attempt, payload)
 
-    def on_review_saved(self, review):
-        """
-        called when a review has been save - either through API or via Django Admin panel
-        in order to trigger any workflow
-        """
-        return super(PassthroughBackendProvider, self).on_review_saved(review)
+    def on_exam_saved(self, exam):
+        return super(PassthroughBackendProvider, self).on_exam_saved(exam)
 
 
 class TestBackends(TestCase):
@@ -140,10 +136,12 @@ class TestBackends(TestCase):
             provider.get_software_download_url()
 
         with self.assertRaises(NotImplementedError):
-            provider.on_review_callback(None)
+            provider.on_review_callback(None, None)
 
         with self.assertRaises(NotImplementedError):
-            provider.on_review_saved(None)
+            provider.on_exam_saved(None)
+
+        self.assertIsNone(provider.get_exam(None))
 
     def test_null_provider(self):
         """
@@ -156,8 +154,8 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
         self.assertIsNone(provider.get_software_download_url())
-        self.assertIsNone(provider.on_review_callback(None))
-        self.assertIsNone(provider.on_review_saved(None))
+        self.assertIsNone(provider.on_review_callback(None, None))
+        self.assertIsNone(provider.on_exam_saved(None))
 
     def test_mock_provider(self):
         """
@@ -181,5 +179,51 @@ class TestBackends(TestCase):
         )
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
-        self.assertIsNone(provider.on_review_callback(None))
-        self.assertIsNone(provider.on_review_saved(None))
+        self.assertIsNone(provider.on_review_callback(None, None))
+        self.assertIsNone(provider.on_exam_saved(None))
+
+
+class BackendChooserTests(TestCase):
+    """
+    Tests for backend configuration
+    """
+    def test_default_backend(self):
+        """
+        Test the default backend choice
+        """
+        backend = get_backend_provider()
+        self.assertIsInstance(backend, TestBackendProvider)
+
+    def test_get_different_backend(self):
+        """
+        Test that passing in a backend name returns the right backend
+        """
+        backend = get_backend_provider({'backend': 'null'})
+        self.assertIsInstance(backend, NullBackendProvider)
+
+    def test_backend_choices(self):
+        """
+        Test that we have a list of choices
+        """
+        from django.apps import apps
+        choices = list(apps.get_app_config('edx_proctoring').get_backend_choices())
+        expected = [
+            ('test', u'Unknown'),
+            ('null', u'Null Backend'),
+            ('mock', u'Mock Backend'),
+            ('software_secure', u'RPNow')
+        ]
+        self.assertEqual(choices, expected)
+
+    def test_invalid_configurations(self):
+        """
+        Test that invalid backends throw the right exceptions
+        """
+        with self.assertRaises(NotImplementedError):
+            get_backend_provider({'backend': 'foo'})
+        with patch('django.conf.settings.PROCTORING_BACKENDS', {}):
+            with self.assertRaises(ImproperlyConfigured):
+                get_backend_provider()
+        with patch('django.conf.settings.PROCTORING_BACKENDS', {'test': {}}):
+            with self.assertRaises(ImproperlyConfigured):
+                get_backend_provider({'backend': None})

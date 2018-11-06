@@ -2,18 +2,15 @@
 Defines the abstract base class that all backends should derive from
 """
 
-from __future__ import absolute_import
-
 import abc
+import six
 
 
-class ProctoringBackendProvider(object):
+class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
     """
     The base abstract class for all proctoring service providers
     """
-
-    # don't allow instantiation of this class, it must be subclassed
-    __metaclass__ = abc.ABCMeta
+    verbose_name = u'Unknown'
 
     @abc.abstractmethod
     def register_exam_attempt(self, exam, context):
@@ -47,16 +44,41 @@ class ProctoringBackendProvider(object):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def on_review_callback(self, payload):
+    def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def on_review_saved(self, review):
+    def on_exam_saved(self, exam):
         """
-        called when a review has been save - either through API or via Django Admin panel
-        in order to trigger any workflow.
+        Called after an exam is saved.
         """
         raise NotImplementedError()
+
+    def get_javascript(self):
+        """
+        Returns the backend javascript to embed on each proctoring page
+        """
+        return ""
+
+    def get_exam(self, exam):
+        """
+        Returns the backend's representation of the exam
+        Args:
+            dict: our exam object
+        Returns:
+            dict: backend exam object
+        """
+        return exam
+
+    def get_attempt(self, attempt):
+        """
+        Returns the backend's representation of the exam attempt
+        Args:
+            dict: our exam attempt object
+        Returns:
+            dict: backend exam attempt object
+        """
+        return attempt

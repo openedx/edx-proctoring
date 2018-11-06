@@ -46,8 +46,6 @@ class TestClient(Client):
         This is based on Client.login() with a small hack that does not
         require the call to authenticate()
         """
-        if 'django.contrib.sessions' not in settings.INSTALLED_APPS:
-            raise AssertionError("Unable to login without django.contrib.sessions in INSTALLED_APPS")
         user.backend = "django.contrib.auth.backends.ModelBackend"
         engine = import_module(settings.SESSION_ENGINE)
 

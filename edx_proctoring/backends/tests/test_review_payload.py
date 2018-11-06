@@ -7,7 +7,7 @@ import json
 MOCK_EXAM_ID = "4d07a01a-1502-422e-b943-93ac04dc6ced"
 
 
-def create_test_review_payload(exam_id=MOCK_EXAM_ID, attempt_code=None, external_id=None):
+def create_test_review_payload(exam_id=MOCK_EXAM_ID, attempt_code=None, external_id=None, review_status="Clean"):
     """
     Returns a test payload for reviews.
     """
@@ -38,7 +38,7 @@ def create_test_review_payload(exam_id=MOCK_EXAM_ID, attempt_code=None, external
             "ssiProduct": "rp-now"
         },
         "overAllComments": ";Candidates should always wear suit and tie for exams.",
-        "reviewStatus": "Clean",
+        "reviewStatus": review_status,
         "userPhotoBase64String": "",
         "videoReviewLink": "http://www.remoteproctor.com/AdminSite/Account/Reviewer/DirectLink-Generic.aspx?ID=foo",
         "examMetaData": {

@@ -6,7 +6,6 @@
 
 # Installation artifacts
 src
-requirements/*.txt
 
 # Sphinx docs:
 build
