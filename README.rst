@@ -1,5 +1,5 @@
 edx-proctoring
-=============================
+==============
 
 .. image:: https://img.shields.io/pypi/v/edx-proctoring.svg
     :target: https://pypi.python.org/pypi/edx-proctoring/
@@ -33,8 +33,6 @@ implementation used by Open edX.
 
 Documentation
 -------------
-
-For documentation about taking a proctored exam, see `Taking a Proctored Exam`_.
 
 For authoring documentation, see `Including Proctored Exams In Your Course`_.
 
