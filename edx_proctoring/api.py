@@ -16,6 +16,8 @@ import six
 from django.utils.translation import ugettext as _, ugettext_noop
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 from django.template import loader
 from django.urls import reverse, NoReverseMatch
 from django.core.mail.message import EmailMessage
@@ -108,10 +110,6 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
     # read back exam so we can emit an event on it
     exam = get_exam_by_id(proctored_exam.id)
     emit_event(exam, 'created')
-    external_id = get_backend_provider(exam).on_exam_saved(exam)
-    if external_id:
-        proctored_exam.external_id = external_id
-        proctored_exam.save()
     return proctored_exam.id
 
 
@@ -209,6 +207,33 @@ def remove_review_policy(exam_id):
     exam_review_policy.delete()
 
 
+@receiver(post_save, sender=ProctoredExamReviewPolicy)
+@receiver(post_save, sender=ProctoredExam)
+def _save_exam_on_backend(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    Save the exam to the backend provider when our model changes.
+    It also combines the review policy into the exam when saving to the backend
+    """
+    if sender == ProctoredExam:
+        exam_obj = instance
+        review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(instance.id)
+    else:
+        exam_obj = instance.proctored_exam
+        review_policy = instance
+    if exam_obj.is_proctored:
+        exam = ProctoredExamSerializer(exam_obj).data
+        if review_policy:
+            exam['rule_summary'] = review_policy.review_policy
+            # When the rules are defined as boolean options,
+            # save them here
+            exam['rules'] = getattr(review_policy, 'rules', {})
+        backend = get_backend_provider(exam)
+        external_id = backend.on_exam_saved(exam)
+        if external_id and external_id != exam_obj.external_id:
+            exam_obj.external_id = external_id
+            exam_obj.save()
+
+
 def get_review_policy_by_exam_id(exam_id):
     """
     Looks up exam by the Primary Key. Raises exception if not found.
@@ -294,10 +319,6 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constant
     # read back exam so we can emit an event on it
     exam = get_exam_by_id(proctored_exam.id)
     emit_event(exam, 'updated')
-    external_id = get_backend_provider(exam).on_exam_saved(exam)
-    if external_id:
-        proctored_exam.external_id = external_id
-        proctored_exam.save()
 
     return proctored_exam.id
 

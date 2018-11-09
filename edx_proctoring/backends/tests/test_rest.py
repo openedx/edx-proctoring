@@ -100,7 +100,7 @@ class RESTBackendTests(TestCase):
 
     @responses.activate
     def test_create_exam_with_defaults(self):
-        provider = BaseRestProctoringProvider(default_config={'allow_grok': True})
+        provider = BaseRestProctoringProvider(default_rules={'allow_grok': True})
         responses.add(
             responses.POST,
             url=self.provider.create_exam_url,
@@ -110,7 +110,7 @@ class RESTBackendTests(TestCase):
         external_id = provider.on_exam_saved(self.backend_exam)
         request = json.loads(responses.calls[1].request.body)
         self.assertEqual(external_id, 'abcdefg')
-        self.assertTrue(request['config']['allow_grok'])
+        self.assertTrue(request['rules']['allow_grok'])
 
     @responses.activate
     def test_update_exam(self):

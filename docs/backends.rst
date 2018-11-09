@@ -25,7 +25,7 @@ Proctoring System configuration endpoint
 ``GET``: returns an object of the available configuration options and metadata for the proctoring service.::
 
     {
-        "config": {
+        "rules": {
             "allow_multiple": "Allow multiple monitors",
             "allow_notes": "Allow paper notes",
             "allow_apps": "Allow other applications to be running",
@@ -40,8 +40,8 @@ Proctoring System configuration endpoint
         ]
     }
 
-The keys in the config object should be machine readable. The values are human readable. PS should respect the HTTP request ``Accept-Language``
-header and translate all human readable configuration options into the requested language.
+The keys in the rules object should be machine readable. The values are human readable. PS should respect the HTTP request ``Accept-Language``
+header and translate all human readable rules into the requested language.
 
 If a download_url is included in the response, Open edX will redirect learners to the address before the proctoring session starts. The address will include ``attempt={attempt_id}`` in the query string.
 
@@ -53,7 +53,7 @@ Exam endpoint
 ``GET``: returns an object describing the exam. If no exam exists, return 404 error.::
 
     {
-        "config": {
+        "rules": {
             "allow_notes": true,
             "allow_multiple": false
         }
@@ -64,10 +64,11 @@ Exam endpoint
 ``POST``: may be used to create the exam on the PS, by sending an object like this::
 
     {
-        "config": {
+        "rules": {
             "allow_notes": false,
             "allow_multiple": true
         },
+        "rule_summary": "Human readable summary of rules.",
         "course_id": "myOrgX:Course101",
         "is_practice": false,
         "is_proctored": true,
@@ -75,7 +76,7 @@ Exam endpoint
         "name": "Course Final Exam"
     }
 
-The config object will match the config keys returned from the configuration endpoint above. Any options which aren't passed in should be set to default values by the proctoring service.
+The rules object will match the rule keys returned from the configuration endpoint above. Any options which aren't passed in should be set to default values by the proctoring service.
 
 The PS system should respond with an object containing at least the following fields::
 

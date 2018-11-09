@@ -22,6 +22,7 @@ class TestBackendProvider(ProctoringBackendProvider):
     """
     Implementation of the ProctoringBackendProvider that does nothing
     """
+    last_exam = None
 
     def register_exam_attempt(self, exam, context):
         """
@@ -57,7 +58,8 @@ class TestBackendProvider(ProctoringBackendProvider):
         return payload
 
     def on_exam_saved(self, exam):
-        return exam.get('external_id', 'examexternalid')
+        self.last_exam = exam
+        return exam.get('external_id', None) or 'externalid'
 
 
 class PassthroughBackendProvider(ProctoringBackendProvider):
@@ -207,11 +209,12 @@ class BackendChooserTests(TestCase):
         """
         from django.apps import apps
         choices = list(apps.get_app_config('edx_proctoring').get_backend_choices())
+        choices.sort()
         expected = [
-            ('test', u'Unknown'),
-            ('null', u'Null Backend'),
             ('mock', u'Mock Backend'),
-            ('software_secure', u'RPNow')
+            ('null', u'Null Backend'),
+            ('software_secure', u'RPNow'),
+            ('test', u'Unknown'),
         ]
         self.assertEqual(choices, expected)
 
