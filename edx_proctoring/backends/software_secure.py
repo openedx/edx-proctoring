@@ -27,7 +27,7 @@ from edx_proctoring.exceptions import (
     BackendProvideCannotRegisterAttempt,
     ProctoredExamSuspiciousLookup,
 )
-from edx_proctoring.models import SoftwareSecureReviewStatus
+from edx_proctoring.statuses import SoftwareSecureReviewStatus
 
 log = logging.getLogger(__name__)
 

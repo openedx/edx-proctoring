@@ -27,9 +27,9 @@ from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptStatus,
 )
 from edx_proctoring.runtime import set_runtime_service
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from .test_services import MockCreditServiceWithCourseEndDate, MockCreditServiceNone
 from .utils import ProctoredExamTestCase

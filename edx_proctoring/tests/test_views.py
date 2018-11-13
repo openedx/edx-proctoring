@@ -21,7 +21,6 @@ from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAllowance,
-    ProctoredExamStudentAttemptStatus,
 )
 from edx_proctoring.exceptions import (
     ProctoredExamIllegalStatusTransition,
@@ -34,7 +33,7 @@ from edx_proctoring.api import (
     update_attempt_status,
     _calculate_allowed_mins
 )
-
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.serializers import ProctoredExamSerializer
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content

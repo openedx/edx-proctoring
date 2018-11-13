@@ -13,7 +13,8 @@ from django.core.management import call_command
 from edx_proctoring.tests.utils import LoggedInTestCase
 from edx_proctoring.api import create_exam, get_exam_attempt
 
-from edx_proctoring.models import ProctoredExamStudentAttemptStatus, ProctoredExamStudentAttempt
+from edx_proctoring.models import ProctoredExamStudentAttempt
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import (
     MockCreditService,
     MockGradesService,

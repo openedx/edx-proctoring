@@ -51,11 +51,13 @@ from edx_proctoring.exceptions import (
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
 from edx_proctoring.models import (
-    ProctoredExamStudentAttemptStatus,
     ProctoredExamStudentAttempt,
     ProctoredExam,
     ProctoredExamSoftwareSecureComment,
     ProctoredExamSoftwareSecureReview,
+)
+from edx_proctoring.statuses import (
+    ProctoredExamStudentAttemptStatus,
     ReviewStatus,
     SoftwareSecureReviewStatus,
 )

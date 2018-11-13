@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 from django.core.management.base import BaseCommand, CommandError
 
-from edx_proctoring.models import ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 
 class Command(BaseCommand):

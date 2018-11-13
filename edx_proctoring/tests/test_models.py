@@ -15,8 +15,8 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptHistory,
     ProctoredExamReviewPolicy,
     ProctoredExamReviewPolicyHistory,
-    ProctoredExamStudentAttemptStatus,
 )
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from .utils import (
     LoggedInTestCase

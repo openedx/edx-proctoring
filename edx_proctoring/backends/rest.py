@@ -2,10 +2,14 @@
 Base implementation of a REST backend, following the API documented in
 docs/backends.rst
 """
+import time
+import uuid
 import pkg_resources
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_proctoring.models import ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_rest_api_client.client import OAuthAPIClient
+
+import jwt
 
 
 class BaseRestProctoringProvider(ProctoringBackendProvider):
@@ -15,7 +19,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     properties
     """
     base_url = None
-    expiration_time = 86400 * 2
+    token_expiration_time = 60
     needs_oauth = True
 
     @property
@@ -42,6 +46,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     def config_url(self):
         "Returns proctor config url"
         return self.base_url + u'/v1/config/'
+
+    @property
+    def instructor_url(self):
+        "Returns the instructor dashboar url"
+        return self.base_url + u'/v1/instructor/{client_id}/?jwt={jwt}'
 
     def __init__(self, client_id=None, client_secret=None, **kwargs):
         """
@@ -152,6 +161,30 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             url = self.create_exam_url
         response = self.session.post(url, json=exam).json()
         return response.get('id')
+
+    def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None):
+        """
+        Return a URL to the instructor dashboard
+        course_id: str
+        user: dict of {id, full_name, email}
+        exam_id: str optional exam external id
+        attempt_id: str optional exam attempt external id
+        """
+        exp = time.time() + self.token_expiration_time
+        token = {
+            'course_id': course_id,
+            'user': user,
+            'iss': self.client_id,
+            'jti': uuid.uuid4().hex,
+            'exp': exp
+        }
+        if exam_id:
+            token['exam_id'] = exam_id
+            if attempt_id:
+                token['attempt_id'] = attempt_id
+        encoded = jwt.encode(token, self.client_secret)
+        url = self.instructor_url.format(client_id=self.client_id, jwt=encoded)
+        return url
 
     def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):
         """

@@ -39,7 +39,6 @@ from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptStatus,
     ProctoredExamReviewPolicy,
     ProctoredExamSoftwareSecureReview,
 )
@@ -49,6 +48,8 @@ from edx_proctoring.serializers import (
     ProctoredExamStudentAllowanceSerializer,
     ProctoredExamReviewPolicySerializer
 )
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+
 from edx_proctoring.utils import (
     humanized_time,
     emit_event
@@ -635,7 +636,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         lms_host = '{scheme}://{hostname}'.format(scheme=scheme, hostname=settings.SITE_NAME)
 
-        obs_user_id = hashlib.sha1((u'%s%s' % (attempt_code, user_id)).encode('ascii')).hexdigest()
+        obs_user_id = hashlib.sha1((u'%s%s' % (exam['course_id'], user_id)).encode('ascii')).hexdigest()
 
         # get the name of the user, if the service is available
         full_name = None

@@ -17,7 +17,7 @@ class RESTBackendTests(TestCase):
     def setUp(self):
         "setup tests"
         BaseRestProctoringProvider.base_url = 'http://rr.fake'
-        self.provider = BaseRestProctoringProvider()
+        self.provider = BaseRestProctoringProvider('client_id', 'client_secret')
         responses.add(
             responses.POST,
             url=self.provider.base_url + '/oauth2/access_token',
@@ -185,3 +185,20 @@ class RESTBackendTests(TestCase):
         # A real backend would return real javascript from backend.js
         with self.assertRaises(IOError):
             self.provider.get_javascript()
+
+    def test_instructor_url(self):
+        user = {
+            'id': 1,
+            'full_name': 'Instructor',
+            'email': 'instructor@example.com'
+        }
+        course_id = 'course+abc'
+        base_url = self.provider.get_instructor_url(course_id, user)
+        self.assertIn('?jwt=', base_url)
+        # now try with an exam_id and an attempt_id.
+        # the tokens will be different, but let's not bother decoding them
+        exam_url = self.provider.get_instructor_url(course_id, user, exam_id='abcd')
+        self.assertNotEqual(exam_url, base_url)
+        attempt_url = self.provider.get_instructor_url(course_id, user, exam_id='abcd', attempt_id='defgh')
+        self.assertNotEqual(attempt_url, base_url)
+        self.assertNotEqual(attempt_url, exam_url)

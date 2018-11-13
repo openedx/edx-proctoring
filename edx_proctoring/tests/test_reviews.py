@@ -15,9 +15,9 @@ from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attemp
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.exceptions import (ProctoredExamBadReviewStatus, ProctoredExamReviewAlreadyExists)
 from edx_proctoring.models import (ProctoredExamSoftwareSecureComment, ProctoredExamSoftwareSecureReview,
-                                   ProctoredExamSoftwareSecureReviewHistory, ProctoredExamStudentAttemptHistory,
-                                   ProctoredExamStudentAttemptStatus, ReviewStatus, SoftwareSecureReviewStatus)
+                                   ProctoredExamSoftwareSecureReviewHistory, ProctoredExamStudentAttemptHistory)
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, ReviewStatus, SoftwareSecureReviewStatus
 from edx_proctoring.tests.test_services import (MockCertificateService, MockCreditService, MockGradesService,
                                                 MockInstructorService)
 from edx_proctoring.utils import locate_attempt_by_attempt_code
