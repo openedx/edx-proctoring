@@ -19,7 +19,7 @@ edx-rest-api-client==1.9.2
 event-tracking==0.2.5
 future==0.17.1            # via pyjwkest
 idna==2.7                 # via requests
-newrelic==4.4.1.104       # via edx-django-utils
+newrelic==4.6.0.106       # via edx-django-utils
 pbr==5.1.1                # via stevedore
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 pycryptodomex==3.7.0
@@ -28,7 +28,7 @@ pyjwt==1.6.4              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.7.2            # via edx-opaque-keys, event-tracking
 python-dateutil==2.7.5
 pytz==2018.7
-requests==2.20.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
+requests==2.20.1          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
 rest-condition==1.0.3     # via edx-drf-extensions
 semantic-version==2.6.0   # via edx-drf-extensions
 six==1.11.0               # via edx-drf-extensions, edx-opaque-keys, pyjwkest, python-dateutil, stevedore
