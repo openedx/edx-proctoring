@@ -34,6 +34,35 @@ if sys.argv[-1] == 'tag':
 README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 CHANGELOG = open(os.path.join(os.path.dirname(__file__), 'CHANGELOG.rst')).read()
 
+
+def load_requirements(*requirements_paths):
+    """
+    Load all requirements from the specified requirements files.
+    Returns a list of requirement strings.
+    """
+    requirements = set()
+    for path in requirements_paths:
+        requirements.update(
+            line.split('#')[0].strip() for line in open(path).readlines()
+            if is_requirement(line.strip())
+        )
+    return list(requirements)
+
+
+def is_requirement(line):
+    """
+    Return True if the requirement line is a package requirement;
+    that is, it is not blank, a comment, a URL, or an included file.
+    """
+    return not (
+        line == '' or
+        line.startswith('-r') or
+        line.startswith('#') or
+        line.startswith('-e') or
+        line.startswith('git+')
+    )
+
+
 setup(
     name='edx-proctoring',
     version=VERSION,
@@ -61,23 +90,7 @@ setup(
         'edx_proctoring',
     ],
     include_package_data=True,
-    install_requires=[
-        "Django>=1.11,<2.0",
-        "django-model-utils>=2.3.1",
-        "edx-drf-extensions",
-        "djangorestframework>=3.1,<3.7",
-        "django-ipware>=1.1.0",
-        "edx-opaque-keys>=0.4",
-        "pytz>=2018",
-        "pycryptodomex>=3.4.7",
-        "python-dateutil>=2.1",
-        "requests",
-        "stevedore",
-        "six",
-    ],
-    dependency_links=[
-        "git+https://github.com/edx/event-tracking.git@0.2.2#egg=event-tracking==0.2.2",
-    ],
+    install_requires=load_requirements("requirements/base.in"),
     entry_points={
         'openedx.proctoring': [
             'mock = edx_proctoring.backends.mock:MockProctoringBackendProvider',
@@ -85,5 +98,4 @@ setup(
             'software_secure = edx_proctoring.backends.software_secure:SoftwareSecureBackendProvider',
         ],
     },
-
 )

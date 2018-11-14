@@ -1,5 +1,7 @@
 # Additional requirements for development of this application
 
+-r quality.in
+
 diff-cover                # Changeset diff test coverage
 edx_lint==0.5.5           # Python code linting rules
 edx-i18n-tools==0.4.4     # For i18n_tool dummy
