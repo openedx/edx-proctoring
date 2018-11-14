@@ -115,14 +115,19 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
     return proctored_exam.id
 
 
-def create_exam_review_policy(exam_id, set_by_user_id, review_policy):
+def create_exam_review_policy(exam_id, set_by_user_id, review_policy, rules):
     """
     Creates a new exam_review_policy entity, if the review_policy
     for exam_id does not already exist. If it exists, then raise exception.
 
+    Arguments:
+        exam_id: the ID of the exam with which the review policy is to be associated
+        set_by_user_id: the ID of the user setting this review policy
+        review_policy: the review policy for the exam
+        rules: the dictionary of rules for the exam
+
     Returns: id (PK)
     """
-
     exam_review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
     if exam_review_policy is not None:
         raise ProctoredExamReviewPolicyAlreadyExists
@@ -130,15 +135,17 @@ def create_exam_review_policy(exam_id, set_by_user_id, review_policy):
     exam_review_policy = ProctoredExamReviewPolicy.objects.create(
         proctored_exam_id=exam_id,
         set_by_user_id=set_by_user_id,
-        review_policy=review_policy
+        review_policy=review_policy,
+        rules=rules,
     )
 
     log_msg = (
         u'Created ProctoredExamReviewPolicy ({review_policy}) with parameters: exam_id={exam_id}, '
-        u'set_by_user_id={set_by_user_id}'.format(
+        u'set_by_user_id={set_by_user_id}, rules={rules}'.format(
             exam_id=exam_id,
             review_policy=review_policy,
-            set_by_user_id=set_by_user_id
+            set_by_user_id=set_by_user_id,
+            rules=rules,
         )
     )
     log.info(log_msg)
@@ -146,17 +153,25 @@ def create_exam_review_policy(exam_id, set_by_user_id, review_policy):
     return exam_review_policy.id
 
 
-def update_review_policy(exam_id, set_by_user_id, review_policy):
+def update_review_policy(exam_id, set_by_user_id, review_policy, rules):
     """
     Given a exam id, update/remove the existing record, otherwise raise exception if not found.
+
+    Arguments:
+        exam_id: the ID of the exam whose review policy is being updated
+        set_by_user_id: the ID of the user updating this review policy
+        review_policy: the review policy for the exam
+        rules: the dictionary of rules for the exam
+
     Returns: review_policy_id
     """
-
     log_msg = (
-        u'Updating exam review policy with exam_id {exam_id}'
-        u'set_by_user_id={set_by_user_id}, review_policy={review_policy}'
+        u'Updating exam review policy with exam_id {exam_id} '
+        u'set_by_user_id={set_by_user_id}, review_policy={review_policy} '
+        u'rules={rules}'
         .format(
             exam_id=exam_id, set_by_user_id=set_by_user_id, review_policy=review_policy,
+            rules=rules
         )
     )
     log.info(log_msg)
@@ -164,9 +179,10 @@ def update_review_policy(exam_id, set_by_user_id, review_policy):
     if exam_review_policy is None:
         raise ProctoredExamReviewPolicyNotFoundException
 
-    if review_policy:
+    if review_policy or rules:
         exam_review_policy.set_by_user_id = set_by_user_id
         exam_review_policy.review_policy = review_policy
+        exam_review_policy.rules = rules
         exam_review_policy.save()
         msg = 'Updated exam review policy with {exam_id}'.format(exam_id=exam_id)
         log.info(msg)
@@ -242,10 +258,11 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constant
         u'Updating exam_id {exam_id} with parameters '
         u'exam_name={exam_name}, time_limit_mins={time_limit_mins}, due_date={due_date}'
         u'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
-        u'external_id={external_id}, is_active={is_active}, hide_after_due={hide_after_due}'.format(
+        u'external_id={external_id}, is_active={is_active}, hide_after_due={hide_after_due}, '
+        u'backend={backend}'.format(
             exam_id=exam_id, exam_name=exam_name, time_limit_mins=time_limit_mins,
             due_date=due_date, is_proctored=is_proctored, is_practice_exam=is_practice_exam,
-            external_id=external_id, is_active=is_active, hide_after_due=hide_after_due
+            external_id=external_id, is_active=is_active, hide_after_due=hide_after_due, backend=backend
         )
     )
     log.info(log_msg)

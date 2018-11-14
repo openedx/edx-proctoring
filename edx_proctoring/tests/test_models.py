@@ -305,10 +305,13 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
             time_limit_mins=90
         )
 
+        rules = {'allow_grok': True}
+
         policy = ProctoredExamReviewPolicy.objects.create(
             set_by_user_id=self.user.id,
             proctored_exam=proctored_exam,
-            review_policy='Foo Policy'
+            review_policy='Foo Policy',
+            rules=rules
         )
 
         attempt = ProctoredExamStudentAttempt.create_exam_attempt(
@@ -327,7 +330,10 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         self.assertEqual(len(history), 0)
 
         # now update it
+        updated_rules = {'allow_foo': False}
+
         policy.review_policy = 'Updated Foo Policy'
+        policy.rules = updated_rules
         policy.save()
 
         # look in history
@@ -338,6 +344,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         self.assertEqual(previous.proctored_exam_id, proctored_exam.id)
         self.assertEqual(previous.original_id, policy.id)
         self.assertEqual(previous.review_policy, 'Foo Policy')
+        self.assertEqual(previous.rules, rules)
 
         # now delete updated one
         deleted_id = policy.id
@@ -351,12 +358,14 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         self.assertEqual(previous.proctored_exam_id, proctored_exam.id)
         self.assertEqual(previous.original_id, deleted_id)
         self.assertEqual(previous.review_policy, 'Foo Policy')
+        self.assertEqual(previous.rules, rules)
 
         previous = history[1]
         self.assertEqual(previous.set_by_user_id, self.user.id)
         self.assertEqual(previous.proctored_exam_id, proctored_exam.id)
         self.assertEqual(previous.original_id, deleted_id)
         self.assertEqual(previous.review_policy, 'Updated Foo Policy')
+        self.assertEqual(previous.rules, updated_rules)
 
         # assert that we cannot delete history!
         with self.assertRaises(NotImplementedError):
