@@ -20,7 +20,7 @@ docutils==0.14            # via doc8, readme-renderer, restructuredtext-lint, sp
 edx-django-utils==1.0.1   # via edx-drf-extensions
 edx-drf-extensions==2.0.1
 edx-opaque-keys==0.4.4
-edx-rest-api-client==1.9
+edx-rest-api-client==1.9.2
 edx-sphinx-theme==1.3.0
 event-tracking==0.2.5
 future==0.17.1            # via pyjwkest
