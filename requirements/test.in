@@ -1,5 +1,7 @@
 # Requirements for test runs.
 
+-r base.in
+
 pytest-cov                # pytest extension for code coverage statistics
 pytest-django             # pytest extension for better Django support
 pytest-xdist              # pytest extension for parallel execution
