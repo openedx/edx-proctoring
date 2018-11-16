@@ -20,7 +20,7 @@ All requests and responses in this API are formatted as JSON objects.
 Proctoring System configuration endpoint
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    /v1/config/
+    /api/v1/config/
 
 ``GET``: returns an object of the available configuration options and metadata for the proctoring service.::
 
@@ -48,7 +48,7 @@ If a download_url is included in the response, Open edX will redirect learners t
 Exam endpoint
 ^^^^^^^^^^^^^
 
-    /v1/exam/{exam_id}/
+    /api/v1/exam/{exam_id}/
 
 ``GET``: returns an object describing the exam. If no exam exists, return 404 error.::
 
@@ -59,7 +59,7 @@ Exam endpoint
         }
     }
 
-    /v1/exam/
+    /api/v1/exam/
 
 ``POST``: may be used to create the exam on the PS, by sending an object like this::
 
@@ -88,7 +88,7 @@ The PS system should respond with an object containing at least the following fi
 Exam attempt endpoint
 ^^^^^^^^^^^^^^^^^^^^^
 
-    /v1/exam/{exam_id}/attempt/
+    /api/v1/exam/{exam_id}/attempt/
 
 ``{exam_id}`` is the id returned by the PS during exam creation.
 
@@ -108,7 +108,7 @@ The PS system should respond with an object containing at least the following fi
 
 ..
 
-    /v1/exam/{exam_id}/attempt/{attempt_id}/
+    /api/v1/exam/{exam_id}/attempt/{attempt_id}/
 
 ``{exam_id}`` is the id returned by the PS at exam creation and ``{attempt_id}`` is the id returned by the PS during exam attempt creation.
 

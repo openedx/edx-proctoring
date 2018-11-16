@@ -25,32 +25,32 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     @property
     def exam_attempt_url(self):
         "Returns exam attempt url"
-        return self.base_url + u'/v1/exam/{exam_id}/attempt/{attempt_id}/'
+        return self.base_url + u'/api/v1/exam/{exam_id}/attempt/{attempt_id}/'
 
     @property
     def create_exam_attempt_url(self):
         "Returns the create exam url"
-        return self.base_url + u'/v1/exam/{exam_id}/attempt/'
+        return self.base_url + u'/api/v1/exam/{exam_id}/attempt/'
 
     @property
     def create_exam_url(self):
         "Returns create exam url"
-        return self.base_url + u'/v1/exam/'
+        return self.base_url + u'/api/v1/exam/'
 
     @property
     def exam_url(self):
         "Returns exam url"
-        return self.base_url + u'/v1/exam/{exam_id}/'
+        return self.base_url + u'/api/v1/exam/{exam_id}/'
 
     @property
     def config_url(self):
         "Returns proctor config url"
-        return self.base_url + u'/v1/config/'
+        return self.base_url + u'/api/v1/config/'
 
     @property
     def instructor_url(self):
         "Returns the instructor dashboar url"
-        return self.base_url + u'/v1/instructor/{client_id}/?jwt={jwt}'
+        return self.base_url + u'/api/v1/instructor/{client_id}/?jwt={jwt}'
 
     def __init__(self, client_id=None, client_secret=None, **kwargs):
         """
