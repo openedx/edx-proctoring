@@ -205,11 +205,16 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         proctored exam and tests that it stores in the
         db correctly
         """
+        rules = {
+            'allow_grok': True
+        }
+
         proctored_exam = get_exam_by_id(self.proctored_exam_id)
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper'
+            review_policy=u'allow use of paper',
+            rules=rules
         )
 
         # now get the exam review policy for the proctored exam
@@ -218,6 +223,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(exam_review_policy['proctored_exam']['id'], proctored_exam['id'])
         self.assertEqual(exam_review_policy['set_by_user']['id'], self.user_id)
         self.assertEqual(exam_review_policy['review_policy'], u'allow use of paper')
+        self.assertEqual(exam_review_policy['rules'], rules)
 
     def test_get_exam_review_policy(self):
         """
@@ -228,7 +234,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper'
+            review_policy=u'allow use of paper',
+            rules={'allow_grok': True}
         )
 
         # now get the exam review policy for the proctored exam
@@ -236,25 +243,30 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         self.assertEqual(exam_review_policy_string, u'allow use of paper')
 
-    def test_update_exam_review_policy(self):
+    def test_update_exam_review_policy_updates_review_policy(self):
         """
-        Test to update existing exam review policy for
-        proctored exam and tests that it stores in the
-        db correctly and set the exam review policy to ''
-        will remove the entry from the database.
+        Test to update existing exam review policy's review
+        policy for proctored exam and tests that it stores in the
+        db correctly.
         """
+        rules = {
+            'allow_grok': True
+        }
+
         proctored_exam = get_exam_by_id(self.proctored_exam_id)
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper'
+            review_policy=u'allow use of paper',
+            rules=rules
         )
 
-        # now update the exam review policy for the proctored exam
+        # now update the exam review policy's review policy for the proctored exam
         update_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of calculator'
+            review_policy=u'allow use of calculator',
+            rules=rules
         )
 
         # now get the updated exam review policy for the proctored exam
@@ -263,14 +275,68 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(exam_review_policy['proctored_exam']['id'], proctored_exam['id'])
         self.assertEqual(exam_review_policy['set_by_user']['id'], self.user_id)
         self.assertEqual(exam_review_policy['review_policy'], u'allow use of calculator')
+        self.assertEqual(exam_review_policy['rules'], rules)
+
+    def test_update_exam_review_policy_updates_rules(self):
+        """
+        Test to update existing exam review policy's rules for
+        proctored exam and tests that it stores in the
+        db correctly.
+        """
+        rules = {
+            'allow_grok': True
+        }
+
+        proctored_exam = get_exam_by_id(self.proctored_exam_id)
+        create_exam_review_policy(
+            exam_id=proctored_exam['id'],
+            set_by_user_id=self.user_id,
+            review_policy=u'allow use of paper',
+            rules=rules
+        )
+
+        updated_rules = {
+            'allow_foo': False
+        }
+
+        # now update the exam review policy's rules for the proctored exam
+        update_review_policy(
+            exam_id=proctored_exam['id'],
+            set_by_user_id=self.user_id,
+            review_policy=u'allow use of calculator',
+            rules=updated_rules
+        )
+
+        # now get the updated exam review policy for the proctored exam
+        exam_review_policy = get_review_policy_by_exam_id(proctored_exam['id'])
+
+        self.assertEqual(exam_review_policy['proctored_exam']['id'], proctored_exam['id'])
+        self.assertEqual(exam_review_policy['set_by_user']['id'], self.user_id)
+        self.assertEqual(exam_review_policy['review_policy'], u'allow use of calculator')
+        self.assertEqual(exam_review_policy['rules'], updated_rules)
+
+    def test_update_review_policy_with_empty_review_policy_and_rules_removes_review_policy(self):
+        """
+        Test that updating an proctored exam's exam review policy with an
+        empty review policy removes the exam review policy.
+        """
+        proctored_exam = get_exam_by_id(self.proctored_exam_id)
+        create_exam_review_policy(
+            exam_id=proctored_exam['id'],
+            set_by_user_id=self.user_id,
+            review_policy=u'allow use of paper',
+            rules={'allow_grok': True}
+        )
 
         # now update the exam review policy for the proctored exam
-        # with review_policy value to "". This will delete the exam
+        # with review_policy value to "" and rules value to "".
+        # This will delete the exam
         # review policy object from the database.
         update_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u''
+            review_policy=u'',
+            rules=u''
         )
         with self.assertRaises(ProctoredExamReviewPolicyNotFoundException):
             get_review_policy_by_exam_id(proctored_exam['id'])
@@ -284,7 +350,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper'
+            review_policy=u'allow use of paper',
+            rules={'allow_grok': True}
         )
 
         # now remove the exam review policy for the proctored exam
@@ -323,7 +390,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             update_review_policy(
                 exam_id=self.practice_exam_id,
                 set_by_user_id=10,
-                review_policy=u'allow use of calculator'
+                review_policy=u'allow use of calculator',
+                rules={'allow_grok': True}
             )
 
     def test_create_exam_review_policy_with_same_exam_id(self):
@@ -334,7 +402,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper'
+            review_policy=u'allow use of paper',
+            rules={'allow_grok': True}
         )
 
         # create the same review policy again will raise exception
@@ -342,7 +411,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             create_exam_review_policy(
                 exam_id=proctored_exam['id'],
                 set_by_user_id=self.user_id,
-                review_policy=u'allow use of paper'
+                review_policy=u'allow use of paper',
+                rules={'allow_grok': True}
             )
 
     def test_get_non_existing_review_policy_raises_exception(self):

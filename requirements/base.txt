@@ -19,6 +19,7 @@ edx-rest-api-client==1.9.2
 event-tracking==0.2.5
 future==0.17.1            # via pyjwkest
 idna==2.7                 # via requests
+jsonfield==2.0.2
 newrelic==4.6.0.106       # via edx-django-utils
 pbr==5.1.1                # via stevedore
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions

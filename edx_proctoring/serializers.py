@@ -112,10 +112,11 @@ class ProctoredExamStudentAllowanceSerializer(serializers.ModelSerializer):
 
 class ProctoredExamReviewPolicySerializer(serializers.ModelSerializer):
     """
-    Serializer for the ProctoredExamStudentAllowance Model.
+    Serializer for the ProctoredExamReviewPolicy Model.
     """
     proctored_exam = ProctoredExamSerializer()
     set_by_user = UserSerializer()
+    rules = serializers.JSONField()
 
     class Meta:
         """
@@ -123,5 +124,5 @@ class ProctoredExamReviewPolicySerializer(serializers.ModelSerializer):
         """
         model = ProctoredExamReviewPolicy
         fields = (
-            "id", "created", "modified", "set_by_user", "proctored_exam", "review_policy"
+            "id", "created", "modified", "set_by_user", "proctored_exam", "review_policy", "rules"
         )

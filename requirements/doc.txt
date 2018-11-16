@@ -27,6 +27,7 @@ future==0.17.1            # via pyjwkest
 idna==2.7                 # via requests
 imagesize==1.1.0          # via sphinx
 jinja2==2.10              # via sphinx
+jsonfield==2.0.2
 markupsafe==1.1.0         # via jinja2
 newrelic==4.6.0.106       # via edx-django-utils
 packaging==18.0           # via sphinx
