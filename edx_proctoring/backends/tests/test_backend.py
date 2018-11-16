@@ -61,6 +61,14 @@ class TestBackendProvider(ProctoringBackendProvider):
         self.last_exam = exam
         return exam.get('external_id', None) or 'externalid'
 
+    # pylint: disable=unused-argument
+    def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None):
+        "Return a fake instructor url"
+        url = '/instructor/%s/' % course_id
+        if exam_id:
+            url += '?exam=%s' % exam_id
+        return url
+
 
 class PassthroughBackendProvider(ProctoringBackendProvider):
     """

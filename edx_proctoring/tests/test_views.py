@@ -2477,3 +2477,82 @@ class TestActiveExamsForUserView(LoggedInTestCase):
             exams_query_data
         )
         self.assertEqual(response.status_code, 200)
+
+
+class TestInstructorDashboard(LoggedInTestCase):
+    """
+    Tests for launching the instructor dashboard
+    """
+    def setUp(self):
+        super(TestInstructorDashboard, self).setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.second_user = User(username='tester2', email='tester2@test.com')
+        self.second_user.save()
+        self.client.login_user(self.user)
+
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+
+    def test_launch_for_course(self):
+        course_id = 'a/b/c'
+
+        ProctoredExam.objects.create(
+            course_id=course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+        )
+
+        expected_url = '/instructor/%s/' % course_id
+        response = self.client.get(
+            reverse('edx_proctoring.instructor_dashboard_course', args=[course_id])
+        )
+        self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+
+    def test_launch_for_exam(self):
+        course_id = 'a/b/c'
+
+        proctored_exam = ProctoredExam.objects.create(
+            course_id=course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+        )
+        exam_id = proctored_exam.id
+
+        expected_url = '/instructor/%s/?exam=%s' % (course_id, exam_id)
+        response = self.client.get(
+            reverse('edx_proctoring.instructor_dashboard_exam', kwargs={'course_id': course_id, 'exam_id': exam_id})
+        )
+        self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+
+    def test_error_with_multiple_backends(self):
+        course_id = 'a/b/c'
+
+        ProctoredExam.objects.create(
+            course_id=course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            backend='test',
+        )
+        ProctoredExam.objects.create(
+            course_id=course_id,
+            content_id='test_content2',
+            exam_name='Test Exam',
+            external_id='123aXqe4',
+            time_limit_mins=90,
+            is_active=True,
+            backend='null',
+        )
+        with self.assertRaises(Exception):
+            self.client.get(
+                reverse('edx_proctoring.instructor_dashboard_course',
+                        kwargs={'course_id': course_id})
+            )
