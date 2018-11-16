@@ -50,9 +50,7 @@ class EdxProctoringConfig(AppConfig):
         """
         Loads the available proctoring backends
         """
-        config = getattr(settings, 'PROCTORING_BACKENDS', None)  # pylint: disable=literal-used-as-attribute
-        if not config:
-            raise ImproperlyConfigured("Settings not configured with PROCTORING_BACKENDS!")
+        config = settings.PROCTORING_BACKENDS
 
         self.backends = {}  # pylint: disable=W0201
         for extension in ExtensionManager(namespace='openedx.proctoring'):
