@@ -26,6 +26,7 @@ from edx_proctoring.api import (
     start_exam_attempt_by_code,
     stop_exam_attempt,
     get_active_exams_for_user,
+    get_backend_provider,
     get_exam_attempt,
     create_exam_attempt,
     get_allowances_for_course,
@@ -225,6 +226,10 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(exam_review_policy['review_policy'], u'allow use of paper')
         self.assertEqual(exam_review_policy['rules'], rules)
 
+        # this tests that the backend received the callback when the review policy changed
+        backend = get_backend_provider(proctored_exam)
+        self.assertEqual(backend.last_exam['rule_summary'], u'allow use of paper')
+
     def test_get_exam_review_policy(self):
         """
         Test that creates a new exam policy and tests
@@ -295,11 +300,17 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             rules=rules
         )
 
+        # this tests that the backend received the callback when the review policy changed
+        backend = get_backend_provider(proctored_exam)
+        self.assertEqual(backend.last_exam['rule_summary'], u'allow use of paper')
+        self.assertEqual(backend.last_exam['rules'], rules)
+
         updated_rules = {
             'allow_foo': False
         }
 
         # now update the exam review policy's rules for the proctored exam
+        # now update the exam review policy for the proctored exam
         update_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
@@ -314,6 +325,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(exam_review_policy['set_by_user']['id'], self.user_id)
         self.assertEqual(exam_review_policy['review_policy'], u'allow use of calculator')
         self.assertEqual(exam_review_policy['rules'], updated_rules)
+        self.assertEqual(backend.last_exam['rule_summary'], u'allow use of calculator')
+        self.assertEqual(backend.last_exam['rules'], updated_rules)
 
     def test_update_review_policy_with_empty_review_policy_and_rules_removes_review_policy(self):
         """
@@ -327,7 +340,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             review_policy=u'allow use of paper',
             rules={'allow_grok': True}
         )
-
         # now update the exam review policy for the proctored exam
         # with review_policy value to "" and rules value to "".
         # This will delete the exam

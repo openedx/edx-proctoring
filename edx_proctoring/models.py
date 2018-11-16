@@ -318,7 +318,7 @@ class ProctoredExamReviewPolicyHistory(TimeStampedModel):
         raise NotImplementedError()
 
 
-# Hook up the post_save signal to record creations in the ProctoredExamReviewPolicyHistory table.
+# Hook up the pre_save signal to record creations in the ProctoredExamReviewPolicyHistory table.
 @receiver(pre_save, sender=ProctoredExamReviewPolicy)
 def on_review_policy_saved(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """

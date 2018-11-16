@@ -5,6 +5,8 @@ edx_proctoring Django application initialization.
 
 from __future__ import absolute_import
 
+import warnings
+
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -23,33 +25,39 @@ class EdxProctoringConfig(AppConfig):
         Returns an iterator of available backends:
         backend_name, verbose name
         """
-        for extension in self.backends:
-            yield extension.name, getattr(extension.plugin, 'verbose_name', u'Unknown')
+        for name, backend in self.backends.items():
+            yield name, getattr(backend, 'verbose_name', u'Unknown')
 
-    def get_backend(self, name=None, options=None):
+    def get_backend(self, name=None):
         """
         Returns an instance of the proctoring backend.
 
         :param str name: Name of entrypoint in openedx.proctoring
         :param dict options: Keyword arguments to use when instantiating the backend
         """
-        config = getattr(settings, 'PROCTORING_BACKENDS', None)  # pylint: disable=literal-used-as-attribute
-        if not config:
-            raise ImproperlyConfigured("Settings not configured with PROCTORING_BACKENDS!")
         if name is None:
             try:
-                name = config['DEFAULT']
-            except KeyError:
+                name = settings.PROCTORING_BACKENDS['DEFAULT']
+            except (KeyError, AttributeError):
                 raise ImproperlyConfigured("No default proctoring backend set in settings.PROCTORING_BACKENDS")
         try:
-            options = options or config[name]
-            return self.backends[name].plugin(**options)
+            return self.backends[name]
         except KeyError:
             raise NotImplementedError("No proctoring backend configured for '{}'.  "
-                                      "Available: {} {}".format(name, self.backends.names(), config))
+                                      "Available: {}".format(name, list(self.backends)))
 
     def ready(self):
         """
         Loads the available proctoring backends
         """
-        self.backends = ExtensionManager(namespace='openedx.proctoring')  # pylint: disable=W0201
+        config = settings.PROCTORING_BACKENDS
+
+        self.backends = {}  # pylint: disable=W0201
+        for extension in ExtensionManager(namespace='openedx.proctoring'):
+            name = extension.name
+            try:
+                options = config[name]
+                self.backends[name] = extension.plugin(**options)
+            except KeyError:
+                warnings.warn("No proctoring backend configured for '{}'.  "
+                              "Available: {}".format(name, list(self.backends)))
