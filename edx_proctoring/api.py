@@ -226,7 +226,7 @@ def _save_exam_on_backend(sender, instance, **kwargs):  # pylint: disable=unused
             exam['rule_summary'] = review_policy.review_policy
             # When the rules are defined as boolean options,
             # save them here
-            exam['rules'] = getattr(review_policy, 'rules', {})
+            exam['rules'] = review_policy.rules
         backend = get_backend_provider(exam)
         external_id = backend.on_exam_saved(exam)
         if external_id and external_id != exam_obj.external_id:
