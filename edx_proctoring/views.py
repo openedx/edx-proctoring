@@ -11,6 +11,7 @@ import six
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse, NoReverseMatch
+from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
 
@@ -51,11 +52,13 @@ from edx_proctoring.exceptions import (
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
 from edx_proctoring.models import (
-    ProctoredExamStudentAttemptStatus,
     ProctoredExamStudentAttempt,
     ProctoredExam,
     ProctoredExamSoftwareSecureComment,
     ProctoredExamSoftwareSecureReview,
+)
+from edx_proctoring.statuses import (
+    ProctoredExamStudentAttemptStatus,
     ReviewStatus,
     SoftwareSecureReviewStatus,
 )
@@ -946,3 +949,41 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
                          request.data,
                          backend=provider)
         return Response('OK')
+
+
+class InstructorDashboard(AuthenticatedAPIView):
+    """
+    Redirects to the instructor dashboard for reviewing exams on the configured backend
+    """
+    @method_decorator(require_course_or_global_staff)
+    def get(self, request, course_id, exam_id=None):
+        """
+        Redirect to dashboard for a given course and optional exam_id
+        """
+        exam = None
+        if exam_id:
+            exam = get_exam_by_id(exam_id)
+        else:
+            found_backend = None
+            for exam in get_all_exams_for_course(course_id, True):
+                exam_backend = exam['backend'] or settings.PROCTORING_BACKENDS.get('DEFAULT', None)
+                if found_backend and exam_backend != found_backend:
+                    # In this case, what are we supposed to do?!
+                    # It should not be possible to get in this state, because
+                    # course teams will be prevented from updating the backend after the course start date
+                    error_message = "Multiple backends for course %r %r != %r" % (course_id,
+                                                                                  found_backend,
+                                                                                  exam['backend'])
+                    return Response(data=error_message, status=400)
+                else:
+                    found_backend = exam_backend
+        if exam is None:
+            return Response(data='No exam found for course %r.' % course_id, status=404)
+        backend = get_backend_provider(exam)
+        user = {
+            'id': request.user.id,
+            'full_name': request.user.get_full_name(),
+            'email': request.user.email
+        }
+        url = backend.get_instructor_url(exam['course_id'], user, exam_id=exam_id)
+        return redirect(url)

@@ -83,6 +83,16 @@ urlpatterns = [
         views.ActiveExamsForUserView.as_view(),
         name='edx_proctoring.proctored_exam.active_exams_for_user'
     ),
+    url(
+        r'edx_proctoring/v1/instructor/{}$'.format(settings.COURSE_ID_PATTERN),
+        views.InstructorDashboard.as_view(),
+        name='edx_proctoring.instructor_dashboard_course'
+    ),
+    url(
+        r'edx_proctoring/v1/instructor/{}/(?P<exam_id>\d+)$'.format(settings.COURSE_ID_PATTERN),
+        views.InstructorDashboard.as_view(),
+        name='edx_proctoring.instructor_dashboard_exam'
+    ),
     #
     # Unauthenticated callbacks from SoftwareSecure. Note we use other
     # security token measures to protect data

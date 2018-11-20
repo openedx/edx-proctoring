@@ -29,10 +29,11 @@ from edx_proctoring.api import (
 )
 
 from edx_proctoring.models import (
-    ProctoredExamStudentAttemptStatus,
     ProctoredExamReviewPolicy,
     ProctoredExamStudentAllowance
 )
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.tests.test_services import (
     MockCreditService,

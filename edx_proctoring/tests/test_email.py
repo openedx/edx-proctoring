@@ -12,10 +12,10 @@ from mock import MagicMock, patch
 from edx_proctoring.api import (
     update_attempt_status,
 )
-from edx_proctoring.models import (
+from edx_proctoring.runtime import set_runtime_service, get_runtime_service
+from edx_proctoring.statuses import (
     ProctoredExamStudentAttemptStatus,
 )
-from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 
 from .test_services import (
     MockCreditService,

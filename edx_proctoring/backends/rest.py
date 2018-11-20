@@ -2,10 +2,17 @@
 Base implementation of a REST backend, following the API documented in
 docs/backends.rst
 """
+import logging
+import time
+import uuid
 import pkg_resources
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_proctoring.models import ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_rest_api_client.client import OAuthAPIClient
+
+import jwt
+
+log = logging.getLogger(__name__)
 
 
 class BaseRestProctoringProvider(ProctoringBackendProvider):
@@ -15,33 +22,38 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     properties
     """
     base_url = None
-    expiration_time = 86400 * 2
+    token_expiration_time = 60
     needs_oauth = True
 
     @property
     def exam_attempt_url(self):
         "Returns exam attempt url"
-        return self.base_url + u'/v1/exam/{exam_id}/attempt/{attempt_id}/'
+        return self.base_url + u'/api/v1/exam/{exam_id}/attempt/{attempt_id}/'
 
     @property
     def create_exam_attempt_url(self):
         "Returns the create exam url"
-        return self.base_url + u'/v1/exam/{exam_id}/attempt/'
+        return self.base_url + u'/api/v1/exam/{exam_id}/attempt/'
 
     @property
     def create_exam_url(self):
         "Returns create exam url"
-        return self.base_url + u'/v1/exam/'
+        return self.base_url + u'/api/v1/exam/'
 
     @property
     def exam_url(self):
         "Returns exam url"
-        return self.base_url + u'/v1/exam/{exam_id}/'
+        return self.base_url + u'/api/v1/exam/{exam_id}/'
 
     @property
     def config_url(self):
         "Returns proctor config url"
-        return self.base_url + u'/v1/config/'
+        return self.base_url + u'/api/v1/config/'
+
+    @property
+    def instructor_url(self):
+        "Returns the instructor dashboard url"
+        return self.base_url + u'/api/v1/instructor/{client_id}/?jwt={jwt}'
 
     def __init__(self, client_id=None, client_secret=None, **kwargs):
         """
@@ -76,6 +88,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the metadata and configuration options for the proctoring service
         """
         url = self.config_url
+        log.debug('Requesting config from %r', url)
         response = self.session.get(url).json()
         return response
 
@@ -84,6 +97,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the exam metadata stored by the proctoring service
         """
         url = self.exam_url.format(exam_id=exam['id'])
+        log.debug('Requesting exam from %r', url)
         response = self.session.get(url).json()
         return response
 
@@ -104,7 +118,9 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         url = self.create_exam_attempt_url.format(exam_id=exam['external_id'])
         payload = context
         payload['status'] = 'created'
-        response = self.session.post(url, json=payload).json()
+        log.debug('Creating exam attempt for %r at %r', exam['external_id'], url)
+        response = self.session.post(url, json=payload)
+        response = response.json()
         return response['id']
 
     def start_exam_attempt(self, exam, attempt):
@@ -150,8 +166,39 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             url = self.exam_url.format(exam_id=external_id)
         else:
             url = self.create_exam_url
-        response = self.session.post(url, json=exam).json()
-        return response.get('id')
+        log.debug('Saving exam to %r', url)
+        try:
+            response = self.session.post(url, json=exam)
+            data = response.json()
+        except Exception:  # pylint: disable=broad-except
+            log.exception('saving exam. %r', response.content)
+            data = {}
+        return data.get('id')
+
+    def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None):
+        """
+        Return a URL to the instructor dashboard
+        course_id: str
+        user: dict of {id, full_name, email} for the instructor or reviewer
+        exam_id: str optional exam external id
+        attempt_id: str optional exam attempt external id
+        """
+        exp = time.time() + self.token_expiration_time
+        token = {
+            'course_id': course_id,
+            'user': user,
+            'iss': self.client_id,
+            'jti': uuid.uuid4().hex,
+            'exp': exp
+        }
+        if exam_id:
+            token['exam_id'] = exam_id
+            if attempt_id:
+                token['attempt_id'] = attempt_id
+        encoded = jwt.encode(token, self.client_secret)
+        url = self.instructor_url.format(client_id=self.client_id, jwt=encoded)
+        log.debug('Created instructor url for %r %r %r', course_id, exam_id, attempt_id)
+        return url
 
     def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):
         """
@@ -162,5 +209,6 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         else:
             payload = None
         url = self.exam_attempt_url.format(exam_id=exam, attempt_id=attempt)
+        log.debug('Making %r attempt request at %r', method, url)
         response = self.session.request(method, url, json=payload).json()
         return response

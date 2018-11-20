@@ -70,10 +70,10 @@ from edx_proctoring.models import (
     ProctoredExamSoftwareSecureComment,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptStatus,
     ProctoredExamReviewPolicy,
 )
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from .test_services import (
     MockCreditService,

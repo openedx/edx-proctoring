@@ -19,7 +19,6 @@ from edx_proctoring.models import (
     ProctoredExamSoftwareSecureReview,
     ProctoredExamSoftwareSecureReviewHistory,
     ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptStatus,
 )
 from edx_proctoring.api import update_attempt_status
 from edx_proctoring.backends import get_backend_provider
@@ -28,6 +27,7 @@ from edx_proctoring.exceptions import (
     ProctoredExamIllegalStatusTransition,
     StudentExamAttemptDoesNotExistsException,
 )
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 
 class ProctoredExamReviewPolicyAdmin(admin.ModelAdmin):

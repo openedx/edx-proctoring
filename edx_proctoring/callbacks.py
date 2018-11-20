@@ -11,7 +11,7 @@ from edx_proctoring.api import (
     get_exam_attempt_by_code,
     mark_exam_attempt_as_ready,
 )
-from edx_proctoring.models import ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 log = logging.getLogger(__name__)
 

@@ -23,8 +23,8 @@ from edx_proctoring.api import (
 )
 from edx_proctoring.models import (
     ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptStatus,
 )
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from edx_proctoring.tests.test_services import (
     MockCreditService,
