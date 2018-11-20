@@ -3,6 +3,8 @@ Tests for the REST backend
 """
 import json
 
+import jwt
+
 import responses
 
 from django.test import TestCase
@@ -123,6 +125,16 @@ class RESTBackendTests(TestCase):
         self.assertEqual(external_id, 'abcdefg')
 
     @responses.activate
+    def test_failed_exam_save(self):
+        responses.add(
+            responses.POST,
+            url=self.provider.exam_url.format(exam_id=self.backend_exam['external_id']),
+            body='}{bad',
+        )
+        external_id = self.provider.on_exam_saved(self.backend_exam)
+        self.assertEqual(external_id, None)
+
+    @responses.activate
     def test_register_exam_attempt(self):
         context = {
             'attempt_code': '2',
@@ -196,9 +208,21 @@ class RESTBackendTests(TestCase):
         base_url = self.provider.get_instructor_url(course_id, user)
         self.assertIn('?jwt=', base_url)
         # now try with an exam_id and an attempt_id.
-        # the tokens will be different, but let's not bother decoding them
-        exam_url = self.provider.get_instructor_url(course_id, user, exam_id='abcd')
+        # the tokens will be different
+        exam_id = 'abcd'
+        attempt_id = 'defgh'
+        exam_url = self.provider.get_instructor_url(course_id, user, exam_id=exam_id)
         self.assertNotEqual(exam_url, base_url)
-        attempt_url = self.provider.get_instructor_url(course_id, user, exam_id='abcd', attempt_id='defgh')
+        attempt_url = self.provider.get_instructor_url(course_id, user, exam_id='abcd', attempt_id=attempt_id)
         self.assertNotEqual(attempt_url, base_url)
         self.assertNotEqual(attempt_url, exam_url)
+        # let's ensure that the last token contains all of the expected data
+        token = attempt_url.split('jwt=')[1]
+        decoded = jwt.decode(token,
+                             issuer=self.provider.client_id,
+                             key=self.provider.client_secret,
+                             algorithms=['HS256'])
+        self.assertEqual(decoded['user'], user)
+        self.assertEqual(decoded['course_id'], course_id)
+        self.assertEqual(decoded['exam_id'], exam_id)
+        self.assertEqual(decoded['attempt_id'], attempt_id)

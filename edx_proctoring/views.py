@@ -960,6 +960,7 @@ class InstructorDashboard(AuthenticatedAPIView):
         """
         Redirect to dashboard for a given course and optional exam_id
         """
+        exam = None
         if exam_id:
             exam = get_exam_by_id(exam_id)
         else:
@@ -970,10 +971,14 @@ class InstructorDashboard(AuthenticatedAPIView):
                     # In this case, what are we supposed to do?!
                     # It should not be possible to get in this state, because
                     # course teams will be prevented from updating the backend after the course start date
-                    raise ProctoredBaseException("Multiple backends for course %s %s != %s" %
-                                                 (course_id, found_backend, exam['backend']))
+                    error_message = "Multiple backends for course %r %r != %r" % (course_id,
+                                                                                  found_backend,
+                                                                                  exam['backend'])
+                    return Response(data=error_message, status=400)
                 else:
                     found_backend = exam_backend
+        if exam is None:
+            return Response(data='No exam found for course %r.' % course_id, status=404)
         backend = get_backend_provider(exam)
         user = {
             'id': request.user.id,

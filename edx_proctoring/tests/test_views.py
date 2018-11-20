@@ -2551,8 +2551,17 @@ class TestInstructorDashboard(LoggedInTestCase):
             is_active=True,
             backend='null',
         )
-        with self.assertRaises(Exception):
-            self.client.get(
-                reverse('edx_proctoring.instructor_dashboard_course',
-                        kwargs={'course_id': course_id})
-            )
+        response = self.client.get(
+            reverse('edx_proctoring.instructor_dashboard_course',
+                    kwargs={'course_id': course_id})
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Multiple backends for course', response.data)
+
+    def test_error_with_no_exams(self):
+        course_id = 'a/b/c'
+        response = self.client.get(
+            reverse('edx_proctoring.instructor_dashboard_course',
+                    kwargs={'course_id': course_id})
+        )
+        self.assertEqual(response.status_code, 404)

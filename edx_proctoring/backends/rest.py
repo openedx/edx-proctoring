@@ -88,7 +88,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the metadata and configuration options for the proctoring service
         """
         url = self.config_url
-        log.debug('Requesting config from %s', url)
+        log.debug('Requesting config from %r', url)
         response = self.session.get(url).json()
         return response
 
@@ -97,7 +97,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the exam metadata stored by the proctoring service
         """
         url = self.exam_url.format(exam_id=exam['id'])
-        log.debug('Requesting exam from %s', url)
+        log.debug('Requesting exam from %r', url)
         response = self.session.get(url).json()
         return response
 
@@ -118,7 +118,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         url = self.create_exam_attempt_url.format(exam_id=exam['external_id'])
         payload = context
         payload['status'] = 'created'
-        log.debug('Creating exam attempt for %s at %s', exam['external_id'], url)
+        log.debug('Creating exam attempt for %r at %r', exam['external_id'], url)
         response = self.session.post(url, json=payload)
         response = response.json()
         return response['id']
@@ -166,12 +166,12 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             url = self.exam_url.format(exam_id=external_id)
         else:
             url = self.create_exam_url
-        log.debug('Saving exam to %s', url)
+        log.debug('Saving exam to %r', url)
         try:
             response = self.session.post(url, json=exam)
             data = response.json()
         except Exception:  # pylint: disable=broad-except
-            log.exception('saving exam. %s', response.content)
+            log.exception('saving exam. %r', response.content)
             data = {}
         return data.get('id')
 
@@ -179,7 +179,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         Return a URL to the instructor dashboard
         course_id: str
-        user: dict of {id, full_name, email}
+        user: dict of {id, full_name, email} for the instructor or reviewer
         exam_id: str optional exam external id
         attempt_id: str optional exam attempt external id
         """
@@ -197,7 +197,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
                 token['attempt_id'] = attempt_id
         encoded = jwt.encode(token, self.client_secret)
         url = self.instructor_url.format(client_id=self.client_id, jwt=encoded)
-        log.debug('Created instructor url for %s %s %s', course_id, exam_id, attempt_id)
+        log.debug('Created instructor url for %r %r %r', course_id, exam_id, attempt_id)
         return url
 
     def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):
@@ -209,6 +209,6 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         else:
             payload = None
         url = self.exam_attempt_url.format(exam_id=exam, attempt_id=attempt)
-        log.debug('Making %s attempt request at %s', method, url)
+        log.debug('Making %r attempt request at %r', method, url)
         response = self.session.request(method, url, json=payload).json()
         return response
