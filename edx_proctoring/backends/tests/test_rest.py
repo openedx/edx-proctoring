@@ -6,6 +6,7 @@ import json
 import jwt
 
 import responses
+from mock import patch
 
 from django.test import TestCase
 from django.utils import translation
@@ -216,9 +217,22 @@ class RESTBackendTests(TestCase):
         self.assertEqual(payload, new_payload)
 
     def test_get_javascript(self):
-        # A real backend would return real javascript from backend.js
+        # A real backend would return a real bundle url from webpack
+        # but in this context we'll fail looking up webpack's stats file
         with self.assertRaises(IOError):
             self.provider.get_javascript()
+
+    @patch('edx_proctoring.backends.rest.get_files')
+    def test_get_javascript_bundle(self, get_files_mock):
+        get_files_mock.return_value = [{'name': 'rest', 'url': '/there/it/is'}]
+        javascript_url = self.provider.get_javascript()
+        self.assertEqual(javascript_url, '/there/it/is')
+
+    @patch('edx_proctoring.backends.rest.get_files')
+    def test_get_javascript_empty_bundle(self, get_files_mock):
+        get_files_mock.return_value = []
+        javascript_url = self.provider.get_javascript()
+        self.assertEqual(javascript_url, '')
 
     def test_instructor_url(self):
         user = {

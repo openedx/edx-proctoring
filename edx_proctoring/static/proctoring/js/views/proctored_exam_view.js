@@ -3,10 +3,10 @@ var edx = edx || {};
 (function (Backbone, $, _, gettext) {
     'use strict';
 
-    edx.coursware = edx.coursware || {};
-    edx.coursware.proctored_exam = edx.coursware.proctored_exam || {};
+    edx.courseware = edx.courseware || {};
+    edx.courseware.proctored_exam = edx.courseware.proctored_exam || {};
 
-    edx.coursware.proctored_exam.ProctoredExamView = Backbone.View.extend({
+    edx.courseware.proctored_exam.ProctoredExamView = Backbone.View.extend({
         initialize: function (options) {
             _.bindAll(this, "detectScroll");
             this.$el = options.el;
@@ -192,5 +192,5 @@ var edx = edx || {};
             event.preventDefault();
         }
     });
-    this.edx.coursware.proctored_exam.ProctoredExamView = edx.coursware.proctored_exam.ProctoredExamView;
+    this.edx.courseware.proctored_exam.ProctoredExamView = edx.courseware.proctored_exam.ProctoredExamView;
 }).call(this, Backbone, $, _, gettext);

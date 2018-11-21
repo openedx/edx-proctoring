@@ -9,6 +9,7 @@ jsonfield>=2.0.2
 pytz>=2018
 pycryptodomex>=3.4.7
 python-dateutil>=2.1
+django-webpack-loader>=0.6.0
 
 # edX packages
 event-tracking>=0.2.5
