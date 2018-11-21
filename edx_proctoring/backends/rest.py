@@ -5,7 +5,8 @@ docs/backends.rst
 import logging
 import time
 import uuid
-import pkg_resources
+
+from webpack_loader.utils import get_files
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -72,10 +73,13 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
     def get_javascript(self):
         """
-        Returns the backend javascript to embed on each proctoring page
+        Returns the url of the javascript bundle into which the provider's JS will be loaded
         """
         package = self.__class__.__module__.split('.')[0]
-        return pkg_resources.resource_string(package, 'backend.js')
+        bundle_chunks = get_files(package, config="WORKERS")
+        if bundle_chunks:
+            return bundle_chunks[0]["url"]
+        return ''
 
     def get_software_download_url(self):
         """

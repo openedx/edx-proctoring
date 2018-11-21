@@ -30,7 +30,7 @@ describe('ProctoredExamView', function () {
             lastFetched: new Date()
         });
 
-        this.proctored_exam_view = new edx.coursware.proctored_exam.ProctoredExamView(
+        this.proctored_exam_view = new edx.courseware.proctored_exam.ProctoredExamView(
             {
                 model: this.model,
                 el: $(".proctored_exam_status"),
