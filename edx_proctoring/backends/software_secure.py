@@ -14,12 +14,10 @@ import logging
 import unicodedata
 import six
 
-import requests
-
+from Cryptodome.Cipher import DES3
 from django.conf import settings
 from django.urls import reverse
-
-from Cryptodome.Cipher import DES3
+import requests
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring import constants
@@ -30,6 +28,14 @@ from edx_proctoring.exceptions import (
 from edx_proctoring.models import SoftwareSecureReviewStatus
 
 log = logging.getLogger(__name__)
+
+try:
+    from student.tasks import send_exam_review_email
+except ImportError:
+    log.warning('Cannot import packages to send email.')
+    SEND_EMAIL = False
+else:
+    SEND_EMAIL = True
 
 
 SOFTWARE_SECURE_INVALID_CHARS = u'[]<>#:|!?/\'"*\\'
@@ -145,6 +151,18 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         # redact the videoReviewLink from the payload
         if 'videoReviewLink' in payload:
+            if payload['reviewStatus'] == 'second_review_required' and SEND_EMAIL and settings.EXAM_REVIEWER_EMAILS:
+                msg = 'Exam attempt code: {}; video review link: {}'.format(
+                    payload['examMetaData']['examCode'], payload['videoReviewLink']
+                )
+                for email in settings.EXAM_REVIEWER_EMAILS:
+                    log.info("videoReviewLink is sent to the reviewer's email: {}".format(email))
+                    send_exam_review_email.delay(
+                        '[OSPP] Exam Video Review Link',
+                        msg,
+                        settings.DEFAULT_FROM_EMAIL,
+                        email
+                    )
             del payload['videoReviewLink']
 
         log_msg = (
