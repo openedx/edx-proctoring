@@ -78,6 +78,10 @@ var edx = edx || {};
                 // remove callback on unload event
                 $(window).unbind('beforeunload', this.unloadMessage);
             }
+            var desktopApplicationJsUrl = this.model.get('desktop_application_js_url');
+            if (desktopApplicationJsUrl && !edx.courseware.proctored_exam.configuredWorkerURL) {
+              edx.courseware.proctored_exam.configuredWorkerURL = desktopApplicationJsUrl;
+            }
 
             this.render();
         },
@@ -140,6 +144,19 @@ var edx = edx || {};
         updateRemainingTime: function (self) {
             self.timerTick ++;
             self.secondsLeft --;
+            if (self.timerTick % self.poll_interval === self.poll_interval / 2) {
+              edx.courseware.proctored_exam.pingApplication().catch(function() {
+                return Promise.resolve($.ajax({
+                  data: {
+                    action: 'submit'
+                  },
+                  url: self.model.url + '/' + self.model.get('attempt_id'),
+                  action: 'PUT'
+                })).then(function() {
+                  self.reloadPage();
+                });
+              });
+            }
             if (self.timerTick % self.poll_interval === 0) {
                 var url = self.model.url + '/' + self.model.get('attempt_id');
                 var queryString = '?sourceid=in_exam&proctored=' + self.model.get('taking_as_proctored');

@@ -11,6 +11,10 @@ var edx = edx || {};
     'start': {
       promptEventName: 'startExamAttempt',
       responseEventName: 'examAttemptStarted'
+    },
+    'ping': {
+      promptEventName: 'ping',
+      responseEventName: 'echo'
     }
   };
 
@@ -89,6 +93,9 @@ var edx = edx || {};
       updateExamAttemptStatusPromise(actionUrl, action)()
         .then(reloadPage);
     }
+  }
+  edx.courseware.proctored_exam.pingApplication = function() {
+    return workerPromiseForEventNames(actionToMessageTypesMap.ping)();
   }
 
 
