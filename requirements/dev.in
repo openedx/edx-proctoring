@@ -4,7 +4,7 @@
 
 diff-cover                # Changeset diff test coverage
 edx_lint==0.5.5           # Python code linting rules
-edx-i18n-tools==0.4.4     # For i18n_tool dummy
+edx-i18n-tools            # For i18n_tool dummy
 pip-tools                 # Requirements file management
 tox                       # virtualenv management for tests
 tox-battery               # Makes tox aware of requirements file changes
