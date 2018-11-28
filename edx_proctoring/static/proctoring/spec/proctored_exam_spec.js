@@ -74,7 +74,7 @@ describe('ProctoredExamView', function () {
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         expect(reloadPage).toHaveBeenCalled();
     });
-    it("resets the remainig exam time after the ajax response", function(){
+    it("resets the remaining exam time after the ajax response", function(){
         this.server.respondWith(
             "GET",
             "/api/edx_proctoring/v1/proctored_exam/attempt/" +
@@ -94,5 +94,27 @@ describe('ProctoredExamView', function () {
         this.server.respond();
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         expect(reloadPage).toHaveBeenCalled();
+    });
+    it("calls external js global function on off-beat", function() {
+        edx.courseware.proctored_exam.pingApplication = jasmine.createSpy().and.returnValue(Promise.reject());
+        this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval / 2 - 1;
+        this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
+        expect(edx.courseware.proctored_exam.pingApplication).toHaveBeenCalled();
+    });
+    it("reloads the page after failure-state ajax call", function(done) {
+        this.server.respondWith(
+            function(request) {
+                request.respond(200,
+                                {"Content-Type": "application/json"},
+                                "{}"
+                );
+            }
+        );
+        var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
+        this.proctored_exam_view.submitExamForFailureState().done(function() {
+            expect(reloadPage).toHaveBeenCalled();
+            done();
+        });
+        this.server.respond();
     });
 });

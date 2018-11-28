@@ -145,17 +145,7 @@ var edx = edx || {};
             self.timerTick ++;
             self.secondsLeft --;
             if (self.timerTick % self.poll_interval === self.poll_interval / 2) {
-              edx.courseware.proctored_exam.pingApplication().catch(function() {
-                return Promise.resolve($.ajax({
-                  data: {
-                    action: 'submit'
-                  },
-                  url: self.model.url + '/' + self.model.get('attempt_id'),
-                  action: 'PUT'
-                })).then(function() {
-                  self.reloadPage();
-                });
-              });
+              edx.courseware.proctored_exam.pingApplication().catch(self.submitExamForFailureState.bind(self));
             }
             if (self.timerTick % self.poll_interval === 0) {
                 var url = self.model.url + '/' + self.model.get('attempt_id');
@@ -192,6 +182,18 @@ var edx = edx || {};
                 self.reloadPage();
             }
         },
+        submitExamForFailureState: function () {
+            var self = this;
+            return $.ajax({
+                data: {
+                    action: 'submit'
+                },
+                url: this.model.url + '/' + this.model.get('attempt_id'),
+                type: 'PUT'
+            }).done(function() {
+                self.reloadPage();
+            });
+      },
         toggleTimerVisibility: function (event) {
             var button = $(event.currentTarget);
             var icon = button.find('i');
