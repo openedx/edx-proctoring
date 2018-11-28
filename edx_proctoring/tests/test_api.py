@@ -1654,6 +1654,25 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         self.assertIsNone(summary)
 
+    @patch('edx_proctoring.backends.tests.test_backend.TestBackendProvider')
+    def test_update_exam_attempt_timed(self, mock_backend):
+        """
+        Make sure that timed exams do not try to update status in the backend
+        """
+        attempt = self._create_unstarted_exam_attempt(is_proctored=False)
+        update_attempt_status(
+            attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.started
+        )
+        mock_backend.start_exam_attempt.assert_not_called()
+        update_attempt_status(
+            attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.submitted
+        )
+        mock_backend.stop_exam_attempt.assert_not_called()
+
     def test_update_exam_attempt(self):
         """
         Make sure we restrict which fields we can update
