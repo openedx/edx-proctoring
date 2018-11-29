@@ -1,11 +1,12 @@
-var edx = edx || {};
+edx = edx || {};
 
-(function (Backbone, $, _, gettext) {
+(function(Backbone, $, _, gettext) {
     'use strict';
 
+    var viewHelper, examStatusReadableFormat;
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
-    var examStatusReadableFormat = {
+    examStatusReadableFormat = {
         eligible: gettext('Eligible'),
         created: gettext('Created'),
         download_software_clicked: gettext('Download Software Clicked'),
@@ -24,27 +25,24 @@ var edx = edx || {};
         onboarding_failed: gettext('Onboarding Failed'),
         onboarding_expired: gettext('Onboarding Expired')
     };
-    var viewHelper = {
+    viewHelper = {
         getDateFormat: function(date) {
             if (date) {
                 return new Date(date).toString('MMM dd, yyyy h:mmtt');
-            }
-            else {
+            } else {
                 return '---';
             }
-
         },
         getExamAttemptStatus: function(status) {
             if (status in examStatusReadableFormat) {
-                return examStatusReadableFormat[status]
-            }
-            else {
-                return status
+                return examStatusReadableFormat[status];
+            } else {
+                return status;
             }
         }
     };
     edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = Backbone.View.extend({
-        initialize: function (options) {
+        initialize: function() {
             this.setElement($('.student-proctored-exam-container'));
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptCollection();
             this.tempate_url = '/static/proctoring/templates/student-proctored-exam-attempts.underscore';
@@ -56,7 +54,7 @@ var edx = edx || {};
             this.attempt_url = this.model.url;
             this.collection.url = this.initial_url + this.course_id;
             this.inSearchMode = false;
-            this.searchText = "";
+            this.searchText = '';
 
             /* re-render if the model changes */
             this.listenTo(this.collection, 'change', this.collectionChanged);
@@ -65,17 +63,17 @@ var edx = edx || {};
             this.loadTemplateData();
         },
         events: {
-            "click .remove-attempt": "onRemoveAttempt",
+            'click .remove-attempt': 'onRemoveAttempt',
             'click li > a.target-link': 'getPaginatedAttempts',
             'click .search-attempts > span.search': 'searchAttempts',
             'click .search-attempts > span.clear-search': 'clearSearch'
         },
         searchAttempts: function(event) {
             var searchText = $('#search_attempt_id').val();
-            if (searchText !== "") {
+            if (searchText !== '') {
                 this.inSearchMode = true;
                 this.searchText = searchText;
-                this.collection.url = this.initial_url + this.course_id + "/search/" + searchText;
+                this.collection.url = this.initial_url + this.course_id + '/search/' + searchText;
                 this.hydrate();
                 event.stopPropagation();
                 event.preventDefault();
@@ -83,28 +81,29 @@ var edx = edx || {};
         },
         clearSearch: function(event) {
             this.inSearchMode = false;
-            this.searchText = "";
+            this.searchText = '';
             this.collection.url = this.initial_url + this.course_id;
             this.hydrate();
             event.stopPropagation();
             event.preventDefault();
         },
         getPaginatedAttempts: function(event) {
-            var target = $(event.currentTarget);
-            this.collection.url = target.data('target-url');
+            var $target = $(event.currentTarget);
+            this.collection.url = $target.data('target-url');
             this.hydrate();
             event.stopPropagation();
             event.preventDefault();
         },
-        getCSRFToken: function () {
+        getCSRFToken: function() {
             var cookieValue = null;
             var name = 'csrftoken';
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
+            var cookie, cookies, i;
+            if (document.cookie && document.cookie !== '') {
+                cookies = document.cookie.split(';');
+                for (i = 0; i < cookies.length; i += 1) {
+                    cookie = jQuery.trim(cookies[i]);
                     // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                         break;
                     }
@@ -112,18 +111,15 @@ var edx = edx || {};
             }
             return cookieValue;
         },
-        loadTemplateData: function () {
+        loadTemplateData: function() {
             var self = this;
-            $.ajax({url: self.tempate_url, dataType: "html"})
-                .error(function (jqXHR, textStatus, errorThrown) {
-
-                })
-                .done(function (template_data) {
-                    self.template = _.template(template_data);
+            $.ajax({url: self.tempate_url, dataType: 'html'})
+                .done(function(templateData) {
+                    self.template = _.template(templateData);
                     self.hydrate();
                 });
         },
-        hydrate: function () {
+        hydrate: function() {
             /* This function will load the bound collection */
 
             /* add and remove a class when we do the initial loading */
@@ -131,78 +127,79 @@ var edx = edx || {};
             /* loading, like a spinner */
             var self = this;
             self.collection.fetch({
-                success: function () {
+                success: function() {
                     self.render();
                 }
             });
         },
-        collectionChanged: function () {
+        collectionChanged: function() {
             this.hydrate();
         },
-        render: function () {
+        render: function() {
+            var dataJson, startPage, endPage, data, html;
             if (this.template !== null) {
-
-                var data_json = this.collection.toJSON()[0];
+                dataJson = this.collection.toJSON()[0];
 
                 // calculate which pages ranges to display
                 // show no more than 5 pages at the same time
-                var start_page = data_json.pagination_info.current_page - 2;
+                startPage = dataJson.pagination_info.current_page - 2;
 
-                if (start_page < 1) {
-                    start_page = 1;
+                if (startPage < 1) {
+                    startPage = 1;
                 }
 
-                var end_page = start_page + 4;
+                endPage = startPage + 4;
 
-                if (end_page > data_json.pagination_info.total_pages) {
-                    end_page = data_json.pagination_info.total_pages;
+                if (endPage > dataJson.pagination_info.total_pages) {
+                    endPage = dataJson.pagination_info.total_pages;
                 }
 
-                _.each(data_json.proctored_exam_attempts, function(proctored_exam_attempt) {
-                    if (proctored_exam_attempt.proctored_exam.is_proctored) {
-                        if (proctored_exam_attempt.proctored_exam.is_practice_exam) {
-                            proctored_exam_attempt.exam_attempt_type = gettext('Practice');
-                        } else {
-                            proctored_exam_attempt.exam_attempt_type = gettext('Proctored');
-                        }
-                    } else {
-                        proctored_exam_attempt.exam_attempt_type = gettext('Timed');
+                _.each(
+                    dataJson.proctored_exam_attempts,
+                    function(proctoredExamAttempt) {
+                        var isProctored = proctoredExamAttempt.proctored_exam.is_proctored;
+                        var isPractice = proctoredExamAttempt.proctored_exam.is_practice_exam;
+                        var proctoredText = isPractice ? gettext('Practice') : gettext('Proctored');
+                        // eslint-disable-next-line no-param-reassign
+                        proctoredExamAttempt.exam_attempt_type = !isProctored ? gettext('Timed') : proctoredText;
                     }
-                });
+                );
 
-                var data = {
-                    proctored_exam_attempts: data_json.proctored_exam_attempts,
-                    pagination_info: data_json.pagination_info,
-                    attempt_url: data_json.attempt_url,
+                data = {
+                    proctored_exam_attempts: dataJson.proctored_exam_attempts,
+                    pagination_info: dataJson.pagination_info,
+                    attempt_url: dataJson.attempt_url,
                     inSearchMode: this.inSearchMode,
                     searchText: this.searchText,
-                    start_page: start_page,
-                    end_page: end_page
+                    start_page: startPage,
+                    end_page: endPage
                 };
                 _.extend(data, viewHelper);
-                var html = this.template(data);
+                html = this.template(data);
                 this.$el.html(html);
-           }
+            }
         },
-        onRemoveAttempt: function (event) {
+        onRemoveAttempt: function(event) {
+            var $target, attemptId;
+            var self = this;
             event.preventDefault();
 
             // confirm the user's intent
+            // eslint-disable-next-line no-alert
             if (!confirm(gettext('Are you sure you want to remove this student\'s exam attempt?'))) {
                 return;
             }
             $('body').css('cursor', 'wait');
-            var $target = $(event.currentTarget);
-            var attemptId = $target.data("attemptId");
+            $target = $(event.currentTarget);
+            attemptId = $target.data('attemptId');
 
-            var self = this;
             self.model.url = this.attempt_url + attemptId;
-            self.model.fetch( {
+            self.model.fetch({
                 headers: {
-                    "X-CSRFToken": this.getCSRFToken()
+                    'X-CSRFToken': this.getCSRFToken()
                 },
                 type: 'DELETE',
-                success: function () {
+                success: function() {
                     // fetch the attempts again.
                     self.hydrate();
                     $('body').css('cursor', 'auto');
@@ -210,5 +207,6 @@ var edx = edx || {};
             });
         }
     });
-    this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = edx.instructor_dashboard.proctoring.ProctoredExamAttemptView;
+    this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptView =
+      edx.instructor_dashboard.proctoring.ProctoredExamAttemptView;
 }).call(this, Backbone, $, _, gettext);
