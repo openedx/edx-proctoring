@@ -167,12 +167,15 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             url = self.exam_url.format(exam_id=external_id)
         else:
             url = self.create_exam_url
-        log.debug('Saving exam to %r', url)
+        log.info('Saving exam to %r', url)
+        response = None
         try:
             response = self.session.post(url, json=exam)
             data = response.json()
-        except Exception:  # pylint: disable=broad-except
-            log.exception('saving exam. %r', response.content)
+        except Exception as exc:  # pylint: disable=broad-except
+            # pylint: disable=no-member
+            content = exc.response.content if hasattr(exc, 'response') else response.content
+            log.exception('failed to save exam. %r', content)
             data = {}
         return data.get('id')
 
