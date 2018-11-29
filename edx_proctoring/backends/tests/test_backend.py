@@ -226,6 +226,17 @@ class BackendChooserTests(TestCase):
         ]
         self.assertEqual(choices, expected)
 
+    def test_no_backend_for_timed_exams(self):
+        """
+        Timed exams should not return a backend, even if one has accidentally been set
+        """
+        exam = {
+            'is_proctored': False,
+            'backend': 'test'
+        }
+        backend = get_backend_provider(exam)
+        self.assertIsNone(backend)
+
     def test_invalid_configurations(self):
         """
         Test that invalid backends throw the right exceptions
