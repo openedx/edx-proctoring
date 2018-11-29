@@ -1069,10 +1069,13 @@ def update_attempt_status(exam_id, user_id, to_status,
 
     # call back to the backend to register the end of the exam, if necessary
     backend = get_backend_provider(exam)
-    if to_status == ProctoredExamStudentAttemptStatus.started:
-        backend.start_exam_attempt(exam['external_id'], attempt['external_id'])
-    if to_status == ProctoredExamStudentAttemptStatus.submitted:
-        backend.stop_exam_attempt(exam['external_id'], attempt['external_id'])
+    if backend:
+        # only proctored exams have a backend
+        # timed exams have no backend
+        if to_status == ProctoredExamStudentAttemptStatus.started:
+            backend.start_exam_attempt(exam['external_id'], attempt['external_id'])
+        if to_status == ProctoredExamStudentAttemptStatus.submitted:
+            backend.stop_exam_attempt(exam['external_id'], attempt['external_id'])
     # we user the 'status' field as the name of the event 'verb'
     emit_event(exam, attempt['status'], attempt=attempt)
 
