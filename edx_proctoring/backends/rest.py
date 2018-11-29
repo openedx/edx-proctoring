@@ -203,17 +203,20 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
     def _get_language_headers(self):
         """
-        Makes the Accept-Language header based on the currently active language
+        Returns a dictionary of the Accept-Language headers
         """
+        # This import is here because developers writing backends which subclass this class
+        # may want to import this module and use the other methods, without having to run in the context
+        # of django settings, etc.
         from django.conf import settings
         from django.utils.translation import get_language
 
-        headers = {}
         current_lang = get_language()
         default_lang = settings.LANGUAGE_CODE
+        lang_header = default_lang
         if current_lang and current_lang != default_lang:
-            headers['Accept-Language'] = '{};{}'.format(current_lang, default_lang)
-        return headers
+            lang_header = '{};{}'.format(current_lang, default_lang)
+        return {'Accept-Language': lang_header}
 
     def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):
         """
