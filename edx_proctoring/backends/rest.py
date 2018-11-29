@@ -175,7 +175,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         except Exception as exc:  # pylint: disable=broad-except
             # pylint: disable=no-member
             content = exc.response.content if hasattr(exc, 'response') else response.content
-            log.exception('saving exam. %r', content)
+            log.exception('failed to save exam. %r', content)
             data = {}
         return data.get('id')
 

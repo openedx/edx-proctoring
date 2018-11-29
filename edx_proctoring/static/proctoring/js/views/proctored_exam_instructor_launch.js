@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function (Backbone, $, _, gettext) {
+(function (Backbone, $, _) {
     'use strict';
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -9,9 +9,9 @@ var edx = edx || {};
         initialize: function (options) {
             this.setElement($('.student-review-dashboard-container'));
             this.tempate_url = '/static/proctoring/templates/dashboard.underscore';
-            this.template = null;
+            this.iframeHTML = null;
             this.doRender = true;
-            this.template_data = {
+            this.context = {
                 dashboardURL: '/api/edx_proctoring/v1/instructor/' + this.$el.data('course-id')
             };
             var self = this;
@@ -28,18 +28,16 @@ var edx = edx || {};
                 .error(function (jqXHR, textStatus, errorThrown) {
 
                 })
-                .done(function (template_data) {
-                    self.template = _.template(template_data);
+                .done(function (template_html) {
+                    self.iframeHTML = _.template(template_html)(self.context);
                 });
         },
         render: function (ui) {
-            if (ui.newPanel.eq(this.$el)) {
-                if (this.doRender) {
-                    this.$el.html(this.template(this.template_data));
-                    this.doRender = false;
-                }
+            if (ui.newPanel.eq(this.$el) && this.doRender && this.iframeHTML) {
+                this.$el.html(this.iframeHTML);
+                this.doRender = false;
             }
         },
     });
     this.edx.instructor_dashboard.proctoring.ProctoredExamDashboardView = edx.instructor_dashboard.proctoring.ProctoredExamDashboardView;
-}).call(this, Backbone, $, _, gettext);
+}).call(this, Backbone, $, _);
