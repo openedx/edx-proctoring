@@ -32,7 +32,7 @@ deploy:
 - provider: npm
   user: oscm@edx.org
   api_key:
-    secure: <HELP ME, FEANIL>
+    secure: Bs6z6iFpO86mav8qo3cDhcjDckNXDGfcbuZtSWbbrIFe9Q0VSVz046s9Yo7hHjjaRUSb6frlTC8lYRNDZ2m7TxXrh4vXHrHsr9ajcJXUZJCwqnnxIEFeHe02hD/7RPJ3xK7tkGCxd/2AUHEHXYylGOePDc/Ck/2VYmGQ0EijcfZeOJ5macZ65TP0Kwvf+IDOko++W94f3Ujglu+lWryBTR61Yaf7zt7fKQVgjxGQjb07F1ze39A00xkYYYbIDSrzjZeebs/pzCjZhrrkzTwReDItTxk9K7cEx5nlRvQul6Wj5USe1uBL5SodP2XCp3mi7XrB/LOt6kDEcdREUzqZUqB5n21VVey0JWihd579PIHFhTXDQpdSJNhOi86Mv8lj3v/XUTRaZBV+2OPVGKSRgmJ0Qv7BkQXOp8tzSN4AINrYD2bMod3jVaGcjg7MYUpJ7B2swWUSa0aLLUe1M2RYzfQ2CiGeN9jCdz8jmQie+HGc5CkaMFtoT1OUt1R7wuO2RNo8pYrP0KJTWpOCHlGn+5r17iDOPXoc/m6a5wN3sxMrARqF5A/PRv3uY/Nb+4bfTeczDZudpxVxGFxe85rahXjh7tSHX5JOiaOXDO9xWj2EBRKKeD4xbgRSBZvjnRrZ0f9ygZjuzFv86KixwYI3HFo21SJQmIaJIUSOoM+r1lQ=
   on:
     tags: true
     condition: $TRAVIS_TAG =~ ^npmv[0-9]+\.[0-9]+\.[0-9]+$
