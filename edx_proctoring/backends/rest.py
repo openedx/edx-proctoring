@@ -6,6 +6,7 @@ import logging
 import time
 import uuid
 import pkg_resources
+
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_rest_api_client.client import OAuthAPIClient
@@ -89,7 +90,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         url = self.config_url
         log.debug('Requesting config from %r', url)
-        response = self.session.get(url).json()
+        response = self.session.get(url, headers=self._get_language_headers()).json()
         return response
 
     def get_exam(self, exam):
@@ -200,6 +201,23 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         log.debug('Created instructor url for %r %r %r', course_id, exam_id, attempt_id)
         return url
 
+    def _get_language_headers(self):
+        """
+        Returns a dictionary of the Accept-Language headers
+        """
+        # This import is here because developers writing backends which subclass this class
+        # may want to import this module and use the other methods, without having to run in the context
+        # of django settings, etc.
+        from django.conf import settings
+        from django.utils.translation import get_language
+
+        current_lang = get_language()
+        default_lang = settings.LANGUAGE_CODE
+        lang_header = default_lang
+        if current_lang and current_lang != default_lang:
+            lang_header = '{};{}'.format(current_lang, default_lang)
+        return {'Accept-Language': lang_header}
+
     def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):
         """
         Calls backend attempt API
@@ -209,6 +227,9 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         else:
             payload = None
         url = self.exam_attempt_url.format(exam_id=exam, attempt_id=attempt)
+        headers = {}
+        if method == 'GET':
+            headers.update(self._get_language_headers())
         log.debug('Making %r attempt request at %r', method, url)
-        response = self.session.request(method, url, json=payload).json()
+        response = self.session.request(method, url, json=payload, headers=headers).json()
         return response
