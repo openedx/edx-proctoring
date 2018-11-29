@@ -1,0 +1,4 @@
+node_modules/
+build/
+edx_proctoring/static/proctoring/js/vendor/
+htmlcov/

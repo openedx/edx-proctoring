@@ -17,6 +17,7 @@ script:
 - make validate_translations
 - make test-all
 - make test-js
+- make lint-js
 after_success:
 - coverage xml
 - bash <(curl -s https://codecov.io/bash) -cF python -f coverage.xml

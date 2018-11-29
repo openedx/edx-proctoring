@@ -62,6 +62,9 @@ test-python: clean ## run tests in the current virtualenv
 test-js:
 	gulp test
 
+lint-js:
+	./node_modules/.bin/eslint --ext .js --ext .jsx .
+
 test-all: ## run tests on every supported Python/Django combination
 	tox -e quality
 	tox
