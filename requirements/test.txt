@@ -15,6 +15,7 @@ ddt==1.2.0
 django-ipware==2.1.0
 django-model-utils==3.1.2
 django-waffle==0.15.0     # via edx-django-utils, edx-drf-extensions
+django-webpack-loader==0.6.0
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.6.4
 edx-django-utils==1.0.1   # via edx-drf-extensions

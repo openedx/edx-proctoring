@@ -1,5 +1,5 @@
 $(function() {
-    var proctored_exam_view = new edx.coursware.proctored_exam.ProctoredExamView({
+    var proctored_exam_view = new edx.courseware.proctored_exam.ProctoredExamView({
         el: $(".proctored_exam_status"),
         proctored_template: '#proctored-exam-status-tpl',
         model: new ProctoredExamModel()

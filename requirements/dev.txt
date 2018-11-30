@@ -6,7 +6,7 @@
 #
 argparse==1.4.0           # via caniusepython3
 astroid==1.5.2            # via edx-lint, pylint, pylint-celery
-backports.functools-lru-cache==1.5  # via caniusepython3
+backports.functools-lru-cache==1.5  # via astroid, caniusepython3, pylint
 bleach==3.0.2             # via readme-renderer
 caniusepython3==7.0.0
 certifi==2018.10.15       # via requests
@@ -20,6 +20,7 @@ docutils==0.14            # via readme-renderer
 edx-i18n-tools==0.4.8
 edx_lint==0.5.5
 filelock==3.0.10          # via tox
+futures==3.2.0            # via caniusepython3, isort
 idna==2.7                 # via requests
 importlib-metadata==0.6   # via path.py
 inflect==2.1.0            # via jinja2-pluralize

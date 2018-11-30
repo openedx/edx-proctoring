@@ -4,6 +4,10 @@
 
 Proctoring services (PS) who wish to integrate with Open edX should implement a `REST API`_ and a thin `Python wrapper`_, as described below.
 
+Proctoring services integrated with Open edX may also optionally
+implement a `Javascript API`_ to hook into specific browser-level
+events.
+
 REST API
 --------
 
@@ -211,5 +215,32 @@ Manual way
 
 .. _JWT: https://jwt.io/
 .. _pypi: https://pypi.org/
+
+Javascript API
+--------------
+
+Several browser-level events are exposed from the LMS to proctoring
+services via javascript. Proctoring services may optionally provide
+handlers for these events as methods on an ES2015 class, e.g.::
+  class ProctoringServiceHandler {
+    onStartExamAttempt() {
+      return Promise.resolve();
+    }
+    onEndExamAttempt() {
+      return Promise.resolve();
+    }
+    onPing() {
+      return Promise.resolve();
+    }
+  }
+
+Each handler method should return a Promise which resolves upon
+successful communication with the desktop application.
+This class should be wrapped in ``@edx/edx-proctoring``'s
+``handlerWrapper``, with the result exported as the main export of your
+``npm`` package::
+  import { handlerWrapper } from '@edx/edx-proctoring';
+  ...
+  export default handlerWrapper(ProctoringServiceHandler);
 
 

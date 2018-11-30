@@ -106,6 +106,13 @@ PROCTORING_SETTINGS = {
     'ALLOW_CALLBACK_SIMULATION': False
 }
 
+WEBPACK_LOADER={
+    'WORKERS': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': 'webpack-worker-stats.json'
+    }
+}
+
 DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 CONTACT_EMAIL = 'info@edx.org'
 TECH_SUPPORT_EMAIL = 'technical@example.com'

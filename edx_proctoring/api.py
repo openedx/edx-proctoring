@@ -1807,7 +1807,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
     if student_view_template:
-        context['backend_js'] = provider.get_javascript()
+        context['backend_js_bundle'] = provider.get_javascript()
         template = loader.get_template(student_view_template)
         context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=True))
         return template.render(context)
@@ -1955,7 +1955,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
     if student_view_template:
-        context['backend_js'] = provider.get_javascript()
+        context['backend_js_bundle'] = provider.get_javascript()
         template = loader.get_template(student_view_template)
         context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id))
         return template.render(context)
@@ -2012,7 +2012,7 @@ def get_student_view(user_id, course_id, content_id,
             is_proctored=context.get('is_proctored', False),
             is_practice_exam=context.get('is_practice_exam', False),
             due_date=context.get('due_date', None),
-            hide_after_due=context.get('hide_after_due', None),
+            hide_after_due=context.get('hide_after_due', False),
         )
         exam = get_exam_by_content_id(course_id, content_id)
 
