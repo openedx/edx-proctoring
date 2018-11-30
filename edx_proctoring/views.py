@@ -978,16 +978,21 @@ class InstructorDashboard(AuthenticatedAPIView):
                 else:
                     found_backend = exam_backend
         if exam is None:
-            return Response(data='No exam found for course %r.' % course_id, status=404)
-        backend = get_backend_provider(exam)
-        user = {
-            'id': request.user.id,
-            'full_name': request.user.get_full_name(),
-            'email': request.user.email
-        }
-        url = backend.get_instructor_url(exam['course_id'], user, exam_id=exam_id)
-        if url:
-            resp = redirect(url)
+            error = _('No exams in course {course_id}.').format(course_id=course_id)
         else:
-            resp = Response(data='No instructor dashboard for %s' % backend.verbose_name, status=404)
-        return resp
+            backend = get_backend_provider(exam)
+            if backend:
+                user = {
+                    'id': request.user.id,
+                    'full_name': request.user.get_full_name(),
+                    'email': request.user.email
+                }
+                url = backend.get_instructor_url(exam['course_id'], user, exam_id=exam_id)
+                if url:
+                    return redirect(url)
+                else:
+                    error = _('No instructor dashboard for {proctor_service}').format(
+                        proctor_service=backend.verbose_name)
+            else:
+                error = _('No proctored exams in course {course_id}').format(course_id=course_id)
+        return Response(data=error, status=404, headers={'X-Frame-Options': 'sameorigin'})

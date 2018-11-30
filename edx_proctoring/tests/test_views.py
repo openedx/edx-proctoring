@@ -2570,6 +2570,23 @@ class TestInstructorDashboard(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 404)
 
+        # test the case of no PROCTORED exams
+        ProctoredExam.objects.create(
+            course_id=course_id,
+            content_id='test_content',
+            exam_name='Timed Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=False,
+            backend='software_secure',
+        )
+        response = self.client.get(
+            reverse('edx_proctoring.instructor_dashboard_course',
+                    kwargs={'course_id': course_id})
+        )
+        self.assertEqual(response.status_code, 404)
+
     def test_error_with_no_dashboard(self):
         course_id = 'a/b/d'
 
