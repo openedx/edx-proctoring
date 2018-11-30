@@ -53,11 +53,14 @@ class EdxProctoringConfig(AppConfig):
         config = settings.PROCTORING_BACKENDS
 
         self.backends = {}  # pylint: disable=W0201
+        not_found = []
         for extension in ExtensionManager(namespace='openedx.proctoring'):
             name = extension.name
             try:
                 options = config[name]
                 self.backends[name] = extension.plugin(**options)
             except KeyError:
-                warnings.warn("No proctoring backend configured for '{}'.  "
-                              "Available: {}".format(name, list(self.backends)))
+                not_found.append(name)
+        if not_found:  # pragma: no branch
+            warnings.warn("No proctoring backend configured for '{}'.  "
+                          "Available: {}".format(not_found, list(self.backends)))

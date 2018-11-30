@@ -986,4 +986,8 @@ class InstructorDashboard(AuthenticatedAPIView):
             'email': request.user.email
         }
         url = backend.get_instructor_url(exam['course_id'], user, exam_id=exam_id)
-        return redirect(url)
+        if url:
+            resp = redirect(url)
+        else:
+            resp = Response(data='No instructor dashboard for %s' % backend.verbose_name, status=404)
+        return resp
