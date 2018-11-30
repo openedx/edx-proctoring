@@ -82,3 +82,10 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
             dict: backend exam attempt object
         """
         return attempt
+
+    # pylint: disable=unused-argument
+    def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None):
+        """
+        Returns the instructor dashboard url for reviews
+        """
+        return None
