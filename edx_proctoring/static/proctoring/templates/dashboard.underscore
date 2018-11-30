@@ -1,0 +1,3 @@
+<div class="wrapper-content wrapper">
+    <iframe src="<%= dashboardURL %>" frameborder=0 height=1280 style="width:100%">
+</div>

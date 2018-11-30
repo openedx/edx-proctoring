@@ -41,7 +41,7 @@ Proctoring System configuration endpoint
     }
 
 The keys in the rules object should be machine readable. The values are human readable. PS should respect the HTTP request ``Accept-Language``
-header and translate all human readable rules into the requested language.
+header and translate all human readable rules and instructions into the requested language.
 
 If a download_url is included in the response, Open edX will redirect learners to the address before the proctoring session starts. The address will include ``attempt={attempt_id}`` in the query string.
 

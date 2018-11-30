@@ -8,6 +8,7 @@ import jwt
 import responses
 
 from django.test import TestCase
+from django.utils.translation import activate
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
 
@@ -88,6 +89,27 @@ class RESTBackendTests(TestCase):
         )
         external_attempt = self.provider.get_attempt(attempt)
         self.assertEqual(external_attempt, attempt)
+        self.assertEqual(responses.calls[1].request.headers['Accept-Language'], 'en-us')
+
+    @responses.activate
+    def test_get_attempt_i18n(self):
+        activate('es')
+        attempt = {
+            'id': 1,
+            'external_id': 'abcd',
+            'proctored_exam': self.backend_exam,
+            'user': 1,
+            'instructions': []
+        }
+        responses.add(
+            responses.GET,
+            url=self.provider.exam_attempt_url.format(
+                exam_id=self.backend_exam['external_id'], attempt_id=attempt['external_id']),
+            json=attempt
+        )
+        external_attempt = self.provider.get_attempt(attempt)
+        self.assertEqual(external_attempt, attempt)
+        self.assertEqual(responses.calls[1].request.headers['Accept-Language'], 'es;en-us')
 
     @responses.activate
     def test_on_exam_saved(self):

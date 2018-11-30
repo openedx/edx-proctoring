@@ -2503,6 +2503,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             external_id='123aXqe3',
             time_limit_mins=90,
             is_active=True,
+            is_proctored=True,
         )
 
         expected_url = '/instructor/%s/' % course_id
@@ -2521,6 +2522,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             external_id='123aXqe3',
             time_limit_mins=90,
             is_active=True,
+            is_proctored=True,
         )
         exam_id = proctored_exam.id
 
@@ -2540,6 +2542,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             external_id='123aXqe3',
             time_limit_mins=90,
             is_active=True,
+            is_proctored=True,
             backend='test',
         )
         ProctoredExam.objects.create(
@@ -2549,6 +2552,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             external_id='123aXqe4',
             time_limit_mins=90,
             is_active=True,
+            is_proctored=True,
             backend='null',
         )
         response = self.client.get(
