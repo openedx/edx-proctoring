@@ -498,7 +498,10 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
                 critically_low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60
             )
 
-            desktop_application_js_url = provider.get_javascript()
+            if provider:
+                desktop_application_js_url = provider.get_javascript()
+            else:
+                desktop_application_js_url = ''
 
             exam_url_path = ''
             try:
