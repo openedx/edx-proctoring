@@ -3,10 +3,12 @@ Base implementation of a REST backend, following the API documented in
 docs/backends.rst
 """
 import logging
+import warnings
 import time
 import uuid
 
 from webpack_loader.utils import get_files
+from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleLookupError
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -76,10 +78,33 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the url of the javascript bundle into which the provider's JS will be loaded
         """
         package = self.__class__.__module__.split('.')[0]
-        bundle_chunks = get_files(package, config="WORKERS")
-        if bundle_chunks:
-            return bundle_chunks[0]["url"]
-        return ''
+        js_url = ''
+        try:
+            bundle_chunks = get_files(package, config="WORKERS")
+            # still necessary to check, since webpack_loader can be
+            # configured to ignore all matching packages
+            if bundle_chunks:
+                js_url = bundle_chunks[0]["url"]
+
+        except WebpackBundleLookupError:
+            warnings.warn(
+                u'Could not find webpack bundle for proctoring backend {package}.'
+                u' Check whether webpack is configured to build such a bundle'.format(
+                    package=package
+                )
+            )
+        except BaseWebpackLoaderException:
+            warnings.warn(
+                u'Could not find webpack bundle for proctoring backend {package}.'.format(
+                    package=package
+                )
+            )
+        except IOError as err:
+            warnings.warn(
+                u'Webpack stats file corresponding to WebWorkers not found: {}'
+                .format(str(err))
+            )
+        return js_url
 
     def get_software_download_url(self):
         """
