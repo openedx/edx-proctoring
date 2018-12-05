@@ -1,3 +1,8 @@
 {
-  "extends": "eslint-config-edx-es5"
+  "extends": "eslint-config-edx-es5",
+  "globals": {
+    "sinon": false,
+    "setFixtures": false,
+    "edx": true
+  }
 }
