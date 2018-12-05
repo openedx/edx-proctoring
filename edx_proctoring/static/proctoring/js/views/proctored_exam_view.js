@@ -145,7 +145,7 @@ var edx = edx || {};
             self.timerTick ++;
             self.secondsLeft --;
             if (self.timerTick % self.poll_interval === self.poll_interval / 2) {
-              edx.courseware.proctored_exam.pingApplication().catch(self.submitExamForFailureState.bind(self));
+              edx.courseware.proctored_exam.pingApplication().catch(self.endExamForFailureState.bind(self));
             }
             if (self.timerTick % self.poll_interval === 0) {
                 var url = self.model.url + '/' + self.model.get('attempt_id');
@@ -182,11 +182,11 @@ var edx = edx || {};
                 self.reloadPage();
             }
         },
-        submitExamForFailureState: function () {
+        endExamForFailureState: function () {
             var self = this;
             return $.ajax({
                 data: {
-                    action: 'submit'
+                    action: 'error'
                 },
                 url: this.model.url + '/' + this.model.get('attempt_id'),
                 type: 'PUT'

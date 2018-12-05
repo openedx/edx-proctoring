@@ -112,7 +112,7 @@ describe('ProctoredExamView', function () {
             }
         );
         var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
-        this.proctored_exam_view.submitExamForFailureState().done(function() {
+        this.proctored_exam_view.endExamForFailureState().done(function() {
             expect(reloadPage).toHaveBeenCalled();
             done();
         });

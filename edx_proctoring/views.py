@@ -395,6 +395,12 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 request.user.id,
                 ProctoredExamStudentAttemptStatus.download_software_clicked
             )
+        elif action == 'error':
+            exam_attempt_id = update_attempt_status(
+                attempt['proctored_exam']['id'],
+                request.user.id,
+                ProctoredExamStudentAttemptStatus.error
+            )
         elif action == 'decline':
             exam_attempt_id = update_attempt_status(
                 attempt['proctored_exam']['id'],
