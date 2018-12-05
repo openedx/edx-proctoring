@@ -1,5 +1,8 @@
-describe('ProctoredExamView', function () {
-    beforeEach(function () {
+/* global ProctoredExamModel:false */
+describe('ProctoredExamView', function() {
+    'use strict';
+
+    beforeEach(function() {
         this.server = sinon.fakeServer.create();
         jasmine.clock().install();
         setFixtures(
@@ -14,7 +17,7 @@ describe('ProctoredExamView', function () {
             '<i class="fa fa-eye-slash" aria-hidden="true"></i></button>' +
             '</span> </span>' +
             '</div>' +
-            '</script>'+
+            '</script>' +
             '</div>'
         );
         this.model = new ProctoredExamModel({
@@ -23,7 +26,7 @@ describe('ProctoredExamView', function () {
             exam_display_name: 'Midterm',
             taking_as_proctored: true,
             exam_url_path: '/test_url',
-            time_remaining_seconds: 45, //2 * 60 + 15,
+            time_remaining_seconds: 45, // 2 * 60 + 15,
             low_threshold_sec: 30,
             attempt_id: 2,
             critically_low_threshold_sec: 15,
@@ -33,7 +36,7 @@ describe('ProctoredExamView', function () {
         this.proctored_exam_view = new edx.courseware.proctored_exam.ProctoredExamView(
             {
                 model: this.model,
-                el: $(".proctored_exam_status"),
+                el: $('.proctored_exam_status'),
                 proctored_template: '#proctored-exam-status-tpl'
             }
         );
@@ -45,16 +48,16 @@ describe('ProctoredExamView', function () {
         jasmine.clock().uninstall();
     });
 
-    it('renders items correctly', function () {
-        expect(this.proctored_exam_view.$el.find('a')).toHaveAttr('href',  this.model.get("exam_url_path"));
+    it('renders items correctly', function() {
+        expect(this.proctored_exam_view.$el.find('a')).toHaveAttr('href', this.model.get('exam_url_path'));
         expect(this.proctored_exam_view.$el.find('a')).toContainHtml(this.model.get('exam_display_name'));
     });
-    it('changes behavior when clock time decreases low threshold', function () {
+    it('changes behavior when clock time decreases low threshold', function() {
         this.proctored_exam_view.secondsLeft = 25;
         this.proctored_exam_view.render();
         expect(this.proctored_exam_view.$el.find('div.exam-timer')).toHaveClass('low-time warning');
     });
-    it('changes behavior when clock time decreases critically low threshold', function () {
+    it('changes behavior when clock time decreases critically low threshold', function() {
         this.proctored_exam_view.secondsLeft = 5;
         this.proctored_exam_view.render();
         expect(this.proctored_exam_view.$el.find('div.exam-timer')).toHaveClass('low-time critical');
@@ -68,28 +71,28 @@ describe('ProctoredExamView', function () {
         button.click();
         expect(timer).not.toHaveClass('timer-hidden');
     });
-    it("reload the page when the exam time finishes", function(){
-        this.proctored_exam_view.secondsLeft = -10;
+    it('reload the page when the exam time finishes', function() {
         var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
+        this.proctored_exam_view.secondsLeft = -10;
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         expect(reloadPage).toHaveBeenCalled();
     });
-    it("resets the remaining exam time after the ajax response", function(){
+    it('resets the remaining exam time after the ajax response', function() {
+        var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
         this.server.respondWith(
-            "GET",
-            "/api/edx_proctoring/v1/proctored_exam/attempt/" +
+            'GET',
+            '/api/edx_proctoring/v1/proctored_exam/attempt/' +
             this.proctored_exam_view.model.get('attempt_id') +
             '?sourceid=in_exam&proctored=true',
             [
                 200,
-                {"Content-Type": "application/json"},
+                {'Content-Type': 'application/json'},
                 JSON.stringify({
                     time_remaining_seconds: -10
                 })
             ]
         );
-        this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval-1; // to make the ajax call.
-        var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
+        this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval - 1; // to make the ajax call.
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         this.server.respond();
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
