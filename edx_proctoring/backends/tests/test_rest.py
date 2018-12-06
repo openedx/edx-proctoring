@@ -217,10 +217,7 @@ class RESTBackendTests(TestCase):
         self.assertEqual(payload, new_payload)
 
     def test_get_javascript(self):
-        # A real backend would return a real bundle url from webpack
-        # but in this context we'll fail looking up webpack's stats file
-        with self.assertRaises(IOError):
-            self.provider.get_javascript()
+        self.assertEqual(self.provider.get_javascript(), '')
 
     @patch('edx_proctoring.backends.rest.get_files')
     def test_get_javascript_bundle(self, get_files_mock):
@@ -229,8 +226,20 @@ class RESTBackendTests(TestCase):
         self.assertEqual(javascript_url, '/there/it/is')
 
     @patch('edx_proctoring.backends.rest.get_files')
-    def test_get_javascript_empty_bundle(self, get_files_mock):
+    def test_get_javascript_empty_return(self, get_files_mock):
         get_files_mock.return_value = []
+        javascript_url = self.provider.get_javascript()
+        self.assertEqual(javascript_url, '')
+
+    @patch('webpack_loader.loader.WebpackLoader.get_assets')
+    def test_get_javascript_swallows_errors(self, mock_get_assets):
+        mock_get_assets.return_value = {'status': 'done', 'chunks': {}}
+        javascript_url = self.provider.get_javascript()
+        self.assertEqual(javascript_url, '')
+        mock_get_assets.return_value = {'status': 'error', 'chunks': {}}
+        javascript_url = self.provider.get_javascript()
+        self.assertEqual(javascript_url, '')
+        mock_get_assets.return_value = {'status': 'turtle', 'chunks': {}}
         javascript_url = self.provider.get_javascript()
         self.assertEqual(javascript_url, '')
 
