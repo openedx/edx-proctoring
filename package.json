@@ -16,6 +16,7 @@
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
     "eslint": "^5.9.0",
+    "eslint-config-edx": "^4.0.4",
     "eslint-config-edx-es5": "^4.0.1",
     "gulp": "^3.9.0",
     "gulp-karma": "0.0.1",

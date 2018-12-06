@@ -1,0 +1,6 @@
+{
+  "extends": "eslint-config-edx",
+  "env": {
+    "worker": true
+  }
+}
