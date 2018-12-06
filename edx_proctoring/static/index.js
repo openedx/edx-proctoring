@@ -1,3 +1,4 @@
+/* eslint no-restricted-globals: "off" */
 export const handlerWrapper = (Handler) => {
   let handler = new Handler({});
 

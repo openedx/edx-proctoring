@@ -64,6 +64,7 @@ edx = edx || {};
             }
         },
         modelChanged: function() {
+            var desktopApplicationJsUrl;
             // if we are a proctored exam, then we need to alert user that he/she
             // should not be navigating around the courseware
             var takingAsProctored = this.model.get('taking_as_proctored');
@@ -80,7 +81,7 @@ edx = edx || {};
                 // remove callback on unload event
                 $(window).unbind('beforeunload', this.unloadMessage);
             }
-            var desktopApplicationJsUrl = this.model.get('desktop_application_js_url');
+            desktopApplicationJsUrl = this.model.get('desktop_application_js_url');
             if (desktopApplicationJsUrl && !edx.courseware.proctored_exam.configuredWorkerURL) {
                 edx.courseware.proctored_exam.configuredWorkerURL = desktopApplicationJsUrl;
             }
