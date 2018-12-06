@@ -1,4 +1,4 @@
-var edx = edx || {};
+edx = edx || {};
 
 (function($) {
     'use strict';
@@ -70,14 +70,18 @@ var edx = edx || {};
     edx.courseware = edx.courseware || {};
     edx.courseware.proctored_exam = edx.courseware.proctored_exam || {};
     edx.courseware.proctored_exam.examStartHandler = function(e) {
+        var $this,
+            actionUrl,
+            action,
+            shouldUseWorker;
         e.preventDefault();
         e.stopPropagation();
 
-        var $this = $(this);
-        var actionUrl = $this.data('change-state-url');
-        var action = $this.data('action');
+        $this = $(this);
+        actionUrl = $this.data('change-state-url');
+        action = $this.data('action');
 
-        var shouldUseWorker = window.Worker && edx.courseware.proctored_exam.configuredWorkerURL;
+        shouldUseWorker = window.Worker && edx.courseware.proctored_exam.configuredWorkerURL;
         if (shouldUseWorker) {
             workerPromiseForEventNames(actionToMessageTypesMap[action])()
                 .then(updateExamAttemptStatusPromise(actionUrl, action))
@@ -88,13 +92,17 @@ var edx = edx || {};
         }
     };
     edx.courseware.proctored_exam.examEndHandler = function() {
+        var $this,
+            actionUrl,
+            action,
+            shouldUseWorker;
         $(window).unbind('beforeunload');
 
-        var $this = $(this);
-        var actionUrl = $this.data('change-state-url');
-        var action = $this.data('action');
+        $this = $(this);
+        actionUrl = $this.data('change-state-url');
+        action = $this.data('action');
 
-        var shouldUseWorker = window.Worker &&
+        shouldUseWorker = window.Worker &&
                           edx.courseware.proctored_exam.configuredWorkerURL &&
                           action === 'submit';
         if (shouldUseWorker) {

@@ -7,6 +7,7 @@
     "_": false,
     "Backbone": false,
     "gettext": false,
+    "Promise": false,
     "edx": true
   }
 }
