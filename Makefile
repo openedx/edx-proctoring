@@ -63,7 +63,8 @@ test-js:
 	gulp test
 
 lint-js:
-	./node_modules/.bin/eslint --ext .js --ext .jsx .
+	./node_modules/.bin/eslint --ignore-pattern 'edx_proctoring/static/index.js' --ext .js --ext .jsx .
+	./node_modules/.bin/eslint --config .eslintrc.worker.json 'edx_proctoring/static/index.js'
 
 test-all: ## run tests on every supported Python/Django combination
 	tox -e quality
