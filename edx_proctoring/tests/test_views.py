@@ -1107,7 +1107,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
     @ddt.data(
         ('submit', ProctoredExamStudentAttemptStatus.submitted),
-        ('decline', ProctoredExamStudentAttemptStatus.declined)
+        ('decline', ProctoredExamStudentAttemptStatus.declined),
+        ('error', ProctoredExamStudentAttemptStatus.error),
     )
     @ddt.unpack
     def test_submit_exam_attempt(self, action, expected_status):

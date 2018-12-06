@@ -395,6 +395,12 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 request.user.id,
                 ProctoredExamStudentAttemptStatus.download_software_clicked
             )
+        elif action == 'error':
+            exam_attempt_id = update_attempt_status(
+                attempt['proctored_exam']['id'],
+                request.user.id,
+                ProctoredExamStudentAttemptStatus.error
+            )
         elif action == 'decline':
             exam_attempt_id = update_attempt_status(
                 attempt['proctored_exam']['id'],
@@ -485,6 +491,8 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
             exam = exam_info['exam']
             attempt = exam_info['attempt']
 
+            provider = get_backend_provider(exam)
+
             time_remaining_seconds = get_time_remaining_for_attempt(attempt)
 
             proctoring_settings = getattr(settings, 'PROCTORING_SETTINGS', {})
@@ -495,6 +503,11 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
             critically_low_threshold = int(
                 critically_low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60
             )
+
+            if provider:
+                desktop_application_js_url = provider.get_javascript()
+            else:
+                desktop_application_js_url = ''
 
             exam_url_path = ''
             try:
@@ -521,7 +534,8 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
                 'accessibility_time_string': _('you have {remaining_time} remaining').format(
                     remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
                 ),
-                'attempt_status': attempt['status']
+                'attempt_status': attempt['status'],
+                'desktop_application_js_url': desktop_application_js_url
             }
         else:
             response_dict = {

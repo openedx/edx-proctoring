@@ -78,6 +78,10 @@ var edx = edx || {};
                 // remove callback on unload event
                 $(window).unbind('beforeunload', this.unloadMessage);
             }
+            var desktopApplicationJsUrl = this.model.get('desktop_application_js_url');
+            if (desktopApplicationJsUrl && !edx.courseware.proctored_exam.configuredWorkerURL) {
+              edx.courseware.proctored_exam.configuredWorkerURL = desktopApplicationJsUrl;
+            }
 
             this.render();
         },
@@ -140,6 +144,9 @@ var edx = edx || {};
         updateRemainingTime: function (self) {
             self.timerTick ++;
             self.secondsLeft --;
+            if (self.timerTick % self.poll_interval === self.poll_interval / 2) {
+              edx.courseware.proctored_exam.pingApplication().catch(self.endExamForFailureState.bind(self));
+            }
             if (self.timerTick % self.poll_interval === 0) {
                 var url = self.model.url + '/' + self.model.get('attempt_id');
                 var queryString = '?sourceid=in_exam&proctored=' + self.model.get('taking_as_proctored');
@@ -175,6 +182,18 @@ var edx = edx || {};
                 self.reloadPage();
             }
         },
+        endExamForFailureState: function () {
+            var self = this;
+            return $.ajax({
+                data: {
+                    action: 'error'
+                },
+                url: this.model.url + '/' + this.model.get('attempt_id'),
+                type: 'PUT'
+            }).done(function() {
+                self.reloadPage();
+            });
+      },
         toggleTimerVisibility: function (event) {
             var button = $(event.currentTarget);
             var icon = button.find('i');
