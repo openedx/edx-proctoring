@@ -1,4 +1,4 @@
-describe('ProctoredExamAttemptView', function () {
+describe('ProctoredExamAttemptView', function() {
     var html = '';
     var deletedProctoredExamAttemptJson = [{
         attempt_url: '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/edX/DemoX/Demo_Course',
@@ -21,22 +21,22 @@ describe('ProctoredExamAttemptView', function () {
         },
         proctored_exam_attempts: [{
             allowed_time_limit_mins: 1,
-            attempt_code: "20C32387-372E-48BD-BCAC-A2BE9DC91E09",
+            attempt_code: '20C32387-372E-48BD-BCAC-A2BE9DC91E09',
             completed_at: null,
-            created: "2015-08-10T09:15:45Z",
-            external_id: "40eceb15-bcc3-4791-b43f-4e843afb7ae8",
+            created: '2015-08-10T09:15:45Z',
+            external_id: '40eceb15-bcc3-4791-b43f-4e843afb7ae8',
             id: 43,
             is_sample_attempt: false,
             last_poll_ipaddr: null,
             last_poll_timestamp: null,
-            modified: "2015-08-10T09:15:45Z",
-            started_at: "2015-08-10T09:15:45Z",
-            status: "started",
+            modified: '2015-08-10T09:15:45Z',
+            started_at: '2015-08-10T09:15:45Z',
+            status: 'started',
             taking_as_proctored: true,
             proctored_exam: {
-                content_id: "i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c",
-                course_id: "edX/DemoX/Demo_Course",
-                exam_name: "Normal Exam",
+                content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
+                course_id: 'edX/DemoX/Demo_Course',
+                exam_name: 'Normal Exam',
                 external_id: null,
                 id: 17,
                 is_active: true,
@@ -51,7 +51,7 @@ describe('ProctoredExamAttemptView', function () {
         }]
     }];
 
-    beforeEach(function () {
+    beforeEach(function() {
         html = '<div class="wrapper-content wrapper">' +
         '<% var is_proctored_attempts = proctored_exam_attempts.length !== 0 %>' +
         '<section class="content">' +
@@ -127,10 +127,10 @@ describe('ProctoredExamAttemptView', function () {
         setFixtures('<div class="student-proctored-exam-container" data-course-id="test_course_id"></div>');
 
         // load the underscore template response before calling the proctored exam attemp view.
-        this.server.respondWith("GET", "/static/proctoring/templates/student-proctored-exam-attempts.underscore",
+        this.server.respondWith('GET', '/static/proctoring/templates/student-proctored-exam-attempts.underscore',
             [
                 200,
-                {"Content-Type": "text/html"},
+                {'Content-Type': 'text/html'},
                 html
             ]
         );
@@ -139,12 +139,12 @@ describe('ProctoredExamAttemptView', function () {
     afterEach(function() {
         this.server.restore();
     });
-    it("should render the proctored exam attempt view properly", function () {
+    it('should render the proctored exam attempt view properly', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredExamAttemptJson)
             ]
@@ -158,12 +158,12 @@ describe('ProctoredExamAttemptView', function () {
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
     });
 
-    it("should delete the proctored exam attempt", function () {
+    it('should delete the proctored exam attempt', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredExamAttemptJson)
             ]
@@ -182,7 +182,7 @@ describe('ProctoredExamAttemptView', function () {
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify([])
             ]
@@ -194,19 +194,19 @@ describe('ProctoredExamAttemptView', function () {
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(deletedProctoredExamAttemptJson)
             ]
         );
 
-        spyOn(window, "confirm").and.callFake(function() {
+        spyOn(window, 'confirm').and.callFake(function() {
             return true;
         });
 
         // trigger the remove attempt event.
         var spyEvent = spyOnEvent('.remove-attempt', 'click');
-        $('.remove-attempt').trigger( "click" );
+        $('.remove-attempt').trigger('click');
 
         // process the deleted attempt requests.
         this.server.respond();
@@ -216,12 +216,12 @@ describe('ProctoredExamAttemptView', function () {
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).not.toContain('Normal Exam');
     });
 
-    it("should search for the proctored exam attempt", function () {
+    it('should search for the proctored exam attempt', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredExamAttemptJson)
             ]
@@ -240,11 +240,11 @@ describe('ProctoredExamAttemptView', function () {
         $('#search_attempt_id').val(searchText);
 
         // search for the proctored exam attempt
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id/search/'+searchText,
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id/search/' + searchText,
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredExamAttemptJson)
             ]
@@ -252,7 +252,7 @@ describe('ProctoredExamAttemptView', function () {
 
         // trigger the search attempt event.
         var spyEvent = spyOnEvent('.search-attempts > span.search', 'click');
-        $('.search-attempts > span.search').trigger( "click" );
+        $('.search-attempts > span.search').trigger('click');
 
         // process the search attempt requests.
         this.server.respond();
@@ -261,12 +261,12 @@ describe('ProctoredExamAttemptView', function () {
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('testuser1');
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
     });
-    it("should clear the search for the proctored exam attempt", function () {
+    it('should clear the search for the proctored exam attempt', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredExamAttemptJson)
             ]
@@ -284,11 +284,11 @@ describe('ProctoredExamAttemptView', function () {
         $('#search_attempt_id').val(searchText);
 
         // search the proctored exam attempt
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id/search/'+searchText,
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id/search/' + searchText,
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(deletedProctoredExamAttemptJson)
             ]
@@ -296,7 +296,7 @@ describe('ProctoredExamAttemptView', function () {
 
         // trigger the search attempt event.
         var spyEvent = spyOnEvent('.search-attempts > span.search', 'click');
-        $('.search-attempts > span.search').trigger( "click" );
+        $('.search-attempts > span.search').trigger('click');
 
         // process the search attempt request.
         this.server.respond();
@@ -310,7 +310,7 @@ describe('ProctoredExamAttemptView', function () {
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredExamAttemptJson)
             ]
@@ -318,7 +318,7 @@ describe('ProctoredExamAttemptView', function () {
 
         // trigger the clear search event.
         var spyEvent = spyOnEvent('.search-attempts > span.clear-search', 'click');
-        $('.search-attempts > span.clear-search').trigger( "click" );
+        $('.search-attempts > span.clear-search').trigger('click');
 
         // process the reset attempt request.
         this.server.respond();

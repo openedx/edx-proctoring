@@ -1,14 +1,13 @@
 var edx = edx || {};
 
-(function (Backbone, $, _) {
+(function(Backbone, $, _) {
     'use strict';
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
 
     edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = Backbone.View.extend({
-        initialize: function () {
-
+        initialize: function() {
             this.allowance_types = [
                 ['additional_time_granted', gettext('Additional Time (minutes)')],
                 ['review_policy_exception', gettext('Review Policy Exception')]
@@ -33,13 +32,12 @@ var edx = edx || {};
 
             this.proctoredExamCollection.url = this.proctoredExamCollection.url + this.course_id;
             this.collection.url = this.initial_url + this.course_id + '/allowance';
-
         },
         events: {
             'click #add-allowance': 'showAddModal',
             'click .remove_allowance': 'removeAllowance'
         },
-        getCSRFToken: function () {
+        getCSRFToken: function() {
             var cookieValue = null;
             var name = 'csrftoken';
             if (document.cookie && document.cookie != '') {
@@ -55,25 +53,25 @@ var edx = edx || {};
             }
             return cookieValue;
         },
-        removeAllowance: function (event) {
-            var element = $(event.currentTarget);
-            var userID = element.data('user-id');
-            var examID = element.data('exam-id');
-            var key = element.data('key-name');
+        removeAllowance: function(event) {
+            var $element = $(event.currentTarget);
+            var userID = $element.data('user-id');
+            var examID = $element.data('exam-id');
+            var key = $element.data('key-name');
             var self = this;
             self.collection.url = this.allowance_url;
             self.collection.fetch(
                 {
                     headers: {
-                        "X-CSRFToken": this.getCSRFToken()
+                        'X-CSRFToken': this.getCSRFToken()
                     },
                     type: 'DELETE',
                     data: {
-                        'exam_id': examID,
-                        'user_id': userID,
-                        'key': key
+                        exam_id: examID,
+                        user_id: userID,
+                        key: key
                     },
-                    success: function () {
+                    success: function() {
                         // fetch the allowances again.
                         self.collection.url = self.initial_url + self.course_id + '/allowance';
                         self.hydrate();
@@ -88,28 +86,28 @@ var edx = edx || {};
          See setup_instructor_dashboard_sections() in
          instructor_dashboard.coffee (in edx-platform)
          */
-        constructor: function (section) {
+        constructor: function(section) {
             /* the Instructor Dashboard javascript expects this to be set up */
             $(section).data('wrapper', this);
 
             this.initialize({});
         },
-        onClickTitle: function () {
+        onClickTitle: function() {
             // called when this is selected in the instructor dashboard
-            return;
+
         },
-        loadTemplateData: function () {
+        loadTemplateData: function() {
             var self = this;
-            $.ajax({url: self.template_url, dataType: "html"})
-                .error(function (jqXHR, textStatus, errorThrown) {
+            $.ajax({url: self.template_url, dataType: 'html'})
+                .error(function(jqXHR, textStatus, errorThrown) {
 
                 })
-                .done(function (template_data) {
+                .done(function(template_data) {
                     self.template = _.template(template_data);
                     self.hydrate();
                 });
         },
-        hydrate: function () {
+        hydrate: function() {
             /* This function will load the bound collection */
 
             /* add and remove a class when we do the initial loading */
@@ -117,21 +115,21 @@ var edx = edx || {};
             /* loading, like a spinner */
             var self = this;
             self.collection.fetch({
-                success: function () {
+                success: function() {
                     self.render();
                 }
             });
         },
-        collectionChanged: function () {
+        collectionChanged: function() {
             this.hydrate();
         },
-        render: function () {
+        render: function() {
             if (this.template !== null) {
                 var self = this;
-                this.collection.each(function(item){
+                this.collection.each(function(item) {
                     var key = item.get('key');
-                    var i
-                    for (i=0; i<self.allowance_types.length; i++) {
+                    var i;
+                    for (i = 0; i < self.allowance_types.length; i++) {
                         if (key === self.allowance_types[i][0]) {
                             item.set('key_display_name', self.allowance_types[i][1]);
                             break;
@@ -145,10 +143,10 @@ var edx = edx || {};
                 this.$el.html(html);
             }
         },
-        showAddModal: function (event) {
+        showAddModal: function(event) {
             var self = this;
             self.proctoredExamCollection.fetch({
-                success: function () {
+                success: function() {
                     var add_allowance_view = new edx.instructor_dashboard.proctoring.AddAllowanceView({
                         course_id: self.course_id,
                         proctored_exams: self.proctoredExamCollection.toJSON(),

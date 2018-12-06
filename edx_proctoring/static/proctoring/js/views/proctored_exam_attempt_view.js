@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function (Backbone, $, _, gettext) {
+(function(Backbone, $, _, gettext) {
     'use strict';
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -24,23 +24,20 @@ var edx = edx || {};
         getDateFormat: function(date) {
             if (date) {
                 return new Date(date).toString('MMM dd, yyyy h:mmtt');
-            }
-            else {
+            } else {
                 return '---';
             }
-
         },
         getExamAttemptStatus: function(status) {
             if (status in examStatusReadableFormat) {
-                return examStatusReadableFormat[status]
-            }
-            else {
-                return status
+                return examStatusReadableFormat[status];
+            } else {
+                return status;
             }
         }
     };
     edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = Backbone.View.extend({
-        initialize: function (options) {
+        initialize: function(options) {
             this.setElement($('.student-proctored-exam-container'));
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptCollection();
             this.tempate_url = '/static/proctoring/templates/student-proctored-exam-attempts.underscore';
@@ -52,7 +49,7 @@ var edx = edx || {};
             this.attempt_url = this.model.url;
             this.collection.url = this.initial_url + this.course_id;
             this.inSearchMode = false;
-            this.searchText = "";
+            this.searchText = '';
 
             /* re-render if the model changes */
             this.listenTo(this.collection, 'change', this.collectionChanged);
@@ -61,17 +58,17 @@ var edx = edx || {};
             this.loadTemplateData();
         },
         events: {
-            "click .remove-attempt": "onRemoveAttempt",
+            'click .remove-attempt': 'onRemoveAttempt',
             'click li > a.target-link': 'getPaginatedAttempts',
             'click .search-attempts > span.search': 'searchAttempts',
             'click .search-attempts > span.clear-search': 'clearSearch'
         },
         searchAttempts: function(event) {
             var searchText = $('#search_attempt_id').val();
-            if (searchText !== "") {
+            if (searchText !== '') {
                 this.inSearchMode = true;
                 this.searchText = searchText;
-                this.collection.url = this.initial_url + this.course_id + "/search/" + searchText;
+                this.collection.url = this.initial_url + this.course_id + '/search/' + searchText;
                 this.hydrate();
                 event.stopPropagation();
                 event.preventDefault();
@@ -79,20 +76,20 @@ var edx = edx || {};
         },
         clearSearch: function(event) {
             this.inSearchMode = false;
-            this.searchText = "";
+            this.searchText = '';
             this.collection.url = this.initial_url + this.course_id;
             this.hydrate();
             event.stopPropagation();
             event.preventDefault();
         },
         getPaginatedAttempts: function(event) {
-            var target = $(event.currentTarget);
-            this.collection.url = target.data('target-url');
+            var $target = $(event.currentTarget);
+            this.collection.url = $target.data('target-url');
             this.hydrate();
             event.stopPropagation();
             event.preventDefault();
         },
-        getCSRFToken: function () {
+        getCSRFToken: function() {
             var cookieValue = null;
             var name = 'csrftoken';
             if (document.cookie && document.cookie != '') {
@@ -108,18 +105,18 @@ var edx = edx || {};
             }
             return cookieValue;
         },
-        loadTemplateData: function () {
+        loadTemplateData: function() {
             var self = this;
-            $.ajax({url: self.tempate_url, dataType: "html"})
-                .error(function (jqXHR, textStatus, errorThrown) {
+            $.ajax({url: self.tempate_url, dataType: 'html'})
+                .error(function(jqXHR, textStatus, errorThrown) {
 
                 })
-                .done(function (template_data) {
+                .done(function(template_data) {
                     self.template = _.template(template_data);
                     self.hydrate();
                 });
         },
-        hydrate: function () {
+        hydrate: function() {
             /* This function will load the bound collection */
 
             /* add and remove a class when we do the initial loading */
@@ -127,17 +124,16 @@ var edx = edx || {};
             /* loading, like a spinner */
             var self = this;
             self.collection.fetch({
-                success: function () {
+                success: function() {
                     self.render();
                 }
             });
         },
-        collectionChanged: function () {
+        collectionChanged: function() {
             this.hydrate();
         },
-        render: function () {
+        render: function() {
             if (this.template !== null) {
-
                 var data_json = this.collection.toJSON()[0];
 
                 // calculate which pages ranges to display
@@ -178,9 +174,9 @@ var edx = edx || {};
                 _.extend(data, viewHelper);
                 var html = this.template(data);
                 this.$el.html(html);
-           }
+            }
         },
-        onRemoveAttempt: function (event) {
+        onRemoveAttempt: function(event) {
             event.preventDefault();
 
             // confirm the user's intent
@@ -189,16 +185,16 @@ var edx = edx || {};
             }
             $('body').css('cursor', 'wait');
             var $target = $(event.currentTarget);
-            var attemptId = $target.data("attemptId");
+            var attemptId = $target.data('attemptId');
 
             var self = this;
             self.model.url = this.attempt_url + attemptId;
-            self.model.fetch( {
+            self.model.fetch({
                 headers: {
-                    "X-CSRFToken": this.getCSRFToken()
+                    'X-CSRFToken': this.getCSRFToken()
                 },
                 type: 'DELETE',
-                success: function () {
+                success: function() {
                     // fetch the attempts again.
                     self.hydrate();
                     $('body').css('cursor', 'auto');
