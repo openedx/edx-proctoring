@@ -4,6 +4,7 @@
     "sinon": false,
     "setFixtures": false,
     "spyOnEvent": false,
+    "gettext": false,
     "edx": true
   }
 }
