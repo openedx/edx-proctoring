@@ -1,4 +1,4 @@
-var edx = edx || {};
+edx = edx || {};
 
 (function(Backbone, $, _, gettext) {
     'use strict';
@@ -8,6 +8,8 @@ var edx = edx || {};
 
     edx.courseware.proctored_exam.ProctoredExamView = Backbone.View.extend({
         initialize: function(options) {
+            var controlsTemplateHtml,
+                templateHtml;
             _.bindAll(this, 'detectScroll');
             this.$el = options.el;
             this.timerBarTopPosition = this.$el.position().top;
@@ -27,16 +29,16 @@ var edx = edx || {};
             // get destroyed before onbeforeunload is called
             this.taking_as_proctored = false;
 
-            var template_html = $(this.templateId).text();
-            if (template_html !== null) {
+            templateHtml = $(this.templateId).text();
+            if (templateHtml !== null) {
                 /* don't assume this backbone view is running on a page with the underscore templates */
-                this.template = _.template(template_html);
+                this.template = _.template(templateHtml);
             }
 
-            var controls_template_html = $(this.examControlsTemplateId).text();
-            if (controls_template_html !== null) {
+            controlsTemplateHtml = $(this.examControlsTemplateId).text();
+            if (controlsTemplateHtml !== null) {
                 /* don't assume this backbone view is running on a page with the underscore templates */
-                this.controls_template = _.template(controls_template_html);
+                this.controls_template = _.template(controlsTemplateHtml);
             }
 
             /* re-render if the model changes */
@@ -64,13 +66,15 @@ var edx = edx || {};
         modelChanged: function() {
             // if we are a proctored exam, then we need to alert user that he/she
             // should not be navigating around the courseware
-            var taking_as_proctored = this.model.get('taking_as_proctored');
-            var time_left = this.model.get('time_remaining_seconds') > 0;
-            this.secondsLeft = this.model.get('time_remaining_seconds');
+            var takingAsProctored = this.model.get('taking_as_proctored');
+            var timeLeft = this.model.get('time_remaining_seconds') > 0;
             var status = this.model.get('attempt_status');
-            var in_courseware = document.location.href.indexOf('/courses/' + this.model.get('course_id') + '/courseware/') > -1;
+            var inCourseware = document.location.href.indexOf(
+                '/courses/' + this.model.get('course_id') + '/courseware/'
+            ) > -1;
+            this.secondsLeft = this.model.get('time_remaining_seconds');
 
-            if (taking_as_proctored && time_left && in_courseware && status !== 'started') {
+            if (takingAsProctored && timeLeft && inCourseware && status !== 'started') {
                 $(window).bind('beforeunload', this.unloadMessage);
             } else {
                 // remove callback on unload event
@@ -84,6 +88,8 @@ var edx = edx || {};
             this.render();
         },
         render: function() {
+            var html,
+                self;
             if (this.template !== null) {
                 if (
                     this.model.get('in_timed_exam') &&
@@ -93,7 +99,7 @@ var edx = edx || {};
                     // add callback on scroll event
                     $(window).bind('scroll', this.detectScroll);
 
-                    var html = this.template(this.model.toJSON());
+                    html = this.template(this.model.toJSON());
                     this.$el.html(html);
                     this.$el.show();
                     // only render the accesibility string the first time we render after
@@ -103,11 +109,11 @@ var edx = edx || {};
                         this.$el.find('.timer-announce').html(this.accessibility_time_string);
                         this.first_time_rendering = false;
                     }
-                    this.updateRemainingTime(this);
-                    this.timerId = setInterval(this.updateRemainingTime, 1000, this);
+                    this.updateRemainingTime();
+                    this.timerId = setInterval(this.updateRemainingTime.bind(this), 1000);
 
                     // Bind a click handler to the exam controls
-                    var self = this;
+                    self = this;
                     $('.exam-button-turn-in-exam').click(function() {
                         $(window).unbind('beforeunload', self.unloadMessage);
 
@@ -138,9 +144,13 @@ var edx = edx || {};
             return gettext('Are you sure you want to leave this page? \n' +
                 'To pass your proctored exam you must also pass the online proctoring session review.');
         },
-        updateRemainingTime: function(self) {
-            self.timerTick++;
-            self.secondsLeft--;
+        updateRemainingTime: function() {
+            var newState,
+                url,
+                queryString;
+            var self = this;
+            self.timerTick += 1;
+            self.secondsLeft -= 1;
             if (
                 self.timerTick % self.poll_interval === self.poll_interval / 2 &&
                 edx.courseware.proctored_exam.configuredWorkerURL
@@ -148,8 +158,8 @@ var edx = edx || {};
                 edx.courseware.proctored_exam.pingApplication().catch(self.endExamForFailureState.bind(self));
             }
             if (self.timerTick % self.poll_interval === 0) {
-                var url = self.model.url + '/' + self.model.get('attempt_id');
-                var queryString = '?sourceid=in_exam&proctored=' + self.model.get('taking_as_proctored');
+                url = self.model.url + '/' + self.model.get('attempt_id');
+                queryString = '?sourceid=in_exam&proctored=' + self.model.get('taking_as_proctored');
                 $.ajax(url + queryString).success(function(data) {
                     if (data.status === 'error') {
                         // The proctoring session is in error state
@@ -163,8 +173,7 @@ var edx = edx || {};
                     }
                 });
             }
-            var oldState = self.$el.find('div.exam-timer').attr('class');
-            var newState = self.model.getRemainingTimeState(self.secondsLeft);
+            newState = self.model.getRemainingTimeState(self.secondsLeft);
 
             if (newState !== null && !self.$el.find('div.exam-timer').hasClass(newState)) {
                 self.$el.find('div.exam-timer').removeClass('warning critical');
