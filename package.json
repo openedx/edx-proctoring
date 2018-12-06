@@ -1,6 +1,7 @@
 {
   "name": "@edx/edx-proctoring",
-  "version": "1.0.0",
+  "//": "Be sure to update the version number in edx_proctoring/__init__.py",
+  "version": "1.5.0-rc.1",
   "main": "edx_proctoring/static/index.js",
   "repository": {
     "type": "git",
