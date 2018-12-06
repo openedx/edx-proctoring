@@ -1,9 +1,8 @@
-var edx = edx || {};
+/* global accessible_modal */
+edx = edx || {};
 
 (function($) {
     'use strict';
-
-    var ONE_MINUTE_MS = 60000;
 
     var actionToMessageTypesMap = {
         submit: {
@@ -111,14 +110,18 @@ var edx = edx || {};
     edx.courseware = edx.courseware || {};
     edx.courseware.proctored_exam = edx.courseware.proctored_exam || {};
     edx.courseware.proctored_exam.examStartHandler = function(e) {
+        var $this,
+            actionUrl,
+            action,
+            shouldUseWorker;
         e.preventDefault();
         e.stopPropagation();
 
-        var $this = $(this);
-        var actionUrl = $this.data('change-state-url');
-        var action = $this.data('action');
+        $this = $(this);
+        actionUrl = $this.data('change-state-url');
+        action = $this.data('action');
 
-        var shouldUseWorker = window.Worker && edx.courseware.proctored_exam.configuredWorkerURL;
+        shouldUseWorker = window.Worker && edx.courseware.proctored_exam.configuredWorkerURL;
         if (shouldUseWorker) {
             workerPromiseForEventNames(actionToMessageTypesMap[action])()
                 .then(updateExamAttemptStatusPromise(actionUrl, action))
@@ -129,52 +132,21 @@ var edx = edx || {};
         }
     };
     edx.courseware.proctored_exam.examEndHandler = function() {
+        var $this,
+            actionUrl,
+            action,
+            shouldUseWorker;
         $(window).unbind('beforeunload');
 
-        var $this = $(this);
-        var actionUrl = $this.data('change-state-url');
-        var action = $this.data('action');
+        $this = $(this);
+        actionUrl = $this.data('change-state-url');
+        action = $this.data('action');
 
         setActionButtonLoadingState($this);
 
-        var shouldUseWorker = window.Worker && edx.courseware.proctored_exam.configuredWorkerURL;
-        if (shouldUseWorker) {
-            workerPromiseForEventNames(actionToMessageTypesMap[action])()
-                .then(updateExamAttemptStatusPromise(actionUrl, action))
-                .then(reloadPage)
-                .catch(errorHandlerGivenMessage(
-                    $this,
-                    gettext('Error Starting Exam'),
-                    gettext(
-                        'Something has gone wrong starting your exam. ' +
-                        'Please double-check that the application is running.'
-                    )
-                ));
-        } else {
-            updateExamAttemptStatusPromise(actionUrl, action)()
-                .then(reloadPage)
-                .catch(errorHandlerGivenMessage(
-                    $this,
-                    gettext('Error Starting Exam'),
-                    gettext(
-                        'Something has gone wrong starting your exam. ' +
-                        'Please reload the page and start again.'
-                    )
-                ));
-        }
-    };
-    edx.courseware.proctored_exam.examEndHandler = function() {
-        $(window).unbind('beforeunload');
-
-        var $this = $(this);
-        var actionUrl = $this.data('change-state-url');
-        var action = $this.data('action');
-
-        setActionButtonLoadingState($this);
-
-        var shouldUseWorker = window.Worker &&
-                              edx.courseware.proctored_exam.configuredWorkerURL &&
-                              action === 'submit';
+        shouldUseWorker = window.Worker &&
+                          edx.courseware.proctored_exam.configuredWorkerURL &&
+                          action === 'submit';
         if (shouldUseWorker) {
             updateExamAttemptStatusPromise(actionUrl, action)()
                 .then(workerPromiseForEventNames(actionToMessageTypesMap[action]))
