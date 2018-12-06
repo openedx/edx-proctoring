@@ -1,4 +1,4 @@
-var edx = edx || {};
+edx = edx || {};
 
 (function(Backbone, $, _, gettext) {
     'use strict';
@@ -28,11 +28,11 @@ var edx = edx || {};
         loadTemplateData: function() {
             var self = this;
             $.ajax({url: self.template_url, dataType: 'html'})
-                .error(function(jqXHR, textStatus, errorThrown) {
+                .error(function() {
 
                 })
-                .done(function(template_data) {
-                    self.template = _.template(template_data);
+                .done(function(templateData) {
+                    self.template = _.template(templateData);
                     self.render();
                     self.showModal();
                     self.updateCss();
@@ -98,18 +98,19 @@ var edx = edx || {};
                 user_info: $('#user_info').val()
             };
         },
-        hideError: function(view, attr, selector) {
+        hideError: function(view, attr) {
             var $element = view.$form[attr];
 
             $element.removeClass('error');
             $element.parent().find('.error-message').empty();
         },
-        showError: function(view, attr, errorMessage, selector) {
-            var $element = view.$form[attr];
+        showError: function(view, attr, errorMessage) {
+            var $element = view.$form[attr],
+                $errorMessage;
 
             $element.addClass('error');
-            var $errorMessage = $element.parent().find('.error-message');
-            if ($errorMessage.length == 0) {
+            $errorMessage = $element.parent().find('.error-message');
+            if (!$errorMessage.length) {
                 $errorMessage = $("<div class='error-message'></div>");
                 $element.parent().append($errorMessage);
             }
@@ -118,14 +119,18 @@ var edx = edx || {};
             this.updateCss();
         },
         addAllowance: function(event) {
+            var self,
+                formHasErrors,
+                values,
+                $errorResponse;
             event.preventDefault();
-            var $error_response = $('.error-response');
-            $error_response.html();
-            var values = this.getCurrentFormValues();
-            var formHasErrors = false;
+            $errorResponse = $('.error-response');
+            $errorResponse.html();
+            values = this.getCurrentFormValues();
+            formHasErrors = false;
 
 
-            var self = this;
+            self = this;
             $.each(values, function(key, value) {
                 if (value === '') {
                     formHasErrors = true;
@@ -149,14 +154,15 @@ var edx = edx || {};
                     },
                     success: function() {
                         // fetch the allowances again.
-                        $error_response.html();
-                        self.proctored_exam_allowance_view.collection.url = self.proctored_exam_allowance_view.initial_url + self.course_id + '/allowance';
+                        $errorResponse.html();
+                        self.proctored_exam_allowance_view.collection.url =
+                            self.proctored_exam_allowance_view.initial_url + self.course_id + '/allowance';
                         self.proctored_exam_allowance_view.hydrate();
                         self.hideModal();
                     },
-                    error: function(self, response, options) {
+                    error: function(context, response) {
                         var data = $.parseJSON(response.responseText);
-                        $error_response.html(gettext(data.detail));
+                        $errorResponse.html(gettext(data.detail));
                     }
                 });
             }
@@ -166,7 +172,11 @@ var edx = edx || {};
 
             if (selectedExam.is_proctored) {
                 // Selected Exam is a Proctored or Practice-Proctored exam.
-                if (selectedExam.is_practice_exam) { $('#exam_type_label').text(gettext('Practice Exam')); } else { $('#exam_type_label').text(gettext('Proctored Exam')); }
+                if (selectedExam.is_practice_exam) {
+                    $('#exam_type_label').text(gettext('Practice Exam'));
+                } else {
+                    $('#exam_type_label').text(gettext('Proctored Exam'));
+                }
 
                 // In case of Proctored Exams, we hide the Additional Time label and show the Allowance Types Select
                 $('#additional_time_label').hide();
@@ -183,14 +193,14 @@ var edx = edx || {};
             }
             this.updateAllowanceLabels('additional_time_granted');
         },
-        selectExam: function(event) {
+        selectExam: function() {
             this.selectExamAtIndex($('#proctored_exam')[0].selectedIndex);
         },
-        selectAllowance: function(event) {
+        selectAllowance: function() {
             this.updateAllowanceLabels($('#allowance_type').val());
         },
         updateAllowanceLabels: function(selectedAllowanceType) {
-            if (selectedAllowanceType == 'additional_time_granted') {
+            if (selectedAllowanceType === 'additional_time_granted') {
                 $('#minutes_label').show();
                 $('#allowance_value_label').text(gettext('Additional Time'));
             } else {
