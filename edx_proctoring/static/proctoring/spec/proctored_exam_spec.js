@@ -98,7 +98,7 @@ describe('ProctoredExamView', function() {
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         expect(reloadPage).toHaveBeenCalled();
     });
-    it("calls external js global function on off-beat", function() {
+    it('calls external js global function on off-beat', function() {
         edx.courseware.proctored_exam.pingApplication = jasmine.createSpy().and.returnValue(Promise.resolve());
         edx.courseware.proctored_exam.configuredWorkerURL = 'nonempty/string.html';
         this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval / 2 - 1;
@@ -107,12 +107,12 @@ describe('ProctoredExamView', function() {
         delete edx.courseware.proctored_exam.pingApplication;
         delete edx.courseware.proctored_exam.configuredWorkerURL;
     });
-    it("reloads the page after failure-state ajax call", function(done) {
+    it('reloads the page after failure-state ajax call', function(done) {
         this.server.respondWith(
             function(request) {
                 request.respond(200,
-                                {"Content-Type": "application/json"},
-                                "{}"
+                    {'Content-Type': 'application/json'},
+                    '{}'
                 );
             }
         );
@@ -123,12 +123,12 @@ describe('ProctoredExamView', function() {
         });
         this.server.respond();
     });
-    it("sets global variable when unset", function() {
+    it('sets global variable when unset', function() {
         expect(window.edx.courseware.proctored_exam.configuredWorkerURL).toBeUndefined();
-        this.proctored_exam_view.model.set("desktop_application_js_url", "nonempty string");
+        this.proctored_exam_view.model.set('desktop_application_js_url', 'nonempty string');
         expect(window.edx.courseware.proctored_exam.configuredWorkerURL).not.toBeUndefined();
-        this.proctored_exam_view.model.set("desktop_application_js_url", "another nonempty string");
-        expect(window.edx.courseware.proctored_exam.configuredWorkerURL).toEqual("nonempty string");
+        this.proctored_exam_view.model.set('desktop_application_js_url', 'another nonempty string');
+        expect(window.edx.courseware.proctored_exam.configuredWorkerURL).toEqual('nonempty string');
         delete window.edx.courseware.proctored_exam.configuredWorkerURL;
     });
 });

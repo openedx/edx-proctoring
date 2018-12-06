@@ -1,16 +1,16 @@
-describe('ProctoredExamAllowanceView', function () {
+describe('ProctoredExamAllowanceView', function() {
     var html = '';
     var expectedProctoredAllowanceJson = [
         {
-            created: "2015-08-10T09:15:45Z",
+            created: '2015-08-10T09:15:45Z',
             id: 1,
-            modified: "2015-08-10T09:15:45Z",
-            key: "Additional time (minutes)",
-            value: "1",
+            modified: '2015-08-10T09:15:45Z',
+            key: 'Additional time (minutes)',
+            value: '1',
             proctored_exam: {
-                content_id: "i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c",
-                course_id: "edX/DemoX/Demo_Course",
-                exam_name: "Test Exam",
+                content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
+                course_id: 'edX/DemoX/Demo_Course',
+                exam_name: 'Test Exam',
                 external_id: null,
                 id: 17,
                 is_active: true,
@@ -25,14 +25,14 @@ describe('ProctoredExamAllowanceView', function () {
         }
     ];
 
-    beforeEach(function () {
+    beforeEach(function() {
         html = '<span class="tip">' +
         '<%- gettext("Allowances") %>' +
         '<span> <a id="add-allowance" href="#"  class="add blue-button">+' +
         '<%- gettext("Add Allowance") %>' +
         '</a> </span> </span>' +
         '<% var is_allowances = proctored_exam_allowances.length !== 0 %>' +
-        '<% if (is_allowances) { %>'+
+        '<% if (is_allowances) { %>' +
         '<div class="wrapper-content wrapper"> <section class="content"> <table class="allowance-table">' +
         '<thead><tr class="allowance-headings">' +
         '<th class="exam-name">Exam Name</th>' +
@@ -75,10 +75,10 @@ describe('ProctoredExamAllowanceView', function () {
         setFixtures('<div class="special-allowance-container" data-course-id="test_course_id"></div>');
 
         // load the underscore template response before calling the proctored exam allowance view.
-        this.server.respondWith("GET", "/static/proctoring/templates/course_allowances.underscore",
+        this.server.respondWith('GET', '/static/proctoring/templates/course_allowances.underscore',
             [
                 200,
-                {"Content-Type": "text/html"},
+                {'Content-Type': 'text/html'},
                 html
             ]
         );
@@ -87,12 +87,12 @@ describe('ProctoredExamAllowanceView', function () {
     afterEach(function() {
         this.server.restore();
     });
-    it("should render the proctored exam allowance view properly", function () {
+    it('should render the proctored exam allowance view properly', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredAllowanceJson)
             ]
@@ -107,12 +107,12 @@ describe('ProctoredExamAllowanceView', function () {
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Test Exam');
     });
     //
-    it("should remove the proctored exam allowance", function () {
+    it('should remove the proctored exam allowance', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredAllowanceJson)
             ]
@@ -133,7 +133,7 @@ describe('ProctoredExamAllowanceView', function () {
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify([])
             ]
@@ -144,7 +144,7 @@ describe('ProctoredExamAllowanceView', function () {
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify([])
             ]
@@ -152,7 +152,7 @@ describe('ProctoredExamAllowanceView', function () {
 
         // trigger the remove allowance event.
         var spyEvent = spyOnEvent('.remove_allowance', 'click');
-        $('.remove_allowance').trigger( "click" );
+        $('.remove_allowance').trigger('click');
 
         // process the deleted allowance requests.
         this.server.respond();

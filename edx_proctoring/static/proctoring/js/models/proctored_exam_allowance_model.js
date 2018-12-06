@@ -1,7 +1,6 @@
 var edx = edx || {};
 
 (function(Backbone) {
-
     'use strict';
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};

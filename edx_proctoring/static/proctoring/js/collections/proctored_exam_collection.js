@@ -1,6 +1,5 @@
 var edx = edx || {};
 (function(Backbone) {
-
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
 

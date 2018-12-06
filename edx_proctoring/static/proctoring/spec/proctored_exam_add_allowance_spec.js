@@ -1,20 +1,20 @@
-describe('ProctoredExamAddAllowanceView', function () {
+describe('ProctoredExamAddAllowanceView', function() {
     var html = '';
     var allowancesHtml = '';
     var errorAddingAllowance = {
-        detail: "Cannot find user"
+        detail: 'Cannot find user'
     };
     var expectedProctoredAllowanceJson = [
         {
-            created: "2015-08-10T09:15:45Z",
+            created: '2015-08-10T09:15:45Z',
             id: 1,
-            modified: "2015-08-10T09:15:45Z",
-            key: "additional_time_granted",
-            value: "1",
+            modified: '2015-08-10T09:15:45Z',
+            key: 'additional_time_granted',
+            value: '1',
             proctored_exam: {
-                content_id: "i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c",
-                course_id: "edX/DemoX/Demo_Course",
-                exam_name: "Test Exam",
+                content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
+                course_id: 'edX/DemoX/Demo_Course',
+                exam_name: 'Test Exam',
                 external_id: null,
                 id: 6,
                 is_active: true,
@@ -31,15 +31,15 @@ describe('ProctoredExamAddAllowanceView', function () {
 
     var expectedTimedAllowanceJson = [
         {
-            created: "2015-08-10T09:15:45Z",
+            created: '2015-08-10T09:15:45Z',
             id: 1,
-            modified: "2015-08-10T09:15:45Z",
-            key: "additional_time_granted",
-            value: "1",
+            modified: '2015-08-10T09:15:45Z',
+            key: 'additional_time_granted',
+            value: '1',
             proctored_exam: {
-                content_id: "i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c",
-                course_id: "edX/DemoX/Demo_Course",
-                exam_name: "Test Exam",
+                content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
+                course_id: 'edX/DemoX/Demo_Course',
+                exam_name: 'Test Exam',
                 external_id: null,
                 id: 6,
                 is_active: true,
@@ -56,19 +56,19 @@ describe('ProctoredExamAddAllowanceView', function () {
 
     var proctoredExamJson = [
         {
-            exam_name: "Midterm Exam",
+            exam_name: 'Midterm Exam',
             is_proctored: true,
             is_practice: false,
             id: 5
         },
         {
-            exam_name: "Final Exam",
+            exam_name: 'Final Exam',
             is_proctored: false,
             is_practice: false,
             id: 6
         },
         {
-            exam_name: "Test Exam",
+            exam_name: 'Test Exam',
             is_proctored: true,
             is_practice: true,
             id: 7
@@ -80,8 +80,7 @@ describe('ProctoredExamAddAllowanceView', function () {
         ['review_policy_exception', gettext('Review Policy Exception')]
     ];
 
-    beforeEach(function () {
-
+    beforeEach(function() {
         // We have converted the edx_proctoring/static/proctoring/templates/add-new-allowance.underscore template
         // from http://www.howtocreate.co.uk/tutorials/jsexamples/syntax/prepareInline.html
 
@@ -93,7 +92,7 @@ describe('ProctoredExamAddAllowanceView', function () {
             '<%- gettext("Add Allowance") %>' +
             '</a> </span> </span>' +
             '<% var is_allowances = proctored_exam_allowances.length !== 0 %>' +
-            '<% if (is_allowances) { %>'+
+            '<% if (is_allowances) { %>' +
             '<div class="wrapper-content wrapper"> <section class="content"> <table class="allowance-table">' +
             '<thead><tr class="allowance-headings">' +
             '<th class="exam-name">Exam Name</th>' +
@@ -136,17 +135,17 @@ describe('ProctoredExamAddAllowanceView', function () {
 
         setFixtures('<div class="special-allowance-container" data-course-id="test_course_id"></div>');
         // load the underscore template response before calling the proctored exam allowance view.
-        this.server.respondWith("GET", "/static/proctoring/templates/add-new-allowance.underscore",
+        this.server.respondWith('GET', '/static/proctoring/templates/add-new-allowance.underscore',
             [
                 200,
-                {"Content-Type": "text/html"},
+                {'Content-Type': 'text/html'},
                 html
             ]
         );
-        this.server.respondWith("GET", "/static/proctoring/templates/course_allowances.underscore",
+        this.server.respondWith('GET', '/static/proctoring/templates/course_allowances.underscore',
             [
                 200,
-                {"Content-Type": "text/html"},
+                {'Content-Type': 'text/html'},
                 allowancesHtml
             ]
         );
@@ -155,12 +154,12 @@ describe('ProctoredExamAddAllowanceView', function () {
     afterEach(function() {
         this.server.restore();
     });
-    it("should render the proctored exam add allowance view properly", function () {
+    it('should render the proctored exam add allowance view properly', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredAllowanceJson)
             ]
@@ -182,17 +181,17 @@ describe('ProctoredExamAddAllowanceView', function () {
         expect(add_allowance_view.$el.find('#proctored_exam').html()).toContain('Test Exam');
         expect(add_allowance_view.$el.find('#exam_type_label')).toExist();
         $('#proctored_exam').val('5');
-        $('#proctored_exam').trigger( "change" );
+        $('#proctored_exam').trigger('change');
         expect(add_allowance_view.$el.find('#exam_type_label').html()).toContain('Proctored Exam');
     });
 
 
-    it("should render the timed exam add allowance view properly", function () {
+    it('should render the timed exam add allowance view properly', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedTimedAllowanceJson)
             ]
@@ -214,17 +213,17 @@ describe('ProctoredExamAddAllowanceView', function () {
         expect(add_allowance_view.$el.find('#proctored_exam').html()).toContain('Test Exam');
         expect(add_allowance_view.$el.find('#exam_type_label')).toExist();
         $('#proctored_exam').val('6');
-        $('#proctored_exam').trigger( "change" );
+        $('#proctored_exam').trigger('change');
         expect(add_allowance_view.$el.find('#exam_type_label').html()).toContain('Timed Exam');
     });
 
 
-    it("should add the proctored exam allowance", function () {
+    it('should add the proctored exam allowance', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify([])
             ]
@@ -252,7 +251,7 @@ describe('ProctoredExamAddAllowanceView', function () {
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify([])
             ]
@@ -263,22 +262,22 @@ describe('ProctoredExamAddAllowanceView', function () {
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredAllowanceJson)
             ]
         );
 
-        //select the form values
+        // select the form values
 
         $('#proctored_exam').val('Test Exam');
         $('#allowance_type').val('additional_time_granted');
         $('#allowance_value').val('1');
-        $("#user_info").val('testuser1');
+        $('#user_info').val('testuser1');
 
         // trigger the add allowance event.
         var spyEvent = spyOnEvent('form', 'submit');
-        $('form').trigger( "submit" );
+        $('form').trigger('submit');
 
         // process the deleted allowance requests.
         this.server.respond();
@@ -289,12 +288,12 @@ describe('ProctoredExamAddAllowanceView', function () {
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Additional Time (minutes)');
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html()).toContain('Test Exam');
     });
-    it("should send error when adding proctored exam allowance", function () {
+    it('should send error when adding proctored exam allowance', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify([])
             ]
@@ -322,7 +321,7 @@ describe('ProctoredExamAddAllowanceView', function () {
             [
                 400,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(errorAddingAllowance)
             ]
@@ -333,22 +332,22 @@ describe('ProctoredExamAddAllowanceView', function () {
             [
                 200,
                 {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 JSON.stringify(expectedProctoredAllowanceJson)
             ]
         );
 
-        //select the form values
+        // select the form values
         // invalid user_info returns error
         $('#proctored_exam').val('Test Exam');
         $('#allowance_type').val('additional_time_granted');
         $('#allowance_value').val('2');
-        $("#user_info").val('testuser112321');
+        $('#user_info').val('testuser112321');
 
         // trigger the add allowance event.
         var spyEvent = spyOnEvent('form', 'submit');
-        $('form').trigger( "submit" );
+        $('form').trigger('submit');
 
         // process the deleted allowance requests.
         this.server.respond();
@@ -356,18 +355,17 @@ describe('ProctoredExamAddAllowanceView', function () {
 
         expect(add_allowance_view.$el.find('.error-response').html()).toContain('Cannot find user');
 
-        //select the form values
+        // select the form values
         // empty value returns error
         $('#proctored_exam').val('Test Exam');
         $('#allowance_type').val('Additional Time (minutes)');
         $('#allowance_value').val('');
-        $("#user_info").val('testuser1');
+        $('#user_info').val('testuser1');
 
         // trigger the add allowance event.
         var spyEvent = spyOnEvent('form', 'submit');
-        $('form').trigger( "submit" );
+        $('form').trigger('submit');
 
         expect(add_allowance_view.$el.find('.error-message').html()).toContain('Required field');
-
     });
 });
