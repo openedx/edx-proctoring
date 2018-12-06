@@ -108,6 +108,7 @@ describe('ProctoredExamView', function() {
         delete edx.courseware.proctored_exam.configuredWorkerURL;
     });
     it('reloads the page after failure-state ajax call', function(done) {
+        var reloadPage;
         this.server.respondWith(
             function(request) {
                 request.respond(200,
@@ -116,7 +117,7 @@ describe('ProctoredExamView', function() {
                 );
             }
         );
-        var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
+        reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
         this.proctored_exam_view.endExamForFailureState().done(function() {
             expect(reloadPage).toHaveBeenCalled();
             done();
