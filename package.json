@@ -9,6 +9,9 @@
   "files": [
     "/edx_proctoring/static"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-karma": "0.0.1",
