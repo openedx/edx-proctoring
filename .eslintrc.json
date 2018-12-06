@@ -4,6 +4,8 @@
     "sinon": false,
     "setFixtures": false,
     "spyOnEvent": false,
+    "_": false,
+    "Backbone": false,
     "gettext": false,
     "edx": true
   }
