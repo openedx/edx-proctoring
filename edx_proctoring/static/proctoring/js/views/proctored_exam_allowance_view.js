@@ -1,4 +1,4 @@
-var edx = edx || {};
+edx = edx || {};
 
 (function(Backbone, $, _) {
     'use strict';
@@ -38,14 +38,17 @@ var edx = edx || {};
             'click .remove_allowance': 'removeAllowance'
         },
         getCSRFToken: function() {
-            var cookieValue = null;
-            var name = 'csrftoken';
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
+            var cookieValue = null,
+                cookie,
+                cookies,
+                name = 'csrftoken',
+                i;
+            if (document.cookie && document.cookie !== '') {
+                cookies = document.cookie.split(';');
+                for (i = 0; i < cookies.length; i += 1) {
+                    cookie = jQuery.trim(cookies[i]);
                     // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                         break;
                     }
@@ -99,11 +102,11 @@ var edx = edx || {};
         loadTemplateData: function() {
             var self = this;
             $.ajax({url: self.template_url, dataType: 'html'})
-                .error(function(jqXHR, textStatus, errorThrown) {
+                .error(function() {
 
                 })
-                .done(function(template_data) {
-                    self.template = _.template(template_data);
+                .done(function(templateData) {
+                    self.template = _.template(templateData);
                     self.hydrate();
                 });
         },
@@ -124,12 +127,14 @@ var edx = edx || {};
             this.hydrate();
         },
         render: function() {
+            var html,
+                self;
             if (this.template !== null) {
-                var self = this;
+                self = this;
                 this.collection.each(function(item) {
                     var key = item.get('key');
                     var i;
-                    for (i = 0; i < self.allowance_types.length; i++) {
+                    for (i = 0; i < self.allowance_types.length; i += 1) {
                         if (key === self.allowance_types[i][0]) {
                             item.set('key_display_name', self.allowance_types[i][1]);
                             break;
@@ -139,7 +144,7 @@ var edx = edx || {};
                         item.set('key_display_name', key);
                     }
                 });
-                var html = this.template({proctored_exam_allowances: this.collection.toJSON()});
+                html = this.template({proctored_exam_allowances: this.collection.toJSON()});
                 this.$el.html(html);
             }
         },
@@ -147,7 +152,8 @@ var edx = edx || {};
             var self = this;
             self.proctoredExamCollection.fetch({
                 success: function() {
-                    var add_allowance_view = new edx.instructor_dashboard.proctoring.AddAllowanceView({
+                    // eslint-disable-next-line no-new
+                    new edx.instructor_dashboard.proctoring.AddAllowanceView({
                         course_id: self.course_id,
                         proctored_exams: self.proctoredExamCollection.toJSON(),
                         proctored_exam_allowance_view: self,
@@ -159,5 +165,6 @@ var edx = edx || {};
             event.preventDefault();
         }
     });
-    this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView;
+    this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView =
+      edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView;
 }).call(this, Backbone, $, _);
