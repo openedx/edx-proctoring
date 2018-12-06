@@ -1,4 +1,4 @@
-var edx = edx || {};
+edx = edx || {};
 
 (function(Backbone) {
     'use strict';
@@ -10,5 +10,6 @@ var edx = edx || {};
         url: '/api/edx_proctoring/v1/proctored_exam/attempt/'
 
     });
-    this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel = edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel;
+    this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel =
+      edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel;
 }).call(this, Backbone);
