@@ -1,4 +1,6 @@
 describe('ProctoredExamAttemptView', function() {
+    'use strict';
+
     var html = '';
     var deletedProctoredExamAttemptJson = [{
         attempt_url: '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/edX/DemoX/Demo_Course',
@@ -57,9 +59,11 @@ describe('ProctoredExamAttemptView', function() {
         '<section class="content">' +
         '<div class="top-header">' +
         '<div class="search-attempts">' +
-        '<input type="text" id="search_attempt_id" placeholder="e.g johndoe or john.doe@gmail.com"' +
+         '<input type="text" id="search_attempt_id"' +
+         'placeholder="e.g johndoe or john.doe@gmail.com"' +
         '<% if (inSearchMode) { %> value="<%= searchText %>" <%} %>' +
-        '/> <span class="search"><span class="icon fa fa-search" aria-hidden="true"></span></span> <span class="clear-search"><span class="icon fa fa-remove" aria-hidden="true"></span></span>' +
+        '/> <span class="search"><span class="icon fa fa-search" aria-hidden="true"></span></span>' +
+        '<span class="clear-search"><span class="icon fa fa-remove" aria-hidden="true"></span></span>' +
         '</div>' +
         '<ul class="pagination">' +
         '<% if (!pagination_info.has_previous){ %>' +
@@ -67,17 +71,21 @@ describe('ProctoredExamAttemptView', function() {
         '<% } else { %>' +
         '<li>' +
         '<a class="target-link " data-target-url="' +
-        '<%- interpolate("%(attempt_url)s?page=%(count)s ", {attempt_url: attempt_url, count: pagination_info.current_page - 1}, true) %>' +
+        '<%- interpolate("%(attempt_url)s?page=%(count)s ",' +
+        '{attempt_url: attempt_url, count: pagination_info.current_page - 1}, true) %>' +
         '"' +
         'href="#" aria-label="Previous">' +
         '<span aria-hidden="true">&laquo;</span> </a> </li> <% }%>' +
         '<% for(var n = 1; n <= pagination_info.total_pages; n++) { %>' +
         '<li> <a class="target-link <% if (pagination_info.current_page == n){ %> active <% } %>" data-target-url=" ' +
-        '<%- interpolate("%(attempt_url)s?page=%(count)s ", {attempt_url: attempt_url, count: n}, true) %>' +
+        '<%- interpolate("%(attempt_url)s?page=%(count)s ",' +
+        '{attempt_url: attempt_url, count: n}, true) %>' +
         '"href="#"><%= n %> </a></li> <% } %>' +
-        '<% if (!pagination_info.has_next){ %> <li class="disabled"> <a aria-label="Next"> <span aria-hidden="true">&raquo;</span> </a></li>' +
+        '<% if (!pagination_info.has_next){ %>' +
+        '<li class="disabled"> <a aria-label="Next"> <span aria-hidden="true">&raquo;</span> </a></li>' +
         '<% } else { %> <li> <a class="target-link" href="#" aria-label="Next" data-target-url="' +
-        '<%- interpolate("%(attempt_url)s?page=%(count)s ",{attempt_url: attempt_url, count: pagination_info.current_page + 1}, true) %>' +
+        '<%- interpolate("%(attempt_url)s?page=%(count)s ",' +
+        '{attempt_url: attempt_url, count: pagination_info.current_page + 1}, true) %>' +
         '" > <span aria-hidden="true">&raquo;</span></a> </li> <% }%> </ul><div class="clearfix"></div></div>' +
         '<table class="exam-attempts-table"> <thead><tr class="exam-attempt-headings">' +
         '<th class="username">Username</th>' +
@@ -95,7 +103,8 @@ describe('ProctoredExamAttemptView', function() {
         ' <%= proctored_exam_attempt.user.username %> ' +
         ' </td>' +
         '<td>' +
-        ' <%- interpolate(gettext(" %(exam_display_name)s "), { exam_display_name: proctored_exam_attempt.proctored_exam.exam_name }, true) %>' +
+        ' <%- interpolate(gettext(" %(exam_display_name)s "),' +
+        '{ exam_display_name: proctored_exam_attempt.proctored_exam.exam_name }, true) %>' +
         '</td>' +
         '<td>' +
         ' <%= proctored_exam_attempt.allowed_time_limit_mins %> ' +
@@ -205,7 +214,7 @@ describe('ProctoredExamAttemptView', function() {
         });
 
         // trigger the remove attempt event.
-        var spyEvent = spyOnEvent('.remove-attempt', 'click');
+        spyOnEvent('.remove-attempt', 'click');
         $('.remove-attempt').trigger('click');
 
         // process the deleted attempt requests.
@@ -217,6 +226,7 @@ describe('ProctoredExamAttemptView', function() {
     });
 
     it('should search for the proctored exam attempt', function() {
+        var searchText = 'testuser1';
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
             [
                 200,
@@ -236,11 +246,12 @@ describe('ProctoredExamAttemptView', function() {
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items')).toContainHtml('<td> testuser1  </td>');
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
 
-        var searchText = 'testuser1';
         $('#search_attempt_id').val(searchText);
 
         // search for the proctored exam attempt
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id/search/' + searchText,
+        this.server.respondWith(
+            'GET',
+            '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id/search/' + searchText,
             [
                 200,
                 {
@@ -251,7 +262,7 @@ describe('ProctoredExamAttemptView', function() {
         );
 
         // trigger the search attempt event.
-        var spyEvent = spyOnEvent('.search-attempts > span.search', 'click');
+        spyOnEvent('.search-attempts > span.search', 'click');
         $('.search-attempts > span.search').trigger('click');
 
         // process the search attempt requests.
@@ -262,6 +273,7 @@ describe('ProctoredExamAttemptView', function() {
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
     });
     it('should clear the search for the proctored exam attempt', function() {
+        var searchText = 'invalid_search_text';
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
             [
                 200,
@@ -280,11 +292,12 @@ describe('ProctoredExamAttemptView', function() {
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items')).toContainHtml('<td> testuser1  </td>');
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
 
-        var searchText = 'invalid_search_text';
         $('#search_attempt_id').val(searchText);
 
         // search the proctored exam attempt
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id/search/' + searchText,
+        this.server.respondWith(
+            'GET',
+            '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id/search/' + searchText,
             [
                 200,
                 {
@@ -295,7 +308,7 @@ describe('ProctoredExamAttemptView', function() {
         );
 
         // trigger the search attempt event.
-        var spyEvent = spyOnEvent('.search-attempts > span.search', 'click');
+        spyOnEvent('.search-attempts > span.search', 'click');
         $('.search-attempts > span.search').trigger('click');
 
         // process the search attempt request.
@@ -317,7 +330,7 @@ describe('ProctoredExamAttemptView', function() {
         );
 
         // trigger the clear search event.
-        var spyEvent = spyOnEvent('.search-attempts > span.clear-search', 'click');
+        spyOnEvent('.search-attempts > span.clear-search', 'click');
         $('.search-attempts > span.clear-search').trigger('click');
 
         // process the reset attempt request.

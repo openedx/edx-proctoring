@@ -3,6 +3,7 @@
   "globals": {
     "sinon": false,
     "setFixtures": false,
+    "spyOnEvent": false,
     "edx": true
   }
 }
