@@ -80,7 +80,8 @@ class RESTBackendTests(TestCase):
             'id': 1,
             'external_id': 'abcd',
             'proctored_exam': self.backend_exam,
-            'user': 1
+            'user': 1,
+            'instructions': [],
         }
         responses.add(
             responses.GET,

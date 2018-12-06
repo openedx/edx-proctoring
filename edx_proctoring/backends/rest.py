@@ -59,6 +59,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         "Returns the instructor dashboard url"
         return self.base_url + u'/api/v1/instructor/{client_id}/?jwt={jwt}'
 
+    @property
+    def proctoring_instructions(self):
+        "Returns the (optional) proctoring instructions"
+        return []
+
     def __init__(self, client_id=None, client_secret=None, **kwargs):
         """
         Initialize REST backend.
@@ -139,6 +144,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             attempt['proctored_exam']['external_id'],
             attempt['external_id'],
             method='GET')
+        # If the class has instructions defined, use them.
+        # Otherwise, the instructions should be returned by this
+        # API request. Subclasses should wrap each instruction with gettext
+        response['instructions'] = self.proctoring_instructions or response.get('instructions', [])
         return response
 
     def register_exam_attempt(self, exam, context):
