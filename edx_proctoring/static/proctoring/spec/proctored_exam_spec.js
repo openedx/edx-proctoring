@@ -102,7 +102,7 @@ describe('ProctoredExamView', function() {
         this.proctored_exam_view.model.set('ping_interval', 60);
         edx.courseware.proctored_exam.pingApplication = jasmine.createSpy().and.returnValue(Promise.resolve());
         edx.courseware.proctored_exam.configuredWorkerURL = 'nonempty/string.html';
-        this.proctored_exam_view.timerTick = this.proctored_exam_view.model.get('ping_interval') / 2 - 1;
+        this.proctored_exam_view.timerTick = (this.proctored_exam_view.model.get('ping_interval') / 2) - 1;
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         expect(edx.courseware.proctored_exam.pingApplication).toHaveBeenCalled();
         delete edx.courseware.proctored_exam.pingApplication;
