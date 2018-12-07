@@ -131,9 +131,9 @@ describe('ProctoredExamAddAllowanceView', function() {
             '<%= proctored_exam_allowance.value %>' +
             '</td>' +
             '<td>' +
-            '<a data-exam-id="<%= proctored_exam_allowance.proctored_exam.id %>"' +
-            'data-key-name="<%= proctored_exam_allowance.key %>"' +
-            'data-user-id="<%= proctored_exam_allowance.user.id %>"' +
+            '<a data-exam-id="<%= proctored_exam_allowance.proctored_exam.id %>" ' +
+            'data-key-name="<%= proctored_exam_allowance.key %>" ' +
+            'data-user-id="<%= proctored_exam_allowance.user.id %>" ' +
             'class="remove_allowance" href="#">[x]</a>' +
             '</td></tr>' +
             '<% }); %>' +
