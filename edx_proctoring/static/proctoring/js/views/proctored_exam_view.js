@@ -144,8 +144,11 @@ var edx = edx || {};
         updateRemainingTime: function (self) {
             self.timerTick ++;
             self.secondsLeft --;
-            if (self.timerTick % self.poll_interval === self.poll_interval / 2) {
-              edx.courseware.proctored_exam.pingApplication().catch(self.endExamForFailureState.bind(self));
+            if (
+                self.timerTick % self.poll_interval === self.poll_interval / 2 &&
+                edx.courseware.proctored_exam.configuredWorkerURL
+            ) {
+                edx.courseware.proctored_exam.pingApplication().catch(self.endExamForFailureState.bind(self));
             }
             if (self.timerTick % self.poll_interval === 0) {
                 var url = self.model.url + '/' + self.model.get('attempt_id');
