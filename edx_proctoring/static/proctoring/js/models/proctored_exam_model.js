@@ -27,8 +27,8 @@
             /* since we can have a small grace period, we can end in the negative numbers */
             if (secondsLeft < 0) { totalSeconds = 0; }
 
-            hours = totalSeconds / 3600;
-            minutes = (totalSeconds / 60) % 60;
+            hours = Math.floor(totalSeconds / 3600);
+            minutes = Math.floor(totalSeconds / 60) % 60;
             seconds = Math.floor(totalSeconds % 60);
 
             return hours + ':' + (minutes < 10 ? '0' + minutes : minutes)
