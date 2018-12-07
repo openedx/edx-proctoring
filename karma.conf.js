@@ -34,6 +34,7 @@ module.exports = function(config) {
 
         // patterns to load all files in child folders
         files: [
+            'edx_proctoring/static/proctoring/spec/proctored_exam_global_vars.js',
             'node_modules/babel-polyfill/dist/polyfill.js', // polyfills for e.g. Promises
             'edx_proctoring/static/proctoring/js/vendor/i18n.js',
             'edx_proctoring/static/proctoring/js/vendor/jquery.js',

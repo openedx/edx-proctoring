@@ -101,7 +101,7 @@ describe('ProctoredExamView', function() {
     it('calls external js global function on off-beat', function() {
         edx.courseware.proctored_exam.pingApplication = jasmine.createSpy().and.returnValue(Promise.resolve());
         edx.courseware.proctored_exam.configuredWorkerURL = 'nonempty/string.html';
-        this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval / 2 - 1;
+        this.proctored_exam_view.timerTick = (this.proctored_exam_view.poll_interval / 2) - 1;
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         expect(edx.courseware.proctored_exam.pingApplication).toHaveBeenCalled();
         delete edx.courseware.proctored_exam.pingApplication;
