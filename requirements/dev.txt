@@ -9,20 +9,23 @@ astroid==1.5.2            # via edx-lint, pylint, pylint-celery
 backports.functools-lru-cache==1.5  # via astroid, caniusepython3, pylint
 bleach==3.0.2             # via readme-renderer
 caniusepython3==7.0.0
-certifi==2018.10.15       # via requests
+certifi==2018.11.29       # via requests
 chardet==3.0.4            # via requests
 click-log==0.1.8          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
+configparser==3.5.0       # via pydocstyle, pylint
+contextlib2==0.5.5        # via importlib-metadata
 diff-cover==1.0.5
 distlib==0.2.8            # via caniusepython3
-django==1.11.16
+django==1.11.17
 docutils==0.14            # via readme-renderer
 edx-i18n-tools==0.4.8
 edx_lint==0.5.5
+enum34==1.1.6             # via astroid
 filelock==3.0.10          # via tox
 futures==3.2.0            # via caniusepython3, isort
-idna==2.7                 # via requests
-importlib-metadata==0.6   # via path.py
+idna==2.8                 # via requests
+importlib-metadata==0.7   # via path.py
 inflect==2.1.0            # via jinja2-pluralize
 isort==4.3.4
 jinja2-pluralize==0.3.0   # via diff-cover
@@ -32,6 +35,7 @@ markupsafe==1.1.0         # via jinja2
 mccabe==0.6.1             # via pylint
 packaging==18.0           # via caniusepython3
 path.py==11.5.0           # via edx-i18n-tools
+pathlib2==2.3.3           # via importlib-metadata
 pip-tools==3.1.0
 pkginfo==1.4.2            # via twine
 pluggy==0.8.0             # via tox
@@ -49,8 +53,10 @@ pytz==2018.7              # via django
 pyyaml==3.13              # via edx-i18n-tools
 readme-renderer==24.0     # via twine
 requests-toolbelt==0.8.0  # via twine
-requests==2.20.1          # via caniusepython3, requests-toolbelt, twine
-six==1.11.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pip-tools, pydocstyle, pylint, readme-renderer, tox
+requests==2.21.0          # via caniusepython3, requests-toolbelt, twine
+scandir==1.9.0            # via pathlib2
+singledispatch==3.4.0.3   # via astroid, pylint
+six==1.12.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pathlib2, pip-tools, pydocstyle, pylint, readme-renderer, singledispatch, tox
 snowballstemmer==1.2.1    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1

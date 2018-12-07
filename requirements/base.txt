@@ -4,13 +4,13 @@
 #
 #    pip-compile --output-file requirements/base.txt requirements/base.in
 #
-certifi==2018.10.15       # via requests
+certifi==2018.11.29       # via requests
 chardet==3.0.4            # via requests
 django-ipware==2.1.0
 django-model-utils==3.1.2
 django-waffle==0.15.0     # via edx-django-utils, edx-drf-extensions
 django-webpack-loader==0.6.0
-django==1.11.16
+django==1.11.17
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.6.4
 edx-django-utils==1.0.1   # via edx-drf-extensions
@@ -19,21 +19,21 @@ edx-opaque-keys==0.4.4
 edx-rest-api-client==1.9.2
 event-tracking==0.2.7
 future==0.17.1            # via pyjwkest
-idna==2.7                 # via requests
+idna==2.8                 # via requests
 jsonfield==2.0.2
-newrelic==4.6.0.106       # via edx-django-utils
+newrelic==4.8.0.110       # via edx-django-utils
 pbr==5.1.1                # via stevedore
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 pycryptodomex==3.7.2
 pyjwkest==1.3.2           # via edx-drf-extensions
-pyjwt==1.6.4              # via djangorestframework-jwt, edx-rest-api-client
+pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.7.2            # via edx-opaque-keys, event-tracking
 python-dateutil==2.7.5
 pytz==2018.7
-requests==2.20.1          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
+requests==2.21.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
 rest-condition==1.0.3     # via edx-drf-extensions
 semantic-version==2.6.0   # via edx-drf-extensions
-six==1.11.0               # via edx-drf-extensions, edx-opaque-keys, pyjwkest, python-dateutil, stevedore
+six==1.12.0               # via edx-drf-extensions, edx-opaque-keys, pyjwkest, python-dateutil, stevedore
 slumber==0.7.1            # via edx-rest-api-client
 stevedore==1.30.0         # via edx-opaque-keys
 urllib3==1.24.1           # via requests
