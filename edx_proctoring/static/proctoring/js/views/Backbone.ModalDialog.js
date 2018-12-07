@@ -9,7 +9,7 @@
 Backbone.ModalView =
     Backbone.View.extend(
         {
-            name: 'ModalView',
+            name: "ModalView",
             modalBlanket: null,
             modalContainer: null,
             defaultOptions: {
@@ -22,40 +22,40 @@ Backbone.ModalView =
                 slideFromAbove: false,
                 slideFromBelow: false,
                 slideDistance: 150,
-                closeImageUrl: '/static/proctoring/close-modal.png',
-                closeImageHoverUrl: '/static/proctoring/close-modal-hover.png',
+                closeImageUrl: "/static/proctoring/close-modal.png",
+                closeImageHoverUrl: "/static/proctoring/close-modal-hover.png",
                 showModalAtScrollPosition: true,
                 permanentlyVisible: false,
                 backgroundClickClosesModal: true,
                 pressingEscapeClosesModal: true,
                 css: {
-                    border: '1px solid #111',
-                    display: 'block',
-                    'background-color': '#fff',
-                    '-webkit-box-shadow': '0px 0px 15px 4px rgba(0, 0, 0, 0.5)',
-                    '-moz-box-shadow': '0px 0px 15px 4px rgba(0, 0, 0, 0.5)',
-                    'box-shadow': '0px 0px 15px 4px rgba(0, 0, 0, 0.5)',
-                    '-webkit-border-radius': '10px',
-                    '-moz-border-radius': '10px',
-                    'border-radius': '6px',
-                    padding: '0px'
+                    "border": "1px solid #111",
+                    "display": "block",
+                    "background-color": "#fff",
+                    "-webkit-box-shadow": "0px 0px 15px 4px rgba(0, 0, 0, 0.5)",
+                    "-moz-box-shadow": "0px 0px 15px 4px rgba(0, 0, 0, 0.5)",
+                    "box-shadow": "0px 0px 15px 4px rgba(0, 0, 0, 0.5)",
+                    "-webkit-border-radius": "10px",
+                    "-moz-border-radius": "10px",
+                    "border-radius": "6px",
+                    "padding": "0px"
                 }
             },
 
-            initialize: function() {
+            initialize: function () {
             },
             events: {
             },
 
-            showModalBlanket: function() {
+            showModalBlanket: function () {
                 return this.ensureModalBlanket().fadeIn(this.options.fadeInDuration);
             },
 
-            hideModalBlanket: function() {
+            hideModalBlanket: function () {
                 return this.modalBlanket.fadeOut(this.options.fadeOutDuration);
             },
 
-            ensureModalContainer: function(target) {
+            ensureModalContainer: function (target) {
                 if (target != null) {
                     // A target is passed in, we need to re-render the modal container into the target.
                     if (this.modalContainer != null) {
@@ -68,11 +68,11 @@ Backbone.ModalView =
                     this.modalContainer =
                         $("<div id='modalContainer'>")
                             .css({
-                                'z-index': '99999',
-                                position: 'relative',
-                                '-webkit-border-radius': '6px',
-                                '-moz-border-radius': '6px',
-                                'border-radius': '6px'
+                                "z-index": "99999",
+                                "position": "relative",
+                                "-webkit-border-radius": "6px",
+                                "-moz-border-radius": "6px",
+                                "border-radius": "6px"
                             })
                             .appendTo(target);
                 }
@@ -80,78 +80,79 @@ Backbone.ModalView =
                 return this.modalContainer;
             },
 
-            ensureModalBlanket: function() {
-                this.modalBlanket = $('#modal-blanket');
+            ensureModalBlanket: function () {
+                this.modalBlanket = $("#modal-blanket");
 
                 if (this.modalBlanket.length == 0) {
                     this.modalBlanket =
                         $("<div id='modal-blanket'>")
                             .css(
-                                {
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    height: $(document).height(), // Span the full document height...
-                                    width: '100%', // ...and full width
-                                    opacity: 0.5, // Make it slightly transparent
-                                    backgroundColor: '#000',
-                                    'z-index': 99900
-                                })
+                            {
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                height: $(document).height(), // Span the full document height...
+                                width: "100%", // ...and full width
+                                opacity: 0.5, // Make it slightly transparent
+                                backgroundColor: "#000",
+                                "z-index": 99900
+                            })
                             .appendTo(document.body)
                             .hide();
-                } else {
+                }
+                else {
                     // Ensure the blanket spans the whole document, screen may have been updated.
                     this.modalBlanket.css(
                         {
                             height: $(document).height(), // Span the full document height...
-                            width: '100%' // ...and full width
+                            width: "100%" // ...and full width
                         });
                 }
 
                 return this.modalBlanket;
             },
 
-            keyup: function(event) {
+            keyup: function (event) {
                 if (event.keyCode == 27 && this.options.pressingEscapeClosesModal) {
                     this.hideModal();
                 }
             },
 
-            click: function(event) {
-                if (event.target.id == 'modal-blanket' && this.options.backgroundClickClosesModal) {
+            click: function (event) {
+                if (event.target.id == "modal-blanket" && this.options.backgroundClickClosesModal) {
                     this.hideModal();
                 }
             },
 
-            setFocusOnFirstFormControl: function() {
-                var $controls = $('input, select, email, url, number, range, date, month, week, time, datetime, datetime-local, search, color', $(this.el));
-                if ($controls.length > 0) {
-                    $($controls[0]).focus();
+            setFocusOnFirstFormControl: function () {
+                var controls = $("input, select, email, url, number, range, date, month, week, time, datetime, datetime-local, search, color", $(this.el));
+                if (controls.length > 0) {
+                    $(controls[0]).focus();
                 }
             },
 
-            hideModal: function() {
-                this.trigger('closeModalWindow');
+            hideModal: function () {
+                this.trigger("closeModalWindow");
 
                 this.hideModalBlanket();
-                $(document.body).unbind('keyup', this.keyup);
-                this.modalBlanket.unbind('click', this.click);
+                $(document.body).unbind("keyup", this.keyup);
+                this.modalBlanket.unbind("click", this.click);
 
                 if (this.options.bodyOverflowHidden === true) {
-                    $(document.body).css('overflow', this.originalBodyOverflowValue);
+                    $(document.body).css("overflow", this.originalBodyOverflowValue);
                 }
 
                 var container = this.modalContainer;
                 $(this.modalContainer)
                     .fadeOut(
-                        this.options.fadeOutDuration,
-                        function() {
-                            container.remove();
-                        });
+                    this.options.fadeOutDuration,
+                    function () {
+                        container.remove();
+                    });
             },
 
-            getCoordinate: function(coordinate, css) {
-                if (typeof (css[coordinate]) !== 'undefined') {
+            getCoordinate: function (coordinate, css) {
+                if (typeof( css[coordinate]) !== "undefined") {
                     var value = css[coordinate];
                     delete css[coordinate]; // Don't apply positioning to the $el, we apply it to the modal container. Remove it from options.css
 
@@ -159,19 +160,19 @@ Backbone.ModalView =
                 }
             },
 
-            recenter: function() {
+            recenter: function () {
                 return this.recentre();
             },
 
             recentre: // Re-centre the modal dialog after it has been displayed. Useful if the height changes after initial rendering eg; jquery ui tabs will hide tab sections
-                function() {
+                function () {
                     var $el = $(this.el);
                     var coords = {
-                        top: this.getCoordinate('top', this.options.css),
-                        left: this.getCoordinate('left', this.options.css),
-                        right: this.getCoordinate('right', this.options.css),
-                        bottom: this.getCoordinate('bottom', this.options.css),
-                        isEmpty: function() {
+                        top: this.getCoordinate("top", this.options.css),
+                        left: this.getCoordinate("left", this.options.css),
+                        right: this.getCoordinate("right", this.options.css),
+                        bottom: this.getCoordinate("bottom", this.options.css),
+                        isEmpty: function () {
                             return (this.top == null && this.left == null && this.right == null && this.bottom == null);
                         }
                     };
@@ -181,26 +182,25 @@ Backbone.ModalView =
                     var centreX = $(window).width() / 2;
                     var modalContainer = this.modalContainer;
                     var positionY = centreY - ($el.outerHeight() / 2);
-                    modalContainer.css({top: (positionY + offsets.y) + 'px'});
+                    modalContainer.css({"top": (positionY + offsets.y) + "px"});
 
                     var positionX = centreX - ($el.outerWidth() / 2);
-                    modalContainer.css({left: (positionX + offsets.x) + 'px'});
+                    modalContainer.css({"left": (positionX + offsets.x) + "px"});
 
                     return this;
                 },
 
-            getOffsets: function() {
-                var offsetY = 0,
-                    offsetX = 0;
+            getOffsets: function () {
+                var offsetY = 0, offsetX = 0;
                 if (this.options.showModalAtScrollPosition) {
                     offsetY = $(document).scrollTop(),
-                    offsetX = $(document).scrollLeft();
+                        offsetX = $(document).scrollLeft()
                 }
 
                 return {x: offsetX, y: offsetY};
             },
 
-            showModal: function(options) {
+            showModal: function (options) {
                 this.defaultOptions.targetContainer = document.body;
                 this.options = $.extend(true, {}, this.defaultOptions, options, this.options);
 
@@ -210,21 +210,21 @@ Backbone.ModalView =
                     this.options.pressingEscapeClosesModal = false;
                 }
 
-                // Set the center alignment padding + border see css style
+                //Set the center alignment padding + border see css style
                 var $el = $(this.el);
 
                 var centreY = $(window).height() / 2;
                 var centreX = $(window).width() / 2;
                 var modalContainer = this.ensureModalContainer(this.options.targetContainer).empty();
 
-                $el.addClass('modal');
+                $el.addClass("modal");
 
                 var coords = {
-                    top: this.getCoordinate('top', this.options.css),
-                    left: this.getCoordinate('left', this.options.css),
-                    right: this.getCoordinate('right', this.options.css),
-                    bottom: this.getCoordinate('bottom', this.options.css),
-                    isEmpty: function() {
+                    top: this.getCoordinate("top", this.options.css),
+                    left: this.getCoordinate("left", this.options.css),
+                    right: this.getCoordinate("right", this.options.css),
+                    bottom: this.getCoordinate("bottom", this.options.css),
+                    isEmpty: function () {
                         return (this.top == null && this.left == null && this.right == null && this.bottom == null);
                     }
                 };
@@ -238,17 +238,17 @@ Backbone.ModalView =
                 this.modalBlanket.click(this.click); // This handler is unbound in hideModal()
 
                 if (this.options.bodyOverflowHidden === true) {
-                    this.originalBodyOverflowValue = $(document.body).css('overflow');
-                    $(document.body).css('overflow', 'hidden');
+                    this.originalBodyOverflowValue = $(document.body).css("overflow");
+                    $(document.body).css("overflow", "hidden");
                 }
 
                 modalContainer
                     .append($el);
 
                 modalContainer.css({
-                    opacity: 0,
-                    position: 'absolute',
-                    'z-index': 999999});
+                    "opacity": 0,
+                    "position": "absolute",
+                    "z-index": 999999});
 
                 var offsets = this.getOffsets();
 
@@ -258,28 +258,31 @@ Backbone.ModalView =
                     if (positionY < 10) positionY = 10;
 
                     // Overriding the coordinates with explicit values if they are passed in
-                    if (typeof (this.options.y) !== 'undefined') {
+                    if (typeof( this.options.y) !== "undefined") {
                         positionY = this.options.y;
-                    } else {
+                    }
+                    else {
                         positionY += offsets.y;
                     }
 
-                    modalContainer.css({top: positionY + 'px'});
+                    modalContainer.css({"top": positionY + "px"});
 
                     var positionX = centreX - ($el.outerWidth() / 2);
                     // Overriding the coordinates with explicit values if they are passed in
-                    if (typeof (this.options.x) !== 'undefined') {
+                    if (typeof( this.options.x) !== "undefined") {
                         positionX = this.options.x;
-                    } else {
+                    }
+                    else {
                         positionX += offsets.x;
                     }
 
-                    modalContainer.css({left: positionX + 'px'});
-                } else {
-                    if (coords.top != null) modalContainer.css({top: coords.top + offsets.y});
-                    if (coords.left != null) modalContainer.css({left: coords.left + offsets.x});
-                    if (coords.right != null) modalContainer.css({right: coords.right});
-                    if (coords.bottom != null) modalContainer.css({bottom: coords.bottom});
+                    modalContainer.css({"left": positionX + "px"});
+                }
+                else {
+                    if (coords.top != null) modalContainer.css({"top": coords.top + offsets.y});
+                    if (coords.left != null) modalContainer.css({"left": coords.left + offsets.x});
+                    if (coords.right != null) modalContainer.css({"right": coords.right});
+                    if (coords.bottom != null) modalContainer.css({"bottom": coords.bottom});
                 }
 
                 if (this.options.setFocusOnFirstFormControl) {
@@ -291,39 +294,39 @@ Backbone.ModalView =
                     var image =
                         $("<a href='#' id='modalCloseButton'>&#160;</a>")
                             .css({
-                                position: 'absolute',
-                                top: '-8px',
-                                right: '-495px',
-                                width: '32px',
-                                height: '32px',
-                                'z-index': '999999',
-                                background: 'transparent url(' + view.options.closeImageUrl + ') top left no-repeat',
-                                'text-decoration': 'none'})
+                                "position": "absolute",
+                                "top": "-8px",
+                                "right": "-495px",
+                                "width": "32px",
+                                "height": "32px",
+                                "z-index": "999999",
+                                "background": "transparent url(" + view.options.closeImageUrl + ") top left no-repeat",
+                                "text-decoration": "none"})
                             .appendTo(this.modalContainer)
                             .hover(
-                                function() {
-                                    $(this).css('background-image', 'url(' + view.options.closeImageHoverUrl + ') !important');
-                                },
-                                function() {
-                                    $(this).css('background-image', 'url(' + view.options.closeImageUrl + ') !important');
-                                })
+                            function () {
+                                $(this).css("background-image", "url(" + view.options.closeImageHoverUrl + ") !important");
+                            },
+                            function () {
+                                $(this).css("background-image", "url(" + view.options.closeImageUrl + ") !important");
+                            })
                             .click(
-                                function(event) {
-                                    event.preventDefault();
-                                    view.hideModal();
-                                });
+                            function (event) {
+                                event.preventDefault();
+                                view.hideModal();
+                            });
                 }
 
                 var animateProperties = {opacity: 1};
                 var modalOffset = modalContainer.offset();
 
                 if (this.options.slideFromAbove) {
-                    modalContainer.css({top: (modalOffset.top - this.options.slideDistance) + 'px'});
+                    modalContainer.css({"top": (modalOffset.top - this.options.slideDistance) + "px"});
                     animateProperties.top = coords.top;
                 }
 
                 if (this.options.slideFromBelow) {
-                    modalContainer.css({top: (modalOffset.top + this.options.slideDistance) + 'px'});
+                    modalContainer.css({"top": (modalOffset.top + this.options.slideDistance) + "px"});
                     animateProperties.top = coords.top;
                 }
 
