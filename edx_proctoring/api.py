@@ -114,7 +114,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
     return proctored_exam.id
 
 
-def create_exam_review_policy(exam_id, set_by_user_id, review_policy, rules):
+def create_exam_review_policy(exam_id, set_by_user_id, review_policy):
     """
     Creates a new exam_review_policy entity, if the review_policy
     for exam_id does not already exist. If it exists, then raise exception.
@@ -123,7 +123,6 @@ def create_exam_review_policy(exam_id, set_by_user_id, review_policy, rules):
         exam_id: the ID of the exam with which the review policy is to be associated
         set_by_user_id: the ID of the user setting this review policy
         review_policy: the review policy for the exam
-        rules: the dictionary of rules for the exam
 
     Returns: id (PK)
     """
@@ -135,16 +134,14 @@ def create_exam_review_policy(exam_id, set_by_user_id, review_policy, rules):
         proctored_exam_id=exam_id,
         set_by_user_id=set_by_user_id,
         review_policy=review_policy,
-        rules=rules,
     )
 
     log_msg = (
         u'Created ProctoredExamReviewPolicy ({review_policy}) with parameters: exam_id={exam_id}, '
-        u'set_by_user_id={set_by_user_id}, rules={rules}'.format(
+        u'set_by_user_id={set_by_user_id}'.format(
             exam_id=exam_id,
             review_policy=review_policy,
             set_by_user_id=set_by_user_id,
-            rules=rules,
         )
     )
     log.info(log_msg)
@@ -152,7 +149,7 @@ def create_exam_review_policy(exam_id, set_by_user_id, review_policy, rules):
     return exam_review_policy.id
 
 
-def update_review_policy(exam_id, set_by_user_id, review_policy, rules):
+def update_review_policy(exam_id, set_by_user_id, review_policy):
     """
     Given a exam id, update/remove the existing record, otherwise raise exception if not found.
 
@@ -160,17 +157,14 @@ def update_review_policy(exam_id, set_by_user_id, review_policy, rules):
         exam_id: the ID of the exam whose review policy is being updated
         set_by_user_id: the ID of the user updating this review policy
         review_policy: the review policy for the exam
-        rules: the dictionary of rules for the exam
 
     Returns: review_policy_id
     """
     log_msg = (
         u'Updating exam review policy with exam_id {exam_id} '
         u'set_by_user_id={set_by_user_id}, review_policy={review_policy} '
-        u'rules={rules}'
         .format(
-            exam_id=exam_id, set_by_user_id=set_by_user_id, review_policy=review_policy,
-            rules=rules
+            exam_id=exam_id, set_by_user_id=set_by_user_id, review_policy=review_policy
         )
     )
     log.info(log_msg)
@@ -178,10 +172,9 @@ def update_review_policy(exam_id, set_by_user_id, review_policy, rules):
     if exam_review_policy is None:
         raise ProctoredExamReviewPolicyNotFoundException
 
-    if review_policy or rules:
+    if review_policy:
         exam_review_policy.set_by_user_id = set_by_user_id
         exam_review_policy.review_policy = review_policy
-        exam_review_policy.rules = rules
         exam_review_policy.save()
         msg = 'Updated exam review policy with {exam_id}'.format(exam_id=exam_id)
         log.info(msg)
@@ -225,9 +218,6 @@ def _save_exam_on_backend(sender, instance, **kwargs):  # pylint: disable=unused
         exam = ProctoredExamSerializer(exam_obj).data
         if review_policy:
             exam['rule_summary'] = review_policy.review_policy
-            # When the rules are defined as boolean options,
-            # save them here
-            exam['rules'] = review_policy.rules
         backend = get_backend_provider(exam)
         external_id = backend.on_exam_saved(exam)
         if external_id and external_id != exam_obj.external_id:

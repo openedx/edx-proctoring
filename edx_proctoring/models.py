@@ -16,7 +16,6 @@ from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext_noop
 
-from jsonfield import JSONField
 from model_utils.models import TimeStampedModel
 
 from edx_proctoring.exceptions import (
@@ -133,9 +132,6 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
     # policy that will be passed to reviewers
     review_policy = models.TextField(default='')
 
-    # JSON rules that will be passed to reviewers
-    rules = JSONField(null=True)
-
     def __str__(self):
         # pragma: no cover
         return u"ProctoredExamReviewPolicy: {set_by_user} ({proctored_exam})".format(
@@ -178,9 +174,6 @@ class ProctoredExamReviewPolicyHistory(TimeStampedModel):
 
     # policy that will be passed to reviewers
     review_policy = models.TextField()
-
-    # JSON rules that will be passed to reviewers
-    rules = JSONField(null=True)
 
     class Meta:
         """ Meta class for this Django model """
@@ -228,7 +221,6 @@ def _make_review_policy_archive_copy(instance):
         set_by_user_id=instance.set_by_user_id,
         proctored_exam=instance.proctored_exam,
         review_policy=instance.review_policy,
-        rules=instance.rules,
     )
     archive_object.save()
 
