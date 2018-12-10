@@ -223,7 +223,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             scheme=scheme,
             hostname=settings.SITE_NAME,
             path=reverse(
-                'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                'edx_proctoring:anonymous.proctoring_launch_callback.start_exam',
                 args=[attempt_code]
             )
         )

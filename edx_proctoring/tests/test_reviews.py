@@ -177,7 +177,7 @@ class ReviewTests(LoggedInTestCase):
         if not external_id:
             external_id = self.attempt['external_id']
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.callback',
+            reverse('edx_proctoring:proctored_exam.attempt.callback',
                     kwargs={'external_id': external_id}),
             json.dumps(review),
             content_type='application/json'

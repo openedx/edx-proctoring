@@ -62,19 +62,20 @@ class ProctoredExamsApiTests(LoggedInTestCase):
         """
         self.client = Client()  # use AnonymousUser on the API calls
         for urlpattern in urlpatterns:
-            if hasattr(urlpattern, 'name') and '.anonymous.' not in urlpattern.name:
+            if hasattr(urlpattern, 'name') and 'anonymous.' not in urlpattern.name:
+                name = 'edx_proctoring:%s' % urlpattern.name
                 try:
-                    response = self.client.get(reverse(urlpattern.name))
+                    response = self.client.get(reverse(name))
                 except NoReverseMatch:
                     # some of our URL mappings may require a argument substitution
                     try:
-                        response = self.client.get(reverse(urlpattern.name, args=[0]))
+                        response = self.client.get(reverse(name, args=[0]))
                     except NoReverseMatch:
                         try:
-                            response = self.client.get(reverse(urlpattern.name, args=["0/0/0"]))
+                            response = self.client.get(reverse(name, args=["0/0/0"]))
                         except NoReverseMatch:
                             # some require 2 args.
-                            response = self.client.get(reverse(urlpattern.name, args=["0/0/0", 0]))
+                            response = self.client.get(reverse(name, args=["0/0/0", 0]))
 
                 self.assertEqual(response.status_code, 403)
 
@@ -106,7 +107,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             'hide_after_due': False,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.exam'),
+            reverse('edx_proctoring:proctored_exam.exam'),
             exam_data
         )
 
@@ -116,7 +117,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
 
         # Now lookup the exam by giving the exam_id returned and match the data.
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.exam_by_id', kwargs={'exam_id': response_data['exam_id']})
+            reverse('edx_proctoring:proctored_exam.exam_by_id', kwargs={'exam_id': response_data['exam_id']})
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -142,7 +143,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             'hide_after_due': False,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.exam'),
+            reverse('edx_proctoring:proctored_exam.exam'),
             exam_data
         )
 
@@ -151,7 +152,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.assertGreater(response_data['exam_id'], 0)
 
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.exam'),
+            reverse('edx_proctoring:proctored_exam.exam'),
             exam_data
         )
 
@@ -180,7 +181,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             'is_active': True
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.exam'),
+            reverse('edx_proctoring:proctored_exam.exam'),
             json.dumps(updated_exam_data),
             content_type='application/json'
         )
@@ -191,7 +192,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
 
         # Now lookup the exam by giving the exam_id returned and match the data.
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.exam_by_id', kwargs={'exam_id': response_data['exam_id']})
+            reverse('edx_proctoring:proctored_exam.exam_by_id', kwargs={'exam_id': response_data['exam_id']})
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -250,7 +251,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             'is_active': True
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.exam'),
+            reverse('edx_proctoring:proctored_exam.exam'),
             json.dumps(updated_exam_data),
             content_type='application/json'
         )
@@ -273,7 +274,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.exam_by_id', kwargs={'exam_id': proctored_exam.id})
+            reverse('edx_proctoring:proctored_exam.exam_by_id', kwargs={'exam_id': proctored_exam.id})
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -289,7 +290,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         """
         # Create an exam.
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.exam_by_id', kwargs={'exam_id': 99999})
+            reverse('edx_proctoring:proctored_exam.exam_by_id', kwargs={'exam_id': 99999})
         )
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
@@ -309,7 +310,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.exam_by_content_id', kwargs={
+            reverse('edx_proctoring:proctored_exam.exam_by_content_id', kwargs={
                 'course_id': proctored_exam.course_id,
                 'content_id': proctored_exam.content_id
             })
@@ -337,7 +338,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.exams_by_course_id', kwargs={
+            reverse('edx_proctoring:proctored_exam.exams_by_course_id', kwargs={
                 'course_id': proctored_exam.course_id
             })
         )
@@ -363,7 +364,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.exam_by_content_id', kwargs={
+            reverse('edx_proctoring:proctored_exam.exam_by_content_id', kwargs={
                 'course_id': 'c/d/e',
                 'content_id': proctored_exam.content_id
             })
@@ -387,7 +388,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.exam_by_content_id', kwargs={
+            reverse('edx_proctoring:proctored_exam.exam_by_content_id', kwargs={
                 'course_id': proctored_exam.course_id,
                 'content_id': proctored_exam.content_id
             })
@@ -440,7 +441,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # Starting exam attempt
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
@@ -478,7 +479,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt_id = attempt['id']
         code = attempt['attempt_code']
         self.client.get(
-            reverse('edx_proctoring.anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
+            reverse('edx_proctoring:anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
         )
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], "ready_to_start")
@@ -492,7 +493,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # hit callback again and verify that status is still 'started' and not 'ready to start'
         self.client.get(
-            reverse('edx_proctoring.anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
+            reverse('edx_proctoring:anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
         )
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], "started")
@@ -508,7 +509,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         attempt_id = attempt['id']
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.ready_callback', kwargs={'external_id': ext_id})
+            reverse('edx_proctoring:proctored_exam.attempt.ready_callback', kwargs={'external_id': ext_id})
         )
         self.assertEqual(response.status_code, http_status)
         attempt = get_exam_attempt_by_id(attempt_id)
@@ -532,7 +533,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -558,7 +559,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': False,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -573,7 +574,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertIsNone(attempt['started_at'])
 
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
             json.dumps({
                 'action': 'start',
             }),
@@ -629,7 +630,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -639,7 +640,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertGreater(attempt_id, 0)
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -654,7 +655,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         reset_time = datetime.now(pytz.UTC) + timedelta(minutes=90, seconds=30)
         with freeze_time(reset_time):
             response = self.client.get(
-                reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+                reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
             )
             self.assertEqual(response.status_code, 200)
             response_data = json.loads(response.content)
@@ -679,7 +680,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -689,7 +690,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertGreater(attempt_id, 0)
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -751,7 +752,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt.save()
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt.id])
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt.id])
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -774,7 +775,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         with patch('edx_proctoring.api.update_attempt_status', Mock(side_effect=ProctoredExamIllegalStatusTransition)):
             with freeze_time(reset_time):
                 response = self.client.get(
-                    reverse('edx_proctoring.proctored_exam.attempt', args=[exam_attempt.id])
+                    reverse('edx_proctoring:proctored_exam.attempt', args=[exam_attempt.id])
                 )
                 self.assertEqual(response.status_code, 200)
 
@@ -796,7 +797,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -806,7 +807,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt_id, 1)
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -823,7 +824,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         reset_time = datetime.now(pytz.UTC) + timedelta(minutes=2)
         with freeze_time(reset_time):
             response = self.client.get(
-                reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+                reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
             )
             self.assertEqual(response.status_code, 200)
             response_data = json.loads(response.content)
@@ -854,7 +855,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # Starting exam attempt
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 400)
@@ -874,7 +875,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         response = self.client.delete(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[1])
+            reverse('edx_proctoring:proctored_exam.attempt', args=[1])
         )
 
         self.assertEqual(response.status_code, 400)
@@ -885,7 +886,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -897,7 +898,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.user.is_staff = False
         self.user.save()
         response = self.client.delete(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
 
         self.assertEqual(response.status_code, 200)
@@ -922,7 +923,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -938,7 +939,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
 
         response = self.client.delete(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
 
         self.assertEqual(response.status_code, 403)
@@ -963,7 +964,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -974,7 +975,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         self.client.login_user(self.second_user)
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[attempt_id])
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
         self.assertEqual(response.status_code, 400)
 
@@ -983,7 +984,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         Confirms that we cannot read a non-existing attempt
         """
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[0])
+            reverse('edx_proctoring:proctored_exam.attempt', args=[0])
         )
         self.assertEqual(response.status_code, 400)
 
@@ -1004,7 +1005,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -1013,7 +1014,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertGreater(response_data['exam_attempt_id'], 0)
 
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 400)
@@ -1041,7 +1042,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -1051,7 +1052,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         old_attempt_id = response_data['exam_attempt_id']
 
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
             json.dumps({
                 'action': 'stop',
             }),
@@ -1080,7 +1081,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             json.dumps(attempt_data),
             content_type='application/json'
         )
@@ -1091,7 +1092,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         old_attempt_id = response_data['exam_attempt_id']
 
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
             json.dumps({
                 'action': 'click_download_software',
             }),
@@ -1129,7 +1130,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -1139,7 +1140,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         old_attempt_id = response_data['exam_attempt_id']
 
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
             json.dumps({
                 'action': action,
             }),
@@ -1156,7 +1157,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # we should not be able to restart it
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
             json.dumps({
                 'action': 'start',
             }),
@@ -1166,7 +1167,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 400)
 
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
             json.dumps({
                 'action': 'stop',
             }),
@@ -1192,10 +1193,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
-        url = reverse('edx_proctoring.proctored_exam.attempts.course', kwargs={'course_id': proctored_exam.course_id})
+        url = reverse('edx_proctoring:proctored_exam.attempts.course', kwargs={'course_id': proctored_exam.course_id})
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -1233,7 +1234,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': timed_exam.external_id
         }
         self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -1252,10 +1253,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
-        url = reverse('edx_proctoring.proctored_exam.attempts.course', kwargs={'course_id': proctored_exam.course_id})
+        url = reverse('edx_proctoring:proctored_exam.attempts.course', kwargs={'course_id': proctored_exam.course_id})
 
         self.user.is_staff = False
         self.user.save()
@@ -1294,7 +1295,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         }
         # create a exam attempt
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
@@ -1302,7 +1303,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.second_user)
         # create a new exam attempt for second student
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
@@ -1310,7 +1311,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.user)
         response = self.client.get(
             reverse(
-                'edx_proctoring.proctored_exam.attempts.search',
+                'edx_proctoring:proctored_exam.attempts.search',
                 kwargs={
                     'course_id': proctored_exam.course_id,
                     'search_by': 'tester'
@@ -1349,7 +1350,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         }
         # create a exam attempt
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
@@ -1357,7 +1358,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.second_user)
         # create a new exam attempt for second student
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
@@ -1367,7 +1368,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.user)
         response = self.client.get(
             reverse(
-                'edx_proctoring.proctored_exam.attempts.search',
+                'edx_proctoring:proctored_exam.attempts.search',
                 kwargs={
                     'course_id': timed_exm.course_id,
                     'search_by': 'tester'
@@ -1409,7 +1410,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.user)
         response = self.client.get(
             reverse(
-                'edx_proctoring.proctored_exam.attempts.course',
+                'edx_proctoring:proctored_exam.attempts.course',
                 kwargs={
                     'course_id': proctored_exam.course_id
                 }
@@ -1441,7 +1442,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -1452,7 +1453,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         self.client.login_user(self.second_user)
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[old_attempt_id]),
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
             {}
         )
 
@@ -1464,7 +1465,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         """
 
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.attempt', args=[0]),
+            reverse('edx_proctoring:proctored_exam.attempt', args=[0]),
             {}
         )
 
@@ -1485,7 +1486,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             time_limit_mins=90
         )
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt.collection')
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -1498,13 +1499,13 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt.collection')
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -1527,7 +1528,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             time_limit_mins=90
         )
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt.collection')
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -1540,13 +1541,13 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt.collection')
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -1576,7 +1577,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': True
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
@@ -1586,7 +1587,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.submitted)
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt.collection')
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -1606,7 +1607,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             time_limit_mins=90
         )
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt.collection')
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
 
@@ -1616,7 +1617,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'external_id': proctored_exam.external_id
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
@@ -1630,7 +1631,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt.collection')
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
 
@@ -1654,7 +1655,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         }
         # create a exam attempt
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
@@ -1690,7 +1691,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'start_clock': False,
         }
         response = self.client.post(
-            reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
 
@@ -1708,7 +1709,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         response = self.client.get(
             reverse(
-                'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                'edx_proctoring:anonymous.proctoring_launch_callback.start_exam',
                 args=[attempt_code]
             )
         )
@@ -1723,7 +1724,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         """
         response = self.client.get(
             reverse(
-                'edx_proctoring.anonymous.proctoring_launch_callback.start_exam',
+                'edx_proctoring:anonymous.proctoring_launch_callback.start_exam',
                 args=['foo']
             )
         )
@@ -1759,7 +1760,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             external_id=attempt['external_id']
         )
         response = self.client.post(
-            reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+            reverse('edx_proctoring:anonymous.proctoring_review_callback'),
             data=test_payload,
             content_type='application/json'
         )
@@ -1797,7 +1798,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         response = self.client.post(
-            reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+            reverse('edx_proctoring:anonymous.proctoring_review_callback'),
             data=test_payload,
             content_type='application/json'
         )
@@ -1834,7 +1835,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         response = self.client.post(
-            reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+            reverse('edx_proctoring:anonymous.proctoring_review_callback'),
             data=test_payload,
             content_type='foo'
         )
@@ -1870,7 +1871,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             external_id='mismatch'
         )
         response = self.client.post(
-            reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+            reverse('edx_proctoring:anonymous.proctoring_review_callback'),
             data=test_payload,
             content_type='application/json'
         )
@@ -1882,7 +1883,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         """
 
         response = self.client.get(
-            reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+            reverse('edx_proctoring:anonymous.proctoring_review_callback'),
         )
 
         self.assertEqual(response.status_code, 405)
@@ -1918,7 +1919,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.attempt.collection')
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -1956,7 +1957,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         response = self.client.put(
             reverse(
-                'edx_proctoring.proctored_exam.attempt.review_status',
+                'edx_proctoring:proctored_exam.attempt.review_status',
                 args=[attempt.id]
             ),
             {},
@@ -1974,7 +1975,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         response = self.client.put(
             reverse(
-                'edx_proctoring.proctored_exam.attempt.review_status',
+                'edx_proctoring:proctored_exam.attempt.review_status',
                 args=['5']
             ),
             {},
@@ -1999,7 +2000,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         response = self.client.put(
             reverse(
-                'edx_proctoring.proctored_exam.attempt.review_status',
+                'edx_proctoring:proctored_exam.attempt.review_status',
                 args=[attempt.id]
             ),
             {},
@@ -2043,7 +2044,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2069,7 +2070,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2098,7 +2099,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': 'invalid_value'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2131,7 +2132,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         }
         # Try to add an allowance
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2158,7 +2159,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2167,7 +2168,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         allowance_data.pop('value')
 
         response = self.client.delete(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2197,7 +2198,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2225,14 +2226,14 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
+            reverse('edx_proctoring:proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
         )
 
         self.assertEqual(response.status_code, 200)
@@ -2265,7 +2266,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2275,7 +2276,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         # which will return in the Forbidden request.
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
+            reverse('edx_proctoring:proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
         )
 
         self.assertEqual(response.status_code, 403)
@@ -2306,7 +2307,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2329,14 +2330,14 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
+            reverse('edx_proctoring:proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
         )
 
         self.assertEqual(response.status_code, 200)
@@ -2368,7 +2369,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2379,7 +2380,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         proctored_exam.save()
 
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
+            reverse('edx_proctoring:proctored_exam.allowance', kwargs={'course_id': proctored_exam.course_id})
         )
 
         self.assertEqual(response.status_code, 200)
@@ -2410,7 +2411,7 @@ class TestExamAllowanceView(LoggedInTestCase):
 
         # Add allowance
         response = self.client.put(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2423,7 +2424,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         proctored_exam.save()
 
         response = self.client.delete(
-            reverse('edx_proctoring.proctored_exam.allowance'),
+            reverse('edx_proctoring:proctored_exam.allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
@@ -2474,7 +2475,7 @@ class TestActiveExamsForUserView(LoggedInTestCase):
             'course_id': proctored_exam.course_id
         }
         response = self.client.get(
-            reverse('edx_proctoring.proctored_exam.active_exams_for_user'),
+            reverse('edx_proctoring:proctored_exam.active_exams_for_user'),
             exams_query_data
         )
         self.assertEqual(response.status_code, 200)
@@ -2509,7 +2510,7 @@ class TestInstructorDashboard(LoggedInTestCase):
 
         expected_url = '/instructor/%s/' % course_id
         response = self.client.get(
-            reverse('edx_proctoring.instructor_dashboard_course', args=[course_id])
+            reverse('edx_proctoring:instructor_dashboard_course', args=[course_id])
         )
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
 
@@ -2529,7 +2530,7 @@ class TestInstructorDashboard(LoggedInTestCase):
 
         expected_url = '/instructor/%s/?exam=%s' % (course_id, exam_id)
         response = self.client.get(
-            reverse('edx_proctoring.instructor_dashboard_exam', kwargs={'course_id': course_id, 'exam_id': exam_id})
+            reverse('edx_proctoring:instructor_dashboard_exam', kwargs={'course_id': course_id, 'exam_id': exam_id})
         )
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
 
@@ -2557,7 +2558,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             backend='null',
         )
         response = self.client.get(
-            reverse('edx_proctoring.instructor_dashboard_course',
+            reverse('edx_proctoring:instructor_dashboard_course',
                     kwargs={'course_id': course_id})
         )
         self.assertEqual(response.status_code, 400)
@@ -2566,7 +2567,7 @@ class TestInstructorDashboard(LoggedInTestCase):
     def test_error_with_no_exams(self):
         course_id = 'a/b/c'
         response = self.client.get(
-            reverse('edx_proctoring.instructor_dashboard_course',
+            reverse('edx_proctoring:instructor_dashboard_course',
                     kwargs={'course_id': course_id})
         )
         self.assertEqual(response.status_code, 404)
@@ -2583,7 +2584,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             backend='software_secure',
         )
         response = self.client.get(
-            reverse('edx_proctoring.instructor_dashboard_course',
+            reverse('edx_proctoring:instructor_dashboard_course',
                     kwargs={'course_id': course_id})
         )
         self.assertEqual(response.status_code, 404)
@@ -2602,7 +2603,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             backend='software_secure',
         )
         response = self.client.get(
-            reverse('edx_proctoring.instructor_dashboard_course',
+            reverse('edx_proctoring:instructor_dashboard_course',
                     kwargs={'course_id': course_id})
         )
         self.assertEqual(response.status_code, 404)

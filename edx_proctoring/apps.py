@@ -18,7 +18,27 @@ class EdxProctoringConfig(AppConfig):
     Configuration for the edx_proctoring Django application.
     """
 
-    name = 'edx_proctoring'
+    name = u'edx_proctoring'
+    plugin_app = {
+        u'url_config': {
+            u'lms.djangoapp': {
+                u'namespace': u'edx_proctoring',
+                u'regex': u'^api/',
+                u'relative_path': u'urls',
+            }
+        },
+        u'settings_config': {
+            u'lms.djangoapp': {
+                u'common': {'relative_path': u'settings.common'},
+                u'aws': {'relative_path': u'settings.aws'},
+            },
+            u'cms.djangoapp': {
+                u'common': {'relative_path': u'settings.common'},
+                u'aws': {'relative_path': u'settings.aws'},
+            }
+
+        },
+    }
 
     def get_backend_choices(self):
         """

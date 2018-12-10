@@ -97,5 +97,12 @@ setup(
             'null = edx_proctoring.backends.null:NullBackendProvider',
             'software_secure = edx_proctoring.backends.software_secure:SoftwareSecureBackendProvider',
         ],
+        'lms.djangoapp': [
+            "edx_proctoring = edx_proctoring.apps:EdxProctoringConfig",
+        ],
+        'cms.djangoapp': [
+            "edx_proctoring = edx_proctoring.apps:EdxProctoringConfig",
+        ],
+
     },
 )

@@ -183,7 +183,7 @@ class SoftwareSecureTests(TestCase):
                 external_id='bogus'
             )
             response = self.client.post(
-                reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+                reverse('edx_proctoring:anonymous.proctoring_review_callback'),
                 data=test_payload,
                 content_type='application/json'
             )
@@ -212,7 +212,7 @@ class SoftwareSecureTests(TestCase):
                 external_id='bogus'
             )
             response = self.client.post(
-                reverse('edx_proctoring.anonymous.proctoring_review_callback'),
+                reverse('edx_proctoring:anonymous.proctoring_review_callback'),
                 data=test_payload,
                 content_type='application/json'
             )

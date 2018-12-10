@@ -91,7 +91,7 @@ evaluation = 10.0 - ((float(5 * error + warning + refactor + convention) / state
 [BASIC]
 bad-functions = map,filter,apply,input
 module-rgx = (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
-const-rgx = (([A-Z_][A-Z0-9_]*)|(__.*__)|log|urlpatterns)$
+const-rgx = (([A-Z_][A-Z0-9_]*)|(__.*__)|log|urlpatterns|app_name)$
 class-rgx = [A-Z_][a-zA-Z0-9]+$
 function-rgx = ([a-z_][a-z0-9_]{2,40}|test_[a-z0-9_]+)$
 method-rgx = ([a-z_][a-z0-9_]{2,40}|setUp|set[Uu]pClass|tearDown|tear[Dd]ownClass|assert[A-Z]\w*|maxDiff|test_[a-z0-9_]+)$
