@@ -669,8 +669,6 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             exam,
             context=context,
         )
-        if external_id:
-            attempt_code = external_id
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,

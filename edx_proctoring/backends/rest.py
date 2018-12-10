@@ -157,6 +157,8 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         url = self.create_exam_attempt_url.format(exam_id=exam['external_id'])
         payload = context
         payload['status'] = 'created'
+        # attempt code isn't needed in this API
+        payload.pop('attempt_code', False)
         log.debug('Creating exam attempt for %r at %r', exam['external_id'], url)
         response = self.session.post(url, json=payload)
         response = response.json()
