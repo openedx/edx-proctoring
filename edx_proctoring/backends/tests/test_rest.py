@@ -12,7 +12,7 @@ from django.test import TestCase
 from django.utils import translation
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
-from edx_proctoring.exceptions import BackendProvideCannotRegisterAttempt
+from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
 
 
 class RESTBackendTests(TestCase):
@@ -193,7 +193,7 @@ class RESTBackendTests(TestCase):
             json={'error': 'something'},
             status=400
         )
-        with self.assertRaises(BackendProvideCannotRegisterAttempt):
+        with self.assertRaises(BackendProviderCannotRegisterAttempt):
             self.provider.register_exam_attempt(self.backend_exam, context)
 
     @responses.activate

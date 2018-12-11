@@ -24,7 +24,7 @@ from Cryptodome.Cipher import DES3
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring import constants
 from edx_proctoring.exceptions import (
-    BackendProvideCannotRegisterAttempt,
+    BackendProviderCannotRegisterAttempt,
     ProctoredExamSuspiciousLookup,
 )
 from edx_proctoring.statuses import SoftwareSecureReviewStatus
@@ -91,7 +91,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                 )
             )
             log.error(err_msg)
-            raise BackendProvideCannotRegisterAttempt(err_msg)
+            raise BackendProviderCannotRegisterAttempt(err_msg)
 
         # get the external ID that Software Secure has defined
         # for this attempt

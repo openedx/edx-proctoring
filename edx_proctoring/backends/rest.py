@@ -11,7 +11,7 @@ from webpack_loader.utils import get_files
 from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleLookupError
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_proctoring.exceptions import BackendProvideCannotRegisterAttempt
+from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_rest_api_client.client import OAuthAPIClient
 
@@ -163,7 +163,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         log.debug('Creating exam attempt for %r at %r', exam['external_id'], url)
         response = self.session.post(url, json=payload)
         if response.status_code != 200:
-            raise BackendProvideCannotRegisterAttempt(response.content)
+            raise BackendProviderCannotRegisterAttempt(response.content)
         response = response.json()
         log.debug(response)
         return response['id']

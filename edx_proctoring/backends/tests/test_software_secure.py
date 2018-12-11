@@ -17,7 +17,7 @@ from django.urls import reverse
 from edx_proctoring.runtime import set_runtime_service
 
 from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.exceptions import BackendProvideCannotRegisterAttempt
+from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
 from edx_proctoring import constants
 
 from edx_proctoring.api import (
@@ -501,7 +501,7 @@ class SoftwareSecureTests(TestCase):
 
         # now try a failing request
         with HTTMock(mock_response_error):
-            with self.assertRaises(BackendProvideCannotRegisterAttempt):
+            with self.assertRaises(BackendProviderCannotRegisterAttempt):
                 create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
 
     def test_payload_construction(self):
