@@ -15,11 +15,11 @@ coverage==4.5.2           # via pytest-cov
 ddt==1.2.0
 django-ipware==2.1.0
 django-model-utils==3.1.2
-django-waffle==0.15.0     # via edx-django-utils, edx-drf-extensions
+django-waffle==0.15.0
 django-webpack-loader==0.6.0
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.6.4
-edx-django-utils==1.0.1   # via edx-drf-extensions
+edx-django-utils==1.0.3   # via edx-drf-extensions
 edx-drf-extensions==2.0.1
 edx-opaque-keys==0.4.4
 edx-rest-api-client==1.9.2
@@ -49,12 +49,12 @@ pymongo==3.7.2            # via edx-opaque-keys, event-tracking
 pytest-cov==2.6.0
 pytest-django==3.4.4
 pytest-forked==0.2        # via pytest-xdist
-pytest-xdist==1.24.1
-pytest==4.0.1             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
+pytest-xdist==1.25.0
+pytest==4.0.2             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
 python-dateutil==2.7.5
 pytz==2018.7
 requests==2.21.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
-responses==0.10.4
+responses==0.10.5
 rest-condition==1.0.3     # via edx-drf-extensions
 scandir==1.9.0            # via pathlib2
 selenium==3.141.0
@@ -63,5 +63,5 @@ six==1.12.0               # via bok-choy, edx-drf-extensions, edx-opaque-keys, f
 slumber==0.7.1            # via edx-rest-api-client
 stevedore==1.30.0         # via edx-opaque-keys
 sure==1.2.7
-testfixtures==6.3.0
+testfixtures==6.4.0
 urllib3==1.24.1           # via requests, selenium

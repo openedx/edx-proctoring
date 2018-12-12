@@ -142,13 +142,14 @@ var edx = edx || {};
                 "To pass your proctored exam you must also pass the online proctoring session review.");
         },
         updateRemainingTime: function (self) {
+            var pingInterval = self.model.get('ping_interval');
             self.timerTick ++;
             self.secondsLeft --;
             if (
-                self.timerTick % self.poll_interval === self.poll_interval / 2 &&
+                self.timerTick % pingInterval === pingInterval / 2 &&
                 edx.courseware.proctored_exam.configuredWorkerURL
             ) {
-                edx.courseware.proctored_exam.pingApplication().catch(self.endExamForFailureState.bind(self));
+                edx.courseware.proctored_exam.pingApplication(pingInterval).catch(self.endExamForFailureState.bind(self));
             }
             if (self.timerTick % self.poll_interval === 0) {
                 var url = self.model.url + '/' + self.model.get('attempt_id');
@@ -193,8 +194,10 @@ var edx = edx || {};
                 },
                 url: this.model.url + '/' + this.model.get('attempt_id'),
                 type: 'PUT'
-            }).done(function() {
-                self.reloadPage();
+            }).done(function(result) {
+                if (result.exam_attempt_id) {
+                    self.reloadPage();
+                }
             });
       },
         toggleTimerVisibility: function (event) {

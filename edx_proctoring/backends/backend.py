@@ -5,12 +5,15 @@ Defines the abstract base class that all backends should derive from
 import abc
 import six
 
+from edx_proctoring import constants
+
 
 class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
     """
     The base abstract class for all proctoring service providers
     """
     verbose_name = u'Unknown'
+    ping_interval = constants.DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS
 
     @abc.abstractmethod
     def register_exam_attempt(self, exam, context):
