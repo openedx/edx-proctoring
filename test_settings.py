@@ -73,7 +73,7 @@ MIDDLEWARE = (
     'django.middleware.csrf.CsrfViewMiddleware',
 )
 
-ROOT_URLCONF = 'edx_proctoring.urls'
+ROOT_URLCONF = 'test_urls'
 
 COURSE_ID_REGEX = r'[^/+]+(/|\+)[^/+]+(/|\+)[^/]+'
 COURSE_ID_PATTERN = r'(?P<course_id>%s)' % COURSE_ID_REGEX

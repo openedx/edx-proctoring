@@ -12,6 +12,7 @@ from django.test import TestCase
 from django.utils import translation
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
+from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
 
 
 class RESTBackendTests(TestCase):
@@ -177,6 +178,23 @@ class RESTBackendTests(TestCase):
         self.assertEqual(request['status'], 'created')
         self.assertIn('lms_host', request)
         self.assertIn('full_name', request)
+
+    @responses.activate
+    def test_register_exam_attempt_failure(self):
+        context = {
+            'attempt_code': '2',
+            'obs_user_id': 'abcdefghij',
+            'full_name': 'user name',
+            'lms_host': 'http://lms.com'
+        }
+        responses.add(
+            responses.POST,
+            url=self.provider.create_exam_attempt_url.format(exam_id=self.backend_exam['external_id']),
+            json={'error': 'something'},
+            status=400
+        )
+        with self.assertRaises(BackendProviderCannotRegisterAttempt):
+            self.provider.register_exam_attempt(self.backend_exam, context)
 
     @responses.activate
     def test_start_exam_attempt(self):

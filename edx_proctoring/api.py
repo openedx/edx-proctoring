@@ -1684,9 +1684,9 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
             'progress_page_url': progress_page_url,
             'does_time_remain': _does_time_remain(attempt),
             'has_time_expired': has_time_expired,
-            'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
+            'enter_exam_endpoint': reverse('edx_proctoring:proctored_exam.attempt.collection'),
             'change_state_url': reverse(
-                'edx_proctoring.proctored_exam.attempt',
+                'edx_proctoring:proctored_exam.attempt',
                 args=[attempt['id']]
             ) if attempt else '',
         })
@@ -1741,17 +1741,17 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'has_due_date': has_due_date,
         'has_due_date_passed': has_due_date_passed(exam['due_date']),
         'does_time_remain': _does_time_remain(attempt),
-        'enter_exam_endpoint': reverse('edx_proctoring.proctored_exam.attempt.collection'),
+        'enter_exam_endpoint': reverse('edx_proctoring:proctored_exam.attempt.collection'),
         'exam_started_poll_url': reverse(
-            'edx_proctoring.proctored_exam.attempt',
+            'edx_proctoring:proctored_exam.attempt',
             args=[attempt['id']]
         ) if attempt else '',
         'change_state_url': reverse(
-            'edx_proctoring.proctored_exam.attempt',
+            'edx_proctoring:proctored_exam.attempt',
             args=[attempt['id']]
         ) if attempt else '',
         'update_is_status_acknowledge_url': reverse(
-            'edx_proctoring.proctored_exam.attempt.review_status',
+            'edx_proctoring:proctored_exam.attempt.review_status',
             args=[attempt['id']]
         ) if attempt else '',
         'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),

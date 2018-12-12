@@ -599,12 +599,12 @@ class StudentProctoredExamAttemptsByCourse(ProctoredAPIView):
             exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(
                 course_id, search_by
             )
-            attempt_url = reverse('edx_proctoring.proctored_exam.attempts.search', args=[course_id, search_by])
+            attempt_url = reverse('edx_proctoring:proctored_exam.attempts.search', args=[course_id, search_by])
         else:
             exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(
                 course_id
             )
-            attempt_url = reverse('edx_proctoring.proctored_exam.attempts.course', args=[course_id])
+            attempt_url = reverse('edx_proctoring:proctored_exam.attempts.course', args=[course_id])
 
         paginator = Paginator(exam_attempts, ATTEMPTS_PER_PAGE)
         page = request.GET.get('page')

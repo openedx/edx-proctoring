@@ -71,7 +71,7 @@ class AllowanceValueNotAllowedException(ProctoredBaseException):
     """
 
 
-class BackendProvideCannotRegisterAttempt(ProctoredBaseException):
+class BackendProviderCannotRegisterAttempt(ProctoredBaseException):
     """
     Raised when a back-end provider cannot register an attempt
     """
