@@ -188,10 +188,10 @@ var edx = edx || {};
         ));
     }
   }
-  edx.courseware.proctored_exam.pingApplication = function() {
+  edx.courseware.proctored_exam.pingApplication = function(timeoutInSeconds) {
     return Promise.race([
       workerPromiseForEventNames(actionToMessageTypesMap.ping)(),
-      timeoutPromise(ONE_MINUTE_MS)
+      timeoutPromise(timeoutInSeconds * 1000)
     ]);
   }
   edx.courseware.proctored_exam.accessibleError = accessibleError;

@@ -6,6 +6,7 @@ import logging
 import warnings
 import time
 import uuid
+import jwt
 
 from webpack_loader.utils import get_files
 from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleLookupError
@@ -14,8 +15,6 @@ from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_rest_api_client.client import OAuthAPIClient
-
-import jwt
 
 log = logging.getLogger(__name__)
 

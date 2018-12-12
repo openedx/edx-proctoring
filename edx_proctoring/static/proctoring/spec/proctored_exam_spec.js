@@ -96,9 +96,10 @@ describe('ProctoredExamView', function () {
         expect(reloadPage).toHaveBeenCalled();
     });
     it("calls external js global function on off-beat", function() {
+      this.proctored_exam_view.model.set('ping_interval', 60);
         edx.courseware.proctored_exam.pingApplication = jasmine.createSpy().and.returnValue(Promise.resolve());
         edx.courseware.proctored_exam.configuredWorkerURL = 'nonempty/string.html';
-        this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval / 2 - 1;
+        this.proctored_exam_view.timerTick = this.proctored_exam_view.model.get('ping_interval') / 2 - 1;
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         expect(edx.courseware.proctored_exam.pingApplication).toHaveBeenCalled();
         delete edx.courseware.proctored_exam.pingApplication;
@@ -109,7 +110,7 @@ describe('ProctoredExamView', function () {
             function(request) {
                 request.respond(200,
                                 {"Content-Type": "application/json"},
-                                "{}"
+                                '{"exam_attempt_id": "abcde"}'
                 );
             }
         );
@@ -120,6 +121,26 @@ describe('ProctoredExamView', function () {
         });
         this.server.respond();
     });
+    it("does not reload the page after failure-state ajax call when server responds with no attempt id", function(done) {
+        // this case mimics current behavior of the server when the
+        // proctoring backend is configured to not block the user for a
+        // failed ping.
+        this.server.respondWith(
+            function(request) {
+                request.respond(200,
+                                {"Content-Type": "application/json"},
+                                '{"exam_attempt_id": false}'
+                );
+            }
+        );
+        var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
+        this.proctored_exam_view.endExamForFailureState().done(function() {
+            expect(reloadPage).not.toHaveBeenCalled();
+            done();
+        });
+        this.server.respond();
+    });
+
     it("sets global variable when unset", function() {
         expect(window.edx.courseware.proctored_exam.configuredWorkerURL).toBeUndefined();
         this.proctored_exam_view.model.set("desktop_application_js_url", "nonempty string");

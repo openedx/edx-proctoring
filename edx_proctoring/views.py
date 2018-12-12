@@ -7,6 +7,7 @@ from __future__ import absolute_import
 import json
 import logging
 import six
+import waffle
 
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -43,6 +44,8 @@ from edx_proctoring.api import (
     get_backend_provider,
     mark_exam_attempt_as_ready,
 )
+from edx_proctoring.constants import PING_FAILURE_PASSTHROUGH_TEMPLATE
+
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
     ProctoredExamReviewAlreadyExists,
@@ -396,11 +399,21 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 ProctoredExamStudentAttemptStatus.download_software_clicked
             )
         elif action == 'error':
-            exam_attempt_id = update_attempt_status(
-                attempt['proctored_exam']['id'],
-                request.user.id,
-                ProctoredExamStudentAttemptStatus.error
-            )
+            backend = attempt['proctored_exam']['backend']
+            waffle_name = PING_FAILURE_PASSTHROUGH_TEMPLATE.format(backend)
+            should_block_user = not (backend and waffle.switch_is_active(waffle_name))
+            if should_block_user:
+                exam_attempt_id = update_attempt_status(
+                    attempt['proctored_exam']['id'],
+                    request.user.id,
+                    ProctoredExamStudentAttemptStatus.error
+                )
+            else:
+                exam_attempt_id = False
+            LOG.warn(u'Browser JS reported problem with proctoring desktop '
+                     u'application. Did block user: %s, for attempt: %s',
+                     should_block_user,
+                     attempt['id'])
         elif action == 'decline':
             exam_attempt_id = update_attempt_status(
                 attempt['proctored_exam']['id'],
@@ -504,11 +517,6 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
                 critically_low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60
             )
 
-            if provider:
-                desktop_application_js_url = provider.get_javascript()
-            else:
-                desktop_application_js_url = ''
-
             exam_url_path = ''
             try:
                 # resolve the LMS url, note we can't assume we're running in
@@ -535,8 +543,14 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
                     remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
                 ),
                 'attempt_status': attempt['status'],
-                'desktop_application_js_url': desktop_application_js_url
             }
+
+            if provider:
+                response_dict['desktop_application_js_url'] = provider.get_javascript()
+                response_dict['ping_interval'] = provider.ping_interval
+            else:
+                response_dict['desktop_application_js_url'] = ''
+
         else:
             response_dict = {
                 'in_timed_exam': False,
@@ -797,7 +811,7 @@ class BaseReviewCallback(object):
         if review:
             if not constants.ALLOW_REVIEW_UPDATES:
                 err_msg = (
-                    'We already have a review submitted from SoftwareSecure regarding '
+                    'We already have a review submitted regarding '
                     'attempt_code {attempt_code}. We do not allow for updates!'.format(
                         attempt_code=attempt_code
                     )
@@ -806,7 +820,7 @@ class BaseReviewCallback(object):
 
             # we allow updates
             warn_msg = (
-                'We already have a review submitted from SoftwareSecure regarding '
+                'We already have a review submitted from our proctoring provider regarding '
                 'attempt_code {attempt_code}. We have been configured to allow for '
                 'updates and will continue...'.format(
                     attempt_code=attempt_code

@@ -8,12 +8,12 @@ certifi==2018.11.29       # via requests
 chardet==3.0.4            # via requests
 django-ipware==2.1.0
 django-model-utils==3.1.2
-django-waffle==0.15.0     # via edx-django-utils, edx-drf-extensions
+django-waffle==0.15.0
 django-webpack-loader==0.6.0
 django==1.11.17
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.6.4
-edx-django-utils==1.0.1   # via edx-drf-extensions
+edx-django-utils==1.0.3   # via edx-drf-extensions
 edx-drf-extensions==2.0.1
 edx-opaque-keys==0.4.4
 edx-rest-api-client==1.9.2
