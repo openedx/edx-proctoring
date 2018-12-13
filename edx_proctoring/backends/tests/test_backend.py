@@ -67,6 +67,8 @@ class TestBackendProvider(ProctoringBackendProvider):
         url = '/instructor/%s/' % course_id
         if exam_id:
             url += '?exam=%s' % exam_id
+            if attempt_id:
+                url += '&attempt=%s' % attempt_id
         return url
 
 

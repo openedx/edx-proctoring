@@ -8,6 +8,7 @@ import json
 import ddt
 from mock import patch
 
+from django.test import RequestFactory
 from django.urls import reverse
 
 from edx_proctoring import constants
@@ -33,6 +34,7 @@ class ReviewTests(LoggedInTestCase):
     """
     def setUp(self):
         super(ReviewTests, self).setUp()
+        self.dummy_request = RequestFactory().get('/')
         self.exam_id = create_exam(
             course_id='foo/bar/baz',
             content_id='content',
@@ -113,12 +115,11 @@ class ReviewTests(LoggedInTestCase):
         ))
         # test_payload = self.get_review_payload(review_status)
         self.attempt['proctored_exam']['backend'] = 'software_secure'
-
         if review_status is None:
             with self.assertRaises(ProctoredExamBadReviewStatus):
                 ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
         else:
-            ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+            ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
             # make sure that what we have in the Database matches what we expect
             review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
 
@@ -150,11 +151,13 @@ class ReviewTests(LoggedInTestCase):
                 # check to see whether the zendesk ticket was created
                 self.assertEqual(len(notifications), 1)
                 exam = self.attempt['proctored_exam']
+                review_url = 'http://testserver/edx_proctoring/v1/instructor/foo/bar/baz/1?attempt=testexternalid'
                 self.assertEqual(notifications,
                                  [(exam['course_id'],
                                    exam['exam_name'],
                                    self.attempt['user']['username'],
-                                   review.review_status)])
+                                   review.review_status,
+                                   review_url)])
             else:
                 self.assertEqual(len(notifications), 0)
 
@@ -242,7 +245,7 @@ class ReviewTests(LoggedInTestCase):
 
         # now call again, this will not throw exception
         test_payload['status'] = ReviewStatus.suspicious
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
 
         # make sure that what we have in the Database matches what we expect
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
@@ -274,9 +277,10 @@ class ReviewTests(LoggedInTestCase):
         don't automatically update the status to failure
         """
         test_payload = self.get_review_payload(ReviewStatus.suspicious)
+
         allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
         # submit a Suspicious review payload
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
 
         # now look at the attempt and make sure it did not
         # transition to failure on the callback,
@@ -306,7 +310,7 @@ class ReviewTests(LoggedInTestCase):
         test_payload = self.get_review_payload(ReviewStatus.suspicious)
         allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
         # submit a Suspicious review payload
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
 
         # now look at the attempt and make sure it did not
         # transition to failure on the callback,
@@ -359,7 +363,7 @@ class ReviewTests(LoggedInTestCase):
         # now we'll make another review for the archived attempt. It should NOT update the status
         test_payload = self.get_review_payload(ReviewStatus.suspicious)
         self.attempt['is_archived'] = True
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
         attempt, is_archived = locate_attempt_by_attempt_code(self.attempt['attempt_code'])
         self.assertTrue(is_archived)
         self.assertEqual(attempt.status, 'verified')

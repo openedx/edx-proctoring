@@ -145,11 +145,11 @@ class MockInstructorService(object):
         """
         return self.is_user_course_staff
 
-    def send_support_notification(self, course_id, exam_name, student_username, review_status):
+    def send_support_notification(self, course_id, exam_name, student_username, review_status, review_url):
         """
         Mocked implementation of send_support_notification
         """
-        self.notifications.append((course_id, exam_name, student_username, review_status))
+        self.notifications.append((course_id, exam_name, student_username, review_status, review_url))
 
 
 class TestProctoringService(unittest.TestCase):

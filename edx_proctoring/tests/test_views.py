@@ -2528,10 +2528,16 @@ class TestInstructorDashboard(LoggedInTestCase):
         )
         exam_id = proctored_exam.id
 
-        expected_url = '/instructor/%s/?exam=%s' % (course_id, exam_id)
-        response = self.client.get(
-            reverse('edx_proctoring:instructor_dashboard_exam', kwargs={'course_id': course_id, 'exam_id': exam_id})
-        )
+        expected_url = '/instructor/%s/?exam=%s' % (course_id, proctored_exam.external_id)
+        dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
+                                kwargs={'course_id': course_id, 'exam_id': exam_id})
+        response = self.client.get(dashboard_url)
+        self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+        # try with an attempt
+        attempt_frag = 'attempt=abcde'
+        expected_url += '&%s' % attempt_frag
+        dashboard_url += '?%s' % attempt_frag
+        response = self.client.get(dashboard_url)
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
 
     def test_error_with_multiple_backends(self):

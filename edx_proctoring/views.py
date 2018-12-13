@@ -780,7 +780,7 @@ class BaseReviewCallback(object):
     Base class for review callbacks.
     make_review handles saving reviews and review comments.
     """
-    def make_review(self, attempt, data, backend=None):
+    def make_review(self, attempt, data, request=None, backend=None):
         """
         Save the review and review comments
         """
@@ -862,11 +862,19 @@ class BaseReviewCallback(object):
         if review.review_status in SoftwareSecureReviewStatus.notify_support_for_status:
             instructor_service = get_runtime_service('instructor')
             if instructor_service:
+                course_id = attempt['proctored_exam']['course_id']
+                exam_id = attempt['proctored_exam']['id']
+                review_url = request.build_absolute_uri(
+                    u'{}?attempt={}'.format(
+                        reverse('edx_proctoring:instructor_dashboard_exam', args=[course_id, exam_id]),
+                        attempt['external_id']
+                    ))
                 instructor_service.send_support_notification(
                     course_id=attempt['proctored_exam']['course_id'],
                     exam_name=attempt['proctored_exam']['exam_name'],
                     student_username=attempt['user']['username'],
-                    review_status=review.review_status
+                    review_status=review.review_status,
+                    review_url=review_url,
                 )
 
         if not attempt.get('is_archived', False):
@@ -900,7 +908,7 @@ class ProctoredExamReviewCallback(ProctoredAPIView, BaseReviewCallback):
         attempt = get_exam_attempt_by_external_id(external_id)
         if attempt is None:
             raise StudentExamAttemptDoesNotExistsException('not found')
-        self.make_review(attempt, request.data)
+        self.make_review(attempt, request.data, request)
         return Response(data='OK')
 
 
@@ -961,6 +969,7 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
         serialized['is_archived'] = is_archived
         self.make_review(serialized,
                          request.data,
+                         request,
                          backend=provider)
         return Response('OK')
 
@@ -975,8 +984,11 @@ class InstructorDashboard(AuthenticatedAPIView):
         Redirect to dashboard for a given course and optional exam_id
         """
         exam = None
+        attempt_id = None
         if exam_id:
             exam = get_exam_by_id(exam_id)
+            exam_id = exam['external_id']
+            attempt_id = request.GET.get('attempt', None)
         else:
             found_backend = None
             for exam in get_all_exams_for_course(course_id, True):
@@ -1001,7 +1013,7 @@ class InstructorDashboard(AuthenticatedAPIView):
                     'full_name': request.user.get_full_name(),
                     'email': request.user.email
                 }
-                url = backend.get_instructor_url(exam['course_id'], user, exam_id=exam_id)
+                url = backend.get_instructor_url(exam['course_id'], user, exam_id=exam_id, attempt_id=attempt_id)
                 if url:
                     return redirect(url)
                 else:
