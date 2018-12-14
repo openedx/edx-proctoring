@@ -985,9 +985,12 @@ class InstructorDashboard(AuthenticatedAPIView):
         """
         exam = None
         attempt_id = None
+        ext_exam_id = None
         if exam_id:
             exam = get_exam_by_id(exam_id)
-            exam_id = exam['external_id']
+            # the exam_id in the url is our database id (for ease of lookups)
+            # but the backend needs its external id for the instructor dashboard
+            ext_exam_id = exam['external_id']
             attempt_id = request.GET.get('attempt', None)
         else:
             found_backend = None
@@ -1013,7 +1016,7 @@ class InstructorDashboard(AuthenticatedAPIView):
                     'full_name': request.user.get_full_name(),
                     'email': request.user.email
                 }
-                url = backend.get_instructor_url(exam['course_id'], user, exam_id=exam_id, attempt_id=attempt_id)
+                url = backend.get_instructor_url(exam['course_id'], user, exam_id=ext_exam_id, attempt_id=attempt_id)
                 if url:
                     return redirect(url)
                 else:
