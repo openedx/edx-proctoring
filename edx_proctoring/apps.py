@@ -5,12 +5,44 @@ edx_proctoring Django application initialization.
 
 from __future__ import absolute_import
 
+import json
+import os.path
 import warnings
 
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from stevedore.extension import ExtensionManager
+
+
+def make_worker_config(backends, out=os.path.join(settings.ENV_ROOT, 'workers.json')):
+    """
+    Generates a config json file used for edx-platform's webpack.common.config.js
+    """
+    if not hasattr(settings, 'NODE_MODULES_ROOT'):
+        return False
+    config = {}
+    for backend in backends:
+        try:
+            package = backend.npm_module
+            package_file = os.path.join(settings.NODE_MODULES_ROOT, package, 'package.json')
+            with open(package_file, 'rb') as package_fp:
+                package_json = json.load(package_fp)
+            main_file = package_json['main']
+            config[package] = os.path.join(settings.NODE_MODULES_ROOT, package, main_file)
+        except AttributeError:
+            # no npm module defined
+            continue
+        except IOError:
+            warnings.warn('Proctoring backend %s defined an npm module,'
+                          'but it is not installed at %r' % (backend.__class__, package_file))
+        except KeyError:
+            warnings.warn('%r does not contain a `main` entry' % package_file)
+    if config:
+        with open(out, 'wb') as outfp:
+            json.dump(config, outfp)
+        return True
+    return False
 
 
 class EdxProctoringConfig(AppConfig):
@@ -84,3 +116,4 @@ class EdxProctoringConfig(AppConfig):
         if not_found:  # pragma: no branch
             warnings.warn("No proctoring backend configured for '{}'.  "
                           "Available: {}".format(not_found, list(self.backends)))
+        make_worker_config(self.backends.values())
