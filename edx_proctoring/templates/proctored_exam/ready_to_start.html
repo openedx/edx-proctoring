@@ -45,14 +45,14 @@
     </p>
     {% endif %}
     <div>
-      <button type="button" class="exam-action-button proctored-enter-exam btn btn-pl-primary btn-base" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
-        {% blocktrans %}
-          Start my exam
-        {% endblocktrans %}
+      {% trans "Start my exam" as start_exam %}
+      <button type="button" class="exam-action-button proctored-enter-exam btn btn-pl-primary btn-base" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" data-loading-text="<span class='fa fa-circle-o-notch fa-spin'></span> {% trans 'Starting Exam' %}" data-cta-text="{{ start_exam }}">
+        {{ start_exam }}
       </button>
     </div>
   </div>
 </div>
+{% include 'proctored_exam/error_modal.html' %}
 {% include 'proctored_exam/footer.html' %}
 
 <script type="text/javascript">

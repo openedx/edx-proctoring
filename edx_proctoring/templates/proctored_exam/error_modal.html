@@ -1,0 +1,26 @@
+{% load i18n %}
+<div id="accessible-error-modal" class="modal" aria-hidden="true">
+  <div class="inner-wrapper" role="dialog" aria-labelledby="accessible-error-title">
+    <button class="close-modal">
+      <span class="icon fa fa-remove" aria-hidden="true"></span>
+      <span class="sr">
+          {% trans "Close" %}
+      </span>
+    </button>
+
+    <header>
+        <h2 id="acessible-error-title"></h2>
+        <span class="sr">,
+            {% trans "modal open"}
+        </span>
+    <hr aria-hidden="true" />
+    </header>
+    <div role="alertdialog" class="status message" tabindex="-1">
+        <p class="message-title" style="text-align: center; font-size: 16px;"></p>
+    </div>
+    <div class="actions" style="text-align: center;">
+        <button class="dismiss ok-button"></button>
+    </div>
+  </div>
+  <a href="#accessible-error-modal" rel="leanModal" id="confirm_open_button" style="display:none">{% trans "open"}</a>
+</div>
