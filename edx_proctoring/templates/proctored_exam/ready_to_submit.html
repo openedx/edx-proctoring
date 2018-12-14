@@ -15,10 +15,9 @@
       After you submit your exam, your responses are graded and your proctoring session is reviewed.
     {% endblocktrans %}
   </p>
-  <button type="button" name="submit-proctored-exam" class="exam-action-button btn btn-pl-primary btn-base" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}">
-    {% blocktrans %}
-      Yes, end my proctored exam
-    {% endblocktrans %}
+      {% trans "Yes, end my proctored exam" as end_exam %}
+  <button type="button" name="submit-proctored-exam" class="exam-action-button btn btn-pl-primary btn-base" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" data-loading-text="<span class='fa fa-circle-o-notch fa-spin'></span> {% trans 'Ending Exam' %}" data-cta-text="{{ end_exam }}">
+    {{ end_exam }}
   </button>
   {% if does_time_remain %}
     <button type="button" name="goback-proctored-exam" class="exam-action-button btn btn-secondary btn-base" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" style="box-shadow: none">
@@ -28,6 +27,9 @@
     </button>
   {% endif %}
 </div>
+{% include 'proctored_exam/error_modal.html' %}
+
+
 <script type="text/javascript">
   var edx = edx || {};
   edx.courseware = edx.courseware || {};
