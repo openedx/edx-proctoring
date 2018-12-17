@@ -29,7 +29,7 @@ def make_worker_config(backends, out=os.path.join(settings.ENV_ROOT, 'workers.js
             with open(package_file, 'rb') as package_fp:
                 package_json = json.load(package_fp)
             main_file = package_json['main']
-            config[package] = os.path.join(settings.NODE_MODULES_ROOT, package, main_file)
+            config[package] = ['babel-polyfill', os.path.join(settings.NODE_MODULES_ROOT, package, main_file)]
         except AttributeError:
             # no npm module defined
             continue
