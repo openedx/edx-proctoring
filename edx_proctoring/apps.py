@@ -19,7 +19,7 @@ def make_worker_config(backends, out=os.path.join(settings.ENV_ROOT, 'workers.js
     """
     Generates a config json file used for edx-platform's webpack.common.config.js
     """
-    if not hasattr(settings, 'NODE_MODULES_ROOT'):
+    if not getattr(settings, 'NODE_MODULES_ROOT', None):
         return False
     config = {}
     for backend in backends:

@@ -125,3 +125,5 @@ TEMPLATES = [{
     'APP_DIRS': True,
 }]
 ########## END TEMPLATE CONFIGURATION
+
+NODE_MODULES_ROOT = '/tmp/test-proctoring-modules'
