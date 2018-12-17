@@ -133,7 +133,7 @@ var edx = edx || {};
           gettext(
             'Something has gone wrong starting your exam. ' +
             'Please double-check that the application is running.'
-          ),
+          )
         ));
     } else {
       updateExamAttemptStatusPromise(actionUrl, action)()
@@ -144,7 +144,7 @@ var edx = edx || {};
           gettext(
             'Something has gone wrong starting your exam. ' +
             'Please reload the page and start again.'
-          ),
+          )
         ));
 
     }
