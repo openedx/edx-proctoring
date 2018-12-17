@@ -56,7 +56,12 @@ class TestWorkerConfig(unittest.TestCase):
         backend = TestBackendProvider()
         backend.npm_module = self._make_npm_module('test-1234', 'foo/bar/baz.js')
         self.assertTrue(make_worker_config([backend], self.outfile))
-        self._check_outfile({'test-1234': '/tmp/test-proctoring-modules/test-1234/foo/bar/baz.js'})
+        self._check_outfile(
+            {'test-1234': [
+                'babel-polyfill',
+                '/tmp/test-proctoring-modules/test-1234/foo/bar/baz.js'
+            ]}
+        )
 
     def test_not_defined(self):
         backend = TestBackendProvider()
