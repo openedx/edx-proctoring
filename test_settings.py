@@ -14,6 +14,8 @@ import sys
 import os
 BASE_DIR = os.path.dirname(__file__)
 
+ENV_ROOT = os.path.dirname(BASE_DIR)
+
 DEBUG=True
 TEST_MODE=True
 TEST_ROOT = "tests"
@@ -123,3 +125,5 @@ TEMPLATES = [{
     'APP_DIRS': True,
 }]
 ########## END TEMPLATE CONFIGURATION
+
+NODE_MODULES_ROOT = '/tmp/test-proctoring-modules'
