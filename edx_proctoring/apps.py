@@ -15,7 +15,7 @@ from django.core.exceptions import ImproperlyConfigured
 from stevedore.extension import ExtensionManager
 
 
-def make_worker_config(backends, out=os.path.join(settings.ENV_ROOT, 'workers.json')):
+def make_worker_config(backends, out='/tmp/workers.json'):
     """
     Generates a config json file used for edx-platform's webpack.common.config.js
     """
@@ -116,4 +116,4 @@ class EdxProctoringConfig(AppConfig):
         if not_found:  # pragma: no branch
             warnings.warn("No proctoring backend configured for '{}'.  "
                           "Available: {}".format(not_found, list(self.backends)))
-        make_worker_config(self.backends.values())
+        make_worker_config(self.backends.values(), out=os.path.join(settings.ENV_ROOT, 'workers.json'))

@@ -17,7 +17,7 @@ class TestWorkerConfig(unittest.TestCase):
 
     def setUp(self):
         super(TestWorkerConfig, self).setUp()
-        self.outfile = tempfile.mktemp()
+        self.outfile = tempfile.mktemp(prefix='test-%d' % os.getpid())
         self.to_del = [self.outfile]
 
     def tearDown(self):
