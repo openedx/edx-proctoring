@@ -125,25 +125,27 @@ describe('ProctoredExamView', function() {
         });
         this.server.respond();
     });
-    it('does not reload the page after failure-state ajax call when server responds with no attempt id', function(done) {
-        // this case mimics current behavior of the server when the
-        // proctoring backend is configured to not block the user for a
-        // failed ping.
-        this.server.respondWith(
-            function(request) {
-                request.respond(200,
-                    {'Content-Type': 'application/json'},
-                    '{"exam_attempt_id": false}'
-                );
-            }
-        );
-        var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
-        this.proctored_exam_view.endExamForFailureState().done(function() {
-            expect(reloadPage).not.toHaveBeenCalled();
-            done();
+    it('does not reload the page after failure-state ajax call when server responds with no attempt id',
+        function(done) {
+            var reloadPage;
+            // this case mimics current behavior of the server when the
+            // proctoring backend is configured to not block the user for a
+            // failed ping.
+            this.server.respondWith(
+                function(request) {
+                    request.respond(200,
+                        {'Content-Type': 'application/json'},
+                        '{"exam_attempt_id": false}'
+                    );
+                }
+            );
+            reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
+            this.proctored_exam_view.endExamForFailureState().done(function() {
+                expect(reloadPage).not.toHaveBeenCalled();
+                done();
+            });
+            this.server.respond();
         });
-        this.server.respond();
-    });
 
     it('sets global variable when unset', function() {
         expect(window.edx.courseware.proctored_exam.configuredWorkerURL).toBeUndefined();

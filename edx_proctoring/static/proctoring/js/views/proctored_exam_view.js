@@ -157,7 +157,8 @@ edx = edx || {};
                 self.timerTick % pingInterval === pingInterval / 2 &&
                 edx.courseware.proctored_exam.configuredWorkerURL
             ) {
-                edx.courseware.proctored_exam.pingApplication(pingInterval).catch(self.endExamForFailureState.bind(self));
+                edx.courseware.proctored_exam.pingApplication(pingInterval)
+                    .catch(self.endExamForFailureState.bind(self));
             }
             if (self.timerTick % self.poll_interval === 0) {
                 url = self.model.url + '/' + self.model.get('attempt_id');
