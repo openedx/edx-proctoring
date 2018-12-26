@@ -80,6 +80,13 @@ class TestWorkerConfig(unittest.TestCase):
         self.assertFalse(make_worker_config([backend], self.outfile))
         self._check_outfile(None)
 
+    def test_no_permission(self):
+        self.outfile = '/etc/workers-test.json'
+        backend = TestBackendProvider()
+        backend.npm_module = self._make_npm_module('test-1234', 'foo/bar/baz.js')
+        self.assertFalse(make_worker_config([backend], self.outfile))
+        self._check_outfile(None)
+
     @patch('django.conf.settings.NODE_MODULES_ROOT', None)
     def test_no_setting(self):
         backend = TestBackendProvider()
