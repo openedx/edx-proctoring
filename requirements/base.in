@@ -10,7 +10,7 @@ pytz>=2018
 pycryptodomex>=3.4.7
 python-dateutil>=2.1
 django-webpack-loader>=0.6.0
-django-waffle>=0.14.0
+django-waffle
 
 # edX packages
 event-tracking>=0.2.5
