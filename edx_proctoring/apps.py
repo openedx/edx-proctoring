@@ -6,6 +6,7 @@ edx_proctoring Django application initialization.
 from __future__ import absolute_import
 
 import json
+import os
 import os.path
 import warnings
 
@@ -41,6 +42,7 @@ def make_worker_config(backends, out='/tmp/workers.json'):
     if config:
         with open(out, 'wb') as outfp:
             json.dump(config, outfp)
+        os.chmod(out, 0o664)
         return True
     return False
 
