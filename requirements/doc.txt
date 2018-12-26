@@ -51,7 +51,7 @@ semantic-version==2.6.0   # via edx-drf-extensions
 six==1.12.0               # via bleach, doc8, edx-drf-extensions, edx-opaque-keys, edx-sphinx-theme, packaging, pockets, pyjwkest, python-dateutil, readme-renderer, sphinx, sphinxcontrib-napoleon, stevedore
 slumber==0.7.1            # via edx-rest-api-client
 snowballstemmer==1.2.1    # via sphinx
-sphinx==1.8.2
+sphinx==1.8.3
 sphinxcontrib-napoleon==0.7
 sphinxcontrib-websupport==1.1.0  # via sphinx
 stevedore==1.30.0         # via doc8, edx-opaque-keys
