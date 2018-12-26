@@ -40,10 +40,15 @@ def make_worker_config(backends, out='/tmp/workers.json'):
         except KeyError:
             warnings.warn('%r does not contain a `main` entry' % package_file)
     if config:
-        with open(out, 'wb') as outfp:
-            json.dump(config, outfp)
-        os.chmod(out, 0o664)
-        return True
+        try:
+            with open(out, 'wb+') as outfp:
+                json.dump(config, outfp)
+        except IOError:
+            warnings.warn("Could not write worker config to %s" % out)
+        else:
+            # make sure that this file is group writable, because it may be written by different users
+            os.chmod(out, 0o664)
+            return True
     return False
 
 
