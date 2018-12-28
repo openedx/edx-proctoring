@@ -147,7 +147,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         # redact the videoReviewLink from the payload
         if 'videoReviewLink' in payload:
-            if payload['reviewStatus'] == 'second_review_required' and SEND_EMAIL and settings.EXAM_REVIEWER_EMAILS:
+            if (
+                payload['reviewStatus'] in self.notify_support_for_status and SEND_EMAIL
+                and settings.EXAM_REVIEWER_EMAILS
+            ):
                 msg = 'Exam attempt code: {}; video review link: {}'.format(
                     payload['examMetaData']['examCode'], payload['videoReviewLink']
                 )
