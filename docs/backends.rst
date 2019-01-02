@@ -183,6 +183,53 @@ The following fields are optional::
 
 (Start and stop are seconds relative to the start of the recorded proctoring session.)
 
+
+Instructor Dashboard
+--------------------
+
+It is possible to add support for an instructor dashboard for reviewing proctored exam violations and/or configuring proctored exam options.
+
+The ``get_instructor_url`` method of the backend will return a URL on the PS end that will redirect to the instructor dashboard.
+
+By default, this URL will be ``base_url + u'/api/v1/instructor/{client_id}/?jwt={jwt}'``. This URL template is specified by the ``instructor_url`` property.
+You may override this property to modify the URL template.
+
+The `JWT <https://jwt.io/>`_ contains the following data::
+
+    {
+        "course_id": <course id>,
+        "user": <user>,
+        "iss": <issuer>,
+        "jti": <JWT id>,
+        "exp": <expiration time>
+
+    }
+
+By default, ``get_instructor_url`` may return two URLS.
+
+1. /api/v1/instructor/{client_id}/?jwt={jwt}
+
+    This URL will provide information that can be used for three different dashboards.
+    
+    1. course instructor dashboard
+        This dashboard is on the course level and may show an overview of proctored exams in a particular course. Note that the ``course_id`` will be 
+        contained in the JWT.
+
+    2. exam instructor dashboard
+        This dashboard is on the individual exam level and may show an overview of proctored exam attempts. Note that the ``course_id``
+        and ``exam_id`` will be contained in the JWT.
+
+    3. exam attempt instructor dashboard
+        This dashboard is on the exam attempt level and may show violations for a particular proctored exam attempt. Note that the ``course_id``, ``exam_id``,
+        and ``attempt_id`` will be contained in the JWT.
+
+2. /api/v1/instructor/{client_id}/?jwt={jwt}&config=true
+
+    This URL will link to a configuration dashboard for configuring proctored exam options. Note that the ``course_id``
+    and ``exam_id`` will be contained in the JWT.
+
+If you wish to modify the aforementioned logic, override the ``get_instructor_url`` method of the ``edx_proctoring.backends.rest.BaseRestProctoringProvider`` class.
+
 --------
 
 Python wrapper

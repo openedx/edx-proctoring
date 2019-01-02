@@ -64,7 +64,12 @@ class EdxProctoringConfig(AppConfig):
                 u'namespace': u'edx_proctoring',
                 u'regex': u'^api/',
                 u'relative_path': u'urls',
-            }
+            },
+            u'cms.djangoapp': {
+                u'namespace': u'edx_proctoring',
+                u'regex': u'^api/',
+                u'relative_path': u'instructor_dashboard_exam_urls',
+            },
         },
         u'settings_config': {
             u'lms.djangoapp': {

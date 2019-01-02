@@ -331,7 +331,7 @@ def get_exam_by_content_id(course_id, content_id):
     proctored_exam = ProctoredExam.get_exam_by_content_id(course_id, content_id)
     if proctored_exam is None:
         log.exception(
-            'Cannot find the proctored exams in this course %s with content_id: %s',
+            'Cannot find the proctored exam in this course %s with content_id: %s',
             course_id, content_id
         )
         raise ProctoredExamNotFoundException
@@ -1521,9 +1521,12 @@ def get_attempt_status_summary(user_id, course_id, content_id):
 
     try:
         exam = get_exam_by_content_id(course_id, content_id)
-    except ProctoredExamNotFoundException as ex:
+    except ProctoredExamNotFoundException:
         # this really shouldn't happen, but log it at least
-        log.exception(ex)
+        log.exception(
+            'Cannot find the proctored exam in this course %s with content_id: %s',
+            course_id, content_id
+        )
         return None
 
     # check if the exam is not proctored
@@ -2103,3 +2106,27 @@ def is_backend_dashboard_available(course_id):
         if get_backend_provider(name=exam.backend).has_dashboard:
             return True
     return False
+
+
+def get_exam_configuration_dashboard_url(course_id, content_id):
+    """
+    Returns the exam configuration dashboard URL, if the exam exists and the backend
+    has an exam configuration dashboard. Otherwise, returns None.
+    """
+    try:
+        exam = get_exam_by_content_id(course_id, content_id)
+    except ProctoredExamNotFoundException:
+        log.exception(
+            'Cannot find the proctored exam in this course %s with content_id: %s',
+            course_id, content_id
+        )
+        return None
+
+    if is_backend_dashboard_available(course_id):
+        return '{}?config=true'.format(
+            reverse(
+                'edx_proctoring:instructor_dashboard_exam', args=(course_id, exam['id'])
+            )
+        )
+
+    return None

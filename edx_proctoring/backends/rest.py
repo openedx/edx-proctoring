@@ -223,7 +223,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             data = {}
         return data.get('id')
 
-    def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None):
+    def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None, show_configuration_dashboard=False):
         """
         Return a URL to the instructor dashboard
         course_id: str
@@ -245,6 +245,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
                 token['attempt_id'] = attempt_id
         encoded = jwt.encode(token, self.client_secret)
         url = self.instructor_url.format(client_id=self.client_id, jwt=encoded)
+
+        if show_configuration_dashboard:
+            url += '&config=true'
+
         log.debug('Created instructor url for %r %r %r', course_id, exam_id, attempt_id)
         return url
 

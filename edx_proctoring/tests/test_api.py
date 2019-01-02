@@ -51,6 +51,7 @@ from edx_proctoring.api import (
     update_review_policy,
     remove_review_policy,
     is_backend_dashboard_available,
+    get_exam_configuration_dashboard_url,
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -138,7 +139,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         update_practice_exam = ProctoredExam.objects.get(id=updated_practice_exam_id)
 
         self.assertEqual(update_practice_exam.time_limit_mins, 31)
-        self.assertEqual(update_practice_exam.course_id, 'test_course')
+        self.assertEqual(update_practice_exam.course_id, self.course_id)
         self.assertEqual(update_practice_exam.content_id, 'test_content_id_practice')
         self.assertEqual(update_practice_exam.backend, 'null')
 
@@ -160,7 +161,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         self.assertEqual(update_proctored_exam.exam_name, 'Updated Exam Name')
         self.assertEqual(update_proctored_exam.time_limit_mins, 30)
-        self.assertEqual(update_proctored_exam.course_id, 'test_course')
+        self.assertEqual(update_proctored_exam.course_id, self.course_id)
         self.assertEqual(update_proctored_exam.content_id, 'test_content_id')
 
     def test_update_timed_exam(self):
@@ -1944,3 +1945,31 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         # backend with a dashboard
         self.assertTrue(is_backend_dashboard_available(self.course_id))
+
+    def test_exam_configuration_dashboard_url(self):
+        # test if exam doesn't exist
+        ProctoredExam.objects.filter(course_id=self.course_id).delete()
+        self.assertEqual(get_exam_configuration_dashboard_url(self.course_id, 'test_content_1'), None)
+
+        # test if exam dashboard is not available
+        create_exam(
+            course_id=self.course_id,
+            content_id='test_content_1',
+            exam_name='test_exam',
+            time_limit_mins=60,
+            backend='null'
+        )
+        self.assertEqual(get_exam_configuration_dashboard_url(self.course_id, 'test_content_1'), None)
+
+        # test if exam exists and dashboard is available
+        create_exam(
+            course_id=self.course_id,
+            content_id='test_content_2',
+            exam_name='test_exam2',
+            time_limit_mins=60,
+            backend='test'
+        )
+        self.assertEqual(
+            get_exam_configuration_dashboard_url(self.course_id, 'test_content_2'),
+            '/edx_proctoring/v1/instructor/a/b/c/6?config=true'
+        )

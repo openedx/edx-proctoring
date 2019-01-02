@@ -109,7 +109,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
         """
         super(ProctoredExamTestCase, self).setUp()
         self.default_time_limit = 21
-        self.course_id = 'test_course'
+        self.course_id = 'a/b/c'
         self.content_id_for_exam_with_due_date = 'test_content_due_date_id'
         self.content_id = 'test_content_id'
         self.content_id_timed = 'test_content_id_timed'
@@ -211,7 +211,8 @@ class ProctoredExamTestCase(LoggedInTestCase):
             course_id=self.course_id,
             content_id=self.content_id,
             exam_name=self.exam_name,
-            time_limit_mins=self.default_time_limit
+            time_limit_mins=self.default_time_limit,
+            external_id=self.external_id,
         )
 
     def _create_exam_with_due_time(self, is_proctored=True, is_practice_exam=False, due_date=None):

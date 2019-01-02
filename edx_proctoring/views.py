@@ -950,12 +950,18 @@ class InstructorDashboard(AuthenticatedAPIView):
         exam = None
         attempt_id = None
         ext_exam_id = None
+        show_configuration_dashboard = False
+
         if exam_id:
             exam = get_exam_by_id(exam_id)
             # the exam_id in the url is our database id (for ease of lookups)
             # but the backend needs its external id for the instructor dashboard
             ext_exam_id = exam['external_id']
             attempt_id = request.GET.get('attempt', None)
+
+            # only show the configuration dashboard if an exam_id is passed in
+            show_configuration_dashboard = request.GET.get('config', '').lower() == 'true'
+
         else:
             found_backend = None
             for exam in get_all_exams_for_course(course_id, True):
@@ -980,7 +986,14 @@ class InstructorDashboard(AuthenticatedAPIView):
                     'full_name': request.user.get_full_name(),
                     'email': request.user.email
                 }
-                url = backend.get_instructor_url(exam['course_id'], user, exam_id=ext_exam_id, attempt_id=attempt_id)
+
+                url = backend.get_instructor_url(
+                    exam['course_id'],
+                    user,
+                    exam_id=ext_exam_id,
+                    attempt_id=attempt_id,
+                    show_configuration_dashboard=show_configuration_dashboard
+                )
                 if url:
                     return redirect(url)
                 else:
