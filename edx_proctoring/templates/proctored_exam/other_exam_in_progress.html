@@ -1,0 +1,15 @@
+{% load i18n %}
+<div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      Complete in-progress exam
+    {% endblocktrans %}
+  </h3>
+
+  <p>
+    {% blocktrans %}
+      You must <a href="{{ exam_url }}">complete your currently in-progress exam</a> before you can attempt this one.
+    {% endblocktrans %}
+  </p>
+</div>
+{% include 'proctored_exam/footer.html' %}
