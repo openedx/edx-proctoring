@@ -12,8 +12,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
 from django.db.models.base import ObjectDoesNotExist
-from django.db.models.signals import pre_save, pre_delete
-from django.dispatch import receiver
 from django.utils.translation import ugettext_noop
 
 from model_utils.models import TimeStampedModel
@@ -185,44 +183,6 @@ class ProctoredExamReviewPolicyHistory(TimeStampedModel):
         Don't allow deletions!
         """
         raise NotImplementedError()
-
-
-# Hook up the pre_save signal to record creations in the ProctoredExamReviewPolicyHistory table.
-@receiver(pre_save, sender=ProctoredExamReviewPolicy)
-def on_review_policy_saved(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """
-    Archiving all changes made to the Student Allowance.
-    Will only archive on update, and not on new entries created.
-    """
-
-    if instance.id:
-        # only for update cases
-        original = ProctoredExamReviewPolicy.objects.get(id=instance.id)
-        _make_review_policy_archive_copy(original)
-
-
-# Hook up the pre_delete signal to record creations in the ProctoredExamReviewPolicyHistory table.
-@receiver(pre_delete, sender=ProctoredExamReviewPolicy)
-def on_review_policy_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """
-    Archive the allowance when the item is about to be deleted
-    """
-
-    _make_review_policy_archive_copy(instance)
-
-
-def _make_review_policy_archive_copy(instance):
-    """
-    Do the copying into the history table
-    """
-
-    archive_object = ProctoredExamReviewPolicyHistory(
-        original_id=instance.id,
-        set_by_user_id=instance.set_by_user_id,
-        proctored_exam=instance.proctored_exam,
-        review_policy=instance.review_policy,
-    )
-    archive_object.save()
 
 
 class ProctoredExamStudentAttemptManager(models.Manager):
@@ -473,67 +433,20 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
         verbose_name = 'proctored exam attempt history'
 
 
-@receiver(pre_delete, sender=ProctoredExamStudentAttempt)
-def on_attempt_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
+def archive_model(model, instance, **mapping):
     """
-    Archive the exam attempt when the item is about to be deleted
-    Make a clone and populate in the History table
+    Archives the instance to the given history model
+    optionally maps field names from the instance model to the history model
     """
-
-    archive_object = ProctoredExamStudentAttemptHistory(
-        user=instance.user,
-        attempt_id=instance.id,
-        proctored_exam=instance.proctored_exam,
-        started_at=instance.started_at,
-        completed_at=instance.completed_at,
-        attempt_code=instance.attempt_code,
-        external_id=instance.external_id,
-        allowed_time_limit_mins=instance.allowed_time_limit_mins,
-        status=instance.status,
-        taking_as_proctored=instance.taking_as_proctored,
-        is_sample_attempt=instance.is_sample_attempt,
-        student_name=instance.student_name,
-        review_policy_id=instance.review_policy_id,
-        last_poll_timestamp=instance.last_poll_timestamp,
-        last_poll_ipaddr=instance.last_poll_ipaddr,
-
-    )
-    archive_object.save()
-
-
-@receiver(pre_save, sender=ProctoredExamStudentAttempt)
-def on_attempt_updated(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """
-    Archive the exam attempt whenever the attempt status is about to be
-    modified. Make a new entry with the previous value of the status in the
-    ProctoredExamStudentAttemptHistory table.
-    """
-
-    if instance.id:
-        # on an update case, get the original
-        # and see if the status has changed, if so, then we need
-        # to archive it
-        original = ProctoredExamStudentAttempt.objects.get(id=instance.id)
-
-        if original.status != instance.status:
-            archive_object = ProctoredExamStudentAttemptHistory(
-                user=original.user,
-                attempt_id=original.id,
-                proctored_exam=original.proctored_exam,
-                started_at=original.started_at,
-                completed_at=original.completed_at,
-                attempt_code=original.attempt_code,
-                external_id=original.external_id,
-                allowed_time_limit_mins=original.allowed_time_limit_mins,
-                status=original.status,
-                taking_as_proctored=original.taking_as_proctored,
-                is_sample_attempt=original.is_sample_attempt,
-                student_name=original.student_name,
-                review_policy_id=original.review_policy_id,
-                last_poll_timestamp=original.last_poll_timestamp,
-                last_poll_ipaddr=original.last_poll_ipaddr,
-            )
-            archive_object.save()
+    archive = model()
+    # timestampedmodels automatically create these
+    mapping['created'] = mapping['modified'] = None
+    for field in instance._meta.get_fields():
+        to_name = mapping.get(field.name, field.name)
+        if to_name is not None:
+            setattr(archive, to_name, getattr(instance, field.name, None))
+    archive.save()
+    return archive
 
 
 class QuerySetWithUpdateOverride(models.QuerySet):
@@ -543,7 +456,7 @@ class QuerySetWithUpdateOverride(models.QuerySet):
     """
     def update(self, **kwargs):
         super(QuerySetWithUpdateOverride, self).update(**kwargs)
-        _make_archive_copy(self.get())
+        archive_model(ProctoredExamStudentAllowanceHistory, self.get(), id='allowance_id')
 
 
 class ProctoredExamStudentAllowanceManager(models.Manager):
@@ -717,43 +630,6 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
         verbose_name = 'proctored allowance history'
 
 
-# Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
-@receiver(pre_save, sender=ProctoredExamStudentAllowance)
-def on_allowance_saved(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """
-    Archiving all changes made to the Student Allowance.
-    Will only archive on update, and not on new entries created.
-    """
-
-    if instance.id:
-        original = ProctoredExamStudentAllowance.objects.get(id=instance.id)
-        _make_archive_copy(original)
-
-
-@receiver(pre_delete, sender=ProctoredExamStudentAllowance)
-def on_allowance_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """
-    Archive the allowance when the item is about to be deleted
-    """
-
-    _make_archive_copy(instance)
-
-
-def _make_archive_copy(item):
-    """
-    Make a clone and populate in the History table
-    """
-
-    archive_object = ProctoredExamStudentAllowanceHistory(
-        allowance_id=item.id,
-        user=item.user,
-        proctored_exam=item.proctored_exam,
-        key=item.key,
-        value=item.value
-    )
-    archive_object.save()
-
-
 class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     """
     This is where we store the proctored exam review feedback
@@ -840,45 +716,6 @@ class ProctoredExamSoftwareSecureReviewHistory(TimeStampedModel):
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamsoftwaresecurereviewhistory'
         verbose_name = 'Proctored exam review archive'
-
-
-# Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
-@receiver(pre_save, sender=ProctoredExamSoftwareSecureReview)
-def on_review_saved(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """
-    Archiving all changes made to the Student Allowance.
-    Will only archive on update, and not on new entries created.
-    """
-
-    if instance.id:
-        # only for update cases
-        original = ProctoredExamSoftwareSecureReview.objects.get(id=instance.id)
-        _make_review_archive_copy(original)
-
-
-@receiver(pre_delete, sender=ProctoredExamSoftwareSecureReview)
-def on_review_deleted(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """
-    Archive the allowance when the item is about to be deleted
-    """
-
-    _make_review_archive_copy(instance)
-
-
-def _make_review_archive_copy(instance):
-    """
-    Do the copying into the history table
-    """
-
-    archive_object = ProctoredExamSoftwareSecureReviewHistory(
-        attempt_code=instance.attempt_code,
-        review_status=instance.review_status,
-        raw_data=instance.raw_data,
-        reviewed_by=instance.reviewed_by,
-        student=instance.student,
-        exam=instance.exam,
-    )
-    archive_object.save()
 
 
 class ProctoredExamSoftwareSecureComment(TimeStampedModel):

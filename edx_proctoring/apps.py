@@ -109,6 +109,7 @@ class EdxProctoringConfig(AppConfig):
         """
         Loads the available proctoring backends
         """
+        from edx_proctoring import signals  # pylint: disable=unused-variable
         config = settings.PROCTORING_BACKENDS
 
         self.backends = {}  # pylint: disable=W0201
