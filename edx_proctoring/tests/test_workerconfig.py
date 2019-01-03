@@ -54,12 +54,12 @@ class TestWorkerConfig(unittest.TestCase):
 
     def test_create_success(self):
         backend = TestBackendProvider()
-        backend.npm_module = self._make_npm_module('test-1234', 'foo/bar/baz.js')
+        backend.npm_module = self._make_npm_module('success', 'foo/bar/baz.js')
         self.assertTrue(make_worker_config([backend], self.outfile))
         self._check_outfile(
-            {'test-1234': [
+            {'success': [
                 'babel-polyfill',
-                '/tmp/test-proctoring-modules/test-1234/foo/bar/baz.js'
+                '/tmp/test-proctoring-modules/success/foo/bar/baz.js'
             ]}
         )
 
@@ -70,7 +70,7 @@ class TestWorkerConfig(unittest.TestCase):
 
     def test_no_main(self):
         backend = TestBackendProvider()
-        backend.npm_module = self._make_npm_module('test-1234')
+        backend.npm_module = self._make_npm_module('no-main')
         self.assertFalse(make_worker_config([backend], self.outfile))
         self._check_outfile(None)
 
@@ -83,13 +83,13 @@ class TestWorkerConfig(unittest.TestCase):
     def test_no_permission(self):
         self.outfile = '/etc/workers-test.json'
         backend = TestBackendProvider()
-        backend.npm_module = self._make_npm_module('test-1234', 'foo/bar/baz.js')
+        backend.npm_module = self._make_npm_module('no-perm', 'foo/bar/baz.js')
         self.assertFalse(make_worker_config([backend], self.outfile))
         self._check_outfile(None)
 
     @patch('django.conf.settings.NODE_MODULES_ROOT', None)
     def test_no_setting(self):
         backend = TestBackendProvider()
-        backend.npm_module = 'test-1234'
+        backend.npm_module = 'no-setting'
         self.assertFalse(make_worker_config([backend], self.outfile))
         self._check_outfile(None)
