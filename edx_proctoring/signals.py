@@ -5,9 +5,27 @@ from edx_proctoring import models
 from edx_proctoring.backends import get_backend_provider
 
 
+@receiver(pre_save, sender=models.ProctoredExam)
+def check_for_category_switch(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """
+    If the exam switches from proctored to timed, notify the backend
+    """
+    if instance.id:
+        original = sender.objects.get(pk=instance.id)
+        if original.is_proctored and instance.is_proctored != original.is_proctored:
+            from edx_proctoring.serializers import ProctoredExamSerializer
+            exam = ProctoredExamSerializer(instance).data
+            exam['is_active'] = False
+            exam['is_proctored'] = True
+            # we have to pretend that the exam is still proctored
+            # or else we get_backend_provider will return None
+            backend = get_backend_provider(exam)
+            backend.on_exam_saved(exam)
+
+
 @receiver(post_save, sender=models.ProctoredExamReviewPolicy)
 @receiver(post_save, sender=models.ProctoredExam)
-def _save_exam_on_backend(sender, instance, **kwargs):  # pylint: disable=unused-argument
+def save_exam_on_backend(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """
     Save the exam to the backend provider when our model changes.
     It also combines the review policy into the exam when saving to the backend
@@ -49,7 +67,7 @@ def on_review_policy_changed(sender, instance, signal, **kwargs):  # pylint: dis
 # Hook up the post_save signal to record creations in the ProctoredExamStudentAllowanceHistory table.
 @receiver(pre_save, sender=models.ProctoredExamStudentAllowance)
 @receiver(pre_delete, sender=models.ProctoredExamStudentAllowance)
-def on_allowance_saved(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
+def on_allowance_changed(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
     """
     Archiving all changes made to the Student Allowance.
     Will only archive on update/delete, and not on new entries created.
@@ -65,7 +83,7 @@ def on_allowance_saved(sender, instance, signal, **kwargs):  # pylint: disable=u
 
 @receiver(pre_save, sender=models.ProctoredExamStudentAttempt)
 @receiver(pre_delete, sender=models.ProctoredExamStudentAttempt)
-def on_attempt_updated(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
+def on_attempt_changed(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
     """
     Archive the exam attempt whenever the attempt status is about to be
     modified. Make a new entry with the previous value of the status in the
@@ -91,7 +109,7 @@ def on_attempt_updated(sender, instance, signal, **kwargs):  # pylint: disable=u
 # Hook up the signals to record updates/deletions in the ProctoredExamStudentAllowanceHistory table.
 @receiver(pre_save, sender=models.ProctoredExamSoftwareSecureReview)
 @receiver(pre_delete, sender=models.ProctoredExamSoftwareSecureReview)
-def on_review_saved(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
+def on_review_changed(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
     """
     Archiving all changes made to the Review.
     Will only archive on update/delete, and not on new entries created.
