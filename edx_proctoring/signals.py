@@ -15,11 +15,9 @@ def check_for_category_switch(sender, instance, **kwargs):  # pylint: disable=un
         if original.is_proctored and instance.is_proctored != original.is_proctored:
             from edx_proctoring.serializers import ProctoredExamSerializer
             exam = ProctoredExamSerializer(instance).data
+            # from the perspective of the backend, the exam is now inactive.
             exam['is_active'] = False
-            exam['is_proctored'] = True
-            # we have to pretend that the exam is still proctored
-            # or else we get_backend_provider will return None
-            backend = get_backend_provider(exam)
+            backend = get_backend_provider(name=exam['backend'])
             backend.on_exam_saved(exam)
 
 
