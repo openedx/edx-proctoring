@@ -174,6 +174,16 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         self.assertEqual(update_timed_exam.hide_after_due, True)
 
+    def test_switch_from_proctored_to_timed(self):
+        """
+        Test that switches an exam from proctored to timed.
+        The backend should be notified that the exam is inactive
+        """
+        proctored_exam = get_exam_by_id(self.proctored_exam_id)
+        update_exam(self.proctored_exam_id, is_proctored=False)
+        backend = get_backend_provider(proctored_exam)
+        self.assertEqual(backend.last_exam['is_active'], False)
+
     def test_update_non_existing_exam(self):
         """
         test to update the non-existing proctored exam

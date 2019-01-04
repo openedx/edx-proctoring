@@ -212,6 +212,8 @@ class BackendChooserTests(TestCase):
         """
         backend = get_backend_provider({'backend': 'null'})
         self.assertIsInstance(backend, NullBackendProvider)
+        backend = get_backend_provider(name='test')
+        self.assertIsInstance(backend, TestBackendProvider)
 
     def test_backend_choices(self):
         """
