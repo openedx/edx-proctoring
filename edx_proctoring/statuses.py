@@ -135,7 +135,7 @@ class ReviewStatus(object):
         """
         Validate review status
         """
-        if status not in [cls.passed, cls.violation, cls.suspicious, cls.not_reviewed]:
+        if status not in (cls.passed, cls.violation, cls.suspicious, cls.not_reviewed):
             raise ProctoredExamBadReviewStatus(status)
         return True
 

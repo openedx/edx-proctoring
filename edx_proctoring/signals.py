@@ -1,7 +1,15 @@
 "edx-proctoring signals"
+from crum import get_current_request
+
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
+from django.urls import reverse
+
+from edx_proctoring import api
+from edx_proctoring import constants
 from edx_proctoring import models
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
+from edx_proctoring.utils import emit_event, locate_attempt_by_attempt_code
 from edx_proctoring.backends import get_backend_provider
 
 
@@ -120,3 +128,65 @@ def on_review_changed(sender, instance, signal, **kwargs):  # pylint: disable=un
             # don't archive on create
             return
     models.archive_model(models.ProctoredExamSoftwareSecureReviewHistory, instance, id='review_id')
+
+
+@receiver(post_save, sender=models.ProctoredExamSoftwareSecureReview)
+def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
+    """
+    Updates the attempt status based on the review status
+    Also notifies support about suspicious reviews.
+    """
+    review = instance
+    attempt_obj, is_archived = locate_attempt_by_attempt_code(review.attempt_code)
+    attempt = api.ProctoredExamStudentAttemptSerializer(attempt_obj).data
+
+    # we could have gotten a review for an archived attempt
+    # this should *not* cause an update in our credit
+    # eligibility table
+    if review.review_status in SoftwareSecureReviewStatus.passing_statuses:
+        attempt_status = ProctoredExamStudentAttemptStatus.verified
+    elif review.reviewed_by or not constants.REQUIRE_FAILURE_SECOND_REVIEWS:
+        # reviews from the django admin have a reviewer set. They should be allowed to
+        # reject an attempt
+        attempt_status = ProctoredExamStudentAttemptStatus.rejected
+    else:
+        # if we are not allowed to store 'rejected' on this
+        # code path, then put status into 'second_review_required'
+        attempt_status = ProctoredExamStudentAttemptStatus.second_review_required
+
+    if review.review_status in SoftwareSecureReviewStatus.notify_support_for_status:
+        instructor_service = api.get_runtime_service('instructor')
+        request = get_current_request()
+        if instructor_service and request:
+            course_id = attempt['proctored_exam']['course_id']
+            exam_id = attempt['proctored_exam']['id']
+            review_url = request.build_absolute_uri(
+                u'{}?attempt={}'.format(
+                    reverse('edx_proctoring:instructor_dashboard_exam', args=[course_id, exam_id]),
+                    attempt['external_id']
+                ))
+            instructor_service.send_support_notification(
+                course_id=attempt['proctored_exam']['course_id'],
+                exam_name=attempt['proctored_exam']['exam_name'],
+                student_username=attempt['user']['username'],
+                review_status=review.review_status,
+                review_url=review_url,
+            )
+
+    if not is_archived:
+        # updating attempt status will trigger workflow
+        # (i.e. updating credit eligibility table)
+        # archived attempts should not trigger the workflow
+        api.update_attempt_status(
+            attempt['proctored_exam']['id'],
+            attempt['user']['id'],
+            attempt_status,
+            raise_if_not_found=False
+        )
+
+    # emit an event for 'review_received'
+    data = {
+        'review_attempt_code': review.attempt_code,
+        'review_status': review.review_status,
+    }
+    emit_event(attempt['proctored_exam'], 'review_received', attempt=attempt, override_data=data)
