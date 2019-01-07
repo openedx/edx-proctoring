@@ -5,6 +5,7 @@ from __future__ import absolute_import
 
 import json
 
+from crum import set_current_request
 import ddt
 from mock import patch
 
@@ -55,6 +56,7 @@ class ReviewTests(LoggedInTestCase):
         set_runtime_service('instructor', MockInstructorService())
         set_runtime_service('grades', MockGradesService())
         set_runtime_service('certificates', MockCertificateService())
+        set_current_request(self.dummy_request)
 
     def tearDown(self):
         super(ReviewTests, self).tearDown()
@@ -119,7 +121,7 @@ class ReviewTests(LoggedInTestCase):
             with self.assertRaises(ProctoredExamBadReviewStatus):
                 ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
         else:
-            ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
+            ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
             # make sure that what we have in the Database matches what we expect
             review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
 
@@ -245,7 +247,7 @@ class ReviewTests(LoggedInTestCase):
 
         # now call again, this will not throw exception
         test_payload['status'] = ReviewStatus.suspicious
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
 
         # make sure that what we have in the Database matches what we expect
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
@@ -280,7 +282,7 @@ class ReviewTests(LoggedInTestCase):
 
         allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
         # submit a Suspicious review payload
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
 
         # now look at the attempt and make sure it did not
         # transition to failure on the callback,
@@ -310,7 +312,7 @@ class ReviewTests(LoggedInTestCase):
         test_payload = self.get_review_payload(ReviewStatus.suspicious)
         allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
         # submit a Suspicious review payload
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
 
         # now look at the attempt and make sure it did not
         # transition to failure on the callback,
@@ -363,7 +365,7 @@ class ReviewTests(LoggedInTestCase):
         # now we'll make another review for the archived attempt. It should NOT update the status
         test_payload = self.get_review_payload(ReviewStatus.suspicious)
         self.attempt['is_archived'] = True
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload, request=self.dummy_request)
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
         attempt, is_archived = locate_attempt_by_attempt_code(self.attempt['attempt_code'])
         self.assertTrue(is_archived)
         self.assertEqual(attempt.status, 'verified')

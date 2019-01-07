@@ -21,7 +21,6 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttempt,
 )
 from edx_proctoring.api import update_attempt_status
-from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.utils import locate_attempt_by_attempt_code
 from edx_proctoring.exceptions import (
     ProctoredExamIllegalStatusTransition,
@@ -292,9 +291,6 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         """
         review.reviewed_by = request.user
         review.save()
-        # call the review saved and since it's coming from
-        # the Django admin will we accept failures
-        get_backend_provider().on_review_saved(review, allow_rejects=True)
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(ProctoredExamSoftwareSecureReviewAdmin, self).get_form(request, obj, **kwargs)
