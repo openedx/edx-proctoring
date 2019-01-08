@@ -64,6 +64,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
         self.take_exam_without_proctoring_msg = 'Take this exam without proctoring'
         self.ready_to_start_msg = 'Important'
+        self.complete_other_exam_first_msg = 'Complete in-progress exam'
         self.footer_msg = 'About Proctored Exams'
         self.timed_footer_msg = 'Can I request additional time to complete my exam?'
 
@@ -128,6 +129,18 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             exam_context_overrides.update(context_overrides)
         return self._render_exam(
             self.practice_exam_id,
+            context_overrides=exam_context_overrides
+        )
+
+    def render_timed_exam(self):
+        """
+        Renders a test timed exam
+        """
+        exam_context_overrides = {
+            'is_proctored': False
+        }
+        return self._render_exam(
+            self.timed_exam_id,
             context_overrides=exam_context_overrides
         )
 
@@ -456,6 +469,46 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
 
         rendered_response = self.render_proctored_exam()
         self.assertIsNone(rendered_response)
+
+    def test_get_studentview_exam_in_progress(self):
+        """
+        Assert that we get the right content when another exam was
+        started first
+        """
+        self._create_started_exam_attempt()
+        self.content_id = self.content_id + '_new'
+        self.proctored_exam_id = self._create_proctored_exam()
+        unstarted_attempt = self._create_unstarted_exam_attempt()
+
+        unstarted_attempt.status = ProctoredExamStudentAttemptStatus.created
+        unstarted_attempt.save()
+
+        rendered_response = self.render_proctored_exam()
+        self.assertIn(self.complete_other_exam_first_msg, rendered_response)
+
+    def test_get_studentview_exam_in_progress_timed(self):
+        """
+        Assert that we get the right content when another exam was
+        started first for timed and practice exams
+        """
+        self._create_started_exam_attempt()
+
+        rendered_response = self.render_timed_exam()
+        self.assertIn(self.complete_other_exam_first_msg, rendered_response)
+
+    def test_get_studentview_exam_in_progress_practice(self):
+        """
+        Assert that we get the right content when another exam was
+        started first for timed and practice exams
+        """
+        self._create_started_exam_attempt()
+        unstarted_attempt = self._create_unstarted_exam_attempt(is_practice=True)
+
+        unstarted_attempt.status = ProctoredExamStudentAttemptStatus.created
+        unstarted_attempt.save()
+
+        rendered_response = self.render_practice_exam()
+        self.assertIn(self.complete_other_exam_first_msg, rendered_response)
 
     def test_get_studentview_ready(self):
         """
