@@ -23,6 +23,7 @@ class TestBackendProvider(ProctoringBackendProvider):
     Implementation of the ProctoringBackendProvider that does nothing
     """
     last_exam = None
+    has_dashboard = True
 
     def register_exam_attempt(self, exam, context):
         """

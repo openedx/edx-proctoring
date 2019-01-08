@@ -2038,3 +2038,17 @@ def get_exam_violation_report(course_id, include_practice_exams=False):
                 attempts_by_code[attempt_code][comments_key].append(comment.comment)
 
     return sorted(attempts_by_code.values(), key=lambda a: a['exam_name'])
+
+
+def is_backend_dashboard_available(course_id):
+    """
+    Returns whether the backend for this course supports the instructor dashboard feature
+    """
+    exams = ProctoredExam.get_all_exams_for_course(
+        course_id,
+        active_only=True
+    )
+    for exam in exams:
+        if get_backend_provider(name=exam.backend).has_dashboard:
+            return True
+    return False
