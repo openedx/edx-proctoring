@@ -7,7 +7,8 @@
   </h3>
   <p>
     {% blocktrans %}
-      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.
+      To be eligible for credit or the program credential associated with this course, you must pass the proctoring review for this exam.
+
     {% endblocktrans %}
   </p>
   <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
@@ -15,7 +16,7 @@
     <span class="icon fa fa-arrow-circle-right" aria-hidden="true"></span>
     <p>
       {% blocktrans %}
-        You will be guided through steps to set up online proctoring software and to perform various checks.</br>
+        You will be guided through steps to set up online proctoring software and verify your identity.</br>
       {% endblocktrans %}
     </p>
   </button>

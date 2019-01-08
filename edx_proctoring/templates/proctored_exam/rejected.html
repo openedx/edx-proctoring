@@ -2,13 +2,13 @@
 <div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
   <h3>
     {% blocktrans %}
-      Your proctoring session was reviewed and did not pass requirements
+      Your proctoring session was reviewed, but did not pass all requirements
     {% endblocktrans %}
   </h3>
 
   <p>
     {% blocktrans %}
-      If you have questions about the status of your proctored exam results, contact {{ platform_name }} Support.
+      If you have questions about the status of your proctoring session results, contact {{ platform_name }} Support.
     {% endblocktrans %}
   </p>
   {% include 'proctored_exam/visit_exam_content.html' %}
