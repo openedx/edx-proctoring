@@ -14,6 +14,8 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
     """
     verbose_name = u'Unknown'
     ping_interval = constants.DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS
+    # whether this backend supports an instructor review/configuration dashboard
+    has_dashboard = False
 
     @abc.abstractmethod
     def register_exam_attempt(self, exam, context):

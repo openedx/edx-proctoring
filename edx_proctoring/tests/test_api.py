@@ -50,6 +50,7 @@ from edx_proctoring.api import (
     _get_review_policy_by_exam_id,
     update_review_policy,
     remove_review_policy,
+    is_backend_dashboard_available,
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -1920,3 +1921,26 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         # call to get_exam_violation_report did not fail. Assert that report is empty as
         # the only exam atempt was deleted.
         self.assertEqual(len(report), 0)
+
+    def test_dashboard_availability(self):
+        ProctoredExam.objects.filter(course_id=self.course_id).delete()
+        # no exams yet
+        self.assertFalse(is_backend_dashboard_available(self.course_id))
+        create_exam(
+            course_id=self.course_id,
+            content_id='test_content_1',
+            exam_name='test_exam',
+            time_limit_mins=60,
+            backend='null'
+        )
+        # backend with no dashboard
+        self.assertFalse(is_backend_dashboard_available(self.course_id))
+        create_exam(
+            course_id=self.course_id,
+            content_id='test_content_2',
+            exam_name='test_exam2',
+            time_limit_mins=60,
+            backend='test'
+        )
+        # backend with a dashboard
+        self.assertTrue(is_backend_dashboard_available(self.course_id))

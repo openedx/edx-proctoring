@@ -28,6 +28,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     base_url = None
     token_expiration_time = 60
     needs_oauth = True
+    has_dashboard = True
 
     @property
     def exam_attempt_url(self):
