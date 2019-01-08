@@ -11,9 +11,7 @@
       {% for instruction in backend_instructions %}
       <p>{{instruction|safe}}</p>
       {% endfor %}
-      <p>
-        <a href="#" id="software_download_link" data-action="click_download_software" target="_blank">{% trans "Start System Check" %}</a>
-      </p>
+      <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
 
     {% else %}
     <p>
@@ -34,9 +32,7 @@
         2. Follow the link below to set up proctoring.
       {% endblocktrans %}
     </p>
-    <p>
-      <span><a href="#" id="software_download_link" data-action="click_download_software" target="_blank">{% trans "Start System Check" %}</a></span>
-    </p>
+    <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
     <p>
       {% blocktrans %}
         A new window will open. You will run a system check before downloading the proctoring application.
@@ -55,10 +51,8 @@
         {% endblocktrans %}
     </p>
     {% endif %}
-    <div>
-        <button type="button" class="exam-action-button btn-pl-primary start-proctored-exam">
-            {% trans "Start Proctored Exam" %}
-        </button>
+    <div class="footer-sequence border-b-0 padding-b-0">
+      <a href="#" class="start-proctored-exam">{% trans "Start Proctored Exam" %}</a>
     </div>
   </div>
 </div>
@@ -109,7 +103,6 @@
     }
   );
 
-
   function check_exam_started() {
     var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
     $.ajax(url).success(function(data){
@@ -124,19 +117,6 @@
               gettext("Cannot Start Proctored Exam"),
               gettext("You must complete the proctoring setup before you can start the exam."),
           );
-      }
-    });
-  }
-
-  function poll_until_ready() {
-    var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
-    $.ajax(url).success(function(data){
-      if (data.status === 'ready_to_start') {
-        // we've state transitioned, so refresh the page
-        // to reflect the new state (which will expose the test)
-        location.reload();
-      } else {
-        setTimeout(poll_until_ready, 5000);
       }
     });
   }
