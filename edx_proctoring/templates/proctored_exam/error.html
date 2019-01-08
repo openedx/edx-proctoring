@@ -8,19 +8,19 @@
 
   <p>
     {% blocktrans %}
-      A technical error has occurred with your proctored exam. To resolve this problem, contact
-      <a href="mailto:{{tech_support_email}}">technical support</a>. All exam data, including answers
-      for completed problems, has been lost. When the problem is resolved you will need to restart
-      the exam and complete all problems again.
+      A technical error has occurred with your proctored exam. All
+      exam data, including completed answers, has been lost. To
+      resolve this error, please
+      contact <a href="mailto:{{tech_support_email}}">technical
+      support</a>.
     {% endblocktrans %}
   </p>
-</div>
-<div class="footer-sequence border-b-0 padding-b-0">
   <p>
     {% blocktrans %}
-      If you have concerns about your proctoring session results, contact your course team.
+      Once the error is resolved, you will need to restart the exam
+      and answer all questions again. If you have concerns about your
+      proctoring session results, please contact your course team.
     {% endblocktrans %}
   </p>
-  <div class="clearfix"></div>
 </div>
 {% include 'proctored_exam/footer.html' %}
