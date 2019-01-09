@@ -2639,3 +2639,23 @@ class TestInstructorDashboard(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 404)
         self.assertEqual('No instructor dashboard for RPNow', response.data)
+
+    def test_launch_for_configuration_dashboard(self):
+        course_id = 'a/b/c'
+
+        proctored_exam = ProctoredExam.objects.create(
+            course_id=course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=True,
+        )
+        exam_id = proctored_exam.id
+
+        expected_url = '/instructor/%s/?exam=%s&config=true' % (course_id, proctored_exam.external_id)
+        dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
+                                kwargs={'course_id': course_id, 'exam_id': exam_id})
+        response = self.client.get(dashboard_url, {'config': 'true'})
+        self.assertRedirects(response, expected_url, fetch_redirect_response=False)

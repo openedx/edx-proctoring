@@ -290,3 +290,15 @@ class RESTBackendTests(TestCase):
         self.assertEqual(decoded['course_id'], course_id)
         self.assertEqual(decoded['exam_id'], exam_id)
         self.assertEqual(decoded['attempt_id'], attempt_id)
+
+        # test that correct URL is returned for a request with parameter "show_configuration_dashboard=true"
+        config_url = self.provider.get_instructor_url(
+            course_id,
+            user,
+            exam_id=exam_id,
+            show_configuration_dashboard=True,
+        )
+        self.assertIn('&config=true', config_url)
+        self.assertNotEqual(config_url, base_url)
+        self.assertNotEqual(config_url, exam_url)
+        self.assertNotEqual(config_url, attempt_url)

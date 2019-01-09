@@ -7,7 +7,7 @@ from __future__ import absolute_import
 from django.conf import settings
 from django.conf.urls import url, include
 
-from edx_proctoring import views, callbacks
+from edx_proctoring import views, callbacks, instructor_dashboard_exam_urls
 
 app_name = u'edx_proctoring'
 
@@ -90,12 +90,6 @@ urlpatterns = [
         views.InstructorDashboard.as_view(),
         name='instructor_dashboard_course'
     ),
-    url(
-        r'edx_proctoring/v1/instructor/{}/(?P<exam_id>\d+)$'.format(settings.COURSE_ID_PATTERN),
-        views.InstructorDashboard.as_view(),
-        name='instructor_dashboard_exam'
-    ),
-    #
     # Unauthenticated callbacks from SoftwareSecure. Note we use other
     # security token measures to protect data
     #
@@ -111,3 +105,5 @@ urlpatterns = [
     ),
     url(r'^', include('rest_framework.urls', namespace='rest_framework'))
 ]
+
+urlpatterns += instructor_dashboard_exam_urls.urlpatterns
