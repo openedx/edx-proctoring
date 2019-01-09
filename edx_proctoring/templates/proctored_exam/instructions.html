@@ -8,9 +8,27 @@
     {% endblocktrans %}
     </h3>
     {% if backend_instructions %}
-      {% for instruction in backend_instructions %}
-      <p>{{instruction|safe}}</p>
-      {% endfor %}
+      <p>
+        {% blocktrans %}
+          Note: As part of the proctored exam setup, you will be asked
+          to verify your identity. Before you begin, make sure you are
+          on a computer with a webcam, and that you have a valid form
+          of photo identification such as a driver’s license or
+          passport.
+        {% endblocktrans %}
+      </p>
+      <ol>
+        {% for instruction in backend_instructions %}
+          <li>{{instruction|safe}}
+        {% endfor %}
+      </ol>
+      {% if provider_tech_support_email and provider_tech_support_phone %}
+        <p>
+          {% blocktrans %}
+            If you have issues relating to proctoring, you can contact {{ provider_name }} technical support by emailing {{ provider_tech_support_email }}  or by calling {{ provider_tech_support_phone }}.
+          {% endblocktrans %}
+        </p>
+      {% endif %}
       <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
 
     {% else %}

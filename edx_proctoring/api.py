@@ -1695,7 +1695,7 @@ def _calculate_allowed_mins(exam, user_id):
     return allowed_time_limit_mins
 
 
-def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=False):
+def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=False, provider=None):
     """
     Common context variables for the Proctored and Practice exams' templates.
     """
@@ -1737,6 +1737,10 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
         'tech_support_email': settings.TECH_SUPPORT_EMAIL,
         'exam_review_policy': _get_review_policy_by_exam_id(exam['id']),
+        'backend_js_bundle': provider.get_javascript(),
+        'provider_tech_support_email': provider.tech_support_email,
+        'provider_tech_support_phone': provider.tech_support_phone,
+        'provider_name': provider.verbose_name,
     }
 
 
@@ -1788,9 +1792,10 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
     if student_view_template:
-        context['backend_js_bundle'] = provider.get_javascript()
         template = loader.get_template(student_view_template)
-        context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=True))
+        context.update(
+            _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=True, provider=provider)
+        )
         return template.render(context)
 
 
@@ -1947,9 +1952,8 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
     if student_view_template:
-        context['backend_js_bundle'] = provider.get_javascript()
         template = loader.get_template(student_view_template)
-        context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id))
+        context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id, provider=provider))
         return template.render(context)
 
 
