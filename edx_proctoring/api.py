@@ -1668,6 +1668,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
                 'edx_proctoring:proctored_exam.attempt',
                 args=[attempt['id']]
             ) if attempt else '',
+            'course_id': course_id,
         })
         return template.render(context)
 
