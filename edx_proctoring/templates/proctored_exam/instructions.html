@@ -8,13 +8,31 @@
     {% endblocktrans %}
     </h3>
     {% if backend_instructions %}
-      {% for instruction in backend_instructions %}
-      <p>{{instruction|safe}}</p>
-      {% endfor %}
       <p>
-        <a href="#" id="software_download_link" data-action="click_download_software" target="_blank">{% trans "Start System Check" %}</a>
+        {% blocktrans %}
+          Note: As part of the proctored exam setup, you will be asked
+          to verify your identity. Before you begin, make sure you are
+          on a computer with a webcam, and that you have a valid form
+          of photo identification such as a driver’s license or
+          passport.
+        {% endblocktrans %}
       </p>
-
+      <ol>
+        {% for instruction in backend_instructions %}
+          <li>{{instruction|safe}}</li>
+        {% endfor %}
+      </ol>
+      {% if provider_tech_support_email and provider_tech_support_phone %}
+        <p>
+          {% blocktrans %}
+            If you have issues relating to proctoring, you can contact {{ provider_name }} technical support by emailing {{ provider_tech_support_email }}  or by calling {{ provider_tech_support_phone }}.
+          {% endblocktrans %}
+        </p>
+      {% endif %}
+      <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
+      <div class="footer-sequence border-b-0 padding-b-0">
+        <a href="#" class="start-proctored-exam">{% trans "Start Proctored Exam" %}</a>
+      </div>
     {% else %}
     <p>
       {% blocktrans %}
@@ -54,12 +72,12 @@
           3. When you have finished setting up proctoring, start the exam.
         {% endblocktrans %}
     </p>
-    {% endif %}
     <div>
         <button type="button" class="exam-action-button btn-pl-primary start-proctored-exam">
             {% trans "Start Proctored Exam" %}
         </button>
     </div>
+    {% endif %}
   </div>
 </div>
 {% include 'proctored_exam/error_modal.html' %}
@@ -109,7 +127,6 @@
     }
   );
 
-
   function check_exam_started() {
     var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
     $.ajax(url).success(function(data){
@@ -124,19 +141,6 @@
               gettext("Cannot Start Proctored Exam"),
               gettext("You must complete the proctoring setup before you can start the exam."),
           );
-      }
-    });
-  }
-
-  function poll_until_ready() {
-    var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
-    $.ajax(url).success(function(data){
-      if (data.status === 'ready_to_start') {
-        // we've state transitioned, so refresh the page
-        // to reflect the new state (which will expose the test)
-        location.reload();
-      } else {
-        setTimeout(poll_until_ready, 5000);
       }
     });
   }

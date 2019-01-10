@@ -1715,7 +1715,9 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
     except NoReverseMatch:
         log.exception("Can't find progress url for course %s", course_id)
 
-    return {
+    provider = get_backend_provider(exam)
+
+    context = {
         'platform_name': settings.PLATFORM_NAME,
         'total_time': total_time,
         'exam_id': exam['id'],
@@ -1740,7 +1742,21 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
         'tech_support_email': settings.TECH_SUPPORT_EMAIL,
         'exam_review_policy': _get_review_policy_by_exam_id(exam['id']),
+        'backend_js_bundle': provider.get_javascript(),
+        'provider_tech_support_email': provider.tech_support_email,
+        'provider_tech_support_phone': provider.tech_support_phone,
+        'provider_name': provider.verbose_name,
     }
+    if attempt:
+        provider_attempt = provider.get_attempt(attempt)
+        download_url = provider_attempt.get('download_url', None) or provider.get_software_download_url()
+
+        context.update({
+            'exam_code': attempt['attempt_code'],
+            'backend_instructions': provider_attempt.get('instructions', None),
+            'software_download_url': download_url,
+        })
+    return context
 
 
 def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
@@ -1752,7 +1768,6 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     attempt = get_exam_attempt(exam_id, user_id)
 
     attempt_status = attempt['status'] if attempt else None
-    provider = get_backend_provider(exam)
 
     if attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
@@ -1772,14 +1787,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
                 ProctoredExamStudentAttemptStatus.created,
                 ProctoredExamStudentAttemptStatus.download_software_clicked,
         ]:
-            provider_attempt = provider.get_attempt(attempt)
             student_view_template = 'proctored_exam/instructions.html'
-            context.update({
-                'exam_code': attempt['attempt_code'],
-                'backend_instructions': provider_attempt.get('instructions', None),
-                'software_download_url': (provider_attempt.get('download_url', None)
-                                          or provider.get_software_download_url()),
-            })
         else:
             # note: then the status must be ready_to_start
             student_view_template = 'proctored_exam/ready_to_start.html'
@@ -1791,7 +1799,6 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
     if student_view_template:
-        context['backend_js_bundle'] = provider.get_javascript()
         template = loader.get_template(student_view_template)
         context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=True))
         return template.render(context)
@@ -1826,8 +1833,6 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     # proctored exam, a quick exit....
     if attempt_status == ProctoredExamStudentAttemptStatus.declined:
         return None
-
-    provider = get_backend_provider(exam)
 
     if attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
@@ -1909,14 +1914,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
                 ProctoredExamStudentAttemptStatus.created,
                 ProctoredExamStudentAttemptStatus.download_software_clicked,
         ]:
-            provider_attempt = provider.get_attempt(attempt)
             student_view_template = 'proctored_exam/instructions.html'
-            download_url = provider_attempt.get('download_url', None) or provider.get_software_download_url()
-            context.update({
-                'exam_code': attempt['attempt_code'],
-                'backend_instructions': provider_attempt.get('instructions', None),
-                'software_download_url': download_url
-            })
         else:
             # note: then the status must be ready_to_start
             student_view_template = 'proctored_exam/ready_to_start.html'
@@ -1950,7 +1948,6 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/ready_to_submit.html'
 
     if student_view_template:
-        context['backend_js_bundle'] = provider.get_javascript()
         template = loader.get_template(student_view_template)
         context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id))
         return template.render(context)
