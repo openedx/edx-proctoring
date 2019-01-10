@@ -41,6 +41,14 @@ from edx_proctoring.serializers import (
 )
 log = logging.getLogger(__name__)
 
+try:
+    from student.tasks import send_exam_review_email
+except ImportError:
+    log.warning('Cannot import packages to send email.')
+    SEND_EMAIL = False
+else:
+    SEND_EMAIL = True
+
 
 SOFTWARE_SECURE_INVALID_CHARS = '[]<>#:|!?/\'"*\\'
 
@@ -69,7 +77,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.send_email = send_email
         self.passing_review_status = ['Clean', 'Rules Violation']
         self.failing_review_status = ['Not Reviewed', 'Suspicious']
-        self.notify_support_for_status = ['Suspicious']
+        self.notify_support_for_status = ['Suspicious', 'Rules Violation']
 
     def register_exam_attempt(self, exam, context):
         """
@@ -139,6 +147,21 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         # redact the videoReviewLink from the payload
         if 'videoReviewLink' in payload:
+            if (
+                    payload['reviewStatus'] in self.notify_support_for_status and SEND_EMAIL
+                    and settings.EXAM_REVIEWER_EMAILS
+            ):
+                msg = 'Exam attempt code: {}; video review link: {}'.format(
+                    payload['examMetaData']['examCode'], payload['videoReviewLink']
+                )
+                for email in settings.EXAM_REVIEWER_EMAILS:
+                    log.info("videoReviewLink is sent to the reviewer's email: {}".format(email))
+                    send_exam_review_email.delay(
+                        '[OSPP] Exam Video Review Link',
+                        msg,
+                        settings.DEFAULT_FROM_EMAIL,
+                        email
+                    )
             del payload['videoReviewLink']
 
         log_msg = (
