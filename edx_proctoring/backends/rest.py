@@ -11,6 +11,8 @@ import jwt
 from webpack_loader.utils import get_files
 from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleLookupError
 
+from django.contrib.auth.models import User
+
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
@@ -199,6 +201,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Called when the reviewing 3rd party service posts back the results
         """
         # REST backends should convert the payload into the expected data structure
+        if payload.get('reviewed_by', False):
+            try:
+                payload['reviewed_by'] = User.objects.get(email=payload['reviewed_by'])
+            except User.DoesNotExist:
+                payload['reviewed_by'] = None
         return payload
 
     def on_exam_saved(self, exam):

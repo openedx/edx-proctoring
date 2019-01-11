@@ -178,10 +178,11 @@ The following fields are optional::
 
     {
         "start": 123,
-        "stop": 144
+        "stop": 144,
+        "reviewed_by": "user@example.com"
     }
 
-(Start and stop are seconds relative to the start of the recorded proctoring session.)
+Start and stop are seconds relative to the start of the recorded proctoring session. ``reviewed_by`` must be included whenever a specific edX user (e.g. a member of a course team) initiated the review.
 
 
 Instructor Dashboard

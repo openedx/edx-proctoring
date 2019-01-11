@@ -840,12 +840,10 @@ class BaseReviewCallback(object):
         review.review_status = SoftwareSecureReviewStatus.from_standard_status.get(backend_review['status'])
 
         review.attempt_code = attempt_code
-        review.raw_data = json.dumps(backend_review)
+        review.raw_data = json.dumps(data)
         review.student_id = attempt['user']['id']
         review.exam_id = attempt['proctored_exam']['id']
-        # set reviewed_by to None because it was reviewed by our 3rd party
-        # service provider, not a user in our database
-        review.reviewed_by = None
+        review.reviewed_by = backend_review.get('reviewed_by', None)
 
         review.save()
 

@@ -170,7 +170,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         converted = {
             'status': review_status,
             'comments': comments,
-            'payload': payload
+            'payload': payload,
+            'reviewed_by': None,
         }
         return converted
 
