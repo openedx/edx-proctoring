@@ -9,6 +9,7 @@ import logging
 import six
 import waffle
 
+from crum import get_current_request
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse, NoReverseMatch
@@ -859,6 +860,25 @@ class BaseReviewCallback(object):
                 status=comment['status']
             )
             comment.save()
+
+        if review.should_notify:
+            instructor_service = get_runtime_service('instructor')
+            request = get_current_request()
+            if instructor_service and request:
+                course_id = attempt['proctored_exam']['course_id']
+                exam_id = attempt['proctored_exam']['id']
+                review_url = request.build_absolute_uri(
+                    u'{}?attempt={}'.format(
+                        reverse('edx_proctoring:instructor_dashboard_exam', args=[course_id, exam_id]),
+                        attempt['external_id']
+                    ))
+                instructor_service.send_support_notification(
+                    course_id=attempt['proctored_exam']['course_id'],
+                    exam_name=attempt['proctored_exam']['exam_name'],
+                    student_username=attempt['user']['username'],
+                    review_status=review.review_status,
+                    review_url=review_url,
+                )
 
 
 class ProctoredExamReviewCallback(ProctoredAPIView, BaseReviewCallback):

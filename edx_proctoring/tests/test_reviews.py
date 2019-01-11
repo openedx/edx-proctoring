@@ -14,6 +14,7 @@ from django.urls import reverse
 
 from edx_proctoring import constants
 from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attempt_by_id, remove_exam_attempt
+from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.exceptions import (ProctoredExamBadReviewStatus, ProctoredExamReviewAlreadyExists)
 from edx_proctoring.models import (ProctoredExamSoftwareSecureComment, ProctoredExamSoftwareSecureReview,
@@ -115,7 +116,7 @@ class ReviewTests(LoggedInTestCase):
             external_id=self.attempt['external_id'],
             review_status=psi_review_status
         ))
-        # test_payload = self.get_review_payload(review_status)
+
         self.attempt['proctored_exam']['backend'] = 'software_secure'
         if review_status is None:
             with self.assertRaises(ProctoredExamBadReviewStatus):
@@ -369,3 +370,15 @@ class ReviewTests(LoggedInTestCase):
         attempt, is_archived = locate_attempt_by_attempt_code(self.attempt['attempt_code'])
         self.assertTrue(is_archived)
         self.assertEqual(attempt.status, 'verified')
+
+    def test_clean_status(self):
+        """
+        Test that defining `passing_statuses` on the backend works
+        """
+        test_backend = get_backend_provider(name='test')
+        with patch.object(test_backend, 'passing_statuses', [SoftwareSecureReviewStatus.clean], create=True):
+            test_payload = self.get_review_payload(status=ReviewStatus.violation)
+            ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+
+            attempt = get_exam_attempt_by_id(self.attempt_id)
+            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.second_review_required)

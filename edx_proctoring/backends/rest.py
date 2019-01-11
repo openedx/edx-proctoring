@@ -13,7 +13,7 @@ from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleL
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 from edx_rest_api_client.client import OAuthAPIClient
 
 log = logging.getLogger(__name__)
@@ -29,6 +29,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     token_expiration_time = 60
     needs_oauth = True
     has_dashboard = True
+    passing_statuses = (SoftwareSecureReviewStatus.clean,)
 
     @property
     def exam_attempt_url(self):
