@@ -41,6 +41,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     RPNow product
     """
     verbose_name = u'RPNow'
+    passing_statuses = SoftwareSecureReviewStatus.passing_statuses
 
     def __init__(self, organization, exam_sponsor, exam_register_endpoint,
                  secret_key_id, secret_key, crypto_key, software_download_url,

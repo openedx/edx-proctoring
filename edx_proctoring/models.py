@@ -16,12 +16,13 @@ from django.utils.translation import ugettext_noop
 
 from model_utils.models import TimeStampedModel
 
+from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import (
     UserNotFoundException,
     ProctoredExamNotActiveException,
     AllowanceValueNotAllowedException,
 )
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 
 
 @six.python_2_unicode_compatible
@@ -668,6 +669,23 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamsoftwaresecurereview'
         verbose_name = 'Proctored exam software secure review'
+
+    @property
+    def is_passing(self):
+        """
+        Returns whether the review should be considered "passing"
+        """
+        backend = get_backend_provider(name=self.exam.backend)
+        # if the backend defines `passing_statuses`, use that
+        statuses = getattr(backend, 'passing_statuses', []) or SoftwareSecureReviewStatus.passing_statuses
+        return self.review_status in statuses
+
+    @property
+    def should_notify(self):
+        """
+        Returns whether to notify support/course teams
+        """
+        return self.review_status in SoftwareSecureReviewStatus.notify_support_for_status and not self.reviewed_by
 
     @classmethod
     def get_review_by_attempt_code(cls, attempt_code):
