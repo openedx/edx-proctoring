@@ -72,6 +72,7 @@ from edx_proctoring.utils import (
     get_time_remaining_for_attempt,
     locate_attempt_by_attempt_code,
     humanized_time,
+    obscured_user_id,
 )
 
 ATTEMPTS_PER_PAGE = 25
@@ -1000,7 +1001,7 @@ class InstructorDashboard(AuthenticatedAPIView):
             backend = get_backend_provider(exam)
             if backend:
                 user = {
-                    'id': request.user.id,
+                    'id': obscured_user_id(request.user.id, exam['backend']),
                     'full_name': request.user.get_full_name(),
                     'email': request.user.email
                 }
