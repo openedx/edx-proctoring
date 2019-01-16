@@ -45,6 +45,14 @@ class TestBackendProvider(ProctoringBackendProvider):
         """
         return None
 
+    def mark_erroneous_exam_attempt(self, exam, attempt):
+        """
+        Method that would be responsible for communicating with the
+        backend provider to mark a proctored session as having
+        encountered a technical error
+        """
+        return None
+
     def get_software_download_url(self):
         """
         Returns the URL that the user needs to go to in order to download
@@ -111,6 +119,17 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
             attempt
         )
 
+    def mark_erroneous_exam_attempt(self, exam, attempt):
+        """
+        Method that would be responsible for communicating with the
+        backend provider to mark a proctored session as having
+        encountered a technical error
+        """
+        return super(PassthroughBackendProvider, self).mark_erroneous_exam_attempt(
+            exam,
+            attempt
+        )
+
     def get_software_download_url(self):
         """
         Returns the URL that the user needs to go to in order to download
@@ -156,6 +175,9 @@ class TestBackends(TestCase):
             provider.on_review_callback(None, None)
 
         with self.assertRaises(NotImplementedError):
+            provider.mark_erroneous_exam_attempt(None, None)
+
+        with self.assertRaises(NotImplementedError):
             provider.on_exam_saved(None)
 
         self.assertIsNone(provider.get_exam(None))
@@ -170,6 +192,7 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.register_exam_attempt(None, None))
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
+        self.assertIsNone(provider.mark_erroneous_exam_attempt(None, None))
         self.assertIsNone(provider.get_software_download_url())
         self.assertIsNone(provider.on_review_callback(None, None))
         self.assertIsNone(provider.on_exam_saved(None))
@@ -196,6 +219,7 @@ class TestBackends(TestCase):
         )
         self.assertIsNone(provider.start_exam_attempt(None, None))
         self.assertIsNone(provider.stop_exam_attempt(None, None))
+        self.assertIsNone(provider.mark_erroneous_exam_attempt(None, None))
         self.assertIsNone(provider.on_review_callback(None, None))
         self.assertIsNone(provider.on_exam_saved(None))
 

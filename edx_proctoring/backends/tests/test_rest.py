@@ -3,6 +3,7 @@ Tests for the REST backend
 """
 import json
 
+import ddt
 import jwt
 
 import responses
@@ -16,6 +17,7 @@ from edx_proctoring.backends.rest import BaseRestProctoringProvider
 from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
 
 
+@ddt.ddt
 class RESTBackendTests(TestCase):
     """
     Tests for the REST backend
@@ -197,27 +199,22 @@ class RESTBackendTests(TestCase):
         with self.assertRaises(BackendProviderCannotRegisterAttempt):
             self.provider.register_exam_attempt(self.backend_exam, context)
 
+    @ddt.data(
+        ['start_exam_attempt', 'start'],
+        ['stop_exam_attempt', 'stop'],
+        ['mark_erroneous_exam_attempt', 'error'],
+    )
+    @ddt.unpack
     @responses.activate
-    def test_start_exam_attempt(self):
+    def test_update_exam_attempt_status(self, provider_method_name, corresponding_status):
         attempt_id = 2
         responses.add(
             responses.PATCH,
             url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
-            json={'id': 2, 'status': 'start'}
+            json={'id': 2, 'status': corresponding_status}
         )
-        status = self.provider.start_exam_attempt(self.backend_exam['external_id'], attempt_id)
-        self.assertEqual(status, 'start')
-
-    @responses.activate
-    def test_stop_exam_attempt(self):
-        attempt_id = 2
-        responses.add(
-            responses.PATCH,
-            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
-            json={'id': 2, 'status': 'stop'}
-        )
-        status = self.provider.stop_exam_attempt(self.backend_exam['external_id'], attempt_id)
-        self.assertEqual(status, 'stop')
+        status = getattr(self.provider, provider_method_name)(self.backend_exam['external_id'], attempt_id)
+        self.assertEqual(status, corresponding_status)
 
     def test_on_review_callback(self):
         """

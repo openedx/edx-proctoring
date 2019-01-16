@@ -196,6 +196,18 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             method='PATCH')
         return response.get('status')
 
+    def mark_erroneous_exam_attempt(self, exam, attempt):
+        """
+        Method that is responsible for communicating with the backend provider
+        to mark an unfinished exam to be in error
+        """
+        response = self._make_attempt_request(
+            exam,
+            attempt,
+            status=ProctoredExamStudentAttemptStatus.error,
+            method='PATCH')
+        return response.get('status')
+
     def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results

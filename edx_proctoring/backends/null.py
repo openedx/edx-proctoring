@@ -33,6 +33,14 @@ class NullBackendProvider(ProctoringBackendProvider):
         """
         return None
 
+    def mark_erroneous_exam_attempt(self, exam, attempt):
+        """
+        Method that would be responsible for communicating with the
+        backend provider to mark a proctored session as having
+        encountered a technical error
+        """
+        return None
+
     def get_software_download_url(self):
         """
         Returns the URL that the user needs to go to in order to download

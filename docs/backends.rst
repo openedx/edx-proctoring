@@ -125,7 +125,7 @@ The PS system should respond with an object containing at least the following fi
         "status": "submitted",
     }
 
-Open edX will issue a ``PATCH`` request with a ``started`` status when the learner starts the proctored exam, and a ``submitted`` status when the learner finishes the exam.
+Open edX will issue a ``PATCH`` request with a ``started`` status when the learner starts the proctored exam, and a ``submitted`` status when the learner finishes the exam. A status of ``error`` may be used in case of a technical error being associated with a learner's proctoring session.
 
 ``GET``: returns PS information about the attempt
 
