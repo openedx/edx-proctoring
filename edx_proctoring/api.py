@@ -7,7 +7,6 @@ API which is in the views.py file, per edX coding standards
 from __future__ import absolute_import
 
 from datetime import datetime, timedelta
-import hashlib
 import logging
 import uuid
 import pytz
@@ -50,7 +49,8 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from edx_proctoring.utils import (
     humanized_time,
-    emit_event
+    emit_event,
+    obscured_user_id,
 )
 
 from edx_proctoring.backends import get_backend_provider
@@ -600,7 +600,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         lms_host = '{scheme}://{hostname}'.format(scheme=scheme, hostname=settings.SITE_NAME)
 
-        obs_user_id = hashlib.sha1((u'%s%s' % (exam['course_id'], user_id)).encode('ascii')).hexdigest()
+        obs_user_id = obscured_user_id(user_id, exam['backend'])
 
         # get the name of the user, if the service is available
         full_name = None

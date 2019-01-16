@@ -5,9 +5,13 @@ Helpers for the HTTP APIs
 from __future__ import absolute_import
 
 from datetime import datetime, timedelta
+import hashlib
+import hmac
 import logging
 import pytz
+import six
 
+from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from opaque_keys.edx.keys import CourseKey
@@ -216,3 +220,14 @@ def _emit_event(name, context, data):
             'Analytics tracker not properly configured. '
             'If this message appears in a production environment, please investigate'
         )
+
+
+def obscured_user_id(user_id, *extra):
+    """
+    Obscures the user id, returning a sha1 hash
+    Any extra information can be added to the hash
+    """
+    obs_hash = hmac.new(settings.SECRET_KEY.encode('ascii'), digestmod=hashlib.sha1)
+    obs_hash.update(six.text_type(user_id))
+    obs_hash.update(u''.join(six.text_type(ext) for ext in extra))
+    return obs_hash.hexdigest()
