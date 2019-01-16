@@ -542,6 +542,15 @@ class SoftwareSecureTests(TestCase):
         provider = get_backend_provider()
         self.assertIsNone(provider.stop_exam_attempt(None, None))
 
+    def test_mark_erroneous_proctored_exam(self):
+        """
+        Test that SoftwareSecure's implementation returns None, because there is no
+        work that needs to happen right now
+        """
+
+        provider = get_backend_provider()
+        self.assertIsNone(provider.mark_erroneous_exam_attempt(None, None))
+
     def test_split_fullname(self):
         """
         Make sure we are splitting up full names correctly
