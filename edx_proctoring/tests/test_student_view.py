@@ -247,16 +247,16 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         ('reverification', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('reverification', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('reverification', 'failed', 'You did not satisfy the following prerequisites', True),
-        ('reverification', 'satisfied', 'To be eligible for course credit', False),
+        ('reverification', 'satisfied', 'To be eligible for credit', False),
         ('reverification', 'declined', None, False),
         ('proctored_exam', None, 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('proctored_exam', 'pending', 'The following prerequisites are in a <strong>pending</strong> state', True),
         ('proctored_exam', 'failed', 'You did not satisfy the following prerequisites', True),
-        ('proctored_exam', 'satisfied', 'To be eligible for course credit', False),
+        ('proctored_exam', 'satisfied', 'To be eligible for credit', False),
         ('proctored_exam', 'declined', None, False),
-        ('grade', 'failed', 'To be eligible for course credit', False),
+        ('grade', 'failed', 'To be eligible for credit', False),
         # this is nonsense, but let's double check it
-        ('grade', 'declined', 'To be eligible for course credit', False),
+        ('grade', 'declined', 'To be eligible for credit', False),
     )
     @ddt.unpack
     def test_prereq_scenarios(self, namespace, req_status, expected_content, should_see_prereq):
@@ -845,11 +845,11 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
     @ddt.data(
         (
             ProctoredExamStudentAttemptStatus.rejected,
-            'Your proctoring session was reviewed and did not pass requirements'
+            'Your proctoring session was reviewed, but did not pass all requirements'
         ),
         (
             ProctoredExamStudentAttemptStatus.verified,
-            'Your proctoring session was reviewed and passed all requirements'
+            'Your proctoring session was reviewed successfully.'
         ),
         (
             ProctoredExamStudentAttemptStatus.ready_to_submit,

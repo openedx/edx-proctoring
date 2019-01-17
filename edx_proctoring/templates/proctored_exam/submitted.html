@@ -5,17 +5,13 @@
       You have submitted this proctored exam for review
     {% endblocktrans %}
   </h3>
-  <p>
-    {% blocktrans %}
-      If the proctoring software window is still open, you can close it now. Confirm that you want to quit the application when you are prompted.
-    {% endblocktrans %}
-  </p>
-  <p>
-    {% blocktrans %}
-      &#8226; After you quit the proctoring session, the recorded data is uploaded for review. </br>
-      &#8226; Proctoring results are usually available within 5 business days after you submit your exam.
-    {% endblocktrans %}
-  </p>
+  <ul>
+    <li> {% trans "Your recorded data should now be uploaded for review." %}</li>
+      <ul>
+        <li> {% trans "If the proctoring software window is still open, close it now and confirm that you want to quit the application." %}</li>
+      </ul>
+      <li> {% trans "Proctoring results are usually available within 5 business days after you submit your exam." %}</li>
+  </ul>
 
   {% include 'proctored_exam/visit_exam_content.html' %}
 
