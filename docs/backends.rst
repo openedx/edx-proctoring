@@ -195,7 +195,7 @@ The ``get_instructor_url`` method of the backend will return a URL on the PS end
 By default, this URL will be ``base_url + u'/api/v1/instructor/{client_id}/?jwt={jwt}'``. This URL template is specified by the ``instructor_url`` property.
 You may override this property to modify the URL template.
 
-The `JWT <https://jwt.io/>`_ contains the following data::
+The JWT_ will be signed with the client_secret configured for the backend, and the decoded token contains the following data::
 
     {
         "course_id": <course id>,
@@ -203,14 +203,13 @@ The `JWT <https://jwt.io/>`_ contains the following data::
         "iss": <issuer>,
         "jti": <JWT id>,
         "exp": <expiration time>
-
     }
 
-By default, ``get_instructor_url`` may return two URLS.
+By default, ``get_instructor_url`` returns this URL:
 
 1. /api/v1/instructor/{client_id}/?jwt={jwt}
 
-    This URL will provide information that can be used for three different dashboards.
+    This URL will provide information that can be used for four different dashboards.
     
     1. course instructor dashboard
         This dashboard is on the course level and may show an overview of proctored exams in a particular course. Note that the ``course_id`` will be 
@@ -224,10 +223,8 @@ By default, ``get_instructor_url`` may return two URLS.
         This dashboard is on the exam attempt level and may show violations for a particular proctored exam attempt. Note that the ``course_id``, ``exam_id``,
         and ``attempt_id`` will be contained in the JWT.
 
-2. /api/v1/instructor/{client_id}/?jwt={jwt}&config=true
-
-    This URL will link to a configuration dashboard for configuring proctored exam options. Note that the ``course_id``
-    and ``exam_id`` will be contained in the JWT.
+    4. exam configuration dashboard
+        This dashboard should be used for configuring proctored exam options. Note that the ``course_id``, ``exam_id``, and ``config=true`` will be contained in the JWT.
 
 If you wish to modify the aforementioned logic, override the ``get_instructor_url`` method of the ``edx_proctoring.backends.rest.BaseRestProctoringProvider`` class.
 
