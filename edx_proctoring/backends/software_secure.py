@@ -261,10 +261,12 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review.save()
 
         # go through and populate all of the specific comments
-        for comment in payload.get('webCamComments', []):
+        webcam_comments = payload.get('webCamComments', [])
+        for comment in webcam_comments:
             self._save_review_comment(review, comment)
 
-        for comment in payload.get('desktopComments', []):
+        desktop_comments = payload.get('desktopComments', [])
+        for comment in desktop_comments:
             self._save_review_comment(review, comment)
 
         # we could have gotten a review for an archived attempt
@@ -276,7 +278,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
             allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
 
-            self.on_review_saved(review, allow_rejects=allow_rejects)
+            self.on_review_saved(review, allow_rejects=allow_rejects, comments=webcam_comments+desktop_comments)
 
         # emit an event for 'review_received'
         data = {
@@ -290,7 +292,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         self._create_zendesk_ticket(review, exam, attempt)
 
-    def on_review_saved(self, review, allow_rejects=False):  # pylint: disable=arguments-differ
+    def on_review_saved(self, review, allow_rejects=False, comments=None):  # pylint: disable=arguments-differ
         """
         called when a review has been save - either through API (on_review_callback) or via Django Admin panel
         in order to trigger any workflow associated with proctoring review results
@@ -333,7 +335,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         update_attempt_status(
             attempt_obj.proctored_exam_id,
             attempt_obj.user_id,
-            status
+            status,
+            comments=comments
         )
 
     def _save_review_comment(self, review, comment):

@@ -16,6 +16,16 @@
         exam requirements.
     {% endblocktrans %}
 </p>
+{% if comments %}
+<p>
+    {% trans "Reviewer comments" %}
+    <ul>
+        {% for comment in comments %}
+            <li>{{ comment }}</li>
+        {% endfor %}
+    </ul>
+</p>
+{% endif %}
 <p>
     {% blocktrans %}
         If you have any questions about your results, contact {{ platform }}
