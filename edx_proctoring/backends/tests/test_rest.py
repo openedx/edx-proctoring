@@ -333,7 +333,10 @@ class RESTBackendTests(TestCase):
             exam_id=exam_id,
             show_configuration_dashboard=True,
         )
-        self.assertIn('&config=true', config_url)
-        self.assertNotEqual(config_url, base_url)
-        self.assertNotEqual(config_url, exam_url)
-        self.assertNotEqual(config_url, attempt_url)
+        token = config_url.split('jwt=')[1]
+        decoded = jwt.decode(token,
+                             issuer=self.provider.client_id,
+                             key=self.provider.client_secret,
+                             algorithms=['HS256'])
+        self.assertTrue(decoded['config'])
+        self.assertEqual(decoded['exam_id'], exam_id)

@@ -1753,14 +1753,17 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'provider_name': provider.verbose_name,
     }
     if attempt:
-        provider_attempt = provider.get_attempt(attempt)
-        download_url = provider_attempt.get('download_url', None) or provider.get_software_download_url()
+        context['exam_code'] = attempt['attempt_code']
+        if attempt['status'] in (ProctoredExamStudentAttemptStatus.created,
+                                 ProctoredExamStudentAttemptStatus.download_software_clicked):
+            # since this may make an http request, let's not include it on every page
+            provider_attempt = provider.get_attempt(attempt)
+            download_url = provider_attempt.get('download_url', None) or provider.get_software_download_url()
 
-        context.update({
-            'exam_code': attempt['attempt_code'],
-            'backend_instructions': provider_attempt.get('instructions', None),
-            'software_download_url': download_url,
-        })
+            context.update({
+                'backend_instructions': provider_attempt.get('instructions', None),
+                'software_download_url': download_url,
+            })
     return context
 
 

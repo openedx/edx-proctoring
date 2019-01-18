@@ -262,13 +262,12 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         }
         if exam_id:
             token['exam_id'] = exam_id
+            if show_configuration_dashboard:
+                token['config'] = True
             if attempt_id:
                 token['attempt_id'] = attempt_id
         encoded = jwt.encode(token, self.client_secret)
         url = self.instructor_url.format(client_id=self.client_id, jwt=encoded)
-
-        if show_configuration_dashboard:
-            url += '&config=true'
 
         log.debug('Created instructor url for %r %r %r', course_id, exam_id, attempt_id)
         return url
