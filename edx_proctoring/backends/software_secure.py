@@ -277,8 +277,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             # api.py imports software_secure.py, so we'll get an import circular reference
 
             allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
-
-            self.on_review_saved(review, allow_rejects=allow_rejects, comments=webcam_comments+desktop_comments)
+            self.on_review_saved(
+                review,
+                allow_rejects=allow_rejects,
+                comments={"webcam": webcam_comments, "desktop": desktop_comments}
+            )
 
         # emit an event for 'review_received'
         data = {

@@ -16,15 +16,25 @@
         exam requirements.
     {% endblocktrans %}
 </p>
-{% if comments %}
-<p>
-    {% trans "Reviewer comments" %}
-    <ul>
-        {% for comment in comments %}
-            <li>{{ comment }}</li>
-        {% endfor %}
-    </ul>
-</p>
+{% if comments.webcam %}
+    <p>
+        {% trans "Reviewer comments for web camera" %}
+        <ul>
+            {% for comment in comments.webcam %}
+                <li>{{ comment }}</li>
+            {% endfor %}
+        </ul>
+    </p>
+{% endif %}
+{% if comments.desktop %}
+    <p>
+        {% trans "Reviewer comments for desktop" %}
+        <ul>
+            {% for comment in comments.desktop %}
+                <li>{{ comment }}</li>
+            {% endfor %}
+        </ul>
+    </p>
 {% endif %}
 <p>
     {% blocktrans %}
