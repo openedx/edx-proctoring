@@ -75,8 +75,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.timeout = 10
         self.software_download_url = software_download_url
         self.send_email = send_email
-        self.passing_review_status = ['Clean', 'Rules Violation']
-        self.failing_review_status = ['Not Reviewed', 'Suspicious']
+        self.allowed_review_statuses = ['Not Reviewed', 'Suspicious', 'Clean', 'Rules Violation']
+        self.passing_review_status = ['Clean', ]
+        self.violated_review_status = ['Rules Violation', ]
         self.notify_support_for_status = ['Suspicious', 'Rules Violation']
 
     def register_exam_attempt(self, exam, context):
@@ -180,9 +181,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # get the SoftwareSecure status on this attempt
         review_status = payload['reviewStatus']
 
-        bad_status = review_status not in self.passing_review_status + self.failing_review_status
-
-        if bad_status:
+        if review_status not in self.allowed_review_statuses:
             err_msg = (
                 'Received unexpected reviewStatus field calue from payload. '
                 'Was {review_status}.'.format(review_status=review_status)
@@ -319,17 +318,17 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             log.warn(err_msg)
             return
 
-        # only 'Clean' and 'Rules Violation' count as passing
-        status = (
-            ProctoredExamStudentAttemptStatus.verified
-            if review.review_status in self.passing_review_status
-            else (
+        if review.review_status in self.passing_review_status:
+            status = ProctoredExamStudentAttemptStatus.verified
+        elif review.review_status in self.violated_review_status:
+            status = (
                 # if we are not allowed to store 'rejected' on this
                 # code path, then put status into 'second_review_required'
                 ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
                 ProctoredExamStudentAttemptStatus.second_review_required
             )
-        )
+        else:
+            status = ProctoredExamStudentAttemptStatus.second_review_required
 
         # updating attempt status will trigger workflow
         # (i.e. updating credit eligibility table)
