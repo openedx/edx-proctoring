@@ -720,7 +720,7 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
 
 
 def update_attempt_status(exam_id, user_id, to_status,
-                          raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None):
+                          raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None, comments=None):
     """
     Internal helper to handle state transitions of attempt status
     """
@@ -909,7 +909,8 @@ def update_attempt_status(exam_id, user_id, to_status,
     email = create_proctoring_attempt_status_email(
         user_id,
         exam_attempt_obj,
-        course_name
+        course_name,
+        comments
     )
     if email:
         email.send()
@@ -925,7 +926,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     return attempt['id']
 
 
-def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_name):
+def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_name, comments=None):
     """
     Creates an email about change in proctoring attempt status.
     """
@@ -989,6 +990,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
             'platform': constants.PLATFORM_NAME,
             'contact_email': constants.CONTACT_EMAIL,
             'support_email_subject': support_email_subject,
+            'comments': comments,
         })
     )
 

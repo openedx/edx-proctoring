@@ -75,8 +75,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.timeout = 10
         self.software_download_url = software_download_url
         self.send_email = send_email
-        self.passing_review_status = ['Clean', 'Rules Violation']
-        self.failing_review_status = ['Not Reviewed', 'Suspicious']
+        self.allowed_review_statuses = ['Not Reviewed', 'Suspicious', 'Clean', 'Rules Violation']
+        self.passing_review_status = ['Clean', ]
+        self.violated_review_status = ['Rules Violation', ]
         self.notify_support_for_status = ['Suspicious', 'Rules Violation']
 
     def register_exam_attempt(self, exam, context):
@@ -180,9 +181,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # get the SoftwareSecure status on this attempt
         review_status = payload['reviewStatus']
 
-        bad_status = review_status not in self.passing_review_status + self.failing_review_status
-
-        if bad_status:
+        if review_status not in self.allowed_review_statuses:
             err_msg = (
                 'Received unexpected reviewStatus field calue from payload. '
                 'Was {review_status}.'.format(review_status=review_status)
@@ -261,10 +260,12 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review.save()
 
         # go through and populate all of the specific comments
-        for comment in payload.get('webCamComments', []):
+        webcam_comments = payload.get('webCamComments', [])
+        for comment in webcam_comments:
             self._save_review_comment(review, comment)
 
-        for comment in payload.get('desktopComments', []):
+        desktop_comments = payload.get('desktopComments', [])
+        for comment in desktop_comments:
             self._save_review_comment(review, comment)
 
         # we could have gotten a review for an archived attempt
@@ -275,8 +276,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             # api.py imports software_secure.py, so we'll get an import circular reference
 
             allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
-
-            self.on_review_saved(review, allow_rejects=allow_rejects)
+            self.on_review_saved(
+                review,
+                allow_rejects=allow_rejects,
+                comments={"webcam": webcam_comments, "desktop": desktop_comments}
+            )
 
         # emit an event for 'review_received'
         data = {
@@ -290,7 +294,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         self._create_zendesk_ticket(review, exam, attempt)
 
-    def on_review_saved(self, review, allow_rejects=False):  # pylint: disable=arguments-differ
+    def on_review_saved(self, review, allow_rejects=False, comments=None):  # pylint: disable=arguments-differ
         """
         called when a review has been save - either through API (on_review_callback) or via Django Admin panel
         in order to trigger any workflow associated with proctoring review results
@@ -314,17 +318,17 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             log.warn(err_msg)
             return
 
-        # only 'Clean' and 'Rules Violation' count as passing
-        status = (
-            ProctoredExamStudentAttemptStatus.verified
-            if review.review_status in self.passing_review_status
-            else (
+        if review.review_status in self.passing_review_status:
+            status = ProctoredExamStudentAttemptStatus.verified
+        elif review.review_status in self.violated_review_status:
+            status = (
                 # if we are not allowed to store 'rejected' on this
                 # code path, then put status into 'second_review_required'
                 ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
                 ProctoredExamStudentAttemptStatus.second_review_required
             )
-        )
+        else:
+            status = ProctoredExamStudentAttemptStatus.second_review_required
 
         # updating attempt status will trigger workflow
         # (i.e. updating credit eligibility table)
@@ -333,7 +337,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         update_attempt_status(
             attempt_obj.proctored_exam_id,
             attempt_obj.user_id,
-            status
+            status,
+            comments=comments
         )
 
     def _save_review_comment(self, review, comment):
