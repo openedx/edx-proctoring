@@ -6,13 +6,21 @@ describe('ProctoredExamView', function () {
             '<div class="proctored_exam_status">' +
             '<script type="text/template" id="proctored-exam-status-tpl">' +
             '<div class="exam-timer">' +
+            '<div class="exam-text js-exam-text" data-show-long="true">' +
             'You are taking "' +
             '<a href="<%= exam_url_path %>"> <%= exam_display_name %> </a>' +
-            '" as a proctored exam. The timer on the right shows the time remaining in the exam' +
-            '<span class="exam-timer-clock"> <span id="time_remaining_id">' +
-            '<b> </b> <button role="button" id="toggle_timer" aria-label="Hide Timer" aria-pressed="false">' +
+            '" as a proctored exam.' +
+            '<span class="js-exam-additional-text" aria-hidden="false">' +
+            'The timer on the right shows the time remaining in the exam' +
+            '</span>' +
+            '<button class="js-toggle-show-more" data-show-more-text="Show More" data-show-less-text="Show Less">' +
+            'Show Less' +
+            '</button>' +
+            '<span class="exam-timer-clock"> <h3 id="time_remaining_id">' +
+            '<b> </b> </h3>' +
+            '<button role="button" id="toggle_timer" aria-label="Hide Timer" aria-pressed="false">' +
             '<i class="fa fa-eye-slash" aria-hidden="true"></i></button>' +
-            '</span> </span>' +
+            '</span>' +
             '</div>' +
             '</script>'+
             '</div>'
@@ -61,12 +69,30 @@ describe('ProctoredExamView', function () {
     });
     it('toggles timer visibility correctly', function() {
         var button = this.proctored_exam_view.$el.find('#toggle_timer');
-        var timer = this.proctored_exam_view.$el.find('span#time_remaining_id b');
+        var timer = this.proctored_exam_view.$el.find('h3#time_remaining_id b');
         expect(timer).not.toHaveClass('timer-hidden');
         button.click();
         expect(timer).toHaveClass('timer-hidden');
         button.click();
         expect(timer).not.toHaveClass('timer-hidden');
+    });
+    it('toggles long text visibility on show more/less', function() {
+        var button = this.proctored_exam_view.$el.find('.js-toggle-show-more');
+        var textToToggle = this.proctored_exam_view.$el.find('.js-exam-additional-text');
+        var initiallyHidden = textToToggle.hasClass('hidden');
+        button.click();
+        expect(textToToggle.hasClass('hidden')).not.toBe(initiallyHidden);
+        button.click();
+        expect(textToToggle.hasClass('hidden')).toBe(initiallyHidden);
+    });
+    it("toggles initial visibility according to whether media query is satisfied", function() {
+        var matchMedia = window.matchMedia;
+        var fakeMediaQuery = sinon.stub().returns({matches: true});
+        this.proctored_exam_view.first_time_rendering = true;
+        window.matchMedia = fakeMediaQuery;
+        this.proctored_exam_view.render();
+        expect(this.proctored_exam_view.$el.find('.js-exam-additional-text')).not.toHaveClass('hidden');
+        window.matchMedia = matchMedia;
     });
     it("reload the page when the exam time finishes", function(){
         this.proctored_exam_view.secondsLeft = -10;

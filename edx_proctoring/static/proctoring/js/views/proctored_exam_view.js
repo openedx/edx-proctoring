@@ -11,7 +11,7 @@ var edx = edx || {};
             _.bindAll(this, "detectScroll");
             this.$el = options.el;
             this.timerBarTopPosition = this.$el.position().top;
-            this.courseNavBarMarginTop = this.timerBarTopPosition - 3;
+            this.initialCourseNavBarMarginTop = this.timerBarTopPosition - 3;
             this.model = options.model;
             this.templateId = options.proctored_template;
             this.template = null;
@@ -50,16 +50,22 @@ var edx = edx || {};
             this.model.fetch();
         },
         events: {
-            'click #toggle_timer': 'toggleTimerVisibility'
+            'click #toggle_timer': 'toggleTimerVisibility',
+            'click .js-toggle-show-more': 'toggleShowText'
         },
         detectScroll: function(event) {
+            var $courseNavBar = $('.wrapper-course-material');
+            if(!$courseNavBar.length) {
+                $courseNavBar = $('.course-tabs');
+            }
+            var examStatusBarHeight = this.$el.height();
             if ($(event.currentTarget).scrollTop() > this.timerBarTopPosition) {
-                $(".proctored_exam_status").addClass('is-fixed');
-                $(".wrapper-course-material").css('margin-top', this.courseNavBarMarginTop + 'px');
+                $('.proctored_exam_status').addClass('is-fixed');
+                $courseNavBar.css('margin-top', examStatusBarHeight + 'px');
             }
             else {
-                $(".proctored_exam_status").removeClass('is-fixed');
-                $(".wrapper-course-material").css('margin-top', '0');
+                $('.proctored_exam_status').removeClass('is-fixed');
+                $courseNavBar.css('margin-top', '0');
             }
 
         },
@@ -103,6 +109,9 @@ var edx = edx || {};
                     if (this.first_time_rendering) {
                         this.accessibility_time_string = this.model.get('accessibility_time_string');
                         this.$el.find('.timer-announce').html(this.accessibility_time_string);
+                        if (!(window && window.matchMedia && window.matchMedia("(min-width: 992px)").matches)) {
+                            this.toggleShowText();
+                        }
                         this.first_time_rendering = false;
                     }
                     this.updateRemainingTime(this);
@@ -178,7 +187,7 @@ var edx = edx || {};
                 self.$el.find('.timer-announce').html(self.accessibility_time_string);
             }
 
-            self.$el.find('span#time_remaining_id b').html(self.model.getFormattedRemainingTime(self.secondsLeft));
+            self.$el.find('h3#time_remaining_id b').html(self.model.getFormattedRemainingTime(self.secondsLeft));
             if (self.secondsLeft <= -self.grace_period_secs) {
                 clearInterval(self.timerId); // stop the timer once the time finishes.
                 $(window).unbind('beforeunload', this.unloadMessage);
@@ -203,7 +212,7 @@ var edx = edx || {};
         toggleTimerVisibility: function (event) {
             var button = $(event.currentTarget);
             var icon = button.find('i');
-            var timer = this.$el.find('span#time_remaining_id b');
+            var timer = this.$el.find('h3#time_remaining_id b');
             if (timer.hasClass('timer-hidden')) {
                 timer.removeClass('timer-hidden');
                 button.attr('aria-pressed', 'false');
@@ -215,6 +224,19 @@ var edx = edx || {};
             }
             event.stopPropagation();
             event.preventDefault();
+        },
+        toggleShowText: function() {
+            var $examText = this.$el.find('.js-exam-text');
+            var $toggle = this.$el.find('.js-toggle-show-more');
+            var $additionalText = this.$el.find('.js-exam-additional-text');
+            var currentlyShowingLongText = $examText.data('showLong');
+            $additionalText
+                // uses both a v1 and a bootstrap utility class because
+                // this banner appears across both types of pages
+                .toggleClass('hidden d-none', currentlyShowingLongText)
+                .attr('aria-hidden', currentlyShowingLongText);
+            $toggle.html(currentlyShowingLongText ? $toggle.data('showMoreText') : $toggle.data('showLessText'));
+            $examText.data('showLong', !currentlyShowingLongText);
         }
     });
     this.edx.courseware.proctored_exam.ProctoredExamView = edx.courseware.proctored_exam.ProctoredExamView;
