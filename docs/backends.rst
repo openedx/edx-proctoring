@@ -158,7 +158,7 @@ Exam review callback
 
 After the PS system has reviewed an attempt, it must issue a ``POST`` request to the Open edX server at ``/api/v1/edx_proctoring/v1/proctored_exam/attempt/{attempt_id}/reviewed``
 
-The expected JSON request must include::
+The expected JSON request must include the following fields::
 
     {
         "status": "passed",
@@ -167,22 +167,29 @@ The expected JSON request must include::
 
 Status must be one of ``["passed", "violation", "suspicious", "not_reviewed"]``.
 
-There can be an arbitrary number of review comments, formatted with at least the following fields::
+The JSON request may also include the following optional fields::
+
+    {
+        "reviewed_by": "user@example.com"
+    }
+
+``reviewed_by`` must be included whenever a specific edX user (e.g. a member of a course team) initiated the review.
+
+There can be an arbitrary number of review comments in the ``comments`` array, formatted with at least the following fields::
 
     {
         "comment": "Human readable comment",
         "status": "unknown"
     }
 
-The following fields are optional::
+Each comment can also optionally include the following fields::
 
     {
         "start": 123,
-        "stop": 144,
-        "reviewed_by": "user@example.com"
+        "stop": 144
     }
 
-Start and stop are seconds relative to the start of the recorded proctoring session. ``reviewed_by`` must be included whenever a specific edX user (e.g. a member of a course team) initiated the review.
+Start and stop are seconds relative to the start of the recorded proctoring session.
 
 
 Instructor Dashboard
