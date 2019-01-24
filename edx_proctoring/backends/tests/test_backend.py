@@ -14,6 +14,7 @@ from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.backends.null import NullBackendProvider
 from edx_proctoring.backends.mock import MockProctoringBackendProvider
+from edx_proctoring.exceptions import BackendProviderCannotRetireUser
 
 # pragma pylint: disable=useless-super-delegation
 
@@ -24,6 +25,7 @@ class TestBackendProvider(ProctoringBackendProvider):
     """
     last_exam = None
     has_dashboard = True
+    last_retire_user = None
 
     def register_exam_attempt(self, exam, context):
         """
@@ -83,6 +85,13 @@ class TestBackendProvider(ProctoringBackendProvider):
             url += '&config=true'
 
         return url
+
+    def retire_user(self, user_id):
+        if self.last_retire_user:
+            raise BackendProviderCannotRetireUser(user_id)
+        else:
+            self.last_retire_user = user_id
+            return True
 
 
 class PassthroughBackendProvider(ProctoringBackendProvider):

@@ -14,7 +14,7 @@ from django.utils import translation
 from django.contrib.auth.models import User
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
-from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
+from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt, BackendProviderCannotRetireUser
 
 
 @ddt.ddt
@@ -340,3 +340,36 @@ class RESTBackendTests(TestCase):
                              algorithms=['HS256'])
         self.assertTrue(decoded['config'])
         self.assertEqual(decoded['exam_id'], exam_id)
+
+    @responses.activate
+    def test_retire_user(self):
+        user_id = 'abcdef5'
+        responses.add(
+            responses.DELETE,
+            url=self.provider.user_info_url.format(user_id=user_id),
+            json=True
+        )
+        result = self.provider.retire_user(user_id)
+        assert result is True
+
+    @responses.activate
+    def test_retire_unknown_user(self):
+        user_id = 'abcdef5'
+        responses.add(
+            responses.DELETE,
+            url=self.provider.user_info_url.format(user_id=user_id),
+            json=False
+        )
+        result = self.provider.retire_user(user_id)
+        assert result is False
+
+    @responses.activate
+    def test_retire_error(self):
+        user_id = 'abcdef5'
+        responses.add(
+            responses.DELETE,
+            url=self.provider.user_info_url.format(user_id=user_id),
+            body='"'
+        )
+        with self.assertRaises(BackendProviderCannotRetireUser):
+            self.provider.retire_user(user_id)

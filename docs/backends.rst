@@ -142,6 +142,18 @@ For convenience, the PS should return the exam instructions and the software dow
     }
 
 
+User management endpoint
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+    /api/v1/user/{user_id}/
+
+``{user_id}`` is the id sent by the Open edX server on exam attempts.
+
+``DELETE``: deletes all user data associated with this user id. Response::
+
+    true or false
+
+
 Exam ready callback
 ^^^^^^^^^^^^^^^^^^^
 

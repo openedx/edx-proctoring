@@ -14,7 +14,7 @@ from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleL
 from django.contrib.auth.models import User
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
+from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt, BackendProviderCannotRetireUser
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 from edx_rest_api_client.client import OAuthAPIClient
 
@@ -62,6 +62,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     def instructor_url(self):
         "Returns the instructor dashboard url"
         return self.base_url + u'/api/v1/instructor/{client_id}/?jwt={jwt}'
+
+    @property
+    def user_info_url(self):
+        "Returns the user info url"
+        return self.base_url + u'/api/v1/user/{user_id}/'
 
     @property
     def proctoring_instructions(self):
@@ -271,6 +276,18 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
         log.debug('Created instructor url for %r %r %r', course_id, exam_id, attempt_id)
         return url
+
+    def retire_user(self, user_id):
+        url = self.user_info_url.format(user_id=user_id)
+        try:
+            response = self.session.delete(url)
+            data = response.json()
+            assert data in (True, False)
+        except Exception as exc:  # pylint: disable=broad-except
+            # pylint: disable=no-member
+            content = exc.response.content if hasattr(exc, 'response') else response.content
+            raise BackendProviderCannotRetireUser(content)
+        return data
 
     def _get_language_headers(self):
         """

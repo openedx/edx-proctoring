@@ -107,3 +107,9 @@ class ProctoredExamIllegalStatusTransition(ProctoredBaseException):
     """
     Raised if a state transition is not allowed, e.g. going from submitted to started
     """
+
+
+class BackendProviderCannotRetireUser(ProctoredBaseException):
+    """
+    Raised when a back-end provider cannot retire a user
+    """
