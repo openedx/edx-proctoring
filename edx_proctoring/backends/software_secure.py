@@ -150,11 +150,11 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         desktop_set = set([
             cmt["comments"].strip(" .,?!").lower()
-            for cmt in webcam_comments if cmt.get("comments")
+            for cmt in desktop_comments if cmt.get("comments")
         ])
         webcam_set = set([
             cmt["comments"].strip(" .,?!").lower()
-            for cmt in desktop_comments if cmt.get("comments")
+            for cmt in webcam_comments if cmt.get("comments")
         ]) - desktop_set  # remove webcam comments if they are similar to desktop
         comments = {
             "webcam": ', '.join(webcam_set),
