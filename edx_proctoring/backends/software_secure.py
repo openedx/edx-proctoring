@@ -138,6 +138,30 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         return self.software_download_url
 
+    def _transform_comments(self, webcam_comments, desktop_comments):
+        """
+        Select only unique comments text from proctoring review comments structure.
+        Ignore case and trim some delimiters.
+
+        :param webcam_comments: list of dicts
+        :param desktop_comments: list of dicts
+        :return: dict
+        """
+
+        desktop_set = set([
+            cmt["comments"].strip(" .,?!").lower()
+            for cmt in webcam_comments if cmt.get("comments")
+        ])
+        webcam_set = set([
+            cmt["comments"].strip(" .,?!").lower()
+            for cmt in desktop_comments if cmt.get("comments")
+        ]) - desktop_set  # remove webcam comments if they are similar to desktop
+        comments = {
+            "webcam": ', '.join(webcam_set),
+            "desktop": ', '.join(desktop_set)
+        }
+        return comments
+
     def on_review_callback(self, payload):
         """
         Called when the reviewing 3rd party service posts back the results
@@ -279,7 +303,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             self.on_review_saved(
                 review,
                 allow_rejects=allow_rejects,
-                comments={"webcam": webcam_comments, "desktop": desktop_comments}
+                comments=self._transform_comments(webcam_comments, desktop_comments)
             )
 
         # emit an event for 'review_received'
