@@ -11,6 +11,7 @@ import waffle
 
 from crum import get_current_request
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse, NoReverseMatch
 from django.shortcuts import redirect
@@ -844,7 +845,11 @@ class BaseReviewCallback(object):
         review.raw_data = json.dumps(data)
         review.student_id = attempt['user']['id']
         review.exam_id = attempt['proctored_exam']['id']
-        review.reviewed_by = backend_review.get('reviewed_by', None)
+
+        try:
+            review.reviewed_by = User.objects.get(email=data['reviewed_by'])
+        except (User.DoesNotExist, KeyError):
+            review.reviewed_by = None
 
         review.save()
 

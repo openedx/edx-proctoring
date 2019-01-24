@@ -9,6 +9,7 @@ from crum import set_current_request
 import ddt
 from mock import patch
 
+from django.contrib.auth.models import User
 from django.test import RequestFactory
 from django.urls import reverse
 
@@ -382,3 +383,34 @@ class ReviewTests(LoggedInTestCase):
 
             attempt = get_exam_attempt_by_id(self.attempt_id)
             self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.second_review_required)
+
+    def test_status_reviewed_by_field(self):
+        """
+        Test that `reviewed_by` field of Review model is correctly assigned to None or to a User object.
+        """
+        # no reviewed_by field
+        test_payload = self.get_review_payload(ReviewStatus.suspicious)
+        # submit a Suspicious review payload
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+
+        review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=self.attempt['attempt_code'])
+        self.assertIsNone(review.reviewed_by)
+
+        # reviewed_by field with no corresponding User object
+        reviewed_by_email = 'testy@example.com'
+        test_payload['reviewed_by'] = reviewed_by_email
+
+        # submit a Suspicious review payload
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+        review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=self.attempt['attempt_code'])
+        self.assertIsNone(review.reviewed_by)
+
+        # reviewed_by field with corresponding User object
+        user = User.objects.create(
+            email=reviewed_by_email,
+            username='TestyMcTesterson'
+        )
+        # submit a Suspicious review payload
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+        review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=self.attempt['attempt_code'])
+        self.assertEqual(review.reviewed_by, user)
