@@ -104,3 +104,11 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
         Returns the instructor dashboard url for reviews
         """
         return None
+
+    # pylint: disable=unused-argument
+    def retire_user(self, user_id):
+        """
+        Delete the stored user in the backend.
+        Returns boolean status of deletion, or None if this would be a no-op
+        """
+        return None

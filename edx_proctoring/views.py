@@ -1021,3 +1021,30 @@ class InstructorDashboard(AuthenticatedAPIView):
             else:
                 error = _('No proctored exams in course {course_id}').format(course_id=course_id)
         return Response(data=error, status=404, headers={'X-Frame-Options': 'sameorigin'})
+
+
+class BackendUserManagementAPI(AuthenticatedAPIView):
+    """
+    Manage user information stored on the backends
+    """
+    @method_decorator(require_staff)
+    def delete(self, request, user_id):  # pylint: disable=unused-argument
+        """
+        Deletes all user data for the particular user_id
+        from all configured backends
+        """
+        from django.apps import apps
+        choices = apps.get_app_config('edx_proctoring').get_backend_choices()
+        results = {}
+        code = 200
+        for backend_name, verbose_name in choices:
+            backend_user_id = obscured_user_id(user_id, backend_name)
+            LOG.info('retiring user %s from %s', user_id, backend_name)
+            try:
+                result = get_backend_provider(name=backend_name).retire_user(backend_user_id)
+            except ProctoredBaseException:
+                LOG.exception('attempting to delete %s (%s) from %s', user_id, backend_user_id, verbose_name)
+                result = False
+            if result is not None:
+                results[backend_name] = result
+        return Response(data=results, status=code)

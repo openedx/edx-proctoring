@@ -2,7 +2,7 @@
   "name": "@edx/edx-proctoring",
   "//": "Be sure to update the version number in edx_proctoring/__init__.py",
   "//": "Note that the version format is slightly different than that of the Python version when using prereleases.",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "main": "edx_proctoring/static/index.js",
   "repository": {
     "type": "git",

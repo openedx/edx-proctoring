@@ -31,7 +31,8 @@ from edx_proctoring.api import (
     create_exam_attempt,
     get_exam_attempt_by_id,
     update_attempt_status,
-    _calculate_allowed_mins
+    _calculate_allowed_mins,
+    get_backend_provider,
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.serializers import ProctoredExamSerializer
@@ -2659,3 +2660,41 @@ class TestInstructorDashboard(LoggedInTestCase):
                                 kwargs={'course_id': course_id, 'exam_id': exam_id})
         response = self.client.get(dashboard_url, {'config': 'true'})
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+
+
+class TestBackendUserDeletion(LoggedInTestCase):
+    """
+    Tests for deleting user data from backends
+    """
+    def setUp(self):
+        super(TestBackendUserDeletion, self).setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.second_user = User(username='tester2', email='tester2@test.com')
+        self.second_user.save()
+        self.client.login_user(self.user)
+
+    def test_can_delete_user(self):
+        deletion_url = reverse('edx_proctoring:backend_user_deletion_api', kwargs={'user_id': self.second_user.id})
+
+        response = self.client.delete(deletion_url)
+        assert response.status_code == 200
+        data = response.json()
+        assert data == {'test': True}
+        test_backend = get_backend_provider(name='test')
+        assert test_backend.last_retire_user is not None
+
+        # running a second time will return a false status
+        response = self.client.delete(deletion_url)
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data) == 1
+        assert data == {'test': False}
+
+    def test_no_access(self):
+        self.client.login_user(self.second_user)
+        deletion_url = reverse('edx_proctoring:backend_user_deletion_api', kwargs={'user_id': self.user.id})
+
+        response = self.client.delete(deletion_url)
+        print response.content
+        assert response.status_code == 403
