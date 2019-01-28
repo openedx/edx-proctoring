@@ -16,8 +16,9 @@ from edx_proctoring.backends.rest import BaseRestProctoringProvider
 from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
     BackendProviderCannotRetireUser,
-    BackendProviderOnboardingException
+    BackendProviderOnboardingException,
 )
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 
 @ddt.ddt
@@ -203,12 +204,8 @@ class RESTBackendTests(TestCase):
             self.provider.register_exam_attempt(self.backend_exam, context)
 
     @ddt.data(
-        ['onboarding_missing'],
-        ['onboarding_pending'],
-        ['onboarding_failed'],
-        ['onboarding_expired'],
+        *ProctoredExamStudentAttemptStatus.onboarding_errors
     )
-    @ddt.unpack
     @responses.activate
     def test_attempt_failure_onboarding(self, failure_status):
         context = {
