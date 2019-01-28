@@ -10,15 +10,11 @@
         Your proctored exam "{{ exam_name }}" in
         <a href="{{ course_url }}">{{ course_name }}</a> was reviewed and the
         team found one or more violations of the proctored exam rules. As a result of the
-        following violation(s), you did not successfully meet the proctored exam requirements.
+        following violation(s),
     {% endblocktrans %}
+    {% if comments %} “{{comments}}“{% endif %}
+    {% trans "you did not successfully meet the proctored exam requirements." %}
 </p>
-{% if comments.webcam %}
-    <p>{% trans "Reviewer comments for web camera:" %} {{ comments.webcam }}</p>
-{% endif %}
-{% if comments.desktop %}
-    <p>{% trans "Reviewer comments for desktop:" %} {{ comments.desktop }}</p>
-{% endif %}
 <p>
     {% blocktrans %}
         If you have any questions about your results, contact {{ platform }}

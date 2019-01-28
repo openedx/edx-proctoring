@@ -804,7 +804,7 @@ def update_attempt_status(exam_id, user_id, to_status,
         # when the exam has been completed
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
 
-    exam_attempt_obj.save()
+    exam_attempt_obj.save(comments=comments)
 
     # see if the status transition this changes credit requirement status
     if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
