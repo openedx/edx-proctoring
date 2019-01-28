@@ -11,7 +11,6 @@ from mock import patch
 
 from django.test import TestCase
 from django.utils import translation
-from django.contrib.auth.models import User
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
 from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt, BackendProviderCannotRetireUser
@@ -218,7 +217,7 @@ class RESTBackendTests(TestCase):
 
     def test_on_review_callback(self):
         """
-        on_review_callback should just return the payload when called without review author
+        on_review_callback should just return the payload
         """
         attempt = {
             'id': 1,
@@ -233,42 +232,6 @@ class RESTBackendTests(TestCase):
         }
         new_payload = self.provider.on_review_callback(attempt, payload)
         self.assertEqual(payload, new_payload)
-
-    def test_on_review_callback_with_reviewer(self):
-        """
-        on_review_callback should find a user if an email is provided
-        """
-        person = User(
-            username='tester',
-            email='someone@example.com'
-        )
-        person.save()
-        attempt = {
-            'id': 1,
-            'external_id': 'abcd',
-            'user': 1
-        }
-
-        def payload_with_email(email):
-            """
-            generic payload with variable email
-            """
-            return {
-                'status': 'verified',
-                'comments': [
-                    {'comment': 'something happened', 'status': 'ok'},
-                ],
-                'reviewed_by': email,
-            }
-
-        payload = payload_with_email('someone@example.com')
-        new_payload = self.provider.on_review_callback(attempt, payload)
-        self.assertEqual(new_payload['reviewed_by'], person)
-
-        payload = payload_with_email('nonexistent+person@example.com')
-        new_payload = self.provider.on_review_callback(attempt, payload)
-
-        self.assertEqual(new_payload['reviewed_by'], None)
 
     def test_get_javascript(self):
         self.assertEqual(self.provider.get_javascript(), '')
