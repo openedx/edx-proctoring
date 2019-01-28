@@ -271,6 +271,14 @@ class ProctoredExamStudentAttemptManager(models.Manager):
 
         return self.filter(filtered_query).order_by('-created')  # pylint: disable=no-member
 
+    def clear_onboarding_errors(self, user_id):
+        """
+        Removes any attempts in the onboarding error states.
+        (They will automatically be saved to the attempt history table)
+        """
+        self.filter(user_id=user_id,
+                    status__in=ProctoredExamStudentAttemptStatus.onboarding_errors).delete()
+
 
 class ProctoredExamStudentAttempt(TimeStampedModel):
     """

@@ -33,6 +33,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     token_expiration_time = 60
     needs_oauth = True
     has_dashboard = True
+    supports_onboarding = True
     passing_statuses = (SoftwareSecureReviewStatus.clean,)
 
     @property

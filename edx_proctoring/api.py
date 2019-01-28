@@ -1044,7 +1044,16 @@ def update_attempt_status(exam_id, user_id, to_status,
     # call back to the backend to register the end of the exam, if necessary
     backend = get_backend_provider(exam)
     if backend:
-        # only proctored exams have a backend
+        # When onboarding exams change state to a completed status,
+        # look up any exams in the onboarding error states, and delete them.
+        # This will allow learners to return to the proctored exam and continue
+        # through the workflow.
+        if exam['is_practice_exam'] and backend.supports_onboarding and \
+                ProctoredExamStudentAttemptStatus.is_completed_status(to_status):
+            # find and delete any pending attempts
+            ProctoredExamStudentAttempt.objects.clear_onboarding_errors(user_id)
+
+        # only proctored/practice exams have a backend
         # timed exams have no backend
         backend_method = None
         if to_status == ProctoredExamStudentAttemptStatus.started:
