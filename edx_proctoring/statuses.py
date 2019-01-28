@@ -64,6 +64,18 @@ class ProctoredExamStudentAttemptStatus(object):
     # the course end date has passed
     expired = 'expired'
 
+    # onboarding failure states
+    # the user hasn't taken an onboarding exam
+    onboarding_missing = 'onboarding_missing'
+    # the onboarding exam is pending review
+    onboarding_pending = 'onboarding_pending'
+    # the user failed onboarding
+    onboarding_failed = 'onboarding_failed'
+    # the onboarding data expired
+    onboarding_expired = 'onboarding_expired'
+
+    onboarding_errors = (onboarding_missing, onboarding_pending, onboarding_failed, onboarding_expired)
+
     @classmethod
     def is_completed_status(cls, status):
         """
@@ -72,7 +84,8 @@ class ProctoredExamStudentAttemptStatus(object):
         """
         return status in [
             cls.declined, cls.timed_out, cls.submitted, cls.second_review_required,
-            cls.verified, cls.rejected, cls.error
+            cls.verified, cls.rejected, cls.error,
+            cls.onboarding_missing, cls.onboarding_pending, cls.onboarding_failed, cls.onboarding_expired
         ]
 
     @classmethod

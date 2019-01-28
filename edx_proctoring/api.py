@@ -30,7 +30,8 @@ from edx_proctoring.exceptions import (
     ProctoredExamPermissionDenied,
     ProctoredExamNotActiveException,
     ProctoredExamReviewPolicyNotFoundException,
-    ProctoredExamReviewPolicyAlreadyExists
+    ProctoredExamReviewPolicyAlreadyExists,
+    BackendProviderOnboardingException,
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -595,6 +596,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     external_id = None
     review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
     review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
+    force_status = None
 
     if not has_due_date_passed(exam['due_date']) and taking_as_proctored:
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
@@ -639,10 +641,19 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             })
 
         # now call into the backend provider to register exam attempt
-        external_id = get_backend_provider(exam).register_exam_attempt(
-            exam,
-            context=context,
-        )
+        try:
+            external_id = get_backend_provider(exam).register_exam_attempt(
+                exam,
+                context=context,
+            )
+        except BackendProviderOnboardingException as exc:
+            force_status = exc.status
+            log_msg = (
+                'Failed to create attempt for {user_id} '
+                'in {exam_id} because of onboarding failure: '
+                '{force_status}'.format(**locals())
+            )
+            log.error(log_msg)
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,
@@ -653,6 +664,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         exam['is_practice_exam'],
         external_id,
         review_policy_id=review_policy.id if review_policy else None,
+        status=force_status,
     )
 
     # Emit event when exam attempt created

@@ -335,11 +335,12 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     @classmethod
     def create_exam_attempt(cls, exam_id, user_id, student_name, attempt_code,
                             taking_as_proctored, is_sample_attempt, external_id,
-                            review_policy_id=None):
+                            review_policy_id=None, status=None):
         """
         Create a new exam attempt entry for a given exam_id and
         user_id.
         """
+        status = status or ProctoredExamStudentAttemptStatus.created
         return cls.objects.create(
             proctored_exam_id=exam_id,
             user_id=user_id,
@@ -348,7 +349,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             taking_as_proctored=taking_as_proctored,
             is_sample_attempt=is_sample_attempt,
             external_id=external_id,
-            status=ProctoredExamStudentAttemptStatus.created,
+            status=status,
             review_policy_id=review_policy_id
         )  # pylint: disable=no-member
 

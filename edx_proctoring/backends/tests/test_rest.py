@@ -13,7 +13,12 @@ from django.test import TestCase
 from django.utils import translation
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
-from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt, BackendProviderCannotRetireUser
+from edx_proctoring.exceptions import (
+    BackendProviderCannotRegisterAttempt,
+    BackendProviderCannotRetireUser,
+    BackendProviderOnboardingException,
+)
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 
 @ddt.ddt
@@ -197,6 +202,28 @@ class RESTBackendTests(TestCase):
         )
         with self.assertRaises(BackendProviderCannotRegisterAttempt):
             self.provider.register_exam_attempt(self.backend_exam, context)
+
+    @ddt.data(
+        *ProctoredExamStudentAttemptStatus.onboarding_errors
+    )
+    @responses.activate
+    def test_attempt_failure_onboarding(self, failure_status):
+        context = {
+            'attempt_code': '2',
+            'obs_user_id': 'abcdefghij',
+            'full_name': 'user name',
+            'lms_host': 'http://lms.com'
+        }
+        responses.add(
+            responses.POST,
+            url=self.provider.create_exam_attempt_url.format(exam_id=self.backend_exam['external_id']),
+            json={'status': failure_status},
+            status=200
+        )
+        with self.assertRaises(BackendProviderOnboardingException) as exc_manager:
+            self.provider.register_exam_attempt(self.backend_exam, context)
+        exception = exc_manager.exception
+        assert exception.status == failure_status
 
     @ddt.data(
         ['start_exam_attempt', 'start'],
