@@ -64,7 +64,7 @@ from edx_proctoring.exceptions import (
     ProctoredExamPermissionDenied,
     AllowanceValueNotAllowedException,
     ProctoredExamReviewPolicyAlreadyExists,
-    ProctoredExamReviewPolicyNotFoundException
+    ProctoredExamReviewPolicyNotFoundException,
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -543,6 +543,20 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['allowed_time_limit_mins'], self.default_time_limit + allowed_extra_time)
+
+    @ddt.data(
+        *ProctoredExamStudentAttemptStatus.onboarding_errors
+    )
+    def test_attempt_onboarding_error(self, onboarding_error):
+        """
+        Test that onboarding errors move the attempt to an errored state
+        """
+        test_backend = get_backend_provider(name='test')
+        test_backend.attempt_error = onboarding_error
+        attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
+        attempt = get_exam_attempt_by_id(attempt_id)
+        assert attempt['status'] == onboarding_error
+        test_backend.attempt_error = None
 
     def test_no_existing_attempt(self):
         """

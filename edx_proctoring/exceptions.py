@@ -77,6 +77,16 @@ class BackendProviderCannotRegisterAttempt(ProctoredBaseException):
     """
 
 
+class BackendProviderOnboardingException(ProctoredBaseException):
+    """
+    Raised when a back-end provider cannot register an attempt
+    because of missing/failed onboarding requirements
+    """
+    def __init__(self, status):
+        ProctoredBaseException.__init__(self, status)
+        self.status = status
+
+
 class ProctoredExamPermissionDenied(ProctoredBaseException):
     """
     Raised when the calling user does not have access to the requested object.

@@ -12,7 +12,11 @@ from webpack_loader.utils import get_files
 from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleLookupError
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt, BackendProviderCannotRetireUser
+from edx_proctoring.exceptions import (
+    BackendProviderCannotRegisterAttempt,
+    BackendProviderCannotRetireUser,
+    BackendProviderOnboardingException,
+)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 from edx_rest_api_client.client import OAuthAPIClient
 
@@ -173,6 +177,9 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             raise BackendProviderCannotRegisterAttempt(response.content)
         response = response.json()
         log.debug(response)
+        onboarding_status = response.get('status', None)
+        if onboarding_status in ProctoredExamStudentAttemptStatus.onboarding_errors:
+            raise BackendProviderOnboardingException(onboarding_status)
         return response['id']
 
     def start_exam_attempt(self, exam, attempt):

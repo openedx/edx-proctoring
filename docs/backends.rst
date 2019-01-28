@@ -104,11 +104,18 @@ Exam attempt endpoint
         "user_name": "Joe Smith"
     }
 
-The PS system should respond with an object containing at least the following fields::
+The PS server must respond with an object containing at least the following fields::
 
     {
         "id": "<some opaque id for the attempt>",
     }
+
+The PS server can block the user from taking a proctored exam if onboarding prerequistes haven't been met. Return an object with ``status`` set to one of the following:
+
+    * ``onboarding_missing``: The user has not completed an onboarding exam.
+    * ``onboarding_pending``: The user has taken an onboarding exam, but it is pending review.
+    * ``onboarding_failed``: The user failed the onboarding exam requirements.
+    * ``onboarding_expired``: The onboarding profile has expired, requiring the user to re-take an onboarding exam.
 
 ..
 
