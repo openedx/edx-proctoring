@@ -474,9 +474,10 @@ class ProctoredExamSoftwareSecureCommentAdmin(admin.ModelAdmin):
     """
 
     list_display = [
-        'review',
-        'review__user__username',
-        'review__course__course_id',
+        'attempt_code',
+        'username',
+        'exam_name',
+        'course_id',
         'comment',
         'status',
         'start_time',
@@ -485,15 +486,26 @@ class ProctoredExamSoftwareSecureCommentAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
-        'review__user__username',
-        'review__course__course_id',
+        'review__student__username',
+        'review__exam__exam_name',
+        'review__exam__course_id',
     ]
 
-    def save_model(self, request, review, form, change):
-        """
-        Comments can't be updated
-        """
-        return
+    def attempt_code(self, obj):
+        return obj.review.attempt_code
+
+    def username(self, obj):
+        return obj.review.student.username
+
+    def exam_name(self, obj):
+        return obj.review.exam.exam_name
+
+    def course_id(self, obj):
+        return obj.review.exam.course_id
+
+    def has_add_permission(self, request):
+        """Don't allow adds"""
+        return False
 
 
 def prettify_course_id(course_id):
