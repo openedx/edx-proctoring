@@ -161,32 +161,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         documentation named "Reviewer Data Transfer"
         """
 
-        # redact the videoReviewLink from the payload
-        if 'videoReviewLink' in payload:
-            if (
-                    payload['reviewStatus'] in self.notify_support_for_status and SEND_EMAIL
-                    and settings.EXAM_REVIEWER_EMAILS
-            ):
-                msg = 'Exam attempt code: {}; video review link: {}'.format(
-                    payload['examMetaData']['examCode'], payload['videoReviewLink']
-                )
-                for email in settings.EXAM_REVIEWER_EMAILS:
-                    log.info("videoReviewLink is sent to the reviewer's email: {}".format(email))
-                    send_exam_review_email.delay(
-                        '[OSPP] Exam Video Review Link',
-                        msg,
-                        settings.DEFAULT_FROM_EMAIL,
-                        email
-                    )
-            del payload['videoReviewLink']
-
-        log_msg = (
-            'Received callback from SoftwareSecure with review data: {payload}'.format(
-                payload=payload
-            )
-        )
-        log.info(log_msg)
-
         # what we consider the external_id is SoftwareSecure's 'ssiRecordLocator'
         external_id = payload['examMetaData']['ssiRecordLocator']
 
@@ -215,6 +189,33 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                 'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+        # redact the videoReviewLink from the payload
+        if 'videoReviewLink' in payload:
+            if (
+                    payload['reviewStatus'] in self.notify_support_for_status
+                    and attempt_obj.status != ProctoredExamStudentAttemptStatus.second_review_required
+                    and SEND_EMAIL and settings.EXAM_REVIEWER_EMAILS
+            ):
+                msg = 'Exam attempt code: {}; video review link: {}; student email: {}'.format(
+                    payload['examMetaData']['examCode'], payload['videoReviewLink'], payload.get('examTakerEmail')
+                )
+                for email in settings.EXAM_REVIEWER_EMAILS:
+                    log.info("videoReviewLink is sent to the reviewer's email: {}".format(email))
+                    send_exam_review_email.delay(
+                        '[OSPP] Exam Video Review Link',
+                        msg,
+                        settings.DEFAULT_FROM_EMAIL,
+                        email
+                    )
+            del payload['videoReviewLink']
+
+        log_msg = (
+            'Received callback from SoftwareSecure with review data: {payload}'.format(
+                payload=payload
+            )
+        )
+        log.info(log_msg)
 
         # then make sure we have the right external_id
         # note that SoftwareSecure might send a case insensitive
