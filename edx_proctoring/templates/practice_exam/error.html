@@ -1,28 +1,51 @@
 {% load i18n %}
 <div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
   <h3>
-    {% blocktrans %}
-      There was a problem with your practice proctoring session
-    {% endblocktrans %}
+    {% if provider_uses_onboarding %}
+      {% blocktrans %}
+        There was a problem with your onboarding session
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans %}
+        There was a problem with your practice proctoring session
+      {% endblocktrans %}
+    {% endif %}
   </h3>
 
   <h4>
-    {% blocktrans %}
-      Your practice proctoring results: <b class="failure"> Unsatisfactory </b>
-    {% endblocktrans %}
+    {% if provider_uses_onboarding %}
+      {% blocktrans %}
+        Your onboarding results: <b class="failure"> Unsatisfactory </b>
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans %}
+        Your practice proctoring results: <b class="failure"> Unsatisfactory </b>
+      {% endblocktrans %}
+    {% endif %}
   </h4>
 
   <p>
-    {% blocktrans %}
-      Your proctoring session ended before you completed this practice exam.
-      You can retry this practice exam if you had problems setting up the online proctoring software.
-    {% endblocktrans %}
+    {% if provider_uses_onboarding %}
+      {% blocktrans %}
+        Your proctoring session ended before you completed this onboarding exam.
+        You can retry this onboarding exam if you had problems setting up the online proctoring software.
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans %}
+        Your proctoring session ended before you completed this practice exam.
+        You can retry this practice exam if you had problems setting up the online proctoring software.
+      {% endblocktrans %}
+    {% endif %}
   </p>
   <hr>
   <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
     <span class="icon fa fa-lock" aria-hidden="true"></span>
     <a>
-      {% trans "Try this practice exam again" %}
+      {% if provider_uses_onboarding %}
+        {% trans "Try this onboarding exam again" %}
+      {% else %}
+        {% trans "Try this practice exam again" %}
+      {% endif %}
     </a>
   </button>
 </div>

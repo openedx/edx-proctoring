@@ -61,7 +61,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.proctored_exam_optout_msg = 'Take this exam without proctoring'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
-        self.practice_exam_submitted_msg = 'You have submitted this practice proctored exam'
+        self.onboarding_exam_submitted_msg = 'You have submitted this onboarding exam'
         self.take_exam_without_proctoring_msg = 'Take this exam without proctoring'
         self.ready_to_start_msg = 'Important'
         self.footer_msg = 'About Proctored Exams'
@@ -146,7 +146,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         # try practice exam variant
         rendered_response = self.render_practice_exam()
         self.assertIn(
-            'Get familiar with proctoring for real exams later in the course'.format(exam_name=self.exam_name),
+            'sequence proctored-exam entrance',
             rendered_response
         )
 
@@ -753,7 +753,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt.save()
 
         rendered_response = self.render_practice_exam()
-        self.assertIn(self.practice_exam_submitted_msg, rendered_response)
+        self.assertIn(self.onboarding_exam_submitted_msg, rendered_response)
 
     @ddt.data(
         ProctoredExamStudentAttemptStatus.created,
@@ -850,7 +850,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt.save()
 
         rendered_response = self.render_practice_exam()
-        self.assertIn('There was a problem with your practice proctoring session', rendered_response)
+        self.assertIn('There was a problem with your onboarding session', rendered_response)
 
     def test_get_studentview_unstarted_timed_exam(self):
         """

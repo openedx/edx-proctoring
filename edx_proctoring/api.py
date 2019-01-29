@@ -1767,6 +1767,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'provider_tech_support_email': provider.tech_support_email,
         'provider_tech_support_phone': provider.tech_support_phone,
         'provider_name': provider.verbose_name,
+        'provider_uses_onboarding': provider.supports_onboarding,
     }
     if attempt:
         context['exam_code'] = attempt['attempt_code']

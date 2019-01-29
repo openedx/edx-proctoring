@@ -1915,12 +1915,18 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 405)
 
     @ddt.data(
-        (True, True, 'practice'),
-        (True, False, 'proctored'),
-        (False, False, 'timed')
+        (True, True, 'an onboarding exam'),
+        (True, False, 'a proctored exam'),
+        (False, False, 'a timed exam')
     )
     @ddt.unpack
     def test_exam_type(self, is_proctored, is_practice, expected_exam_type):
+        """
+        Testing the exam type
+        """
+        self._test_exam_type(is_proctored, is_practice, expected_exam_type)
+
+    def _test_exam_type(self, is_proctored, is_practice, expected_exam_type):
         """
         Testing the exam type
         """
@@ -1950,6 +1956,16 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['exam_type'], expected_exam_type)
+
+    def test_practice_exam_type(self):
+        """
+        Test practice exam type with short special setup and teardown
+        """
+        test_backend = get_backend_provider(name='test')
+        previous_value = test_backend.supports_onboarding
+        test_backend.supports_onboarding = False
+        self._test_exam_type(True, True, 'a practice exam')
+        test_backend.supports_onboarding = previous_value
 
     def _create_proctored_exam_attempt_with_duedate(self, due_date=datetime.now(pytz.UTC), user=None):
         """
