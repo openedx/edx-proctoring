@@ -25,6 +25,8 @@ class TestBackendProvider(ProctoringBackendProvider):
     """
     last_exam = None
     has_dashboard = True
+    supports_onboarding = True
+
     last_retire_user = None
     attempt_error = None
 

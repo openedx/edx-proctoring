@@ -73,6 +73,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt,
     ProctoredExamReviewPolicy,
+    ProctoredExamStudentAttemptHistory,
 )
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -1987,3 +1988,24 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             get_exam_configuration_dashboard_url(self.course_id, 'test_content_2'),
             '/edx_proctoring/v1/instructor/a/b/c/6?config=true'
         )
+
+    def test_clear_onboarding_errors(self):
+        """
+        Tests that reviewing onboarding exams will clear pending proctored attempts
+        """
+        # create a proctored attempt before onboarding
+        test_backend = get_backend_provider(name='test')
+        test_backend.attempt_error = ProctoredExamStudentAttemptStatus.onboarding_missing
+        attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
+        test_backend.attempt_error = None
+        assert get_exam_attempt_by_id(attempt_id)['status'] == ProctoredExamStudentAttemptStatus.onboarding_missing
+
+        # now create the practice attempt
+        create_exam_attempt(self.practice_exam_id, self.user_id)
+        # and move the status to verified
+        update_attempt_status(self.practice_exam_id, self.user_id, ProctoredExamStudentAttemptStatus.verified)
+        # now the original attempt will be deleted
+        assert get_exam_attempt_by_id(attempt_id) is None
+        # ensure that the attempt is still in the history table
+        hist_attempt = ProctoredExamStudentAttemptHistory.objects.get(attempt_id=attempt_id)
+        assert hist_attempt.status == ProctoredExamStudentAttemptStatus.onboarding_missing

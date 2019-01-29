@@ -18,6 +18,8 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
     tech_support_phone = ''
     # whether this backend supports an instructor review/configuration dashboard
     has_dashboard = False
+    # whether practice exams map to "onboarding" exams for this backend
+    supports_onboarding = False
 
     @abc.abstractmethod
     def register_exam_attempt(self, exam, context):
