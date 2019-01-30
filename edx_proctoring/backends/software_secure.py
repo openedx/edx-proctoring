@@ -141,6 +141,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     def _transform_comments(self, comments):
         """
         Select only unique comments text from proctoring review comments structure.
+
         Ignore case and trim some delimiters.
 
         :param comments: list of dicts

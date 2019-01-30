@@ -470,7 +470,7 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
 
 class ProctoredExamSoftwareSecureCommentAdmin(admin.ModelAdmin):
     """
-    The admin panel for SoftwareSecure Review Comments records
+    The admin panel for SoftwareSecure Review Comments records.
     """
 
     list_display = [
@@ -504,7 +504,9 @@ class ProctoredExamSoftwareSecureCommentAdmin(admin.ModelAdmin):
         return obj.review.exam.course_id
 
     def has_add_permission(self, request):
-        """Don't allow adds"""
+        """
+        Don't allow adds.
+        """
         return False
 
 
