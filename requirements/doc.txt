@@ -48,6 +48,7 @@ readme-renderer==24.0
 requests==2.21.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber, sphinx
 rest-condition==1.0.3     # via edx-drf-extensions
 restructuredtext-lint==1.2.2  # via doc8
+rules==2.0.1
 semantic-version==2.6.0   # via edx-drf-extensions
 six==1.12.0               # via bleach, doc8, edx-drf-extensions, edx-opaque-keys, edx-sphinx-theme, packaging, pockets, pyjwkest, python-dateutil, readme-renderer, sphinx, sphinxcontrib-napoleon, stevedore
 slumber==0.7.1            # via edx-rest-api-client

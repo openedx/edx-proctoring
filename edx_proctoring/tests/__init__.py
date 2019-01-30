@@ -1,6 +1,9 @@
 """
 Monkeypatches the default backends
 """
+from __future__ import absolute_import
+
+import rules
 
 
 def setup_test_backends():
@@ -17,4 +20,13 @@ def setup_test_backends():
     config.backends['mock'] = MockProctoringBackendProvider()
 
 
+def setup_test_perms():
+    """
+    Create missing permissions that would be defined in edx-platform,
+    or elsewhere
+    """
+    rules.add_perm('accounts.can_retire_user', rules.is_staff)
+
+
 setup_test_backends()
+setup_test_perms()

@@ -54,6 +54,7 @@ pyyaml==3.13              # via edx-i18n-tools
 readme-renderer==24.0     # via twine
 requests-toolbelt==0.8.0  # via twine
 requests==2.21.0          # via caniusepython3, requests-toolbelt, twine
+rules==2.0.1
 scandir==1.9.0            # via pathlib2
 singledispatch==3.4.0.3   # via astroid, pylint
 six==1.12.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pathlib2, pip-tools, pydocstyle, pylint, readme-renderer, singledispatch, tox

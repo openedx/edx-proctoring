@@ -33,6 +33,7 @@ python-dateutil==2.7.5
 pytz==2018.9
 requests==2.21.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
 rest-condition==1.0.3     # via edx-drf-extensions
+rules==2.0.1
 semantic-version==2.6.0   # via edx-drf-extensions
 six==1.12.0               # via edx-drf-extensions, edx-opaque-keys, pyjwkest, python-dateutil, stevedore
 slumber==0.7.1            # via edx-rest-api-client
