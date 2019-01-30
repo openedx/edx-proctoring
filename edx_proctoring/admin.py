@@ -20,6 +20,7 @@ from edx_proctoring.models import (
     ProctoredExamSoftwareSecureReviewHistory,
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptStatus,
+    ProctoredExamSoftwareSecureComment,
 )
 from edx_proctoring.api import update_attempt_status
 from edx_proctoring.backends import get_backend_provider
@@ -467,6 +468,48 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
         return False
 
 
+class ProctoredExamSoftwareSecureCommentAdmin(admin.ModelAdmin):
+    """
+    The admin panel for SoftwareSecure Review Comments records.
+    """
+
+    list_display = [
+        'attempt_code',
+        'username',
+        'exam_name',
+        'course_id',
+        'comment',
+        'status',
+        'start_time',
+        'stop_time',
+        'duration',
+    ]
+
+    search_fields = [
+        'review__student__username',
+        'review__exam__exam_name',
+        'review__exam__course_id',
+    ]
+
+    def attempt_code(self, obj):
+        return obj.review.attempt_code
+
+    def username(self, obj):
+        return obj.review.student.username
+
+    def exam_name(self, obj):
+        return obj.review.exam.exam_name
+
+    def course_id(self, obj):
+        return obj.review.exam.course_id
+
+    def has_add_permission(self, request):
+        """
+        Don't allow adds.
+        """
+        return False
+
+
 def prettify_course_id(course_id):
     """
     Prettify the COURSE ID string
@@ -478,3 +521,4 @@ admin.site.register(ProctoredExamStudentAttempt, ProctoredExamStudentAttemptAdmi
 admin.site.register(ProctoredExamReviewPolicy, ProctoredExamReviewPolicyAdmin)
 admin.site.register(ProctoredExamSoftwareSecureReview, ProctoredExamSoftwareSecureReviewAdmin)
 admin.site.register(ProctoredExamSoftwareSecureReviewHistory, ProctoredExamSoftwareSecureReviewHistoryAdmin)
+admin.site.register(ProctoredExamSoftwareSecureComment, ProctoredExamSoftwareSecureCommentAdmin)

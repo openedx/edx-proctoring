@@ -9,33 +9,12 @@
     {% blocktrans %}
         Your proctored exam "{{ exam_name }}" in
         <a href="{{ course_url }}">{{ course_name }}</a> was reviewed and the
-        team found one or more violations of the proctored exam rules. Examples
-        of behaviors that may result in a rules violation include browsing
-        the internet, using a phone, or getting help from another person. As a
-        result of the violation(s), you did not successfully meet the proctored
-        exam requirements.
+        team found one or more violations of the proctored exam rules. As a result of the
+        following violation(s),
     {% endblocktrans %}
+    {% if comments %} “{{comments}}“{% endif %}
+    {% trans "you did not successfully meet the proctored exam requirements." %}
 </p>
-{% if comments.webcam %}
-    <p>
-        {% trans "Reviewer comments for web camera" %}
-        <ul>
-            {% for comment in comments.webcam %}
-                <li>{{ comment }}</li>
-            {% endfor %}
-        </ul>
-    </p>
-{% endif %}
-{% if comments.desktop %}
-    <p>
-        {% trans "Reviewer comments for desktop" %}
-        <ul>
-            {% for comment in comments.desktop %}
-                <li>{{ comment }}</li>
-            {% endfor %}
-        </ul>
-    </p>
-{% endif %}
 <p>
     {% blocktrans %}
         If you have any questions about your results, contact {{ platform }}
