@@ -2085,6 +2085,20 @@ def is_backend_dashboard_available(course_id):
     return False
 
 
+def does_course_support_onboarding(course_id):
+    """
+    Returns whether this course supports onboarding exams.
+    """
+    exams = ProctoredExam.get_all_exams_for_course(
+        course_id,
+        active_only=True
+    )
+    for exam in exams:
+        if get_backend_provider(name=exam.backend).supports_onboarding:
+            return True
+    return False
+
+
 def get_exam_configuration_dashboard_url(course_id, content_id):
     """
     Returns the exam configuration dashboard URL, if the exam exists and the backend
