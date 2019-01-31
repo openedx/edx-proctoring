@@ -3,7 +3,6 @@ from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 
 from edx_proctoring import api
-from edx_proctoring import constants
 from edx_proctoring import models
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, ReviewStatus
 from edx_proctoring.utils import emit_event, locate_attempt_by_attempt_code
@@ -144,8 +143,6 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
     elif review.review_status == ReviewStatus.suspicious:
         attempt_status = ProctoredExamStudentAttemptStatus.second_review_required
     else:
-        # if we are not allowed to store 'rejected' on this
-        # code path, then put status into 'second_review_required'
         attempt_status = ProctoredExamStudentAttemptStatus.rejected
 
     if not is_archived:
