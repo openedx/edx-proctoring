@@ -140,7 +140,6 @@ class ReviewTests(LoggedInTestCase):
             self.assertEqual(len(comments), 6)
 
             # check that we got credit requirement set appropriately
-
             credit_service = get_runtime_service('credit')
             credit_status = credit_service.get_credit_state(self.user.id, 'foo/bar/baz')
 
