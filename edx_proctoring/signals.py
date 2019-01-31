@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from edx_proctoring import api
 from edx_proctoring import constants
 from edx_proctoring import models
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, ReviewStatus
 from edx_proctoring.utils import emit_event, locate_attempt_by_attempt_code
 from edx_proctoring.backends import get_backend_provider
 
@@ -141,14 +141,12 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
     # eligibility table
     if review.is_passing:
         attempt_status = ProctoredExamStudentAttemptStatus.verified
-    elif review.reviewed_by or not constants.REQUIRE_FAILURE_SECOND_REVIEWS:
-        # reviews from the django admin have a reviewer set. They should be allowed to
-        # reject an attempt
-        attempt_status = ProctoredExamStudentAttemptStatus.rejected
+    elif review.review_status == ReviewStatus.suspicious:
+        attempt_status = ProctoredExamStudentAttemptStatus.second_review_required
     else:
         # if we are not allowed to store 'rejected' on this
         # code path, then put status into 'second_review_required'
-        attempt_status = ProctoredExamStudentAttemptStatus.second_review_required
+        attempt_status = ProctoredExamStudentAttemptStatus.rejected
 
     if not is_archived:
         # updating attempt status will trigger workflow
