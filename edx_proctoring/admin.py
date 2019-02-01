@@ -10,6 +10,7 @@ import pytz
 
 from django import forms
 from django.db.models import Q
+from django.conf import settings
 from django.contrib import admin
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
@@ -381,7 +382,13 @@ class ProctoredExamAttemptForm(forms.ModelForm):
         (ProctoredExamStudentAttemptStatus.rejected, _('Rejected')),
         (ProctoredExamStudentAttemptStatus.error, _('Error')),
     ]
-
+    if settings.DEBUG:
+        STATUS_CHOICES.extend([
+            (ProctoredExamStudentAttemptStatus.onboarding_missing, _('Onboarding Missing')),
+            (ProctoredExamStudentAttemptStatus.onboarding_failed, _('Onboarding Failed')),
+            (ProctoredExamStudentAttemptStatus.onboarding_pending, _('Onboarding Pending')),
+            (ProctoredExamStudentAttemptStatus.onboarding_expired, _('Onboarding Expired')),
+        ])
     status = forms.ChoiceField(choices=STATUS_CHOICES)
 
 

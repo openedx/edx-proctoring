@@ -995,3 +995,16 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 self.assertIn(self.footer_msg, rendered_response)
         else:
             self.assertIn(self.footer_msg, rendered_response)
+
+    @ddt.data(
+        *ProctoredExamStudentAttemptStatus.onboarding_errors
+    )
+    def test_onboarding_error_pages(self, onboarding_status):
+        """
+        Test that onboarding errors return a particular error page
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        exam_attempt.status = onboarding_status
+        exam_attempt.save()
+        rendered_response = self.render_proctored_exam()
+        assert onboarding_status in rendered_response

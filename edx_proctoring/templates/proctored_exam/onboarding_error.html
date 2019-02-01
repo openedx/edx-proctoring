@@ -1,0 +1,43 @@
+{% load i18n %}
+<div class="failure sequence proctored-exam {{onboarding_status}}" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      You must complete an onboarding exam before taking this proctored exam
+    {% endblocktrans %}
+  </h3>
+  <p>
+{% if onboarding_status == 'onboarding_missing' or onboarding_status ==  'onboarding_expired' %}
+    {% if onboarding_link %}
+      {% blocktrans %}
+      Please complete the <a href="{{onboarding_link}}">onboarding exam</a> before attempting this exam.
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans %}
+      Please complete an onboarding exam before attempting this exam.
+      {% endblocktrans %}
+    {% endif %}
+{% elif onboarding_status == 'onboarding_pending' %}
+    {% blocktrans %}
+    Your onboarding exam is being reviewed. Before attempting this exam, please allow 1-2 days for your onboarding exam to be reviewed.
+    {% endblocktrans %}
+{% elif onboarding_status == 'onboarding_failed' %}
+    {% if onboarding_link %}
+      {% blocktrans %}
+        Your onboarding exam failed to pass all requirements. You can retake the <a href="{{onboarding_link}}">Onboarding Exam</a>.
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans %}
+        Your onboarding exam failed to pass all requirements.
+      {% endblocktrans %}
+    {% endif %}
+{% endif %}
+  </p>
+  <p>
+    {% blocktrans %}
+        If you have questions about the status of your onboarding exam, contact {{ platform_name }}
+        support at
+        <a href="mailto:{{ tech_support_email }}?Subject={{ support_email_subject }}">{{ tech_support_email }}</a>.
+    {% endblocktrans %}
+  </p>
+</div>
+{% include 'proctored_exam/footer.html' %}

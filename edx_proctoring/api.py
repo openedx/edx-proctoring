@@ -1947,6 +1947,17 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         ) else 'proctored_exam/rejected.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
+    elif attempt_status in ProctoredExamStudentAttemptStatus.onboarding_errors:
+        student_view_template = 'proctored_exam/onboarding_error.html'
+        context['onboarding_status'] = attempt['status']
+        context['support_email_subject'] = _('Onboarding status question')
+        onboarding_exam = ProctoredExam.objects.filter(course_id=course_id,
+                                                       is_active=True,
+                                                       is_practice_exam=True).first()
+        try:
+            context['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
+        except (NoReverseMatch, AttributeError):
+            log.exception("Can't find onboarding exam for %s", course_id)
 
     if student_view_template:
         template = loader.get_template(student_view_template)
