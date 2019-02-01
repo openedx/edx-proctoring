@@ -22,6 +22,7 @@ from eventtracking import tracker
 from edx_proctoring.models import (
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptHistory,
+    ProctoredExamSoftwareSecureComment,
 )
 
 log = logging.getLogger(__name__)
@@ -213,3 +214,19 @@ def _emit_event(name, context, data):
             'Analytics tracker not properly configured. '
             'If this message appears in a production environment, please investigate'
         )
+
+
+def get_unique_review_comments_for_attempt(attempt_code):
+    """
+    Select only unique comments text from saved proctoring review comments.
+
+    Ignore case and trim some delimiters.
+
+    :param attempt_code: string, unique identifier for proctoring attempt
+    :return: string with comma-separated unique comments
+    """
+
+    qs = ProctoredExamSoftwareSecureComment.objects.filter(review__attempt_code=attempt_code)
+    comments_set = set([cmt.strip(" .,?!").lower() for cmt in qs.values_list('comment', flat=True)])
+
+    return ', '.join(comments_set)

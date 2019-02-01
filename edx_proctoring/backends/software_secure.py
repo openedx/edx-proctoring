@@ -138,22 +138,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         return self.software_download_url
 
-    def _transform_comments(self, comments):
-        """
-        Select only unique comments text from proctoring review comments structure.
-
-        Ignore case and trim some delimiters.
-
-        :param comments: list of dicts
-        :return: string with comma-separated unique comments
-        """
-
-        comments_set = set([
-            cmt["comments"].strip(" .,?!").lower()
-            for cmt in comments if cmt.get("comments")
-        ])
-        return ', '.join(comments_set)
-
     def on_review_callback(self, payload):
         """
         Called when the reviewing 3rd party service posts back the results
@@ -277,12 +261,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review.save()
 
         # go through and populate all of the specific comments
-        webcam_comments = payload.get('webCamComments', [])
-        for comment in webcam_comments:
+        for comment in payload.get('webCamComments', []):
             self._save_review_comment(review, comment)
 
-        desktop_comments = payload.get('desktopComments', [])
-        for comment in desktop_comments:
+        for comment in payload.get('desktopComments', []):
             self._save_review_comment(review, comment)
 
         # we could have gotten a review for an archived attempt
@@ -295,8 +277,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
             self.on_review_saved(
                 review,
-                allow_rejects=allow_rejects,
-                comments=self._transform_comments(webcam_comments + desktop_comments)
+                allow_rejects=allow_rejects
             )
 
         # emit an event for 'review_received'
@@ -311,7 +292,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         self._create_zendesk_ticket(review, exam, attempt)
 
-    def on_review_saved(self, review, allow_rejects=False, comments=None):  # pylint: disable=arguments-differ
+    def on_review_saved(self, review, allow_rejects=False):  # pylint: disable=arguments-differ
         """
         called when a review has been save - either through API (on_review_callback) or via Django Admin panel
         in order to trigger any workflow associated with proctoring review results
@@ -355,7 +336,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             attempt_obj.proctored_exam_id,
             attempt_obj.user_id,
             status,
-            comments=comments
         )
 
     def _save_review_comment(self, review, comment):

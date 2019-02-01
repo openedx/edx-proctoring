@@ -46,7 +46,8 @@ from edx_proctoring.serializers import (
 )
 from edx_proctoring.utils import (
     humanized_time,
-    emit_event
+    emit_event,
+    get_unique_review_comments_for_attempt,
 )
 
 from edx_proctoring.backends import get_backend_provider
@@ -720,7 +721,7 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
 
 
 def update_attempt_status(exam_id, user_id, to_status,
-                          raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None, comments=None):
+                          raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None):
     """
     Internal helper to handle state transitions of attempt status
     """
@@ -804,7 +805,7 @@ def update_attempt_status(exam_id, user_id, to_status,
         # when the exam has been completed
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
 
-    exam_attempt_obj.save(comments=comments)
+    exam_attempt_obj.save()
 
     # see if the status transition this changes credit requirement status
     if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
@@ -910,7 +911,6 @@ def update_attempt_status(exam_id, user_id, to_status,
         user_id,
         exam_attempt_obj,
         course_name,
-        comments
     )
     if email:
         email.send()
@@ -926,7 +926,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     return attempt['id']
 
 
-def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_name, comments=None):
+def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_name):
     """
     Creates an email about change in proctoring attempt status.
     """
@@ -935,26 +935,36 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         return None
 
     user = User.objects.get(id=user_id)
+    exam_name = exam_attempt_obj.proctored_exam.exam_name
     course_info_url = ''
     email_subject = (
         _('Proctoring Results For {course_name} {exam_name}').format(
             course_name=course_name,
-            exam_name=exam_attempt_obj.proctored_exam.exam_name
+            exam_name=exam_name
         )
     )
     status = exam_attempt_obj.status
+    context_dict = {
+        'username': user.username,
+        'course_name': course_name,
+        'exam_name': exam_name,
+        'status': status,
+        'platform': constants.PLATFORM_NAME,
+        'contact_email': constants.CONTACT_EMAIL,
+    }
     if status == ProctoredExamStudentAttemptStatus.submitted:
         email_template_path = 'emails/proctoring_attempt_submitted_email.html'
         email_subject = (
             _('Proctoring Review In Progress For {course_name} {exam_name}').format(
                 course_name=course_name,
-                exam_name=exam_attempt_obj.proctored_exam.exam_name
+                exam_name=exam_name
             )
         )
     elif status == ProctoredExamStudentAttemptStatus.verified:
         email_template_path = 'emails/proctoring_attempt_satisfactory_email.html'
     elif status == ProctoredExamStudentAttemptStatus.rejected:
         email_template_path = 'emails/proctoring_attempt_unsatisfactory_email.html'
+        context_dict['comments'] = get_unique_review_comments_for_attempt(exam_attempt_obj.attempt_code)
     else:
         # Don't send an email for any other attempt status codes
         return None
@@ -968,31 +978,19 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         log.exception("Can't find course info url for course %s", exam_attempt_obj.proctored_exam.course_id)
 
     scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
-    course_url = '{scheme}://{site_name}{course_info_url}'.format(
+    context_dict['course_url'] = '{scheme}://{site_name}{course_info_url}'.format(
         scheme=scheme,
         site_name=constants.SITE_NAME,
         course_info_url=course_info_url
     )
     exam_name = exam_attempt_obj.proctored_exam.exam_name
-    support_email_subject = _('Proctored exam {exam_name} in {course_name} for user {username}').format(
+    context_dict['support_email_subject'] = _('Proctored exam {exam_name} in {course_name} for user {username}').format(
         exam_name=exam_name,
         course_name=course_name,
         username=user.username,
     )
 
-    body = email_template.render(
-        Context({
-            'username': user.username,
-            'course_url': course_url,
-            'course_name': course_name,
-            'exam_name': exam_name,
-            'status': status,
-            'platform': constants.PLATFORM_NAME,
-            'contact_email': constants.CONTACT_EMAIL,
-            'support_email_subject': support_email_subject,
-            'comments': comments,
-        })
-    )
+    body = email_template.render(Context(context_dict))
 
     email = EmailMessage(
         body=body,
