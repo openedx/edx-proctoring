@@ -122,7 +122,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
                 u'Webpack stats file corresponding to WebWorkers not found: {}'
                 .format(str(err))
             )
-        return js_url
+        return js_url + u'?raw'
 
     def get_software_download_url(self):
         """
