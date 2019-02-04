@@ -18,7 +18,11 @@ var edx = edx || {};
         submitted: gettext('Submitted'),
         verified: gettext('Verified'),
         rejected: gettext('Rejected'),
-        error: gettext('Error')
+        error: gettext('Error'),
+        onboarding_missing: gettext('Onboarding Missing'),
+        onboarding_pending: gettext('Onboarding Pending'),
+        onboarding_failed: gettext('Onboarding Failed'),
+        onboarding_expired: gettext('Onboarding Expired')
     };
     var viewHelper = {
         getDateFormat: function(date) {
