@@ -1032,7 +1032,7 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
     """
     Manage user information stored on the backends
     """
-    def delete(self, request, user_id):  # pylint: disable=unused-argument
+    def post(self, request, user_id):  # pylint: disable=unused-argument
         """
         Deletes all user data for the particular user_id
         from all configured backends

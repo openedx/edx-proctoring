@@ -2677,7 +2677,7 @@ class TestBackendUserDeletion(LoggedInTestCase):
     def test_can_delete_user(self):
         deletion_url = reverse('edx_proctoring:backend_user_deletion_api', kwargs={'user_id': self.second_user.id})
 
-        response = self.client.delete(deletion_url)
+        response = self.client.post(deletion_url)
         assert response.status_code == 200
         data = response.json()
         # if there is no user data, then no deletion happens
@@ -2695,7 +2695,7 @@ class TestBackendUserDeletion(LoggedInTestCase):
         )
         create_exam_attempt(proctored_exam.id, self.second_user.id, True)
 
-        response = self.client.delete(deletion_url)
+        response = self.client.post(deletion_url)
         assert response.status_code == 200
         data = response.json()
         # if there is an attempt, we'll try to delete from the backend
@@ -2704,7 +2704,7 @@ class TestBackendUserDeletion(LoggedInTestCase):
         assert test_backend.last_retire_user is not None
 
         # running a second time will return a false status
-        response = self.client.delete(deletion_url)
+        response = self.client.post(deletion_url)
         assert response.status_code == 500
         data = response.json()
         assert len(data) == 1
@@ -2714,5 +2714,5 @@ class TestBackendUserDeletion(LoggedInTestCase):
         self.client.login_user(self.second_user)
         deletion_url = reverse('edx_proctoring:backend_user_deletion_api', kwargs={'user_id': self.user.id})
 
-        response = self.client.delete(deletion_url)
+        response = self.client.post(deletion_url)
         assert response.status_code == 403
