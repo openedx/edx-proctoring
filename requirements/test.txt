@@ -5,7 +5,7 @@
 #    pip-compile --output-file requirements/test.txt requirements/test.in
 #
 apipkg==1.5               # via execnet
-atomicwrites==1.2.1       # via pytest
+atomicwrites==1.3.0       # via pytest
 attrs==18.2.0             # via pytest
 bok-choy==0.9.0
 certifi==2018.11.29       # via requests
@@ -16,7 +16,7 @@ ddt==1.2.0
 django-crum==0.7.3
 django-ipware==2.1.0
 django-model-utils==3.1.2
-django-waffle==0.15.0
+django-waffle==0.15.1
 django-webpack-loader==0.6.0
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.6.4
@@ -29,29 +29,29 @@ execnet==1.5.0            # via pytest-xdist
 freezegun==0.3.11
 funcsigs==1.0.2           # via mock, pytest
 future==0.17.1            # via pyjwkest
-httmock==1.2.6
+httmock==1.3.0
 httpretty==0.9.6
 idna==2.8                 # via requests
 jsonfield==2.0.2
-lazy==1.3                 # via bok-choy
+lazy==1.4                 # via bok-choy
 logilab-common==1.4.2
 mock==2.0.0
 more-itertools==5.0.0     # via pytest
-newrelic==4.8.0.110       # via edx-django-utils
+newrelic==4.12.0.113      # via edx-django-utils
 pathlib2==2.3.3           # via pytest, pytest-django
-pbr==5.1.1                # via mock, stevedore
-pluggy==0.8.0             # via pytest
+pbr==5.1.2                # via mock, stevedore
+pluggy==0.8.1             # via pytest
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 py==1.7.0                 # via pytest
-pycryptodomex==3.7.2
+pycryptodomex==3.7.3
 pyjwkest==1.3.2           # via edx-drf-extensions
 pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.7.2            # via edx-opaque-keys, event-tracking
 pytest-cov==2.6.1
-pytest-django==3.4.4
-pytest-forked==0.2        # via pytest-xdist
-pytest-xdist==1.25.0
-pytest==4.1.0             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
+pytest-django==3.4.7
+pytest-forked==1.0.1      # via pytest-xdist
+pytest-xdist==1.26.1
+pytest==4.2.0             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
 python-dateutil==2.7.5
 pytz==2018.9
 requests==2.21.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
@@ -65,5 +65,5 @@ six==1.12.0               # via bok-choy, edx-drf-extensions, edx-opaque-keys, f
 slumber==0.7.1            # via edx-rest-api-client
 stevedore==1.30.0         # via edx-opaque-keys
 sure==1.2.7
-testfixtures==6.4.1
+testfixtures==6.5.0
 urllib3==1.24.1           # via requests, selenium

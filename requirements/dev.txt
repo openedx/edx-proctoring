@@ -7,13 +7,13 @@
 argparse==1.4.0           # via caniusepython3
 astroid==1.5.2            # via edx-lint, pylint, pylint-celery
 backports.functools-lru-cache==1.5  # via astroid, caniusepython3, pylint
-bleach==3.0.2             # via readme-renderer
+bleach==3.1.0             # via readme-renderer
 caniusepython3==7.0.0
 certifi==2018.11.29       # via requests
 chardet==3.0.4            # via requests
 click-log==0.1.8          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
-configparser==3.5.0       # via importlib-metadata, pydocstyle, pylint
+configparser==3.7.1       # via importlib-metadata, pydocstyle, pylint
 contextlib2==0.5.5        # via importlib-metadata
 diff-cover==1.0.6
 distlib==0.2.8            # via caniusepython3
@@ -33,40 +33,39 @@ jinja2==2.10              # via diff-cover, jinja2-pluralize
 lazy-object-proxy==1.3.1  # via astroid
 markupsafe==1.1.0         # via jinja2
 mccabe==0.6.1             # via pylint
-packaging==18.0           # via caniusepython3
+packaging==19.0           # via caniusepython3
 path.py==11.5.0           # via edx-i18n-tools
 pathlib2==2.3.3           # via importlib-metadata
-pip-tools==3.2.0
-pkginfo==1.4.2            # via twine
-pluggy==0.8.0             # via tox
+pip-tools==3.3.2
+pkginfo==1.5.0.1          # via twine
+pluggy==0.8.1             # via tox
 polib==1.1.0              # via edx-i18n-tools
 py==1.7.0                 # via tox
-pycodestyle==2.4.0
+pycodestyle==2.5.0
 pydocstyle==3.0.0
 pygments==2.3.1           # via diff-cover, readme-renderer
 pylint-celery==0.3        # via edx-lint
 pylint-django==0.7.2      # via edx-lint
 pylint-plugin-utils==0.4  # via pylint-celery, pylint-django
 pylint==1.7.1             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
-pyparsing==2.3.0          # via packaging
+pyparsing==2.3.1          # via packaging
 pytz==2018.9              # via django
 pyyaml==3.13              # via edx-i18n-tools
 readme-renderer==24.0     # via twine
-requests-toolbelt==0.8.0  # via twine
+requests-toolbelt==0.9.1  # via twine
 requests==2.21.0          # via caniusepython3, requests-toolbelt, twine
-rules==2.0.1
 scandir==1.9.0            # via pathlib2
 singledispatch==3.4.0.3   # via astroid, pylint
 six==1.12.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pathlib2, pip-tools, pydocstyle, pylint, readme-renderer, singledispatch, tox
 snowballstemmer==1.2.1    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
-tox==3.6.1
-tqdm==4.29.0              # via twine
+tox==3.7.0
+tqdm==4.30.0              # via twine
 twine==1.12.1
 urllib3==1.24.1           # via requests
-virtualenv==16.2.0        # via tox
+virtualenv==16.3.0        # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.32.3
-wrapt==1.10.11            # via astroid
+wrapt==1.11.1             # via astroid
 zipp==0.3.3               # via importlib-metadata

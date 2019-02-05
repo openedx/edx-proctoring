@@ -9,7 +9,7 @@ chardet==3.0.4            # via requests
 django-crum==0.7.3
 django-ipware==2.1.0
 django-model-utils==3.1.2
-django-waffle==0.15.0
+django-waffle==0.15.1
 django-webpack-loader==0.6.0
 django==1.11.18
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
@@ -22,10 +22,10 @@ event-tracking==0.2.7
 future==0.17.1            # via pyjwkest
 idna==2.8                 # via requests
 jsonfield==2.0.2
-newrelic==4.8.0.110       # via edx-django-utils
-pbr==5.1.1                # via stevedore
+newrelic==4.12.0.113      # via edx-django-utils
+pbr==5.1.2                # via stevedore
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
-pycryptodomex==3.7.2
+pycryptodomex==3.7.3
 pyjwkest==1.3.2           # via edx-drf-extensions
 pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.7.2            # via edx-opaque-keys, event-tracking
