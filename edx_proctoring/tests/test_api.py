@@ -1245,6 +1245,38 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             random_timestamp
         )
 
+    def test_immediate_timeout(self):
+        """
+        Verify that exams started after their due date will be immediately submitted once started
+        """
+
+        exam_attempt = ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=self.proctored_exam_id,
+            user_id=self.user_id,
+            external_id=self.external_id,
+            status='ready_to_start'
+        )
+        exam_attempt.proctored_exam.due_date = datetime.now(pytz.UTC) - timedelta(hours=4)
+        exam_attempt.proctored_exam.save()
+
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.started
+        )
+
+        exam_attempt = get_exam_attempt_by_id(exam_attempt.id)
+
+        self.assertEqual(
+            exam_attempt['status'],
+            ProctoredExamStudentAttemptStatus.submitted
+        )
+
+        self.assertEqual(
+            exam_attempt['allowed_time_limit_mins'],
+            0
+        )
+
     @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
     def test_timeout_not_submitted(self):
         """

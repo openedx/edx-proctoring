@@ -1714,7 +1714,7 @@ def _calculate_allowed_mins(exam, user_id):
         if current_datetime + timedelta(minutes=allowed_time_limit_mins) > due_datetime:
             # e.g current_datetime=09:00, due_datetime=10:00 and allowed_mins=120(2hours)
             # then allowed_mins should be 60(1hour)
-            allowed_time_limit_mins = int((due_datetime - current_datetime).total_seconds() / 60)
+            allowed_time_limit_mins = max(int((due_datetime - current_datetime).total_seconds() / 60), 0)
 
     return allowed_time_limit_mins
 
