@@ -1,23 +1,74 @@
 {% load i18n %}
 <div class="sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
   <h3>
-    {% blocktrans %}
-      Try a proctored exam
-    {% endblocktrans %}
+    {% if provider_uses_onboarding %}
+      {% blocktrans %}
+        Proctoring onboarding exam
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans %}
+        Try a proctored exam
+      {% endblocktrans %}
+    {% endif %}
   </h3>
-  <p>
-    {% blocktrans %}
-      Get familiar with proctoring for real exams later in the course. This practice exam has no impact
-      on your grade in the course.
-    {% endblocktrans %}
-  </p>
-  <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-    {% trans "Continue to my practice exam" %}
-    <span class="icon fa fa-arrow-circle-right" aria-hidden="true" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></span>
+  {% if provider_uses_onboarding %}
     <p>
       {% blocktrans %}
-        You will be guided through steps to set up online proctoring software and verify your identity.
+        Why this is important to you:
       {% endblocktrans %}
+    </p>
+    <ul>
+      <li>
+        {% blocktrans %}
+          Establish your identity with the proctoring system to take a proctored exam
+        {% endblocktrans %}
+      </li>
+      <li>
+        {% blocktrans %}
+          Create your onboarding profile for faster access in the future
+        {% endblocktrans %}
+      </li>
+      <li>
+        {% blocktrans %}
+          Practice taking a proctored test
+        {% endblocktrans %}
+      </li>
+    </ul>
+    <p>
+      {% blocktrans %}
+        You must successfully complete your onboarding profile before you start a proctored exam.
+      {% endblocktrans %}
+    </p>
+    <p>
+      {% blocktrans %}
+        The onboarding profile review can take 2+ business days. 
+      {% endblocktrans %}
+    </p>
+  {% else %}
+    <p>
+      {% blocktrans %}
+        Get familiar with proctoring for real exams later in the course. This practice exam has no impact
+        on your grade in the course.
+      {% endblocktrans %}
+    </p>
+  {% endif %}
+  <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
+    {% if provider_uses_onboarding %}
+      {% trans "Continue to onboarding" %}
+    {% else %}
+      {% trans "Continue to my practice exam" %}
+    {% endif %}
+    <span class="icon fa fa-arrow-circle-right" aria-hidden="true" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false></span>
+    <p>
+      {% if provider_uses_onboarding %}
+        {% blocktrans %}
+          You will be guided through online proctoring software set up  and identity verification. 
+        {% endblocktrans %}
+      {% else %}
+        {% blocktrans %}
+          You will be guided through steps to set up online proctoring software and verify your identity.
+        {% endblocktrans %}
+      {% endif %}
     </p>
   </button>
 </div>
