@@ -91,7 +91,7 @@ urlpatterns = [
         name='instructor_dashboard_course'
     ),
     url(
-        r'edx_proctoring/v1/backend_user/(?P<user_id>[\d]+)/$',
+        r'edx_proctoring/v1/retire_backend_user/(?P<user_id>[\d]+)/$',
         views.BackendUserManagementAPI.as_view(),
         name='backend_user_deletion_api'
     ),

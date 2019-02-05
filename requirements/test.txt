@@ -57,6 +57,7 @@ pytz==2018.9
 requests==2.21.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
 responses==0.10.5
 rest-condition==1.0.3     # via edx-drf-extensions
+rules==2.0.1
 scandir==1.9.0            # via pathlib2
 selenium==3.141.0
 semantic-version==2.6.0   # via edx-drf-extensions
