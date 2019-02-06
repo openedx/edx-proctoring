@@ -52,7 +52,7 @@ from edx_proctoring.api import (
     remove_review_policy,
     is_backend_dashboard_available,
     get_exam_configuration_dashboard_url,
-    does_course_support_onboarding,
+    does_backend_support_onboarding,
 )
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
@@ -1994,28 +1994,9 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         # backend with a dashboard
         self.assertTrue(is_backend_dashboard_available(self.course_id))
 
-    def test_does_course_support_onboarding(self):
-        ProctoredExam.objects.filter(course_id=self.course_id).delete()
-        # no exams yet
-        self.assertFalse(does_course_support_onboarding(self.course_id))
-        create_exam(
-            course_id=self.course_id,
-            content_id='test_content_1',
-            exam_name='test_exam',
-            time_limit_mins=60,
-            backend='null'
-        )
-        # backend that does not support onboarding
-        self.assertFalse(does_course_support_onboarding(self.course_id))
-        create_exam(
-            course_id=self.course_id,
-            content_id='test_content_2',
-            exam_name='test_exam2',
-            time_limit_mins=60,
-            backend='test'
-        )
-        # backend that does support onboarding
-        self.assertTrue(does_course_support_onboarding(self.course_id))
+    def test_does_provider_support_onboarding(self):
+        self.assertTrue(does_backend_support_onboarding('test'))
+        self.assertFalse(does_backend_support_onboarding('mock'))
 
     def test_exam_configuration_dashboard_url(self):
         # test if exam doesn't exist
