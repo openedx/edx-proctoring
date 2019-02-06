@@ -180,6 +180,8 @@ class ReviewTests(LoggedInTestCase):
     )
     @ddt.unpack
     def test_post_review(self, external_id, status):
+        self.user.is_staff = True
+        self.user.save()
         review = self.get_review_payload()
         if not external_id:
             external_id = self.attempt['external_id']
@@ -190,6 +192,38 @@ class ReviewTests(LoggedInTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status)
+
+    def test_post_review_auth(self):
+        review = json.dumps(self.get_review_payload())
+        external_id = self.attempt['external_id']
+        url = reverse('edx_proctoring:proctored_exam.attempt.callback',
+                      kwargs={'external_id': external_id})
+        response = self.client.post(
+            url,
+            review,
+            content_type='application/json'
+        )
+        assert response.status_code == 403
+        # staff users can review
+        self.user.is_staff = True
+        self.user.save()
+        response = self.client.post(
+            url,
+            review,
+            content_type='application/json'
+        )
+        assert response.status_code == 200
+        # user in the review group
+        group_name = '%s_review' % (self.attempt['proctored_exam']['backend'])
+        self.user.groups.get_or_create(name=group_name)
+        self.user.is_staff = False
+        self.user.save()
+        response = self.client.post(
+            url,
+            review,
+            content_type='application/json'
+        )
+        assert response.status_code == 200
 
     @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', False)
     def test_review_on_archived_attempt(self):

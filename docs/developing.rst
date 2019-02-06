@@ -86,7 +86,7 @@ Then back in your host shell::
     pip install -e .[server]
     python -m mockprock.server
 
-The command will tell you you have to supply an client_id and client_secret. It'll open your browser to the django admin page where you should create or use an existing credential. Note the client_id and client_secret and restart the server::
+The command will tell you you have to supply an client_id and client_secret. It'll open your browser to the Django admin page where you should create or use an existing credential. You'll also need to add the user associated with the credential to the "mockprock_review" Django group. You can create the group at ``/admin/auth/group/``. Note the client_id and client_secret and restart the server::
 
     python -m mockprock.server {client_id} {client_secret}
 
