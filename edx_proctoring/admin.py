@@ -461,7 +461,8 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         """Don't allow adds"""
-        return False
+        # NOTE(idegtiarov) OSPP has self proctored exams and add proctored exam attempt manually is required.
+        return True
 
     def has_delete_permission(self, request, obj=None):
         """Don't allow deletes"""
