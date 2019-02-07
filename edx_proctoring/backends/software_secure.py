@@ -75,8 +75,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.timeout = 10
         self.software_download_url = software_download_url
         self.send_email = send_email
-        self.passing_review_status = ['Clean', 'Rules Violation']
-        self.failing_review_status = ['Not Reviewed', 'Suspicious']
+        self.allowed_review_statuses = ['Not Reviewed', 'Suspicious', 'Clean', 'Rules Violation']
+        self.passing_review_status = ['Clean', ]
+        self.violated_review_status = ['Rules Violation', ]
         self.notify_support_for_status = ['Suspicious', 'Rules Violation']
 
     def register_exam_attempt(self, exam, context):
@@ -145,32 +146,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         documentation named "Reviewer Data Transfer"
         """
 
-        # redact the videoReviewLink from the payload
-        if 'videoReviewLink' in payload:
-            if (
-                    payload['reviewStatus'] in self.notify_support_for_status and SEND_EMAIL
-                    and settings.EXAM_REVIEWER_EMAILS
-            ):
-                msg = 'Exam attempt code: {}; video review link: {}'.format(
-                    payload['examMetaData']['examCode'], payload['videoReviewLink']
-                )
-                for email in settings.EXAM_REVIEWER_EMAILS:
-                    log.info("videoReviewLink is sent to the reviewer's email: {}".format(email))
-                    send_exam_review_email.delay(
-                        '[OSPP] Exam Video Review Link',
-                        msg,
-                        settings.DEFAULT_FROM_EMAIL,
-                        email
-                    )
-            del payload['videoReviewLink']
-
-        log_msg = (
-            'Received callback from SoftwareSecure with review data: {payload}'.format(
-                payload=payload
-            )
-        )
-        log.info(log_msg)
-
         # what we consider the external_id is SoftwareSecure's 'ssiRecordLocator'
         external_id = payload['examMetaData']['ssiRecordLocator']
 
@@ -180,9 +155,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # get the SoftwareSecure status on this attempt
         review_status = payload['reviewStatus']
 
-        bad_status = review_status not in self.passing_review_status + self.failing_review_status
-
-        if bad_status:
+        if review_status not in self.allowed_review_statuses:
             err_msg = (
                 'Received unexpected reviewStatus field calue from payload. '
                 'Was {review_status}.'.format(review_status=review_status)
@@ -201,6 +174,33 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                 'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
+
+        # redact the videoReviewLink from the payload
+        if 'videoReviewLink' in payload:
+            if (
+                    payload['reviewStatus'] in self.notify_support_for_status
+                    and attempt_obj.status != ProctoredExamStudentAttemptStatus.second_review_required
+                    and SEND_EMAIL and settings.EXAM_REVIEWER_EMAILS
+            ):
+                msg = 'Exam attempt code: {}; video review link: {}; student email: {}'.format(
+                    payload['examMetaData']['examCode'], payload['videoReviewLink'], payload.get('examTakerEmail')
+                )
+                for email in settings.EXAM_REVIEWER_EMAILS:
+                    log.info("videoReviewLink is sent to the reviewer's email: {}".format(email))
+                    send_exam_review_email.delay(
+                        '[OSPP] Exam Video Review Link',
+                        msg,
+                        settings.DEFAULT_FROM_EMAIL,
+                        email
+                    )
+            del payload['videoReviewLink']
+
+        log_msg = (
+            'Received callback from SoftwareSecure with review data: {payload}'.format(
+                payload=payload
+            )
+        )
+        log.info(log_msg)
 
         # then make sure we have the right external_id
         # note that SoftwareSecure might send a case insensitive
@@ -275,8 +275,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             # api.py imports software_secure.py, so we'll get an import circular reference
 
             allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
-
-            self.on_review_saved(review, allow_rejects=allow_rejects)
+            self.on_review_saved(
+                review,
+                allow_rejects=allow_rejects
+            )
 
         # emit an event for 'review_received'
         data = {
@@ -314,17 +316,17 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             log.warn(err_msg)
             return
 
-        # only 'Clean' and 'Rules Violation' count as passing
-        status = (
-            ProctoredExamStudentAttemptStatus.verified
-            if review.review_status in self.passing_review_status
-            else (
+        if review.review_status in self.passing_review_status:
+            status = ProctoredExamStudentAttemptStatus.verified
+        elif review.review_status in self.violated_review_status:
+            status = (
                 # if we are not allowed to store 'rejected' on this
                 # code path, then put status into 'second_review_required'
                 ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
                 ProctoredExamStudentAttemptStatus.second_review_required
             )
-        )
+        else:
+            status = ProctoredExamStudentAttemptStatus.second_review_required
 
         # updating attempt status will trigger workflow
         # (i.e. updating credit eligibility table)
@@ -333,7 +335,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         update_attempt_status(
             attempt_obj.proctored_exam_id,
             attempt_obj.user_id,
-            status
+            status,
         )
 
     def _save_review_comment(self, review, comment):
