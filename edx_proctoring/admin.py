@@ -396,20 +396,22 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
     """
 
     readonly_fields = [
-        'user',
-        'proctored_exam',
-        'started_at',
-        'completed_at',
+        # NOTE(idegtiarov) OSPP required to add manually proctored exam attempts, next fields are removed from the
+        #  read-only mode
+        # 'user',
+        # 'proctored_exam',
+        # 'started_at',
+        # 'completed_at',
         'last_poll_timestamp',
         'last_poll_ipaddr',
-        'attempt_code',
-        'external_id',
-        'allowed_time_limit_mins',
-        'taking_as_proctored',
-        'is_sample_attempt',
+        # 'attempt_code',
+        # 'external_id',
+        # 'allowed_time_limit_mins',
+        # 'taking_as_proctored',
+        # 'is_sample_attempt',
         'student_name',
         'review_policy_id',
-        'is_status_acknowledged'
+        # 'is_status_acknowledged'
     ]
 
     list_display = [
