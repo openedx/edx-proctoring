@@ -23,9 +23,15 @@ def setup_test_backends():
 def setup_test_perms():
     """
     Create missing permissions that would be defined in edx-platform,
-    or elsewhere
+    or elsewhere.
+
+    edx-platform imports tests from edx-proctoring, which causes duplicate
+    rules, so ignore the KeyError thrown by the rules package.
     """
-    rules.add_perm('accounts.can_retire_user', rules.is_staff)
+    try:
+        rules.add_perm('accounts.can_retire_user', rules.is_staff)
+    except KeyError:
+        pass
 
 
 setup_test_backends()
