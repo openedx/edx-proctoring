@@ -112,6 +112,8 @@ class ReviewTests(LoggedInTestCase):
         """
         Simulates callbacks from SoftwareSecure with various statuses
         """
+        # if psi_review_status == 'Suspicious':
+        #     import pudb; pu.db
         test_payload = json.loads(create_test_review_payload(
             attempt_code=self.attempt['attempt_code'],
             external_id=self.attempt['external_id'],
@@ -308,37 +310,6 @@ class ReviewTests(LoggedInTestCase):
         self.assertEqual(records[1].review_status, SoftwareSecureReviewStatus.suspicious)
 
     @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', True)
-    def test_failure_submission(self):
-        """
-        Tests that a submission of a failed test and make sure that we
-        don't automatically update the status to failure
-        """
-        test_payload = self.get_review_payload(ReviewStatus.suspicious)
-
-        allow_rejects = not constants.REQUIRE_FAILURE_SECOND_REVIEWS
-        # submit a Suspicious review payload
-        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
-
-        # now look at the attempt and make sure it did not
-        # transition to failure on the callback,
-        # as we'll need a manual confirmation via Django Admin pages
-        attempt = get_exam_attempt_by_id(self.attempt_id)
-        self.assertNotEqual(attempt['status'], ProctoredExamStudentAttemptStatus.rejected)
-
-        review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=self.attempt['attempt_code'])
-
-        attempt = get_exam_attempt_by_id(self.attempt_id)
-
-        # if we don't allow rejects to be stored in attempt status
-        # then we should expect a 'second_review_required' status
-        expected_status = (
-            ProctoredExamStudentAttemptStatus.rejected if allow_rejects else
-            ProctoredExamStudentAttemptStatus.second_review_required
-        )
-        self.assertEqual(attempt['status'], expected_status)
-        self.assertEqual(review.review_status, SoftwareSecureReviewStatus.suspicious)
-
-    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', True)
     def test_failure_submission_rejected(self):
         """
         Tests that a submission of a failed test and make sure that we
@@ -415,7 +386,7 @@ class ReviewTests(LoggedInTestCase):
             ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
 
             attempt = get_exam_attempt_by_id(self.attempt_id)
-            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.second_review_required)
+            self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.rejected)
 
     def test_status_reviewed_by_field(self):
         """

@@ -775,7 +775,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     """
     Internal helper to handle state transitions of attempt status
     """
-
+    # import pudb; pu.db
     log_msg = (
         'Updating attempt status for exam_id {exam_id} '
         'for user_id {user_id} to status {to_status}'.format(
