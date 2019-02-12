@@ -49,10 +49,15 @@ var edx = edx || {};
        });
   };
 
+  function createWorker(url) {
+    var blob = new Blob(["importScripts('" + location.origin + url + "');"], { "type": 'application/javascript' });
+    var blobUrl = window.URL.createObjectURL(blob);
+    return new Worker(blobUrl);
+  }
 
   function workerPromiseForEventNames(eventNames) {
     return function() {
-      var proctoringBackendWorker = new Worker(edx.courseware.proctored_exam.configuredWorkerURL);
+      var proctoringBackendWorker = createWorker(edx.courseware.proctored_exam.configuredWorkerURL);
       return new Promise(function(resolve, reject) {
         var responseHandler = function(e) {
           if (e.data.type === eventNames.successEventName) {
