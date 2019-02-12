@@ -141,7 +141,11 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
     # eligibility table
     if review.is_passing:
         attempt_status = ProctoredExamStudentAttemptStatus.verified
-    elif review.review_status == SoftwareSecureReviewStatus.suspicious or not constants.REQUIRE_FAILURE_SECOND_REVIEWS:
+    # If we do not require second reviews for rejection, and the review is not passing,
+    # move immediately to rejected state.
+    elif not constants.REQUIRE_FAILURE_SECOND_REVIEWS:
+        attempt_status = ProctoredExamStudentAttemptStatus.rejected
+    elif review.review_status == SoftwareSecureReviewStatus.suspicious:
         attempt_status = ProctoredExamStudentAttemptStatus.second_review_required
     else:
         attempt_status = ProctoredExamStudentAttemptStatus.rejected

@@ -112,8 +112,6 @@ class ReviewTests(LoggedInTestCase):
         """
         Simulates callbacks from SoftwareSecure with various statuses
         """
-        # if psi_review_status == 'Suspicious':
-        #     import pudb; pu.db
         test_payload = json.loads(create_test_review_payload(
             attempt_code=self.attempt['attempt_code'],
             external_id=self.attempt['external_id'],
