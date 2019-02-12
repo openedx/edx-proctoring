@@ -212,7 +212,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(proctored_exam['exam_name'], self.exam_name)
 
         exams = get_all_exams_for_course(self.course_id)
-        self.assertEqual(len(exams), 4)
+        self.assertEqual(len(exams), 5)
 
     def test_create_exam_review_policy(self):
         """
@@ -397,9 +397,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(timed_exam['course_id'], self.course_id)
         self.assertEqual(timed_exam['content_id'], self.content_id_timed)
         self.assertEqual(timed_exam['exam_name'], self.exam_name)
-
-        exams = get_all_exams_for_course(self.course_id)
-        self.assertEqual(len(exams), 4)
 
     def test_get_invalid_proctored_exam(self):
         """
@@ -2014,7 +2011,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(get_exam_configuration_dashboard_url(self.course_id, 'test_content_1'), None)
 
         # test if exam exists and dashboard is available
-        create_exam(
+        exam_id = create_exam(
             course_id=self.course_id,
             content_id='test_content_2',
             exam_name='test_exam2',
@@ -2023,7 +2020,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         self.assertEqual(
             get_exam_configuration_dashboard_url(self.course_id, 'test_content_2'),
-            '/edx_proctoring/v1/instructor/a/b/c/6?config=true'
+            '/edx_proctoring/v1/instructor/a/b/c/{}?config=true'.format(exam_id)
         )
 
     def test_clear_onboarding_errors(self):
@@ -2038,9 +2035,9 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         assert get_exam_attempt_by_id(attempt_id)['status'] == ProctoredExamStudentAttemptStatus.onboarding_missing
 
         # now create the practice attempt
-        create_exam_attempt(self.practice_exam_id, self.user_id)
+        create_exam_attempt(self.onboarding_exam_id, self.user_id)
         # and move the status to verified
-        update_attempt_status(self.practice_exam_id, self.user_id, ProctoredExamStudentAttemptStatus.verified)
+        update_attempt_status(self.onboarding_exam_id, self.user_id, ProctoredExamStudentAttemptStatus.verified)
         # now the original attempt will be deleted
         assert get_exam_attempt_by_id(attempt_id) is None
         # ensure that the attempt is still in the history table

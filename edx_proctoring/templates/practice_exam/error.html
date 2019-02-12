@@ -1,51 +1,36 @@
 {% load i18n %}
 <div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
   <h3>
-    {% if provider_uses_onboarding %}
-      {% blocktrans %}
-        There was a problem with your onboarding session
-      {% endblocktrans %}
-    {% else %}
+    {% block title %}
       {% blocktrans %}
         There was a problem with your practice proctoring session
       {% endblocktrans %}
-    {% endif %}
+    {% endblock %}
   </h3>
 
+  {% block secondary_heading %}
   <h4>
-    {% if provider_uses_onboarding %}
-      {% blocktrans %}
-        Your onboarding results: <b class="failure"> Unsatisfactory </b>
-      {% endblocktrans %}
-    {% else %}
-      {% blocktrans %}
-        Your practice proctoring results: <b class="failure"> Unsatisfactory </b>
-      {% endblocktrans %}
-    {% endif %}
+    {% blocktrans %}
+      Your practice proctoring results: <b class="failure"> Unsatisfactory </b>
+    {% endblocktrans %}
   </h4>
+  {% endblock %}
 
   <p>
-    {% if provider_uses_onboarding %}
-      {% blocktrans %}
-        Your proctoring session ended before you completed this onboarding exam.
-        You can retry this onboarding exam if you had problems setting up the online proctoring software.
-      {% endblocktrans %}
-    {% else %}
+    {% block body_text %}
       {% blocktrans %}
         Your proctoring session ended before you completed this practice exam.
         You can retry this practice exam if you had problems setting up the online proctoring software.
       {% endblocktrans %}
-    {% endif %}
+    {% endblock %}
   </p>
   <hr>
   <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
     <span class="icon fa fa-lock" aria-hidden="true"></span>
     <a>
-      {% if provider_uses_onboarding %}
-        {% trans "Try this onboarding exam again" %}
-      {% else %}
+      {% block retry_cta %}
         {% trans "Try this practice exam again" %}
-      {% endif %}
+      {% endblock %}
     </a>
   </button>
 </div>

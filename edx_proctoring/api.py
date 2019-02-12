@@ -1767,7 +1767,9 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'provider_tech_support_email': provider.tech_support_email,
         'provider_tech_support_phone': provider.tech_support_phone,
         'provider_name': provider.verbose_name,
-        'provider_uses_onboarding': provider.supports_onboarding,
+        'learner_notification_from_email': provider.learner_notification_from_email,
+        'integration_specific_email': provider.integration_specific_email,
+        'exam_display_name': exam['exam_name'],
     }
     if attempt:
         context['exam_code'] = attempt['attempt_code']
@@ -1810,6 +1812,44 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'practice_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
+
+    if student_view_template:
+        template = loader.get_template(student_view_template)
+        context.update(_get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_exam=True))
+        return template.render(context)
+
+
+def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
+    """
+    Returns a rendered view for onboarding exams, which for some backends establish a user's profile
+    """
+    student_view_template = None
+
+    attempt = get_exam_attempt(exam_id, user_id)
+
+    attempt_status = attempt['status'] if attempt else None
+
+    if not attempt_status:
+        student_view_template = 'onboarding_exam/entrance.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.started:
+        # when we're taking the exam we should not override the view
+        return None
+    elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
+                            ProctoredExamStudentAttemptStatus.download_software_clicked]:
+        student_view_template = 'proctored_exam/instructions.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_start:
+        student_view_template = 'proctored_exam/ready_to_start.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.error:
+        student_view_template = 'onboarding_exam/error.html'
+    elif attempt_status in [ProctoredExamStudentAttemptStatus.submitted,
+                            ProctoredExamStudentAttemptStatus.second_review_required]:
+        student_view_template = 'onboarding_exam/submitted.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
+        student_view_template = 'onboarding_exam/ready_to_submit.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.verified:
+        student_view_template = 'onboarding_exam/verified.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.rejected:
+        student_view_template = 'onboarding_exam/rejected.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -2025,11 +2065,16 @@ def get_student_view(user_id, course_id, content_id,
     is_proctored_exam = exam['is_proctored'] and not exam['is_practice_exam']
     is_timed_exam = not exam['is_proctored'] and not exam['is_practice_exam']
 
+    exam_backend = get_backend_provider(name=exam['backend'])
+
     sub_view_func = None
     if is_timed_exam:
         sub_view_func = _get_timed_exam_view
     elif is_practice_exam and not has_due_date_passed(course_end_date):
-        sub_view_func = _get_practice_exam_view
+        if exam_backend.supports_onboarding:
+            sub_view_func = _get_onboarding_exam_view
+        else:
+            sub_view_func = _get_practice_exam_view
     elif is_proctored_exam and not has_due_date_passed(course_end_date):
         sub_view_func = _get_proctored_exam_view
 

@@ -15,6 +15,8 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
     verbose_name = u'Unknown'
     ping_interval = constants.DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS
     tech_support_email = ''
+    learner_notification_from_email = ''
+    integration_specific_email = ''
     tech_support_phone = ''
     # whether this backend supports an instructor review/configuration dashboard
     has_dashboard = False
