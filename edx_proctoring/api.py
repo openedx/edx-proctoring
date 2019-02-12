@@ -807,40 +807,12 @@ def update_attempt_status(exam_id, user_id, to_status,
 
     exam_attempt_obj.save()
 
-    # see if the status transition this changes credit requirement status
-    if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
-
-        # trigger credit workflow, as needed
-        credit_service = get_runtime_service('credit')
-
-        if to_status == ProctoredExamStudentAttemptStatus.verified:
-            credit_requirement_status = 'satisfied'
-        elif to_status == ProctoredExamStudentAttemptStatus.submitted:
-            credit_requirement_status = 'submitted'
-        elif to_status == ProctoredExamStudentAttemptStatus.declined:
-            credit_requirement_status = 'declined'
-        else:
-            credit_requirement_status = 'failed'
-
-        log_msg = (
-            'Calling set_credit_requirement_status for '
-            'user_id {user_id} on {course_id} for '
-            'content_id {content_id}. Status: {status}'.format(
-                user_id=exam_attempt_obj.user_id,
-                course_id=exam['course_id'],
-                content_id=exam_attempt_obj.proctored_exam.content_id,
-                status=credit_requirement_status
-            )
-        )
-        log.info(log_msg)
-
-        credit_service.set_credit_requirement_status(
-            user_id=exam_attempt_obj.user_id,
-            course_key_or_id=exam['course_id'],
-            req_namespace='proctored_exam',
-            req_name=exam_attempt_obj.proctored_exam.content_id,
-            status=credit_requirement_status
-        )
+    update_credit_status(
+        exam_attempt_obj.user_id,
+        exam['course_id'],
+        exam_attempt_obj.proctored_exam.content_id,
+        to_status
+    )
 
     if cascade_effects and ProctoredExamStudentAttemptStatus.is_a_cascadable_failure(to_status):
         if to_status == ProctoredExamStudentAttemptStatus.declined:
@@ -924,6 +896,43 @@ def update_attempt_status(exam_id, user_id, to_status,
     emit_event(exam, attempt['status'], attempt=attempt)
 
     return attempt['id']
+
+
+def update_credit_status(user_id, course_id, exam_content_id, to_status):
+    # see if the status transition this changes credit requirement status
+    if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
+
+        # trigger credit workflow, as needed
+        credit_service = get_runtime_service('credit')
+
+        if to_status == ProctoredExamStudentAttemptStatus.verified:
+            credit_requirement_status = 'satisfied'
+        elif to_status == ProctoredExamStudentAttemptStatus.submitted:
+            credit_requirement_status = 'submitted'
+        elif to_status == ProctoredExamStudentAttemptStatus.declined:
+            credit_requirement_status = 'declined'
+        else:
+            credit_requirement_status = 'failed'
+
+        log_msg = (
+            'Calling set_credit_requirement_status for '
+            'user_id {user_id} on {course_id} for '
+            'content_id {content_id}. Status: {status}'.format(
+                user_id=user_id,
+                course_id=course_id,
+                content_id=exam_content_id,
+                status=credit_requirement_status
+            )
+        )
+        log.info(log_msg)
+
+        credit_service.set_credit_requirement_status(
+            user_id=user_id,
+            course_key_or_id=course_id,
+            req_namespace='proctored_exam',
+            req_name=exam_content_id,
+            status=credit_requirement_status
+        )
 
 
 def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_name):
