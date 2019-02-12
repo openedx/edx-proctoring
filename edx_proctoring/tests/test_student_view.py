@@ -168,18 +168,6 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         })
         self.assertIsNotNone(rendered_response)
 
-    def test_get_honor_view(self):
-        """
-        Test for get_student_view prompting when the student is enrolled in non-verified
-        track, this should return None
-        """
-        rendered_response = self.render_proctored_exam({
-            'credit_state': {
-                'enrollment_mode': 'honor'
-            },
-        })
-        self.assertIsNone(rendered_response)
-
     @ddt.data(
         (None, 'Make sure you are on a computer with a webcam, and that you have valid photo identification'),
         ('pending', 'Your verification is pending'),
@@ -334,8 +322,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         Verify that we get a None back on a proctored exam
         if the course end date is passed
         """
-
-        set_runtime_service('credit', MockCreditServiceWithCourseEndDate())
+        credit_state = MockCreditServiceWithCourseEndDate().get_credit_state(self.user_id, 'foo', True)
 
         rendered_response = get_student_view(
             user_id=self.user_id,
@@ -348,6 +335,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 'default_time_limit_mins': 90,
                 'due_date': None,
                 'hide_after_due': False,
+                'credit_state': credit_state,
             },
             user_role='student'
         )
@@ -358,8 +346,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         Verify that we get a None back on a practice exam
         if the course end date is passed
         """
-
-        set_runtime_service('credit', MockCreditServiceWithCourseEndDate())
+        credit_state = MockCreditServiceWithCourseEndDate().get_credit_state(self.user_id, 'foo', True)
 
         rendered_response = get_student_view(
             user_id=self.user_id,
@@ -372,6 +359,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 'default_time_limit_mins': 90,
                 'due_date': None,
                 'hide_after_due': False,
+                'credit_state': credit_state,
             },
             user_role='student'
         )
