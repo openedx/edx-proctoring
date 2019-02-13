@@ -11,6 +11,8 @@ import jwt
 from webpack_loader.utils import get_files
 from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleLookupError
 
+from django.conf import settings
+
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
@@ -122,6 +124,13 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
                 u'Webpack stats file corresponding to WebWorkers not found: {}'
                 .format(str(err))
             )
+
+        # if the Javascript URL is not an absolute URL (i.e. doesn't have a scheme), prepend
+        # the LMS Root URL to it, if it is defined, to make it an absolute URL
+        if not js_url.startswith('http'):
+            if hasattr(settings, 'LMS_ROOT_URL'):
+                js_url = settings.LMS_ROOT_URL + js_url
+
         return js_url
 
     def get_software_download_url(self):
@@ -297,7 +306,6 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         # This import is here because developers writing backends which subclass this class
         # may want to import this module and use the other methods, without having to run in the context
         # of django settings, etc.
-        from django.conf import settings
         from django.utils.translation import get_language
 
         current_lang = get_language()

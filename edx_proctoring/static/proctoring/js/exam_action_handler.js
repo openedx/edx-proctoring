@@ -50,7 +50,7 @@ var edx = edx || {};
   };
 
   function createWorker(url) {
-    var blob = new Blob(["importScripts('" + location.origin + url + "');"], { "type": 'application/javascript' });
+    var blob = new Blob(["importScripts('" + url + "');"], { "type": 'application/javascript' });
     var blobUrl = window.URL.createObjectURL(blob);
     return new Worker(blobUrl);
   }
