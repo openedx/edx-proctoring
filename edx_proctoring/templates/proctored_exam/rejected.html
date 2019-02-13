@@ -1,24 +1,30 @@
 {% load i18n %}
 <div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
   <h3>
-    {% blocktrans %}
-      Your proctoring session was reviewed, but did not pass all requirements
-    {% endblocktrans %}
+    {% block title %}
+      {% blocktrans %}
+        Your proctoring session was reviewed, but did not pass all requirements
+      {% endblocktrans %}
+    {% endblock %}
   </h3>
 
-  <p>
-    {% blocktrans %}
-      If you have questions about the status of your proctoring session results, contact {{ platform_name }} Support.
-    {% endblocktrans %}
-  </p>
-  {% include 'proctored_exam/visit_exam_content.html' %}
+  {% block body %}
+    <p>
+      {% blocktrans %}
+        If you have questions about the status of your proctoring session results, contact {{ platform_name }} Support.
+      {% endblocktrans %}
+    </p>
+    {% include 'proctored_exam/visit_exam_content.html' %}
+  {% endblock %}
 </div>
-<div class="footer-sequence border-b-0 padding-b-0">
-  <p>
-    {% blocktrans %}
-      If you have concerns about your proctoring session results, contact your course team.
-    {% endblocktrans %}
-  </p>
-  <div class="clearfix"></div>
-</div>
+{% block footer_content %}
+  <div class="footer-sequence border-b-0 padding-b-0">
+    <p>
+      {% blocktrans %}
+        If you have concerns about your proctoring session results, contact your course team.
+      {% endblocktrans %}
+    </p>
+    <div class="clearfix"></div>
+  </div>
+{% endblock %}
 {% include 'proctored_exam/footer.html' %}

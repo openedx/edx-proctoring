@@ -1,51 +1,24 @@
 {% load i18n %}
 <div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
   <h3>
-    {% if provider_uses_onboarding %}
-      {% blocktrans %}
-        You have submitted this onboarding exam
-      {% endblocktrans %}
-    {% else %}
+    {% block title %}
       {% blocktrans %}
         You have submitted this practice proctored exam
       {% endblocktrans %}
-    {% endif %}
+    {% endblock %}
   </h3>
 
-  {% if provider_uses_onboarding %}
-    <p>
-      {% blocktrans %}
-        You have submitted your onboarding profile for
-        review and can continue with your course work. Onboarding
-        profile review, including identity verification, can take 2+
-        business days. You will be notified via email once your
-        profile has been reviewed.
-      {% endblocktrans %}
-    </p>
-    <p>
-    {% blocktrans %}
-      Please contact edX Support if you have questions about your
-      onboarding status.
-    {% endblocktrans %}
-    </p>
-  {% else %}
+  {% block body %}
     <p>
       {% blocktrans %}
         Practice exams do not affect your grade.
         You have completed this practice exam and can continue with your course work.
       {% endblocktrans %}
     </p>
-  {% endif %}
-  <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
-    
-    <a>
-      {% if provider_uses_onboarding %}
-        {% trans "You can also retry this onboarding exam" %}
-      {% else %}
-        {% trans "You can also retry this practice exam" %}
-      {% endif %}
-    </a>
-  </button>
+    <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
+      {% trans "You can also retry this practice exam" %}
+    </button>
+  {% endblock %}
 </div>
 <script type="text/javascript">
   $('.start-timed-exam').click(

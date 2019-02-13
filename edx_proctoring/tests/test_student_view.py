@@ -61,7 +61,6 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.proctored_exam_optout_msg = 'Take this exam without proctoring'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
-        self.onboarding_exam_submitted_msg = 'You have submitted this onboarding exam'
         self.take_exam_without_proctoring_msg = 'Take this exam without proctoring'
         self.ready_to_start_msg = 'Important'
         self.footer_msg = 'About Proctored Exams'
@@ -130,6 +129,12 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             self.practice_exam_id,
             context_overrides=exam_context_overrides
         )
+
+    def render_onboarding_exam(self):
+        """
+        Renders a test practice exam.
+        """
+        return self._render_exam(self.onboarding_exam_id)
 
     def test_get_student_view(self):
         """
@@ -744,22 +749,66 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             )
             self.assertIsNotNone(rendered_response)
 
-    def test_get_studentview_submitted_status_practiceexam(self):
+    def test_get_studentview_started_onboarding(self):
         """
-        Test for get_student_view practice exam which has been submitted.
+        Test fallthrough page case for onboarding exams
         """
-        exam_attempt = self._create_started_practice_exam_attempt()
-        exam_attempt.status = ProctoredExamStudentAttemptStatus.submitted
+        exam_attempt = self._create_onboarding_attempt()
+        exam_attempt.status = ProctoredExamStudentAttemptStatus.started
         exam_attempt.save()
+        rendered_response = self.render_onboarding_exam()
+        self.assertEqual(rendered_response, None)
 
-        rendered_response = self.render_practice_exam()
-        self.assertIn(self.onboarding_exam_submitted_msg, rendered_response)
+    def test_get_studentview_new_onboarding(self):
+        """
+        Test entrance page case for onboarding exams
+        """
+        rendered_response = self.render_onboarding_exam()
+        self.assertIn('Proctoring onboarding exam', rendered_response)
 
     @ddt.data(
-        ProctoredExamStudentAttemptStatus.created,
-        ProctoredExamStudentAttemptStatus.download_software_clicked,
+        (ProctoredExamStudentAttemptStatus.created,
+         'Follow these steps to set up and start your proctored exam'),
+        (ProctoredExamStudentAttemptStatus.download_software_clicked,
+         'Follow these steps to set up and start your proctored exam'),
+        (ProctoredExamStudentAttemptStatus.ready_to_start,
+         'Proctored Exam Rules'),
+        (ProctoredExamStudentAttemptStatus.error,
+         'There was a problem with your onboarding session'),
+        (ProctoredExamStudentAttemptStatus.submitted,
+         'You have submitted this onboarding exam'),
+        (ProctoredExamStudentAttemptStatus.second_review_required,
+         'You have submitted this onboarding exam'),
+        (ProctoredExamStudentAttemptStatus.ready_to_submit,
+         'and submit your proctoring session to complete onboarding'),
+        (ProctoredExamStudentAttemptStatus.verified,
+         'Your onboarding profile was reviewed successfully'),
+        (ProctoredExamStudentAttemptStatus.rejected,
+         'Your onboarding session was reviewed, but did not pass all requirements'),
     )
-    def test_get_studentview_created_status_practiceexam(self, status):
+    @ddt.unpack
+    def test_get_studentview_created_status_onboarding(self, status, expected_message):
+        """
+        Test for get_student_view practice exam which has been created.
+        """
+        exam_attempt = self._create_onboarding_attempt()
+        exam_attempt.status = status
+        exam_attempt.save()
+        rendered_response = self.render_onboarding_exam()
+        self.assertIn(expected_message, rendered_response)
+
+    @ddt.data(
+        (ProctoredExamStudentAttemptStatus.created,
+         'Follow these steps to set up and start your proctored exam'),
+        (ProctoredExamStudentAttemptStatus.download_software_clicked,
+         'Follow these steps to set up and start your proctored exam'),
+        (ProctoredExamStudentAttemptStatus.submitted,
+         'You have submitted this practice proctored exam'),
+        (ProctoredExamStudentAttemptStatus.error,
+         'There was a problem with your practice proctoring session'),
+    )
+    @ddt.unpack
+    def test_get_studentview_created_status_practiceexam(self, status, expected_message):
         """
         Test for get_student_view practice exam which has been created.
         """
@@ -767,7 +816,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt.status = status
         exam_attempt.save()
         rendered_response = self.render_practice_exam()
-        self.assertIn('Follow these steps to set up and start your proctored exam', rendered_response)
+        self.assertIn(expected_message, rendered_response)
 
     def test_get_studentview_ready_to_start_status_practiceexam(self):
         """
@@ -840,17 +889,6 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         )
         rendered_response = self.render_proctored_exam()
         self.assertIn(self.exam_time_error_msg, rendered_response)
-
-    def test_get_studentview_erroneous_practice_exam(self):
-        """
-        Test for get_student_view practice exam which has exam status error.
-        """
-        exam_attempt = self._create_started_practice_exam_attempt()
-        exam_attempt.status = ProctoredExamStudentAttemptStatus.error
-        exam_attempt.save()
-
-        rendered_response = self.render_practice_exam()
-        self.assertIn('There was a problem with your onboarding session', rendered_response)
 
     def test_get_studentview_unstarted_timed_exam(self):
         """

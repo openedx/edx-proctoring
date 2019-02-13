@@ -1,0 +1,39 @@
+{% extends 'practice_exam/submitted.html' %}
+{% load i18n %}
+{% block title %}
+  {% blocktrans %}
+    You have submitted this onboarding exam
+  {% endblocktrans %}
+{% endblock %}
+
+{% block body %}
+  <p>
+    {% blocktrans %}
+      If you do not have an onboarding profile with the system,
+      Verificient will review your submission and create an onboarding
+      profile, to grant you access to proctored exams.  Onboarding
+      profile review, including identity verification, can take 2+
+      business days.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+      Once your profile has been reviewed, you will receive an email
+      with review results. The email will come from
+      <a href="mailto:{{ learner_notification_from_email }}">
+        {{ learner_notification_from_email }}
+      </a>,
+      so make sure this email has been added to your inbox filter.
+    {% endblocktrans %}
+  </p>
+
+  <p>
+    {% blocktrans %}
+      Please contact
+      <a href="mailto:{{ integration_specific_email }}">
+        {{ integration_specific_email }}
+      </a> if you have questions.
+    {% endblocktrans %}
+  </p>
+{% endblock %}
+

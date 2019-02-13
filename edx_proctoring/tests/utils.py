@@ -114,6 +114,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
         self.content_id = 'test_content_id'
         self.content_id_timed = 'test_content_id_timed'
         self.content_id_practice = 'test_content_id_practice'
+        self.content_id_onboarding = 'test_content_id_onboarding'
         self.disabled_content_id = 'test_disabled_content_id'
         self.exam_name = 'Test Exam'
         self.user_id = self.user.id
@@ -123,6 +124,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
         self.proctored_exam_id = self._create_proctored_exam()
         self.timed_exam_id = self._create_timed_exam()
         self.practice_exam_id = self._create_practice_exam()
+        self.onboarding_exam_id = self._create_onboarding_exam()
         self.disabled_exam_id = self._create_disabled_exam()
 
         set_runtime_service('credit', MockCreditService())
@@ -251,7 +253,22 @@ class ProctoredExamTestCase(LoggedInTestCase):
             exam_name=self.exam_name,
             time_limit_mins=self.default_time_limit,
             is_practice_exam=True,
-            is_proctored=True
+            is_proctored=True,
+            backend='null',
+        )
+
+    def _create_onboarding_exam(self):
+        """
+        Create an onboarding exam
+        """
+        return create_exam(
+            course_id=self.course_id,
+            content_id=self.content_id_onboarding,
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
         )
 
     def _create_disabled_exam(self):
@@ -290,6 +307,12 @@ class ProctoredExamTestCase(LoggedInTestCase):
         attempt.save()
 
         return attempt
+
+    def _create_onboarding_attempt(self):
+        """
+        Create onboarding attempt
+        """
+        return self._create_exam_attempt(self.onboarding_exam_id)
 
     def _create_unstarted_exam_attempt(self, is_proctored=True, is_practice=False):
         """

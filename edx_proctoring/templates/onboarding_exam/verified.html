@@ -1,0 +1,23 @@
+{% extends 'proctored_exam/verified.html' %}
+{% load i18n %}
+{% block title %}
+  {% blocktrans %}
+    Your onboarding profile was reviewed successfully
+  {% endblocktrans %}
+{% endblock %}
+
+{% block body %}
+  <p>
+    {% blocktrans %}
+      Your profile has been established, and you're ready to take proctored exams in this course.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+      Please contact
+      <a href="mailto:{{ integration_specific_email }}">
+        {{ integration_specific_email }}
+      </a> if you have questions.
+    {% endblocktrans %}
+  </p>
+{% endblock %}

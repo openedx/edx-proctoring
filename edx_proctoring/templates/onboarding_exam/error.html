@@ -1,0 +1,22 @@
+{% extends 'practice_exam/error.html' %}
+{% load i18n %}
+{% block title %}
+  {% blocktrans %}
+    Error: There was a problem with your onboarding session
+  {% endblocktrans %}
+{% endblock %}
+
+{% block secondary_heading %}
+{% endblock %}
+
+{% block body_text %}
+  {% blocktrans %}
+    Your proctoring session ended before you completed this onboarding exam.
+    You should retry this onboarding exam.
+  {% endblocktrans %}
+{% endblock %}
+
+{% block retry_cta %}
+  {% trans "Try again" %}
+{% endblock %}
+

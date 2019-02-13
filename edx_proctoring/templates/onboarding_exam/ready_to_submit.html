@@ -1,0 +1,10 @@
+{% extends 'proctored_exam/ready_to_submit.html' %}
+{% load i18n %}
+
+{% block additional_exhortation %}
+  <p>
+    {% blocktrans %}
+      You are taking "{{ exam_display_name }}" as an onboarding exam. You must click “Yes, end my proctored exam” and submit your proctoring session to complete onboarding.
+    {% endblocktrans %}
+  </p>
+{% endblock %}
