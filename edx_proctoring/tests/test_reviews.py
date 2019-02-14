@@ -369,6 +369,17 @@ class ReviewTests(LoggedInTestCase):
         self.assertEqual(attempt['status'], expected_status)
         self.assertEqual(review.review_status, SoftwareSecureReviewStatus.suspicious)
 
+    def test_failure_not_reviewed(self):
+        """
+        Tests that a review which comes back as "not reviewed"
+        transitions to an error state
+        """
+        test_payload = self.get_review_payload(ReviewStatus.not_reviewed)
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+
+        attempt = get_exam_attempt_by_id(self.attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
     def test_update_archived_attempt(self):
         """
         Test calling the interface point with an attempt_code that was archived
