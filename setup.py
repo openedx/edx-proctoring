@@ -96,6 +96,7 @@ setup(
             'mock = edx_proctoring.backends.mock:MockProctoringBackendProvider',
             'null = edx_proctoring.backends.null:NullBackendProvider',
             'software_secure = edx_proctoring.backends.software_secure:SoftwareSecureBackendProvider',
+            'rpnow4 = edx_proctoring.backends.software_secure:SoftwareSecureBackendProvider',
         ],
         'lms.djangoapp': [
             "edx_proctoring = edx_proctoring.apps:EdxProctoringConfig",
