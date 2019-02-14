@@ -29,6 +29,7 @@ class TestBackendProvider(ProctoringBackendProvider):
 
     last_retire_user = None
     attempt_error = None
+    last_attempt_remove = None
 
     def register_exam_attempt(self, exam, context):
         """
@@ -59,6 +60,10 @@ class TestBackendProvider(ProctoringBackendProvider):
         encountered a technical error
         """
         return None
+
+    def remove_exam_attempt(self, exam, attempt):
+        self.last_attempt_remove = (exam, attempt)
+        return True
 
     def get_software_download_url(self):
         """
@@ -144,6 +149,12 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
             attempt
         )
 
+    def remove_exam_attempt(self, exam, attempt):
+        return super(PassthroughBackendProvider, self).remove_exam_attempt(
+            exam,
+            attempt
+        )
+
     def get_software_download_url(self):
         """
         Returns the URL that the user needs to go to in order to download
@@ -190,6 +201,9 @@ class TestBackends(TestCase):
 
         with self.assertRaises(NotImplementedError):
             provider.mark_erroneous_exam_attempt(None, None)
+
+        with self.assertRaises(NotImplementedError):
+            provider.remove_exam_attempt(None, None)
 
         with self.assertRaises(NotImplementedError):
             provider.on_exam_saved(None)

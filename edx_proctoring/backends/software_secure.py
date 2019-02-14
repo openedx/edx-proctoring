@@ -121,6 +121,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         return None
 
+    def remove_exam_attempt(self, exam, attempt):
+        return None
+
     def get_software_download_url(self):
         """
         Returns the URL that the user needs to go to in order to download

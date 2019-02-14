@@ -216,6 +216,16 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             method='PATCH')
         return response.get('status')
 
+    def remove_exam_attempt(self, exam, attempt):
+        """
+        Removes the exam attempt on the backend provider's server
+        """
+        response = self._make_attempt_request(
+            exam,
+            attempt,
+            method='DELETE')
+        return response.get('status', None) == 'deleted'
+
     def mark_erroneous_exam_attempt(self, exam, attempt):
         """
         Method that is responsible for communicating with the backend provider

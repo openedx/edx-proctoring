@@ -55,6 +55,13 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
         raise NotImplementedError()
 
     @abc.abstractmethod
+    def remove_exam_attempt(self, exam, attempt):
+        """
+        Method that removes the exam attempt from the backend's system
+        """
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def get_software_download_url(self):
         """
         Returns the URL that the user needs to go to in order to download
