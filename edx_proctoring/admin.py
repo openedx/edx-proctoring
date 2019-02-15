@@ -24,7 +24,7 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptStatus,
     ProctoredExamSoftwareSecureComment,
 )
-from edx_proctoring.api import update_attempt_status, update_credit_status
+from edx_proctoring.api import update_attempt_status
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.utils import locate_attempt_by_attempt_code
 from edx_proctoring.exceptions import (
@@ -391,6 +391,16 @@ class ProctoredExamAttemptForm(forms.ModelForm):
 
     status = forms.ChoiceField(choices=STATUS_CHOICES)
 
+    def clean_taking_as_proctored(self):
+        """
+        Allow to change taking as proctored only from False to True.
+
+        This is made for ASU own proctoring without PSI.
+        """
+        if 'taking_as_proctored' in self.changed_data and not self.cleaned_data['taking_as_proctored']:
+            raise ValidationError("Exam attempt could be changed from non-proctored to proctored mode only")
+        return self.cleaned_data['taking_as_proctored']
+
 
 def _prepopulate_manual_id():
     return 'manual-{}'.format(uuid4().hex)
@@ -411,7 +421,6 @@ class ProctoredExamAttemptManualAddForm(ProctoredExamAttemptForm):
         ]
 
     attempt_code = forms.CharField(initial=_prepopulate_manual_id)
-    taking_as_proctored = forms.BooleanField(initial=True, required=False)
 
     def clean_completed_at(self):
         started_at = self.cleaned_data['started_at']
@@ -464,7 +473,6 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
                 'attempt_code',
                 'external_id',
                 'allowed_time_limit_mins',
-                'taking_as_proctored',
                 'is_sample_attempt',
                 'last_poll_ipaddr',
                 'student_name',
@@ -499,20 +507,19 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
         """
         Implement different flows for new and modified proctoring attempt.
 
-        In edit mode only status should be changed by "update_attempt_status" function.
-        For manual adding of new proctoring attempt, save object and update credit status if needed.
+        For edit mode only 'taking_as_proctored' field modification is allowed.
+        For manual adding of new proctoring attempt, save whole object data.
+        In both cases status should be changed by "update_attempt_status" function to process all things
+        triggered by proctored attempt.
         """
         try:
-            if change:
-                update_attempt_status(obj.proctored_exam.id, obj.user.id, form.cleaned_data['status'])
+            if change and form.cleaned_data['taking_as_proctored'] and 'taking_as_proctored' in form.changed_data:
+                # modify only taking_as_proctored field if needed and change status with update_attempt_status
+                obj.taking_as_proctored = True
+                obj.save()  # taking_as_proctored only can be changed from False to True
             elif form.is_valid():
                 super(ProctoredExamStudentAttemptAdmin, self).save_model(request, obj, form, change)
-                update_credit_status(
-                    obj.user_id,
-                    obj.proctored_exam.course_id,
-                    obj.proctored_exam.content_id,
-                    obj.status
-                )
+            update_attempt_status(obj.proctored_exam.id, obj.user.id, form.cleaned_data['status'])
         except (ProctoredExamIllegalStatusTransition, StudentExamAttemptDoesNotExistsException) as ex:
             messages.error(request, ex.message)
 
