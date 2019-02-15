@@ -120,7 +120,8 @@
     }
   );
 
-  function check_exam_started() {
+  function check_exam_started(e) {
+    e.preventDefault();
     var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
     $.ajax(url).success(function(data){
       if (data.status === 'ready_to_start') {

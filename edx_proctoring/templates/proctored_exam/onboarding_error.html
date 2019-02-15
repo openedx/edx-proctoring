@@ -7,36 +7,38 @@
   </h3>
   <p>
 {% if onboarding_status == 'onboarding_missing' or onboarding_status ==  'onboarding_expired' %}
-    {% if onboarding_link %}
-      {% blocktrans %}
-      Please complete the <a href="{{onboarding_link}}">onboarding exam</a> before attempting this exam.
-      {% endblocktrans %}
-    {% else %}
-      {% blocktrans %}
-      Please complete an onboarding exam before attempting this exam.
-      {% endblocktrans %}
-    {% endif %}
-{% elif onboarding_status == 'onboarding_pending' %}
+  <p>
     {% blocktrans %}
-    Your onboarding exam is being reviewed. Before attempting this exam, please allow 1-2 days for your onboarding exam to be reviewed.
+      Please complete an onboarding exam before attempting this exam.
     {% endblocktrans %}
+  </p>
+  {% if onboarding_link %}
+    <a href="{{onboarding_link}}" class="btn-secondary">
+      {% trans "Navigate to onboarding exam" %}
+    </a>
+  {% endif %}
+{% elif onboarding_status == 'onboarding_pending' %}
+  {% blocktrans %}
+    Your onboarding exam is being reviewed. Before attempting this exam, please allow 2+ business days for your onboarding exam to be reviewed.
+  {% endblocktrans %}
 {% elif onboarding_status == 'onboarding_failed' %}
-    {% if onboarding_link %}
-      {% blocktrans %}
-        Your onboarding exam failed to pass all requirements. You can retake the <a href="{{onboarding_link}}">Onboarding Exam</a>.
-      {% endblocktrans %}
-    {% else %}
-      {% blocktrans %}
-        Your onboarding exam failed to pass all requirements.
-      {% endblocktrans %}
-    {% endif %}
+  <p>
+    {% blocktrans %}
+      Your onboarding exam failed to pass all requirements.
+    {% endblocktrans %}
+  </p>
+  {% if onboarding_link %}
+    <a href="{{onboarding_link}}" class="btn-secondary">
+      {% trans "Navigate to onboarding exam" %}
+    </a>
+  {% endif %}
 {% endif %}
   </p>
   <p>
     {% blocktrans %}
-        If you have questions about the status of your onboarding exam, contact {{ platform_name }}
-        support at
-        <a href="mailto:{{ tech_support_email }}?Subject={{ support_email_subject }}">{{ tech_support_email }}</a>.
+      Proctoring for your exam is provided via {{ provider_name }}.
+      If you have questions about the status of your onboarding exam, contact
+      <a href="mailto:{{ integration_specific_email }}">{{ integration_specific_email }}</a>.
     {% endblocktrans %}
   </p>
 </div>
