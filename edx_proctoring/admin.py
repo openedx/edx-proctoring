@@ -6,12 +6,14 @@ Django Admin pages
 from __future__ import absolute_import
 
 from datetime import datetime, timedelta
+from uuid import uuid4
 import pytz
 
 from django import forms
 from django.db.models import Q
 from django.contrib import admin
 from django.contrib import messages
+from django.core.validators import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from edx_proctoring.models import (
     ProctoredExam,
@@ -365,7 +367,7 @@ class ExamAttemptFilterByCourseId(admin.SimpleListFilter):
 
 class ProctoredExamAttemptForm(forms.ModelForm):
     """
-    Admin Form to display for reading/updating a Proctored Exam Attempt
+    Admin Form to display for reading/updating a Proctored Exam Attempt.
     """
 
     class Meta(object):  # pylint: disable=missing-docstring
@@ -389,30 +391,49 @@ class ProctoredExamAttemptForm(forms.ModelForm):
 
     status = forms.ChoiceField(choices=STATUS_CHOICES)
 
+    def clean_taking_as_proctored(self):
+        """
+        Allow to change taking as proctored only from False to True.
+
+        This is made for ASU own proctoring without PSI.
+        """
+        if 'taking_as_proctored' in self.changed_data and not self.cleaned_data['taking_as_proctored']:
+            raise ValidationError("Exam attempt could be changed from non-proctored to proctored mode only")
+        return self.cleaned_data['taking_as_proctored']
+
+
+def _prepopulate_manual_id():
+    return 'manual-{}'.format(uuid4().hex)
+
+
+class ProctoredExamAttemptManualAddForm(ProctoredExamAttemptForm):
+    """
+    Admin Form to display manual add a Proctored Exam Attempt.
+
+    Due to OSPP workflow, some students could take proctored exams at offline classes.
+    """
+    class Meta(object):  # pylint: disable=missing-docstring
+        model = ProctoredExamStudentAttempt
+        fields = [
+            'status', 'user', 'proctored_exam', 'started_at',
+            'completed_at', 'attempt_code', 'allowed_time_limit_mins',
+            'taking_as_proctored', 'is_sample_attempt', 'is_status_acknowledged'
+        ]
+
+    attempt_code = forms.CharField(initial=_prepopulate_manual_id)
+
+    def clean_completed_at(self):
+        started_at = self.cleaned_data['started_at']
+        completed_at = self.cleaned_data['completed_at']
+        if completed_at < started_at:
+            raise ValidationError(_("Completion time can't be less than start"))
+        return completed_at
+
 
 class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
     """
     Admin panel for Proctored Exam Attempts
     """
-
-    readonly_fields = [
-        # NOTE(idegtiarov) OSPP required to add manually proctored exam attempts, next fields are removed from the
-        #  read-only mode
-        # 'user',
-        # 'proctored_exam',
-        # 'started_at',
-        # 'completed_at',
-        'last_poll_timestamp',
-        'last_poll_ipaddr',
-        # 'attempt_code',
-        # 'external_id',
-        # 'allowed_time_limit_mins',
-        # 'taking_as_proctored',
-        # 'is_sample_attempt',
-        'student_name',
-        'review_policy_id',
-        # 'is_status_acknowledged'
-    ]
 
     list_display = [
         'username',
@@ -437,7 +458,38 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
         ExamAttemptFilterByCourseId
     ]
 
-    form = ProctoredExamAttemptForm
+    def get_readonly_fields(self, request, obj=None):
+        """
+        Make all fields except status readonly in edition mode for correct use with update_attempt_status function.
+        """
+        if obj:  # if obj is None, that means editing an existing object
+            return [
+                'user',
+                'proctored_exam',
+                'started_at',
+                'completed_at',
+                'last_poll_timestamp',
+                'last_poll_ipaddr',
+                'attempt_code',
+                'external_id',
+                'allowed_time_limit_mins',
+                'is_sample_attempt',
+                'last_poll_ipaddr',
+                'student_name',
+                'review_policy_id',
+                'is_status_acknowledged'
+            ]
+        return self.readonly_fields
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Use different forms for ProctoredExamStudentAttempt view/edit and add pages.
+        """
+        if obj:  # if obj is not None, this is a view/change page
+            kwargs['form'] = ProctoredExamAttemptForm
+        else:  # if obj is None, this is an add page
+            kwargs['form'] = ProctoredExamAttemptManualAddForm
+        return super(ProctoredExamStudentAttemptAdmin, self).get_form(request, obj, **kwargs)
 
     def username(self, obj):
         """ Return user's username of attempt"""
@@ -453,18 +505,23 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         """
-        Override callback so that we can change the status by "update_attempt_status" function
+        Implement different flows for new and modified proctoring attempt.
+
+        For edit mode only 'taking_as_proctored' field modification is allowed.
+        For manual adding of new proctoring attempt, save whole object data.
+        In both cases status should be changed by "update_attempt_status" function to process all things
+        triggered by proctored attempt.
         """
         try:
-            if change:
-                update_attempt_status(obj.proctored_exam.id, obj.user.id, form.cleaned_data['status'])
+            if change and form.cleaned_data['taking_as_proctored'] and 'taking_as_proctored' in form.changed_data:
+                # modify only taking_as_proctored field if needed and change status with update_attempt_status
+                obj.taking_as_proctored = True
+                obj.save()  # taking_as_proctored only can be changed from False to True
+            elif form.is_valid():
+                super(ProctoredExamStudentAttemptAdmin, self).save_model(request, obj, form, change)
+            update_attempt_status(obj.proctored_exam.id, obj.user.id, form.cleaned_data['status'])
         except (ProctoredExamIllegalStatusTransition, StudentExamAttemptDoesNotExistsException) as ex:
             messages.error(request, ex.message)
-
-    def has_add_permission(self, request):
-        """Don't allow adds"""
-        # NOTE(idegtiarov) OSPP has self proctored exams and add proctored exam attempt manually is required.
-        return True
 
     def has_delete_permission(self, request, obj=None):
         """Don't allow deletes"""
