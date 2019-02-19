@@ -8,6 +8,9 @@ import time
 import uuid
 import jwt
 
+# this is a known PyLint false positive (https://github.com/PyCQA/pylint/issues/1640)
+# that is fixed in PyLint v1.8
+from six.moves.urllib.parse import urlparse  # pylint: disable=import-error
 from webpack_loader.utils import get_files
 from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleLookupError
 
@@ -127,7 +130,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
         # if the Javascript URL is not an absolute URL (i.e. doesn't have a scheme), prepend
         # the LMS Root URL to it, if it is defined, to make it an absolute URL
-        if not js_url.startswith('http'):
+        if not urlparse(js_url).scheme:
             if hasattr(settings, 'LMS_ROOT_URL'):
                 js_url = settings.LMS_ROOT_URL + js_url
 

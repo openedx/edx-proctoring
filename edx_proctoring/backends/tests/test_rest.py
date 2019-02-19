@@ -9,7 +9,7 @@ import jwt
 import responses
 from mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import translation
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
@@ -292,6 +292,11 @@ class RESTBackendTests(TestCase):
         javascript_url = self.provider.get_javascript()
         self.assertEqual(javascript_url, '/there/it/is')
 
+        # test absolute URL
+        get_files_mock.return_value = [{'name': 'rest', 'url': 'http://www.example.com/there/it/is'}]
+        javascript_url = self.provider.get_javascript()
+        self.assertEqual(javascript_url, 'http://www.example.com/there/it/is')
+
     @patch('edx_proctoring.backends.rest.get_files')
     def test_get_javascript_empty_return(self, get_files_mock):
         get_files_mock.return_value = []
@@ -309,6 +314,18 @@ class RESTBackendTests(TestCase):
         mock_get_assets.return_value = {'status': 'turtle', 'chunks': {}}
         javascript_url = self.provider.get_javascript()
         self.assertEqual(javascript_url, '')
+
+    @patch('edx_proctoring.backends.rest.get_files')
+    def test_get_javascript_returns_absolute_url(self, get_files_mock):
+        get_files_mock.return_value = [{'name': 'rest', 'url': '/there/it/is'}]
+        javascript_url = self.provider.get_javascript()
+
+        # no LMS_ROOT_URL setting, so return original URL
+        self.assertEqual(javascript_url, '/there/it/is')
+
+        with override_settings(LMS_ROOT_URL='http://www.example.com'):
+            javascript_url = self.provider.get_javascript()
+            self.assertEqual(javascript_url, 'http://www.example.com/there/it/is')
 
     def test_instructor_url(self):
         user = {
