@@ -126,6 +126,16 @@ def require_course_or_global_staff(func):
     return wrapped
 
 
+def is_user_course_or_global_staff(user, course_id):
+    """
+        Return whether a user is course staff for a given course, described by the course_id,
+        or is global staff.
+    """
+    instructor_service = get_runtime_service('instructor')
+
+    return user.is_staff or instructor_service.is_course_staff(user, course_id)
+
+
 def handle_proctored_exception(exc, name=None):
     """
     converts proctoring exceptions into standard restframework responses
@@ -851,6 +861,16 @@ class BaseReviewCallback(object):
             review.reviewed_by = User.objects.get(email=data['reviewed_by'])
         except (User.DoesNotExist, KeyError):
             review.reviewed_by = None
+
+        # If the reviewing user is a user in the system (user may be None for automated reviews) and does
+        # not have permission to submit a review, log a warning.
+        course_id = attempt['proctored_exam']['course_id']
+        if review.reviewed_by is not None and not is_user_course_or_global_staff(review.reviewed_by, course_id):
+            LOG.warning(
+                'User %(user)s does not have the required permissions to submit '
+                'a review for attempt_code %(attempt_code)s.',
+                {'user': review.reviewed_by, 'attempt_code': attempt_code}
+            )
 
         review.save()
 
