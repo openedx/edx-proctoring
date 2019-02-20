@@ -7,7 +7,7 @@ import json
 
 from crum import set_current_request
 import ddt
-from mock import patch
+from mock import patch, call
 
 from django.contrib.auth.models import User
 from django.test import RequestFactory
@@ -25,7 +25,7 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, ReviewSta
 from edx_proctoring.tests.test_services import (MockCertificateService, MockCreditService, MockGradesService,
                                                 MockInstructorService)
 from edx_proctoring.utils import locate_attempt_by_attempt_code
-from edx_proctoring.views import ProctoredExamReviewCallback
+from edx_proctoring.views import ProctoredExamReviewCallback, is_user_course_or_global_staff
 
 from .utils import LoggedInTestCase
 
@@ -448,3 +448,76 @@ class ReviewTests(LoggedInTestCase):
         ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
         review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=self.attempt['attempt_code'])
         self.assertEqual(review.reviewed_by, user)
+
+    def test_is_user_course_or_global_staff(self):
+        """
+        Test that is_user_course_or_global_staff function correctly returns whether
+        a user is either global staff or course staff.
+        """
+        user = User.objects.create(
+            email='testy@example.com',
+            username='TestyMcTesterson'
+        )
+        course_id = self.attempt['proctored_exam']['course_id']
+
+        # course_staff = true, is_staff = false
+        # by default, user.is_staff is false and instructor_service.is_course_staff returns true
+        self.assertTrue(is_user_course_or_global_staff(user, course_id))
+
+        # course_staff = true, is_staff = true
+        user.is_staff = True
+        self.assertTrue(is_user_course_or_global_staff(user, course_id))
+
+        # mock instructor service must be configured to treat users as not course staff.
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+
+        # course_staff = false, is_staff = true
+        self.assertTrue(is_user_course_or_global_staff(user, course_id))
+
+        # course_staff = false, is_staff = false
+        user.is_staff = False
+        self.assertFalse(is_user_course_or_global_staff(user, course_id))
+
+    @patch('logging.Logger.warning')
+    def test_reviewed_by_is_course_or_global_staff(self, logger_mock):
+        """
+        Test that a "reviewed_by" field of a review that corresponds to a user
+        that is not a course staff or global staff causes a warning to be logged.
+        Test that no warning is logged if a user is course staff or global staff.
+        """
+        test_payload = self.get_review_payload()
+        reviewed_by_email = 'testy@example.com'
+        test_payload['reviewed_by'] = reviewed_by_email
+
+        # reviewed_by field with corresponding User object
+        user = User.objects.create(
+            email=reviewed_by_email,
+            username='TestyMcTesterson'
+        )
+
+        log_format_string = (
+            'User %(user)s does not have the required permissions '
+            'to submit a review for attempt_code %(attempt_code)s.'
+        )
+
+        log_format_dictionary = {
+            'user': user,
+            'attempt_code': self.attempt['attempt_code'],
+        }
+
+        with patch('edx_proctoring.views.is_user_course_or_global_staff', return_value=False):
+            # import pudb; pu.db
+            ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+
+            # using assert_any_call instead of assert_called_with due to logging in analytics emit_event function
+            logger_mock.assert_any_call(log_format_string, log_format_dictionary)
+
+        logger_mock.reset_mock()
+
+        with patch('edx_proctoring.views.is_user_course_or_global_staff', return_value=True):
+            ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+
+            # the mock API doesn't have a "assert_not_called_with" method
+            self.assertFalse(
+                call(log_format_string, log_format_dictionary) in logger_mock.call_args_list
+            )
