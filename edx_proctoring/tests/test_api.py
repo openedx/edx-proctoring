@@ -650,7 +650,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         remove_exam_attempt(proctored_exam_student_attempt.id, requesting_user=self.user)
+        test_backend = get_backend_provider(name='test')
 
+        self.assertEqual(
+            test_backend.last_attempt_remove, (
+                proctored_exam_student_attempt.proctored_exam.external_id,
+                proctored_exam_student_attempt.external_id
+            )
+        )
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
             remove_exam_attempt(proctored_exam_student_attempt.id, requesting_user=self.user)
 

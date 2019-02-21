@@ -148,6 +148,14 @@ For convenience, the PS should return the exam instructions and the software dow
         "download_url": "http://my-proctoring.com/download"
     }
 
+``DELETE``: removes attempt on PS server
+
+When an attempt is deleted on the Open edX server, it will make a ``DELETE`` request on the PS server. On success, return::
+
+    {
+        "status": "deleted"
+    }
+
 
 User management endpoint
 ^^^^^^^^^^^^^^^^^^^^^^^^

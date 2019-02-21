@@ -41,6 +41,9 @@ class NullBackendProvider(ProctoringBackendProvider):
         """
         return None
 
+    def remove_exam_attempt(self, exam, attempt):
+        return True
+
     def get_software_download_url(self):
         """
         Returns the URL that the user needs to go to in order to download

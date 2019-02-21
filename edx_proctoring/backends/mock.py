@@ -74,6 +74,9 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
         """
         return None
 
+    def remove_exam_attempt(self, exam, attempt):
+        return True
+
     def get_software_download_url(self):
         """
         Returns

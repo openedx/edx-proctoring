@@ -242,6 +242,17 @@ class RESTBackendTests(TestCase):
         status = getattr(self.provider, provider_method_name)(self.backend_exam['external_id'], attempt_id)
         self.assertEqual(status, corresponding_status)
 
+    @responses.activate
+    def test_remove_attempt(self):
+        attempt_id = 2
+        responses.add(
+            responses.DELETE,
+            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
+            json={'status': "deleted"}
+        )
+        status = self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+        self.assertTrue(status)
+
     def test_on_review_callback(self):
         """
         on_review_callback should just return the payload
