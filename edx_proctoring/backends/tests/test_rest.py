@@ -243,7 +243,7 @@ class RESTBackendTests(TestCase):
         self.assertEqual(status, corresponding_status)
 
     @responses.activate
-    def test_failed_json(self):
+    def test_malformed_json_in_response(self):
         attempt_id = 2
         responses.add(
             responses.PATCH,
