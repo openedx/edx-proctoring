@@ -243,6 +243,18 @@ class RESTBackendTests(TestCase):
         self.assertEqual(status, corresponding_status)
 
     @responses.activate
+    def test_failed_json(self):
+        attempt_id = 2
+        responses.add(
+            responses.PATCH,
+            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
+            body='"]'
+        )
+        status = self.provider.mark_erroneous_exam_attempt(self.backend_exam['external_id'], attempt_id)
+        # the important thing is that it didn't raise an exception for bad json
+        self.assertEqual(status, None)
+
+    @responses.activate
     def test_remove_attempt(self):
         attempt_id = 2
         responses.add(

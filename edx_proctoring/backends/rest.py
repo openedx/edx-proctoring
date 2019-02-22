@@ -338,5 +338,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         if method == 'GET':
             headers.update(self._get_language_headers())
         log.debug('Making %r attempt request at %r', method, url)
-        response = self.session.request(method, url, json=payload, headers=headers).json()
-        return response
+        response = self.session.request(method, url, json=payload, headers=headers)
+        try:
+            data = response.json()
+        except ValueError:
+            log.exception("Decoding attempt %r -> %r", attempt, response.content)
+            data = {}
+        return data
