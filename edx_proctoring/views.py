@@ -11,7 +11,8 @@ import waffle
 
 from crum import get_current_request
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse, NoReverseMatch
 from django.shortcuts import redirect
@@ -858,8 +859,8 @@ class BaseReviewCallback(object):
         review.exam_id = attempt['proctored_exam']['id']
 
         try:
-            review.reviewed_by = User.objects.get(email=data['reviewed_by'])
-        except (User.DoesNotExist, KeyError):
+            review.reviewed_by = get_user_model().objects.get(email=data['reviewed_by'])
+        except (ObjectDoesNotExist, KeyError):
             review.reviewed_by = None
 
         # If the reviewing user is a user in the system (user may be None for automated reviews) and does

@@ -8,7 +8,7 @@ Data models for the proctoring subsystem
 from __future__ import absolute_import
 import six
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
 from django.db.models.base import ObjectDoesNotExist
@@ -23,6 +23,8 @@ from edx_proctoring.exceptions import (
     AllowanceValueNotAllowedException,
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
+
+USER_MODEL = get_user_model()
 
 
 @six.python_2_unicode_compatible
@@ -123,7 +125,7 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
     """
 
     # who set this ProctoredExamReviewPolicy
-    set_by_user = models.ForeignKey(User)
+    set_by_user = models.ForeignKey(USER_MODEL)
 
     # for which exam?
     proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
@@ -166,7 +168,7 @@ class ProctoredExamReviewPolicyHistory(TimeStampedModel):
     original_id = models.IntegerField(db_index=True)
 
     # who set this ProctoredExamReviewPolicy
-    set_by_user = models.ForeignKey(User)
+    set_by_user = models.ForeignKey(USER_MODEL)
 
     # for which exam?
     proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
@@ -287,7 +289,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     """
     objects = ProctoredExamStudentAttemptManager()
 
-    user = models.ForeignKey(User, db_index=True)
+    user = models.ForeignKey(USER_MODEL, db_index=True)
 
     proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
 
@@ -374,7 +376,7 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     but will record (for audit history) all entries that have been updated.
     """
 
-    user = models.ForeignKey(User, db_index=True)
+    user = models.ForeignKey(USER_MODEL, db_index=True)
 
     # this is the PK of the original table, note this is not a FK
     attempt_id = models.IntegerField(null=True)
@@ -497,7 +499,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
     objects = ProctoredExamStudentAllowanceManager()
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(USER_MODEL)
 
     proctored_exam = models.ForeignKey(ProctoredExam)
 
@@ -558,9 +560,9 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
             user_id = user_info
         else:
             # we got a string, so try to resolve it
-            users = User.objects.filter(username=user_info)
+            users = USER_MODEL.objects.filter(username=user_info)
             if not users.exists():
-                users = User.objects.filter(email=user_info)
+                users = USER_MODEL.objects.filter(email=user_info)
 
             if not users.exists():
                 err_msg = (
@@ -626,7 +628,7 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     # what was the original id of the allowance
     allowance_id = models.IntegerField()
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(USER_MODEL)
 
     proctored_exam = models.ForeignKey(ProctoredExam)
 
@@ -662,12 +664,12 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     video_url = models.TextField()
 
     # user_id of person who did the review (can be None if submitted via server-to-server API)
-    reviewed_by = models.ForeignKey(User, null=True, related_name='+')
+    reviewed_by = models.ForeignKey(USER_MODEL, null=True, related_name='+')
 
     # student username for the exam
     # this is an optimization for the Django Admin pane (so we can search)
     # this is null because it is being added after initial production ship
-    student = models.ForeignKey(User, null=True, related_name='+')
+    student = models.ForeignKey(USER_MODEL, null=True, related_name='+')
 
     # exam_id for the review
     # this is an optimization for the Django Admin pane (so we can search)
@@ -727,12 +729,12 @@ class ProctoredExamSoftwareSecureReviewHistory(TimeStampedModel):
     video_url = models.TextField()
 
     # user_id of person who did the review (can be None if submitted via server-to-server API)
-    reviewed_by = models.ForeignKey(User, null=True, related_name='+')
+    reviewed_by = models.ForeignKey(USER_MODEL, null=True, related_name='+')
 
     # student username for the exam
     # this is an optimization for the Django Admin pane (so we can search)
     # this is null because it is being added after initial production ship
-    student = models.ForeignKey(User, null=True, related_name='+')
+    student = models.ForeignKey(USER_MODEL, null=True, related_name='+')
 
     # exam_id for the review
     # this is an optimization for the Django Admin pane (so we can search)

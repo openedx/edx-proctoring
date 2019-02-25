@@ -737,6 +737,16 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             )
             self.assertIsNotNone(rendered_response)
 
+    def test_get_no_perm_view(self):
+        """
+        Test for get_student_view prompting when the student does not have permission
+        to view proctored exams, this should return None
+        (For edx-proctoring tests, only authenticated students have the permission)
+        """
+        with patch('django.contrib.auth.models.User.is_authenticated', False):
+            rendered_response = self.render_proctored_exam()
+        self.assertIsNone(rendered_response)
+
     def test_get_studentview_started_onboarding(self):
         """
         Test fallthrough page case for onboarding exams

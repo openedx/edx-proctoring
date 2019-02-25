@@ -1618,6 +1618,22 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         self.assertIn(summary, [expected])
 
+    def test_status_summary_no_perm(self):
+        """
+        The summary should be None for users who don't have permission
+        (For the tests, that means non-authenticated users)
+        """
+        set_runtime_service('credit', MockCreditService(enrollment_mode='verified'))
+        exam_attempt = self._create_started_exam_attempt()
+        with patch('django.contrib.auth.models.User.is_authenticated', False):
+            summary = get_attempt_status_summary(
+                self.user.id,
+                exam_attempt.proctored_exam.course_id,
+                exam_attempt.proctored_exam.content_id
+            )
+
+        self.assertIsNone(summary)
+
     def test_status_summary_bad(self):
         """
         Make sure we get back a None when getting summary for content that does not

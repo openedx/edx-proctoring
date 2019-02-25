@@ -14,7 +14,7 @@ import six
 
 from django.utils.translation import ugettext as _, ugettext_noop
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.template import loader
 from django.urls import reverse, NoReverseMatch
 from django.core.mail.message import EmailMessage
@@ -64,6 +64,8 @@ SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is
 APPROVED_STATUS = 'approved'
 
 REJECTED_GRADE_OVERRIDE_EARNED = 0.0
+
+USER_MODEL = get_user_model()
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
@@ -1078,7 +1080,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     if not exam_attempt_obj.taking_as_proctored or exam_attempt_obj.is_sample_attempt:
         return None
 
-    user = User.objects.get(id=user_id)
+    user = USER_MODEL.objects.get(id=user_id)
     course_info_url = ''
     email_subject = (
         _('Proctoring Results For {course_name} {exam_name}').format(
@@ -1558,7 +1560,7 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     # eligibility
     if credit_service and not exam['is_practice_exam']:
         credit_state = credit_service.get_credit_state(user_id, six.text_type(course_id), return_course_info=True)
-        user = User.objects.get(id=user_id)
+        user = USER_MODEL.objects.get(id=user_id)
         if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
             return None
 
@@ -1852,7 +1854,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     """
     student_view_template = None
 
-    user = User.objects.get(id=user_id)
+    user = USER_MODEL.objects.get(id=user_id)
 
     if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
         return None
