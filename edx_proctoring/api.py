@@ -14,7 +14,7 @@ import six
 
 from django.utils.translation import ugettext as _, ugettext_noop
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.template import loader
 from django.urls import reverse, NoReverseMatch
 from django.core.mail.message import EmailMessage
@@ -64,6 +64,8 @@ SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is
 APPROVED_STATUS = 'approved'
 
 REJECTED_GRADE_OVERRIDE_EARNED = 0.0
+
+USER_MODEL = get_user_model()
 
 
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
@@ -1078,7 +1080,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     if not exam_attempt_obj.taking_as_proctored or exam_attempt_obj.is_sample_attempt:
         return None
 
-    user = User.objects.get(id=user_id)
+    user = USER_MODEL.objects.get(id=user_id)
     course_info_url = ''
     email_subject = (
         _('Proctoring Results For {course_name} {exam_name}').format(
@@ -1303,19 +1305,6 @@ def get_active_exams_for_user(user_id, course_id=None):
         })
 
     return result
-
-
-def _check_eligibility_of_enrollment_mode(credit_state):
-    """
-    Inspects that the enrollment mode of the user
-    is valid for proctoring
-    """
-
-    # Allow only the verified students to take the exam as a proctored exam
-    # Also make an exception for the honor students to take the "practice exam" as a proctored exam.
-    # For the rest of the enrollment modes, None is returned which shows the exam content
-    # to the student rather than the proctoring prompt.
-    return credit_state and credit_state['enrollment_mode'] == 'verified'
 
 
 def _get_ordered_prerequisites(prerequisites_statuses, filter_out_namespaces=None):
@@ -1571,13 +1560,15 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     # eligibility
     if credit_service and not exam['is_practice_exam']:
         credit_state = credit_service.get_credit_state(user_id, six.text_type(course_id), return_course_info=True)
-        if not _check_eligibility_of_enrollment_mode(credit_state):
+        user = USER_MODEL.objects.get(id=user_id)
+        if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
             return None
 
     attempt = get_exam_attempt(exam['id'], user_id)
     if attempt:
         status = attempt['status']
-    elif not exam['is_practice_exam'] and has_due_date_passed(credit_state.get('course_end_date', None)):
+    elif not exam['is_practice_exam'] \
+            and credit_state and has_due_date_passed(credit_state.get('course_end_date', None)):
         status = ProctoredExamStudentAttemptStatus.expired
     else:
         status = ProctoredExamStudentAttemptStatus.eligible
@@ -1863,20 +1854,10 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     """
     student_view_template = None
 
-    credit_state = context.get('credit_state')
+    user = USER_MODEL.objects.get(id=user_id)
 
-    # see if only 'verified' track students should see this *except* if it is a practice exam
-    check_mode = (
-        settings.PROCTORING_SETTINGS.get('MUST_BE_VERIFIED_TRACK', True) and
-        credit_state
-    )
-
-    if check_mode:
-        has_mode = _check_eligibility_of_enrollment_mode(credit_state)
-        if not has_mode:
-            # user does not have the required enrollment mode
-            # so do not override view this is a quick exit
-            return None
+    if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
+        return None
 
     attempt = get_exam_attempt(exam_id, user_id)
 
@@ -1899,10 +1880,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
 
         # get information about prerequisites
 
-        credit_requirement_status = (
-            credit_state.get('credit_requirement_status')
-            if credit_state else []
-        )
+        credit_requirement_status = context.get('credit_state', {}).get('credit_requirement_status', [])
 
         prerequisite_status = _are_prerequirements_satisfied(
             credit_requirement_status,
@@ -2020,11 +1998,7 @@ def get_student_view(user_id, course_id, content_id,
     if user_role != 'student':
         return None
 
-    credit_service = get_runtime_service('credit')
-
-    # call service to get course end date.
-    credit_state = credit_service.get_credit_state(user_id, course_id, return_course_info=True)
-    course_end_date = credit_state.get('course_end_date') if credit_state else None
+    course_end_date = context.get('credit_state', {}).get('course_end_date', None)
 
     exam_id = None
     try:

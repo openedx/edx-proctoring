@@ -1618,23 +1618,19 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         self.assertIn(summary, [expected])
 
-    @ddt.data(
-        'honor', 'staff'
-    )
-    def test_status_summary_honor(self, enrollment_mode):
+    def test_status_summary_no_perm(self):
         """
-        Make sure status summary is None for a non-verified person
+        The summary should be None for users who don't have permission
+        (For the tests, that means non-authenticated users)
         """
-
-        set_runtime_service('credit', MockCreditService(enrollment_mode=enrollment_mode))
-
+        set_runtime_service('credit', MockCreditService(enrollment_mode='verified'))
         exam_attempt = self._create_started_exam_attempt()
-
-        summary = get_attempt_status_summary(
-            self.user.id,
-            exam_attempt.proctored_exam.course_id,
-            exam_attempt.proctored_exam.content_id
-        )
+        with patch('django.contrib.auth.models.User.is_authenticated', False):
+            summary = get_attempt_status_summary(
+                self.user.id,
+                exam_attempt.proctored_exam.course_id,
+                exam_attempt.proctored_exam.content_id
+            )
 
         self.assertIsNone(summary)
 
@@ -1775,21 +1771,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(len(results['failed_prerequisites']), expected_len_failed_prerequisites)
         self.assertEqual(len(results['pending_prerequisites']), expected_len_pending_prerequisites)
         self.assertEqual(len(results['declined_prerequisites']), expected_len_declined_prerequisites)
-
-    def test_summary_without_credit_state(self):
-        """
-        Test that attempt status summary is None for users who are not enrolled.
-        """
-        exam_id = self._create_exam_with_due_time()
-        set_runtime_service('credit', MockCreditServiceNone())
-
-        timed_exam = get_exam_by_id(exam_id)
-        summary = get_attempt_status_summary(
-            self.user.id,
-            timed_exam['course_id'],
-            timed_exam['content_id']
-        )
-        self.assertIsNone(summary)
 
     def test_get_exam_violation_report(self):
         """

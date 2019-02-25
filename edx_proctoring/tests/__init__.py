@@ -32,6 +32,10 @@ def setup_test_perms():
         rules.add_perm('accounts.can_retire_user', rules.is_staff)
     except KeyError:
         pass
+    try:
+        rules.add_perm('edx_proctoring.can_take_proctored_exam', rules.is_authenticated)
+    except KeyError:
+        pass
 
 
 setup_test_backends()
