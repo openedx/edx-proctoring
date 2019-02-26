@@ -2699,17 +2699,18 @@ class TestBackendUserDeletion(LoggedInTestCase):
         # if there is no user data, then no deletion happens
         assert data == {}
 
-        proctored_exam = ProctoredExam.objects.create(
-            course_id='a/b/c',
-            content_id='test_content',
-            exam_name='Test Exam',
-            external_id='123aXqe3',
-            is_proctored=True,
-            is_active=True,
-            time_limit_mins=90,
-            backend='test',
-        )
-        create_exam_attempt(proctored_exam.id, self.second_user.id, True)
+        for i, backend in enumerate(('test', 'null', 'test', None)):
+            proctored_exam = ProctoredExam.objects.create(
+                course_id='a/b/c',
+                content_id='test_content%s' % i,
+                exam_name='Test Exam',
+                external_id='123aXqe3',
+                is_proctored=True,
+                is_active=True,
+                time_limit_mins=90,
+                backend=backend,
+            )
+            create_exam_attempt(proctored_exam.id, self.second_user.id, bool(backend))
 
         response = self.client.post(deletion_url)
         assert response.status_code == 200
