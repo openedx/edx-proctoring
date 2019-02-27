@@ -332,6 +332,8 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         Calls backend attempt API
         """
+        if not attempt:
+            return {}
         if status:
             payload['status'] = status
         else:
