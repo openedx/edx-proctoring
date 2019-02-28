@@ -120,8 +120,18 @@
     }
   );
 
-  function check_exam_started(e) {
+  function handle_start_exam(e) {
     e.preventDefault();
+    check_exam_started(function() {
+      // The proctoring setup is not yet complete.
+      // Show a modal indicating that the user is not done yet.
+      edx.courseware.proctored_exam.accessibleError(
+        gettext("Cannot Start Proctored Exam"),
+        gettext("You must complete the proctoring setup before you can start the exam.")
+      );
+    });
+  }
+  function check_exam_started(failureCallback) {
     var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
     $.ajax(url).success(function(data){
       if (data.status === 'ready_to_start') {
@@ -129,27 +139,18 @@
         // to reflect the new state (which will expose the test)
         location.reload();
       } else {
-          // The proctoring setup is not yet complete.
-          // Show a modal indicating that the user is not done yet.
-          edx.courseware.proctored_exam.accessibleError(
-              gettext("Cannot Start Proctored Exam"),
-              gettext("You must complete the proctoring setup before you can start the exam.")
-          );
+        failureCallback();
       }
     });
   }
 
-  $('.start-proctored-exam').click(check_exam_started);
-
-  $("#software_download_link").click(function (e) {
-    e.preventDefault();
+  function launchSystemCheck() {
     var url = $('.instructions').data('exam-started-poll-url');
-    var action = $(this).data('action');
+    var action = $('#software_download_link').data('action');
     // open the new tab in the click event with an empty URL but show the message.
     var newWindow = window.open("", "_blank");
     $(newWindow.document.body).html("<p>Please wait while you are being redirected...</p>");
 
-    var self = this;
     $.ajax({
       url: url,
       type: 'PUT',
@@ -162,6 +163,14 @@
     }).fail(function(){
       newWindow.close();
     });
+
+  }
+
+  $('.start-proctored-exam').click(handle_start_exam);
+
+  $("#software_download_link").click(function (e) {
+    e.preventDefault();
+    check_exam_started(launchSystemCheck);
   });
 {{backend_js|safe}}
 </script>
