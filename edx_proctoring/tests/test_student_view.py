@@ -764,6 +764,14 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         rendered_response = self.render_onboarding_exam()
         self.assertIn('Proctoring onboarding exam', rendered_response)
 
+    def test_get_onboarding_no_perm(self):
+        """
+        Test that onboarding exams are gated by the same permission as proctored exams
+        """
+        with patch('django.contrib.auth.models.User.is_authenticated', False):
+            rendered_response = self.render_onboarding_exam()
+        self.assertIsNone(rendered_response)
+
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.created,
          'Follow these steps to set up and start your proctored exam'),

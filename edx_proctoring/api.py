@@ -1814,6 +1814,11 @@ def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
     """
     Returns a rendered view for onboarding exams, which for some backends establish a user's profile
     """
+    user = USER_MODEL.objects.get(id=user_id)
+
+    if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
+        return None
+
     student_view_template = None
 
     attempt = get_exam_attempt(exam_id, user_id)
