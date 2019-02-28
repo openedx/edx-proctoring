@@ -265,6 +265,10 @@ class RESTBackendTests(TestCase):
         status = self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
         self.assertTrue(status)
 
+    def test_remove_attempt_no_attempt(self):
+        status = self.provider.remove_exam_attempt(self.backend_exam['external_id'], None)
+        self.assertFalse(status)
+
     def test_on_review_callback(self):
         """
         on_review_callback should just return the payload
