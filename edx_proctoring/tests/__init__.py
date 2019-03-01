@@ -3,6 +3,7 @@ Monkeypatches the default backends
 """
 from __future__ import absolute_import
 
+import contextlib
 import rules
 
 
@@ -20,6 +21,18 @@ def setup_test_backends():
     config.backends['mock'] = MockProctoringBackendProvider()
 
 
+@contextlib.contextmanager
+def mock_perm(perm='edx_proctoring.can_take_proctored_exam'):
+    """
+    Context manager for mocking a specific permission to return False inside the block
+    """
+    try:
+        rules.set_perm(perm, rules.always_false)
+        yield
+    finally:
+        rules.set_perm(perm, rules.always_true)
+
+
 def setup_test_perms():
     """
     Create missing permissions that would be defined in edx-platform,
@@ -30,11 +43,11 @@ def setup_test_perms():
     """
     try:
         rules.add_perm('accounts.can_retire_user', rules.is_staff)
-    except KeyError:
+    except KeyError:  # pragma: no cover
         pass
     try:
-        rules.add_perm('edx_proctoring.can_take_proctored_exam', rules.is_authenticated)
-    except KeyError:
+        rules.add_perm('edx_proctoring.can_take_proctored_exam', rules.always_true)
+    except KeyError:  # pragma: no cover
         pass
 
 
