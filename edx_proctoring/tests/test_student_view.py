@@ -30,6 +30,7 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.tests import mock_perm
 
 from .test_services import MockCreditServiceWithCourseEndDate, MockCreditServiceNone
 from .utils import ProctoredExamTestCase
@@ -743,7 +744,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         to view proctored exams, this should return None
         (For edx-proctoring tests, only authenticated students have the permission)
         """
-        with patch('django.contrib.auth.models.User.is_authenticated', False):
+        with mock_perm('edx_proctoring.can_take_proctored_exam'):
             rendered_response = self.render_proctored_exam()
         self.assertIsNone(rendered_response)
 
@@ -768,7 +769,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         """
         Test that onboarding exams are gated by the same permission as proctored exams
         """
-        with patch('django.contrib.auth.models.User.is_authenticated', False):
+        with mock_perm('edx_proctoring.can_take_proctored_exam'):
             rendered_response = self.render_onboarding_exam()
         self.assertIsNone(rendered_response)
 

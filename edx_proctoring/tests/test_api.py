@@ -78,6 +78,7 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.tests import mock_perm
 
 from .test_services import (
     MockCreditService,
@@ -1625,7 +1626,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         set_runtime_service('credit', MockCreditService(enrollment_mode='verified'))
         exam_attempt = self._create_started_exam_attempt()
-        with patch('django.contrib.auth.models.User.is_authenticated', False):
+        with mock_perm('edx_proctoring.can_take_proctored_exam'):
             summary = get_attempt_status_summary(
                 self.user.id,
                 exam_attempt.proctored_exam.course_id,
