@@ -4,7 +4,7 @@
   <div class="">
     <h3>
     {% blocktrans %}
-      Follow these steps to set up and start your proctored exam.
+      Set up and start your proctored exam.
     {% endblocktrans %}
     </h3>
     {% if backend_instructions %}
@@ -31,45 +31,57 @@
       {% endif %}
       <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
     {% else %}
-    <p>
-      {% blocktrans %}
-        1. Copy this unique exam code. You will be prompted to paste this code later before you start the exam.
-      {% endblocktrans %}
-    </p>
+      <h4>
+        {% blocktrans %}
+          Step 1
+        {% endblocktrans %}
+      </h4>
+      <p>
+        {% blocktrans %}
+          Copy this unique exam code. You will be prompted to paste this code later before you start the exam.
+        {% endblocktrans %}
+      </p>
     <p>
       <span class="proctored-exam-code">{{exam_code}}</span>
     </p>
     <p>
       {% blocktrans %}
-        Select the exam code, then copy it using Command+C (Mac) or Control+C (Windows).
+        Select the exam code, then copy it using Control + C (Windows) or Command + C (Mac).
+      {% endblocktrans %}
+    </p>
+      <h4>
+        {% blocktrans %}
+          Step 2
+        {% endblocktrans %}
+      </h4>
+    <p>
+      {% blocktrans %}
+        Start your system check now. A new window will open for this step and you will verify your identity.
       {% endblocktrans %}
     </p>
     <p>
       {% blocktrans %}
-        2. Click the button below to set up proctoring.
+        Make sure you:
       {% endblocktrans %}
     </p>
+    <ul>
+      <li>{% blocktrans %}Have a computer with a functioning webcam{% endblocktrans %}</li>
+      <li>{% blocktrans %}Have your valid photo ID (e.g. driver's license or passport) ready{% endblocktrans %}</li>
+    </ul>
     <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
-    <p>
-      {% blocktrans %}
-        A new window will open. You will run a system check before downloading the proctoring application.
-      {% endblocktrans %}
-    </p>
-    <p>
-      {% blocktrans %}
-        You will be asked to verify your identity as part of the proctoring exam set up.
-        Make sure you are on a computer with a webcam, and that you have valid photo identification
-        such as a driver's license or passport, before you continue.
-      {% endblocktrans %}
-    </p>
+      <h4>
+        {% blocktrans %}
+          Step 3
+        {% endblocktrans %}
+      </h4>
     <p>
         {% blocktrans %}
-          3. When you have finished setting up proctoring, start the exam.
+          When you've finished the system check and verified your identity, begin your exam.
         {% endblocktrans %}
     </p>
     {% endif %}
     <div class="footer-sequence border-b-0 padding-b-0">
-      <button href="#" class="exam-action-button js-start-proctored-exam btn btn-secondary">{% trans "Start Proctored Exam" %}</button>
+      <button href="#" class="exam-action-button js-start-proctored-exam btn btn-secondary">{% trans "Start Exam" %}</button>
     </div>
   </div>
 </div>
