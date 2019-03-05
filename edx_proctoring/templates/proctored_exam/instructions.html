@@ -1,10 +1,10 @@
 {% load i18n %}
 <div class="sequence proctored-exam instructions message-left-bar" data-exam-id="{{exam_id}}" data-exam-started-poll-url="{{exam_started_poll_url}}">
 
-  <div class="">
+  <div>
     <h3>
     {% blocktrans %}
-      Set up and start your proctored exam.
+      Set up and start your proctored exam
     {% endblocktrans %}
     </h3>
     {% if backend_instructions %}
@@ -30,6 +30,9 @@
         </p>
       {% endif %}
       <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
+      <div class="footer-sequence border-b-0 padding-b-0">
+        <button href="#" class="exam-action-button js-start-proctored-exam btn btn-secondary">{% trans "Start Exam" %}</button>
+      </div>
     {% else %}
       <h4>
         {% blocktrans %}
@@ -79,10 +82,8 @@
           When you've finished the system check and verified your identity, begin your exam.
         {% endblocktrans %}
     </p>
+    <button href="#" class="exam-action-button js-start-proctored-exam btn btn-secondary">{% trans "Start Exam" %}</button>
     {% endif %}
-    <div class="footer-sequence border-b-0 padding-b-0">
-      <button href="#" class="exam-action-button js-start-proctored-exam btn btn-secondary">{% trans "Start Exam" %}</button>
-    </div>
   </div>
 </div>
 {% include 'proctored_exam/error_modal.html' %}
