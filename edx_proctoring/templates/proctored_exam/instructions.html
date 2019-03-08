@@ -141,13 +141,13 @@
 
   function check_exam_started(successCallback, failureCallback) {
     var url = $('.instructions').data('exam-started-poll-url') + '?sourceid=instructions';
-    $.ajax(url).success(function(data){
-      if (data.status === 'ready_to_start') {
+    edx.courseware.proctored_exam.checkExamAttemptStatus(url).then(function(status) {
+      if (status === 'ready_to_start') {
         successCallback();
       } else {
         failureCallback();
       }
-    });
+    }, failureCallback);
   }
 
   function launchSystemCheck() {

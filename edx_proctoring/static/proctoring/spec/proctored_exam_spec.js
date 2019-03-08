@@ -96,9 +96,13 @@ describe('ProctoredExamView', function () {
     });
     it("reload the page when the exam time finishes", function(){
         this.proctored_exam_view.secondsLeft = -10;
+        edx.courseware.proctored_exam.endExam =
+          jasmine.createSpy('endExam').and.returnValue(Promise.resolve());
+        // Stubbed out so tests don't reload endlessly when debugging in the browser
         var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
-        expect(reloadPage).toHaveBeenCalled();
+        expect(edx.courseware.proctored_exam.endExam).toHaveBeenCalled();
+        delete edx.courseware.proctored_exam.endExam;
     });
     it("resets the remaining exam time after the ajax response", function(){
         this.server.respondWith(
@@ -116,10 +120,12 @@ describe('ProctoredExamView', function () {
         );
         this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval-1; // to make the ajax call.
         var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
+        edx.courseware.proctored_exam.endExam =
+          jasmine.createSpy('endExam').and.returnValue(Promise.resolve());
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         this.server.respond();
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
-        expect(reloadPage).toHaveBeenCalled();
+        expect(edx.courseware.proctored_exam.endExam).toHaveBeenCalled();
     });
     it("calls external js global function on off-beat", function() {
       this.proctored_exam_view.model.set('ping_interval', 60);

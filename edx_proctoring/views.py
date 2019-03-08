@@ -557,6 +557,11 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
                     remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
                 ),
                 'attempt_status': attempt['status'],
+                'exam_started_poll_url': reverse(
+                    'edx_proctoring:proctored_exam.attempt',
+                    args=[attempt['id']]
+                ),
+
             }
 
             if provider:

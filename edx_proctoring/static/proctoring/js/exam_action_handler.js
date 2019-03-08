@@ -193,6 +193,35 @@ var edx = edx || {};
         ));
     }
   }
+  edx.courseware.proctored_exam.checkExamAttemptStatus = function(attemptStatusPollURL) {
+    return new Promise(function(resolve, reject) {
+      $.ajax(attemptStatusPollURL).success(function(data){
+        if (data.status) {
+          resolve(data.status);
+        } else {
+          reject();
+        }
+      }).fail(function() {
+        reject();
+      });
+    });
+  }
+  edx.courseware.proctored_exam.endExam = function(attemptStatusPollURL) {
+    var shouldUseWorker = window.Worker &&
+                          edx.courseware.proctored_exam.configuredWorkerURL;
+    if (shouldUseWorker) {
+      // todo would like to double-check the exam is ended on the LMS before proceeding
+      return edx.courseware.proctored_exam.checkExamAttemptStatus(attemptStatusPollURL)
+                .then(function(status) {
+                  if(status === 'submitted') {
+                    return workerPromiseForEventNames(actionToMessageTypesMap['submit'])();
+                  }
+                  return Promise.reject();
+                });
+    } else {
+      return Promise.resolve();
+    }
+  }
   edx.courseware.proctored_exam.pingApplication = function(timeoutInSeconds) {
     return Promise.race([
       workerPromiseForEventNames(actionToMessageTypesMap.ping)(),
