@@ -192,7 +192,7 @@ var edx = edx || {};
                 clearInterval(self.timerId); // stop the timer once the time finishes.
                 $(window).unbind('beforeunload', this.unloadMessage);
                 // refresh the page when the timer expired
-                self.reloadPage();
+                edx.courseware.proctored_exam.endExam(self.model.get('exam_started_poll_url')).then(self.reloadPage);
             }
         },
         endExamForFailureState: function () {
