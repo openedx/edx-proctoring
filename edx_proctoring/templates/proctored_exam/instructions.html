@@ -39,13 +39,14 @@
           Step 1
         {% endblocktrans %}
       </h4>
-      <p>
+      <label for="proctored-exam-code">
         {% blocktrans %}
           Copy this unique exam code. You will be prompted to paste this code later before you start the exam.
         {% endblocktrans %}
-      </p>
+      </label>
     <p>
-      <span class="proctored-exam-code">{{exam_code}}</span>
+      <input id ="proctored-exam-code" class="proctored-exam-code" size="40" type="text" value="{{exam_code}}" readonly>
+      <button id="copy-exam-code" class="btn copy-exam-code-button">{% trans "Copy Exam Code" %}</button>
     </p>
     <p>
       {% blocktrans %}
@@ -200,5 +201,25 @@
       );
       setPrimacyOfButtons(false);
     }, launchSystemCheck);
+  });
+
+  $('.proctored-exam-code').click(function () {
+    this.select();
+  });
+
+  $('#copy-exam-code')
+  .click(function (e) {
+    e.preventDefault();
+    var examCode = $('.proctored-exam-code');
+    examCode.select();
+    document.execCommand('copy');
+    $(this).text(gettext("Copied"));
+
+    // selecting the exam code moves focus to it, so move it back to the button
+    // this will also read out "Copied" for screenreaders
+    $(this).focus();
+  })
+  .blur(function () {
+    $(this).text(gettext("Copy Exam Code")); 
   });
 </script>
