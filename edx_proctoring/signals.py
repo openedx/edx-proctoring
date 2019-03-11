@@ -147,6 +147,7 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
     review = instance
     attempt_obj, is_archived = locate_attempt_by_attempt_code(review.attempt_code)
     attempt = api.ProctoredExamStudentAttemptSerializer(attempt_obj).data
+    backend = get_backend_provider(attempt['proctored_exam'])
 
     # we could have gotten a review for an archived attempt
     # this should *not* cause an update in our credit
@@ -158,6 +159,8 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
     elif review.reviewed_by or not constants.REQUIRE_FAILURE_SECOND_REVIEWS:
         # reviews from the django admin have a reviewer set. They should be allowed to
         # reject an attempt
+        attempt_status = ProctoredExamStudentAttemptStatus.rejected
+    elif backend and backend.supports_onboarding and attempt['is_sample_attempt']:
         attempt_status = ProctoredExamStudentAttemptStatus.rejected
     else:
         # if we are not allowed to store 'rejected' on this
