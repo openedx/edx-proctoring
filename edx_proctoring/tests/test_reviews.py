@@ -38,14 +38,15 @@ class ReviewTests(LoggedInTestCase):
     def setUp(self):
         super(ReviewTests, self).setUp()
         self.dummy_request = RequestFactory().get('/')
-        self.exam_id = create_exam(
-            course_id='foo/bar/baz',
-            content_id='content',
-            exam_name='Sample Exam',
-            time_limit_mins=10,
-            is_proctored=True,
-            backend='test'
-        )
+        self.exam_creation_params = {
+            'course_id': 'foo/bar/baz',
+            'content_id': 'content',
+            'exam_name': 'Sample Exam',
+            'time_limit_mins': 10,
+            'is_proctored': True,
+            'backend': 'test'
+        }
+        self.exam_id = create_exam(**self.exam_creation_params)
 
         self.attempt_id = create_exam_attempt(
             self.exam_id,
@@ -398,6 +399,28 @@ class ReviewTests(LoggedInTestCase):
             attempt = get_exam_attempt_by_id(self.attempt_id)
             self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.second_review_required)
 
+    def test_onboarding_attempts_no_second_review_necessary(self):
+        """
+        Test that onboarding exams do not require a manual pass of review before they land in rejected
+        """
+        exam_creation_params = self.exam_creation_params.copy()
+        exam_creation_params.update({
+            'is_practice_exam': True,
+            'content_id': 'onboarding_content',
+        })
+        onboarding_exam_id = create_exam(**exam_creation_params)
+        onboarding_attempt_id = create_exam_attempt(
+            onboarding_exam_id,
+            self.user.id,
+            taking_as_proctored=True,
+        )
+        onboarding_attempt = get_exam_attempt_by_id(onboarding_attempt_id)
+        test_payload = self.get_review_payload(ReviewStatus.suspicious)
+        ProctoredExamReviewCallback().make_review(onboarding_attempt, test_payload)
+
+        onboarding_attempt = get_exam_attempt_by_id(onboarding_attempt_id)
+        assert onboarding_attempt['status'] != ProctoredExamStudentAttemptStatus.second_review_required
+
     def test_status_reviewed_by_field(self):
         """
         Test that `reviewed_by` field of Review model is correctly assigned to None or to a User object.
@@ -486,7 +509,6 @@ class ReviewTests(LoggedInTestCase):
         }
 
         with patch('edx_proctoring.views.is_user_course_or_global_staff', return_value=False):
-            # import pudb; pu.db
             ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
 
             # using assert_any_call instead of assert_called_with due to logging in analytics emit_event function
