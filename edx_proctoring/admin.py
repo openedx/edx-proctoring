@@ -516,6 +516,10 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
             if change and form.cleaned_data['taking_as_proctored'] and 'taking_as_proctored' in form.changed_data:
                 # modify only taking_as_proctored field if needed and change status with update_attempt_status
                 obj.taking_as_proctored = True
+                if obj.started_at is None:
+                    obj.started_at = datetime.now()
+                if obj.completed_at is None:
+                    obj.completed_at = datetime.now()
                 obj.save()  # taking_as_proctored only can be changed from False to True
             elif form.is_valid():
                 super(ProctoredExamStudentAttemptAdmin, self).save_model(request, obj, form, change)
