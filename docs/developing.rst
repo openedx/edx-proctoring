@@ -5,7 +5,7 @@ edX Proctoring Developer Guide
 
 
 How do I use proctoring on devstack?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------
 * Create a test course
     * Follow the steps here: Including Proctored Exams in Your Course
 * Read the `learner guide for using proctoring <http://edx.readthedocs.io/projects/edx-guide-for-students/en/latest/completing_assignments/SFD_proctored_exams.html>`_
@@ -18,7 +18,7 @@ How do I use proctoring on devstack?
     * "Proctored exam software secure review" has log of responses from SoftwareSecure
 
 How do I develop on edx-proctoring?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 These are the steps to install edx-proctoring into your pre-existing devstack image:
 
@@ -56,7 +56,7 @@ In edx-platform/lms/envs/private.py and edx-platform/cms/envs/private.py:
 
 
 Using mockprock as a backend
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------
 
 `Mockprock <https://github.com/edx/mockprock>`_ is a proctoring backend that runs as an HTTP server and a python module. It allows you to simulate the entire proctoring workflow.
 
@@ -92,18 +92,22 @@ The command will tell you you have to supply an client_id and client_secret. It'
 
 
 How do I run proctoring tests?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------
 
     cd /edx/src/edx-proctoring
     make test-all
 
 
-How do I set up proctoring on a sandbox?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+How do I set up proctoring on a running sandbox?
+------------------------------------------------
 
 Start by following the steps here: https://github.com/edx/edx-proctoring
 
 * Add the edX-specific configuration settings
+
+  * What specifically needs to be configured depends on the backends
+    you'll need on your sandbox. See the next section on
+    `Backend-specific Information`_
 * Restart Studio and LMS::
 
     sudo /edx/bin/supervisorctl restart lms cms
@@ -119,8 +123,96 @@ Start by following the steps here: https://github.com/edx/edx-proctoring
         * Go to ``/admin/verify_student/manualverification/`` on your sandbox
         * Create a record for the given user, with status "approved".
 
+Backend-specific Information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+One of the main motivations for setting up a sandbox to test
+proctoring is having an externally accessible system which can be
+accessed by our proctoring providers' systems. This enables more
+thorough end-to-end testing.
+
+To enable proctoring in a way that won't be overridden by ansible
+plays, you can add the following to a sandbox's
+``/edx/app/edx_ansible/server-vars.yml`` at the end of the
+``EDXAPP_FEATURES`` array::
+
+  EDX_APP_FEATURES:
+    MILESTONES_APP: true
+    ...
+    ENABLE_API_DOCS: true
+    ENABLE_SPECIAL_EXAMS: true
+
+  PROCTORING_SETTINGS:
+    MUST_BE_VERIFIED_TRACK: False
+
+  COMMON_JWT_PUBLIC_SIGNING_JWK_SET: ' {"keys":[{"kty":"RSA", ... }]}'
+
+  EDXAPP_PROCTORING_BACKENDS:
+    ...
+
+Placing these configurations here (rather than the more generic
+locations mentioned in `the README`_) will allow us to leverage the
+power of the ansible plays used to construct and administer
+sandboxes, e.g. those run via the ``/edx/bin/update`` script.
+`More on that here.`_
+
+You will need to `generate a public JWK keypair`_.
+
+The contents of ``EDXAPP_PROCTORING_BACKENDS`` will depend on which
+backend(s) you're interested in testing. It's necessary to provide a
+``DEFAULT`` backend.
+
+Proctortrack
+""""""""""""
+
+As will be the case with all REST backends implementing `our spec`_, one
+doesn't need to configure much to get Proctortrack working on a
+sandbox, e.g.::
+  EDXAPP_PROCTORING_BACKENDS:
+    DEFAULT: 'proctortrack'
+    proctortrack:
+      client_id: "<you'll need to fill these in with credentials from Proctortrack>"
+      client_secret: "<you'll need to fill these in with credentials from Proctortrack>"
+      base_url: 'https://prestaging.verificient.com'
+
+In addition to adding these configurations, you'll also need to set up
+a user which PT can authenticate as.
+
+* Create a user group called ``proctortrack_review`` in Django admin
+* Create a user, and associate it with that group
+* Create an OAuth application
+  (``/admin/oauth2_provider/application/``) pointing to the user
+  you've created, and share the client_id with folks on the other end
+  of the integration.
+
+.. _our spec: ./backends.rst
+.. _the README: https://github.com/edx/edx-proctoring
+.. _generate a public JWK keypair: https://mkjwk.org/
+.. _More on that here.: https://openedx.atlassian.net/wiki/spaces/EdxOps/pages/13960183/Sandboxes#Sandboxes-Updatingcode
+
+RPNow
+"""""
+
+Comparably more is required for our older support of PSI's RemoteProctor NOW software::
+
+  EDXAPP_PROCTORING_BACKENDS:
+    DEFAULT: "software_secure"
+    software_secure:
+      crypto_key: "<secret>"
+      exam_register_endpoint: "https://exams.remoteproctor.io/exams/registration/"
+      exam_sponsor: "edx LMS"
+      organization: "edxdev"
+      secret_key_id: "<secret>"
+      secret_key: "<secret>"
+      software_download_url: "http://edxdev.remoteproctor.com"
+      send_email: true
+
+At edX, we keep these non-production secrets stored behind `a private confluence document`_.
+
+.. _a private confluence document: https://openedx.atlassian.net/wiki/spaces/EDUCATOR/pages/160027798/Software+Secure+debug+proctoring+configuration
+
 How do I use proctoring on stage?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------------
 
 * Create a test user that is not staff
 
@@ -134,11 +226,11 @@ For example, andya+test@edx.org
 Note: you can use any expiration date in the future, and any three digit CVN
 
 How do I release edx-proctoring?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------------
 When releasing a new version of edx-proctoring, we use a process that is very similar to edx-platform. However, since edx-proctoring is a dependent library for edx-platform, there are some differences.
 
 Release a new version of edx-proctoring
-----------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * Update the version in ``edx_proctoring/__init__.py`` and ``package.json``
 * Create a `new release on GitHub <https://github.com/edx/edx-proctoring/releases>`_ using the version number 
