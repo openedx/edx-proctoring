@@ -1199,7 +1199,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started),
         (ProctoredExamStudentAttemptStatus.error, ProctoredExamStudentAttemptStatus.started),
-        (ProctoredExamStudentAttemptStatus.submitted, ProctoredExamStudentAttemptStatus.error),
     )
     @ddt.unpack
     @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})

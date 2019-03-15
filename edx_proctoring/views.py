@@ -414,7 +414,9 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
         elif action == 'error':
             backend = attempt['proctored_exam']['backend']
             waffle_name = PING_FAILURE_PASSTHROUGH_TEMPLATE.format(backend)
-            should_block_user = not (backend and waffle.switch_is_active(waffle_name))
+            should_block_user = not (backend and waffle.switch_is_active(waffle_name)) and (
+                not attempt['status'] == ProctoredExamStudentAttemptStatus.submitted
+            )
             if should_block_user:
                 exam_attempt_id = update_attempt_status(
                     attempt['proctored_exam']['id'],
