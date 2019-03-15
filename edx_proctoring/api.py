@@ -824,21 +824,6 @@ def update_attempt_status(exam_id, user_id, to_status,
         )
         raise ProctoredExamIllegalStatusTransition(err_msg)
 
-    # special case logic, if we are in a completed status we shouldn't allow
-    # for a transition to 'Error' state
-    if in_completed_status and to_status == ProctoredExamStudentAttemptStatus.error:
-        err_msg = (
-            'A status transition from {from_status} to {to_status} was attempted '
-            'on exam_id {exam_id} for user_id {user_id}. This is not '
-            'allowed!'.format(
-                from_status=from_status,
-                to_status=to_status,
-                exam_id=exam_id,
-                user_id=user_id
-            )
-        )
-        raise ProctoredExamIllegalStatusTransition(err_msg)
-
     # OK, state transition is fine, we can proceed
     exam_attempt_obj.status = to_status
 

@@ -1178,6 +1178,37 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 400)
 
     @patch('edx_proctoring.views.waffle.switch_is_active')
+    def test_attempt_ping_failure_when_submitted(self, mocked_switch_is_active):
+        """
+        Ping failure should not cause an "error" state transition when
+        the learner has submitted their exam. This could happen when
+        the learner is browsing the LMS from multiple tabs.
+        """
+        attempt = self._test_exam_attempt_creation()
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt['id']]),
+            json.dumps({
+                'action': 'submit',
+            }),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['exam_attempt_id'], attempt['id'])
+
+        mocked_switch_is_active.return_value = False
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt['id']]),
+            json.dumps({
+                'action': 'error',
+            }),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['exam_attempt_id'], False)
+
+    @patch('edx_proctoring.views.waffle.switch_is_active')
     def test_attempt_ping_failure(self, mocked_switch_is_active):
         """
         Test ping failure when backend is configured to permit ping failures
