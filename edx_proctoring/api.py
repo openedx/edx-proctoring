@@ -787,7 +787,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     log.info(log_msg)
 
     # In some configuration we may treat timeouts the same
-    # as the user saying he/she wises to submit the exam
+    # as the user saying he/she wishes to submit the exam
     treat_timeout_as_submitted = (
         to_status == ProctoredExamStudentAttemptStatus.timed_out and
         not settings.PROCTORING_SETTINGS.get('ALLOW_TIMED_OUT_STATE', False)
