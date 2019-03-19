@@ -1,12 +1,13 @@
-var edx = edx || {};
+edx = edx || {};
 
-(function (Backbone, $, _) {
+(function(Backbone, $, _) {
     'use strict';
 
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
     edx.instructor_dashboard.proctoring.ProctoredExamDashboardView = Backbone.View.extend({
-        initialize: function (options) {
+        initialize: function() {
+            var self = this;
             this.setElement($('.student-review-dashboard-container'));
             this.tempate_url = '/static/proctoring/templates/dashboard.underscore';
             this.iframeHTML = null;
@@ -14,7 +15,6 @@ var edx = edx || {};
             this.context = {
                 dashboardURL: '/api/edx_proctoring/v1/instructor/' + this.$el.data('course-id')
             };
-            var self = this;
 
             $('#proctoring-accordion').on('accordionactivate', function(event, ui) {
                 self.render(ui);
@@ -22,22 +22,20 @@ var edx = edx || {};
             /* Load the static template for rendering. */
             this.loadTemplateData();
         },
-        loadTemplateData: function () {
+        loadTemplateData: function() {
             var self = this;
-            $.ajax({url: self.tempate_url, dataType: "html"})
-                .error(function (jqXHR, textStatus, errorThrown) {
-
-                })
-                .done(function (template_html) {
-                    self.iframeHTML = _.template(template_html)(self.context);
+            $.ajax({url: self.tempate_url, dataType: 'html'})
+                .done(function(templateHtml) {
+                    self.iframeHTML = _.template(templateHtml)(self.context);
                 });
         },
-        render: function (ui) {
+        render: function(ui) {
             if (ui.newPanel.eq(this.$el) && this.doRender && this.iframeHTML) {
                 this.$el.html(this.iframeHTML);
                 this.doRender = false;
             }
-        },
+        }
     });
-    this.edx.instructor_dashboard.proctoring.ProctoredExamDashboardView = edx.instructor_dashboard.proctoring.ProctoredExamDashboardView;
+    this.edx.instructor_dashboard.proctoring.ProctoredExamDashboardView =
+        edx.instructor_dashboard.proctoring.ProctoredExamDashboardView;
 }).call(this, Backbone, $, _);

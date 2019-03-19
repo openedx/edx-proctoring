@@ -1,0 +1,13 @@
+{
+  "extends": "eslint-config-edx-es5",
+  "globals": {
+    "sinon": false,
+    "setFixtures": false,
+    "spyOnEvent": false,
+    "_": false,
+    "Backbone": false,
+    "gettext": false,
+    "Promise": false,
+    "edx": true
+  }
+}
