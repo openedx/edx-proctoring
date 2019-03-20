@@ -5,7 +5,8 @@ Various callback paths that support callbacks from SoftwareSecure
 import logging
 from django.template import loader
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from edx_proctoring.api import (
     get_exam_attempt_by_code,
@@ -43,11 +44,10 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
         mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
 
     log.info("Exam %r has been marked as ready", attempt['proctored_exam']['id'])
-    template = loader.get_template('proctored_exam/proctoring_launch_callback.html')
 
-    return HttpResponse(
-        template.render({
-            'platform_name': settings.PLATFORM_NAME,
-            'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {})
-        })
-    )
+    course_id = attempt['proctored_exam']['course_id']
+    content_id = attempt['proctored_exam']['content_id']
+
+    exam_url = reverse('jump_to', args=[course_id, content_id])
+
+    return HttpResponseRedirect(exam_url)
