@@ -74,11 +74,11 @@ class EdxProctoringConfig(AppConfig):
         u'settings_config': {
             u'lms.djangoapp': {
                 u'common': {'relative_path': u'settings.common'},
-                u'aws': {'relative_path': u'settings.aws'},
+                u'production': {'relative_path': u'settings.production'},
             },
             u'cms.djangoapp': {
                 u'common': {'relative_path': u'settings.common'},
-                u'aws': {'relative_path': u'settings.aws'},
+                u'production': {'relative_path': u'settings.production'},
             }
 
         },
