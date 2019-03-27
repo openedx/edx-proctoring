@@ -20,7 +20,8 @@
             lastFetched: new Date()
         },
         getFormattedRemainingTime: function(secondsLeft) {
-            var secsLeft, hours, minutes, seconds;
+            var secsLeft = secondsLeft,
+                hours, minutes, seconds;
             /* since we can have a small grace period, we can end in the negative numbers */
             if (secondsLeft < 0) {
                 secsLeft = 0;
