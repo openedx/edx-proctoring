@@ -174,7 +174,7 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
 
 class TestBackends(TestCase):
     """
-    Miscelaneous tests for backends.py
+    Miscellaneous tests for backends.py
     """
 
     def test_raises_exception(self):

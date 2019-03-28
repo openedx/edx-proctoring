@@ -11,7 +11,9 @@ from mock import MagicMock, patch
 
 from edx_proctoring.api import (
     update_attempt_status,
+    get_integration_specific_email
 )
+from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 from edx_proctoring.statuses import (
     ProctoredExamStudentAttemptStatus,
@@ -183,3 +185,40 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
             status
         )
         self.assertEqual(len(mail.outbox), 0)
+
+    @ddt.data(
+        [ProctoredExamStudentAttemptStatus.submitted, 'edx@example.com'],
+        [ProctoredExamStudentAttemptStatus.submitted, ''],
+        [ProctoredExamStudentAttemptStatus.submitted, None],
+        [ProctoredExamStudentAttemptStatus.verified, 'edx@example.com'],
+        [ProctoredExamStudentAttemptStatus.verified, ''],
+        [ProctoredExamStudentAttemptStatus.verified, None],
+        [ProctoredExamStudentAttemptStatus.rejected, 'edx@example.com'],
+        [ProctoredExamStudentAttemptStatus.rejected, ''],
+        [ProctoredExamStudentAttemptStatus.rejected, None],
+    )
+    @ddt.unpack
+    def test_correct_edx_email(self, status, integration_specific_email,):
+        exam_attempt = self._create_started_exam_attempt()
+
+        test_backend = get_backend_provider(name='test')
+
+        if integration_specific_email is None:
+            # backend does not have integration specific email
+            del test_backend.integration_specific_email
+        else:
+            test_backend.integration_specific_email = integration_specific_email
+
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+
+        # Verify the edX email
+        expected_email = get_integration_specific_email(test_backend)
+        actual_body = self._normalize_whitespace(mail.outbox[0].body)
+        self.assertIn('contact Open edX support at '
+                      '<a href="mailto:{email}?Subject=Proctored exam Test Exam in edx demo for user tester"> '
+                      '{email} </a>'.format(email=expected_email),
+                      actual_body)

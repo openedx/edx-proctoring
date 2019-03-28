@@ -174,6 +174,7 @@ sandbox, e.g.::
       client_id: "<you'll need to fill these in with credentials from Proctortrack>"
       client_secret: "<you'll need to fill these in with credentials from Proctortrack>"
       base_url: 'https://prestaging.verificient.com'
+      integration_specific_email: "proctortrack-support@edx.org"
 
 In addition to adding these configurations, you'll also need to set up
 a user which PT can authenticate as.
@@ -216,7 +217,7 @@ How do I use proctoring on stage?
 
 * Create a test user that is not staff
 
-Note: you can create new emails by adding a suffix starting with + to your edx email
+Note: you can create new emails by adding a suffix starting with + to your edX email
 For example, andya+test@edx.org
 
 * Enroll for the `proctoring test course <https://courses.stage.edx.org/courses/course-v1:Proctoring2+Proctoring2+Proctoring2/info>`_

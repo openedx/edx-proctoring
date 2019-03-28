@@ -1108,6 +1108,9 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         username=user.username,
     )
 
+    exam = get_exam_by_id(exam_attempt_obj.proctored_exam.id)
+    contact_email = get_integration_specific_email(get_backend_provider(exam))
+
     body = email_template.render({
         'username': user.username,
         'course_url': course_url,
@@ -1115,7 +1118,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         'exam_name': exam_name,
         'status': status,
         'platform': constants.PLATFORM_NAME,
-        'contact_email': constants.CONTACT_EMAIL,
+        'contact_email': contact_email,
         'support_email_subject': support_email_subject,
     })
 
@@ -1744,7 +1747,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'provider_tech_support_phone': provider.tech_support_phone,
         'provider_name': provider.verbose_name,
         'learner_notification_from_email': provider.learner_notification_from_email,
-        'integration_specific_email': provider.integration_specific_email,
+        'integration_specific_email': get_integration_specific_email(provider),
         'exam_display_name': exam['exam_name'],
     }
     if attempt:
@@ -2141,3 +2144,10 @@ def get_exam_configuration_dashboard_url(course_id, content_id):
         )
 
     return None
+
+
+def get_integration_specific_email(provider):
+    """
+    Return the edX contact email to use for a particular provider.
+    """
+    return getattr(provider, 'integration_specific_email', None) or constants.DEFAULT_CONTACT_EMAIL

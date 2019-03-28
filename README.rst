@@ -85,7 +85,7 @@ In your lms.auth.json file, please add the following *secure* information::
     "PROCTORING_BACKENDS": {
         "software_secure": {
             "crypto_key": "{add SoftwareSecure crypto key here}",
-            "exam_register_endpoint": "{add enpoint to SoftwareSecure}",
+            "exam_register_endpoint": "{add endpoint to SoftwareSecure}",
             "exam_sponsor": "{add SoftwareSecure sponsor}",
             "organization": "{add SoftwareSecure organization}",
             "secret_key": "{add SoftwareSecure secret key}",
