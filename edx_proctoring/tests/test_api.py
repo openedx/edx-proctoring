@@ -53,7 +53,9 @@ from edx_proctoring.api import (
     is_backend_dashboard_available,
     get_exam_configuration_dashboard_url,
     does_backend_support_onboarding,
+    get_integration_specific_email,
 )
+from edx_proctoring.constants import DEFAULT_CONTACT_EMAIL
 from edx_proctoring.exceptions import (
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
@@ -2031,3 +2033,16 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         # ensure that the attempt is still in the history table
         hist_attempt = ProctoredExamStudentAttemptHistory.objects.get(attempt_id=attempt_id)
         assert hist_attempt.status == ProctoredExamStudentAttemptStatus.onboarding_missing
+
+    def test_get_integration_specific_email(self):
+        """Test that the correct integration_specific_email is returned for a provider."""
+        test_backend = get_backend_provider(name='test')
+
+        assert get_integration_specific_email(test_backend) == DEFAULT_CONTACT_EMAIL
+
+        integration_specific_email = 'edx@example.com'
+        test_backend.integration_specific_email = integration_specific_email
+        assert get_integration_specific_email(test_backend) == integration_specific_email
+
+        del test_backend.integration_specific_email
+        assert get_integration_specific_email(test_backend) == DEFAULT_CONTACT_EMAIL
