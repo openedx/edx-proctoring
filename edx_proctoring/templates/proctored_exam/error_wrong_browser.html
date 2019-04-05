@@ -1,0 +1,32 @@
+{% load i18n %}
+<div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      Error with proctored exam
+    {% endblocktrans %}
+  </h3>
+
+  <p>
+    {% blocktrans %}
+      The content of this exam can only be viewed through the RPNow
+      application. If you have yet to complete your exam, please
+      return to the RPNow application to proceed.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+      Alternatively, you can end your exam.
+    {% endblocktrans %}
+  </p>
+  <button class="exam-action-button btn-pl-primary" data-action="stop" data-change-state-url="{{change_state_url}}">
+    {% trans "End My Exam" %}
+  </button>
+</div>
+{% include 'proctored_exam/footer.html' %}
+{% include 'proctored_exam/error_modal.html' %}
+
+<script type="text/javascript">
+  $('.exam-action-button').click(
+      edx.courseware.proctored_exam.updateStatusHandler
+  );
+</script>

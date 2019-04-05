@@ -1778,8 +1778,12 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     if not attempt_status:
         student_view_template = 'practice_exam/entrance.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
-        # when we're taking the exam we should not override the view
-        return None
+        provider = get_backend_provider(exam)
+        if provider.should_block_access_to_exam_material():
+            student_view_template = 'proctored_exam/error_wrong_browser.html'
+        else:
+            # when we're taking the exam we should not override the view
+            return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
         student_view_template = 'proctored_exam/instructions.html'
@@ -1920,8 +1924,12 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             # to start timed exam
             emit_event(exam, 'option-presented')
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
-        # when we're taking the exam we should not override the view
-        return None
+        provider = get_backend_provider(exam)
+        if provider.should_block_access_to_exam_material():
+            student_view_template = 'proctored_exam/error_wrong_browser.html'
+        else:
+            # when we're taking the exam we should not override the view
+            return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
         if context.get('verification_status') is not APPROVED_STATUS:
