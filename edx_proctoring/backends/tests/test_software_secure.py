@@ -551,6 +551,18 @@ class SoftwareSecureTests(TestCase):
         provider = get_backend_provider()
         self.assertIsNone(provider.mark_erroneous_exam_attempt(None, None))
 
+    @patch('edx_proctoring.backends.software_secure.get_current_request')
+    def test_should_block_access_to_exam_material(self, mocked_get_current_request):
+        """
+        Test that conditions applied for blocking user from accessing
+        course content are correct
+        """
+        provider = get_backend_provider()
+        mocked_get_current_request.return_value.get_signed_cookie.return_value = False
+        assert provider.should_block_access_to_exam_material()
+        mocked_get_current_request.return_value.get_signed_cookie.return_value = 'boop-be-boop-bop-bop'
+        assert not provider.should_block_access_to_exam_material()
+
     def test_split_fullname(self):
         """
         Make sure we are splitting up full names correctly
