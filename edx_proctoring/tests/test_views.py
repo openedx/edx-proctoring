@@ -1770,7 +1770,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
                 args=[attempt_code]
             )
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('exam', response.cookies)
 
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], 'ready_to_start')
