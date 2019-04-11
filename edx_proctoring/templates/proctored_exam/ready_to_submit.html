@@ -6,7 +6,9 @@
     {% endblocktrans %}
   </h3>
   <ul>
-    <li> {% trans 'Make sure that you have selected "Submit" for each answer before you submit your exam.' %}</li>
+    {% if able_to_reenter_exam %}
+      <li> {% trans 'Make sure that you have selected "Submit" for each answer before you submit your exam.' %}</li>
+    {% endif %}
     <li> {% trans 'Once you click "Yes, end my proctored exam", the exam will be closed, and your proctoring session will be submitted for review.' %}</li>
   </ul>
   {% block additional_exhortation %}{% endblock %}
@@ -14,7 +16,7 @@
   <button type="button" name="submit-proctored-exam" class="exam-action-button btn btn-pl-primary btn-base" data-action="submit" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" data-loading-text="<span class='fa fa-circle-o-notch fa-spin'></span> {% trans 'Ending Exam' %}" data-cta-text="{{ end_exam }}">
     {{ end_exam }}
   </button>
-  {% if does_time_remain %}
+  {% if able_to_reenter_exam %}
     <button type="button" name="goback-proctored-exam" class="exam-action-button btn btn-secondary btn-base" data-action="start" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" style="box-shadow: none">
       {% blocktrans %}
         No, I'd like to continue working

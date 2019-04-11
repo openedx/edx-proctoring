@@ -1725,7 +1725,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'is_sample_attempt': is_practice_exam,
         'has_due_date': has_due_date,
         'has_due_date_passed': has_due_date_passed(exam['due_date']),
-        'does_time_remain': _does_time_remain(attempt),
+        'able_to_reenter_exam': _does_time_remain(attempt) and not provider.should_block_access_to_exam_material(),
         'enter_exam_endpoint': reverse('edx_proctoring:proctored_exam.attempt.collection'),
         'exam_started_poll_url': reverse(
             'edx_proctoring:proctored_exam.attempt',
