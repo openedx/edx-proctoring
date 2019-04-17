@@ -151,26 +151,25 @@
     }, failureCallback);
   }
 
-  function launchSystemCheck() {
-    setPrimacyOfButtons(false);
-    var url = $('.instructions').data('exam-started-poll-url');
-    var action = $('#software_download_link').data('action');
-    // open the new tab in the click event with an empty URL but show the message.
-    var newWindow = window.open("", "_blank");
-    $(newWindow.document.body).html("<p>Please wait while you are being redirected...</p>");
-
-    $.ajax({
-      url: url,
-      type: 'PUT',
-      data: {
-        action: action
-      },
-      success: function (data) {
-        newWindow.location = "{{software_download_url|safe}}";
-      }
-    }).fail(function(){
-      newWindow.close();
-    });
+ function launchSystemCheck() {
+   setPrimacyOfButtons(false);
+   var url = $('.instructions').data('exam-started-poll-url');
+   var action = $('#software_download_link').data('action');
+   // open the new tab in the click event with an empty URL but show the message.
+   var newWindow = window.open("{{software_download_url|safe}}", "_blank");
+   if (!newWindow) {
+     edx.courseware.proctored_exam.accessibleError(
+       gettext("Please Allow Pop-ups"),
+       gettext('Enable pop-ups in both your browser settings and/or any browser extensions and then click "Start System Check" again to proceed.')
+     );
+   }
+   $.ajax({
+     url: url,
+     type: 'PUT',
+     data: {
+       action: action
+     }
+   });
   }
 
   $('.js-start-proctored-exam').click(function(e) {
