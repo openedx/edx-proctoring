@@ -38,6 +38,12 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
                              ProctoredExamStudentAttemptStatus.download_software_clicked]:
         mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
+    else:
+        log.warning("Attempted to enter proctored exam attempt {attempt_id} when status was {attempt_status}"
+                    .format(
+                        attempt_id=attempt['id'],
+                        attempt_status=attempt['status'],
+                    ))
 
     log.info("Exam %r has been marked as ready", attempt['proctored_exam']['id'])
 
