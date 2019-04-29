@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'edx_proctoring',
     'rules.apps.AutodiscoverRulesConfig',
+    'waffle',
 )
 
 AUTHENTICATION_BACKENDS = [

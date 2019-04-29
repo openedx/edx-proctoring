@@ -12,6 +12,7 @@ import ddt
 from freezegun import freeze_time
 from mock import MagicMock, patch
 import pytz
+from waffle.testutils import override_flag
 
 import six
 
@@ -23,6 +24,7 @@ from edx_proctoring.api import (
     get_student_view,
     update_attempt_status,
 )
+from edx_proctoring.constants import RPNOWV4_WAFFLE_NAME
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
@@ -36,6 +38,7 @@ from .test_services import MockCreditServiceWithCourseEndDate, MockCreditService
 from .utils import ProctoredExamTestCase
 
 
+@override_flag(RPNOWV4_WAFFLE_NAME, active=True)
 @patch('django.urls.reverse', MagicMock)
 @ddt.ddt
 class ProctoredExamStudentViewTests(ProctoredExamTestCase):
