@@ -43,7 +43,7 @@ from edx_proctoring.api import (
     remove_exam_attempt,
     update_attempt_status,
     update_exam_attempt,
-    has_due_date_passed,
+    is_exam_passed_due,
     get_backend_provider,
     mark_exam_attempt_as_ready,
 )
@@ -591,7 +591,7 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
 
         # Bypassing the due date check for practice exam
         # because student can attempt the practice after the due date
-        if not exam.get("is_practice_exam") and has_due_date_passed(exam.get('due_date')):
+        if not exam.get("is_practice_exam") and is_exam_passed_due(exam, request.user):
             raise ProctoredExamPermissionDenied(
                 'Attempted to access expired exam with exam_id {exam_id}'.format(exam_id=exam_id)
             )

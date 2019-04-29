@@ -5,5 +5,5 @@
 doc8                      # reStructuredText style checker
 edx_sphinx_theme          # edX theme for Sphinx output
 readme_renderer           # Validates README.rst for usage on PyPI
-Sphinx                    # Documentation builder
+sphinx==1.8.5             # Documentation builder
 sphinxcontrib-napoleon    # Google Style docstring support for sphinx
