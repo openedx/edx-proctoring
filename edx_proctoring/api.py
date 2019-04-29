@@ -13,6 +13,8 @@ from datetime import datetime, timedelta
 import pytz
 import six
 
+from waffle import switch_is_active
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail.message import EmailMessage
@@ -1725,6 +1727,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'has_due_date': has_due_date,
         'has_due_date_passed': is_exam_passed_due(exam, user=user_id),
         'able_to_reenter_exam': _does_time_remain(attempt) and not provider.should_block_access_to_exam_material(),
+        'is_rpnow4_enabled': switch_is_active(constants.RPNOWV4_WAFFLE_NAME),
         'enter_exam_endpoint': reverse('edx_proctoring:proctored_exam.attempt.collection'),
         'exam_started_poll_url': reverse(
             'edx_proctoring:proctored_exam.attempt',

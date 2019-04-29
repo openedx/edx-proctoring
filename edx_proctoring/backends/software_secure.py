@@ -17,6 +17,7 @@ import six
 import requests
 
 from crum import get_current_request
+from waffle import switch_is_active
 from django.conf import settings
 from django.urls import reverse
 
@@ -393,4 +394,4 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         browser other than PSI's secure browser
         """
         req = get_current_request()
-        return not req.get_signed_cookie('exam', default=False)
+        return switch_is_active(constants.RPNOWV4_WAFFLE_NAME) and not req.get_signed_cookie('exam', default=False)
