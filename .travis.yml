@@ -11,10 +11,10 @@ env:
 before_install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
-- pip install --upgrade pip
 install:
 - pip install tox-travis
-- make install
+- pip install -r requirements/test.txt
+- npm install
 before_script:
 - npm install -g gulp-cli
 script:
