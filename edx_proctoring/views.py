@@ -425,10 +425,10 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 )
             else:
                 exam_attempt_id = False
-            LOG.warn(u'Browser JS reported problem with proctoring desktop '
-                     u'application. Did block user: %s, for attempt: %s',
-                     should_block_user,
-                     attempt['id'])
+            LOG.warning(u'Browser JS reported problem with proctoring desktop '
+                        u'application. Did block user: %s, for attempt: %s',
+                        should_block_user,
+                        attempt['id'])
         elif action == 'decline':
             exam_attempt_id = update_attempt_status(
                 attempt['proctored_exam']['id'],
