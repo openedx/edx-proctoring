@@ -16,6 +16,8 @@ import six
 
 import requests
 
+from crum import get_current_request
+from waffle import switch_is_active
 from django.conf import settings
 from django.urls import reverse
 
@@ -383,3 +385,13 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         )
 
         return response.status_code, response.text
+
+    def should_block_access_to_exam_material(self):
+        """
+        Whether learner access to exam content should be blocked during the exam
+
+        Blocks learners from viewing exam course content from a
+        browser other than PSI's secure browser
+        """
+        req = get_current_request()
+        return switch_is_active(constants.RPNOWV4_WAFFLE_NAME) and not req.get_signed_cookie('exam', default=False)

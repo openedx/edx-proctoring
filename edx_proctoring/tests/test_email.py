@@ -203,11 +203,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
 
         test_backend = get_backend_provider(name='test')
 
-        if integration_specific_email is None:
-            # backend does not have integration specific email
-            del test_backend.integration_specific_email
-        else:
-            test_backend.integration_specific_email = integration_specific_email
+        test_backend.integration_specific_email = integration_specific_email
 
         update_attempt_status(
             exam_attempt.proctored_exam_id,

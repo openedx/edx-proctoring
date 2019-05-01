@@ -63,3 +63,5 @@ MINIMUM_TIME = datetime.datetime.fromtimestamp(0)
 DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS = 60
 
 PING_FAILURE_PASSTHROUGH_TEMPLATE = 'edx_proctoring.{}_ping_failure_passthrough'
+
+RPNOWV4_WAFFLE_NAME = 'edx_proctoring.rpnowv4_flow'

@@ -122,3 +122,9 @@ class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
         Returns boolean status of deletion, or None if this would be a no-op
         """
         return None
+
+    def should_block_access_to_exam_material(self):
+        """
+        Whether learner access to exam content should be blocked during the exam
+        """
+        return False

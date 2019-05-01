@@ -12,6 +12,7 @@ import ddt
 from freezegun import freeze_time
 from mock import MagicMock, patch
 import pytz
+from waffle.testutils import override_flag
 
 import six
 
@@ -23,6 +24,7 @@ from edx_proctoring.api import (
     get_student_view,
     update_attempt_status,
 )
+from edx_proctoring.constants import RPNOWV4_WAFFLE_NAME
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamStudentAllowance,
@@ -36,6 +38,7 @@ from .test_services import MockCreditServiceWithCourseEndDate, MockCreditService
 from .utils import ProctoredExamTestCase
 
 
+@override_flag(RPNOWV4_WAFFLE_NAME, active=True)
 @patch('django.urls.reverse', MagicMock)
 @ddt.ddt
 class ProctoredExamStudentViewTests(ProctoredExamTestCase):
@@ -64,6 +67,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
         self.take_exam_without_proctoring_msg = 'Take this exam without proctoring'
         self.ready_to_start_msg = 'Important'
+        self.wrong_browser_msg = 'The content of this exam can only be viewed'
         self.footer_msg = 'About Proctored Exams'
         self.timed_footer_msg = 'Can I request additional time to complete my exam?'
 
@@ -471,6 +475,17 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         rendered_response = self.render_proctored_exam()
         self.assertIsNone(rendered_response)
 
+    @patch('edx_proctoring.api.get_backend_provider')
+    def test_get_studentview_started_from_wrong_browser(self, mocked_get_backend):
+        """
+        Test for get_student_view proctored exam as viewed from an
+        insecure browser.
+        """
+        self._create_started_exam_attempt()
+        mocked_get_backend.return_value.should_block_access_to_exam_material.return_value = True
+        rendered_response = self.render_proctored_exam()
+        self.assertIn(self.wrong_browser_msg, rendered_response)
+
     def test_get_studentview_started_practice_exam(self):
         """
         Test for get_student_view practice proctored exam which has started.
@@ -478,6 +493,20 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self._create_started_practice_exam_attempt()
         rendered_response = self.render_practice_exam()
         self.assertIsNone(rendered_response)
+
+    @patch('edx_proctoring.api.get_backend_provider')
+    def test_get_studentview_practice_from_wrong_browser(self, mocked_get_backend):
+        """
+        Test for get_student_view practice proctored exam as viewed
+        from an insecure browser.
+        """
+        self._create_started_practice_exam_attempt()
+        mocked_get_backend.return_value.should_block_access_to_exam_material.return_value = True
+        # Need to make sure our mock doesn't behave like a different
+        # type of backend before we reach to code under test
+        mocked_get_backend.return_value.supports_onboarding = False
+        rendered_response = self.render_practice_exam()
+        self.assertIn(self.wrong_browser_msg, rendered_response)
 
     def test_get_studentview_started_timed_exam(self):
         """

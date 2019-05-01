@@ -116,6 +116,21 @@ edx = edx || {};
 
     edx.courseware = edx.courseware || {};
     edx.courseware.proctored_exam = edx.courseware.proctored_exam || {};
+    edx.courseware.proctored_exam.updateStatusHandler = function() {
+        var $this = $(this);
+        var actionUrl = $this.data('change-state-url');
+        var action = $this.data('action');
+        updateExamAttemptStatusPromise(actionUrl, action)()
+            .then(reloadPage)
+            .catch(errorHandlerGivenMessage(
+                $this,
+                gettext('Error Ending Exam'),
+                gettext(
+                    'Something has gone wrong ending your exam. ' +
+                    'Please reload the page and start again.'
+                )
+            ));
+    };
     edx.courseware.proctored_exam.examStartHandler = function(e) {
         var $this = $(this);
         var actionUrl = $this.data('change-state-url');
@@ -172,7 +187,7 @@ edx = edx || {};
                     gettext('Error Ending Exam'),
                     gettext(
                         'Something has gone wrong ending your exam. ' +
-            'Please double-check that the application is running.'
+                        'Please double-check that the application is running.'
                     )
                 ));
         } else {

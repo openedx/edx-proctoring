@@ -13,6 +13,8 @@ from datetime import datetime, timedelta
 import pytz
 import six
 
+from waffle import switch_is_active
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail.message import EmailMessage
@@ -1724,7 +1726,8 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'is_sample_attempt': is_practice_exam,
         'has_due_date': has_due_date,
         'has_due_date_passed': is_exam_passed_due(exam, user=user_id),
-        'does_time_remain': _does_time_remain(attempt),
+        'able_to_reenter_exam': _does_time_remain(attempt) and not provider.should_block_access_to_exam_material(),
+        'is_rpnow4_enabled': switch_is_active(constants.RPNOWV4_WAFFLE_NAME),
         'enter_exam_endpoint': reverse('edx_proctoring:proctored_exam.attempt.collection'),
         'exam_started_poll_url': reverse(
             'edx_proctoring:proctored_exam.attempt',
@@ -1777,8 +1780,12 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     if not attempt_status:
         student_view_template = 'practice_exam/entrance.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
-        # when we're taking the exam we should not override the view
-        return None
+        provider = get_backend_provider(exam)
+        if provider.should_block_access_to_exam_material():
+            student_view_template = 'proctored_exam/error_wrong_browser.html'
+        else:
+            # when we're taking the exam we should not override the view
+            return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
         student_view_template = 'proctored_exam/instructions.html'
@@ -1919,8 +1926,12 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             # to start timed exam
             emit_event(exam, 'option-presented')
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
-        # when we're taking the exam we should not override the view
-        return None
+        provider = get_backend_provider(exam)
+        if provider.should_block_access_to_exam_material():
+            student_view_template = 'proctored_exam/error_wrong_browser.html'
+        else:
+            # when we're taking the exam we should not override the view
+            return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
         if context.get('verification_status') is not APPROVED_STATUS:
