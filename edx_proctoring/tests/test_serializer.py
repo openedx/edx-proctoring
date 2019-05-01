@@ -32,9 +32,5 @@ class TestProctoredExamSerializer(unittest.TestCase):
         serializer = ProctoredExamSerializer(data=data)
 
         self.assertFalse(serializer.is_valid())
-        self.assertDictEqual(
-            {
-                'is_proctored': [u'"bla" is not a valid boolean.'],
-                'is_practice_exam': [u'"bla" is not a valid boolean.'],
-            }, serializer.errors
-        )
+        self.assertIn('is_proctored', serializer.errors)
+        self.assertIn('is_practice_exam', serializer.errors)
