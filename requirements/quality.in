@@ -1,4 +1,5 @@
 # Requirements for code quality checks
+-c constraints.txt
 
 caniusepython3            # Additional Python 3 compatibility pylint checks
 edx_lint==0.5.5           # Python code linting rules

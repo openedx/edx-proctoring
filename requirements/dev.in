@@ -1,4 +1,5 @@
 # Additional requirements for development of this application
+-c constraints.txt
 
 -r quality.in
 

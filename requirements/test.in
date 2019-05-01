@@ -1,4 +1,5 @@
 # Requirements for test runs.
+-c constraints.txt
 
 -r base.in
 
