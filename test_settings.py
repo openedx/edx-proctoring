@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'edx_proctoring',
+    'edx_when',
     'rules.apps.AutodiscoverRulesConfig',
 )
 

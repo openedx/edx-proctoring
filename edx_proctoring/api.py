@@ -6,56 +6,38 @@ API which is in the views.py file, per edX coding standards
 """
 from __future__ import absolute_import
 
-from datetime import datetime, timedelta
 import logging
 import uuid
+from datetime import datetime, timedelta
+
 import pytz
 import six
 
-from django.utils.translation import ugettext as _, ugettext_noop
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.template import loader
-from django.urls import reverse, NoReverseMatch
 from django.core.mail.message import EmailMessage
+from django.template import loader
+from django.urls import NoReverseMatch, reverse
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_noop
 
 from edx_proctoring import constants
-from edx_proctoring.exceptions import (
-    ProctoredExamAlreadyExists,
-    ProctoredExamNotFoundException,
-    StudentExamAttemptAlreadyExistsException,
-    StudentExamAttemptDoesNotExistsException,
-    StudentExamAttemptedAlreadyStarted,
-    ProctoredExamIllegalStatusTransition,
-    ProctoredExamPermissionDenied,
-    ProctoredExamNotActiveException,
-    ProctoredExamReviewPolicyNotFoundException,
-    ProctoredExamReviewPolicyAlreadyExists,
-    BackendProviderOnboardingException,
-)
-from edx_proctoring.models import (
-    ProctoredExam,
-    ProctoredExamStudentAllowance,
-    ProctoredExamStudentAttempt,
-    ProctoredExamReviewPolicy,
-    ProctoredExamSoftwareSecureReview,
-)
-from edx_proctoring.serializers import (
-    ProctoredExamSerializer,
-    ProctoredExamStudentAttemptSerializer,
-    ProctoredExamStudentAllowanceSerializer,
-    ProctoredExamReviewPolicySerializer
-)
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-
-from edx_proctoring.utils import (
-    humanized_time,
-    emit_event,
-    obscured_user_id,
-)
-
 from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.exceptions import (BackendProviderOnboardingException, ProctoredExamAlreadyExists,
+                                       ProctoredExamIllegalStatusTransition, ProctoredExamNotActiveException,
+                                       ProctoredExamNotFoundException, ProctoredExamPermissionDenied,
+                                       ProctoredExamReviewPolicyAlreadyExists,
+                                       ProctoredExamReviewPolicyNotFoundException,
+                                       StudentExamAttemptAlreadyExistsException,
+                                       StudentExamAttemptDoesNotExistsException, StudentExamAttemptedAlreadyStarted)
+from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamSoftwareSecureReview,
+                                   ProctoredExamStudentAllowance, ProctoredExamStudentAttempt)
 from edx_proctoring.runtime import get_runtime_service
+from edx_proctoring.serializers import (ProctoredExamReviewPolicySerializer, ProctoredExamSerializer,
+                                        ProctoredExamStudentAllowanceSerializer, ProctoredExamStudentAttemptSerializer)
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.utils import emit_event, humanized_time, obscured_user_id
+from edx_when import api as when_api
 
 log = logging.getLogger(__name__)
 
@@ -540,11 +522,28 @@ def has_due_date_passed(due_datetime):
     return False
 
 
-def _was_review_status_acknowledged(is_status_acknowledged, due_datetime):
+def get_exam_due_date(exam, user=None):
+    """
+    Return the due date for the exam.
+    Uses edx_when to lookup the date for the subsection.
+    """
+    due_date = when_api.get_date_for_block(exam['course_id'], exam['content_id'], 'due', user=user)
+    return due_date or exam['due_date']
+
+
+def is_exam_passed_due(exam, user=None):
+    """
+    Return whether the due date has passed.
+    Uses edx_when to lookup the date for the subsection.
+    """
+    return has_due_date_passed(get_exam_due_date(exam, user=user))
+
+
+def _was_review_status_acknowledged(is_status_acknowledged, exam):
     """
     return True if review status has been acknowledged and due date has been passed
     """
-    return is_status_acknowledged and has_due_date_passed(due_datetime)
+    return is_status_acknowledged and is_exam_passed_due(exam)
 
 
 def _create_and_decline_attempt(exam_id, user_id):
@@ -600,7 +599,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
     force_status = None
 
-    if not has_due_date_passed(exam['due_date']) and taking_as_proctored:
+    if not is_exam_passed_due(exam, user=user_id) and taking_as_proctored:
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
         lms_host = '{scheme}://{hostname}'.format(scheme=scheme, hostname=settings.SITE_NAME)
 
@@ -1607,7 +1606,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     attempt_status = attempt['status'] if attempt else None
     has_due_date = True if exam['due_date'] is not None else False
     if not attempt_status:
-        if has_due_date_passed(exam['due_date']):
+        if is_exam_passed_due(exam, user=user_id):
             student_view_template = 'timed_exam/expired.html'
         else:
             student_view_template = 'timed_exam/entrance.html'
@@ -1620,7 +1619,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         # If we are not hiding the exam after the due_date has passed,
         # check if the exam's due_date has passed. If so, return None
         # so that the user can see their exam answers in read only mode.
-        if not exam['hide_after_due'] and has_due_date_passed(exam['due_date']):
+        if not exam['hide_after_due'] and is_exam_passed_due(exam, user=user_id):
             return None
 
         student_view_template = 'timed_exam/submitted.html'
@@ -1680,7 +1679,7 @@ def _calculate_allowed_mins(exam, user_id):
     """
     Returns the allowed minutes w.r.t due date
     """
-    due_datetime = exam['due_date']
+    due_datetime = get_exam_due_date(exam, user_id)
     allowed_time_limit_mins = exam['time_limit_mins']
 
     # add in the allowed additional time
@@ -1724,7 +1723,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'progress_page_url': progress_page_url,
         'is_sample_attempt': is_practice_exam,
         'has_due_date': has_due_date,
-        'has_due_date_passed': has_due_date_passed(exam['due_date']),
+        'has_due_date_passed': is_exam_passed_due(exam, user=user_id),
         'does_time_remain': _does_time_remain(attempt),
         'enter_exam_endpoint': reverse('edx_proctoring:proctored_exam.attempt.collection'),
         'exam_started_poll_url': reverse(
@@ -1887,7 +1886,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         })
 
         # if exam due date has passed, then we can't take the exam
-        if has_due_date_passed(exam['due_date']):
+        if is_exam_passed_due(exam, user_id):
             student_view_template = 'proctored_exam/expired.html'
         elif not prerequisite_status['are_prerequisites_satisifed']:
             # do we have any declined prerequisites, if so, then we
@@ -1938,24 +1937,24 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
         student_view_template = None if _was_review_status_acknowledged(
             attempt['is_status_acknowledged'],
-            exam['due_date']
+            exam
         ) else 'proctored_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.second_review_required:
         # the student should still see a 'submitted'
         # rendering even if the review needs a 2nd review
         student_view_template = None if _was_review_status_acknowledged(
             attempt['is_status_acknowledged'],
-            exam['due_date']
+            exam
         ) else 'proctored_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.verified:
         student_view_template = None if _was_review_status_acknowledged(
             attempt['is_status_acknowledged'],
-            exam['due_date']
+            exam
         ) else 'proctored_exam/verified.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.rejected:
         student_view_template = None if _was_review_status_acknowledged(
             attempt['is_status_acknowledged'],
-            exam['due_date']
+            exam
         ) else 'proctored_exam/rejected.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
@@ -2003,13 +2002,8 @@ def get_student_view(user_id, course_id, content_id,
             return None
 
         # Just in case the due date has been changed because of the
-        # self-paced courses, use the due date from the context and
-        # update the local exam object if necessary.
+        # self-paced courses, use the due date from the context
         if exam['due_date'] != context.get('due_date', None):
-            update_exam(
-                exam_id=exam['id'],
-                due_date=context.get('due_date', None)
-            )
             exam['due_date'] = context.get('due_date', None)
 
         exam_id = exam['id']
