@@ -32,9 +32,10 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 	pip-compile --upgrade -o requirements/doc.txt requirements/doc.in
 	pip-compile --upgrade -o requirements/quality.txt requirements/quality.in
 	pip-compile --upgrade -o requirements/test.txt requirements/test.in
-	# Let tox control the Django version for tests
-	sed '/^django==/d' requirements/test.txt > requirements/test.tmp
-	mv requirements/test.tmp requirements/test.txt
+	# Let tox control the Django and djangorestframework versions for tests
+	sed -i.tmp '/^[d|D]jango==/d' requirements/test.txt
+	sed -i.tmp '/^djangorestframework==/d' requirements/test.txt
+	rm requirements/test.txt.tmp
 
 requirements: ## install development environment requirements
 	pip install -qr requirements/dev.txt --exists-action w
