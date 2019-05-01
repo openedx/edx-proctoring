@@ -9,6 +9,7 @@ env:
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drflatest
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=quality
 - TOXENV=js
+- TOXENV=translations
 before_install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
@@ -19,7 +20,6 @@ install:
 before_script:
 - npm install -g gulp-cli
 script:
-- make validate_translations
 - tox
 after_success:
 - coverage xml
