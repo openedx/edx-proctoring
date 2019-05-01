@@ -8,6 +8,7 @@ env:
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drf39
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drflatest
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=quality
+- TOXENV=js
 before_install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
@@ -19,9 +20,7 @@ before_script:
 - npm install -g gulp-cli
 script:
 - make validate_translations
-- make test-all
-- make test-js
-- make lint-js
+- tox
 after_success:
 - coverage xml
 - bash <(curl -s https://codecov.io/bash) -cF python -f coverage.xml
