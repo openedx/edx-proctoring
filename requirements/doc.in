@@ -1,4 +1,5 @@
 # Requirements for documentation validation
+-c constraints.txt
 
 -r base.in
 

@@ -1,4 +1,5 @@
 # Additional requirements for development of this application
+-c constraints.txt
 
 -r quality.in
 
@@ -10,5 +11,5 @@ tox                       # virtualenv management for tests
 tox-battery               # Makes tox aware of requirements file changes
 twine                     # Utility for PyPI package uploads
 wheel                     # For generation of wheels for PyPI
-path.py==11.5.0           # pinned because of python 3 incompatibility
+path.py
 django>=1.11,<2.0
