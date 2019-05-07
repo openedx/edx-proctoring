@@ -1,8 +1,12 @@
-"Common Pluggable Django App settings"
+"""
+Common Pluggable Django App settings
+"""
 
 
 def plugin_settings(settings):
-    "Injects local settings into django settings"
+    """
+    Injects local settings into django settings
+    """
     settings.PROCTORING_SETTINGS = {}
     settings.PROCTORING_BACKENDS = {
         'DEFAULT': 'null',
@@ -26,7 +30,13 @@ def plugin_settings(settings):
             'proctoring/js/exam_action_handler.js'
         ]
     )
-    settings.PIPELINE_JS['proctoring'] = {
+    if hasattr(settings, 'PIPELINE'):
+        # django-pipeline 1.6+
+        js_setting = settings.PIPELINE['JAVASCRIPT']
+    else:
+        # earlier django-pipeline versions
+        js_setting = settings.PIPELINE_JS
+    js_setting['proctoring'] = {
         'source_filenames': proctoring_js,
         'output_filename': 'js/lms-proctoring.js',
     }
