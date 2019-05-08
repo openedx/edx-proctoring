@@ -22,7 +22,7 @@ edx-i18n-tools==0.4.8
 edx_lint==0.5.5
 enum34==1.1.6             # via astroid
 filelock==3.0.10          # via tox
-futures==3.2.0            # via caniusepython3, isort
+futures==3.2.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 inflect==2.1.0            # via jinja2-pluralize
 isort==4.3.18
