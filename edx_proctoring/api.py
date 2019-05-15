@@ -2077,9 +2077,9 @@ def get_exam_violation_report(course_id, include_practice_exams=False):
             'started_at': attempt['started_at'],
             'completed_at': attempt['completed_at'],
             'status': attempt['status'],
-            'review_status': None
-            ,'provider': attempt['proctored_exam']['backend']
-            ,'user_id': attempt['user']['id']
+            'review_status': None,
+            'provider': attempt['proctored_exam']['backend'],
+            'user_id': attempt['user']['id']
 
         } for attempt in get_all_exam_attempts(course_id) # django OR db query
     }
