@@ -1544,8 +1544,6 @@ def get_attempt_status_summary(user_id, course_id, content_id):
         return summary
 
     # let's check credit eligibility
-
-
     credit_service = get_runtime_service('credit')
 
     # practice exams always has an attempt status regardless of
@@ -2081,7 +2079,7 @@ def get_exam_violation_report(course_id, include_practice_exams=False):
             'provider': attempt['proctored_exam']['backend'],
             'user_id': attempt['user']['id']
 
-        } for attempt in get_all_exam_attempts(course_id) # django OR db query
+        } for attempt in get_all_exam_attempts(course_id)
     }
 
     reviews = ProctoredExamSoftwareSecureReview.objects.prefetch_related(
