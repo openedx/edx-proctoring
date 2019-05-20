@@ -8,9 +8,13 @@
 # pin when possible.  Writing an issue against the offending project and
 # linking to it here is good.
 
-# Sphinx 2.0.0 drops support for python 2.7 which we still need.
-Sphinx<2.0.0
+# This is a backport which can only be installed on Python 2.7
+futures ; python_version == "2.7"
 
+# Sphinx 2.0.0 drops support for python 2.7 which we still need.
+# pip-compile can't resolve dependencies for Sphinx 1.8.5:
+# https://github.com/jazzband/pip-tools/issues/810
+Sphinx<1.8.5
 
 # A dependency of pytest.  Pytest doesn't constrain it and 6.0.0 onward
 # only works with python 3
