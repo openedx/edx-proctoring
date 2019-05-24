@@ -5,6 +5,7 @@ nick: proc
 owner: edx/educator-dahlia
 tags:
     - lms
+    - library
 oeps:
     oep-2: True
     oep-3:
