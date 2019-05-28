@@ -17,8 +17,8 @@ django==1.11.20
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.9.4
 edx-django-utils==1.0.3   # via edx-drf-extensions
-edx-drf-extensions==2.2.1
-edx-opaque-keys==0.4.4
+edx-drf-extensions==2.3.0
+edx-opaque-keys==1.0.0
 edx-rest-api-client==1.9.2
 edx-when==0.1.5
 enum34==1.1.6             # via fs
@@ -29,7 +29,7 @@ idna==2.8                 # via requests
 jsonfield==2.0.2
 lxml==4.3.3               # via xblock
 markupsafe==1.1.1         # via xblock
-newrelic==4.18.0.118      # via edx-django-utils
+newrelic==4.20.0.120      # via edx-django-utils
 pbr==5.2.0                # via stevedore
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 pycryptodomex==3.8.1
@@ -47,7 +47,7 @@ six==1.12.0               # via edx-drf-extensions, edx-opaque-keys, event-track
 slumber==0.7.1            # via edx-rest-api-client
 stevedore==1.30.1         # via edx-opaque-keys
 typing==3.6.6             # via fs
-urllib3==1.25.2           # via requests
+urllib3==1.25.3           # via requests
 web-fragments==0.3.0      # via xblock
 webob==1.8.5              # via xblock
 xblock==1.2.2             # via edx-when
