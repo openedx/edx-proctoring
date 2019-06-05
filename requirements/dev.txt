@@ -16,9 +16,9 @@ click-log==0.1.8          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
 configparser==3.7.4       # via importlib-metadata, pydocstyle, pylint
 contextlib2==0.5.5        # via importlib-metadata
-diff-cover==2.0.1
+diff-cover==2.1.0
 distlib==0.2.9.post0      # via caniusepython3
-django==1.11.20
+django==1.11.21
 docutils==0.14            # via readme-renderer
 edx-i18n-tools==0.4.8
 edx_lint==0.5.5
@@ -27,7 +27,7 @@ filelock==3.0.12          # via tox
 future==0.17.1            # via backports.os
 futures==3.2.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
-importlib-metadata==0.15  # via path.py, pluggy
+importlib-metadata==0.17  # via path.py, pluggy
 inflect==2.1.0            # via jinja2-pluralize
 isort==4.3.20
 jinja2-pluralize==0.3.0   # via diff-cover

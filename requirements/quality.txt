@@ -14,7 +14,7 @@ click-log==0.1.8          # via edx-lint
 click==7.0                # via click-log, edx-lint
 configparser==3.7.4       # via pydocstyle, pylint
 distlib==0.2.9.post0      # via caniusepython3
-django==1.11.20
+django==1.11.21
 edx_lint==0.5.5
 enum34==1.1.6             # via astroid
 futures==3.2.0 ; python_version == "2.7"  # via caniusepython3, isort
