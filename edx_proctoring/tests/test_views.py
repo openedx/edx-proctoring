@@ -41,6 +41,8 @@ from edx_proctoring.backends.tests.test_software_secure import mock_response_con
 from edx_proctoring.runtime import set_runtime_service, get_runtime_service
 from edx_proctoring.urls import urlpatterns
 
+from mock_apps.models import Profile
+
 from .test_services import MockCreditService, MockInstructorService
 from .utils import LoggedInTestCase
 
@@ -2600,6 +2602,10 @@ class TestInstructorDashboard(LoggedInTestCase):
     """
     def setUp(self):
         super(TestInstructorDashboard, self).setUp()
+        profile = Profile()
+        profile.name = 'boo radley'
+        profile.user = self.user
+        profile.save()
         self.user.is_staff = True
         self.user.save()
         self.second_user = User(username='tester2', email='tester2@test.com')

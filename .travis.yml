@@ -2,6 +2,8 @@ language: python
 cache: pip
 python:
 - 2.7
+services:
+- xvfb
 env:
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drf37
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drf38
@@ -12,7 +14,6 @@ env:
 - TOXENV=translations
 before_install:
 - export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
 install:
 - pip install tox-travis
 - pip install -r requirements/test.txt
