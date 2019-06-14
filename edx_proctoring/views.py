@@ -1040,7 +1040,7 @@ class InstructorDashboard(AuthenticatedAPIView):
             if backend:
                 user = {
                     'id': obscured_user_id(request.user.id, exam['backend']),
-                    'full_name': request.user.get_full_name(),
+                    'full_name': request.user.profile.name,
                     'email': request.user.email
                 }
 

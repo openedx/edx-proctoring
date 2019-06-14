@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'edx_when',
     'rules.apps.AutodiscoverRulesConfig',
     'waffle',
+    'mock_apps',
 )
 
 AUTHENTICATION_BACKENDS = [
