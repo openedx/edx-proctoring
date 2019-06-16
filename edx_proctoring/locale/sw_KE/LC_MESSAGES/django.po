@@ -5,11 +5,11 @@
 # EdX Team <info@edx.org>, 2018.
 # 
 # Translators:
-# Isihaka Issa <translations_8@camara.ie>, 2016
 # swaleh amin <mkupuofirstnameswaleh@yahoo.com>, 2016
 # Masoud Mohamed Ali <masoudali@camara.org>, 2016
 # Anasikia Issa <anasikiaissa@camara.ie>, 2017
 # ramadhani mwaimu <ramadhanimwaimu@camara.ie>, 2017
+# Isihaka Issa <translations_8@camara.ie>, 2017
 # YAHAYA MWAVURIZI <translations_1@camara.ie>, 2017
 # 
 msgid ""
