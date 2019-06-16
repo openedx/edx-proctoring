@@ -7,9 +7,9 @@
 # Translators:
 # Masoud Mohamed Ali <masoudali@camara.org>, 2016
 # swaleh amin <mkupuofirstnameswaleh@yahoo.com>, 2016
-# JOHN MASANDA <translations_6@camara.ie>, 2017
 # Anasikia Issa <anasikiaissa@camara.ie>, 2017
 # ramadhani mwaimu <ramadhanimwaimu@camara.ie>, 2017
+# JOHN MASANDA <translations_6@camara.ie>, 2017
 # YAHAYA MWAVURIZI <translations_1@camara.ie>, 2017
 # 
 msgid ""
