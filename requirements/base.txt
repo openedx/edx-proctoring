@@ -6,7 +6,7 @@
 #
 appdirs==1.4.3            # via fs
 backports.os==0.1.1       # via fs
-certifi==2019.3.9         # via requests
+certifi==2019.6.16        # via requests
 chardet==3.0.4            # via requests
 django-crum==0.7.3
 django-ipware==2.1.0
@@ -16,21 +16,21 @@ django-webpack-loader==0.6.0
 django==1.11.21
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.9.4
-edx-django-utils==1.0.3   # via edx-drf-extensions
-edx-drf-extensions==2.3.0
-edx-opaque-keys==1.0.0
+edx-django-utils==1.0.5   # via edx-drf-extensions
+edx-drf-extensions==2.3.1
+edx-opaque-keys==1.0.1
 edx-rest-api-client==1.9.2
 edx-when==0.1.6
 enum34==1.1.6             # via fs
 event-tracking==0.2.8
-fs==2.4.5                 # via xblock
+fs==2.4.8                 # via xblock
 future==0.17.1            # via backports.os, pyjwkest
 idna==2.8                 # via requests
 jsonfield==2.0.2
-lxml==4.3.3               # via xblock
+lxml==4.3.4               # via xblock
 markupsafe==1.1.1         # via xblock
 newrelic==4.20.0.120      # via edx-django-utils
-pbr==5.2.1                # via stevedore
+pbr==5.3.0                # via stevedore
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 pycryptodomex==3.8.2
 pyjwkest==1.3.2           # via edx-drf-extensions
@@ -38,7 +38,7 @@ pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.8.0            # via edx-opaque-keys, event-tracking
 python-dateutil==2.8.0
 pytz==2019.1
-pyyaml==5.1               # via xblock
+pyyaml==5.1.1             # via xblock
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
 rest-condition==1.0.3     # via edx-drf-extensions
 rules==2.0.1
@@ -51,3 +51,6 @@ urllib3==1.25.3           # via requests
 web-fragments==0.3.0      # via xblock
 webob==1.8.5              # via xblock
 xblock==1.2.2             # via edx-when
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools==41.0.1        # via fs
