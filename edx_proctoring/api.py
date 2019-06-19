@@ -530,6 +530,8 @@ def get_exam_due_date(exam, user=None):
     Uses edx_when to lookup the date for the subsection.
     """
     due_date = when_api.get_date_for_block(exam['course_id'], exam['content_id'], 'due', user=user)
+    if due_date is None:
+        return due_date
     return due_date or exam['due_date']
 
 
