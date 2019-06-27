@@ -27,7 +27,7 @@ filelock==3.0.12          # via tox
 future==0.17.1            # via backports.os
 futures==3.2.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
-importlib-metadata==0.18  # via path.py, pluggy
+importlib-metadata==0.18  # via path.py, pluggy, tox
 inflect==2.1.0            # via jinja2-pluralize
 isort==4.3.20
 jinja2-pluralize==0.3.0   # via diff-cover
@@ -35,9 +35,9 @@ jinja2==2.10.1            # via diff-cover, jinja2-pluralize
 lazy-object-proxy==1.4.1  # via astroid
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
-packaging==19.0           # via caniusepython3
+packaging==19.0           # via caniusepython3, tox
 path.py==11.5.2
-pathlib2==2.3.3           # via importlib-metadata
+pathlib2==2.3.4           # via importlib-metadata
 pip-tools==3.8.0
 pkginfo==1.5.0.1          # via twine
 pluggy==0.12.0            # via tox
@@ -62,7 +62,7 @@ six==1.12.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx
 snowballstemmer==1.2.1    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
-tox==3.12.1
+tox==3.13.0
 tqdm==4.32.2              # via twine
 twine==1.13.0
 urllib3==1.25.3           # via requests
@@ -73,4 +73,4 @@ wrapt==1.11.2             # via astroid
 zipp==0.5.1               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via caniusepython3, tox, twine
+# setuptools==41.0.1        # via caniusepython3, twine
