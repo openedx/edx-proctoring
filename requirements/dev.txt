@@ -16,9 +16,9 @@ click-log==0.1.8          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
 configparser==3.7.4       # via importlib-metadata, pydocstyle, pylint
 contextlib2==0.5.5        # via importlib-metadata
-diff-cover==2.2.0
+diff-cover==2.3.0
 distlib==0.2.9.post0      # via caniusepython3
-django==1.11.21
+django==1.11.22
 docutils==0.14            # via readme-renderer
 edx-i18n-tools==0.4.8
 edx_lint==0.5.5
@@ -29,7 +29,7 @@ futures==3.2.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 importlib-metadata==0.18  # via path.py, pluggy, tox
 inflect==2.1.0            # via jinja2-pluralize
-isort==4.3.20
+isort==4.3.21
 jinja2-pluralize==0.3.0   # via diff-cover
 jinja2==2.10.1            # via diff-cover, jinja2-pluralize
 lazy-object-proxy==1.4.1  # via astroid
@@ -59,10 +59,10 @@ requests==2.22.0          # via caniusepython3, requests-toolbelt, twine
 scandir==1.10.0           # via pathlib2
 singledispatch==3.4.0.3   # via astroid, pylint
 six==1.12.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pathlib2, pip-tools, pydocstyle, pylint, readme-renderer, singledispatch, tox
-snowballstemmer==1.2.1    # via pydocstyle
+snowballstemmer==1.9.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
-tox==3.13.0
+tox==3.13.2
 tqdm==4.32.2              # via twine
 twine==1.13.0
 urllib3==1.25.3           # via requests
