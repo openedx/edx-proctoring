@@ -46,6 +46,13 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
         )
 
 
+class ProctoredExamJSONSafeSerializer(ProctoredExamSerializer):
+    """
+    ProctoredExam serializer which will return dates as strings.
+    """
+    due_date = serializers.DateTimeField(required=False)
+
+
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the User Model.

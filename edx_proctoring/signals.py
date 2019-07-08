@@ -22,8 +22,8 @@ def check_for_category_switch(sender, instance, **kwargs):  # pylint: disable=un
     if instance.id:
         original = sender.objects.get(pk=instance.id)
         if original.is_proctored and instance.is_proctored != original.is_proctored:
-            from edx_proctoring.serializers import ProctoredExamSerializer
-            exam = ProctoredExamSerializer(instance).data
+            from edx_proctoring.serializers import ProctoredExamJSONSafeSerializer
+            exam = ProctoredExamJSONSafeSerializer(instance).data
             # from the perspective of the backend, the exam is now inactive.
             exam['is_active'] = False
             backend = get_backend_provider(name=exam['backend'])
@@ -44,8 +44,8 @@ def save_exam_on_backend(sender, instance, **kwargs):  # pylint: disable=unused-
         exam_obj = instance.proctored_exam
         review_policy = instance
     if exam_obj.is_proctored:
-        from edx_proctoring.serializers import ProctoredExamSerializer
-        exam = ProctoredExamSerializer(exam_obj).data
+        from edx_proctoring.serializers import ProctoredExamJSONSafeSerializer
+        exam = ProctoredExamJSONSafeSerializer(exam_obj).data
         if review_policy:
             exam['rule_summary'] = review_policy.review_policy
         backend = get_backend_provider(exam)

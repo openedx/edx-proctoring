@@ -266,8 +266,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             response = self.session.post(url, json=exam)
             data = response.json()
         except Exception as exc:  # pylint: disable=broad-except
-            # pylint: disable=no-member
-            content = exc.response.content if hasattr(exc, 'response') else response.content
+            if response:
+                # pylint: disable=no-member
+                content = exc.response.content if hasattr(exc, 'response') else response.content
+            else:
+                content = None
             log.exception('failed to save exam. %r', content)
             data = {}
         return data.get('id')
