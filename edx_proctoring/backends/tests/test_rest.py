@@ -167,6 +167,12 @@ class RESTBackendTests(TestCase):
         self.assertEqual(external_id, None)
 
     @responses.activate
+    def test_bad_exam_save(self):
+        self.backend_exam['bad'] = object()
+        external_id = self.provider.on_exam_saved(self.backend_exam)
+        self.assertEqual(external_id, None)
+
+    @responses.activate
     def test_register_exam_attempt(self):
         context = {
             'attempt_code': '2',
