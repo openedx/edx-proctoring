@@ -70,7 +70,7 @@ virtualenv==16.6.1        # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.33.4
 wrapt==1.11.2             # via astroid
-zipp==0.5.1               # via importlib-metadata
+zipp==0.5.2               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools==41.0.1        # via caniusepython3, twine
