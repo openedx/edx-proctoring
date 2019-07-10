@@ -39,7 +39,7 @@ lxml==4.3.4               # via xblock
 markupsafe==1.1.1         # via jinja2, xblock
 newrelic==4.20.1.121      # via edx-django-utils
 packaging==19.0           # via sphinx
-pbr==5.3.1                # via stevedore
+pbr==5.4.0                # via stevedore
 pockets==0.7.2            # via sphinxcontrib-napoleon
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 pycryptodomex==3.8.2
