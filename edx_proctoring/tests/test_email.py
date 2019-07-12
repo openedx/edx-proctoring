@@ -67,7 +67,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         [
             ProctoredExamStudentAttemptStatus.rejected,
             'Proctoring Results',
-            'the team found one or more violations',
+            'the team identified one or more violations',
         ]
     )
     @ddt.unpack
@@ -92,7 +92,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
 
         # Verify the body
         actual_body = self._normalize_whitespace(mail.outbox[0].body)
-        self.assertIn('Hi tester,', actual_body)
+        self.assertIn('Hello tester,', actual_body)
         self.assertIn('Your proctored exam "Test Exam"', actual_body)
         self.assertIn(credit_state['course_name'], actual_body)
         self.assertIn(expected_message_string, actual_body)
