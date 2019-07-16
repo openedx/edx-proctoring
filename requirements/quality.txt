@@ -17,7 +17,7 @@ distlib==0.2.9.post0      # via caniusepython3
 django==1.11.22
 edx_lint==0.5.5
 enum34==1.1.6             # via astroid
-futures==3.2.0 ; python_version == "2.7"  # via caniusepython3, isort
+futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 isort==4.3.21
 lazy-object-proxy==1.4.1  # via astroid

@@ -25,7 +25,7 @@ edx_lint==0.5.5
 enum34==1.1.6             # via astroid
 filelock==3.0.12          # via tox
 future==0.17.1            # via backports.os
-futures==3.2.0 ; python_version == "2.7"  # via caniusepython3, isort
+futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 importlib-metadata==0.18  # via path.py, pluggy, tox
 inflect==2.1.0            # via jinja2-pluralize
@@ -66,7 +66,7 @@ tox==3.13.2
 tqdm==4.32.2              # via twine
 twine==1.13.0
 urllib3==1.25.3           # via requests
-virtualenv==16.6.1        # via tox
+virtualenv==16.6.2        # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.33.4
 wrapt==1.11.2             # via astroid

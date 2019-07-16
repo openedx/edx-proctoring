@@ -16,8 +16,8 @@ django-webpack-loader==0.6.0
 django==1.11.22
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.9.4
-edx-django-utils==1.0.5   # via edx-drf-extensions
-edx-drf-extensions==2.3.1
+edx-django-utils==2.0.0   # via edx-drf-extensions
+edx-drf-extensions==2.3.4
 edx-opaque-keys==1.0.1
 edx-rest-api-client==1.9.2
 edx-when==0.1.6
