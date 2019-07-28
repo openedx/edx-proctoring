@@ -12,6 +12,7 @@
 # hafizhuddin amin, 2016
 # Ahmad Sofyan <asofyan@niskala.net>, 2016
 # Sari Rahmawati <kusuma.rahmawati@gmail.com>, 2018
+# Aprisa Chrysantina <aprisa.chrysantina@gmail.com>, 2019
 # 
 msgid ""
 msgstr ""
@@ -19,7 +20,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: Sari Rahmawati <kusuma.rahmawati@gmail.com>, 2018\n"
+"Last-Translator: Aprisa Chrysantina <aprisa.chrysantina@gmail.com>, 2019\n"
 "Language-Team: Indonesian (https://www.transifex.com/open-edx/teams/6205/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -81,7 +82,7 @@ msgstr "Waktu habis"
 
 #: admin.py:387
 msgid "Submitted"
-msgstr ""
+msgstr "Terkirim"
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -89,15 +90,15 @@ msgstr "Diperlukan ulasan kedua"
 
 #: admin.py:389
 msgid "Verified"
-msgstr ""
+msgstr "Terverifikasi"
 
 #: admin.py:390
 msgid "Rejected"
-msgstr ""
+msgstr "Ditolak"
 
 #: admin.py:391
 msgid "Error"
-msgstr ""
+msgstr "Kesalahan"
 
 #: api.py:902
 msgid "your course"
@@ -106,7 +107,7 @@ msgstr "Pelatihan anda"
 #: api.py:962
 #, python-brace-format
 msgid "Proctoring Session Results Update for {course_name} {exam_name}"
-msgstr ""
+msgstr "Hasil Sesi Proctor untuk {course_name} {exam_name}"
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
@@ -150,11 +151,11 @@ msgstr "Gagal dalam ujian sesi latihan"
 
 #: api.py:1351
 msgid "Timed Exam"
-msgstr ""
+msgstr "Ujian Terjadwal"
 
 #: models.py:181
 msgid "pending"
-msgstr ""
+msgstr "ditunda"
 
 #: models.py:182
 msgid "satisfactory"
@@ -282,7 +283,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr ""
+msgstr "Kembali"
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -433,7 +434,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr ""
+msgstr "Coba Verifikasi Verifikasi"
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
@@ -517,7 +518,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr ""
+msgstr "Tutup"
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
