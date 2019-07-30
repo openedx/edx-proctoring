@@ -7,7 +7,7 @@
 apipkg==1.5               # via execnet
 appdirs==1.4.3            # via fs
 atomicwrites==1.3.0       # via pytest
-attrs==19.1.0             # via pytest
+attrs==19.1.0             # via packaging, pytest
 backports.os==0.1.1       # via fs
 bok-choy==1.0.0
 certifi==2019.6.16        # via requests
@@ -15,7 +15,7 @@ chardet==3.0.4            # via requests
 configparser==3.7.4       # via importlib-metadata
 contextlib2==0.5.5        # via importlib-metadata
 cookies==2.2.1            # via responses
-coverage==4.5.3           # via pytest-cov
+coverage==4.5.4           # via pytest-cov
 ddt==1.2.1
 django-crum==0.7.3
 django-ipware==2.1.0
@@ -24,34 +24,34 @@ django-waffle==0.17.0
 django-webpack-loader==0.6.0
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 edx-django-utils==2.0.0   # via edx-drf-extensions
-edx-drf-extensions==2.3.4
+edx-drf-extensions==2.3.8
 edx-i18n-tools==0.4.8
 edx-opaque-keys==1.0.1
 edx-rest-api-client==1.9.2
 edx-when==0.1.6
 enum34==1.1.6             # via fs
 event-tracking==0.2.9
-execnet==1.6.0            # via pytest-xdist
+execnet==1.6.1            # via pytest-xdist
 freezegun==0.3.12
-fs==2.4.8                 # via xblock
+fs==2.4.10                # via xblock
 funcsigs==1.0.2           # via mock, pytest
 future==0.17.1            # via backports.os, pyjwkest
 httmock==1.3.0
 httpretty==0.9.6
 idna==2.8                 # via requests
-importlib-metadata==0.18  # via pluggy, pytest
+importlib-metadata==0.19  # via pluggy, pytest
 jsonfield==2.0.2
 lazy==1.4                 # via bok-choy
-logilab-common==1.4.2
-lxml==4.3.4               # via xblock
+logilab-common==1.4.3
+lxml==4.4.0               # via xblock
 markupsafe==1.1.1         # via xblock
 mock==3.0.5
 more-itertools==5.0.0     # via pytest
 newrelic==4.20.1.121      # via edx-django-utils
-packaging==19.0           # via pytest
+packaging==19.1           # via pytest
 path.py==11.5.2           # via edx-i18n-tools
 pathlib2==2.3.4           # via importlib-metadata, pytest, pytest-django
-pbr==5.4.0                # via stevedore
+pbr==5.4.1                # via stevedore
 pluggy==0.12.0            # via pytest
 polib==1.1.0              # via edx-i18n-tools
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
@@ -60,7 +60,7 @@ pycryptodomex==3.8.2
 pyjwkest==1.3.2           # via edx-drf-extensions
 pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.8.0            # via edx-opaque-keys, event-tracking
-pyparsing==2.4.0          # via packaging
+pyparsing==2.4.2          # via packaging
 pytest-cov==2.7.1
 pytest-django==3.5.1
 pytest-forked==1.0.2      # via pytest-xdist
@@ -86,7 +86,7 @@ urllib3==1.25.3           # via requests, selenium
 wcwidth==0.1.7            # via pytest
 web-fragments==0.3.0      # via xblock
 webob==1.8.5              # via xblock
-xblock==1.2.2             # via edx-when
+xblock==1.2.3             # via edx-when
 zipp==0.5.2               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
