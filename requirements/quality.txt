@@ -6,6 +6,7 @@
 #
 argparse==1.4.0           # via caniusepython3
 astroid==1.5.2            # via edx-lint, pylint, pylint-celery
+attrs==19.1.0             # via packaging
 backports.functools-lru-cache==1.5  # via astroid, caniusepython3, isort, pylint
 caniusepython3==7.1.0
 certifi==2019.6.16        # via requests
@@ -22,14 +23,14 @@ idna==2.8                 # via requests
 isort==4.3.21
 lazy-object-proxy==1.4.1  # via astroid
 mccabe==0.6.1             # via pylint
-packaging==19.0           # via caniusepython3
+packaging==19.1           # via caniusepython3
 pycodestyle==2.5.0
 pydocstyle==3.0.0
 pylint-celery==0.3        # via edx-lint
 pylint-django==0.7.2      # via edx-lint
 pylint-plugin-utils==0.5  # via pylint-celery, pylint-django
 pylint==1.7.1             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
-pyparsing==2.4.0          # via packaging
+pyparsing==2.4.2          # via packaging
 pytz==2019.1              # via django
 requests==2.22.0          # via caniusepython3
 singledispatch==3.4.0.3   # via astroid, pylint

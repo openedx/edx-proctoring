@@ -6,6 +6,7 @@
 #
 argparse==1.4.0           # via caniusepython3
 astroid==1.5.2            # via edx-lint, pylint, pylint-celery
+attrs==19.1.0             # via packaging
 backports.functools-lru-cache==1.5  # via astroid, caniusepython3, isort, pylint
 backports.os==0.1.1       # via path.py
 bleach==3.1.0             # via readme-renderer
@@ -19,7 +20,7 @@ contextlib2==0.5.5        # via importlib-metadata
 diff-cover==2.3.0
 distlib==0.2.9.post0      # via caniusepython3
 django==1.11.22
-docutils==0.14            # via readme-renderer
+docutils==0.15.2          # via readme-renderer
 edx-i18n-tools==0.4.8
 edx_lint==0.5.5
 enum34==1.1.6             # via astroid
@@ -27,7 +28,7 @@ filelock==3.0.12          # via tox
 future==0.17.1            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
-importlib-metadata==0.18  # via path.py, pluggy, tox
+importlib-metadata==0.19  # via path.py, pluggy, tox
 inflect==2.1.0            # via jinja2-pluralize
 isort==4.3.21
 jinja2-pluralize==0.3.0   # via diff-cover
@@ -35,10 +36,10 @@ jinja2==2.10.1            # via diff-cover, jinja2-pluralize
 lazy-object-proxy==1.4.1  # via astroid
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
-packaging==19.0           # via caniusepython3, tox
+packaging==19.1           # via caniusepython3, tox
 path.py==11.5.2
 pathlib2==2.3.4           # via importlib-metadata
-pip-tools==3.8.0
+pip-tools==4.0.0
 pkginfo==1.5.0.1          # via twine
 pluggy==0.12.0            # via tox
 polib==1.1.0              # via edx-i18n-tools
@@ -50,7 +51,7 @@ pylint-celery==0.3        # via edx-lint
 pylint-django==0.7.2      # via edx-lint
 pylint-plugin-utils==0.5  # via pylint-celery, pylint-django
 pylint==1.7.1             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
-pyparsing==2.4.0          # via packaging
+pyparsing==2.4.2          # via packaging
 pytz==2019.1              # via django
 pyyaml==5.1.1             # via edx-i18n-tools
 readme-renderer==24.0     # via twine
@@ -66,7 +67,7 @@ tox==3.13.2
 tqdm==4.32.2              # via twine
 twine==1.13.0
 urllib3==1.25.3           # via requests
-virtualenv==16.6.2        # via tox
+virtualenv==16.7.2        # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.33.4
 wrapt==1.11.2             # via astroid
