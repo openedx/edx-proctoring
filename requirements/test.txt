@@ -47,11 +47,11 @@ lxml==4.4.0               # via xblock
 markupsafe==1.1.1         # via xblock
 mock==3.0.5
 more-itertools==5.0.0     # via pytest
-newrelic==4.20.1.121      # via edx-django-utils
+newrelic==5.0.0.124       # via edx-django-utils
 packaging==19.1           # via pytest
 path.py==11.5.2           # via edx-i18n-tools
 pathlib2==2.3.4           # via importlib-metadata, pytest, pytest-django
-pbr==5.4.1                # via stevedore
+pbr==5.4.2                # via stevedore
 pluggy==0.12.0            # via pytest
 polib==1.1.0              # via edx-i18n-tools
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
@@ -65,10 +65,10 @@ pytest-cov==2.7.1
 pytest-django==3.5.1
 pytest-forked==1.0.2      # via pytest-xdist
 pytest-xdist==1.29.0
-pytest==4.6.4             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
+pytest==4.6.5             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
 python-dateutil==2.8.0
-pytz==2019.1
-pyyaml==5.1.1             # via edx-i18n-tools, xblock
+pytz==2019.2
+pyyaml==5.1.2             # via edx-i18n-tools, xblock
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
 responses==0.10.6
 rest-condition==1.0.3     # via edx-drf-extensions
