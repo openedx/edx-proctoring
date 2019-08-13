@@ -17,7 +17,7 @@ django-ipware==2.1.0
 django-model-utils==3.2.0
 django-waffle==0.17.0
 django-webpack-loader==0.6.0
-django==1.11.22
+django==1.11.23
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.9.4
 doc8==0.8.0
@@ -38,9 +38,9 @@ jinja2==2.10.1            # via sphinx
 jsonfield==2.0.2
 lxml==4.4.0               # via xblock
 markupsafe==1.1.1         # via jinja2, xblock
-newrelic==4.20.1.121      # via edx-django-utils
+newrelic==5.0.0.124       # via edx-django-utils
 packaging==19.1           # via sphinx
-pbr==5.4.1                # via stevedore
+pbr==5.4.2                # via stevedore
 pockets==0.7.2            # via sphinxcontrib-napoleon
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 pycryptodomex==3.8.2
@@ -50,8 +50,8 @@ pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.8.0            # via edx-opaque-keys, event-tracking
 pyparsing==2.4.2          # via packaging
 python-dateutil==2.8.0
-pytz==2019.1
-pyyaml==5.1.1             # via xblock
+pytz==2019.2
+pyyaml==5.1.2             # via xblock
 readme-renderer==24.0
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber, sphinx
 rest-condition==1.0.3     # via edx-drf-extensions
