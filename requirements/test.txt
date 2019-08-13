@@ -12,7 +12,7 @@ backports.os==0.1.1       # via fs
 bok-choy==1.0.0
 certifi==2019.6.16        # via requests
 chardet==3.0.4            # via requests
-configparser==3.7.4       # via importlib-metadata
+configparser==3.8.1       # via importlib-metadata
 contextlib2==0.5.5        # via importlib-metadata
 cookies==2.2.1            # via responses
 coverage==4.5.4           # via pytest-cov
@@ -28,10 +28,10 @@ edx-drf-extensions==2.3.8
 edx-i18n-tools==0.4.8
 edx-opaque-keys==1.0.1
 edx-rest-api-client==1.9.2
-edx-when==0.1.6
+edx-when==0.2
 enum34==1.1.6             # via fs
 event-tracking==0.2.9
-execnet==1.6.1            # via pytest-xdist
+execnet==1.7.0            # via pytest-xdist
 freezegun==0.3.12
 fs==2.4.10                # via xblock
 funcsigs==1.0.2           # via mock, pytest
@@ -43,11 +43,11 @@ importlib-metadata==0.19  # via pluggy, pytest
 jsonfield==2.0.2
 lazy==1.4                 # via bok-choy
 logilab-common==1.4.3
-lxml==4.4.0               # via xblock
+lxml==4.4.1               # via xblock
 markupsafe==1.1.1         # via xblock
 mock==3.0.5
 more-itertools==5.0.0     # via pytest
-newrelic==5.0.0.124       # via edx-django-utils
+newrelic==5.0.2.126       # via edx-django-utils
 packaging==19.1           # via pytest
 path.py==11.5.2           # via edx-i18n-tools
 pathlib2==2.3.4           # via importlib-metadata, pytest, pytest-django
@@ -72,7 +72,7 @@ pyyaml==5.1.2             # via edx-i18n-tools, xblock
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
 responses==0.10.6
 rest-condition==1.0.3     # via edx-drf-extensions
-rules==2.0.1
+rules==2.1
 scandir==1.10.0           # via pathlib2
 selenium==3.141.0
 semantic-version==2.6.0   # via edx-drf-extensions
@@ -90,4 +90,4 @@ xblock==1.2.3             # via edx-when
 zipp==0.5.2               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via fs, logilab-common
+# setuptools==41.1.0        # via fs, logilab-common

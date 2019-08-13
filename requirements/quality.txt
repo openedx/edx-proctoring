@@ -13,7 +13,7 @@ certifi==2019.6.16        # via requests
 chardet==3.0.4            # via requests
 click-log==0.1.8          # via edx-lint
 click==7.0                # via click-log, edx-lint
-configparser==3.7.4       # via pydocstyle, pylint
+configparser==3.8.1       # via pydocstyle, pylint
 distlib==0.2.9.post0      # via caniusepython3
 django==1.11.23
 edx_lint==0.5.5
@@ -40,4 +40,4 @@ urllib3==1.25.3           # via requests
 wrapt==1.11.2             # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via caniusepython3
+# setuptools==41.1.0        # via caniusepython3

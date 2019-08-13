@@ -15,7 +15,7 @@ certifi==2019.6.16        # via requests
 chardet==3.0.4            # via requests
 click-log==0.1.8          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
-configparser==3.7.4       # via importlib-metadata, pydocstyle, pylint
+configparser==3.8.1       # via importlib-metadata, pydocstyle, pylint
 contextlib2==0.5.5        # via importlib-metadata
 diff-cover==2.3.0
 distlib==0.2.9.post0      # via caniusepython3
@@ -64,7 +64,7 @@ snowballstemmer==1.9.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
 tox==3.13.2
-tqdm==4.32.2              # via twine
+tqdm==4.33.0              # via twine
 twine==1.13.0
 urllib3==1.25.3           # via requests
 virtualenv==16.7.2        # via tox
@@ -74,4 +74,4 @@ wrapt==1.11.2             # via astroid
 zipp==0.5.2               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via caniusepython3, twine
+# setuptools==41.1.0        # via caniusepython3, twine
