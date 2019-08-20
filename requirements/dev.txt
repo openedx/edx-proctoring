@@ -64,12 +64,12 @@ snowballstemmer==1.9.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
 tox==3.13.2
-tqdm==4.33.0              # via twine
+tqdm==4.34.0              # via twine
 twine==1.13.0
 urllib3==1.25.3           # via requests
-virtualenv==16.7.2        # via tox
+virtualenv==16.7.3        # via tox
 webencodings==0.5.1       # via bleach
-wheel==0.33.4
+wheel==0.33.6
 wrapt==1.11.2             # via astroid
 zipp==0.5.2               # via importlib-metadata
 
