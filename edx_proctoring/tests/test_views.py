@@ -496,14 +496,15 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], "started")
 
-        # hit callback again and verify that status is still 'started' and not 'ready to start'
+        # hit callback again and verify that status has moved to submitted
         with patch('edx_proctoring.callbacks.switch_is_active') as mock_switch_is_active:
             mock_switch_is_active.return_value = is_rpnow4_on
             self.client.get(
                 reverse('edx_proctoring:anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
             )
         attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertEqual(attempt['status'], "started")
+        self.assertEqual(attempt['status'], "submitted")
+        self.assertNotEqual(attempt['status'], "started")
         self.assertNotEqual(attempt['status'], "ready_to_start")
 
     @ddt.data(
@@ -600,7 +601,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
     def test_start_exam_callback_when_created(self, is_rpnow4_on):
         """
         Test that hitting software secure callback URL twice when the attempt state begins at
-        'created' does not change the state from 'started' back to 'ready to start'
+        'created' changes the state from 'started' to 'submitted' and not back to 'ready to start'
         """
         attempt = self._test_exam_attempt_creation()
         self._test_repeated_start_exam_callbacks(attempt, is_rpnow4_on)
@@ -609,7 +610,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
     def test_start_exam_callback_when_download_software_clicked(self, is_rpnow4_on):
         """
         Test that hitting software secure callback URL twice when the attempt state begins at
-        'download_software_clicked' does not change the state from 'started' back to 'ready to start'
+        'download_software_clicked' changes the state to 'submitted' and does not change the
+        state from 'started' back to 'ready to start'
         """
         # Create an exam.
         attempt = self._test_exam_attempt_creation()
