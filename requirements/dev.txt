@@ -33,13 +33,14 @@ inflect==2.1.0            # via jinja2-pluralize
 isort==4.3.21
 jinja2-pluralize==0.3.0   # via diff-cover
 jinja2==2.10.1            # via diff-cover, jinja2-pluralize
-lazy-object-proxy==1.4.1  # via astroid
+lazy-object-proxy==1.4.2  # via astroid
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
+more-itertools==5.0.0     # via zipp
 packaging==19.1           # via caniusepython3, tox
 path.py==11.5.2
 pathlib2==2.3.4           # via importlib-metadata
-pip-tools==4.0.0
+pip-tools==4.1.0
 pkginfo==1.5.0.1          # via twine
 pluggy==0.12.0            # via tox
 polib==1.1.0              # via edx-i18n-tools
@@ -64,14 +65,14 @@ snowballstemmer==1.9.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
 tox==3.13.2
-tqdm==4.34.0              # via twine
+tqdm==4.35.0              # via twine
 twine==1.13.0
 urllib3==1.25.3           # via requests
-virtualenv==16.7.3        # via tox
+virtualenv==16.7.4        # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.33.6
 wrapt==1.11.2             # via astroid
-zipp==0.5.2               # via importlib-metadata
+zipp==0.6.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.1.0        # via caniusepython3, twine
+# setuptools==41.2.0        # via caniusepython3, twine

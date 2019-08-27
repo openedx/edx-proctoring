@@ -46,11 +46,11 @@ semantic-version==2.6.0   # via edx-drf-extensions
 six==1.12.0               # via edx-drf-extensions, edx-opaque-keys, event-tracking, fs, pyjwkest, python-dateutil, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 stevedore==1.30.1         # via edx-opaque-keys
-typing==3.7.4             # via fs
+typing==3.7.4.1           # via fs
 urllib3==1.25.3           # via requests
 web-fragments==0.3.0      # via xblock
 webob==1.8.5              # via xblock
-xblock==1.2.3             # via edx-when
+xblock==1.2.4             # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.1.0        # via fs
+# setuptools==41.2.0        # via fs
