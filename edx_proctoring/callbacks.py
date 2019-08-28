@@ -12,6 +12,7 @@ from django.urls import reverse, NoReverseMatch
 from edx_proctoring.api import (
     get_exam_attempt_by_code,
     mark_exam_attempt_as_ready,
+    update_attempt_status,
 )
 from edx_proctoring.constants import RPNOWV4_WAFFLE_NAME
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -30,7 +31,6 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     IMPORTANT: This is an unauthenticated endpoint, so be VERY CAREFUL about extending
     this endpoint
     """
-
     attempt = get_exam_attempt_by_code(attempt_code)
     if not attempt:
         log.warning("Attempt code %r cannot be found.", attempt_code)
@@ -42,6 +42,12 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
                              ProctoredExamStudentAttemptStatus.download_software_clicked]:
         mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
+    # if a user attempts to re-enter an exam that has not yet been submitted, submit the exam
+    if attempt['status'] in [ProctoredExamStudentAttemptStatus.started,
+                             ProctoredExamStudentAttemptStatus.ready_to_submit]:
+        update_attempt_status(attempt['proctored_exam']['id'],
+                              attempt['user']['id'],
+                              ProctoredExamStudentAttemptStatus.submitted)
     else:
         log.warning("Attempted to enter proctored exam attempt {attempt_id} when status was {attempt_status}"
                     .format(
@@ -49,7 +55,6 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
                         attempt_status=attempt['status'],
                     ))
 
-    log.info("Exam %r has been marked as ready", attempt['proctored_exam']['id'])
     if switch_is_active(RPNOWV4_WAFFLE_NAME):
         course_id = attempt['proctored_exam']['course_id']
         content_id = attempt['proctored_exam']['content_id']
