@@ -70,6 +70,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.wrong_browser_msg = 'The content of this exam can only be viewed'
         self.footer_msg = 'About Proctored Exams'
         self.timed_footer_msg = 'Can I request additional time to complete my exam?'
+        self.wait_deadline_msg = "The result will be visible after"
 
     def _render_exam(self, content_id, context_overrides=None):
         """
@@ -588,6 +589,116 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             self.assertNotIn(self.submitted_timed_exam_msg_with_due_date, rendered_response)
         else:
             self.assertIsNone(rendered_response)
+
+    @ddt.data(
+        (False, 'submitted', True, 1),
+        (True, 'verified', False, 1),
+        (False, 'submitted', True, 0),
+        (True, 'verified', False, 0),
+    )
+    @ddt.unpack
+    def test_get_studentview_submitted_timed_exam_with_grace_period(self, is_proctored, status, is_timed, graceperiod):
+        """
+        Test the student view for a submitted exam, after the
+        due date, when grace period is in effect.
+
+        Scenario: Given an exam with past due
+        When a user submission exists for that exam
+        Then get the user view with an active grace period
+        Then user will not be able to see exam content
+        And a banner will be visible
+        If the grace period is past due
+        For timed exam, user will not see any banner
+        And user will be able to see exam contents
+        And For proctored exam, view exam button will be visible
+        """
+        due_date = datetime.now(pytz.UTC) - timedelta(days=1)
+        context = {
+            'is_proctored': is_proctored,
+            'display_name': self.exam_name,
+            'default_time_limit_mins': 10,
+            'due_date': due_date,
+            'grace_period': timedelta(days=2)
+        }
+        exam_id = self._create_exam_with_due_time(
+            is_proctored=is_proctored, due_date=due_date
+        )
+        self._create_exam_attempt(exam_id, status=status)
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_for_exam_with_due_date,
+            context=context
+        )
+        self.assertIn(self.wait_deadline_msg, rendered_response)
+
+        # This pop is required as the student view updates the
+        # context dict that was passed in the arguments
+        context.pop('wait_deadline')
+
+        context['grace_period'] = timedelta(days=graceperiod)
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_for_exam_with_due_date,
+            context=context
+        )
+        if is_timed:
+            self.assertIsNone(rendered_response)
+        else:
+            self.assertNotIn(self.wait_deadline_msg, rendered_response)
+
+    def test_get_studentview_acknowledged_proctored_exam_with_grace_period(self):
+        """
+        Verify the student view for an acknowledge proctored exam with an active
+        grace period.
+
+        Given a proctored exam with a past due date and an inactive grace period
+        And a verified user submission exists for that exam
+        When user navigates to the exam
+        Then the wait deadline part is not shown
+        If the attempt is acknowledged to view the exam result
+        Then visiting the page again will not show any banner
+        When an active grace period is applied
+        Then navigating to the exam will not exam content
+        And the wait deadline will be shown
+        """
+        due_date = datetime.now(pytz.UTC) - timedelta(days=1)
+        context = {
+            'is_proctored': True,
+            'display_name': self.exam_name,
+            'default_time_limit_mins': 10,
+            'due_date': due_date,
+            'grace_period': timedelta(days=0)
+        }
+        exam_id = self._create_exam_with_due_time(
+            is_proctored=True, due_date=due_date
+        )
+        attempt = self._create_exam_attempt(exam_id, status='verified')
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_for_exam_with_due_date,
+            context=context
+        )
+        self.assertNotIn(self.wait_deadline_msg, rendered_response)
+        attempt.is_status_acknowledged = True
+        attempt.save()
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_for_exam_with_due_date,
+            context=context
+        )
+        self.assertIsNone(rendered_response)
+        context['grace_period'] = timedelta(days=2)
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_for_exam_with_due_date,
+            context=context
+        )
+        self.assertIn(self.wait_deadline_msg, rendered_response)
 
     def test_proctored_exam_attempt_with_past_due_datetime(self):
         """
