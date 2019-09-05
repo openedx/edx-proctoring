@@ -31,7 +31,7 @@ edx-rest-api-client==1.9.2
 edx-when==0.3
 enum34==1.1.6             # via fs
 event-tracking==0.2.9
-execnet==1.7.0            # via pytest-xdist
+execnet==1.7.1            # via pytest-xdist
 freezegun==0.3.12
 fs==2.4.10                # via xblock
 funcsigs==1.0.2           # via mock, pytest
@@ -39,14 +39,14 @@ future==0.17.1            # via backports.os, pyjwkest
 httmock==1.3.0
 httpretty==0.9.6
 idna==2.8                 # via requests
-importlib-metadata==0.19  # via pluggy, pytest
+importlib-metadata==0.20  # via pluggy, pytest
 jsonfield==2.0.2
 lazy==1.4                 # via bok-choy
 logilab-common==1.4.3
 lxml==4.4.1               # via xblock
 markupsafe==1.1.1         # via xblock
 mock==3.0.5
-more-itertools==5.0.0     # via pytest
+more-itertools==5.0.0     # via pytest, zipp
 newrelic==5.0.2.126       # via edx-django-utils
 packaging==19.1           # via pytest
 path.py==11.5.2           # via edx-i18n-tools
@@ -56,7 +56,7 @@ pluggy==0.12.0            # via pytest
 polib==1.1.0              # via edx-i18n-tools
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 py==1.8.0                 # via pytest
-pycryptodomex==3.8.2
+pycryptodomex==3.9.0
 pyjwkest==1.3.2           # via edx-drf-extensions
 pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.9.0            # via edx-opaque-keys, event-tracking
@@ -75,19 +75,19 @@ rest-condition==1.0.3     # via edx-drf-extensions
 rules==2.1
 scandir==1.10.0           # via pathlib2
 selenium==3.141.0
-semantic-version==2.6.0   # via edx-drf-extensions
+semantic-version==2.8.1   # via edx-drf-extensions
 six==1.12.0               # via bok-choy, edx-drf-extensions, edx-i18n-tools, edx-opaque-keys, event-tracking, freezegun, fs, httpretty, logilab-common, mock, packaging, pathlib2, pyjwkest, pytest, pytest-xdist, python-dateutil, responses, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 stevedore==1.30.1         # via edx-opaque-keys
 sure==1.2.7
 testfixtures==6.10.0
-typing==3.7.4             # via fs
+typing==3.7.4.1           # via fs
 urllib3==1.25.3           # via requests, selenium
 wcwidth==0.1.7            # via pytest
 web-fragments==0.3.0      # via xblock
 webob==1.8.5              # via xblock
-xblock==1.2.3             # via edx-when
-zipp==0.5.2               # via importlib-metadata
+xblock==1.2.4             # via edx-when
+zipp==0.6.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.1.0        # via fs, logilab-common
+# setuptools==41.2.0        # via fs, logilab-common
