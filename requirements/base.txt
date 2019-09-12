@@ -6,7 +6,7 @@
 #
 appdirs==1.4.3            # via fs
 backports.os==0.1.1       # via fs
-certifi==2019.6.16        # via requests
+certifi==2019.9.11        # via requests
 chardet==3.0.4            # via requests
 django-crum==0.7.3
 django-ipware==2.1.0
