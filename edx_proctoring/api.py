@@ -38,8 +38,8 @@ from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import (ProctoredExamReviewPolicySerializer, ProctoredExamSerializer,
                                         ProctoredExamStudentAllowanceSerializer, ProctoredExamStudentAttemptSerializer)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_proctoring.utils import emit_event, humanized_time, obscured_user_id
-from edx_when import api as when_api
+from edx_proctoring.utils import (emit_event, get_exam_due_date, has_due_date_passed, humanized_time,
+                                  obscured_user_id, verify_and_add_wait_deadline)
 
 log = logging.getLogger(__name__)
 
@@ -511,26 +511,6 @@ def update_exam_attempt(attempt_id, **kwargs):
             raise ProctoredExamPermissionDenied(err_msg)
         setattr(exam_attempt_obj, key, value)
     exam_attempt_obj.save()
-
-
-def has_due_date_passed(due_datetime):
-    """
-    return True if due date is lesser than current datetime, otherwise False
-    and if due_datetime is None then we don't have to consider the due date for return False
-    """
-
-    if due_datetime:
-        return due_datetime <= datetime.now(pytz.UTC)
-    return False
-
-
-def get_exam_due_date(exam, user=None):
-    """
-    Return the due date for the exam.
-    Uses edx_when to lookup the date for the subsection.
-    """
-    due_date = when_api.get_date_for_block(exam['course_id'], exam['content_id'], 'due', user=user)
-    return due_date or exam['due_date']
 
 
 def is_exam_passed_due(exam, user=None):
@@ -1623,7 +1603,9 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         # check if the exam's due_date has passed. If so, return None
         # so that the user can see their exam answers in read only mode.
         if not exam['hide_after_due'] and is_exam_passed_due(exam, user=user_id):
-            return None
+            has_context_updated = verify_and_add_wait_deadline(context, exam, user_id)
+            if not has_context_updated:
+                return None
 
         student_view_template = 'timed_exam/submitted.html'
 
@@ -1963,6 +1945,11 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             attempt['is_status_acknowledged'],
             exam
         ) else 'proctored_exam/verified.html'
+        has_context_updated = verify_and_add_wait_deadline(context, exam, user_id)
+        # The edge case where student has already acknowledged the result
+        # but the course team changed the grace period
+        if has_context_updated and not student_view_template:
+            student_view_template = 'proctored_exam/verified.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.rejected:
         student_view_template = None if _was_review_status_acknowledged(
             attempt['is_status_acknowledged'],

@@ -11,11 +11,11 @@ backports.functools-lru-cache==1.5  # via astroid, caniusepython3, isort, pylint
 backports.os==0.1.1       # via path.py
 bleach==3.1.0             # via readme-renderer
 caniusepython3==7.1.0
-certifi==2019.6.16        # via requests
+certifi==2019.9.11        # via requests
 chardet==3.0.4            # via requests
 click-log==0.1.8          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
-configparser==4.0.1       # via importlib-metadata, pydocstyle, pylint
+configparser==4.0.2       # via importlib-metadata, pydocstyle, pylint
 contextlib2==0.5.5        # via importlib-metadata
 diff-cover==2.3.0
 distlib==0.2.9.post0      # via caniusepython3
@@ -28,7 +28,7 @@ filelock==3.0.12          # via tox
 future==0.17.1            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
-importlib-metadata==0.21  # via path.py, pluggy, tox
+importlib-metadata==0.22  # via path.py, pluggy, tox
 inflect==2.1.0            # via jinja2-pluralize
 isort==4.3.21
 jinja2-pluralize==0.3.0   # via diff-cover

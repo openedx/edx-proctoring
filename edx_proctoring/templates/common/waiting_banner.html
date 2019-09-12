@@ -1,0 +1,12 @@
+{% load i18n %}
+<p>
+    {% blocktrans %}
+        The result will be visible after <strong id="wait_deadline"> Loading... </strong>
+    {% endblocktrans %}
+</p>
+<script type="text/javascript">
+    $(function () {
+        var timeZoneAwareDateString = (moment.utc('{{ wait_deadline }}').local().format('MMM DD, YYYY, LT'));
+        $("#wait_deadline").text(timeZoneAwareDateString);
+    });
+</script>

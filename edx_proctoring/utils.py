@@ -14,6 +14,7 @@ import six
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
+from edx_when import api as when_api
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys import InvalidKeyError
 
@@ -231,3 +232,44 @@ def obscured_user_id(user_id, *extra):
     obs_hash.update(six.text_type(user_id))
     obs_hash.update(u''.join(six.text_type(ext) for ext in extra))
     return obs_hash.hexdigest()
+
+
+def has_due_date_passed(due_datetime):
+    """
+    return True if due date is lesser than current datetime, otherwise False
+    and if due_datetime is None then we don't have to consider the due date for return False
+    """
+
+    if due_datetime:
+        return due_datetime <= datetime.now(pytz.UTC)
+    return False
+
+
+def get_exam_due_date(exam, user=None):
+    """
+    Return the due date for the exam.
+    Uses edx_when to lookup the date for the subsection.
+    """
+    due_date = when_api.get_date_for_block(exam['course_id'], exam['content_id'], 'due', user=user)
+    return due_date or exam['due_date']
+
+
+def verify_and_add_wait_deadline(context, exam, user_id):
+    """
+    Verify if the wait deadline should be added to template context.
+
+    If the grace period is present and is valid after the exam
+    has passed due date, for the given user, add the wait deadline to context. If the due
+    date is not present, which happens for self-paced courses, no context
+    update will take place.
+    """
+    exam_due_date = get_exam_due_date(exam, user_id)
+    if not (context.get('grace_period', False) and exam_due_date):
+        return False
+    wait_deadline = exam_due_date + context['grace_period']
+    if not has_due_date_passed(wait_deadline):
+        context.update(
+            {'wait_deadline': wait_deadline.isoformat()}
+        )
+        return True
+    return False

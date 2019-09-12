@@ -1,24 +1,32 @@
 {% load i18n %}
-<div class="sequence proctored-exam completed" data-exam-id="{{exam_id}}">
-  <h3>
+<div class="sequence proctored-exam completed" data-exam-id="{{ exam_id }}">
+    <h3>
 
-    {% if has_time_expired %}
-      {% blocktrans %}
-        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.
-      {% endblocktrans %}
-    {% else %}
-      {% blocktrans %}
-        You have submitted your timed exam.
-      {% endblocktrans %}
-    {% endif %}
+        {% if has_time_expired %}
+            {% blocktrans %}
+                The time allotted for this exam has expired. Your exam has been submitted and any work you completed
+                will be graded.
+            {% endblocktrans %}
+        {% else %}
+            {% blocktrans %}
+                You have submitted your timed exam.
+            {% endblocktrans %}
+        {% endif %}
 
-  </h3>
-  <hr>
-  <p>
+    </h3>
+    <hr>
+
     {% if will_be_revealed %}
-      {% blocktrans %}
-        After the due date has passed, you can review the exam, but you cannot change your answers.
-      {% endblocktrans %}
+        <p>
+            {% blocktrans %}
+                After the due date has passed, you can review the exam, but you cannot change your answers.
+            {% endblocktrans %}
+        </p>
+
+        {% if wait_deadline %}
+            {% include 'common/waiting_banner.html' %}
+        {% endif %}
+
     {% endif %}
-  </p>
 </div>
+
