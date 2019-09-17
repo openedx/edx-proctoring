@@ -18,9 +18,9 @@ djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.9.4
 edx-django-utils==2.0.0   # via edx-drf-extensions
 edx-drf-extensions==2.4.0
-edx-opaque-keys==1.0.1
+edx-opaque-keys==2.0.0
 edx-rest-api-client==1.9.2
-edx-when==0.3
+edx-when==0.4
 enum34==1.1.6             # via fs
 event-tracking==0.2.9
 fs==2.4.11                # via xblock
