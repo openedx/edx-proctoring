@@ -229,8 +229,8 @@ def obscured_user_id(user_id, *extra):
     Any extra information can be added to the hash
     """
     obs_hash = hmac.new(settings.SECRET_KEY.encode('ascii'), digestmod=hashlib.sha1)
-    obs_hash.update(six.text_type(user_id))
-    obs_hash.update(u''.join(six.text_type(ext) for ext in extra))
+    obs_hash.update(user_id.encode('utf-8'))
+    obs_hash.update(b''.join(ext.encode('utf-8') for ext in extra))
     return obs_hash.hexdigest()
 
 
