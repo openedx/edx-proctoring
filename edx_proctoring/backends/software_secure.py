@@ -94,7 +94,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                 )
             )
             log.error(err_msg)
-            raise BackendProviderCannotRegisterAttempt(err_msg)
+            raise BackendProviderCannotRegisterAttempt(err_msg, status)
 
         # get the external ID that Software Secure has defined
         # for this attempt
