@@ -175,7 +175,8 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
             attempt['proctored_exam']['id'],
             attempt['user']['id'],
             attempt_status,
-            raise_if_not_found=False
+            raise_if_not_found=False,
+            update_attributable_to=review.reviewed_by or None
         )
 
     # emit an event for 'review_received'

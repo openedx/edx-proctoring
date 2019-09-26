@@ -1116,6 +1116,43 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             'earned_graded': 5.0
         })
 
+    def test_grade_overrider(self):
+        """
+        Check we pass along the overrider appropriately, as one would when a rejection-worthy review comes in
+        """
+        grades_service = MockGradesService()
+        grades_service.override_subsection_grade = MagicMock()
+        set_runtime_service('grades', grades_service)
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.rejected,
+            update_attributable_to=self.user
+        )
+
+        assert grades_service.override_subsection_grade.called
+        # did we pass the user to whom we're attributing the override along?
+        assert grades_service.override_subsection_grade.call_args[1]['overrider'].id == self.user.id
+
+    def test_grade_override_comment(self):
+        """
+        Check we pass along the backend of the exam for which something failed
+        """
+        grades_service = MockGradesService()
+        grades_service.override_subsection_grade = MagicMock()
+        set_runtime_service('grades', grades_service)
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.rejected
+        )
+
+        assert grades_service.override_subsection_grade.called
+        # did we pass a comment referring to our backend?
+        assert "Unknown" in grades_service.override_subsection_grade.call_args[1]['comment']
+
     def test_disabled_grade_override(self):
         """
         Verify that when the REJECTED_EXAM_OVERRIDES_GRADE flag is disabled for a course,

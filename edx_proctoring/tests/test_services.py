@@ -246,7 +246,7 @@ class MockGradesService(object):
         return self.overrides.get(key)
 
     def override_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all=None,
-                                  earned_graded=None):
+                                  earned_graded=None, overrider=None, comment=None):
         """Sets grade override earned points for key (user_id + course_key + subsection)"""
         key = (user_id, course_key_or_id, usage_key_or_id)
         self.overrides[key] = MockGradeOverride(

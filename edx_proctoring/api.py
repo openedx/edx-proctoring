@@ -754,7 +754,8 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
 
 
 def update_attempt_status(exam_id, user_id, to_status,
-                          raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None):
+                          raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None,
+                          update_attributable_to=None):
     """
     Internal helper to handle state transitions of attempt status
     """
@@ -909,6 +910,8 @@ def update_attempt_status(exam_id, user_id, to_status,
                 cascade_effects=False
             )
 
+    backend = get_backend_provider(exam)
+
     if ProctoredExamStudentAttemptStatus.needs_grade_override(to_status):
         grades_service = get_runtime_service('grades')
 
@@ -933,7 +936,11 @@ def update_attempt_status(exam_id, user_id, to_status,
                 course_key_or_id=exam['course_id'],
                 usage_key_or_id=exam_attempt_obj.proctored_exam.content_id,
                 earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
-                earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
+                earned_graded=REJECTED_GRADE_OVERRIDE_EARNED,
+                overrider=update_attributable_to,
+                comment=('Failed {backend} proctoring'.format(backend=backend.verbose_name)
+                         if backend
+                         else 'Failed Proctoring')
             )
 
             certificates_service = get_runtime_service('certificates')
@@ -1010,7 +1017,6 @@ def update_attempt_status(exam_id, user_id, to_status,
     attempt = get_exam_attempt(exam_id, user_id)
 
     # call back to the backend to register the end of the exam, if necessary
-    backend = get_backend_provider(exam)
     if backend:
         # When onboarding exams change state to a completed status,
         # look up any exams in the onboarding error states, and delete them.
