@@ -25,13 +25,21 @@ from django.utils.translation import ugettext_noop
 
 from edx_proctoring import constants
 from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.exceptions import (BackendProviderOnboardingException, ProctoredExamAlreadyExists,
-                                       ProctoredExamIllegalStatusTransition, ProctoredExamNotActiveException,
-                                       ProctoredExamNotFoundException, ProctoredExamPermissionDenied,
-                                       ProctoredExamReviewPolicyAlreadyExists,
-                                       ProctoredExamReviewPolicyNotFoundException,
-                                       StudentExamAttemptAlreadyExistsException,
-                                       StudentExamAttemptDoesNotExistsException, StudentExamAttemptedAlreadyStarted)
+from edx_proctoring.exceptions import (
+    BackendProviderCannotRegisterAttempt,
+    BackendProviderOnboardingException,
+    BackendProviderSentNoAttemptID,
+    ProctoredExamAlreadyExists,
+    ProctoredExamIllegalStatusTransition,
+    ProctoredExamNotActiveException,
+    ProctoredExamNotFoundException,
+    ProctoredExamPermissionDenied,
+    ProctoredExamReviewPolicyAlreadyExists,
+    ProctoredExamReviewPolicyNotFoundException,
+    StudentExamAttemptAlreadyExistsException,
+    StudentExamAttemptDoesNotExistsException,
+    StudentExamAttemptedAlreadyStarted,
+)
 from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamSoftwareSecureReview,
                                    ProctoredExamStudentAllowance, ProctoredExamStudentAttempt)
 from edx_proctoring.runtime import get_runtime_service
@@ -629,8 +637,37 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
                 exam,
                 context=context,
             )
-        except BackendProviderOnboardingException as exc:
-            force_status = exc.status
+        except BackendProviderSentNoAttemptID as ex:
+            log_message = (
+                'Failed to get the attempt ID for {user_id}'
+                'in {exam_id} from the backend because the backend'
+                'did not provide the id in API response, even when the'
+                'HTTP response status is {status}, '
+                'Response: {response}'.format(
+                    user_id=user_id,
+                    exam_id=exam_id,
+                    response=six.text_type(ex),
+                    status=ex.http_status
+                )
+            )
+            log.error(log_message)
+            raise ex
+        except BackendProviderCannotRegisterAttempt as ex:
+            log_message = (
+                'Failed to create attempt for {user_id} '
+                'in {exam_id} because backend was unable '
+                'to register the attempt. Status: {status}, '
+                'Reponse: {response}'.format(
+                    user_id=user_id,
+                    exam_id=exam_id,
+                    response=six.text_type(ex),
+                    status=ex.http_status,
+                )
+            )
+            log.error(log_message)
+            raise ex
+        except BackendProviderOnboardingException as ex:
+            force_status = ex.status
             log_msg = (
                 'Failed to create attempt for {user_id} '
                 'in {exam_id} because of onboarding failure: '

@@ -17,6 +17,7 @@ from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
+    BackendProviderSentNoAttemptID,
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
@@ -44,6 +45,12 @@ class RESTBackendTests(TestCase):
             'is_active': True,
             'is_proctored': True,
             'is_practice': False,
+        }
+        self.register_exam_context = {
+            'attempt_code': '2',
+            'obs_user_id': 'abcdefghij',
+            'full_name': 'user name',
+            'lms_host': 'http://lms.com'
         }
 
     @responses.activate
@@ -174,18 +181,13 @@ class RESTBackendTests(TestCase):
 
     @responses.activate
     def test_register_exam_attempt(self):
-        context = {
-            'attempt_code': '2',
-            'obs_user_id': 'abcdefghij',
-            'full_name': 'user name',
-            'lms_host': 'http://lms.com'
-        }
         responses.add(
             responses.POST,
             url=self.provider.create_exam_attempt_url.format(exam_id=self.backend_exam['external_id']),
-            json={'id': 2}
+            json={'id': 2},
+            status=200
         )
-        attempt_external_id = self.provider.register_exam_attempt(self.backend_exam, context)
+        attempt_external_id = self.provider.register_exam_attempt(self.backend_exam, self.register_exam_context)
         request = json.loads(responses.calls[1].request.body)
         self.assertEqual(attempt_external_id, 2)
         self.assertEqual(request['status'], 'created')
@@ -194,12 +196,6 @@ class RESTBackendTests(TestCase):
 
     @responses.activate
     def test_register_exam_attempt_failure(self):
-        context = {
-            'attempt_code': '2',
-            'obs_user_id': 'abcdefghij',
-            'full_name': 'user name',
-            'lms_host': 'http://lms.com'
-        }
         responses.add(
             responses.POST,
             url=self.provider.create_exam_attempt_url.format(exam_id=self.backend_exam['external_id']),
@@ -207,19 +203,13 @@ class RESTBackendTests(TestCase):
             status=400
         )
         with self.assertRaises(BackendProviderCannotRegisterAttempt):
-            self.provider.register_exam_attempt(self.backend_exam, context)
+            self.provider.register_exam_attempt(self.backend_exam, self.register_exam_context)
 
     @ddt.data(
         *ProctoredExamStudentAttemptStatus.onboarding_errors
     )
     @responses.activate
     def test_attempt_failure_onboarding(self, failure_status):
-        context = {
-            'attempt_code': '2',
-            'obs_user_id': 'abcdefghij',
-            'full_name': 'user name',
-            'lms_host': 'http://lms.com'
-        }
         responses.add(
             responses.POST,
             url=self.provider.create_exam_attempt_url.format(exam_id=self.backend_exam['external_id']),
@@ -227,9 +217,20 @@ class RESTBackendTests(TestCase):
             status=200
         )
         with self.assertRaises(BackendProviderOnboardingException) as exc_manager:
-            self.provider.register_exam_attempt(self.backend_exam, context)
+            self.provider.register_exam_attempt(self.backend_exam, self.register_exam_context)
         exception = exc_manager.exception
         assert exception.status == failure_status
+
+    @responses.activate
+    def test_attempt_no_id_returned(self):
+        responses.add(
+            responses.POST,
+            url=self.provider.create_exam_attempt_url.format(exam_id=self.backend_exam['external_id']),
+            json={'error': 'something'},
+            status=200
+        )
+        with self.assertRaises(BackendProviderSentNoAttemptID):
+            self.provider.register_exam_attempt(self.backend_exam, self.register_exam_context)
 
     @ddt.data(
         ['start_exam_attempt', 'start'],

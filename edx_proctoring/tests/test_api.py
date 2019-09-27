@@ -57,6 +57,7 @@ from edx_proctoring.api import (
 )
 from edx_proctoring.constants import DEFAULT_CONTACT_EMAIL
 from edx_proctoring.exceptions import (
+    BackendProviderSentNoAttemptID,
     ProctoredExamAlreadyExists,
     ProctoredExamNotFoundException,
     StudentExamAttemptAlreadyExistsException,
@@ -559,6 +560,17 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         assert attempt['status'] == onboarding_error
         test_backend.attempt_error = None
+
+    def test_attempt_without_attempt_id(self):
+        """
+        Test that the exam attempt is throwing exceptions when the attempt id is not included in the
+        API response from proctoring backend
+        """
+        test_backend = get_backend_provider(name='test')
+        test_backend.no_attempt_id_error = 'No id returned'
+        with self.assertRaises(BackendProviderSentNoAttemptID):
+            create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
+        test_backend.no_attempt_id_error = None
 
     def test_no_existing_attempt(self):
         """

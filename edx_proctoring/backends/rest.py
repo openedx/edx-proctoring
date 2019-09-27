@@ -21,6 +21,7 @@ from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
+    BackendProviderSentNoAttemptID,
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 from edx_rest_api_client.client import OAuthAPIClient
@@ -187,13 +188,17 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         log.debug('Creating exam attempt for %r at %r', exam['external_id'], url)
         response = self.session.post(url, json=payload)
         if response.status_code != 200:
-            raise BackendProviderCannotRegisterAttempt(response.content)
+            raise BackendProviderCannotRegisterAttempt(response.content, response.status_code)
+        status_code = response.status_code
         response = response.json()
         log.debug(response)
         onboarding_status = response.get('status', None)
         if onboarding_status in ProctoredExamStudentAttemptStatus.onboarding_errors:
             raise BackendProviderOnboardingException(onboarding_status)
-        return response['id']
+        attempt_id = response.get('id', None)
+        if not attempt_id:
+            raise BackendProviderSentNoAttemptID(response, status_code)
+        return attempt_id
 
     def start_exam_attempt(self, exam, attempt):
         """

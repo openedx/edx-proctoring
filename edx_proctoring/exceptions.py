@@ -76,6 +76,17 @@ class BackendProviderCannotRegisterAttempt(ProctoredBaseException):
     Raised when a back-end provider cannot register an attempt
     """
 
+    def __init__(self, content, http_status):
+        super(BackendProviderCannotRegisterAttempt, self).__init__(self, content)
+        self.http_status = http_status
+
+
+class BackendProviderSentNoAttemptID(BackendProviderCannotRegisterAttempt):
+    """
+    Raised when a back-end provider returns a JSON without exam ID
+    in response to new exam attempt registration
+    """
+
 
 class BackendProviderOnboardingException(ProctoredBaseException):
     """
@@ -83,7 +94,7 @@ class BackendProviderOnboardingException(ProctoredBaseException):
     because of missing/failed onboarding requirements
     """
     def __init__(self, status):
-        ProctoredBaseException.__init__(self, status)
+        super(BackendProviderOnboardingException, self).__init__(self, status)
         self.status = status
 
 

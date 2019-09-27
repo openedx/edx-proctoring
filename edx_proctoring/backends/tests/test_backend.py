@@ -14,7 +14,11 @@ from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.backends.null import NullBackendProvider
 from edx_proctoring.backends.mock import MockProctoringBackendProvider
-from edx_proctoring.exceptions import BackendProviderCannotRetireUser, BackendProviderOnboardingException
+from edx_proctoring.exceptions import (
+    BackendProviderCannotRetireUser,
+    BackendProviderOnboardingException,
+    BackendProviderSentNoAttemptID,
+)
 
 # pragma pylint: disable=useless-super-delegation
 
@@ -30,6 +34,7 @@ class TestBackendProvider(ProctoringBackendProvider):
     last_retire_user = None
     attempt_error = None
     last_attempt_remove = None
+    no_attempt_id_error = None
 
     def register_exam_attempt(self, exam, context):
         """
@@ -37,6 +42,8 @@ class TestBackendProvider(ProctoringBackendProvider):
         """
         if self.attempt_error:
             raise BackendProviderOnboardingException(self.attempt_error)
+        elif self.no_attempt_id_error:
+            raise BackendProviderSentNoAttemptID(self.no_attempt_id_error, http_status=200)
         return 'testexternalid'
 
     def start_exam_attempt(self, exam, attempt):
