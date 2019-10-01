@@ -16,7 +16,7 @@ django-ipware==2.1.0
 django-model-utils==3.2.0
 django-waffle==0.17.0
 django-webpack-loader==0.6.0
-django==1.11.24
+django==1.11.25
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.9.4
 doc8==0.8.0
@@ -26,7 +26,7 @@ edx-drf-extensions==2.4.0
 edx-opaque-keys==2.0.0
 edx-rest-api-client==1.9.2
 edx-sphinx-theme==1.5.0
-edx-when==0.4
+edx-when==0.5
 enum34==1.1.6             # via fs
 event-tracking==0.2.9
 fs==2.4.11                # via xblock
@@ -37,7 +37,7 @@ jinja2==2.10.1            # via sphinx
 jsonfield==2.0.2
 lxml==4.4.1               # via xblock
 markupsafe==1.1.1         # via jinja2, xblock
-newrelic==5.0.2.126       # via edx-django-utils
+newrelic==5.2.0.127       # via edx-django-utils
 packaging==19.2           # via sphinx
 pbr==5.4.3                # via stevedore
 pockets==0.7.2            # via sphinxcontrib-napoleon
