@@ -18,7 +18,7 @@ configparser==4.0.2       # via importlib-metadata, pydocstyle, pylint
 contextlib2==0.6.0        # via importlib-metadata
 diff-cover==2.3.0
 distlib==0.2.9.post0      # via caniusepython3
-django==1.11.24
+django==1.11.25
 docutils==0.15.2          # via readme-renderer
 edx-i18n-tools==0.4.8
 edx_lint==0.5.5
@@ -38,7 +38,7 @@ mccabe==0.6.1             # via pylint
 more-itertools==5.0.0     # via zipp
 packaging==19.2           # via caniusepython3, tox
 path.py==11.5.2
-pathlib2==2.3.4           # via importlib-metadata
+pathlib2==2.3.5           # via importlib-metadata
 pip-tools==4.1.0
 pkginfo==1.5.0.1          # via twine
 pluggy==0.13.0            # via tox
@@ -49,7 +49,7 @@ pydocstyle==3.0.0
 pygments==2.4.2           # via diff-cover, readme-renderer
 pylint-celery==0.3        # via edx-lint
 pylint-django==0.7.2      # via edx-lint
-pylint-plugin-utils==0.5  # via pylint-celery, pylint-django
+pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
 pylint==1.7.1             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
 pyparsing==2.4.2          # via packaging
 pytz==2019.2              # via django
