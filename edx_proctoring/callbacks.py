@@ -3,19 +3,16 @@ Various callback paths that support callbacks from SoftwareSecure
 """
 
 import logging
-from waffle import switch_is_active
+
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.urls import reverse, NoReverseMatch
+from django.urls import NoReverseMatch, reverse
 
-from edx_proctoring.api import (
-    get_exam_attempt_by_code,
-    mark_exam_attempt_as_ready,
-    update_attempt_status,
-)
+from edx_proctoring.api import get_exam_attempt_by_code, mark_exam_attempt_as_ready, update_attempt_status
 from edx_proctoring.constants import RPNOWV4_WAFFLE_NAME
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from waffle import switch_is_active
 
 log = logging.getLogger(__name__)
 
@@ -38,21 +35,21 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
             content='You have entered an exam code that is not valid.',
             status=404
         )
+    proctored_exam_id = attempt['proctored_exam']['id']
+    attempt_status = attempt['status']
+    user_id = attempt['user']['id']
+    if attempt_status in [ProctoredExamStudentAttemptStatus.created,
+                          ProctoredExamStudentAttemptStatus.download_software_clicked]:
+        mark_exam_attempt_as_ready(proctored_exam_id, user_id)
 
-    if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
-                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
-        mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
     # if a user attempts to re-enter an exam that has not yet been submitted, submit the exam
-    if attempt['status'] in [ProctoredExamStudentAttemptStatus.started,
-                             ProctoredExamStudentAttemptStatus.ready_to_submit]:
-        update_attempt_status(attempt['proctored_exam']['id'],
-                              attempt['user']['id'],
-                              ProctoredExamStudentAttemptStatus.submitted)
+    if ProctoredExamStudentAttemptStatus.is_in_progress_status(attempt_status):
+        update_attempt_status(proctored_exam_id, user_id, ProctoredExamStudentAttemptStatus.submitted)
     else:
         log.warning("Attempted to enter proctored exam attempt {attempt_id} when status was {attempt_status}"
                     .format(
                         attempt_id=attempt['id'],
-                        attempt_status=attempt['status'],
+                        attempt_status=attempt_status,
                     ))
 
     if switch_is_active(RPNOWV4_WAFFLE_NAME):

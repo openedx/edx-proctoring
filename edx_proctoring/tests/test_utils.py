@@ -5,8 +5,12 @@ File that contains tests for the util methods.
 from __future__ import absolute_import
 
 import unittest
+from itertools import product
 
-from edx_proctoring.utils import humanized_time, _emit_event
+import ddt
+
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.utils import _emit_event, humanized_time, is_reattempting_exam
 
 
 class TestHumanizedTime(unittest.TestCase):
@@ -51,6 +55,7 @@ class TestHumanizedTime(unittest.TestCase):
         self.assertEqual(human_time, "error")
 
 
+@ddt.ddt
 class TestUtils(unittest.TestCase):
     """
     Class to test misc utilities
@@ -69,4 +74,35 @@ class TestUtils(unittest.TestCase):
             {
                 'one': 'two'
             }
+        )
+
+    @ddt.data(
+        *product(
+            [
+                ProctoredExamStudentAttemptStatus.started,
+                ProctoredExamStudentAttemptStatus.ready_to_submit,
+            ],
+            [
+                ProctoredExamStudentAttemptStatus.created,
+                ProctoredExamStudentAttemptStatus.download_software_clicked,
+                ProctoredExamStudentAttemptStatus.ready_to_start,
+            ]
+        )
+    )
+    @ddt.unpack
+    def test_is_reattempting_exam_from_in_progress_state(self, from_status, to_status):
+        """Tests that re-attempting exam returns true while transiting from given statuses"""
+        self.assertTrue(is_reattempting_exam(from_status, to_status))
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
+        ProctoredExamStudentAttemptStatus.ready_to_start,
+        ProctoredExamStudentAttemptStatus.submitted,
+        ProctoredExamStudentAttemptStatus.verified,
+    )
+    def test_is_reattempting_exam_from_other_status(self, from_status):
+        """Tests that re-attempting exam returns false while transiting from given status"""
+        self.assertFalse(
+            is_reattempting_exam(from_status, 'foo')
         )

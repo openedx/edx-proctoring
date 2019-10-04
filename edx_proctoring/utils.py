@@ -4,31 +4,27 @@ Helpers for the HTTP APIs
 
 from __future__ import absolute_import
 
-from datetime import datetime, timedelta
 import hashlib
 import hmac
 import logging
+from datetime import datetime, timedelta
+
 import pytz
 import six
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from edx_when import api as when_api
-from opaque_keys.edx.keys import CourseKey
-from opaque_keys import InvalidKeyError
-
-from rest_framework.views import APIView
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
+from edx_proctoring.models import ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
-
+from edx_when import api as when_api
 from eventtracking import tracker
-
-from edx_proctoring.models import (
-    ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptHistory,
-)
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 
 log = logging.getLogger(__name__)
 
@@ -273,3 +269,18 @@ def verify_and_add_wait_deadline(context, exam, user_id):
         )
         return True
     return False
+
+
+def is_reattempting_exam(from_status, to_status):
+    """
+    Returns a boolean representing whether or not a user is trying to reattempt an exam.
+
+    Given user's exam is in progress, and he is kicked out due to low bandwidth or
+    closes the secure browser. Its expected that the user should not be able to restart
+    the exam workflow.
+    This behavior is being implemented due to edX's integrity constraints.
+    """
+    return (
+        ProctoredExamStudentAttemptStatus.is_in_progress_status(from_status) and
+        ProctoredExamStudentAttemptStatus.is_pre_started_status(to_status)
+    )

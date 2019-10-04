@@ -137,16 +137,15 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         ProctoredExamStudentAttemptStatus.error,
     )
     @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
-    def test_email_not_sent(self, status):
+    def test_email_not_sent(self, to_status):
         """
         Assert that an email is not sent for the following attempt status codes.
         """
-
-        exam_attempt = self._create_started_exam_attempt()
+        exam_attempt = self._create_exam_attempt(self.proctored_exam_id)
         update_attempt_status(
             exam_attempt.proctored_exam_id,
             self.user.id,
-            status
+            to_status
         )
         self.assertEqual(len(mail.outbox), 0)
 
