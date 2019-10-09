@@ -24,11 +24,11 @@ django-waffle==0.17.0
 django-webpack-loader==0.6.0
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 edx-django-utils==2.0.0   # via edx-drf-extensions
-edx-drf-extensions==2.4.0
+edx-drf-extensions==2.4.1
 edx-i18n-tools==0.4.8
 edx-opaque-keys==2.0.0
 edx-rest-api-client==1.9.2
-edx-when==0.5
+edx-when==0.5.1
 enum34==1.1.6             # via fs
 event-tracking==0.2.9
 execnet==1.7.1            # via pytest-xdist
@@ -61,13 +61,13 @@ pyjwkest==1.3.2           # via edx-drf-extensions
 pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.9.0            # via edx-opaque-keys, event-tracking
 pyparsing==2.4.2          # via packaging
-pytest-cov==2.7.1
+pytest-cov==2.8.1
 pytest-django==3.5.1
 pytest-forked==1.0.2      # via pytest-xdist
 pytest-xdist==1.30.0
 pytest==4.6.5             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
 python-dateutil==2.8.0
-pytz==2019.2
+pytz==2019.3
 pyyaml==5.1.2             # via edx-i18n-tools, xblock
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
 responses==0.10.6
@@ -90,4 +90,4 @@ xblock==1.2.6             # via edx-when
 zipp==0.6.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.2.0        # via fs, logilab-common
+# setuptools==41.4.0        # via fs, logilab-common
