@@ -133,6 +133,24 @@ class ProctoredExamStudentAttemptStatus(object):
         """
         return cls.is_completed_status(status) or cls.is_incomplete_status(status)
 
+    @classmethod
+    def is_pre_started_status(cls, status):
+        """
+        Returns a boolean if the status passed is prior to "started" state.
+        """
+        return status in [
+            cls.created, cls.download_software_clicked, cls.ready_to_start
+        ]
+
+    @classmethod
+    def is_in_progress_status(cls, status):
+        """
+        Returns a boolean if the status passed is "in progress".
+        """
+        return status in [
+            cls.started, cls.ready_to_submit
+        ]
+
 
 class ReviewStatus(object):
     """

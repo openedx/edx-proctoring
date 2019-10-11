@@ -8,88 +8,45 @@ All tests for the api.py
 from __future__ import absolute_import
 
 from datetime import datetime, timedelta
+from itertools import product
+
 import ddt
+import pytz
+import six
 from freezegun import freeze_time
 from mock import MagicMock, patch
-import pytz
 
-import six
-
-from edx_proctoring.api import (
-    create_exam,
-    update_exam,
-    get_exam_by_id,
-    get_exam_by_content_id,
-    add_allowance_for_user,
-    remove_allowance_for_user,
-    start_exam_attempt,
-    start_exam_attempt_by_code,
-    stop_exam_attempt,
-    get_active_exams_for_user,
-    get_backend_provider,
-    get_exam_attempt,
-    create_exam_attempt,
-    get_allowances_for_course,
-    get_all_exams_for_course,
-    get_exam_attempt_by_id,
-    remove_exam_attempt,
-    get_all_exam_attempts,
-    get_exam_violation_report,
-    get_filtered_exam_attempts,
-    get_last_exam_completion_date,
-    mark_exam_attempt_timeout,
-    mark_exam_attempt_as_ready,
-    update_attempt_status,
-    get_attempt_status_summary,
-    update_exam_attempt,
-    _check_for_attempt_timeout,
-    _get_ordered_prerequisites,
-    _are_prerequirements_satisfied,
-    create_exam_review_policy,
-    get_review_policy_by_exam_id,
-    _get_review_policy_by_exam_id,
-    update_review_policy,
-    remove_review_policy,
-    is_backend_dashboard_available,
-    get_exam_configuration_dashboard_url,
-    does_backend_support_onboarding,
-    get_integration_specific_email,
-)
+from edx_proctoring.api import (_are_prerequirements_satisfied, _check_for_attempt_timeout, _get_ordered_prerequisites,
+                                _get_review_policy_by_exam_id, add_allowance_for_user, create_exam, create_exam_attempt,
+                                create_exam_review_policy, does_backend_support_onboarding, get_active_exams_for_user,
+                                get_all_exam_attempts, get_all_exams_for_course, get_allowances_for_course,
+                                get_attempt_status_summary, get_backend_provider, get_exam_attempt,
+                                get_exam_attempt_by_id, get_exam_by_content_id, get_exam_by_id,
+                                get_exam_configuration_dashboard_url, get_exam_violation_report,
+                                get_filtered_exam_attempts, get_integration_specific_email,
+                                get_last_exam_completion_date, get_review_policy_by_exam_id,
+                                is_backend_dashboard_available, mark_exam_attempt_as_ready, mark_exam_attempt_timeout,
+                                remove_allowance_for_user, remove_exam_attempt, remove_review_policy,
+                                start_exam_attempt, start_exam_attempt_by_code, stop_exam_attempt,
+                                update_attempt_status, update_exam, update_exam_attempt, update_review_policy)
 from edx_proctoring.constants import DEFAULT_CONTACT_EMAIL
-from edx_proctoring.exceptions import (
-    BackendProviderSentNoAttemptID,
-    ProctoredExamAlreadyExists,
-    ProctoredExamNotFoundException,
-    StudentExamAttemptAlreadyExistsException,
-    StudentExamAttemptDoesNotExistsException,
-    StudentExamAttemptedAlreadyStarted,
-    UserNotFoundException,
-    ProctoredExamIllegalStatusTransition,
-    ProctoredExamPermissionDenied,
-    AllowanceValueNotAllowedException,
-    ProctoredExamReviewPolicyAlreadyExists,
-    ProctoredExamReviewPolicyNotFoundException,
-)
-from edx_proctoring.models import (
-    ProctoredExam,
-    ProctoredExamSoftwareSecureReview,
-    ProctoredExamSoftwareSecureComment,
-    ProctoredExamStudentAllowance,
-    ProctoredExamStudentAttempt,
-    ProctoredExamReviewPolicy,
-    ProctoredExamStudentAttemptHistory,
-)
-from edx_proctoring.runtime import set_runtime_service, get_runtime_service
+from edx_proctoring.exceptions import (AllowanceValueNotAllowedException, BackendProviderSentNoAttemptID,
+                                       ProctoredExamAlreadyExists, ProctoredExamIllegalStatusTransition,
+                                       ProctoredExamNotFoundException, ProctoredExamPermissionDenied,
+                                       ProctoredExamReviewPolicyAlreadyExists,
+                                       ProctoredExamReviewPolicyNotFoundException,
+                                       StudentExamAttemptAlreadyExistsException,
+                                       StudentExamAttemptDoesNotExistsException, StudentExamAttemptedAlreadyStarted,
+                                       UserNotFoundException)
+from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamSoftwareSecureComment,
+                                   ProctoredExamSoftwareSecureReview, ProctoredExamStudentAllowance,
+                                   ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory)
+from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests import mock_perm
 
-from .test_services import (
-    MockCreditService,
-    MockCreditServiceNone,
-    MockCreditServiceWithCourseEndDate,
-    MockGradesService,
-    MockCertificateService
-)
+from .test_services import (MockCertificateService, MockCreditService, MockCreditServiceNone,
+                            MockCreditServiceWithCourseEndDate, MockGradesService)
 from .utils import ProctoredExamTestCase
 
 
@@ -1300,6 +1257,40 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             random_timestamp
         )
 
+    @ddt.data(
+        *product(
+            [
+                ProctoredExamStudentAttemptStatus.started,
+                ProctoredExamStudentAttemptStatus.ready_to_submit,
+
+            ],
+            [
+                ProctoredExamStudentAttemptStatus.created,
+                ProctoredExamStudentAttemptStatus.download_software_clicked,
+                ProctoredExamStudentAttemptStatus.ready_to_start
+            ],
+        )
+
+    )
+    @ddt.unpack
+    def test_reattempt_as_submitted(self, from_status, to_status):
+        """
+        Tests that when there is an case to update the exam attempt status
+        from started to the given status, the attempt is submitted automatically.
+        """
+        exam_attempt = self._create_exam_attempt(self.proctored_exam_id, from_status)
+
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            to_status,
+        )
+        exam_attempt = get_exam_attempt_by_id(exam_attempt.id)
+        self.assertEqual(
+            exam_attempt['status'],
+            ProctoredExamStudentAttemptStatus.submitted
+        )
+
     def test_immediate_timeout(self):
         """
         Verify that exams started after their due date will be immediately submitted once started
@@ -1503,7 +1494,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         set_runtime_service('grades', MockGradesService())
 
-        exam_attempt = self._create_started_exam_attempt()
+        exam_attempt = self._create_exam_attempt(self.proctored_exam_id)
         update_attempt_status(
             exam_attempt.proctored_exam_id,
             self.user.id,

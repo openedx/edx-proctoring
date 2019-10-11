@@ -13,8 +13,6 @@ from datetime import datetime, timedelta
 import pytz
 import six
 
-from waffle import switch_is_active
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail.message import EmailMessage
@@ -47,7 +45,8 @@ from edx_proctoring.serializers import (ProctoredExamReviewPolicySerializer, Pro
                                         ProctoredExamStudentAllowanceSerializer, ProctoredExamStudentAttemptSerializer)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import (emit_event, get_exam_due_date, has_due_date_passed, humanized_time,
-                                  obscured_user_id, verify_and_add_wait_deadline)
+                                  is_reattempting_exam, obscured_user_id, verify_and_add_wait_deadline)
+from waffle import switch_is_active
 
 log = logging.getLogger(__name__)
 
@@ -797,23 +796,6 @@ def update_attempt_status(exam_id, user_id, to_status,
     Internal helper to handle state transitions of attempt status
     """
 
-    log_msg = (
-        'Updating attempt status for exam_id {exam_id} '
-        'for user_id {user_id} to status {to_status}'.format(
-            exam_id=exam_id, user_id=user_id, to_status=to_status
-        )
-    )
-    log.info(log_msg)
-
-    # In some configuration we may treat timeouts the same
-    # as the user saying he/she wishes to submit the exam
-    treat_timeout_as_submitted = (
-        to_status == ProctoredExamStudentAttemptStatus.timed_out and
-        not settings.PROCTORING_SETTINGS.get('ALLOW_TIMED_OUT_STATE', False)
-    )
-    if treat_timeout_as_submitted:
-        to_status = ProctoredExamStudentAttemptStatus.submitted
-
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
         if raise_if_not_found:
@@ -822,12 +804,28 @@ def update_attempt_status(exam_id, user_id, to_status,
             return
 
     from_status = exam_attempt_obj.status
-    exam = get_exam_by_id(exam_id)
 
+    log_msg = (
+        'Updating attempt status for exam_id {exam_id} '
+        'for user_id {user_id} from status "{from_status}" to "{to_status}"'.format(
+            exam_id=exam_id, user_id=user_id, from_status=from_status, to_status=to_status
+        )
+    )
+    log.info(log_msg)
+    # In some configuration we may treat timeouts the same
+    # as the user saying he/she wishes to submit the exam
+    allow_timeout_state = settings.PROCTORING_SETTINGS.get('ALLOW_TIMED_OUT_STATE', False)
+    treat_timeout_as_submitted = to_status == ProctoredExamStudentAttemptStatus.timed_out and not allow_timeout_state
+
+    user_trying_to_reattempt = is_reattempting_exam(from_status, to_status)
+    if treat_timeout_as_submitted or user_trying_to_reattempt:
+        to_status = ProctoredExamStudentAttemptStatus.submitted
+
+    exam = get_exam_by_id(exam_id)
     # don't allow state transitions from a completed state to an incomplete state
     # if a re-attempt is desired then the current attempt must be deleted
     #
-    in_completed_status = ProctoredExamStudentAttemptStatus.is_completed_status(exam_attempt_obj.status)
+    in_completed_status = ProctoredExamStudentAttemptStatus.is_completed_status(from_status)
     to_incompleted_status = ProctoredExamStudentAttemptStatus.is_incomplete_status(to_status)
 
     if in_completed_status and to_incompleted_status:
