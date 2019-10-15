@@ -16,7 +16,7 @@ django-webpack-loader==0.6.0
 django==1.11.25
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.9.4
-edx-django-utils==2.0.0   # via edx-drf-extensions
+edx-django-utils==2.0.1   # via edx-drf-extensions
 edx-drf-extensions==2.4.1
 edx-opaque-keys==2.0.0
 edx-rest-api-client==1.9.2
@@ -24,12 +24,12 @@ edx-when==0.5.1
 enum34==1.1.6             # via fs
 event-tracking==0.2.9
 fs==2.4.11                # via xblock
-future==0.17.1            # via backports.os, pyjwkest
+future==0.18.0            # via backports.os, pyjwkest
 idna==2.8                 # via requests
 jsonfield==2.0.2
 lxml==4.4.1               # via xblock
 markupsafe==1.1.1         # via xblock
-newrelic==5.2.0.127       # via edx-django-utils
+newrelic==5.2.1.129       # via edx-django-utils
 pbr==5.4.3                # via stevedore
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 pycryptodomex==3.9.0
@@ -50,7 +50,7 @@ typing==3.7.4.1           # via fs
 urllib3==1.25.6           # via requests
 web-fragments==0.3.0      # via xblock
 webob==1.8.5              # via xblock
-xblock==1.2.6             # via edx-when
+xblock==1.2.7             # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools==41.4.0        # via fs
