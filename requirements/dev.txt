@@ -15,7 +15,7 @@ chardet==3.0.4            # via requests
 click-log==0.1.8          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
 configparser==4.0.2       # via importlib-metadata, pydocstyle, pylint
-contextlib2==0.6.0        # via importlib-metadata
+contextlib2==0.6.0.post1  # via importlib-metadata
 diff-cover==2.3.0
 distlib==0.2.9.post0      # via caniusepython3
 django==1.11.25
@@ -24,7 +24,7 @@ edx-i18n-tools==0.4.8
 edx_lint==0.5.5
 enum34==1.1.6             # via astroid
 filelock==3.0.12          # via tox
-future==0.17.1            # via backports.os
+future==0.18.0            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 importlib-metadata==0.23  # via path.py, pluggy, tox
@@ -39,7 +39,7 @@ more-itertools==5.0.0     # via zipp
 packaging==19.2           # via caniusepython3, tox
 path.py==11.5.2
 pathlib2==2.3.5           # via importlib-metadata
-pip-tools==4.1.0
+pip-tools==4.2.0
 pkginfo==1.5.0.1          # via twine
 pluggy==0.13.0            # via tox
 polib==1.1.0              # via edx-i18n-tools
