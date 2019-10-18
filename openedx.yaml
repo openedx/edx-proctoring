@@ -2,16 +2,20 @@
 # http://open-edx-proposals.readthedocs.io/en/latest/oeps/oep-0002.html#specification
 
 nick: proc
-owner: edx/educator-dahlia
+owner: mattcarter
 tags:
     - lms
     - library
 oeps:
     oep-2: True
-    oep-3:
+    oep-3: False
+    oep-5: True
+    oep-7: True
+    oep-18: True
+    oep-30:
         state: False
-        reason: TODO - Implement for this application if appropriate
-    oep-5:
-        state: False
-        reason: TODO - Implement for this application if appropriate
+        reason: Compliance via https://openedx.atlassian.net/browse/EDUCATOR-4754
+
 track-pulls: true
+supporting_teams:
+  - masters-devs
