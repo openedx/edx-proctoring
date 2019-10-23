@@ -1,11 +1,12 @@
 """
 Tests for the REST backend
 """
+from __future__ import absolute_import
+
 import json
 
 import ddt
 import jwt
-
 import responses
 from mock import patch
 
@@ -13,12 +14,8 @@ from django.test import TestCase, override_settings
 from django.utils import translation
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
-from edx_proctoring.exceptions import (
-    BackendProviderCannotRegisterAttempt,
-    BackendProviderCannotRetireUser,
-    BackendProviderOnboardingException,
-    BackendProviderSentNoAttemptID,
-)
+from edx_proctoring.exceptions import (BackendProviderCannotRegisterAttempt, BackendProviderCannotRetireUser,
+                                       BackendProviderOnboardingException, BackendProviderSentNoAttemptID)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 
@@ -27,7 +24,7 @@ class RESTBackendTests(TestCase):
     """
     Tests for the REST backend
     """
-    def setUp(self):
+    def setUp(self):  # pylint: disable=super-method-not-called
         "setup tests"
         BaseRestProctoringProvider.base_url = 'http://rr.fake'
         self.provider = BaseRestProctoringProvider('client_id', 'client_secret')

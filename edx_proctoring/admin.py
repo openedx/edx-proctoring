@@ -6,28 +6,21 @@ Django Admin pages
 from __future__ import absolute_import
 
 from datetime import datetime, timedelta
+
 import pytz
 
 from django import forms
-from django.db.models import Q
 from django.conf import settings
-from django.contrib import admin
-from django.contrib import messages
+from django.contrib import admin, messages
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from edx_proctoring.models import (
-    ProctoredExam,
-    ProctoredExamReviewPolicy,
-    ProctoredExamSoftwareSecureReview,
-    ProctoredExamSoftwareSecureReviewHistory,
-    ProctoredExamStudentAttempt,
-)
+
 from edx_proctoring.api import update_attempt_status
-from edx_proctoring.utils import locate_attempt_by_attempt_code
-from edx_proctoring.exceptions import (
-    ProctoredExamIllegalStatusTransition,
-    StudentExamAttemptDoesNotExistsException,
-)
+from edx_proctoring.exceptions import ProctoredExamIllegalStatusTransition, StudentExamAttemptDoesNotExistsException
+from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamSoftwareSecureReview,
+                                   ProctoredExamSoftwareSecureReviewHistory, ProctoredExamStudentAttempt)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.utils import locate_attempt_by_attempt_code
 
 
 class ProctoredExamReviewPolicyAdmin(admin.ModelAdmin):
@@ -38,13 +31,13 @@ class ProctoredExamReviewPolicyAdmin(admin.ModelAdmin):
 
     def course_id(obj):
         """
-        return course_id of related model
+        Return course_id of related model
         """
         return obj.proctored_exam.course_id
 
     def exam_name(obj):
         """
-        return exam name of related model
+        Return exam name of related model
         """
         return obj.proctored_exam.exam_name
 
@@ -65,7 +58,8 @@ class ProctoredExamReviewPolicyAdmin(admin.ModelAdmin):
 
 class ProctoredExamSoftwareSecureReviewForm(forms.ModelForm):
     """Admin Form to display for reading/updating a Review"""
-    class Meta(object):  # pylint: disable=missing-docstring
+    class Meta(object):
+        """Meta class"""
         model = ProctoredExamSoftwareSecureReview
         fields = '__all__'
 
@@ -294,12 +288,14 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         review.save()
 
     def get_form(self, request, obj=None, **kwargs):
+        """ Returns software secure review form """
         form = super(ProctoredExamSoftwareSecureReviewAdmin, self).get_form(request, obj, **kwargs)
         if 'video_url' in form.base_fields:
             del form.base_fields['video_url']
         return form
 
     def lookup_allowed(self, key, value):  # pylint: disable=arguments-differ
+        """ Checks if lookup allowed or not """
         if key == 'exam__course_id':
             return True
         return super(ProctoredExamSoftwareSecureReviewAdmin, self).lookup_allowed(key, value)
@@ -364,7 +360,8 @@ class ProctoredExamAttemptForm(forms.ModelForm):
     Admin Form to display for reading/updating a Proctored Exam Attempt
     """
 
-    class Meta(object):  # pylint: disable=missing-docstring
+    class Meta(object):
+        """ Meta class """
         model = ProctoredExamStudentAttempt
         fields = '__all__'
 

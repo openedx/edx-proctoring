@@ -35,7 +35,7 @@ class ProctoringService(object):
 
     def _bind_to_module_functions(self, module):
         """
-        bind module functions. Since we use underscores to mean private methods, let's exclude those.
+        Bind module functions. Since we use underscores to mean private methods, let's exclude those.
         """
         for attr_name in dir(module):
             attr = getattr(module, attr_name, None)

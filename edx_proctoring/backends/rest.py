@@ -2,17 +2,18 @@
 Base implementation of a REST backend, following the API documented in
 docs/backends.rst
 """
+from __future__ import absolute_import
+
 import logging
-import warnings
 import time
 import uuid
-import jwt
+import warnings
 
-# this is a known PyLint false positive (https://github.com/PyCQA/pylint/issues/1640)
-# that is fixed in PyLint v1.8
-from six.moves.urllib.parse import urlparse  # pylint: disable=import-error
-from webpack_loader.utils import get_files
+import jwt
+from edx_rest_api_client.client import OAuthAPIClient
+from six.moves.urllib.parse import urlparse  # pylint: disable=import-error, wrong-import-order
 from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleLookupError
+from webpack_loader.utils import get_files
 
 from django.conf import settings
 
@@ -21,10 +22,9 @@ from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
-    BackendProviderSentNoAttemptID,
+    BackendProviderSentNoAttemptID
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
-from edx_rest_api_client.client import OAuthAPIClient
 
 log = logging.getLogger(__name__)
 
@@ -149,7 +149,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the metadata and configuration options for the proctoring service
         """
         url = self.config_url
-        log.debug('Requesting config from %r', url)
+        log.debug(u'Requesting config from %r', url)
         response = self.session.get(url, headers=self._get_language_headers()).json()
         return response
 
@@ -158,7 +158,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the exam metadata stored by the proctoring service
         """
         url = self.exam_url.format(exam_id=exam['id'])
-        log.debug('Requesting exam from %r', url)
+        log.debug(u'Requesting exam from %r', url)
         response = self.session.get(url).json()
         return response
 
@@ -185,7 +185,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         payload['status'] = 'created'
         # attempt code isn't needed in this API
         payload.pop('attempt_code', False)
-        log.debug('Creating exam attempt for %r at %r', exam['external_id'], url)
+        log.debug(u'Creating exam attempt for %r at %r', exam['external_id'], url)
         response = self.session.post(url, json=payload)
         if response.status_code != 200:
             raise BackendProviderCannotRegisterAttempt(response.content, response.status_code)
@@ -265,7 +265,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             url = self.exam_url.format(exam_id=external_id)
         else:
             url = self.create_exam_url
-        log.info('Saving exam to %r', url)
+        log.info(u'Saving exam to %r', url)
         response = None
         try:
             response = self.session.post(url, json=exam)
@@ -276,7 +276,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
                 content = exc.response.content if hasattr(exc, 'response') else response.content
             else:
                 content = None
-            log.exception('failed to save exam. %r', content)
+            log.exception(u'failed to save exam. %r', content)
             data = {}
         return data.get('id')
 
@@ -302,10 +302,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
                 token['config'] = True
             if attempt_id:
                 token['attempt_id'] = attempt_id
-        encoded = jwt.encode(token, self.client_secret)
+        encoded = jwt.encode(token, self.client_secret).decode('utf-8')
         url = self.instructor_url.format(client_id=self.client_id, jwt=encoded)
 
-        log.debug('Created instructor url for %r %r %r', course_id, exam_id, attempt_id)
+        log.debug(u'Created instructor url for %r %r %r', course_id, exam_id, attempt_id)
         return url
 
     def retire_user(self, user_id):
@@ -350,11 +350,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         headers = {}
         if method == 'GET':
             headers.update(self._get_language_headers())
-        log.debug('Making %r attempt request at %r', method, url)
+        log.debug(u'Making %r attempt request at %r', method, url)
         response = self.session.request(method, url, json=payload, headers=headers)
         try:
             data = response.json()
         except ValueError:
-            log.exception("Decoding attempt %r -> %r", attempt, response.content)
+            log.exception(u"Decoding attempt %r -> %r", attempt, response.content)
             data = {}
         return data

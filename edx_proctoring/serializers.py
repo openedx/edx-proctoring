@@ -2,17 +2,13 @@
 
 from __future__ import absolute_import
 
-from django.contrib.auth.models import User
-
 from rest_framework import serializers
 from rest_framework.fields import DateTimeField
 
-from edx_proctoring.models import (
-    ProctoredExam,
-    ProctoredExamStudentAttempt,
-    ProctoredExamStudentAllowance,
-    ProctoredExamReviewPolicy
-)
+from django.contrib.auth.models import User
+
+from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamStudentAllowance,
+                                   ProctoredExamStudentAttempt)
 
 
 class ProctoredExamSerializer(serializers.ModelSerializer):

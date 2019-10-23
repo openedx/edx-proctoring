@@ -10,10 +10,11 @@ import os
 import os.path
 import warnings
 
+from stevedore.extension import ExtensionManager
+
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from stevedore.extension import ExtensionManager
 
 
 def make_worker_config(backends, out='/tmp/workers.json'):
@@ -35,16 +36,16 @@ def make_worker_config(backends, out='/tmp/workers.json'):
             # no npm module defined
             continue
         except IOError:
-            warnings.warn('Proctoring backend %s defined an npm module,'
-                          'but it is not installed at %r' % (backend.__class__, package_file))
+            warnings.warn(u'Proctoring backend %s defined an npm module,'
+                          u'but it is not installed at %r' % (backend.__class__, package_file))
         except KeyError:
-            warnings.warn('%r does not contain a `main` entry' % package_file)
+            warnings.warn(u'%r does not contain a `main` entry' % package_file)
     if config:
         try:
             with open(out, 'wb+') as outfp:
-                json.dump(config, outfp)
+                outfp.write(json.dumps(config).encode('utf-8'))
         except IOError:
-            warnings.warn("Could not write worker config to %s" % out)
+            warnings.warn(u"Could not write worker config to %s" % out)
         else:
             # make sure that this file is group writable, because it may be written by different users
             os.chmod(out, 0o664)
@@ -103,12 +104,12 @@ class EdxProctoringConfig(AppConfig):
             try:
                 name = settings.PROCTORING_BACKENDS['DEFAULT']
             except (KeyError, AttributeError):
-                raise ImproperlyConfigured("No default proctoring backend set in settings.PROCTORING_BACKENDS")
+                raise ImproperlyConfigured(u"No default proctoring backend set in settings.PROCTORING_BACKENDS")
         try:
             return self.backends[name]
         except KeyError:
-            raise NotImplementedError("No proctoring backend configured for '{}'.  "
-                                      "Available: {}".format(name, list(self.backends)))
+            raise NotImplementedError(u"No proctoring backend configured for '{}'.  "
+                                      u"Available: {}".format(name, list(self.backends)))
 
     def ready(self):
         """
@@ -125,4 +126,4 @@ class EdxProctoringConfig(AppConfig):
                 self.backends[name] = extension.plugin(**options)
             except KeyError:
                 pass
-        make_worker_config(self.backends.values(), out=os.path.join(settings.ENV_ROOT, 'workers.json'))
+        make_worker_config(list(self.backends.values()), out=os.path.join(settings.ENV_ROOT, 'workers.json'))

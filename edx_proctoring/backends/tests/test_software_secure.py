@@ -7,41 +7,26 @@ Tests for the software_secure module
 from __future__ import absolute_import
 
 import json
+
 import ddt
+from httmock import HTTMock, all_requests
 from mock import MagicMock, patch
-from httmock import all_requests, HTTMock
 
-from django.test import TestCase
 from django.contrib.auth.models import User
+from django.test import TestCase
 from django.urls import reverse
-from edx_proctoring.runtime import set_runtime_service
 
-from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
 from edx_proctoring import constants
-
-from edx_proctoring.api import (
-    get_exam_attempt_by_id,
-    create_exam,
-    create_exam_attempt,
-    add_allowance_for_user
-
-)
-
-from edx_proctoring.models import (
-    ProctoredExamReviewPolicy,
-    ProctoredExamStudentAllowance
-)
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-
+from edx_proctoring.api import add_allowance_for_user, create_exam, create_exam_attempt, get_exam_attempt_by_id
+from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.backends.software_secure import SOFTWARE_SECURE_INVALID_CHARS, SoftwareSecureBackendProvider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
-from edx_proctoring.tests.test_services import (
-    MockCreditService,
-    MockInstructorService,
-    MockGradesService,
-    MockCertificateService
-)
-from edx_proctoring.backends.software_secure import SoftwareSecureBackendProvider, SOFTWARE_SECURE_INVALID_CHARS
+from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
+from edx_proctoring.models import ProctoredExamReviewPolicy, ProctoredExamStudentAllowance
+from edx_proctoring.runtime import set_runtime_service
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.tests.test_services import (MockCertificateService, MockCreditService, MockGradesService,
+                                                MockInstructorService)
 
 
 @all_requests
@@ -267,7 +252,7 @@ class SoftwareSecureTests(TestCase):
             # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
             expected = context['review_policy']
             if review_policy_exception:
-                expected = '{base}; {exception}'.format(
+                expected = u'{base}; {exception}'.format(
                     base=expected,
                     exception=review_policy_exception
                 )
@@ -329,8 +314,8 @@ class SoftwareSecureTests(TestCase):
         for illegal_char in SOFTWARE_SECURE_INVALID_CHARS:
             exam_id = create_exam(
                 course_id='foo/bar/baz',
-                content_id='content with {}'.format(illegal_char),
-                exam_name='Sample Exam with {} character'.format(illegal_char),
+                content_id=u'content with {}'.format(illegal_char),
+                exam_name=u'Sample Exam with {} character'.format(illegal_char),
                 time_limit_mins=10,
                 is_proctored=True,
                 backend='software_secure',

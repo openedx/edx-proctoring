@@ -7,20 +7,14 @@ All tests for the models.py
 from __future__ import absolute_import
 
 import six
-from edx_proctoring.models import (
-    ProctoredExam,
-    ProctoredExamStudentAllowance,
-    ProctoredExamStudentAllowanceHistory,
-    ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptHistory,
-    ProctoredExamReviewPolicy,
-    ProctoredExamReviewPolicyHistory,
-)
+from six.moves import range
+
+from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamReviewPolicyHistory,
+                                   ProctoredExamStudentAllowance, ProctoredExamStudentAllowanceHistory,
+                                   ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
-from .utils import (
-    LoggedInTestCase
-)
+from .utils import LoggedInTestCase
 
 # pragma pylint: disable=useless-super-delegation
 
@@ -82,6 +76,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
         self.assertEqual(len(proctored_exam_student_history), 0)
 
         # Update the allowance object twice
+        # pylint: disable=no-member
         ProctoredExamStudentAllowance.objects.filter(
             user_id=1,
             proctored_exam=proctored_exam,
@@ -92,6 +87,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
             value='10 minutes'
         )
 
+        # pylint: disable=no-member
         ProctoredExamStudentAllowance.objects.filter(
             user_id=1,
             proctored_exam=proctored_exam,

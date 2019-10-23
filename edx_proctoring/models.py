@@ -6,6 +6,7 @@ Data models for the proctoring subsystem
 # pylint: disable=model-missing-unicode
 
 from __future__ import absolute_import
+
 import six
 
 from django.contrib.auth import get_user_model
@@ -17,11 +18,8 @@ from django.utils.translation import ugettext_noop
 from model_utils.models import TimeStampedModel
 
 from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.exceptions import (
-    UserNotFoundException,
-    ProctoredExamNotActiveException,
-    AllowanceValueNotAllowedException,
-)
+from edx_proctoring.exceptions import (AllowanceValueNotAllowedException, ProctoredExamNotActiveException,
+                                       UserNotFoundException)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 
 USER_MODEL = get_user_model()
@@ -72,6 +70,7 @@ class ProctoredExam(TimeStampedModel):
         db_table = 'proctoring_proctoredexam'
 
     def __str__(self):
+        """ String representation """
         # pragma: no cover
         return u"{course_id}: {exam_name} ({active})".format(
             course_id=self.course_id,
@@ -134,6 +133,7 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
     review_policy = models.TextField(default='')
 
     def __str__(self):
+        """ String representation """
         # pragma: no cover
         return u"ProctoredExamReviewPolicy: {set_by_user} ({proctored_exam})".format(
             set_by_user=self.set_by_user,
@@ -240,7 +240,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         Returns the Student Exam Attempts for the given course_id.
         """
         filtered_query = Q(proctored_exam__course_id=course_id)
-        return self.filter(filtered_query).order_by('-created')
+        return self.filter(filtered_query).order_by('-created')  # pylint: disable=no-member
 
     def get_filtered_exam_attempts(self, course_id, search_by):
         """
@@ -255,6 +255,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         """
         Returns the Student's Proctored Exam Attempts for the given course_id.
         """
+        # pylint: disable=no-member
         return self.filter(
             proctored_exam__course_id=course_id,
             user__username=username,
@@ -278,6 +279,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         Removes any attempts in the onboarding error states.
         (They will automatically be saved to the attempt history table)
         """
+        # pylint: disable=no-member
         self.filter(user_id=user_id,
                     status__in=ProctoredExamStudentAttemptStatus.onboarding_errors).delete()
 
@@ -365,7 +367,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     def delete_exam_attempt(self):
         """
-        deletes the exam attempt object and archives it to the ProctoredExamStudentAttemptHistory table.
+        Deletes the exam attempt object and archives it to the ProctoredExamStudentAttemptHistory table.
         """
         self.delete()
 
@@ -467,6 +469,7 @@ class QuerySetWithUpdateOverride(models.QuerySet):
     every time the object is updated.
     """
     def update(self, **kwargs):
+        """ Create a copy after update """
         super(QuerySetWithUpdateOverride, self).update(**kwargs)
         archive_model(ProctoredExamStudentAllowanceHistory, self.get(), id='allowance_id')
 
@@ -552,7 +555,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
         if not cls.is_allowance_value_valid(key, value):
             err_msg = (
-                'allowance_value "{value}" should be non-negative integer value.'
+                u'allowance_value "{value}" should be non-negative integer value.'
             ).format(value=value)
             raise AllowanceValueNotAllowedException(err_msg)
         # were we passed a PK?
@@ -566,7 +569,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
             if not users.exists():
                 err_msg = (
-                    'Cannot find user against {user_info}'
+                    u'Cannot find user against {user_info}'
                 ).format(user_info=user_info)
                 raise UserNotFoundException(err_msg)
 

@@ -5,26 +5,26 @@
 #    make upgrade
 #
 argparse==1.4.0           # via caniusepython3
-astroid==1.5.2            # via edx-lint, pylint, pylint-celery
+astroid==1.6.6            # via pylint, pylint-celery
 backports.functools-lru-cache==1.5  # via astroid, caniusepython3, isort, pylint
 backports.os==0.1.1       # via path.py
 bleach==3.1.0             # via readme-renderer
 caniusepython3==7.1.0
 certifi==2019.9.11        # via requests
 chardet==3.0.4            # via requests
-click-log==0.1.8          # via edx-lint
+click-log==0.3.2          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
 configparser==4.0.2       # via importlib-metadata, pydocstyle, pylint
 contextlib2==0.6.0.post1  # via importlib-metadata
-diff-cover==2.3.0
+diff-cover==2.4.0
 distlib==0.2.9.post0      # via caniusepython3
 django==1.11.25
 docutils==0.15.2          # via readme-renderer
 edx-i18n-tools==0.4.8
-edx_lint==0.5.5
+edx-lint==1.4.1
 enum34==1.1.6             # via astroid
 filelock==3.0.12          # via tox
-future==0.18.0            # via backports.os
+future==0.18.1            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 importlib-metadata==0.23  # via path.py, pluggy, tox
@@ -48,9 +48,9 @@ pycodestyle==2.5.0
 pydocstyle==3.0.0
 pygments==2.4.2           # via diff-cover, readme-renderer
 pylint-celery==0.3        # via edx-lint
-pylint-django==0.7.2      # via edx-lint
+pylint-django==0.11.1     # via edx-lint
 pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
-pylint==1.7.1             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
+pylint==1.9.5             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
 pyparsing==2.4.2          # via packaging
 pytz==2019.3              # via django
 pyyaml==5.1.2             # via edx-i18n-tools
@@ -67,7 +67,7 @@ tox==3.14.0
 tqdm==4.36.1              # via twine
 twine==1.15.0
 urllib3==1.25.6           # via requests
-virtualenv==16.7.5        # via tox
+virtualenv==16.7.7        # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.33.6
 wrapt==1.11.2             # via astroid

@@ -20,6 +20,7 @@ class ProctoredExamNotFoundException(ProctoredBaseException):
     Raised when a look up fails.
     """
     def __init__(self, *args):
+        """ Init method of exception """
         ProctoredBaseException.__init__(self, u'The exam_id does not exist.', *args)
 
 
@@ -77,6 +78,7 @@ class BackendProviderCannotRegisterAttempt(ProctoredBaseException):
     """
 
     def __init__(self, content, http_status):
+        """ Init method of exception """
         super(BackendProviderCannotRegisterAttempt, self).__init__(self, content)
         self.http_status = http_status
 
@@ -94,6 +96,7 @@ class BackendProviderOnboardingException(ProctoredBaseException):
     because of missing/failed onboarding requirements
     """
     def __init__(self, status):
+        """ Init method of exception """
         super(BackendProviderOnboardingException, self).__init__(self, status)
         self.status = status
 

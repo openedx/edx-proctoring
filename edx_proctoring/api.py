@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 import pytz
 import six
+from waffle import switch_is_active
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -23,21 +24,14 @@ from django.utils.translation import ugettext_noop
 
 from edx_proctoring import constants
 from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.exceptions import (
-    BackendProviderCannotRegisterAttempt,
-    BackendProviderOnboardingException,
-    BackendProviderSentNoAttemptID,
-    ProctoredExamAlreadyExists,
-    ProctoredExamIllegalStatusTransition,
-    ProctoredExamNotActiveException,
-    ProctoredExamNotFoundException,
-    ProctoredExamPermissionDenied,
-    ProctoredExamReviewPolicyAlreadyExists,
-    ProctoredExamReviewPolicyNotFoundException,
-    StudentExamAttemptAlreadyExistsException,
-    StudentExamAttemptDoesNotExistsException,
-    StudentExamAttemptedAlreadyStarted,
-)
+from edx_proctoring.exceptions import (BackendProviderCannotRegisterAttempt, BackendProviderOnboardingException,
+                                       BackendProviderSentNoAttemptID, ProctoredExamAlreadyExists,
+                                       ProctoredExamIllegalStatusTransition, ProctoredExamNotActiveException,
+                                       ProctoredExamNotFoundException, ProctoredExamPermissionDenied,
+                                       ProctoredExamReviewPolicyAlreadyExists,
+                                       ProctoredExamReviewPolicyNotFoundException,
+                                       StudentExamAttemptAlreadyExistsException,
+                                       StudentExamAttemptDoesNotExistsException, StudentExamAttemptedAlreadyStarted)
 from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamSoftwareSecureReview,
                                    ProctoredExamStudentAllowance, ProctoredExamStudentAttempt)
 from edx_proctoring.runtime import get_runtime_service
@@ -46,7 +40,6 @@ from edx_proctoring.serializers import (ProctoredExamReviewPolicySerializer, Pro
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import (emit_event, get_exam_due_date, has_due_date_passed, humanized_time,
                                   is_reattempting_exam, obscured_user_id, verify_and_add_wait_deadline)
-from waffle import switch_is_active
 
 log = logging.getLogger(__name__)
 
@@ -168,11 +161,11 @@ def update_review_policy(exam_id, set_by_user_id, review_policy):
         exam_review_policy.set_by_user_id = set_by_user_id
         exam_review_policy.review_policy = review_policy
         exam_review_policy.save()
-        msg = 'Updated exam review policy with {exam_id}'.format(exam_id=exam_id)
+        msg = u'Updated exam review policy with {exam_id}'.format(exam_id=exam_id)
         log.info(msg)
     else:
         exam_review_policy.delete()
-        msg = 'removed exam review policy with {exam_id}'.format(exam_id=exam_id)
+        msg = u'removed exam review policy with {exam_id}'.format(exam_id=exam_id)
         log.info(msg)
 
 
@@ -325,7 +318,7 @@ def get_exam_by_content_id(course_id, content_id):
     proctored_exam = ProctoredExam.get_exam_by_content_id(course_id, content_id)
     if proctored_exam is None:
         log.exception(
-            'Cannot find the proctored exam in this course %s with content_id: %s',
+            u'Cannot find the proctored exam in this course %s with content_id: %s',
             course_id, content_id
         )
         raise ProctoredExamNotFoundException
@@ -340,8 +333,8 @@ def add_allowance_for_user(exam_id, user_info, key, value):
     """
 
     log_msg = (
-        'Adding allowance "{key}" with value "{value}" for exam_id {exam_id} '
-        'for user {user_info} '.format(
+        u'Adding allowance "{key}" with value "{value}" for exam_id {exam_id} '
+        u'for user {user_info} '.format(
             key=key, value=value, exam_id=exam_id, user_info=user_info
         )
     )
@@ -379,7 +372,7 @@ def remove_allowance_for_user(exam_id, user_id, key):
     Deletes an allowance for a user within a given exam.
     """
     log_msg = (
-        'Removing allowance "{key}" for exam_id {exam_id} for user_id {user_id} '.format(
+        u'Removing allowance "{key}" for exam_id {exam_id} for user_id {user_id} '.format(
             key=key, exam_id=exam_id, user_id=user_id
         )
     )
@@ -495,12 +488,12 @@ def get_exam_attempt_by_code(attempt_code):
 
 def update_exam_attempt(attempt_id, **kwargs):
     """
-    update exam_attempt
+    Update exam_attempt
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
     if not exam_attempt_obj:
         err_msg = (
-            'Attempted to access of attempt object with attempt_id {attempt_id} but '
+            u'Attempted to access of attempt object with attempt_id {attempt_id} but '
             'it does not exist.'.format(
                 attempt_id=attempt_id
             )
@@ -512,8 +505,8 @@ def update_exam_attempt(attempt_id, **kwargs):
         # namely because status transitions can trigger workflow
         if key not in ['last_poll_timestamp', 'last_poll_ipaddr', 'is_status_acknowledged']:
             err_msg = (
-                'You cannot call into update_exam_attempt to change '
-                'field {key}'.format(key=key)
+                u'You cannot call into update_exam_attempt to change '
+                u'field {key}'.format(key=key)
             )
             raise ProctoredExamPermissionDenied(err_msg)
         setattr(exam_attempt_obj, key, value)
@@ -530,7 +523,7 @@ def is_exam_passed_due(exam, user=None):
 
 def _was_review_status_acknowledged(is_status_acknowledged, exam):
     """
-    return True if review status has been acknowledged and due date has been passed
+    Return True if review status has been acknowledged and due date has been passed
     """
     return is_status_acknowledged and is_exam_passed_due(exam)
 
@@ -559,8 +552,8 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     # for now the student is allowed the exam default
 
     log_msg = (
-        'Creating exam attempt for exam_id {exam_id} for '
-        'user_id {user_id} with taking as proctored = {taking_as_proctored}'.format(
+        u'Creating exam attempt for exam_id {exam_id} for '
+        u'user_id {user_id} with taking as proctored = {taking_as_proctored}'.format(
             exam_id=exam_id, user_id=user_id, taking_as_proctored=taking_as_proctored
         )
     )
@@ -574,8 +567,8 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             existing_attempt.delete_exam_attempt()
         else:
             err_msg = (
-                'Cannot create new exam attempt for exam_id = {exam_id} and '
-                'user_id = {user_id} because it already exists!'
+                u'Cannot create new exam attempt for exam_id = {exam_id} and '
+                u'user_id = {user_id} because it already exists!'
             ).format(exam_id=exam_id, user_id=user_id)
 
             raise StudentExamAttemptAlreadyExistsException(err_msg)
@@ -638,11 +631,11 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             )
         except BackendProviderSentNoAttemptID as ex:
             log_message = (
-                'Failed to get the attempt ID for {user_id}'
-                'in {exam_id} from the backend because the backend'
-                'did not provide the id in API response, even when the'
-                'HTTP response status is {status}, '
-                'Response: {response}'.format(
+                u'Failed to get the attempt ID for {user_id}'
+                u'in {exam_id} from the backend because the backend'
+                u'did not provide the id in API response, even when the'
+                u'HTTP response status is {status}, '
+                u'Response: {response}'.format(
                     user_id=user_id,
                     exam_id=exam_id,
                     response=six.text_type(ex),
@@ -653,10 +646,10 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             raise ex
         except BackendProviderCannotRegisterAttempt as ex:
             log_message = (
-                'Failed to create attempt for {user_id} '
-                'in {exam_id} because backend was unable '
-                'to register the attempt. Status: {status}, '
-                'Reponse: {response}'.format(
+                u'Failed to create attempt for {user_id} '
+                u'in {exam_id} because backend was unable '
+                u'to register the attempt. Status: {status}, '
+                u'Reponse: {response}'.format(
                     user_id=user_id,
                     exam_id=exam_id,
                     response=six.text_type(ex),
@@ -668,9 +661,9 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         except BackendProviderOnboardingException as ex:
             force_status = ex.status
             log_msg = (
-                'Failed to create attempt for {user_id} '
-                'in {exam_id} because of onboarding failure: '
-                '{force_status}'.format(**locals())
+                u'Failed to create attempt for {user_id} '
+                u'in {exam_id} because of onboarding failure: '
+                u'{force_status}'.format(**locals())
             )
             log.error(log_msg)
 
@@ -690,10 +683,10 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     emit_event(exam, attempt.status, attempt=_get_exam_attempt(attempt))
 
     log_msg = (
-        'Created exam attempt ({attempt_id}) for exam_id {exam_id} for '
-        'user_id {user_id} with taking as proctored = {taking_as_proctored} '
-        'Attempt_code {attempt_code} was generated which has a '
-        'external_id of {external_id}'.format(
+        u'Created exam attempt ({attempt_id}) for exam_id {exam_id} for '
+        u'user_id {user_id} with taking as proctored = {taking_as_proctored} '
+        u'Attempt_code {attempt_code} was generated which has a '
+        u'external_id of {external_id}'.format(
             attempt_id=attempt.id, exam_id=exam_id, user_id=user_id,
             taking_as_proctored=taking_as_proctored,
             attempt_code=attempt_code,
@@ -717,8 +710,8 @@ def start_exam_attempt(exam_id, user_id):
 
     if not existing_attempt:
         err_msg = (
-            'Cannot start exam attempt for exam_id = {exam_id} '
-            'and user_id = {user_id} because it does not exist!'
+            u'Cannot start exam attempt for exam_id = {exam_id} '
+            u'and user_id = {user_id} because it does not exist!'
         ).format(exam_id=exam_id, user_id=user_id)
 
         raise StudentExamAttemptDoesNotExistsException(err_msg)
@@ -736,8 +729,8 @@ def start_exam_attempt_by_code(attempt_code):
 
     if not existing_attempt:
         err_msg = (
-            'Cannot start exam attempt for attempt_code = {attempt_code} '
-            'because it does not exist!'
+            u'Cannot start exam attempt for attempt_code = {attempt_code} '
+            u'because it does not exist!'
         ).format(attempt_code=attempt_code)
 
         raise StudentExamAttemptDoesNotExistsException(err_msg)
@@ -753,8 +746,8 @@ def _start_exam_attempt(existing_attempt):
     if existing_attempt.started_at and existing_attempt.status == ProctoredExamStudentAttemptStatus.started:
         # cannot restart an attempt
         err_msg = (
-            'Cannot start exam attempt for exam_id = {exam_id} '
-            'and user_id = {user_id} because it has already started!'
+            u'Cannot start exam attempt for exam_id = {exam_id} '
+            u'and user_id = {user_id} because it has already started!'
         ).format(exam_id=existing_attempt.proctored_exam.id, user_id=existing_attempt.user_id)
 
         raise StudentExamAttemptedAlreadyStarted(err_msg)
@@ -789,6 +782,7 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
     return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_start)
 
 
+# pylint: disable=inconsistent-return-statements
 def update_attempt_status(exam_id, user_id, to_status,
                           raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None,
                           update_attributable_to=None):
@@ -806,8 +800,8 @@ def update_attempt_status(exam_id, user_id, to_status,
     from_status = exam_attempt_obj.status
 
     log_msg = (
-        'Updating attempt status for exam_id {exam_id} '
-        'for user_id {user_id} from status "{from_status}" to "{to_status}"'.format(
+        u'Updating attempt status for exam_id {exam_id} '
+        u'for user_id {user_id} from status "{from_status}" to "{to_status}"'.format(
             exam_id=exam_id, user_id=user_id, from_status=from_status, to_status=to_status
         )
     )
@@ -830,9 +824,9 @@ def update_attempt_status(exam_id, user_id, to_status,
 
     if in_completed_status and to_incompleted_status:
         err_msg = (
-            'A status transition from {from_status} to {to_status} was attempted '
-            'on exam_id {exam_id} for user_id {user_id}. This is not '
-            'allowed!'.format(
+            u'A status transition from {from_status} to {to_status} was attempted '
+            u'on exam_id {exam_id} for user_id {user_id}. This is not '
+            u'allowed!'.format(
                 from_status=from_status,
                 to_status=to_status,
                 exam_id=exam_id,
@@ -879,9 +873,9 @@ def update_attempt_status(exam_id, user_id, to_status,
             credit_requirement_status = 'failed'
 
         log_msg = (
-            'Calling set_credit_requirement_status for '
-            'user_id {user_id} on {course_id} for '
-            'content_id {content_id}. Status: {status}'.format(
+            u'Calling set_credit_requirement_status for '
+            u'user_id {user_id} on {course_id} for '
+            u'content_id {content_id}. Status: {status}'.format(
                 user_id=exam_attempt_obj.user_id,
                 course_id=exam['course_id'],
                 content_id=exam_attempt_obj.proctored_exam.content_id,
@@ -952,11 +946,11 @@ def update_attempt_status(exam_id, user_id, to_status,
 
         if grades_service.should_override_grade_on_rejected_exam(exam['course_id']):
             log_msg = (
-                'Overriding exam subsection grade for '
-                'user_id {user_id} on {course_id} for '
-                'content_id {content_id}. Override '
-                'earned_all: {earned_all}, '
-                'earned_graded: {earned_graded}.'.format(
+                u'Overriding exam subsection grade for '
+                u'user_id {user_id} on {course_id} for '
+                u'content_id {content_id}. Override '
+                u'earned_all: {earned_all}, '
+                u'earned_graded: {earned_graded}.'.format(
                     user_id=exam_attempt_obj.user_id,
                     course_id=exam['course_id'],
                     content_id=exam_attempt_obj.proctored_exam.content_id,
@@ -973,7 +967,7 @@ def update_attempt_status(exam_id, user_id, to_status,
                 earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
                 earned_graded=REJECTED_GRADE_OVERRIDE_EARNED,
                 overrider=update_attributable_to,
-                comment=('Failed {backend} proctoring'.format(backend=backend.verbose_name)
+                comment=(u'Failed {backend} proctoring'.format(backend=backend.verbose_name)
                          if backend
                          else 'Failed Proctoring')
             )
@@ -981,8 +975,8 @@ def update_attempt_status(exam_id, user_id, to_status,
             certificates_service = get_runtime_service('certificates')
 
             log.info(
-                'Invalidating certificate for user_id {user_id} in course {course_id} whose '
-                'grade dropped below passing threshold due to suspicious proctored exam'.format(
+                u'Invalidating certificate for user_id {user_id} in course {course_id} whose '
+                u'grade dropped below passing threshold due to suspicious proctored exam'.format(
                     user_id=exam_attempt_obj.user_id,
                     course_id=exam['course_id']
                 )
@@ -1000,11 +994,11 @@ def update_attempt_status(exam_id, user_id, to_status,
 
         if grades_service.should_override_grade_on_rejected_exam(exam['course_id']):
             log_msg = (
-                'Deleting override of exam subsection grade for '
-                'user_id {user_id} on {course_id} for '
-                'content_id {content_id}. Override '
-                'earned_all: {earned_all}, '
-                'earned_graded: {earned_graded}.'.format(
+                u'Deleting override of exam subsection grade for '
+                u'user_id {user_id} on {course_id} for '
+                u'content_id {content_id}. Override '
+                u'earned_all: {earned_all}, '
+                u'earned_graded: {earned_graded}.'.format(
                     user_id=exam_attempt_obj.user_id,
                     course_id=exam['course_id'],
                     content_id=exam_attempt_obj.proctored_exam.content_id,
@@ -1034,7 +1028,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     else:
         course_name = default_name
         log.info(
-            "Could not find credit_state for user id %r in the course %r.",
+            u"Could not find credit_state for user id %r in the course %r.",
             exam_attempt_obj.user_id,
             exam_attempt_obj.proctored_exam.course_id
         )
@@ -1090,7 +1084,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     user = USER_MODEL.objects.get(id=user_id)
     course_info_url = ''
     email_subject = (
-        _('Proctoring Results For {course_name} {exam_name}').format(
+        _(u'Proctoring Results For {course_name} {exam_name}').format(
             course_name=course_name,
             exam_name=exam_attempt_obj.proctored_exam.exam_name
         )
@@ -1099,7 +1093,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     if status == ProctoredExamStudentAttemptStatus.submitted:
         email_template_path = 'emails/proctoring_attempt_submitted_email.html'
         email_subject = (
-            _('Proctoring Review In Progress For {course_name} {exam_name}').format(
+            _(u'Proctoring Review In Progress For {course_name} {exam_name}').format(
                 course_name=course_name,
                 exam_name=exam_attempt_obj.proctored_exam.exam_name
             )
@@ -1115,7 +1109,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     try:
         course_info_url = reverse('info', args=[exam_attempt_obj.proctored_exam.course_id])
     except NoReverseMatch:
-        log.exception("Can't find course info url for course %s", exam_attempt_obj.proctored_exam.course_id)
+        log.exception(u"Can't find course info url for course %s", exam_attempt_obj.proctored_exam.course_id)
 
     scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
     course_url = '{scheme}://{site_name}{course_info_url}'.format(
@@ -1124,7 +1118,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         course_info_url=course_info_url
     )
     exam_name = exam_attempt_obj.proctored_exam.exam_name
-    support_email_subject = _('Proctored exam {exam_name} in {course_name} for user {username}').format(
+    support_email_subject = _(u'Proctored exam {exam_name} in {course_name} for user {username}').format(
         exam_name=exam_name,
         course_name=course_name,
         username=user.username,
@@ -1160,15 +1154,15 @@ def remove_exam_attempt(attempt_id, requesting_user):
     """
 
     log_msg = (
-        'Removing exam attempt {attempt_id}'.format(attempt_id=attempt_id)
+        u'Removing exam attempt {attempt_id}'.format(attempt_id=attempt_id)
     )
     log.info(log_msg)
 
     existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
     if not existing_attempt:
         err_msg = (
-            'Cannot remove attempt for attempt_id = {attempt_id} '
-            'because it does not exist!'
+            u'Cannot remove attempt for attempt_id = {attempt_id} '
+            u'because it does not exist!'
         ).format(attempt_id=attempt_id)
 
         raise StudentExamAttemptDoesNotExistsException(err_msg)
@@ -1253,7 +1247,7 @@ def get_all_exam_attempts(course_id):
 
 def get_filtered_exam_attempts(course_id, search_by):
     """
-    returns all exam attempts for a course id filtered by  the search_by string in user names and emails.
+    Returns all exam attempts for a course id filtered by  the search_by string in user names and emails.
     """
     exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(course_id, search_by)
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
@@ -1261,7 +1255,7 @@ def get_filtered_exam_attempts(course_id, search_by):
 
 def get_last_exam_completion_date(course_id, username):
     """
-    return the completion date of last proctoring exam for the given course and username if
+    Return the completion date of last proctoring exam for the given course and username if
     all the proctored exams are attempted and completed otherwise None
     """
     exam_attempts = ProctoredExamStudentAttempt.objects.get_proctored_exam_attempts(course_id, username)
@@ -1336,9 +1330,12 @@ def _get_ordered_prerequisites(prerequisites_statuses, filter_out_namespaces=Non
     return sorted_list
 
 
-def _are_prerequirements_satisfied(prerequisites_statuses, evaluate_for_requirement_name=None,
-                                   filter_out_namespaces=None):
-    """
+def _are_prerequirements_satisfied(
+        prerequisites_statuses,
+        evaluate_for_requirement_name=None,
+        filter_out_namespaces=None
+):
+    u"""
     Returns a dict about the fulfillment of any pre-requisites in order to this exam
     as proctored. The pre-requisites are taken from the credit requirements table. So if ordering
     of requirements are - say - ICRV1, Proctoring1, ICRV2, and Proctoring2, then the user cannot take
@@ -1442,7 +1439,7 @@ def _resolve_prerequisite_links(exam, prerequisites):
             try:
                 jumpto_url = reverse('jump_to', args=[exam['course_id'], prerequisite['name']])
             except NoReverseMatch:
-                log.exception("Can't find jumpto url for course %s", exam['course_id'])
+                log.exception(u"Can't find jumpto url for course %s", exam['course_id'])
 
         prerequisite['jumpto_url'] = jumpto_url
 
@@ -1549,7 +1546,7 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     except ProctoredExamNotFoundException:
         # this really shouldn't happen, but log it at least
         log.exception(
-            'Cannot find the proctored exam in this course %s with content_id: %s',
+            u'Cannot find the proctored exam in this course %s with content_id: %s',
             course_id, content_id
         )
         return None
@@ -1619,6 +1616,7 @@ def _does_time_remain(attempt):
     return does_time_remain
 
 
+# pylint: disable=inconsistent-return-statements
 def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     """
     Returns a rendered view for the Timed Exams
@@ -1680,7 +1678,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
         try:
             progress_page_url = reverse('progress', args=[course_id])
         except NoReverseMatch:
-            log.exception("Can't find progress url for course %s", course_id)
+            log.exception(u"Can't find progress url for course %s", course_id)
 
         context.update({
             'total_time': total_time,
@@ -1738,7 +1736,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
     try:
         progress_page_url = reverse('progress', args=[course_id])
     except NoReverseMatch:
-        log.exception("Can't find progress url for course %s", course_id)
+        log.exception(u"Can't find progress url for course %s", course_id)
 
     provider = get_backend_provider(exam)
 
@@ -1751,7 +1749,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'has_due_date': has_due_date,
         'has_due_date_passed': is_exam_passed_due(exam, user=user_id),
         'able_to_reenter_exam': _does_time_remain(attempt) and not provider.should_block_access_to_exam_material(),
-        'is_rpnow4_enabled': switch_is_active(constants.RPNOWV4_WAFFLE_NAME),
+        'is_rpnow4_enabled': switch_is_active(constants.RPNOWV4_WAFFLE_NAME),  # pylint: disable=illegal-waffle-usage
         'enter_exam_endpoint': reverse('edx_proctoring:proctored_exam.attempt.collection'),
         'exam_started_poll_url': reverse(
             'edx_proctoring:proctored_exam.attempt',
@@ -1791,6 +1789,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
     return context
 
 
+# pylint: disable=inconsistent-return-statements
 def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     """
     Returns a rendered view for the practice Exams
@@ -1828,6 +1827,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         return template.render(context)
 
 
+# pylint: disable=inconsistent-return-statements
 def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
     """
     Returns a rendered view for onboarding exams, which for some backends establish a user's profile
@@ -1871,6 +1871,7 @@ def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
         return template.render(context)
 
 
+# pylint: disable=inconsistent-return-statements
 def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     """
     Returns a rendered view for the Proctored Exams
@@ -2008,7 +2009,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         try:
             context['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
         except (NoReverseMatch, AttributeError):
-            log.exception("Can't find onboarding exam for %s", course_id)
+            log.exception(u"Can't find onboarding exam for %s", course_id)
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -2123,14 +2124,14 @@ def get_exam_violation_report(course_id, include_practice_exams=False):
             attempts_by_code[attempt_code]['review_status'] = review.review_status
 
             for comment in review.proctoredexamsoftwaresecurecomment_set.all():
-                comments_key = '{status} Comments'.format(status=comment.status)
+                comments_key = u'{status} Comments'.format(status=comment.status)
 
                 if comments_key not in attempts_by_code[attempt_code]:
                     attempts_by_code[attempt_code][comments_key] = []
 
                 attempts_by_code[attempt_code][comments_key].append(comment.comment)
 
-    return sorted(attempts_by_code.values(), key=lambda a: a['exam_name'])
+    return sorted(list(attempts_by_code.values()), key=lambda a: a['exam_name'])
 
 
 def is_backend_dashboard_available(course_id):
@@ -2155,7 +2156,7 @@ def does_backend_support_onboarding(backend):
         return get_backend_provider(name=backend).supports_onboarding
     except NotImplementedError:
         log.exception(
-            "No proctoring backend configured for '{}'.".format(backend)
+            u"No proctoring backend configured for '{}'.".format(backend)
         )
         return False
 
@@ -2169,7 +2170,7 @@ def get_exam_configuration_dashboard_url(course_id, content_id):
         exam = get_exam_by_content_id(course_id, content_id)
     except ProctoredExamNotFoundException:
         log.exception(
-            'Cannot find the proctored exam in this course %s with content_id: %s',
+            u'Cannot find the proctored exam in this course %s with content_id: %s',
             course_id, content_id
         )
         return None

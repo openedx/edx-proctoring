@@ -9,30 +9,23 @@ from __future__ import absolute_import
 
 from datetime import datetime
 from importlib import import_module
+
 import pytz
+from eventtracking import tracker
+from eventtracking.tracker import TRACKERS, Tracker
 
 from django.conf import settings
 from django.contrib.auth import login
-from django.http import HttpRequest
-from django.test.client import Client
-from django.test import TestCase
 from django.contrib.auth.models import User
+from django.http import HttpRequest
+from django.test import TestCase
+from django.test.client import Client
 
-from edx_proctoring.api import (
-    create_exam,
-)
-from edx_proctoring.models import (
-    ProctoredExamStudentAttempt,
-)
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-
-from edx_proctoring.tests.test_services import (
-    MockCreditService,
-    MockInstructorService,
-)
+from edx_proctoring.api import create_exam
+from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
-from eventtracking import tracker
-from eventtracking.tracker import Tracker, TRACKERS
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService
 
 
 class TestClient(Client):

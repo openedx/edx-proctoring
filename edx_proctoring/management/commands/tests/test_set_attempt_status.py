@@ -5,22 +5,18 @@ Tests for the set_attempt_status management command
 from __future__ import absolute_import
 
 from datetime import datetime
-from mock import MagicMock, patch
+
 import pytz
+from mock import MagicMock, patch
 
 from django.core.management import call_command
 
-from edx_proctoring.tests.utils import LoggedInTestCase
 from edx_proctoring.api import create_exam, get_exam_attempt
-
 from edx_proctoring.models import ProctoredExamStudentAttempt
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_proctoring.tests.test_services import (
-    MockCreditService,
-    MockGradesService,
-    MockCertificateService
-)
 from edx_proctoring.runtime import set_runtime_service
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.tests.test_services import MockCertificateService, MockCreditService, MockGradesService
+from edx_proctoring.tests.utils import LoggedInTestCase
 
 
 @patch('django.urls.reverse', MagicMock)

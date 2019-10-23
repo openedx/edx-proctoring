@@ -7,8 +7,8 @@ from __future__ import absolute_import
 
 import threading
 
-from edx_proctoring.callbacks import start_exam_callback
 from edx_proctoring.backends.backend import ProctoringBackendProvider
+from edx_proctoring.callbacks import start_exam_callback
 
 
 class MockProctoringBackendProvider(ProctoringBackendProvider):

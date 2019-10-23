@@ -8,33 +8,23 @@ All tests for the api.py
 from __future__ import absolute_import
 
 from datetime import datetime, timedelta
+
 import ddt
+import pytz
+import six
 from freezegun import freeze_time
 from mock import MagicMock, patch
-import pytz
 from waffle.testutils import override_flag
 
-import six
-
-from edx_proctoring.api import (
-    update_exam,
-    get_exam_by_id,
-    add_allowance_for_user,
-    get_exam_attempt,
-    get_student_view,
-    update_attempt_status,
-)
+from edx_proctoring.api import (add_allowance_for_user, get_exam_attempt, get_exam_by_id, get_student_view,
+                                update_attempt_status, update_exam)
 from edx_proctoring.constants import RPNOWV4_WAFFLE_NAME
-from edx_proctoring.models import (
-    ProctoredExam,
-    ProctoredExamStudentAllowance,
-    ProctoredExamStudentAttempt,
-)
+from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests import mock_perm
 
-from .test_services import MockCreditServiceWithCourseEndDate, MockCreditServiceNone
+from .test_services import MockCreditServiceNone, MockCreditServiceWithCourseEndDate
 from .utils import ProctoredExamTestCase
 
 
@@ -55,7 +45,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         # Messages for get_student_view
         self.start_an_exam_msg = 'This exam is proctored'
         self.exam_expired_msg = 'The due date for this exam has passed'
-        self.timed_exam_msg = '{exam_name} is a Timed Exam'
+        self.timed_exam_msg = u'{exam_name} is a Timed Exam'
         self.timed_exam_submitted = 'You have submitted your timed exam.'
         self.timed_exam_expired = 'The time allotted for this exam has expired.'
         self.submitted_timed_exam_msg_with_due_date = 'After the due date has passed,'

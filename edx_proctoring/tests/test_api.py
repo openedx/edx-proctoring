@@ -12,9 +12,11 @@ from itertools import product
 
 import ddt
 import pytz
-import six
+
 from freezegun import freeze_time
 from mock import MagicMock, patch
+import six
+from six.moves import range
 
 from edx_proctoring.api import (_are_prerequirements_satisfied, _check_for_attempt_timeout, _get_ordered_prerequisites,
                                 _get_review_policy_by_exam_id, add_allowance_for_user, create_exam, create_exam_attempt,
@@ -1949,14 +1951,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             'CCCCCC',
             'DDDDDD'
         ])
-        self.assertTrue('Rules Violation Comments' in report[3])
+        self.assertTrue('Rules Violation Comments' in report[3])  # pylint: disable=wrong-assert-type
         self.assertEqual(len(report[3]['Rules Violation Comments']), 1)
-        self.assertTrue('Suspicious Comments' in report[3])
+        self.assertTrue('Suspicious Comments' in report[3])  # pylint: disable=wrong-assert-type
         self.assertEqual(len(report[3]['Suspicious Comments']), 2)
         self.assertEqual(report[3]['review_status'], 'Suspicious')
 
-        self.assertTrue('Suspicious Comments' not in report[2])
-        self.assertTrue('Rules Violation Comments' in report[2])
+        self.assertTrue('Suspicious Comments' not in report[2])  # pylint: disable=wrong-assert-type
+        self.assertTrue('Rules Violation Comments' in report[2])  # pylint: disable=wrong-assert-type
         self.assertEqual(len(report[2]['Rules Violation Comments']), 1)
         self.assertEqual(report[2]['review_status'], 'Rules Violation')
 

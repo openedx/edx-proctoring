@@ -11,6 +11,11 @@ from datetime import datetime, timedelta
 
 import pytz
 import six
+from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
+from edx_when import api as when_api
+from eventtracking import tracker
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -20,11 +25,6 @@ from django.utils.translation import ugettext as _
 
 from edx_proctoring.models import ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
-from edx_when import api as when_api
-from eventtracking import tracker
-from opaque_keys import InvalidKeyError
-from opaque_keys.edx.keys import CourseKey
 
 log = logging.getLogger(__name__)
 
@@ -75,10 +75,10 @@ def humanized_time(time_in_minutes):
         hours_present = False
         template = ""
     elif hours == 1:
-        template = _("{num_of_hours} hour")
+        template = _(u"{num_of_hours} hour")
         hours_present = True
     elif hours >= 2:
-        template = _("{num_of_hours} hours")
+        template = _(u"{num_of_hours} hours")
         hours_present = True
     else:
         template = "error"
@@ -86,17 +86,17 @@ def humanized_time(time_in_minutes):
     if template != "error":
         if minutes == 0:
             if not hours_present:
-                template = _("{num_of_minutes} minutes")
+                template = _(u"{num_of_minutes} minutes")
         elif minutes == 1:
             if hours_present:
-                template += _(" and {num_of_minutes} minute")
+                template += _(u" and {num_of_minutes} minute")
             else:
-                template += _("{num_of_minutes} minute")
+                template += _(u"{num_of_minutes} minute")
         else:
             if hours_present:
-                template += _(" and {num_of_minutes} minutes")
+                template += _(u" and {num_of_minutes} minutes")
             else:
-                template += _("{num_of_minutes} minutes")
+                template += _(u"{num_of_minutes} minutes")
 
     human_time = template.format(num_of_hours=hours, num_of_minutes=minutes)
     return human_time
@@ -117,7 +117,7 @@ def locate_attempt_by_attempt_code(attempt_code):
         if not attempt_obj:
             # still can't find, error out
             err_msg = (
-                'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
+                u'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
             )
             log.error(err_msg)
             is_archived = None
@@ -214,8 +214,8 @@ def _emit_event(name, context, data):
         # This happens when a default tracker has not been registered by the host application
         # aka LMS. This is normal when running unit tests in isolation.
         log.warning(
-            'Analytics tracker not properly configured. '
-            'If this message appears in a production environment, please investigate'
+            u'Analytics tracker not properly configured. '
+            u'If this message appears in a production environment, please investigate'
         )
 
 
@@ -232,7 +232,7 @@ def obscured_user_id(user_id, *extra):
 
 def has_due_date_passed(due_datetime):
     """
-    return True if due date is lesser than current datetime, otherwise False
+    Return True if due date is lesser than current datetime, otherwise False
     and if due_datetime is None then we don't have to consider the due date for return False
     """
 

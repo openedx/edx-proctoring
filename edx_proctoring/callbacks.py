@@ -2,7 +2,11 @@
 Various callback paths that support callbacks from SoftwareSecure
 """
 
+from __future__ import absolute_import
+
 import logging
+
+from waffle import switch_is_active
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
@@ -12,7 +16,6 @@ from django.urls import NoReverseMatch, reverse
 from edx_proctoring.api import get_exam_attempt_by_code, mark_exam_attempt_as_ready, update_attempt_status
 from edx_proctoring.constants import RPNOWV4_WAFFLE_NAME
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from waffle import switch_is_active
 
 log = logging.getLogger(__name__)
 
@@ -30,7 +33,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     """
     attempt = get_exam_attempt_by_code(attempt_code)
     if not attempt:
-        log.warning("Attempt code %r cannot be found.", attempt_code)
+        log.warning(u"Attempt code %r cannot be found.", attempt_code)
         return HttpResponse(
             content='You have entered an exam code that is not valid.',
             status=404
@@ -46,13 +49,13 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     if ProctoredExamStudentAttemptStatus.is_in_progress_status(attempt_status):
         update_attempt_status(proctored_exam_id, user_id, ProctoredExamStudentAttemptStatus.submitted)
     else:
-        log.warning("Attempted to enter proctored exam attempt {attempt_id} when status was {attempt_status}"
+        log.warning(u"Attempted to enter proctored exam attempt {attempt_id} when status was {attempt_status}"
                     .format(
                         attempt_id=attempt['id'],
                         attempt_status=attempt_status,
                     ))
 
-    if switch_is_active(RPNOWV4_WAFFLE_NAME):
+    if switch_is_active(RPNOWV4_WAFFLE_NAME):  # pylint: disable=illegal-waffle-usage
         course_id = attempt['proctored_exam']['course_id']
         content_id = attempt['proctored_exam']['content_id']
 
@@ -60,7 +63,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
         try:
             exam_url = reverse('jump_to', args=[course_id, content_id])
         except NoReverseMatch:
-            log.exception("BLOCKING ERROR: Can't find course info url for course %s", course_id)
+            log.exception(u"BLOCKING ERROR: Can't find course info url for course %s", course_id)
         response = HttpResponseRedirect(exam_url)
         response.set_signed_cookie('exam', attempt['attempt_code'])
         return response

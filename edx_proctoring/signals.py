@@ -1,15 +1,15 @@
-"edx-proctoring signals"
+"""edx-proctoring signals"""
+from __future__ import absolute_import
+
 import logging
 
-from django.db.models.signals import pre_save, post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
-from edx_proctoring import api
-from edx_proctoring import constants
-from edx_proctoring import models
+from edx_proctoring import api, constants, models
+from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 from edx_proctoring.utils import emit_event, locate_attempt_by_attempt_code
-from edx_proctoring.backends import get_backend_provider
 
 log = logging.getLogger(__name__)
 
@@ -117,7 +117,7 @@ def on_attempt_changed(sender, instance, signal, **kwargs):  # pylint: disable=u
         if backend:
             result = backend.remove_exam_attempt(instance.proctored_exam.external_id, instance.external_id)
             if not result:
-                log.error('Failed to remove attempt %d from %s', instance.id, backend.verbose_name)
+                log.error(u'Failed to remove attempt %d from %s', instance.id, backend.verbose_name)
     models.archive_model(models.ProctoredExamStudentAttemptHistory, instance, id='attempt_id')
 
 

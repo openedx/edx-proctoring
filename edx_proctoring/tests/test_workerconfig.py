@@ -1,13 +1,16 @@
 "Tests for generating webpack config json"
+from __future__ import absolute_import
+
 import json
 import os
 import os.path
 import tempfile
 import unittest
 
+from mock import patch
+
 from django.conf import settings
 
-from mock import patch
 from edx_proctoring.apps import make_worker_config
 from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 
@@ -15,12 +18,12 @@ from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 class TestWorkerConfig(unittest.TestCase):
     "Tests for generating webpack config json"
 
-    def setUp(self):
+    def setUp(self):  # pylint: disable=super-method-not-called
         super(TestWorkerConfig, self).setUp()
         self.outfile = tempfile.mktemp(prefix='test-%d' % os.getpid())
         self.to_del = [self.outfile]
 
-    def tearDown(self):
+    def tearDown(self):  # pylint: disable=super-method-not-called
         for path in self.to_del:
             if os.path.exists(path):
                 os.unlink(path)
@@ -39,7 +42,7 @@ class TestWorkerConfig(unittest.TestCase):
         except OSError:
             pass
         with open(package_file, 'wb') as package_fp:
-            json.dump(package_json, package_fp)
+            package_fp.write(json.dumps(package_json).encode('utf-8'))
             self.to_del.append(package_file)
         return package
 

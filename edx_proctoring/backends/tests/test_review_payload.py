@@ -2,6 +2,8 @@
 Some canned data for SoftwareSecure callback testing.
 """
 
+from __future__ import absolute_import
+
 import json
 
 MOCK_EXAM_ID = "4d07a01a-1502-422e-b943-93ac04dc6ced"
