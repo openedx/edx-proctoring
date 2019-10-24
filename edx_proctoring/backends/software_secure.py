@@ -7,28 +7,24 @@ from __future__ import absolute_import
 import base64
 import binascii
 import datetime
-from hashlib import sha256
 import hmac
 import json
 import logging
 import unicodedata
-import six
+from hashlib import sha256
 
 import requests
-
+import six
 from crum import get_current_request
+from Cryptodome.Cipher import DES3
 from waffle import switch_is_active
+
 from django.conf import settings
 from django.urls import reverse
 
-from Cryptodome.Cipher import DES3
-
-from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring import constants
-from edx_proctoring.exceptions import (
-    BackendProviderCannotRegisterAttempt,
-    ProctoredExamSuspiciousLookup,
-)
+from edx_proctoring.backends.backend import ProctoringBackendProvider
+from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt, ProctoredExamSuspiciousLookup
 from edx_proctoring.statuses import SoftwareSecureReviewStatus
 
 log = logging.getLogger(__name__)
@@ -79,6 +75,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         headers = {
             "Content-Type": 'application/json'
         }
+        # pylint: disable=unicode-format-string
         http_date = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
         signature = self._sign_doc(data, 'POST', headers, http_date)
 
@@ -87,7 +84,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         if status not in [200, 201]:
             err_msg = (
                 u'Could not register attempt_code = {attempt_code}. '
-                'HTTP Status code was {status_code} and response was {response}.'.format(
+                u'HTTP Status code was {status_code} and response was {response}.'.format(
                     attempt_code=attempt_code,
                     status_code=status,
                     response=response
@@ -147,9 +144,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         )
         if not match:
             err_msg = (
-                'Found attempt_code {attempt_code}, but the recorded external_id did not '
-                'match the ssiRecordLocator that had been recorded previously. Has {existing} '
-                'but received {received}!'.format(
+                u'Found attempt_code {attempt_code}, but the recorded external_id did not '
+                u'match the ssiRecordLocator that had been recorded previously. Has {existing} '
+                u'but received {received}!'.format(
                     attempt_code=attempt['attempt_code'],
                     existing=attempt['external_id'],
                     received=received_id
@@ -162,7 +159,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             del payload['videoReviewLink']
 
         log_msg = (
-            'Received callback from SoftwareSecure with review data: {payload}'.format(
+            u'Received callback from SoftwareSecure with review data: {payload}'.format(
                 payload=payload
             )
         )
@@ -248,7 +245,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # combined with any exceptions granted to the particular student
         reviewer_notes = review_policy
         if review_policy_exception:
-            reviewer_notes = '{notes}; {exception}'.format(
+            reviewer_notes = u'{notes}; {exception}'.format(
                 notes=reviewer_notes,
                 exception=review_policy_exception
             )
@@ -256,7 +253,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         (first_name, last_name) = self._split_fullname(full_name)
 
         now = datetime.datetime.utcnow()
+        # pylint: disable=unicode-format-string
         start_time_str = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
+        # pylint: disable=unicode-format-string
         end_time_str = (now + datetime.timedelta(minutes=time_limit_mins)).strftime("%a, %d %b %Y %H:%M:%S GMT")
         # remove all illegal characters from the exam name
         exam_name = exam['exam_name']
@@ -359,7 +358,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         message = method_string + headers_str + body_str
 
         log_msg = (
-            'About to send payload to SoftwareSecure: examCode: {examCode}, courseID: {courseID}'.
+            u'About to send payload to SoftwareSecure: examCode: {examCode}, courseID: {courseID}'.
             format(examCode=body_json.get('examCode'), courseID=body_json.get('orgExtra').get('courseID'))
         )
         log.info(log_msg)
@@ -394,4 +393,5 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         browser other than PSI's secure browser
         """
         req = get_current_request()
+        # pylint: disable=illegal-waffle-usage
         return switch_is_active(constants.RPNOWV4_WAFFLE_NAME) and not req.get_signed_cookie('exam', default=False)

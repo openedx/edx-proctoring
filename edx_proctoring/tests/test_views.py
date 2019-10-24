@@ -5,42 +5,32 @@ All tests for the proctored_exams.py
 
 from __future__ import absolute_import
 
-from datetime import datetime, timedelta
 import json
+from datetime import datetime, timedelta
+
 import ddt
+import pytz
 from freezegun import freeze_time
 from httmock import HTTMock
 from mock import Mock, patch
-import pytz
+from six.moves import range
 
-from django.test.client import Client
-from django.urls import reverse, NoReverseMatch
 from django.contrib.auth.models import User
+from django.test.client import Client
+from django.urls import NoReverseMatch, reverse
 
-from edx_proctoring.models import (
-    ProctoredExam,
-    ProctoredExamStudentAttempt,
-    ProctoredExamStudentAllowance,
-)
-from edx_proctoring.exceptions import (
-    ProctoredExamIllegalStatusTransition,
-    StudentExamAttemptDoesNotExistsException, ProctoredExamPermissionDenied)
-from edx_proctoring.views import require_staff, require_course_or_global_staff
-from edx_proctoring.api import (
-    create_exam,
-    create_exam_attempt,
-    get_exam_attempt_by_id,
-    update_attempt_status,
-    _calculate_allowed_mins,
-    get_backend_provider,
-)
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_proctoring.serializers import ProctoredExamSerializer
+from edx_proctoring.api import (_calculate_allowed_mins, create_exam, create_exam_attempt, get_backend_provider,
+                                get_exam_attempt_by_id, update_attempt_status)
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
-from edx_proctoring.runtime import set_runtime_service, get_runtime_service
+from edx_proctoring.exceptions import (ProctoredExamIllegalStatusTransition, ProctoredExamPermissionDenied,
+                                       StudentExamAttemptDoesNotExistsException)
+from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
+from edx_proctoring.runtime import get_runtime_service, set_runtime_service
+from edx_proctoring.serializers import ProctoredExamSerializer
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.urls import urlpatterns
-
+from edx_proctoring.views import require_course_or_global_staff, require_staff
 from mock_apps.models import Profile
 
 from .test_services import MockCreditService, MockInstructorService
@@ -1689,6 +1679,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+        # pylint: disable=no-member
         ProctoredExamStudentAttempt.objects.filter(
             proctored_exam_id=proctored_exam.id,
             user_id=self.user.id,

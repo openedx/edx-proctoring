@@ -5,9 +5,9 @@ URL mappings for edX Proctoring Server.
 from __future__ import absolute_import
 
 from django.conf import settings
-from django.conf.urls import url, include
+from django.conf.urls import include, url
 
-from edx_proctoring import views, callbacks, instructor_dashboard_exam_urls
+from edx_proctoring import callbacks, instructor_dashboard_exam_urls, views
 
 app_name = u'edx_proctoring'
 

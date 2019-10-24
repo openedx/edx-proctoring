@@ -1,4 +1,4 @@
-"Django Rules for edx_proctoring"
+"""Django Rules for edx_proctoring"""
 from __future__ import absolute_import
 
 import rules

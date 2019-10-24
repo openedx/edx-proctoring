@@ -7,11 +7,10 @@ Django applications, so these settings will not be used.
 
 from __future__ import absolute_import, unicode_literals
 
-import sys
-
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+
 BASE_DIR = os.path.dirname(__file__)
 
 ENV_ROOT = os.path.dirname(BASE_DIR)

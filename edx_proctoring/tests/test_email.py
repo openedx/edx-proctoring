@@ -6,27 +6,17 @@ All tests for proctored exam emails.
 from __future__ import absolute_import
 
 import ddt
-from django.core import mail
 from mock import MagicMock, patch
 
-from edx_proctoring.api import (
-    update_attempt_status,
-    get_integration_specific_email
-)
-from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.runtime import set_runtime_service, get_runtime_service
-from edx_proctoring.statuses import (
-    ProctoredExamStudentAttemptStatus,
-)
+from django.core import mail
 
-from .test_services import (
-    MockCreditService,
-    MockGradesService,
-    MockCertificateService
-)
-from .utils import (
-    ProctoredExamTestCase,
-)
+from edx_proctoring.api import get_integration_specific_email, update_attempt_status
+from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.runtime import get_runtime_service, set_runtime_service
+from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+
+from .test_services import MockCertificateService, MockCreditService, MockGradesService
+from .utils import ProctoredExamTestCase
 
 
 @patch('django.urls.reverse', MagicMock)
@@ -213,7 +203,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         # Verify the edX email
         expected_email = get_integration_specific_email(test_backend)
         actual_body = self._normalize_whitespace(mail.outbox[0].body)
-        self.assertIn('contact Open edX support at '
-                      '<a href="mailto:{email}?Subject=Proctored exam Test Exam in edx demo for user tester"> '
-                      '{email} </a>'.format(email=expected_email),
+        self.assertIn(u'contact Open edX support at '
+                      u'<a href="mailto:{email}?Subject=Proctored exam Test Exam in edx demo for user tester"> '
+                      u'{email} </a>'.format(email=expected_email),
                       actual_body)

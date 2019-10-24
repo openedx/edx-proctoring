@@ -5,6 +5,7 @@ Tests for backend.py
 from __future__ import absolute_import
 
 import time
+
 from mock import patch
 
 from django.core.exceptions import ImproperlyConfigured
@@ -12,13 +13,10 @@ from django.test import TestCase
 
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.backend import ProctoringBackendProvider
-from edx_proctoring.backends.null import NullBackendProvider
 from edx_proctoring.backends.mock import MockProctoringBackendProvider
-from edx_proctoring.exceptions import (
-    BackendProviderCannotRetireUser,
-    BackendProviderOnboardingException,
-    BackendProviderSentNoAttemptID,
-)
+from edx_proctoring.backends.null import NullBackendProvider
+from edx_proctoring.exceptions import (BackendProviderCannotRetireUser, BackendProviderOnboardingException,
+                                       BackendProviderSentNoAttemptID)
 
 # pragma pylint: disable=useless-super-delegation
 

@@ -52,8 +52,8 @@ class Command(BaseCommand):
         to_status = options['to_status']
 
         msg = (
-            'Running management command to update user {user_id} '
-            'attempt status on exam_id {exam_id} to {to_status}'.format(
+            u'Running management command to update user {user_id} '
+            u'attempt status on exam_id {exam_id} to {to_status}'.format(
                 user_id=user_id,
                 exam_id=exam_id,
                 to_status=to_status
@@ -62,7 +62,7 @@ class Command(BaseCommand):
         self.stdout.write(msg)
 
         if not ProctoredExamStudentAttemptStatus.is_valid_status(to_status):
-            raise CommandError('{to_status} is not a valid attempt status!'.format(to_status=to_status))
+            raise CommandError(u'{to_status} is not a valid attempt status!'.format(to_status=to_status))
 
         # get exam, this will throw exception if does not exist, so let it bomb out
         get_exam_by_id(exam_id)

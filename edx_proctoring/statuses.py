@@ -1,6 +1,8 @@
 """
 Status enums for edx-proctoring
 """
+from __future__ import absolute_import
+
 from edx_proctoring.exceptions import ProctoredExamBadReviewStatus
 
 
@@ -211,8 +213,8 @@ class SoftwareSecureReviewStatus(object):
         """
         if status not in cls.passing_statuses + cls.failing_statuses:
             err_msg = (
-                'Received unexpected reviewStatus field value from payload. '
-                'Was {review_status}.'.format(review_status=status)
+                u'Received unexpected reviewStatus field value from payload. '
+                u'Was {review_status}.'.format(review_status=status)
             )
             raise ProctoredExamBadReviewStatus(err_msg)
         return True

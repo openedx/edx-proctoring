@@ -8,7 +8,7 @@ appdirs==1.4.3            # via fs
 backports.os==0.1.1       # via fs
 certifi==2019.9.11        # via requests
 chardet==3.0.4            # via requests
-django-crum==0.7.3
+django-crum==0.7.4
 django-ipware==2.1.0
 django-model-utils==3.2.0
 django-waffle==0.17.0
@@ -17,14 +17,14 @@ django==1.11.25
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.9.4
 edx-django-utils==2.0.1   # via edx-drf-extensions
-edx-drf-extensions==2.4.1
+edx-drf-extensions==2.4.2
 edx-opaque-keys==2.0.0
 edx-rest-api-client==1.9.2
 edx-when==0.5.1
 enum34==1.1.6             # via fs
 event-tracking==0.2.9
 fs==2.4.11                # via xblock
-future==0.18.0            # via backports.os, pyjwkest
+future==0.18.1            # via backports.os, pyjwkest
 idna==2.8                 # via requests
 jsonfield==2.0.2
 lxml==4.4.1               # via xblock

@@ -2,7 +2,7 @@
 -c constraints.txt
 
 caniusepython3            # Additional Python 3 compatibility pylint checks
-edx_lint==0.5.5           # Python code linting rules
+edx_lint                  # Python code linting rules
 isort                     # to standardize order of imports
 pycodestyle               # PEP 8 compliance validation
 pydocstyle                # PEP 257 compliance validation

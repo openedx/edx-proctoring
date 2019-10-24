@@ -5,9 +5,9 @@ from __future__ import absolute_import
 
 import json
 
-from crum import set_current_request
 import ddt
-from mock import patch, call
+from crum import set_current_request
+from mock import call, patch
 
 from django.contrib.auth.models import User
 from django.test import RequestFactory
@@ -17,7 +17,7 @@ from edx_proctoring import constants
 from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attempt_by_id, remove_exam_attempt
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
-from edx_proctoring.exceptions import (ProctoredExamBadReviewStatus, ProctoredExamReviewAlreadyExists)
+from edx_proctoring.exceptions import ProctoredExamBadReviewStatus, ProctoredExamReviewAlreadyExists
 from edx_proctoring.models import (ProctoredExamSoftwareSecureComment, ProctoredExamSoftwareSecureReview,
                                    ProctoredExamSoftwareSecureReviewHistory, ProctoredExamStudentAttemptHistory)
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
@@ -499,8 +499,8 @@ class ReviewTests(LoggedInTestCase):
         )
 
         log_format_string = (
-            'User %(user)s does not have the required permissions '
-            'to submit a review for attempt_code %(attempt_code)s.'
+            u'User %(user)s does not have the required permissions '
+            u'to submit a review for attempt_code %(attempt_code)s.'
         )
 
         log_format_dictionary = {
@@ -520,6 +520,7 @@ class ReviewTests(LoggedInTestCase):
             ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
 
             # the mock API doesn't have a "assert_not_called_with" method
+            # pylint: disable=wrong-assert-type
             self.assertFalse(
                 call(log_format_string, log_format_dictionary) in logger_mock.call_args_list
             )
