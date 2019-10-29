@@ -27,6 +27,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='proctoredexamreviewpolicy',
             name='review_policy',
-            field=models.TextField(default=b''),
+            field=models.TextField(default=u''),
         ),
     ]

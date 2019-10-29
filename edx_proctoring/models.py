@@ -130,7 +130,7 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
     proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
 
     # policy that will be passed to reviewers
-    review_policy = models.TextField(default='')
+    review_policy = models.TextField(default=u'')
 
     def __str__(self):
         """ String representation """
