@@ -17,7 +17,7 @@ click==7.0                # via click-log, edx-lint, pip-tools
 configparser==4.0.2       # via importlib-metadata, pydocstyle, pylint
 contextlib2==0.6.0.post1  # via importlib-metadata
 diff-cover==2.4.0
-distlib==0.2.9.post0      # via caniusepython3
+distlib==0.3.0            # via caniusepython3
 django==1.11.25
 docutils==0.15.2          # via readme-renderer
 edx-i18n-tools==0.4.8
@@ -27,12 +27,12 @@ filelock==3.0.12          # via tox
 future==0.18.1            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
-importlib-metadata==0.23  # via path.py, pluggy, tox
-inflect==2.1.0            # via jinja2-pluralize
+importlib-metadata==0.23  # via inflect, path.py, pluggy, tox
+inflect==3.0.1            # via jinja2-pluralize
 isort==4.3.21
 jinja2-pluralize==0.3.0   # via diff-cover
 jinja2==2.10.3            # via diff-cover, jinja2-pluralize
-lazy-object-proxy==1.4.2  # via astroid
+lazy-object-proxy==1.4.3  # via astroid
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
 more-itertools==5.0.0     # via zipp
@@ -74,4 +74,4 @@ wrapt==1.11.2             # via astroid
 zipp==0.6.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.4.0        # via caniusepython3, twine
+# setuptools==41.6.0        # via caniusepython3, twine

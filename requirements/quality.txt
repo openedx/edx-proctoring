@@ -13,14 +13,14 @@ chardet==3.0.4            # via requests
 click-log==0.3.2          # via edx-lint
 click==7.0                # via click-log, edx-lint
 configparser==4.0.2       # via pydocstyle, pylint
-distlib==0.2.9.post0      # via caniusepython3
+distlib==0.3.0            # via caniusepython3
 django==1.11.25
 edx-lint==1.4.1
 enum34==1.1.6             # via astroid
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 isort==4.3.21
-lazy-object-proxy==1.4.2  # via astroid
+lazy-object-proxy==1.4.3  # via astroid
 mccabe==0.6.1             # via pylint
 packaging==19.2           # via caniusepython3
 pycodestyle==2.5.0
@@ -39,4 +39,4 @@ urllib3==1.25.6           # via requests
 wrapt==1.11.2             # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.4.0        # via caniusepython3
+# setuptools==41.6.0        # via caniusepython3
