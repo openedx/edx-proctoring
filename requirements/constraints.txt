@@ -9,15 +9,15 @@
 # linking to it here is good.
 
 # This is a backport which can only be installed on Python 2.7
-futures ; python_version == "2.7"
+futures==3.3.0 ; python_version == "2.7"
 
 # Sphinx 2.0.0 drops support for python 2.7 which we still need.
 # pip-compile can't resolve dependencies for Sphinx 1.8.5:
 # https://github.com/jazzband/pip-tools/issues/810
-Sphinx<1.8.5
+Sphinx==1.8.4
 
 # A dependency of pytest.  Pytest doesn't constrain it and 6.0.0 onward
 # only works with python 3
-more-itertools<6.0.0
+more-itertools==5.0.0
 
-path.py<12.0           # path.py 12.0 drops support for python 2.7
+path.py==11.5.2           # path.py 12.0 drops support for python 2.7
