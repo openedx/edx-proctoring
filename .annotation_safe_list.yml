@@ -1,0 +1,24 @@
+# See https://code-annotations.readthedocs.io/en/latest/safelist.html for more information.
+
+waffle.Flag:
+    ".. no_pii:": "This model has no PII"
+waffle.Sample:
+    ".. no_pii:": "This model has no PII"
+waffle.Switch:
+    ".. no_pii:": "This model has no PII"
+contenttypes.ContentType:
+    ".. no_pii:": "This model has no PII"
+auth.User:
+    ".. pii": "This model minimally contains a username, password, and email"
+    ".. pii_types": "username, email_address, password"
+    ".. pii_retirement": "consumer_api"
+auth.Group:
+    ".. no_pii": "This model has no PII"
+auth.Permission:
+    ".. no_pii": "This model has no PII"
+sites.Site:
+    ".. no_pii": "This model has no PII"
+sessions.Session:
+    ".. pii": "The session can be used to store user information"
+    ".. pii_types": "other"
+    ".. pii_retirement": "consumer_api"

@@ -29,6 +29,8 @@ USER_MODEL = get_user_model()
 class ProctoredExam(TimeStampedModel):
     """
     Information about the Proctored Exam.
+
+    .. no_pii:
     """
 
     course_id = models.CharField(max_length=255, db_index=True)
@@ -121,6 +123,11 @@ class ProctoredExam(TimeStampedModel):
 class ProctoredExamReviewPolicy(TimeStampedModel):
     """
     This is how an instructor can set review policies for a proctored exam
+
+    .. pii: records who set a review policy in set_by_user
+            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii_types: id
+    .. pii_retirement: to_be_implemented
     """
 
     # who set this ProctoredExamReviewPolicy
@@ -162,6 +169,8 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
 class ProctoredExamReviewPolicyHistory(TimeStampedModel):
     """
     Archive table to record all policies that were deleted or updated
+
+    .. no_pii:
     """
 
     # what was the original PK for the Review Policy
@@ -288,6 +297,11 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     """
     Information about the Student Attempt on a
     Proctored Exam.
+
+    .. pii: new attempts log the student's name and IP
+            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii_types: name, ip
+    .. pii_retirement: to_be_implemented
     """
     objects = ProctoredExamStudentAttemptManager()
 
@@ -376,6 +390,11 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     """
     This should be the same schema as ProctoredExamStudentAttempt
     but will record (for audit history) all entries that have been updated.
+
+    .. pii: new attempts log the student's name and IP
+            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii_types: name, ip
+    .. pii_retirement: to_be_implemented
     """
 
     user = models.ForeignKey(USER_MODEL, db_index=True)
@@ -489,6 +508,11 @@ class ProctoredExamStudentAllowanceManager(models.Manager):
 class ProctoredExamStudentAllowance(TimeStampedModel):
     """
     Information about allowing a student additional time on exam.
+
+    .. pii: allowances have a free-form text field which may be identifiable
+            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii_types: other
+    .. pii_retirement: to_be_implemented
     """
 
     # DONT EDIT THE KEYS - THE FIRST VALUE OF THE TUPLE - AS ARE THEY ARE STORED IN THE DATABASE
@@ -626,6 +650,11 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     """
     This should be the same schema as ProctoredExamStudentAllowance
     but will record (for audit history) all entries that have been updated.
+
+    .. pii: allowances have a free-form text field which may be identifiable
+            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii_types: other
+    .. pii_retirement: to_be_implemented
     """
 
     # what was the original id of the allowance
@@ -649,6 +678,11 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     """
     This is where we store the proctored exam review feedback
     from the exam reviewers
+
+    .. pii: reviews contain video of the exam
+            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii_types: video
+    .. pii_retirement: to_be_implemented
     """
 
     # which student attempt is this feedback for?
@@ -716,6 +750,11 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
 class ProctoredExamSoftwareSecureReviewHistory(TimeStampedModel):
     """
     When records get updated, we will archive them here
+
+    .. pii: reviews contain video of the exam
+            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii_types: video
+    .. pii_retirement: to_be_implemented
     """
 
     # which student attempt is this feedback for?
@@ -754,6 +793,11 @@ class ProctoredExamSoftwareSecureComment(TimeStampedModel):
     """
     This is where we store the proctored exam review comments
     from the exam reviewers
+
+    .. pii: comment contains free-form text which could be personally-identifying
+            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii_types: other
+    .. pii_retirement: to_be_implemented
     """
 
     # which student attempt is this feedback for?
