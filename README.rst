@@ -106,6 +106,17 @@ otherwise noted.
 
 Please see ``LICENSE.txt`` for details.
 
+Issue Tracker
+-------------
+
+We use JIRA for our issue tracker, not GitHub issues. You can search
+`previously reported issues`_.  If you need to report a problem,
+please make a free account on our JIRA and `create a new issue`_.
+
+.. _previously reported issues: https://openedx.atlassian.net/projects/CRI/issues
+.. _create a new issue: https://openedx.atlassian.net/secure/CreateIssue.jspa?issuetype=1&pid=11900
+
+
 How To Contribute
 -----------------
 
