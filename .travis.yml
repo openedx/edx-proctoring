@@ -3,30 +3,39 @@ cache: pip
 python:
 - 2.7
 - 3.6
+
 services:
 - xvfb
+
 env:
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drf37
-- DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drf38
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drf39
-- DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drflatest
+# DRF 3.9.x is the latest that still supports python 2,
+# and we run DRF 3.7 in edx-platform
+# TODO: enable these in future, disable old ones above
+# https://openedx.atlassian.net/browse/EDUCATOR-4774
+# - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drf38
+# - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drflatest
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=quality
-- TOXENV=js
 - TOXENV=translations
+
 before_install:
 - export DISPLAY=:99.0
+
 install:
 - pip install tox-travis
-- pip install -r requirements/test.txt
-- npm install
-before_script:
-- npm install -g gulp-cli
+
 script:
 - tox
+- npm install -g gulp-cli
+- npm install
+- make test-js lint-js
+
 after_success:
 - coverage xml
 - bash <(curl -s https://codecov.io/bash) -cF python -f coverage.xml
 - bash <(curl -s https://codecov.io/bash) -cF javascript -f build/coverage-js/coverage.xml
+
 deploy:
 - provider: pypi
   user: edx
