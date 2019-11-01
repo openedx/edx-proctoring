@@ -4,6 +4,7 @@
 #
 #    make upgrade
 #
+
 argparse==1.4.0           # via caniusepython3
 astroid==1.6.6            # via pylint, pylint-celery
 backports.functools-lru-cache==1.5  # via astroid, caniusepython3, isort, pylint
@@ -24,7 +25,7 @@ edx-i18n-tools==0.4.8
 edx-lint==1.4.1
 enum34==1.1.6             # via astroid
 filelock==3.0.12          # via tox
-future==0.18.1            # via backports.os
+future==0.18.2            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 importlib-metadata==0.23  # via inflect, path.py, pluggy, tox
@@ -37,7 +38,7 @@ markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
 more-itertools==5.0.0     # via zipp
 packaging==19.2           # via caniusepython3, tox
-path.py==11.5.2
+path.py==11.5.2 ; python_version == "2.7"
 pathlib2==2.3.5           # via importlib-metadata
 pip-tools==4.2.0
 pkginfo==1.5.0.1          # via twine
@@ -45,7 +46,7 @@ pluggy==0.13.0            # via tox
 polib==1.1.0              # via edx-i18n-tools
 py==1.8.0                 # via tox
 pycodestyle==2.5.0
-pydocstyle==3.0.0
+pydocstyle==3.0.0 ; python_version == "2.7"
 pygments==2.4.2           # via diff-cover, readme-renderer
 pylint-celery==0.3        # via edx-lint
 pylint-django==0.11.1     # via edx-lint
@@ -64,8 +65,8 @@ snowballstemmer==2.0.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
 tox==3.14.0
-tqdm==4.36.1              # via twine
-twine==1.15.0
+tqdm==4.37.0              # via twine
+twine==1.15.0 ; python_version == "2.7"
 urllib3==1.25.6           # via requests
 virtualenv==16.7.7        # via tox
 webencodings==0.5.1       # via bleach

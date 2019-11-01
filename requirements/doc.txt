@@ -4,6 +4,7 @@
 #
 #    make upgrade
 #
+
 alabaster==0.7.12         # via sphinx
 appdirs==1.4.3            # via fs
 babel==2.7.0              # via sphinx
@@ -18,7 +19,7 @@ django-waffle==0.17.0
 django-webpack-loader==0.6.0
 django==1.11.25
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
-djangorestframework==3.9.4
+djangorestframework==3.9.4 ; python_version == "2.7"
 doc8==0.8.0
 docutils==0.15.2          # via doc8, readme-renderer, restructuredtext-lint, sphinx
 edx-django-utils==2.0.1   # via edx-drf-extensions
@@ -30,7 +31,7 @@ edx-when==0.5.1
 enum34==1.1.6             # via fs
 event-tracking==0.2.9
 fs==2.4.11                # via xblock
-future==0.18.1            # via backports.os, pyjwkest
+future==0.18.2            # via backports.os, pyjwkest
 idna==2.8                 # via requests
 imagesize==1.1.0          # via sphinx
 jinja2==2.10.3            # via sphinx

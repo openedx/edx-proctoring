@@ -62,3 +62,6 @@ node_modules/
 edx-proctoring
 edx_proctoring.egg-info
 proctoring-env
+
+# Output of pii annotations checker
+pii_report
