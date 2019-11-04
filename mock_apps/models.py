@@ -6,5 +6,8 @@ from django.db import models
 
 
 class Profile(models.Model):
+    """
+    .. no_pii: Mock profile
+    """
     user = models.OneToOneField(get_user_model())
     name = models.CharField(max_length=100)

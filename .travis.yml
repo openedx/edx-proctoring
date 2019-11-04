@@ -17,6 +17,7 @@ env:
 # - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drf38
 # - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drflatest
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=quality
+- DJANGO_SETTINGS_MODULE=test_setting  TOXENV=pii_check
 - TOXENV=translations
 
 before_install:
