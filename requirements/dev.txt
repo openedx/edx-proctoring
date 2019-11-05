@@ -7,6 +7,7 @@
 argparse==1.4.0           # via caniusepython3
 astroid==1.6.6            # via pylint, pylint-celery
 backports.functools-lru-cache==1.6.1  # via astroid, caniusepython3, isort, pylint
+backports.os==0.1.1       # via path.py
 bleach==3.1.0             # via readme-renderer
 caniusepython3==7.2.0
 certifi==2019.9.11        # via requests
@@ -23,6 +24,7 @@ edx-i18n-tools==0.4.8
 edx-lint==1.4.1
 enum34==1.1.6             # via astroid
 filelock==3.0.12          # via tox
+future==0.18.2            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 importlib-metadata==0.23  # via inflect, path.py, pluggy, tox
@@ -49,7 +51,7 @@ pylint-celery==0.3        # via edx-lint
 pylint-django==0.11.1     # via edx-lint
 pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
 pylint==1.9.5             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
-pyparsing==2.4.2          # via packaging
+pyparsing==2.4.4          # via packaging
 pytz==2019.3              # via django
 pyyaml==5.1.2             # via edx-i18n-tools
 readme-renderer==24.0     # via twine
@@ -57,7 +59,7 @@ requests-toolbelt==0.9.1  # via twine
 requests==2.22.0          # via caniusepython3, requests-toolbelt, twine
 scandir==1.10.0           # via pathlib2
 singledispatch==3.4.0.3   # via astroid, pylint
-six==1.12.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pathlib2, pip-tools, pydocstyle, pylint, readme-renderer, singledispatch, tox
+six==1.13.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pathlib2, pip-tools, pydocstyle, pylint, readme-renderer, singledispatch, tox
 snowballstemmer==2.0.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
