@@ -7,6 +7,7 @@
 argparse==1.4.0           # via caniusepython3
 astroid==1.6.6            # via pylint, pylint-celery
 backports.functools-lru-cache==1.6.1  # via astroid, caniusepython3, isort, pylint
+backports.os==0.1.1       # via path.py
 bleach==3.1.0             # via readme-renderer
 caniusepython3==7.2.0
 certifi==2019.9.11        # via requests
@@ -15,7 +16,7 @@ click-log==0.3.2          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
 configparser==4.0.2       # via importlib-metadata, pydocstyle, pylint
 contextlib2==0.6.0.post1  # via importlib-metadata
-diff-cover==2.4.0
+diff-cover==2.4.1
 distlib==0.3.0            # via caniusepython3
 django==1.11.26
 docutils==0.15.2          # via readme-renderer
@@ -23,10 +24,11 @@ edx-i18n-tools==0.4.8
 edx-lint==1.4.1
 enum34==1.1.6             # via astroid
 filelock==3.0.12          # via tox
+future==0.18.2            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
 importlib-metadata==0.23  # via inflect, path.py, pluggy, tox
-inflect==3.0.1            # via jinja2-pluralize
+inflect==3.0.2            # via jinja2-pluralize
 isort==4.3.21
 jinja2-pluralize==0.3.0   # via diff-cover
 jinja2==2.10.3            # via diff-cover, jinja2-pluralize
@@ -37,19 +39,19 @@ more-itertools==5.0.0     # via zipp
 packaging==19.2           # via caniusepython3, tox
 path.py==11.5.2 ; python_version == "2.7"
 pathlib2==2.3.5           # via importlib-metadata
-pip-tools==4.2.0
+pip-tools==4.3.0
 pkginfo==1.5.0.1          # via twine
-pluggy==0.13.0            # via tox
+pluggy==0.13.1            # via tox
 polib==1.1.0              # via edx-i18n-tools
 py==1.8.0                 # via tox
 pycodestyle==2.5.0
 pydocstyle==3.0.0 ; python_version == "2.7"
-pygments==2.4.2           # via diff-cover, readme-renderer
+pygments==2.5.1           # via diff-cover, readme-renderer
 pylint-celery==0.3        # via edx-lint
 pylint-django==0.11.1     # via edx-lint
 pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
 pylint==1.9.5             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
-pyparsing==2.4.2          # via packaging
+pyparsing==2.4.5          # via packaging
 pytz==2019.3              # via django
 pyyaml==5.1.2             # via edx-i18n-tools
 readme-renderer==24.0     # via twine
@@ -57,19 +59,19 @@ requests-toolbelt==0.9.1  # via twine
 requests==2.22.0          # via caniusepython3, requests-toolbelt, twine
 scandir==1.10.0           # via pathlib2
 singledispatch==3.4.0.3   # via astroid, pylint
-six==1.12.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pathlib2, pip-tools, pydocstyle, pylint, readme-renderer, singledispatch, tox
+six==1.13.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pathlib2, pip-tools, pydocstyle, pylint, readme-renderer, singledispatch, tox
 snowballstemmer==2.0.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
-tox==3.14.0
-tqdm==4.37.0              # via twine
+tox==3.14.1
+tqdm==4.39.0              # via twine
 twine==1.15.0 ; python_version == "2.7"
-urllib3==1.25.6           # via requests
-virtualenv==16.7.7        # via tox
+urllib3==1.25.7           # via requests
+virtualenv==16.7.8        # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.33.6
 wrapt==1.11.2             # via astroid
 zipp==0.6.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.6.0        # via caniusepython3, twine
+# setuptools
