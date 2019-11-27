@@ -29,14 +29,14 @@ pylint-celery==0.3        # via edx-lint
 pylint-django==0.11.1     # via edx-lint
 pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
 pylint==1.9.5             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
-pyparsing==2.4.2          # via packaging
+pyparsing==2.4.5          # via packaging
 pytz==2019.3              # via django
 requests==2.22.0          # via caniusepython3
 singledispatch==3.4.0.3   # via astroid, pylint
-six==1.12.0               # via astroid, edx-lint, packaging, pydocstyle, pylint, singledispatch
+six==1.13.0               # via astroid, edx-lint, packaging, pydocstyle, pylint, singledispatch
 snowballstemmer==2.0.0    # via pydocstyle
-urllib3==1.25.6           # via requests
+urllib3==1.25.7           # via requests
 wrapt==1.11.2             # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.6.0        # via caniusepython3
+# setuptools
