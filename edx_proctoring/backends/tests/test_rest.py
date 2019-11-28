@@ -14,8 +14,12 @@ from django.test import TestCase, override_settings
 from django.utils import translation
 
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
-from edx_proctoring.exceptions import (BackendProviderCannotRegisterAttempt, BackendProviderCannotRetireUser,
-                                       BackendProviderOnboardingException, BackendProviderSentNoAttemptID)
+from edx_proctoring.exceptions import (
+    BackendProviderCannotRegisterAttempt,
+    BackendProviderCannotRetireUser,
+    BackendProviderOnboardingException,
+    BackendProviderSentNoAttemptID
+)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 
@@ -146,7 +150,7 @@ class RESTBackendTests(TestCase):
         )
         self.backend_exam.pop('external_id')
         external_id = provider.on_exam_saved(self.backend_exam)
-        request = json.loads(responses.calls[1].request.body)
+        request = json.loads(responses.calls[1].request.body.decode('utf-8'))
         self.assertEqual(external_id, 'abcdefg')
         self.assertTrue(request['rules']['allow_grok'])
 
@@ -185,7 +189,7 @@ class RESTBackendTests(TestCase):
             status=200
         )
         attempt_external_id = self.provider.register_exam_attempt(self.backend_exam, self.register_exam_context)
-        request = json.loads(responses.calls[1].request.body)
+        request = json.loads(responses.calls[1].request.body.decode('utf-8'))
         self.assertEqual(attempt_external_id, 2)
         self.assertEqual(request['status'], 'created')
         self.assertIn('lms_host', request)

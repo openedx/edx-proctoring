@@ -8,6 +8,7 @@ Data models for the proctoring subsystem
 from __future__ import absolute_import
 
 import six
+from model_utils.models import TimeStampedModel
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -15,11 +16,12 @@ from django.db.models import Q
 from django.db.models.base import ObjectDoesNotExist
 from django.utils.translation import ugettext_noop
 
-from model_utils.models import TimeStampedModel
-
 from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.exceptions import (AllowanceValueNotAllowedException, ProctoredExamNotActiveException,
-                                       UserNotFoundException)
+from edx_proctoring.exceptions import (
+    AllowanceValueNotAllowedException,
+    ProctoredExamNotActiveException,
+    UserNotFoundException
+)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 
 USER_MODEL = get_user_model()
@@ -131,10 +133,10 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
     """
 
     # who set this ProctoredExamReviewPolicy
-    set_by_user = models.ForeignKey(USER_MODEL)
+    set_by_user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE)
 
     # for which exam?
-    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
+    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True, on_delete=models.CASCADE)
 
     # policy that will be passed to reviewers
     review_policy = models.TextField(default=u'')
@@ -177,10 +179,10 @@ class ProctoredExamReviewPolicyHistory(TimeStampedModel):
     original_id = models.IntegerField(db_index=True)
 
     # who set this ProctoredExamReviewPolicy
-    set_by_user = models.ForeignKey(USER_MODEL)
+    set_by_user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE)
 
     # for which exam?
-    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
+    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True, on_delete=models.CASCADE)
 
     # policy that will be passed to reviewers
     review_policy = models.TextField()
@@ -305,9 +307,9 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     """
     objects = ProctoredExamStudentAttemptManager()
 
-    user = models.ForeignKey(USER_MODEL, db_index=True)
+    user = models.ForeignKey(USER_MODEL, db_index=True, on_delete=models.CASCADE)
 
-    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
+    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True, on_delete=models.CASCADE)
 
     # started/completed date times
     started_at = models.DateTimeField(null=True)
@@ -397,12 +399,12 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     .. pii_retirement: to_be_implemented
     """
 
-    user = models.ForeignKey(USER_MODEL, db_index=True)
+    user = models.ForeignKey(USER_MODEL, db_index=True, on_delete=models.CASCADE)
 
     # this is the PK of the original table, note this is not a FK
     attempt_id = models.IntegerField(null=True)
 
-    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True)
+    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True, on_delete=models.CASCADE)
 
     # started/completed date times
     started_at = models.DateTimeField(null=True)
@@ -526,9 +528,9 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
     objects = ProctoredExamStudentAllowanceManager()
 
-    user = models.ForeignKey(USER_MODEL)
+    user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE)
 
-    proctored_exam = models.ForeignKey(ProctoredExam)
+    proctored_exam = models.ForeignKey(ProctoredExam, on_delete=models.CASCADE)
 
     key = models.CharField(max_length=255)
 
@@ -660,9 +662,9 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     # what was the original id of the allowance
     allowance_id = models.IntegerField()
 
-    user = models.ForeignKey(USER_MODEL)
+    user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE)
 
-    proctored_exam = models.ForeignKey(ProctoredExam)
+    proctored_exam = models.ForeignKey(ProctoredExam, on_delete=models.CASCADE)
 
     key = models.CharField(max_length=255)
 
@@ -701,17 +703,17 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     video_url = models.TextField()
 
     # user_id of person who did the review (can be None if submitted via server-to-server API)
-    reviewed_by = models.ForeignKey(USER_MODEL, null=True, related_name='+')
+    reviewed_by = models.ForeignKey(USER_MODEL, null=True, related_name='+', on_delete=models.CASCADE)
 
     # student username for the exam
     # this is an optimization for the Django Admin pane (so we can search)
     # this is null because it is being added after initial production ship
-    student = models.ForeignKey(USER_MODEL, null=True, related_name='+')
+    student = models.ForeignKey(USER_MODEL, null=True, related_name='+', on_delete=models.CASCADE)
 
     # exam_id for the review
     # this is an optimization for the Django Admin pane (so we can search)
     # this is null because it is being added after initial production ship
-    exam = models.ForeignKey(ProctoredExam, null=True)
+    exam = models.ForeignKey(ProctoredExam, null=True, on_delete=models.CASCADE)
 
     class Meta:
         """ Meta class for this Django model """
@@ -771,17 +773,17 @@ class ProctoredExamSoftwareSecureReviewHistory(TimeStampedModel):
     video_url = models.TextField()
 
     # user_id of person who did the review (can be None if submitted via server-to-server API)
-    reviewed_by = models.ForeignKey(USER_MODEL, null=True, related_name='+')
+    reviewed_by = models.ForeignKey(USER_MODEL, null=True, related_name='+', on_delete=models.CASCADE)
 
     # student username for the exam
     # this is an optimization for the Django Admin pane (so we can search)
     # this is null because it is being added after initial production ship
-    student = models.ForeignKey(USER_MODEL, null=True, related_name='+')
+    student = models.ForeignKey(USER_MODEL, null=True, related_name='+', on_delete=models.CASCADE)
 
     # exam_id for the review
     # this is an optimization for the Django Admin pane (so we can search)
     # this is null because it is being added after initial production ship
-    exam = models.ForeignKey(ProctoredExam, null=True)
+    exam = models.ForeignKey(ProctoredExam, null=True, on_delete=models.CASCADE)
 
     class Meta:
         """ Meta class for this Django model """
@@ -801,7 +803,7 @@ class ProctoredExamSoftwareSecureComment(TimeStampedModel):
     """
 
     # which student attempt is this feedback for?
-    review = models.ForeignKey(ProctoredExamSoftwareSecureReview)
+    review = models.ForeignKey(ProctoredExamSoftwareSecureReview, on_delete=models.CASCADE)
 
     # start time in the video, in seconds, regarding the comment
     start_time = models.IntegerField()

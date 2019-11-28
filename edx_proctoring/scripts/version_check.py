@@ -4,6 +4,7 @@ Scripts to ensure that the Python and npm versions match.
 """
 import json
 import sys
+
 from edx_proctoring import __version__ as python_version
 
 with open('package.json') as json_file:

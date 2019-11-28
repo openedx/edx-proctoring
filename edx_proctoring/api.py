@@ -24,22 +24,45 @@ from django.utils.translation import ugettext_noop
 
 from edx_proctoring import constants
 from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.exceptions import (BackendProviderCannotRegisterAttempt, BackendProviderOnboardingException,
-                                       BackendProviderSentNoAttemptID, ProctoredExamAlreadyExists,
-                                       ProctoredExamIllegalStatusTransition, ProctoredExamNotActiveException,
-                                       ProctoredExamNotFoundException, ProctoredExamPermissionDenied,
-                                       ProctoredExamReviewPolicyAlreadyExists,
-                                       ProctoredExamReviewPolicyNotFoundException,
-                                       StudentExamAttemptAlreadyExistsException,
-                                       StudentExamAttemptDoesNotExistsException, StudentExamAttemptedAlreadyStarted)
-from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamSoftwareSecureReview,
-                                   ProctoredExamStudentAllowance, ProctoredExamStudentAttempt)
+from edx_proctoring.exceptions import (
+    BackendProviderCannotRegisterAttempt,
+    BackendProviderOnboardingException,
+    BackendProviderSentNoAttemptID,
+    ProctoredExamAlreadyExists,
+    ProctoredExamIllegalStatusTransition,
+    ProctoredExamNotActiveException,
+    ProctoredExamNotFoundException,
+    ProctoredExamPermissionDenied,
+    ProctoredExamReviewPolicyAlreadyExists,
+    ProctoredExamReviewPolicyNotFoundException,
+    StudentExamAttemptAlreadyExistsException,
+    StudentExamAttemptDoesNotExistsException,
+    StudentExamAttemptedAlreadyStarted
+)
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamReviewPolicy,
+    ProctoredExamSoftwareSecureReview,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAttempt
+)
 from edx_proctoring.runtime import get_runtime_service
-from edx_proctoring.serializers import (ProctoredExamReviewPolicySerializer, ProctoredExamSerializer,
-                                        ProctoredExamStudentAllowanceSerializer, ProctoredExamStudentAttemptSerializer)
+from edx_proctoring.serializers import (
+    ProctoredExamReviewPolicySerializer,
+    ProctoredExamSerializer,
+    ProctoredExamStudentAllowanceSerializer,
+    ProctoredExamStudentAttemptSerializer
+)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_proctoring.utils import (emit_event, get_exam_due_date, has_due_date_passed, humanized_time,
-                                  is_reattempting_exam, obscured_user_id, verify_and_add_wait_deadline)
+from edx_proctoring.utils import (
+    emit_event,
+    get_exam_due_date,
+    has_due_date_passed,
+    humanized_time,
+    is_reattempting_exam,
+    obscured_user_id,
+    verify_and_add_wait_deadline
+)
 
 log = logging.getLogger(__name__)
 

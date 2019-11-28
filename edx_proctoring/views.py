@@ -25,22 +25,51 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 
 from edx_proctoring import constants
-from edx_proctoring.api import (add_allowance_for_user, create_exam, create_exam_attempt, get_active_exams_for_user,
-                                get_all_exams_for_course, get_allowances_for_course, get_backend_provider,
-                                get_exam_attempt_by_external_id, get_exam_attempt_by_id, get_exam_by_content_id,
-                                get_exam_by_id, is_exam_passed_due, mark_exam_attempt_as_ready,
-                                remove_allowance_for_user, remove_exam_attempt, start_exam_attempt, stop_exam_attempt,
-                                update_attempt_status, update_exam, update_exam_attempt)
+from edx_proctoring.api import (
+    add_allowance_for_user,
+    create_exam,
+    create_exam_attempt,
+    get_active_exams_for_user,
+    get_all_exams_for_course,
+    get_allowances_for_course,
+    get_backend_provider,
+    get_exam_attempt_by_external_id,
+    get_exam_attempt_by_id,
+    get_exam_by_content_id,
+    get_exam_by_id,
+    is_exam_passed_due,
+    mark_exam_attempt_as_ready,
+    remove_allowance_for_user,
+    remove_exam_attempt,
+    start_exam_attempt,
+    stop_exam_attempt,
+    update_attempt_status,
+    update_exam,
+    update_exam_attempt
+)
 from edx_proctoring.constants import PING_FAILURE_PASSTHROUGH_TEMPLATE
-from edx_proctoring.exceptions import (ProctoredBaseException, ProctoredExamPermissionDenied,
-                                       ProctoredExamReviewAlreadyExists, StudentExamAttemptDoesNotExistsException)
-from edx_proctoring.models import (ProctoredExam, ProctoredExamSoftwareSecureComment, ProctoredExamSoftwareSecureReview,
-                                   ProctoredExamStudentAttempt)
+from edx_proctoring.exceptions import (
+    ProctoredBaseException,
+    ProctoredExamPermissionDenied,
+    ProctoredExamReviewAlreadyExists,
+    StudentExamAttemptDoesNotExistsException
+)
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamSoftwareSecureComment,
+    ProctoredExamSoftwareSecureReview,
+    ProctoredExamStudentAttempt
+)
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, ReviewStatus, SoftwareSecureReviewStatus
-from edx_proctoring.utils import (AuthenticatedAPIView, get_time_remaining_for_attempt, humanized_time,
-                                  locate_attempt_by_attempt_code, obscured_user_id)
+from edx_proctoring.utils import (
+    AuthenticatedAPIView,
+    get_time_remaining_for_attempt,
+    humanized_time,
+    locate_attempt_by_attempt_code,
+    obscured_user_id
+)
 
 ATTEMPTS_PER_PAGE = 25
 

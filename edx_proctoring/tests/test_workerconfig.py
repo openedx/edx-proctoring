@@ -52,7 +52,7 @@ class TestWorkerConfig(unittest.TestCase):
             self.assertFalse(os.path.exists(self.outfile))
         else:
             with open(self.outfile, 'rb') as out_fp:
-                data = json.load(out_fp)
+                data = json.loads(out_fp.read().decode('utf-8'))
                 self.assertEqual(data, expected)
 
     def test_create_success(self):

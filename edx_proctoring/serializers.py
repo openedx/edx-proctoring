@@ -7,8 +7,12 @@ from rest_framework.fields import DateTimeField
 
 from django.contrib.auth.models import User
 
-from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamStudentAllowance,
-                                   ProctoredExamStudentAttempt)
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamReviewPolicy,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAttempt
+)
 
 
 class ProctoredExamSerializer(serializers.ModelSerializer):

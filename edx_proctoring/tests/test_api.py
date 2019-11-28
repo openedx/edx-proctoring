@@ -12,43 +12,86 @@ from itertools import product
 
 import ddt
 import pytz
-
+import six
 from freezegun import freeze_time
 from mock import MagicMock, patch
-import six
-from six.moves import range
+from six.moves import range  # pylint: disable=ungrouped-imports
 
-from edx_proctoring.api import (_are_prerequirements_satisfied, _check_for_attempt_timeout, _get_ordered_prerequisites,
-                                _get_review_policy_by_exam_id, add_allowance_for_user, create_exam, create_exam_attempt,
-                                create_exam_review_policy, does_backend_support_onboarding, get_active_exams_for_user,
-                                get_all_exam_attempts, get_all_exams_for_course, get_allowances_for_course,
-                                get_attempt_status_summary, get_backend_provider, get_exam_attempt,
-                                get_exam_attempt_by_id, get_exam_by_content_id, get_exam_by_id,
-                                get_exam_configuration_dashboard_url, get_exam_violation_report,
-                                get_filtered_exam_attempts, get_integration_specific_email,
-                                get_last_exam_completion_date, get_review_policy_by_exam_id,
-                                is_backend_dashboard_available, mark_exam_attempt_as_ready, mark_exam_attempt_timeout,
-                                remove_allowance_for_user, remove_exam_attempt, remove_review_policy,
-                                start_exam_attempt, start_exam_attempt_by_code, stop_exam_attempt,
-                                update_attempt_status, update_exam, update_exam_attempt, update_review_policy)
+from edx_proctoring.api import (
+    _are_prerequirements_satisfied,
+    _check_for_attempt_timeout,
+    _get_ordered_prerequisites,
+    _get_review_policy_by_exam_id,
+    add_allowance_for_user,
+    create_exam,
+    create_exam_attempt,
+    create_exam_review_policy,
+    does_backend_support_onboarding,
+    get_active_exams_for_user,
+    get_all_exam_attempts,
+    get_all_exams_for_course,
+    get_allowances_for_course,
+    get_attempt_status_summary,
+    get_backend_provider,
+    get_exam_attempt,
+    get_exam_attempt_by_id,
+    get_exam_by_content_id,
+    get_exam_by_id,
+    get_exam_configuration_dashboard_url,
+    get_exam_violation_report,
+    get_filtered_exam_attempts,
+    get_integration_specific_email,
+    get_last_exam_completion_date,
+    get_review_policy_by_exam_id,
+    is_backend_dashboard_available,
+    mark_exam_attempt_as_ready,
+    mark_exam_attempt_timeout,
+    remove_allowance_for_user,
+    remove_exam_attempt,
+    remove_review_policy,
+    start_exam_attempt,
+    start_exam_attempt_by_code,
+    stop_exam_attempt,
+    update_attempt_status,
+    update_exam,
+    update_exam_attempt,
+    update_review_policy
+)
 from edx_proctoring.constants import DEFAULT_CONTACT_EMAIL
-from edx_proctoring.exceptions import (AllowanceValueNotAllowedException, BackendProviderSentNoAttemptID,
-                                       ProctoredExamAlreadyExists, ProctoredExamIllegalStatusTransition,
-                                       ProctoredExamNotFoundException, ProctoredExamPermissionDenied,
-                                       ProctoredExamReviewPolicyAlreadyExists,
-                                       ProctoredExamReviewPolicyNotFoundException,
-                                       StudentExamAttemptAlreadyExistsException,
-                                       StudentExamAttemptDoesNotExistsException, StudentExamAttemptedAlreadyStarted,
-                                       UserNotFoundException)
-from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamSoftwareSecureComment,
-                                   ProctoredExamSoftwareSecureReview, ProctoredExamStudentAllowance,
-                                   ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory)
+from edx_proctoring.exceptions import (
+    AllowanceValueNotAllowedException,
+    BackendProviderSentNoAttemptID,
+    ProctoredExamAlreadyExists,
+    ProctoredExamIllegalStatusTransition,
+    ProctoredExamNotFoundException,
+    ProctoredExamPermissionDenied,
+    ProctoredExamReviewPolicyAlreadyExists,
+    ProctoredExamReviewPolicyNotFoundException,
+    StudentExamAttemptAlreadyExistsException,
+    StudentExamAttemptDoesNotExistsException,
+    StudentExamAttemptedAlreadyStarted,
+    UserNotFoundException
+)
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamReviewPolicy,
+    ProctoredExamSoftwareSecureComment,
+    ProctoredExamSoftwareSecureReview,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptHistory
+)
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests import mock_perm
 
-from .test_services import (MockCertificateService, MockCreditService, MockCreditServiceNone,
-                            MockCreditServiceWithCourseEndDate, MockGradesService)
+from .test_services import (
+    MockCertificateService,
+    MockCreditService,
+    MockCreditServiceNone,
+    MockCreditServiceWithCourseEndDate,
+    MockGradesService
+)
 from .utils import ProctoredExamTestCase
 
 

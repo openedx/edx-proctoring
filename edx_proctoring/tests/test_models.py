@@ -9,9 +9,15 @@ from __future__ import absolute_import
 import six
 from six.moves import range
 
-from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamReviewPolicyHistory,
-                                   ProctoredExamStudentAllowance, ProctoredExamStudentAllowanceHistory,
-                                   ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory)
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamReviewPolicy,
+    ProctoredExamReviewPolicyHistory,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAllowanceHistory,
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptHistory
+)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from .utils import LoggedInTestCase

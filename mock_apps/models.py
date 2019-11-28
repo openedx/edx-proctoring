@@ -9,5 +9,5 @@ class Profile(models.Model):
     """
     .. no_pii: Mock profile
     """
-    user = models.OneToOneField(get_user_model())
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=100)

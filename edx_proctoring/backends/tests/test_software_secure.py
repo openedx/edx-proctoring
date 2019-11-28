@@ -25,8 +25,12 @@ from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt
 from edx_proctoring.models import ProctoredExamReviewPolicy, ProctoredExamStudentAllowance
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_proctoring.tests.test_services import (MockCertificateService, MockCreditService, MockGradesService,
-                                                MockInstructorService)
+from edx_proctoring.tests.test_services import (
+    MockCertificateService,
+    MockCreditService,
+    MockGradesService,
+    MockInstructorService
+)
 
 
 @all_requests
