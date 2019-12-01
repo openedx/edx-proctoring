@@ -9,8 +9,8 @@
 # yamahapsr200 <yamahapsr200@googlemail.com>, 2016
 # Shan <shanmathuran.sritharan@paluno.uni-due.de>, 2016
 # Alexander L. <alexander.lohberg@ufo-style.de>, 2017
-# Stefania Trabucchi <stefania.trabucchi@abstract-technology.de>, 2018
 # Donna Klamma <donna@polarstern-education.com>, 2019
+# Stefania Trabucchi <stefania.trabucchi@abstract-technology.de>, 2019
 # 
 msgid ""
 msgstr ""
@@ -18,7 +18,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: Donna Klamma <donna@polarstern-education.com>, 2019\n"
+"Last-Translator: Stefania Trabucchi <stefania.trabucchi@abstract-technology.de>, 2019\n"
 "Language-Team: German (Germany) (https://www.transifex.com/open-edx/teams/6205/de_DE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -760,6 +760,11 @@ msgid ""
 "                submitted for review. </br>\n"
 "      "
 msgstr ""
+"\n"
+"&#8226; Wenn Sie mit Ihrer Prüfung beginnen, haben Sie %(total_time)s Versuche, um sie abzuschließen. </br> \n"
+"&#8226; Sie können den Timer nicht pausieren, sobald Sie ihn einmal gestartet haben. \n"
+"&#8226; Wenn die Zeit abläuft, bevor Sie Ihre Prüfung beenden, werden die beantworteten Fragen\n"
+"zur Überprüfung vorgelegt. "
 
 #: templates/proctored_exam/ready_to_start.html:19
 msgid ""
@@ -800,6 +805,10 @@ msgid ""
 "      as well as achieve a final grade that meets credit requirements for the course.\n"
 "    "
 msgstr ""
+"\n"
+"Nachdem Sie Ihre Prüfung eingereicht haben, werden Ihre Antworten bewertet und Ihre Beaufsichtigung wird überprüft.\n"
+" Sie sind möglicherweise berechtigt, akademische Credits für diesen Kurs zu erhalten, wenn Sie alle erforderlichen Prüfungen ablegen \n"
+"und eine Endnote erreichen, die den Leistungsanforderungen für den Kurs entspricht."
 
 #: templates/proctored_exam/ready_to_submit.html:21
 msgid ""
@@ -839,6 +848,9 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"Sie haben keinen Anspruch mehr auf akademische Anrechnung für diesen Kurs, unabhängig von Ihrer Abschlussnote.\n"
+"Wenn Sie Fragen zum Status Ihrer Prüfungsergebnisse haben, wenden Sie sich bitte an den %(platform_name)s Support."
 
 #: templates/proctored_exam/submitted.html:4
 msgid ""
@@ -856,6 +868,8 @@ msgid ""
 "      If the proctoring software window is still open, you can close it now. Confirm that you want to quit the application when you are prompted.\n"
 "    "
 msgstr ""
+"\n"
+"Wenn das Fenster der Überwachungssoftware noch geöffnet ist, können Sie es jetzt schließen. Bestätigen Sie, dass Sie die Anwendung beenden möchten, wenn Sie dazu aufgefordert werden."
 
 #: templates/proctored_exam/submitted.html:14
 msgid ""
@@ -864,6 +878,9 @@ msgid ""
 "      &#8226; Proctoring results are usually available within 5 business days after you submit your exam.\n"
 "    "
 msgstr ""
+"\n"
+"&#8226; Nachdem Sie die überwachte Sitzung abgeschlossen haben, werden die aufgezeichneten Daten zur Überprüfung hochgeladen. </br>\n"
+"&#8226; Die Ergebnisse der Sitzung sind üblicherweise nach 5 Arbeitstagen einsehbar."
 
 #: templates/proctored_exam/submitted.html:23
 #, python-format
@@ -872,6 +889,8 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"Wenn Sie Fragen über den Status Ihrer überwachten Prüfung haben, kontaktieren Sie den %(platform_name)s Support."
 
 #: templates/proctored_exam/verified.html:4
 msgid ""
@@ -879,6 +898,9 @@ msgid ""
 "      Your proctoring session was reviewed and passed all requirements\n"
 "    "
 msgstr ""
+"\n"
+"      Ihre überwachte Prüfungssitzung wurde überprüft und Sie haben bestanden.\n"
+"    "
 
 #: templates/proctored_exam/verified.html:10
 msgid ""
@@ -887,6 +909,10 @@ msgid ""
 "      and also achieve a final grade that meets the credit requirements for the course.\n"
 "    "
 msgstr ""
+"\n"
+"     Sie sind berechtigt, akademische Credits für diesen Kurs zu erwerben, wenn Sie alle erforderlichen Prüfungen absolviert haben \n"
+"      und auch eine Endnote erreichen, die den Leistungsanforderungen für den Kurs entspricht.\n"
+"    "
 
 #: templates/proctored_exam/visit_exam_content.html:5
 msgid ""
@@ -894,6 +920,8 @@ msgid ""
 "      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
 "    "
 msgstr ""
+"\n"
+"Um die Prüfungsfragen und Antworten einsehen zu können, wählen Sie <strong>Mein Exam einsehen</strong>. Der Überprüfungsstatus der Prüfung wird im linken Navigationsbereich angezeigt."
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
@@ -905,6 +933,8 @@ msgid ""
 "      After the due date for this exam has passed, you will be able to review your answers on this page.\n"
 "    "
 msgstr ""
+"\n"
+"Nach Ablauf der Frist für diese Prüfung können Sie Ihre Antworten auf dieser Seite überprüfen."
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -965,6 +995,10 @@ msgid ""
 "      Ask your course team for information about additional time allowances.\n"
 "    "
 msgstr ""
+"\n"
+"      Wenn Sie behindert sind, \n"
+"      haben Sie möglicherweise Anspruch auf eine zusätzliche Zeitvergütung für terminierte Prüfungen.\n"
+"      Fragen Sie Ihr Kursteam nach Informationen über zusätzliche Zeitvergütungen."
 
 #: templates/timed_exam/ready_to_submit.html:4
 msgid ""
@@ -1022,6 +1056,9 @@ msgid ""
 "        You have submitted your timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"        Sie haben die zeitbegrenzte Prüfung abgeschlossen.\n"
+"      "
 
 #: templates/timed_exam/submitted.html:18
 #, python-format
@@ -1030,6 +1067,9 @@ msgid ""
 "      Your grade for this timed exam will be immediately available on the <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 msgstr ""
+"\n"
+"      Die Auswertung der zeitbegrenzten Prüfung sind direkt nach Abgabe einsehbar auf der <a href=\"%(progress_page_url)s\">Fortschritt</a> Seite.\n"
+"    "
 
 #: templates/timed_exam/submitted.html:22
 msgid ""
@@ -1037,6 +1077,9 @@ msgid ""
 "        After the due date has passed, you can review the exam, but you cannot change your answers.\n"
 "      "
 msgstr ""
+"\n"
+"        Nach dem die Frist abgelaufen ist, können Sie die Prüfung einsehen, aber keine Antworten ändern.\n"
+"      "
 
 #: utils.py:76
 #, python-brace-format
@@ -1091,7 +1134,7 @@ msgstr "Terminiert"
 
 #: views.py:537
 msgid "practice"
-msgstr ""
+msgstr "Übung"
 
 #: views.py:537
 msgid "proctored"
