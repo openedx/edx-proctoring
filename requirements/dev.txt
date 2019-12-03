@@ -10,7 +10,7 @@ backports.functools-lru-cache==1.6.1  # via astroid, caniusepython3, isort, pyli
 backports.os==0.1.1       # via path.py
 bleach==3.1.0             # via readme-renderer
 caniusepython3==7.2.0
-certifi==2019.9.11        # via requests
+certifi==2019.11.28       # via requests
 chardet==3.0.4            # via requests
 click-log==0.3.2          # via edx-lint
 click==7.0                # via click-log, edx-lint, pip-tools
@@ -27,7 +27,7 @@ filelock==3.0.12          # via tox
 future==0.18.2            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
-importlib-metadata==0.23  # via inflect, path.py, pluggy, tox
+importlib-metadata==1.1.0  # via inflect, path.py, pluggy, tox
 inflect==3.0.2            # via jinja2-pluralize
 isort==4.3.21
 jinja2-pluralize==0.3.0   # via diff-cover
@@ -46,14 +46,14 @@ polib==1.1.0              # via edx-i18n-tools
 py==1.8.0                 # via tox
 pycodestyle==2.5.0
 pydocstyle==3.0.0 ; python_version == "2.7"
-pygments==2.5.1           # via diff-cover, readme-renderer
+pygments==2.5.2           # via diff-cover, readme-renderer
 pylint-celery==0.3        # via edx-lint
 pylint-django==0.11.1     # via edx-lint
 pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
 pylint==1.9.5             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
 pyparsing==2.4.5          # via packaging
 pytz==2019.3              # via django
-pyyaml==5.1.2             # via edx-i18n-tools
+pyyaml==5.2               # via edx-i18n-tools
 readme-renderer==24.0     # via twine
 requests-toolbelt==0.9.1  # via twine
 requests==2.22.0          # via caniusepython3, requests-toolbelt, twine
@@ -63,8 +63,8 @@ six==1.13.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx
 snowballstemmer==2.0.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
-tox==3.14.1
-tqdm==4.39.0              # via twine
+tox==3.14.2
+tqdm==4.40.0              # via twine
 twine==1.15.0 ; python_version == "2.7"
 urllib3==1.25.7           # via requests
 virtualenv==16.7.8        # via tox

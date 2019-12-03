@@ -6,7 +6,7 @@
 #
 appdirs==1.4.3            # via fs
 backports.os==0.1.1       # via fs
-certifi==2019.9.11        # via requests
+certifi==2019.11.28       # via requests
 chardet==3.0.4            # via requests
 django-crum==0.7.4
 django-ipware==2.1.0
@@ -38,7 +38,7 @@ pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
 pymongo==3.9.0            # via edx-opaque-keys, event-tracking
 python-dateutil==2.8.1
 pytz==2019.3
-pyyaml==5.1.2             # via xblock
+pyyaml==5.2               # via xblock
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
 rest-condition==1.0.3     # via edx-drf-extensions
 rules==2.1

@@ -8,13 +8,13 @@ apipkg==1.5               # via execnet
 appdirs==1.4.3            # via fs
 backports.os==0.1.1       # via fs
 bok-choy==1.0.1
-certifi==2019.9.11        # via requests
+certifi==2019.11.28       # via requests
 chardet==3.0.4            # via requests
 click==7.0                # via code-annotations
 code-annotations==0.3.2
 cookies==2.2.1            # via responses
 coverage==4.5.4           # via pytest-cov
-ddt==1.2.1
+ddt==1.2.2
 django-crum==0.7.4
 django-ipware==2.1.0
 django-model-utils==3.2.0
@@ -62,7 +62,7 @@ pytest==4.6.6 ; python_version == "2.7"  # via pytest-cov, pytest-django, pytest
 python-dateutil==2.8.1
 python-slugify==4.0.0     # via code-annotations
 pytz==2019.3
-pyyaml==5.1.2             # via code-annotations, edx-i18n-tools, xblock
+pyyaml==5.2               # via code-annotations, edx-i18n-tools, xblock
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
 responses==0.10.7
 rest-condition==1.0.3     # via edx-drf-extensions
