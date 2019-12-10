@@ -11,7 +11,7 @@ backports.os==0.1.1       # via fs
 bleach==3.1.0             # via readme-renderer
 certifi==2019.11.28       # via requests
 chardet==3.0.4            # via doc8, requests
-django-crum==0.7.4
+django-crum==0.7.5
 django-ipware==2.1.0
 django-model-utils==3.2.0
 django-waffle==0.18.0
@@ -46,7 +46,7 @@ pycryptodomex==3.9.4
 pygments==2.5.2           # via readme-renderer, sphinx
 pyjwkest==1.3.2           # via edx-drf-extensions
 pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
-pymongo==3.9.0            # via edx-opaque-keys, event-tracking
+pymongo==3.10.0           # via edx-opaque-keys, event-tracking
 pyparsing==2.4.5          # via packaging
 python-dateutil==2.8.1
 pytz==2019.3

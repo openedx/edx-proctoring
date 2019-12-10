@@ -27,7 +27,7 @@ filelock==3.0.12          # via tox
 future==0.18.2            # via backports.os
 futures==3.3.0 ; python_version == "2.7"  # via caniusepython3, isort
 idna==2.8                 # via requests
-importlib-metadata==1.1.0  # via inflect, path.py, pluggy, tox
+importlib-metadata==1.2.0  # via inflect, path.py, pluggy, tox
 inflect==3.0.2            # via jinja2-pluralize
 isort==4.3.21
 jinja2-pluralize==0.3.0   # via diff-cover
@@ -64,7 +64,7 @@ snowballstemmer==2.0.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
 tox==3.14.2
-tqdm==4.40.0              # via twine
+tqdm==4.40.2              # via twine
 twine==1.15.0 ; python_version == "2.7"
 urllib3==1.25.7           # via requests
 virtualenv==16.7.8        # via tox
