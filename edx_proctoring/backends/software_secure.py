@@ -54,6 +54,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.exam_register_endpoint = exam_register_endpoint
         self.secret_key_id = secret_key_id
         self.secret_key = secret_key
+        if isinstance(crypto_key, six.text_type):
+            crypto_key = crypto_key.encode('utf-8')
         self.crypto_key = crypto_key
         self.timeout = 10
         self.software_download_url = software_download_url
