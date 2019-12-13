@@ -18,7 +18,13 @@ env:
 # - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=django111-drflatest
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=quality
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=pii_check
+- TOXENV=version_check
 - TOXENV=translations
+
+matrix:
+ exclude:
+  - python: 2.7
+    env: TOXENV=version_check
 
 before_install:
 - export DISPLAY=:99.0
