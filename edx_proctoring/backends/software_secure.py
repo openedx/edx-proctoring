@@ -328,9 +328,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             value = body_json[key]
             if isinstance(value, bool):
                 if value:
-                    value = b'true'
+                    value = 'true'
                 else:
-                    value = b'false'
+                    value = 'false'
             key = key.encode('utf8')
             if isinstance(value, (list, tuple)):
                 for idx, arr in enumerate(value):
