@@ -20,11 +20,18 @@ env:
 - DJANGO_SETTINGS_MODULE=test_setting  TOXENV=pii_check
 - TOXENV=version_check
 - TOXENV=translations
+- TOXENV=js_tests
+- TOXENV=js_lint
+
 
 matrix:
  exclude:
   - python: 2.7
     env: TOXENV=version_check
+  - python: 2.7
+    env: TOXENV=js_lint
+  - python: 2.7
+    env: TOXENV=js_tests
 
 before_install:
 - export DISPLAY=:99.0
@@ -34,9 +41,6 @@ install:
 
 script:
 - tox
-- npm install -g gulp-cli
-- npm install
-- make test-js lint-js
 
 after_success:
 - coverage xml
