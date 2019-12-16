@@ -971,12 +971,14 @@ class InstructorDashboard(AuthenticatedAPIView):
         Redirect to dashboard for a given course and optional exam_id
         """
         exam = None
-        attempt_id = None
+        backend = None
         ext_exam_id = None
+        attempt_id = None
         show_configuration_dashboard = False
 
         if exam_id:
             exam = get_exam_by_id(exam_id)
+            backend = get_backend_provider(exam=exam)
             # the exam_id in the url is our database id (for ease of lookups)
             # but the backend needs its external id for the instructor dashboard
             ext_exam_id = exam['external_id']
@@ -984,49 +986,62 @@ class InstructorDashboard(AuthenticatedAPIView):
 
             # only show the configuration dashboard if an exam_id is passed in
             show_configuration_dashboard = request.GET.get('config', '').lower() == 'true'
-
         else:
-            found_backend = None
+            existing_backend_name = None
             for exam in get_all_exams_for_course(course_id, True):
-                exam_backend = exam['backend'] or settings.PROCTORING_BACKENDS.get('DEFAULT', None)
-                if found_backend and exam_backend != found_backend:
+                if not exam.get('is_proctored'):
+                    # We should only get backends of exams which are configured to be proctored
+                    continue
+
+                exam_backend_name = exam.get('backend')
+                backend = get_backend_provider(name=exam_backend_name)
+                if existing_backend_name and exam_backend_name != existing_backend_name:
                     # In this case, what are we supposed to do?!
                     # It should not be possible to get in this state, because
                     # course teams will be prevented from updating the backend after the course start date
                     error_message = u"Multiple backends for course %r %r != %r" % (
                         course_id,
-                        found_backend,
-                        exam['backend']
+                        existing_backend_name,
+                        exam_backend_name
                     )
                     return Response(data=error_message, status=400)
                 else:
-                    found_backend = exam_backend
-        if exam is None:
-            error = _(u'No exams in course {course_id}.').format(course_id=course_id)
-        else:
-            backend = get_backend_provider(exam)
-            if backend:
-                user = {
-                    'id': obscured_user_id(request.user.id, exam['backend']),
-                    'full_name': request.user.profile.name,
-                    'email': request.user.email
-                }
+                    existing_backend_name = exam_backend_name
 
-                url = backend.get_instructor_url(
-                    exam['course_id'],
-                    user,
-                    exam_id=ext_exam_id,
-                    attempt_id=attempt_id,
-                    show_configuration_dashboard=show_configuration_dashboard
-                )
-                if url:
-                    return redirect(url)
-                else:
-                    error = _(u'No instructor dashboard for {proctor_service}').format(
-                        proctor_service=backend.verbose_name)
-            else:
-                error = _(u'No proctored exams in course {course_id}').format(course_id=course_id)
-        return Response(data=error, status=404, headers={'X-Frame-Options': 'sameorigin'})
+        if not exam:
+            return Response(
+                data=_(u'No exams in course {course_id}.').format(course_id=course_id),
+                status=404,
+                headers={'X-Frame-Options': 'sameorigin'}
+            )
+        if not backend:
+            return Response(
+                data=_(u'No proctored exams in course {course_id}').format(course_id=course_id),
+                status=404,
+                headers={'X-Frame-Options': 'sameorigin'}
+            )
+        user = {
+            'id': obscured_user_id(request.user.id, exam['backend']),
+            'full_name': request.user.profile.name,
+            'email': request.user.email
+        }
+
+        url = backend.get_instructor_url(
+            exam['course_id'],
+            user,
+            exam_id=ext_exam_id,
+            attempt_id=attempt_id,
+            show_configuration_dashboard=show_configuration_dashboard
+        )
+        if not url:
+            return Response(
+                data=_(u'No instructor dashboard for {proctor_service}').format(
+                    proctor_service=backend.verbose_name
+                ),
+                status=404,
+                headers={'X-Frame-Options': 'sameorigin'}
+            )
+        return redirect(url)
 
 
 class BackendUserManagementAPI(AuthenticatedAPIView):

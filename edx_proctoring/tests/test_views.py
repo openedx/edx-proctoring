@@ -2589,6 +2589,7 @@ class TestActiveExamsForUserView(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
 
 
+@ddt.ddt
 class TestInstructorDashboard(LoggedInTestCase):
     """
     Tests for launching the instructor dashboard
@@ -2604,14 +2605,13 @@ class TestInstructorDashboard(LoggedInTestCase):
         self.second_user = User(username='tester2', email='tester2@test.com')
         self.second_user.save()
         self.client.login_user(self.user)
+        self.course_id = 'a/b/c'
 
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
     def test_launch_for_course(self):
-        course_id = 'a/b/c'
-
         ProctoredExam.objects.create(
-            course_id=course_id,
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
@@ -2620,17 +2620,16 @@ class TestInstructorDashboard(LoggedInTestCase):
             is_proctored=True,
         )
 
-        expected_url = '/instructor/%s/' % course_id
+        expected_url = '/instructor/%s/' % self.course_id
         response = self.client.get(
-            reverse('edx_proctoring:instructor_dashboard_course', args=[course_id])
+            reverse('edx_proctoring:instructor_dashboard_course',
+                    kwargs={'course_id': self.course_id})
         )
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
 
     def test_launch_for_exam(self):
-        course_id = 'a/b/c'
-
         proctored_exam = ProctoredExam.objects.create(
-            course_id=course_id,
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
@@ -2640,9 +2639,9 @@ class TestInstructorDashboard(LoggedInTestCase):
         )
         exam_id = proctored_exam.id
 
-        expected_url = '/instructor/%s/?exam=%s' % (course_id, proctored_exam.external_id)
+        expected_url = '/instructor/%s/?exam=%s' % (self.course_id, proctored_exam.external_id)
         dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
-                                kwargs={'course_id': course_id, 'exam_id': exam_id})
+                                kwargs={'course_id': self.course_id, 'exam_id': exam_id})
         response = self.client.get(dashboard_url)
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
         # try with an attempt
@@ -2653,10 +2652,8 @@ class TestInstructorDashboard(LoggedInTestCase):
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
 
     def test_error_with_multiple_backends(self):
-        course_id = 'a/b/c'
-
         ProctoredExam.objects.create(
-            course_id=course_id,
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
@@ -2666,7 +2663,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             backend='test',
         )
         ProctoredExam.objects.create(
-            course_id=course_id,
+            course_id=self.course_id,
             content_id='test_content2',
             exam_name='Test Exam',
             external_id='123aXqe4',
@@ -2677,61 +2674,56 @@ class TestInstructorDashboard(LoggedInTestCase):
         )
         response = self.client.get(
             reverse('edx_proctoring:instructor_dashboard_course',
-                    kwargs={'course_id': course_id})
+                    kwargs={'course_id': self.course_id})
         )
         self.assertEqual(response.status_code, 400)
         self.assertIn('Multiple backends for course', response.data)
 
     def test_error_with_no_exams(self):
-        course_id = 'a/b/c'
         response = self.client.get(
             reverse('edx_proctoring:instructor_dashboard_course',
-                    kwargs={'course_id': course_id})
+                    kwargs={'course_id': self.course_id})
         )
         self.assertEqual(response.status_code, 404)
 
         # test the case of no PROCTORED exams
         ProctoredExam.objects.create(
-            course_id=course_id,
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Timed Exam',
             external_id='123aXqe3',
             time_limit_mins=90,
             is_active=True,
             is_proctored=False,
-            backend='software_secure',
+            backend='mock',
         )
         response = self.client.get(
             reverse('edx_proctoring:instructor_dashboard_course',
-                    kwargs={'course_id': course_id})
+                    kwargs={'course_id': self.course_id})
         )
         self.assertEqual(response.status_code, 404)
 
     def test_error_with_no_dashboard(self):
-        course_id = 'a/b/d'
-
         ProctoredExam.objects.create(
-            course_id=course_id,
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
             time_limit_mins=90,
             is_active=True,
             is_proctored=True,
-            backend='software_secure',
+            backend='mock',
         )
         response = self.client.get(
             reverse('edx_proctoring:instructor_dashboard_course',
-                    kwargs={'course_id': course_id})
+                    kwargs={'course_id': self.course_id})
         )
         self.assertEqual(response.status_code, 404)
-        self.assertEqual('No instructor dashboard for RPNow', response.data)
+        self.assertEqual('No instructor dashboard for Mock Backend', response.data)
 
     def test_launch_for_configuration_dashboard(self):
-        course_id = 'a/b/c'
-
         proctored_exam = ProctoredExam.objects.create(
-            course_id=course_id,
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             external_id='123aXqe3',
@@ -2741,11 +2733,54 @@ class TestInstructorDashboard(LoggedInTestCase):
         )
         exam_id = proctored_exam.id
 
-        expected_url = '/instructor/%s/?exam=%s&config=true' % (course_id, proctored_exam.external_id)
+        expected_url = '/instructor/%s/?exam=%s&config=true' % (self.course_id, proctored_exam.external_id)
         dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
-                                kwargs={'course_id': course_id, 'exam_id': exam_id})
+                                kwargs={'course_id': self.course_id, 'exam_id': exam_id})
         response = self.client.get(dashboard_url, {'config': 'true'})
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+
+    @ddt.data(
+        (True, True),
+        (True, False),
+        (False, True),
+        (False, False)
+    )
+    @ddt.unpack
+    def test_multiple_exams_returns_correct_dashboard(self, exam_1_is_proctored, exam_2_is_proctored):
+        ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=exam_1_is_proctored,
+            backend='test',
+        )
+        ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='test_content2',
+            exam_name='Test Exam',
+            external_id='123aXqe4',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=exam_2_is_proctored,
+            backend='test',
+        )
+
+        expected_url = '/instructor/%s/' % self.course_id
+        response = self.client.get(
+            reverse('edx_proctoring:instructor_dashboard_course',
+                    kwargs={'course_id': self.course_id})
+        )
+        if not exam_1_is_proctored and not exam_2_is_proctored:
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(
+                u'No proctored exams in course {}'.format(self.course_id),
+                response.data
+            )
+        else:
+            self.assertRedirects(response, expected_url, fetch_redirect_response=False)
 
 
 class TestBackendUserDeletion(LoggedInTestCase):
