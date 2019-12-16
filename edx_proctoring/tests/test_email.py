@@ -10,8 +10,8 @@ from mock import MagicMock, patch
 
 from django.core import mail
 
-from edx_proctoring.api import get_integration_specific_email, update_attempt_status
-from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.api import update_attempt_status
+from edx_proctoring.constants import SITE_NAME
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
@@ -52,12 +52,12 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         [
             ProctoredExamStudentAttemptStatus.verified,
             'Proctoring Results',
-            'was reviewed and you met all exam requirements',
+            'was reviewed and you met all proctoring requirements',
         ],
         [
             ProctoredExamStudentAttemptStatus.rejected,
             'Proctoring Results',
-            'the team identified one or more violations',
+            'the course team has identified one or more violations',
         ]
     )
     @ddt.unpack
@@ -176,34 +176,23 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     @ddt.data(
-        [ProctoredExamStudentAttemptStatus.submitted, 'edx@example.com'],
-        [ProctoredExamStudentAttemptStatus.submitted, ''],
-        [ProctoredExamStudentAttemptStatus.submitted, None],
-        [ProctoredExamStudentAttemptStatus.verified, 'edx@example.com'],
-        [ProctoredExamStudentAttemptStatus.verified, ''],
-        [ProctoredExamStudentAttemptStatus.verified, None],
-        [ProctoredExamStudentAttemptStatus.rejected, 'edx@example.com'],
-        [ProctoredExamStudentAttemptStatus.rejected, ''],
-        [ProctoredExamStudentAttemptStatus.rejected, None],
+        [ProctoredExamStudentAttemptStatus.submitted],
+        [ProctoredExamStudentAttemptStatus.verified],
+        [ProctoredExamStudentAttemptStatus.rejected],
     )
     @ddt.unpack
-    def test_correct_edx_email(self, status, integration_specific_email,):
+    def test_correct_edx_support_url(self, status):
         exam_attempt = self._create_started_exam_attempt()
-
-        test_backend = get_backend_provider(name='test')
-
-        test_backend.integration_specific_email = integration_specific_email
-
         update_attempt_status(
             exam_attempt.proctored_exam_id,
             self.user.id,
             status
         )
 
-        # Verify the edX email
-        expected_email = get_integration_specific_email(test_backend)
+        # Verify the edX support URL
+        contact_url = 'http://{site_name}/support/contact_us'.format(site_name=SITE_NAME)
         actual_body = self._normalize_whitespace(mail.outbox[0].body)
-        self.assertIn(u'contact Open edX support at '
-                      u'<a href="mailto:{email}?Subject=Proctored exam Test Exam in edx demo for user tester"> '
-                      u'{email} </a>'.format(email=expected_email),
+        self.assertIn(u'You can also reach Open edX Support at '
+                      u'<a href="{contact_url}"> '
+                      u'{contact_url} </a>'.format(contact_url=contact_url),
                       actual_body)

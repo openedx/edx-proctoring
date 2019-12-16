@@ -1146,9 +1146,10 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         course_name=course_name,
         username=user.username,
     )
-
-    exam = get_exam_by_id(exam_attempt_obj.proctored_exam.id)
-    contact_email = get_integration_specific_email(get_backend_provider(exam))
+    contact_url = '{scheme}://{site_name}/support/contact_us'.format(
+        scheme=scheme,
+        site_name=constants.SITE_NAME
+    )
 
     body = email_template.render({
         'username': user.username,
@@ -1157,8 +1158,8 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         'exam_name': exam_name,
         'status': status,
         'platform': constants.PLATFORM_NAME,
-        'contact_email': contact_email,
         'support_email_subject': support_email_subject,
+        'contact_url': contact_url,
     })
 
     email = EmailMessage(
