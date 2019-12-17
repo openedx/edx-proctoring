@@ -11,9 +11,9 @@ bok-choy==1.0.1
 certifi==2019.11.28       # via requests
 chardet==3.0.4            # via requests
 click==7.0                # via code-annotations
-code-annotations==0.3.2
+code-annotations==0.3.3
 cookies==2.2.1            # via responses
-coverage==4.5.4           # via pytest-cov
+coverage==5.0             # via pytest-cov
 ddt==1.2.2
 django-crum==0.7.5
 django-ipware==2.1.0
