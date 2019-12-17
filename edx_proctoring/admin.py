@@ -17,8 +17,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from edx_proctoring.api import update_attempt_status
 from edx_proctoring.exceptions import ProctoredExamIllegalStatusTransition, StudentExamAttemptDoesNotExistsException
-from edx_proctoring.models import (ProctoredExam, ProctoredExamReviewPolicy, ProctoredExamSoftwareSecureReview,
-                                   ProctoredExamSoftwareSecureReviewHistory, ProctoredExamStudentAttempt)
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamReviewPolicy,
+    ProctoredExamSoftwareSecureReview,
+    ProctoredExamSoftwareSecureReviewHistory,
+    ProctoredExamStudentAttempt
+)
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import locate_attempt_by_attempt_code
 

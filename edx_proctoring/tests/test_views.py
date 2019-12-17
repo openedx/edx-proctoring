@@ -19,12 +19,21 @@ from django.contrib.auth.models import User
 from django.test.client import Client
 from django.urls import NoReverseMatch, reverse
 
-from edx_proctoring.api import (_calculate_allowed_mins, create_exam, create_exam_attempt, get_backend_provider,
-                                get_exam_attempt_by_id, update_attempt_status)
+from edx_proctoring.api import (
+    _calculate_allowed_mins,
+    create_exam,
+    create_exam_attempt,
+    get_backend_provider,
+    get_exam_attempt_by_id,
+    update_attempt_status
+)
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
-from edx_proctoring.exceptions import (ProctoredExamIllegalStatusTransition, ProctoredExamPermissionDenied,
-                                       StudentExamAttemptDoesNotExistsException)
+from edx_proctoring.exceptions import (
+    ProctoredExamIllegalStatusTransition,
+    ProctoredExamPermissionDenied,
+    StudentExamAttemptDoesNotExistsException
+)
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer
@@ -105,7 +114,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertGreater(response_data['exam_id'], 0)
 
         # Now lookup the exam by giving the exam_id returned and match the data.
@@ -113,7 +122,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.exam_by_id', kwargs={'exam_id': response_data['exam_id']})
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['course_id'], exam_data['course_id'])
         self.assertEqual(response_data['exam_name'], exam_data['exam_name'])
         self.assertEqual(response_data['content_id'], exam_data['content_id'])
@@ -141,7 +150,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertGreater(response_data['exam_id'], 0)
 
         response = self.client.post(
@@ -180,7 +189,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['exam_id'], exam_id)
 
         # Now lookup the exam by giving the exam_id returned and match the data.
@@ -188,7 +197,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.exam_by_id', kwargs={'exam_id': response_data['exam_id']})
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['course_id'], proctored_exam.course_id)
         self.assertEqual(response_data['content_id'], proctored_exam.content_id)
         self.assertEqual(response_data['exam_name'], updated_exam_data['exam_name'])
@@ -250,7 +259,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data, {'detail': 'The exam_id does not exist.'})
 
     def test_get_exam_by_id(self):
@@ -270,7 +279,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.exam_by_id', kwargs={'exam_id': proctored_exam.id})
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['course_id'], proctored_exam.course_id)
         self.assertEqual(response_data['exam_name'], proctored_exam.exam_name)
         self.assertEqual(response_data['content_id'], proctored_exam.content_id)
@@ -286,7 +295,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.exam_by_id', kwargs={'exam_id': 99999})
         )
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['detail'], 'The exam_id does not exist.')
 
     def test_get_exam_by_content_id(self):
@@ -309,7 +318,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             })
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['course_id'], proctored_exam.course_id)
         self.assertEqual(response_data['exam_name'], proctored_exam.exam_name)
         self.assertEqual(response_data['content_id'], proctored_exam.content_id)
@@ -336,7 +345,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             })
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data[0]['course_id'], proctored_exam.course_id)
         self.assertEqual(response_data[0]['exam_name'], proctored_exam.exam_name)
         self.assertEqual(response_data[0]['content_id'], proctored_exam.content_id)
@@ -363,7 +372,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             })
         )
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         message = 'The exam_id does not exist.'
         self.assertEqual(response_data['detail'], message)
 
@@ -387,7 +396,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
             })
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['course_id'], proctored_exam.course_id)
         self.assertEqual(response_data['exam_name'], proctored_exam.exam_name)
         self.assertEqual(response_data['content_id'], proctored_exam.content_id)
@@ -536,7 +545,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertGreater(response_data['exam_attempt_id'], 0)
 
     def test_start_exam(self):
@@ -562,7 +571,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertGreater(response_data['exam_attempt_id'], 0)
 
         old_attempt_id = response_data['exam_attempt_id']
@@ -580,7 +589,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
         # make sure the exam started
@@ -636,7 +645,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         attempt_id = response_data['exam_attempt_id']
         self.assertGreater(attempt_id, 0)
 
@@ -644,7 +653,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['id'], attempt_id)
         self.assertEqual(response_data['proctored_exam']['id'], proctored_exam.id)
         self.assertIsNotNone(response_data['started_at'])
@@ -659,7 +668,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
                 reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
             )
             self.assertEqual(response.status_code, 200)
-            response_data = json.loads(response.content)
+            response_data = json.loads(response.content.decode('utf-8'))
 
             self.assertEqual(response_data['accessibility_time_string'], 'you have less than a minute remaining')
 
@@ -686,7 +695,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         attempt_id = response_data['exam_attempt_id']
         self.assertGreater(attempt_id, 0)
 
@@ -694,7 +703,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['id'], attempt_id)
         self.assertEqual(response_data['proctored_exam']['id'], proctored_exam.id)
         self.assertIsNotNone(response_data['started_at'])
@@ -756,7 +765,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt', args=[attempt.id])
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['id'], attempt.id)
         self.assertEqual(response_data['proctored_exam']['id'], proctored_exam.id)
         self.assertIsNone(response_data['started_at'])
@@ -803,7 +812,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         attempt_id = response_data['exam_attempt_id']
         self.assertEqual(attempt_id, 1)
 
@@ -811,7 +820,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['status'], ProctoredExamStudentAttemptStatus.started)
 
         # now switched to a submitted state
@@ -828,7 +837,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
                 reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
             )
             self.assertEqual(response.status_code, 200)
-            response_data = json.loads(response.content)
+            response_data = json.loads(response.content.decode('utf-8'))
             # make sure the submitted status is sticky
             self.assertEqual(
                 response_data['status'],
@@ -892,7 +901,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         attempt_id = response_data['exam_attempt_id']
         self.assertGreater(attempt_id, 0)
 
@@ -929,7 +938,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         attempt_id = response_data['exam_attempt_id']
         self.assertGreater(attempt_id, 0)
 
@@ -944,7 +953,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 403)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
     def test_read_others_attempt(self):
@@ -970,7 +979,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         attempt_id = response_data['exam_attempt_id']
         self.assertGreater(attempt_id, 0)
 
@@ -1011,7 +1020,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertGreater(response_data['exam_attempt_id'], 0)
 
         response = self.client.post(
@@ -1019,7 +1028,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             attempt_data
         )
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(
             response_data['detail'],
             'Cannot create new exam attempt for exam_id = 1 and user_id = 1 because it already exists!'
@@ -1048,7 +1057,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertGreater(response_data['exam_attempt_id'], 0)
         old_attempt_id = response_data['exam_attempt_id']
 
@@ -1061,7 +1070,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
     def test_download_software_clicked_action(self):
@@ -1088,7 +1097,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertGreater(response_data['exam_attempt_id'], 0)
         old_attempt_id = response_data['exam_attempt_id']
 
@@ -1101,7 +1110,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
         attempt = get_exam_attempt_by_id(old_attempt_id)
@@ -1136,7 +1145,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertGreater(response_data['exam_attempt_id'], 0)
         old_attempt_id = response_data['exam_attempt_id']
 
@@ -1149,7 +1158,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
 
         attempt = get_exam_attempt_by_id(response_data['exam_attempt_id'])
@@ -1193,7 +1202,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['exam_attempt_id'], attempt['id'])
 
         mocked_switch_is_active.return_value = False
@@ -1205,7 +1214,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['exam_attempt_id'], False)
 
     @patch('edx_proctoring.views.waffle.switch_is_active')
@@ -1227,7 +1236,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['exam_attempt_id'], False)
 
         attempt = get_exam_attempt_by_id(attempt_id)
@@ -1257,7 +1266,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
 
         attempt = response_data['proctored_exam_attempts'][0]
@@ -1268,7 +1277,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # url with the invalid page # still gives us the first page result.
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
 
     def test_exam_attempts_not_global_staff(self):
@@ -1320,7 +1329,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         # assert that both timed and proctored exam attempts are in response data
         # so the len should be 2
         self.assertEqual(len(response_data['proctored_exam_attempts']), 2)
@@ -1376,7 +1385,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(response_data['proctored_exam_attempts']), 2)
         attempt = response_data['proctored_exam_attempts'][0]
@@ -1433,7 +1442,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(response_data['proctored_exam_attempts']), 2)
         attempt = response_data['proctored_exam_attempts'][0]
@@ -1474,7 +1483,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(response_data['proctored_exam_attempts']), 25)
         self.assertTrue(response_data['pagination_info']['has_next'])
@@ -1504,7 +1513,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertGreater(response_data['exam_attempt_id'], 0)
         old_attempt_id = response_data['exam_attempt_id']
 
@@ -1527,7 +1536,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['detail'], 'Attempted to access attempt_id 0 but it does not exist.')
 
     def test_get_exam_attempt(self):
@@ -1546,7 +1555,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode('utf-8'))
         self.assertNotIn('exam_display_name', data)
 
         attempt_data = {
@@ -1565,7 +1574,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data['exam_display_name'], 'Test Exam')
         self.assertEqual(data['low_threshold_sec'], 1080)
         self.assertEqual(data['critically_low_threshold_sec'], 270)
@@ -1588,7 +1597,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode('utf-8'))
         self.assertNotIn('exam_display_name', data)
 
         attempt_data = {
@@ -1607,7 +1616,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data['exam_display_name'], 'Test Exam')
         self.assertEqual(data['low_threshold_sec'], 1080)
         self.assertEqual(data['critically_low_threshold_sec'], 270)
@@ -1638,7 +1647,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             attempt_data
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode('utf-8'))
 
         attempt = get_exam_attempt_by_id(data['exam_attempt_id'])
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.submitted)
@@ -1647,7 +1656,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode('utf-8'))
         self.assertNotIn('time_remaining_seconds', data)
 
     def test_get_expired_exam_attempt(self):
@@ -1754,7 +1763,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
 
         self.assertIn('exam_attempt_id', response_data)
 
@@ -2020,7 +2029,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt.collection')
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data['exam_type'], expected_exam_type)
 
     def test_practice_exam_type(self):
@@ -2183,7 +2192,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data), 1)
         self.assertEqual(response_data['detail'], u"Cannot find user against invalid_user")
 
@@ -2212,7 +2221,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data), 1)
         self.assertEqual(
             response_data['detail'],
@@ -2311,7 +2320,7 @@ class TestExamAllowanceView(LoggedInTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 403)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
     def test_get_allowances_for_course(self):
@@ -2345,7 +2354,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data), 1)
         self.assertEqual(response_data[0]['proctored_exam']['course_id'], proctored_exam.course_id)
         self.assertEqual(response_data[0]['key'], allowance_data['key'])
@@ -2388,7 +2397,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 403)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
     def test_get_timed_exam_allowances_for_course(self):  # pylint: disable=invalid-name
@@ -2449,7 +2458,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         # assert that both timed and proctored exams allowance are in response data
         # so the len should be 2
         self.assertEqual(len(response_data), 2)
@@ -2492,7 +2501,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
+        response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data), 1)
         self.assertEqual(response_data[0]['proctored_exam']['course_id'], proctored_exam.course_id)
         self.assertEqual(response_data[0]['key'], allowance_data['key'])

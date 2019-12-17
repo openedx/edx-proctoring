@@ -7,3 +7,4 @@ isort                     # to standardize order of imports
 pycodestyle               # PEP 8 compliance validation
 pydocstyle                # PEP 257 compliance validation
 django<2.0
+twine                     # Twine is a utility for publishing Python packages on PyPI.

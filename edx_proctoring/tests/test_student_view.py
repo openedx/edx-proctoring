@@ -16,8 +16,14 @@ from freezegun import freeze_time
 from mock import MagicMock, patch
 from waffle.testutils import override_flag
 
-from edx_proctoring.api import (add_allowance_for_user, get_exam_attempt, get_exam_by_id, get_student_view,
-                                update_attempt_status, update_exam)
+from edx_proctoring.api import (
+    add_allowance_for_user,
+    get_exam_attempt,
+    get_exam_by_id,
+    get_student_view,
+    update_attempt_status,
+    update_exam
+)
 from edx_proctoring.constants import RPNOWV4_WAFFLE_NAME
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service

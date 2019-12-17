@@ -15,8 +15,11 @@ from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.backends.mock import MockProctoringBackendProvider
 from edx_proctoring.backends.null import NullBackendProvider
-from edx_proctoring.exceptions import (BackendProviderCannotRetireUser, BackendProviderOnboardingException,
-                                       BackendProviderSentNoAttemptID)
+from edx_proctoring.exceptions import (
+    BackendProviderCannotRetireUser,
+    BackendProviderOnboardingException,
+    BackendProviderSentNoAttemptID
+)
 
 # pragma pylint: disable=useless-super-delegation
 
