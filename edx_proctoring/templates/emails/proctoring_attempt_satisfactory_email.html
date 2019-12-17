@@ -9,15 +9,15 @@
     {% blocktrans %}
         Your proctored exam "{{ exam_name }}" in
         <a href="{{ course_url }}">{{ course_name }}</a> was reviewed and you
-        met all exam requirements.
+        met all proctoring requirements.
     {% endblocktrans %}
 </p>
 <p>
     {% blocktrans %}
-        If you have any questions about your results, contact {{ platform }}
-        support at
-        <a href="mailto:{{ contact_email }}?Subject={{ support_email_subject }}">
-            {{ contact_email }}
+        If you have any questions about your results, please <b>contact the course team</b>.
+        You can also reach {{platform}} Support at
+        <a href="{{contact_url}}">
+            {{ contact_url }}
         </a>.
     {% endblocktrans %}
 </p>
