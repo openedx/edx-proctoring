@@ -13,7 +13,7 @@ django-ipware==2.1.0
 django-model-utils==3.2.0
 django-waffle==0.18.0
 django-webpack-loader==0.6.0
-django==1.11.26
+django==1.11.27
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
 djangorestframework==3.9.4 ; python_version == "2.7"
 edx-django-utils==2.0.2   # via edx-drf-extensions
@@ -29,7 +29,7 @@ idna==2.8                 # via requests
 jsonfield==2.0.2
 lxml==4.4.2               # via xblock
 markupsafe==1.1.1         # via xblock
-newrelic==5.4.0.132       # via edx-django-utils
+newrelic==5.4.1.134       # via edx-django-utils
 pbr==5.4.4                # via stevedore
 psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 pycryptodomex==3.9.4
@@ -42,7 +42,7 @@ pyyaml==5.2               # via xblock
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
 rest-condition==1.0.3     # via edx-drf-extensions
 rules==2.1
-semantic-version==2.8.3   # via edx-drf-extensions
+semantic-version==2.8.4   # via edx-drf-extensions
 six==1.13.0               # via edx-drf-extensions, edx-opaque-keys, event-tracking, fs, pyjwkest, python-dateutil, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 stevedore==1.31.0         # via edx-opaque-keys
