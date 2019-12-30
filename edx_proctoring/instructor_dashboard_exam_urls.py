@@ -9,6 +9,9 @@ from django.conf.urls import url
 
 from edx_proctoring import views
 
+app_name = u'instructor'
+
+
 urlpatterns = [
     url(
         r'edx_proctoring/v1/instructor/{}/(?P<exam_id>\d+)$'.format(settings.COURSE_ID_PATTERN),
