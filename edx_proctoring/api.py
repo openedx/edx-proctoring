@@ -611,7 +611,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         obs_user_id = obscured_user_id(user_id, exam['backend'])
 
         # get the name of the user, if the service is available
-        full_name = None
+        full_name = ''
         email = None
 
         credit_service = get_runtime_service('credit')

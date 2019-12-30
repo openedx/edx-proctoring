@@ -28,6 +28,7 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import (
     MockCertificateService,
     MockCreditService,
+    MockCreditServiceNone,
     MockGradesService,
     MockInstructorService
 )
@@ -426,6 +427,26 @@ class SoftwareSecureTests(TestCase):
         """
 
         set_runtime_service('credit', MockCreditService())
+
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True,
+            backend='software_secure',
+        )
+
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
+            self.assertIsNotNone(attempt_id)
+
+    def test_full_name_without_credit_service(self):
+        """
+        Tests to make sure split doesn't raises AttributeError if credit service is down.
+        """
+
+        set_runtime_service('credit', MockCreditServiceNone())
 
         exam_id = create_exam(
             course_id='foo/bar/baz',
