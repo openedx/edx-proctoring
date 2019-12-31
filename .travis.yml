@@ -88,6 +88,7 @@ deploy:
 - provider: pypi
   user: edx
   distributions: sdist bdist_wheel
+  skip_existing: true
   on:
     tags: true
     python: 3.5
