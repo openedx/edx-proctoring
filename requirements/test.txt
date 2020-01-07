@@ -13,7 +13,7 @@ chardet==3.0.4            # via requests
 click==7.0                # via code-annotations
 code-annotations==0.3.3
 cookies==2.2.1            # via responses
-coverage==5.0.1           # via pytest-cov
+coverage==5.0.2           # via pytest-cov
 ddt==1.2.2
 django-crum==0.7.5
 django-ipware==2.1.0
@@ -62,7 +62,7 @@ pytest==4.6.6 ; python_version == "2.7"  # via pytest-cov, pytest-django, pytest
 python-dateutil==2.8.1
 python-slugify==4.0.0     # via code-annotations
 pytz==2019.3
-pyyaml==5.2               # via code-annotations, edx-i18n-tools, xblock
+pyyaml==5.3               # via code-annotations, edx-i18n-tools, xblock
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
 responses==0.10.9
 rest-condition==1.0.3     # via edx-drf-extensions

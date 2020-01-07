@@ -36,7 +36,7 @@ lazy-object-proxy==1.4.3  # via astroid
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
 more-itertools==5.0.0     # via zipp
-packaging==19.2           # via caniusepython3, tox
+packaging==20.0           # via caniusepython3, tox
 path.py==11.5.2 ; python_version == "2.7"
 pathlib2==2.3.5           # via importlib-metadata
 pip-tools==4.3.0
@@ -53,7 +53,7 @@ pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
 pylint==1.9.5             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
 pyparsing==2.4.6          # via packaging
 pytz==2019.3              # via django
-pyyaml==5.2               # via edx-i18n-tools
+pyyaml==5.3               # via edx-i18n-tools
 readme-renderer==24.0     # via twine
 requests-toolbelt==0.9.1  # via twine
 requests==2.22.0          # via caniusepython3, requests-toolbelt, twine
@@ -64,7 +64,7 @@ snowballstemmer==2.0.0    # via pydocstyle
 toml==0.10.0              # via tox
 tox-battery==0.5.1
 tox==3.14.3
-tqdm==4.41.0              # via twine
+tqdm==4.41.1              # via twine
 twine==1.15.0 ; python_version == "2.7"
 urllib3==1.25.7           # via requests
 virtualenv==16.7.9        # via tox
