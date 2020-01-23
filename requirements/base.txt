@@ -5,28 +5,26 @@
 #    make upgrade
 #
 appdirs==1.4.3            # via fs
-backports.os==0.1.1       # via fs
 certifi==2019.11.28       # via requests
 chardet==3.0.4            # via requests
 django-crum==0.7.5
 django-ipware==2.1.0
 django-model-utils==3.2.0
-django-waffle==0.18.0
+django-waffle==0.19.0
 django-webpack-loader==0.6.0
 django==1.11.27
 djangorestframework-jwt==1.11.0  # via edx-drf-extensions
-djangorestframework==3.9.4 ; python_version == "2.7"
-edx-django-utils==2.0.2   # via edx-drf-extensions
+djangorestframework==3.11.0
+edx-django-utils==2.0.3   # via edx-drf-extensions, edx-rest-api-client
 edx-drf-extensions==2.4.5
 edx-opaque-keys==2.0.1
-edx-rest-api-client==1.9.2
+edx-rest-api-client==3.0.2
 edx-when==0.5.2
-enum34==1.1.6             # via fs
 event-tracking==0.3.0
 fs==2.4.11                # via xblock
-future==0.18.2            # via backports.os, pyjwkest
+future==0.18.2            # via pyjwkest
 idna==2.8                 # via requests
-jsonfield==2.0.2
+jsonfield2==3.0.3
 lxml==4.4.2               # via xblock
 markupsafe==1.1.1         # via xblock
 newrelic==5.4.1.134       # via edx-django-utils
@@ -35,21 +33,21 @@ psutil==1.2.1             # via edx-django-utils, edx-drf-extensions
 pycryptodomex==3.9.4
 pyjwkest==1.3.2           # via edx-drf-extensions
 pyjwt==1.7.1              # via djangorestframework-jwt, edx-rest-api-client
-pymongo==3.10.0           # via edx-opaque-keys, event-tracking
+pymongo==3.10.1           # via edx-opaque-keys, event-tracking
 python-dateutil==2.8.1
 pytz==2019.3
-pyyaml==5.2               # via xblock
+pyyaml==5.3               # via xblock
 requests==2.22.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
 rest-condition==1.0.3     # via edx-drf-extensions
-rules==2.1
+rules==2.2
 semantic-version==2.8.4   # via edx-drf-extensions
-six==1.13.0               # via edx-drf-extensions, edx-opaque-keys, event-tracking, fs, pyjwkest, python-dateutil, stevedore, xblock
+six==1.14.0               # via django-waffle, edx-drf-extensions, edx-opaque-keys, event-tracking, fs, pyjwkest, python-dateutil, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 stevedore==1.31.0         # via edx-opaque-keys
 typing==3.7.4.1           # via fs
-urllib3==1.25.7           # via requests
+urllib3==1.25.8           # via requests
 web-fragments==0.3.1      # via xblock
-webob==1.8.5              # via xblock
+webob==1.8.6              # via xblock
 xblock==1.2.9             # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:

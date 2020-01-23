@@ -1,74 +1,29 @@
 language: python
 cache: pip
 python:
-- 2.7
 - 3.5
 
 services:
 - xvfb
 
 env:
-- TOXENV=django111-drf37
-- TOXENV=django111-drf38
 - TOXENV=django111-drf39
+- TOXENV=django111-drf310
 - TOXENV=django111-drflatest
-- TOXENV=django20-drf37
-- TOXENV=django20-drf38
 - TOXENV=django20-drf39
+- TOXENV=django20-drf310
 - TOXENV=django20-drflatest
-- TOXENV=django21-drf37
-- TOXENV=django21-drf38
 - TOXENV=django21-drf39
+- TOXENV=django21-drf310
 - TOXENV=django21-drflatest
-- TOXENV=django22-drf37
-- TOXENV=django22-drf38
-- TOXENV=django22-drf39
+- TOXENV=django22-drf310
 - TOXENV=django22-drflatest
-# DRF 3.9.x is the latest that still supports python 2,
-# and we run DRF 3.7 in edx-platform
-# TODO: enable these in future, disable old ones above
-# https://openedx.atlassian.net/browse/EDUCATOR-4774
 - TOXENV=quality
 - TOXENV=pii_check
 - TOXENV=version_check
 - TOXENV=translations
 - TOXENV=js_tests
 - TOXENV=js_lint
-
-
-matrix:
-  exclude:
-    - python: 2.7
-      env: TOXENV=django20-drf37
-    - python: 2.7
-      env: TOXENV=django20-drf38
-    - python: 2.7
-      env: TOXENV=django20-drf39
-    - python: 2.7
-      env: TOXENV=django20-drflatest
-    - python: 2.7
-      env: TOXENV=django21-drf37
-    - python: 2.7
-      env: TOXENV=django21-drf38
-    - python: 2.7
-      env: TOXENV=django21-drf39
-    - python: 2.7
-      env: TOXENV=django21-drflatest
-    - python: 2.7
-      env: TOXENV=django22-drf37
-    - python: 2.7
-      env: TOXENV=django22-drf38
-    - python: 2.7
-      env: TOXENV=django22-drf39
-    - python: 2.7
-      env: TOXENV=django22-drflatest
-    - python: 2.7
-      env: TOXENV=version_check
-    - python: 2.7
-      env: TOXENV=js_lint
-    - python: 2.7
-      env: TOXENV=js_tests
-
 
 before_install:
 - export DISPLAY=:99.0

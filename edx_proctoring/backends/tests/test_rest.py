@@ -107,7 +107,7 @@ class RESTBackendTests(TestCase):
         )
         external_attempt = self.provider.get_attempt(attempt)
         self.assertEqual(external_attempt, attempt)
-        self.assertEqual(responses.calls[1].request.headers['Accept-Language'], 'en-us')
+        self.assertEqual(responses.calls[-1].request.headers['Accept-Language'], 'en-us')
 
     @responses.activate
     def test_get_attempt_i18n(self):
@@ -127,7 +127,7 @@ class RESTBackendTests(TestCase):
         with translation.override('es'):
             external_attempt = self.provider.get_attempt(attempt)
         self.assertEqual(external_attempt, attempt)
-        self.assertEqual(responses.calls[1].request.headers['Accept-Language'], 'es;en-us')
+        self.assertEqual(responses.calls[-1].request.headers['Accept-Language'], 'es;en-us')
 
     @responses.activate
     def test_on_exam_saved(self):
@@ -150,7 +150,7 @@ class RESTBackendTests(TestCase):
         )
         self.backend_exam.pop('external_id')
         external_id = provider.on_exam_saved(self.backend_exam)
-        request = json.loads(responses.calls[1].request.body.decode('utf-8'))
+        request = json.loads(responses.calls[-1].request.body.decode('utf-8'))
         self.assertEqual(external_id, 'abcdefg')
         self.assertTrue(request['rules']['allow_grok'])
 
@@ -189,7 +189,7 @@ class RESTBackendTests(TestCase):
             status=200
         )
         attempt_external_id = self.provider.register_exam_attempt(self.backend_exam, self.register_exam_context)
-        request = json.loads(responses.calls[1].request.body.decode('utf-8'))
+        request = json.loads(responses.calls[-1].request.body.decode('utf-8'))
         self.assertEqual(attempt_external_id, 2)
         self.assertEqual(request['status'], 'created')
         self.assertIn('lms_host', request)

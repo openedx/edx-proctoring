@@ -63,7 +63,7 @@ class ProctoredExamReviewPolicyAdmin(admin.ModelAdmin):
 
 class ProctoredExamSoftwareSecureReviewForm(forms.ModelForm):
     """Admin Form to display for reading/updating a Review"""
-    class Meta(object):
+    class Meta:
         """Meta class"""
         model = ProctoredExamSoftwareSecureReview
         fields = '__all__'
@@ -104,7 +104,7 @@ class ReviewListFilter(admin.SimpleListFilter):
 
         if self.value() == 'all_unreviewed':
             return queryset.filter(reviewed_by__isnull=True)
-        elif self.value() == 'all_unreviewed_failures':
+        if self.value() == 'all_unreviewed_failures':
             return queryset.filter(reviewed_by__isnull=True, review_status='Suspicious')
         return queryset
 
@@ -365,7 +365,7 @@ class ProctoredExamAttemptForm(forms.ModelForm):
     Admin Form to display for reading/updating a Proctored Exam Attempt
     """
 
-    class Meta(object):
+    class Meta:
         """ Meta class """
         model = ProctoredExamStudentAttempt
         fields = '__all__'

@@ -88,7 +88,6 @@ class MockTracker(Tracker):
         """
         Overload this method to do nothing
         """
-        pass
 
 
 class ProctoredExamTestCase(LoggedInTestCase):

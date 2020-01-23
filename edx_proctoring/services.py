@@ -7,7 +7,7 @@ from __future__ import absolute_import
 import types
 
 
-class ProctoringService(object):
+class ProctoringService:
     """
     An xBlock service for xBlocks to talk to the Proctoring subsystem. This class basically introspects
     and exposes all functions in the api libraries, so it is a direct pass through.

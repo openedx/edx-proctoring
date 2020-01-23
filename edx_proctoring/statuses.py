@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from edx_proctoring.exceptions import ProctoredExamBadReviewStatus
 
 
-class ProctoredExamStudentAttemptStatus(object):
+class ProctoredExamStudentAttemptStatus:
     """
     A class to enumerate the various status that an attempt can have
 
@@ -154,7 +154,7 @@ class ProctoredExamStudentAttemptStatus(object):
         ]
 
 
-class ReviewStatus(object):
+class ReviewStatus:
     """
     Standard review statuses
     """
@@ -173,7 +173,7 @@ class ReviewStatus(object):
         return True
 
 
-class SoftwareSecureReviewStatus(object):
+class SoftwareSecureReviewStatus:
     """
     These are the valid review statuses from
     SoftwareSecure

@@ -18,7 +18,7 @@ from edx_proctoring.exceptions import UserNotFoundException
 from edx_proctoring.services import ProctoringService
 
 
-class MockCreditService(object):
+class MockCreditService:
     """
     Simple mock of the Credit Service
     """
@@ -117,7 +117,7 @@ class MockCreditServiceNone(MockCreditService):
         return None
 
 
-class MockInstructorService(object):
+class MockInstructorService:
     """
     Simple mock of the Instructor Service
     """
@@ -176,21 +176,21 @@ class TestProctoringService(unittest.TestCase):
         self.assertIs(service1, service2)
 
 
-class MockGrade(object):
+class MockGrade:
     """Fake PersistentSubsectionGrade instance."""
     def __init__(self, earned_all=0.0, earned_graded=0.0):
         self.earned_all = earned_all
         self.earned_graded = earned_graded
 
 
-class MockGradeOverride(object):
+class MockGradeOverride:
     """Fake PersistentSubsectionGradeOverride instance."""
     def __init__(self, earned_all=0.0, earned_graded=0.0):
         self.earned_all_override = earned_all
         self.earned_graded_override = earned_graded
 
 
-class MockGeneratedCertificate(object):
+class MockGeneratedCertificate:
     """Fake GeneratedCertificate instance."""
     def __init__(self):
         self.verify_uuid = 'test_verify_uuid'
@@ -210,7 +210,7 @@ class MockGeneratedCertificate(object):
         self.status = 'unavailable'
 
 
-class MockGradesService(object):
+class MockGradesService:
     """
     Simple mock of the Grades Service
     """
@@ -264,7 +264,7 @@ class MockGradesService(object):
         return self.rejected_exam_overrides_grade
 
 
-class MockCertificateService(object):
+class MockCertificateService:
     """
     mock Certificate Service
     """
