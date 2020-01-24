@@ -6,7 +6,7 @@
 # 
 # Translators:
 # Pedro Lonbide <plonbide@gmail.com>, 2016
-# Abel Camacho <abelcama@gmail.com>, 2017
+# Abel Camacho <abelcama@gmail.com>, 2020
 # 
 msgid ""
 msgstr ""
@@ -14,7 +14,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: Abel Camacho <abelcama@gmail.com>, 2017\n"
+"Last-Translator: Abel Camacho <abelcama@gmail.com>, 2020\n"
 "Language-Team: Basque (Spain) (https://www.transifex.com/open-edx/teams/6205/eu_ES/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -56,7 +56,7 @@ msgstr ""
 
 #: admin.py:382
 msgid "Ready To Start"
-msgstr ""
+msgstr "Hasteko prest"
 
 #: admin.py:383
 msgid "Started"
@@ -64,7 +64,7 @@ msgstr "Hasita"
 
 #: admin.py:384
 msgid "Ready To Submit"
-msgstr ""
+msgstr "Bidaltzeko prest"
 
 #: admin.py:385
 msgid "Declined"
@@ -203,7 +203,7 @@ msgstr ""
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
-msgstr ""
+msgstr "Joan praktika-azterketara"
 
 #: templates/practice_exam/entrance.html:18
 msgid ""
@@ -236,7 +236,7 @@ msgstr ""
 
 #: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
-msgstr ""
+msgstr "Saiatu berriz praktika-azterketa hau egiten"
 
 #: templates/practice_exam/submitted.html:4
 msgid ""
@@ -255,7 +255,7 @@ msgstr ""
 
 #: templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
-msgstr ""
+msgstr "Praktika-azterketa hau berriz egiten saia zaitezke"
 
 #: templates/proctored_exam/confirm-decline.html:5
 msgid ""
@@ -858,7 +858,7 @@ msgstr "{num_of_minutes} minutu"
 #: utils.py:90
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr ""
+msgstr "eta {num_of_minutes} minutu"
 
 #: utils.py:92
 #, python-brace-format
@@ -868,7 +868,7 @@ msgstr "{num_of_minutes} minutu"
 #: utils.py:95
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr ""
+msgstr " eta {num_of_minutes} minutu"
 
 #: views.py:92
 msgid "could not determine the course_id"
@@ -893,7 +893,7 @@ msgstr ""
 
 #: views.py:537
 msgid "practice"
-msgstr ""
+msgstr "praktika"
 
 #: views.py:537
 msgid "proctored"
