@@ -9,7 +9,7 @@
 # yamahapsr200 <yamahapsr200@googlemail.com>, 2016
 # Shan <shanmathuran.sritharan@paluno.uni-due.de>, 2016
 # Alexander L. <alexander.lohberg@ufo-style.de>, 2017
-# Donna Klamma <donna@polarstern-education.com>, 2019
+# Donna Kl <donna@polarstern-education.com>, 2019
 # Stefania Trabucchi <stefania.trabucchi@abstract-technology.de>, 2019
 # 
 msgid ""
