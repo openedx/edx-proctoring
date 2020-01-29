@@ -43,7 +43,7 @@ class TestBackendProvider(ProctoringBackendProvider):
         """
         if self.attempt_error:
             raise BackendProviderOnboardingException(self.attempt_error)
-        elif self.no_attempt_id_error:
+        if self.no_attempt_id_error:
             raise BackendProviderSentNoAttemptID(self.no_attempt_id_error, http_status=200)
         return 'testexternalid'
 
@@ -107,9 +107,8 @@ class TestBackendProvider(ProctoringBackendProvider):
     def retire_user(self, user_id):
         if self.last_retire_user:
             raise BackendProviderCannotRetireUser(user_id)
-        else:
-            self.last_retire_user = user_id
-            return True
+        self.last_retire_user = user_id
+        return True
 
 
 class PassthroughBackendProvider(ProctoringBackendProvider):

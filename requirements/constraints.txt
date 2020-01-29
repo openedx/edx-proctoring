@@ -37,3 +37,6 @@ twine==1.15.0 ; python_version == "2.7"
 
 # django-model-utils==4.0.0 version dropped the support for Django 1.11 and Python 2.7 and dropped usage of six
 django-model-utils<4.0.0
+
+# jsonfield2 > 3.0.3 dropped support for python 3.5
+jsonfield2==3.0.3

@@ -97,26 +97,25 @@ def require_course_or_global_staff(func):
         attempt_id = kwargs.get('attempt_id', None)
         if request.user.is_staff:
             return func(request, *args, **kwargs)
-        else:
-            if course_id is None:
-                if exam_id is not None:
-                    exam = ProctoredExam.get_exam_by_id(exam_id)
-                    course_id = exam.course_id
-                elif attempt_id is not None:
-                    exam_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
-                    course_id = exam_attempt.proctored_exam.course_id
-                else:
-                    response_message = _("could not determine the course_id")
-                    return Response(
-                        status=status.HTTP_403_FORBIDDEN,
-                        data={"detail": response_message}
-                    )
-            if instructor_service.is_course_staff(request.user, course_id):
-                return func(request, *args, **kwargs)
-            return Response(
-                status=status.HTTP_403_FORBIDDEN,
-                data={"detail": _("Must be a Staff User to Perform this request.")}
-            )
+        if course_id is None:
+            if exam_id is not None:
+                exam = ProctoredExam.get_exam_by_id(exam_id)
+                course_id = exam.course_id
+            elif attempt_id is not None:
+                exam_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+                course_id = exam_attempt.proctored_exam.course_id
+            else:
+                response_message = _("could not determine the course_id")
+                return Response(
+                    status=status.HTTP_403_FORBIDDEN,
+                    data={"detail": response_message}
+                )
+        if instructor_service.is_course_staff(request.user, course_id):
+            return func(request, *args, **kwargs)
+        return Response(
+            status=status.HTTP_403_FORBIDDEN,
+            data={"detail": _("Must be a Staff User to Perform this request.")}
+        )
 
     return wrapped
 
@@ -329,31 +328,30 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 )
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
-        else:
-            # make sure the the attempt belongs to the calling user_id
-            if attempt['user']['id'] != request.user.id:
-                err_msg = (
-                    u'Attempted to access attempt_id {attempt_id} but '
-                    u'does not have access to it.'.format(
-                        attempt_id=attempt_id
-                    )
+        # make sure the the attempt belongs to the calling user_id
+        if attempt['user']['id'] != request.user.id:
+            err_msg = (
+                u'Attempted to access attempt_id {attempt_id} but '
+                u'does not have access to it.'.format(
+                    attempt_id=attempt_id
                 )
-                raise ProctoredExamPermissionDenied(err_msg)
+            )
+            raise ProctoredExamPermissionDenied(err_msg)
 
-            # add in the computed time remaining as a helper
-            time_remaining_seconds = get_time_remaining_for_attempt(attempt)
+        # add in the computed time remaining as a helper
+        time_remaining_seconds = get_time_remaining_for_attempt(attempt)
 
-            attempt['time_remaining_seconds'] = time_remaining_seconds
+        attempt['time_remaining_seconds'] = time_remaining_seconds
 
-            accessibility_time_string = _(u'you have {remaining_time} remaining').format(
-                remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0))))
+        accessibility_time_string = _(u'you have {remaining_time} remaining').format(
+            remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0))))
 
-            # special case if we are less than a minute, since we don't produce
-            # text translations of granularity at the seconds range
-            if time_remaining_seconds < 60:
-                accessibility_time_string = _(u'you have less than a minute remaining')
+        # special case if we are less than a minute, since we don't produce
+        # text translations of granularity at the seconds range
+        if time_remaining_seconds < 60:
+            accessibility_time_string = _(u'you have less than a minute remaining')
 
-            attempt['accessibility_time_string'] = accessibility_time_string
+        attempt['accessibility_time_string'] = accessibility_time_string
         return Response(attempt)
 
     def put(self, request, attempt_id):
@@ -804,7 +802,7 @@ class ExamReadyCallback(ProctoredAPIView):
         return Response(data='OK')
 
 
-class BaseReviewCallback(object):
+class BaseReviewCallback:
     """
     Base class for review callbacks.
     make_review handles saving reviews and review comments.
@@ -1034,8 +1032,7 @@ class InstructorDashboard(AuthenticatedAPIView):
                         exam_backend_name
                     )
                     return Response(data=error_message, status=400)
-                else:
-                    existing_backend_name = exam_backend_name
+                existing_backend_name = exam_backend_name
 
         if not exam:
             return Response(

@@ -6,7 +6,7 @@ Django>=1.11
 django-model-utils
 djangorestframework
 django-ipware>=1.1.0
-jsonfield>=2.0.2
+jsonfield2
 pytz>=2018
 pycryptodomex>=3.4.7
 django-crum
@@ -21,3 +21,4 @@ edx-opaque-keys>=0.4
 edx-drf-extensions
 edx-rest-api-client>=1.9.2
 edx-when>=0.1.3
+

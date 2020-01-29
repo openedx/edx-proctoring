@@ -817,8 +817,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     if exam_attempt_obj is None:
         if raise_if_not_found:
             raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
-        else:
-            return
+        return
 
     from_status = exam_attempt_obj.status
 
@@ -1650,7 +1649,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     has_time_expired = False
 
     attempt_status = attempt['status'] if attempt else None
-    has_due_date = True if exam['due_date'] is not None else False
+    has_due_date = exam['due_date'] is not None
     if not attempt_status:
         if is_exam_passed_due(exam, user=user_id):
             student_view_template = 'timed_exam/expired.html'
@@ -1749,7 +1748,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
     """
     Common context variables for the Proctored and Practice exams' templates.
     """
-    has_due_date = True if exam['due_date'] is not None else False
+    has_due_date = exam['due_date'] is not None
     attempt_time = attempt.get('allowed_time_limit_mins', None) if attempt else None
 
     if not attempt_time:

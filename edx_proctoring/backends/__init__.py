@@ -16,6 +16,6 @@ def get_backend_provider(exam=None, name=None):
         if 'is_proctored' in exam and not exam['is_proctored']:
             # timed exams don't have a backend
             return None
-        elif exam['backend']:
+        if exam['backend']:
             name = exam['backend']
     return apps.get_app_config('edx_proctoring').get_backend(name=name)
