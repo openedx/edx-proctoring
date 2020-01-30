@@ -9,19 +9,20 @@
     {% blocktrans %}
         Your proctored exam "{{ exam_name }}" in
         <a href="{{ course_url }}">{{ course_name }}</a> was reviewed and the
-        course team has identified one or more violations of the proctored exam rules. Examples
+        team identified one or more violations of the proctored exam rules. Examples
         of issues that may result in a rules violation include browsing
         the internet, blurry or missing photo identification, using a phone,
         or getting help from another person. As a result of the identified issue(s),
-        you did not successfully meet the proctored exam requirements.
+        you did not successfully meet the proctored
+        exam requirements.
     {% endblocktrans %}
 </p>
 <p>
     {% blocktrans %}
-        If you have any questions about your exam results, please <b>contact the course team</b>
-        for assistance. You can also reach {{platform}} Support at
-        <a href="{{contact_url}}">
-            {{ contact_url }}
+        If you have any questions about your results, contact {{ platform }}
+        support at
+        <a href="mailto:{{ contact_email }}?Subject={{ support_email_subject }}">
+            {{ contact_email }}
         </a>.
     {% endblocktrans %}
 </p>
