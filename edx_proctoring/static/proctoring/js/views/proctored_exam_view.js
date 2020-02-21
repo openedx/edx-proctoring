@@ -202,6 +202,15 @@ edx = edx || {};
         },
         endExamForFailureState: function() {
             var self = this;
+            var currentStatus = this.model.get('attempt_status');
+
+            // If the learner is in a state where they've finished the exam
+            // and the attempt can be submitted,
+            // don't let them move into the error state.
+            if (currentStatus === 'ready_to_submit') {
+                return;
+            }
+
             return $.ajax({
                 data: {
                     action: 'error'
