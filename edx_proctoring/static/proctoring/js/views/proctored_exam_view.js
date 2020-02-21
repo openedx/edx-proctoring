@@ -161,7 +161,8 @@ edx = edx || {};
             self.secondsLeft -= 1;
             if (
                 self.timerTick % pingInterval === pingInterval / 2 &&
-                edx.courseware.proctored_exam.configuredWorkerURL
+                edx.courseware.proctored_exam.configuredWorkerURL &&
+                self.model.get('attempt_status') !== 'ready_to_submit'
             ) {
                 edx.courseware.proctored_exam.pingApplication(pingInterval)
                     .catch(self.endExamForFailureState.bind(self));
