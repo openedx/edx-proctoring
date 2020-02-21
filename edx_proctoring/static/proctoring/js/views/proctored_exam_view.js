@@ -159,9 +159,16 @@ edx = edx || {};
             var pingInterval = self.model.get('ping_interval');
             self.timerTick += 1;
             self.secondsLeft -= 1;
+
+            // AED 2020-02-21:
+            // If the learner is in a state where they've finished the exam
+            // and the attempt can be submitted (i.e. they are "ready_to_submit"),
+            // don't ping the proctoring app (which action could move
+            // the attempt into an error state).
             if (
                 self.timerTick % pingInterval === pingInterval / 2 &&
-                edx.courseware.proctored_exam.configuredWorkerURL
+                edx.courseware.proctored_exam.configuredWorkerURL &&
+                this.model.get('attempt_status') !== 'ready_to_submit'
             ) {
                 edx.courseware.proctored_exam.pingApplication(pingInterval)
                     .catch(self.endExamForFailureState.bind(self));
