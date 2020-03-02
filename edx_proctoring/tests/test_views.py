@@ -2869,7 +2869,8 @@ class TestUserRetirement(LoggedInTestCase):
         self.client.login_user(self.user)
         self.deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
 
-    def create_proctored_exam(self):
+    def _create_proctored_exam(self):
+        """ Create a mock proctored exam with common values """
         return ProctoredExam.objects.create(
             course_id='a/b/c',
             content_id='test_content',
@@ -2890,7 +2891,7 @@ class TestUserRetirement(LoggedInTestCase):
         assert response.status_code == 403
 
     def test_retire_user_no_data(self):
-        """ 
+        """
         Attempting to retire an unknown user or user with no proctored attempts
         returns 204 but does not carry out a retirment
         """
@@ -2901,7 +2902,7 @@ class TestUserRetirement(LoggedInTestCase):
     def test_retire_user_exam_attempt(self):
         """ Retiring a user should obfuscate PII for exam attempts and return a 204 status """
         # Create an exam attempt
-        proctored_exam = self.create_proctored_exam()
+        proctored_exam = self._create_proctored_exam()
         create_exam_attempt(proctored_exam.id, self.user_to_retire.id)
         attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
 
@@ -2917,7 +2918,7 @@ class TestUserRetirement(LoggedInTestCase):
     def test_retire_user_exam_attempt_history(self):
         """ Retiring a user should obfuscate PII for exam attempt history and return a 204 status """
         # Create and archive an exam attempt so it appears in the history table
-        proctored_exam = self.create_proctored_exam()
+        proctored_exam = self._create_proctored_exam()
         create_exam_attempt(proctored_exam.id, self.user_to_retire.id)
         attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
         attempt.delete_exam_attempt()
@@ -2927,13 +2928,14 @@ class TestUserRetirement(LoggedInTestCase):
         response = self.client.post(self.deletion_url)
         assert response.status_code == 204
 
-        retired_attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=self.user_to_retire.id).first()
+        retired_attempt_history = ProctoredExamStudentAttemptHistory \
+            .objects.filter(user_id=self.user_to_retire.id).first()
         assert retired_attempt_history.student_name != attempt_history.student_name
         assert retired_attempt_history.last_poll_ipaddr != attempt_history.last_poll_ipaddr
 
     def test_retire_user_allowances(self):
         """ Retiring a user should delete their allowances and return a 204 """
-        proctored_exam = self.create_proctored_exam()
+        proctored_exam = self._create_proctored_exam()
         add_allowance_for_user(proctored_exam.id, self.user_to_retire.id, 'a_key', 30)
         assert len(ProctoredExamStudentAllowance.objects.filter(user=self.user_to_retire.id)) == 1
 
@@ -2945,7 +2947,7 @@ class TestUserRetirement(LoggedInTestCase):
 
     def test_retire_user_allowances_history(self):
         """ Retiring a user should delete their allowances and return a 204 """
-        proctored_exam = self.create_proctored_exam()
+        proctored_exam = self._create_proctored_exam()
         add_allowance_for_user(proctored_exam.id, self.user_to_retire.id, 'a_key', 30)
         add_allowance_for_user(proctored_exam.id, self.user_to_retire.id, 'a_key', 60)
         assert len(ProctoredExamStudentAllowanceHistory.objects.filter(user=self.user_to_retire.id)) == 1
