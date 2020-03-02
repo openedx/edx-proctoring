@@ -509,9 +509,8 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
     Information about allowing a student additional time on exam.
 
     .. pii: allowances have a free-form text field which may be identifiable
-            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
     .. pii_types: other
-    .. pii_retirement: to_be_implemented
+    .. pii_retirement: local_api
     """
 
     # DONT EDIT THE KEYS - THE FIRST VALUE OF THE TUPLE - AS ARE THEY ARE STORED IN THE DATABASE
@@ -651,9 +650,8 @@ class ProctoredExamStudentAllowanceHistory(TimeStampedModel):
     but will record (for audit history) all entries that have been updated.
 
     .. pii: allowances have a free-form text field which may be identifiable
-            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
     .. pii_types: other
-    .. pii_retirement: to_be_implemented
+    .. pii_retirement: local_api
     """
 
     # what was the original id of the allowance

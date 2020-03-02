@@ -58,6 +58,8 @@ from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamSoftwareSecureComment,
     ProctoredExamSoftwareSecureReview,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAllowanceHistory,
     ProctoredExamStudentAttempt,
     ProctoredExamStudentAttemptHistory
 )
@@ -1132,5 +1134,15 @@ class UserRetirement(AuthenticatedAPIView):
                 attempt_history.student_name = obscured_user_id(attempt_history.student_name)
                 attempt_history.last_poll_ipaddr = obscured_user_id(attempt_history.last_poll_ipaddr)
                 attempt_history.save()
+
+        allowances = ProctoredExamStudentAllowance.objects.filter(user=user_id)
+        if allowances:
+            for allowance in allowances:
+                allowance.delete()
+
+        allowances_history = ProctoredExamStudentAllowanceHistory.objects.filter(user=user_id)
+        if allowances_history:
+            for allowance_history in allowances_history:
+                allowance_history.delete()
 
         return Response(status=code)
