@@ -34,7 +34,12 @@ from edx_proctoring.exceptions import (
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException
 )
-from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
+from edx_proctoring.models import (
+    ProctoredExam,
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptHistory
+)
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -2873,27 +2878,38 @@ class TestUserRetirement(LoggedInTestCase):
 
     def test_can_delete_user(self):
         """ Retiring a user should obfuscate PII for all exam attempts and return a 204 status """
+        # Create an exam attempt
         proctored_exam = ProctoredExam.objects.create(
-                course_id='a/b/c',
-                content_id='test_content',
-                exam_name='Test Exam',
-                external_id='123aXqe3',
-                is_proctored=True,
-                is_active=True,
-                time_limit_mins=90,
-                backend='test'
-            )
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            is_proctored=True,
+            is_active=True,
+            time_limit_mins=90,
+            backend='test'
+        )
         create_exam_attempt(proctored_exam.id, self.user_to_retire.id)
         attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
 
+        # Create a second attempt to archive the first to the history table
+        attempt.is_sample_attempt = True
+        attempt.save()
+        create_exam_attempt(proctored_exam.id, self.user_to_retire.id)
+        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=self.user_to_retire.id).first()
+
+        # Run the retirement command
         deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
         response = self.client.post(deletion_url)
-        retired_attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
+        assert response.status_code == 204
 
+        retired_attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
         assert retired_attempt.student_name != attempt.student_name
         assert retired_attempt.last_poll_ipaddr != attempt.last_poll_ipaddr
 
-        assert response.status_code == 204
+        retired_attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=self.user_to_retire.id).first()
+        assert retired_attempt_history.student_name != attempt_history.student_name
+        assert retired_attempt_history.last_poll_ipaddr != attempt_history.last_poll_ipaddr
 
     def test_no_access(self):
         """ A user without retirement permissions should not be able to retire other users """

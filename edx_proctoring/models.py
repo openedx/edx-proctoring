@@ -391,9 +391,8 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     but will record (for audit history) all entries that have been updated.
 
     .. pii: new attempts log the student's name and IP
-            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
     .. pii_types: name, ip
-    .. pii_retirement: to_be_implemented
+    .. pii_retirement: local_api
     """
 
     user = models.ForeignKey(USER_MODEL, db_index=True, on_delete=models.CASCADE)
@@ -428,6 +427,7 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     # the proctoring software
     is_sample_attempt = models.BooleanField(default=False)
 
+    # Note - this is currently unset
     student_name = models.CharField(max_length=255)
 
     # what review policy was this exam submitted under

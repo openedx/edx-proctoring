@@ -58,7 +58,8 @@ from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamSoftwareSecureComment,
     ProctoredExamSoftwareSecureReview,
-    ProctoredExamStudentAttempt
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptHistory
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
@@ -1116,13 +1117,20 @@ class UserRetirement(AuthenticatedAPIView):
         """
         if not request.user.has_perm('accounts.can_retire_user'):
             return Response(status=403)
-
         code = 204
-        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id)
 
+        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id)
         if attempts:
             for attempt in attempts:
                 attempt.student_name = obscured_user_id(attempt.student_name)
                 attempt.last_poll_ipaddr = obscured_user_id(attempt.last_poll_ipaddr)
                 attempt.save()
+
+        attempts_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=user_id)
+        if attempts_history:
+            for attempt_history in attempts_history:
+                attempt_history.student_name = obscured_user_id(attempt_history.student_name)
+                attempt_history.last_poll_ipaddr = obscured_user_id(attempt_history.last_poll_ipaddr)
+                attempt_history.save()
+
         return Response(status=code)
