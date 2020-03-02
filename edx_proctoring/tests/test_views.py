@@ -21,6 +21,7 @@ from django.urls import NoReverseMatch, reverse
 
 from edx_proctoring.api import (
     _calculate_allowed_mins,
+    add_allowance_for_user,
     create_exam,
     create_exam_attempt,
     get_backend_provider,
@@ -2866,6 +2867,7 @@ class TestUserRetirement(LoggedInTestCase):
         self.user_to_retire = User(username='tester2', email='tester2@test.com')
         self.user_to_retire.save()
         self.client.login_user(self.user)
+        self.deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
 
     def create_proctored_exam(self):
         return ProctoredExam.objects.create(
@@ -2892,8 +2894,7 @@ class TestUserRetirement(LoggedInTestCase):
         Attempting to retire an unknown user or user with no proctored attempts
         returns 204 but does not carry out a retirment
         """
-        deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
-        response = self.client.post(deletion_url)
+        response = self.client.post(self.deletion_url)
 
         assert response.status_code == 204
 
@@ -2915,20 +2916,15 @@ class TestUserRetirement(LoggedInTestCase):
 
     def test_retire_user_exam_attempt_history(self):
         """ Retiring a user should obfuscate PII for exam attempt history and return a 204 status """
-        # Create an exam attempt
+        # Create and archive an exam attempt so it appears in the history table
         proctored_exam = self.create_proctored_exam()
         create_exam_attempt(proctored_exam.id, self.user_to_retire.id)
-
-        # Archive this attempt so it appears in the history table
         attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
-        attempt.is_sample_attempt = True
-        attempt.save()
-        create_exam_attempt(proctored_exam.id, self.user_to_retire.id)
+        attempt.delete_exam_attempt()
         attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=self.user_to_retire.id).first()
 
         # Run the retirement command
-        deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
-        response = self.client.post(deletion_url)
+        response = self.client.post(self.deletion_url)
         assert response.status_code == 204
 
         retired_attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=self.user_to_retire.id).first()
@@ -2938,16 +2934,11 @@ class TestUserRetirement(LoggedInTestCase):
     def test_retire_user_allowances(self):
         """ Retiring a user should delete their allowances and return a 204 """
         proctored_exam = self.create_proctored_exam()
-        allowance = ProctoredExamStudentAllowance.objects.create(
-            proctored_exam=proctored_exam,
-            user=self.user_to_retire,
-            key='a_key',
-            value=30
-        )
+        add_allowance_for_user(proctored_exam.id, self.user_to_retire.id, 'a_key', 30)
+        assert len(ProctoredExamStudentAllowance.objects.filter(user=self.user_to_retire.id)) == 1
 
         # Run the retirement command
-        deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
-        response = self.client.post(deletion_url)
+        response = self.client.post(self.deletion_url)
         assert response.status_code == 204
 
         assert len(ProctoredExamStudentAllowance.objects.filter(user=self.user_to_retire.id)) == 0
@@ -2955,23 +2946,12 @@ class TestUserRetirement(LoggedInTestCase):
     def test_retire_user_allowances_history(self):
         """ Retiring a user should delete their allowances and return a 204 """
         proctored_exam = self.create_proctored_exam()
-        allowance = ProctoredExamStudentAllowance.objects.create(
-            proctored_exam=proctored_exam,
-            user=self.user_to_retire,
-            key='a_key',
-            value=30
-        )
-        ProctoredExamStudentAllowanceHistory.objects.create(
-            allowance_id=allowance.id,
-            proctored_exam=proctored_exam,
-            user=self.user_to_retire,
-            key='a_key',
-            value=30
-        )
+        add_allowance_for_user(proctored_exam.id, self.user_to_retire.id, 'a_key', 30)
+        add_allowance_for_user(proctored_exam.id, self.user_to_retire.id, 'a_key', 60)
+        assert len(ProctoredExamStudentAllowanceHistory.objects.filter(user=self.user_to_retire.id)) == 1
 
         # Run the retirement command
-        deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
-        response = self.client.post(deletion_url)
+        response = self.client.post(self.deletion_url)
         assert response.status_code == 204
 
         assert len(ProctoredExamStudentAllowanceHistory.objects.filter(user=self.user_to_retire.id)) == 0
