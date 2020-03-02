@@ -1113,14 +1113,8 @@ class UserRetirement(AuthenticatedAPIView):
     """
     Retire user personally-identifiable information (PII) for a user
     """
-    def post(self, request, user_id):  # pylint: disable=unused-argument
-        """
-        Obfuscates all PII for a given user_id
-        """
-        if not request.user.has_perm('accounts.can_retire_user'):
-            return Response(status=403)
-        code = 204
-
+    def _retire_exam_attempts_user_info(self, user_id):
+        """ Obfuscate PII for exam attempts and exam history """
         attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id)
         if attempts:
             for attempt in attempts:
@@ -1135,14 +1129,18 @@ class UserRetirement(AuthenticatedAPIView):
                 attempt_history.last_poll_ipaddr = obscured_user_id(attempt_history.last_poll_ipaddr)
                 attempt_history.save()
 
-        allowances = ProctoredExamStudentAllowance.objects.filter(user=user_id)
-        if allowances:
-            for allowance in allowances:
-                allowance.delete()
+    def _retire_user_allowances(self, user_id):
+        """ Delete user allowances """
+        ProctoredExamStudentAllowance.objects.filter(user=user_id).delete()
+        ProctoredExamStudentAllowanceHistory.objects.filter(user=user_id).delete()
 
-        allowances_history = ProctoredExamStudentAllowanceHistory.objects.filter(user=user_id)
-        if allowances_history:
-            for allowance_history in allowances_history:
-                allowance_history.delete()
+    def post(self, request, user_id):  # pylint: disable=unused-argument
+        """ Obfuscates all PII for a given user_id """
+        if not request.user.has_perm('accounts.can_retire_user'):
+            return Response(status=403)
+        code = 204
+
+        self._retire_exam_attempts_user_info(user_id)
+        self._retire_user_allowances(user_id)
 
         return Response(status=code)
