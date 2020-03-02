@@ -98,6 +98,14 @@ In your lms.auth.json file, please add the following *secure* information::
 You will need to restart services after these configuration changes for them to
 take effect.
 
+Debugging
+------------
+
+To debug with PDB, run ``pytest`` with the ``-n0`` flag. This restricts the number
+of processes in a way that is compatible with ``pytest``
+
+    pytest -n0 [file-path]
+
 License
 -------
 
