@@ -126,10 +126,7 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
     """
     This is how an instructor can set review policies for a proctored exam
 
-    .. pii: records who set a review policy in set_by_user
-            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
-    .. pii_types: id
-    .. pii_retirement: to_be_implemented
+    .. no_pii:
     """
 
     # who set this ProctoredExamReviewPolicy
