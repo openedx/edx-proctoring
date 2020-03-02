@@ -2857,19 +2857,47 @@ class TestUserRetirement(LoggedInTestCase):
         super(TestUserRetirement, self).setUp()
         self.user.is_staff = True
         self.user.save()
-        self.second_user = User(username='tester2', email='tester2@test.com')
-        self.second_user.save()
+        self.user_to_retire = User(username='tester2', email='tester2@test.com')
+        self.user_to_retire.save()
         self.client.login_user(self.user)
 
-    def test_can_delete_user(self):
-        deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.second_user.id})
+    def test_can_delete_user_no_data(self):
+        """ 
+        Attempting to retire an unknown user or user with no proctored attempts
+        returns 204 but does not carry out a retirment
+        """
+        deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
         response = self.client.post(deletion_url)
+
         assert response.status_code == 204
-        # if there is no user data, then no deletion happens
-        assert response.data == {}
+
+    def test_can_delete_user(self):
+        """ Retiring a user should obfuscate PII for all exam attempts and return a 204 status """
+        proctored_exam = ProctoredExam.objects.create(
+                course_id='a/b/c',
+                content_id='test_content',
+                exam_name='Test Exam',
+                external_id='123aXqe3',
+                is_proctored=True,
+                is_active=True,
+                time_limit_mins=90,
+                backend='test'
+            )
+        create_exam_attempt(proctored_exam.id, self.user_to_retire.id)
+        attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
+
+        deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
+        response = self.client.post(deletion_url)
+        retired_attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
+
+        assert retired_attempt.student_name != attempt.student_name
+        assert retired_attempt.last_poll_ipaddr != attempt.last_poll_ipaddr
+
+        assert response.status_code == 204
 
     def test_no_access(self):
-        self.client.login_user(self.second_user)
+        """ A user without retirement permissions should not be able to retire other users """
+        self.client.login_user(self.user_to_retire)
         deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user.id})
 
         response = self.client.post(deletion_url)

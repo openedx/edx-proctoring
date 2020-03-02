@@ -1116,7 +1116,13 @@ class UserRetirement(AuthenticatedAPIView):
         """
         if not request.user.has_perm('accounts.can_retire_user'):
             return Response(status=403)
-        results = {}
-        code = 204
 
-        return Response(data=results, status=code)
+        code = 204
+        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id)
+
+        if attempts:
+            for attempt in attempts:
+                attempt.student_name = obscured_user_id(attempt.student_name)
+                attempt.last_poll_ipaddr = obscured_user_id(attempt.last_poll_ipaddr)
+                attempt.save()
+        return Response(status=code)
