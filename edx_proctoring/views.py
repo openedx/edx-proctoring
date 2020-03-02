@@ -1104,3 +1104,19 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
                         code = 500
                 seen.add(backend_name)
         return Response(data=results, status=code)
+
+
+class UserRetirement(AuthenticatedAPIView):
+    """
+    Retire user personally-identifiable information (PII) for a user
+    """
+    def post(self, request, user_id):  # pylint: disable=unused-argument
+        """
+        Obfuscates all PII for a given user_id
+        """
+        if not request.user.has_perm('accounts.can_retire_user'):
+            return Response(status=403)
+        results = {}
+        code = 204
+
+        return Response(data=results, status=code)

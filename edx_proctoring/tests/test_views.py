@@ -2847,3 +2847,30 @@ class TestBackendUserDeletion(LoggedInTestCase):
 
         response = self.client.post(deletion_url)
         assert response.status_code == 403
+
+
+class TestUserRetirement(LoggedInTestCase):
+    """
+    Tests for deleting user PII for proctoring
+    """
+    def setUp(self):
+        super(TestUserRetirement, self).setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.second_user = User(username='tester2', email='tester2@test.com')
+        self.second_user.save()
+        self.client.login_user(self.user)
+
+    def test_can_delete_user(self):
+        deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.second_user.id})
+        response = self.client.post(deletion_url)
+        assert response.status_code == 204
+        # if there is no user data, then no deletion happens
+        assert response.data == {}
+
+    def test_no_access(self):
+        self.client.login_user(self.second_user)
+        deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user.id})
+
+        response = self.client.post(deletion_url)
+        assert response.status_code == 403
