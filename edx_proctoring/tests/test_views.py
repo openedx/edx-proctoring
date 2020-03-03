@@ -2903,8 +2903,12 @@ class TestUserRetirement(LoggedInTestCase):
         """ Retiring a user should obfuscate PII for exam attempts and return a 204 status """
         # Create an exam attempt
         proctored_exam = self._create_proctored_exam()
-        create_exam_attempt(proctored_exam.id, self.user_to_retire.id)
-        attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
+        ProctoredExamStudentAttempt.objects.create(
+            proctored_exam=proctored_exam,
+            user=self.user_to_retire,
+            student_name='me',
+            last_poll_ipaddr='127.0.0.1'
+        )
 
         # Run the retirement command
         deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
@@ -2912,17 +2916,19 @@ class TestUserRetirement(LoggedInTestCase):
         assert response.status_code == 204
 
         retired_attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
-        assert retired_attempt.student_name != attempt.student_name
-        assert retired_attempt.last_poll_ipaddr != attempt.last_poll_ipaddr
+        assert retired_attempt.student_name == ''
+        assert retired_attempt.last_poll_ipaddr == None
 
     def test_retire_user_exam_attempt_history(self):
         """ Retiring a user should obfuscate PII for exam attempt history and return a 204 status """
         # Create and archive an exam attempt so it appears in the history table
         proctored_exam = self._create_proctored_exam()
-        create_exam_attempt(proctored_exam.id, self.user_to_retire.id)
-        attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
-        attempt.delete_exam_attempt()
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=self.user_to_retire.id).first()
+        ProctoredExamStudentAttemptHistory.objects.create(
+            proctored_exam=proctored_exam,
+            user=self.user_to_retire,
+            student_name='me',
+            last_poll_ipaddr='127.0.0.1'
+        )
 
         # Run the retirement command
         response = self.client.post(self.deletion_url)
@@ -2930,8 +2936,8 @@ class TestUserRetirement(LoggedInTestCase):
 
         retired_attempt_history = ProctoredExamStudentAttemptHistory \
             .objects.filter(user_id=self.user_to_retire.id).first()
-        assert retired_attempt_history.student_name != attempt_history.student_name
-        assert retired_attempt_history.last_poll_ipaddr != attempt_history.last_poll_ipaddr
+        assert retired_attempt_history.student_name == ''
+        assert retired_attempt_history.last_poll_ipaddr == None
 
     def test_retire_user_allowances(self):
         """ Retiring a user should delete their allowances and return a 204 """

@@ -1114,19 +1114,19 @@ class UserRetirement(AuthenticatedAPIView):
     Retire user personally-identifiable information (PII) for a user
     """
     def _retire_exam_attempts_user_info(self, user_id):
-        """ Obfuscate PII for exam attempts and exam history """
+        """ Remove PII for exam attempts and exam history """
         attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id)
         if attempts:
             for attempt in attempts:
-                attempt.student_name = obscured_user_id(attempt.student_name)
-                attempt.last_poll_ipaddr = obscured_user_id(attempt.last_poll_ipaddr)
+                attempt.student_name = ''
+                attempt.last_poll_ipaddr = None
                 attempt.save()
 
         attempts_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=user_id)
         if attempts_history:
             for attempt_history in attempts_history:
-                attempt_history.student_name = obscured_user_id(attempt_history.student_name)
-                attempt_history.last_poll_ipaddr = obscured_user_id(attempt_history.last_poll_ipaddr)
+                attempt_history.student_name = ''
+                attempt_history.last_poll_ipaddr = None
                 attempt_history.save()
 
     def _retire_user_allowances(self, user_id):
