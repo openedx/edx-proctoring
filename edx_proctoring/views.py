@@ -1130,9 +1130,19 @@ class UserRetirement(AuthenticatedAPIView):
                 attempt_history.save()
 
     def _retire_user_allowances(self, user_id):
-        """ Delete user allowances """
-        ProctoredExamStudentAllowance.objects.filter(user=user_id).delete()
-        ProctoredExamStudentAllowanceHistory.objects.filter(user=user_id).delete()
+        """ Clear user allowance values """
+        allowances = ProctoredExamStudentAllowance.objects.filter(user=user_id)
+
+        if allowances:
+            for allowance in allowances:
+                allowance.value = ''
+                allowance.save()
+
+        allowances_history = ProctoredExamStudentAllowanceHistory.objects.filter(user=user_id)
+        if allowances_history:
+            for allowance_history in allowances_history:
+                allowance_history.value = ''
+                allowance_history.save()
 
     def post(self, request, user_id):  # pylint: disable=unused-argument
         """ Obfuscates all PII for a given user_id """

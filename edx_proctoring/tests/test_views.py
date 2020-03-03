@@ -2943,23 +2943,25 @@ class TestUserRetirement(LoggedInTestCase):
         """ Retiring a user should delete their allowances and return a 204 """
         proctored_exam = self._create_proctored_exam()
         add_allowance_for_user(proctored_exam.id, self.user_to_retire.id, 'a_key', 30)
-        assert len(ProctoredExamStudentAllowance.objects.filter(user=self.user_to_retire.id)) == 1
 
         # Run the retirement command
         response = self.client.post(self.deletion_url)
         assert response.status_code == 204
 
-        assert len(ProctoredExamStudentAllowance.objects.filter(user=self.user_to_retire.id)) == 0
+        retired_allowance = ProctoredExamStudentAllowance \
+            .objects.filter(user=self.user_to_retire.id).first()
+        assert retired_allowance.value == ''
 
     def test_retire_user_allowances_history(self):
         """ Retiring a user should delete their allowances and return a 204 """
         proctored_exam = self._create_proctored_exam()
         add_allowance_for_user(proctored_exam.id, self.user_to_retire.id, 'a_key', 30)
         add_allowance_for_user(proctored_exam.id, self.user_to_retire.id, 'a_key', 60)
-        assert len(ProctoredExamStudentAllowanceHistory.objects.filter(user=self.user_to_retire.id)) == 1
 
         # Run the retirement command
         response = self.client.post(self.deletion_url)
         assert response.status_code == 204
 
-        assert len(ProctoredExamStudentAllowanceHistory.objects.filter(user=self.user_to_retire.id)) == 0
+        retired_allowance_history = ProctoredExamStudentAllowanceHistory \
+            .objects.filter(user=self.user_to_retire.id).first()
+        assert retired_allowance_history.value == ''
