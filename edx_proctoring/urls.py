@@ -95,6 +95,11 @@ urlpatterns = [
         views.BackendUserManagementAPI.as_view(),
         name='backend_user_deletion_api'
     ),
+    url(
+        r'edx_proctoring/v1/retire_user/(?P<user_id>[\d]+)/$',
+        views.UserRetirement.as_view(),
+        name='user_retirement_api'
+    ),
 
     # Unauthenticated callbacks from SoftwareSecure. Note we use other
     # security token measures to protect data
