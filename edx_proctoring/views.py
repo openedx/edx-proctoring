@@ -58,7 +58,10 @@ from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamSoftwareSecureComment,
     ProctoredExamSoftwareSecureReview,
-    ProctoredExamStudentAttempt
+    ProctoredExamStudentAllowance,
+    ProctoredExamStudentAllowanceHistory,
+    ProctoredExamStudentAttempt,
+    ProctoredExamStudentAttemptHistory
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
@@ -917,7 +920,13 @@ class ProctoredExamReviewCallback(ProctoredAPIView, BaseReviewCallback):
         """
         attempt = get_exam_attempt_by_external_id(external_id)
         if attempt is None:
-            raise StudentExamAttemptDoesNotExistsException('not found')
+            err_msg = (
+                u'Attempted to access external exam id {external_id} but '
+                u'it does not exist.'.format(
+                    external_id=external_id
+                )
+            )
+            raise StudentExamAttemptDoesNotExistsException(err_msg)
         if request.user.has_perm('edx_proctoring.can_review_attempt', attempt):
             self.make_review(attempt, request.data)
             resp = Response(data='OK')
@@ -1104,3 +1113,47 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
                         code = 500
                 seen.add(backend_name)
         return Response(data=results, status=code)
+
+
+class UserRetirement(AuthenticatedAPIView):
+    """
+    Retire user personally-identifiable information (PII) for a user
+    """
+    def _retire_exam_attempts_user_info(self, user_id):
+        """ Remove PII for exam attempts and exam history """
+        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id)
+        if attempts:
+            for attempt in attempts:
+                attempt.student_name = ''
+                attempt.last_poll_ipaddr = None
+                attempt.save()
+
+        attempts_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=user_id)
+        if attempts_history:
+            for attempt_history in attempts_history:
+                attempt_history.student_name = ''
+                attempt_history.last_poll_ipaddr = None
+                attempt_history.save()
+
+    def _retire_user_allowances(self, user_id):
+        """ Clear user allowance values """
+        allowances = ProctoredExamStudentAllowance.objects.filter(user=user_id)
+        for allowance in allowances:
+            allowance.value = ''
+            allowance.save()
+
+        allowances_history = ProctoredExamStudentAllowanceHistory.objects.filter(user=user_id)
+        for allowance_history in allowances_history:
+            allowance_history.value = ''
+            allowance_history.save()
+
+    def post(self, request, user_id):  # pylint: disable=unused-argument
+        """ Obfuscates all PII for a given user_id """
+        if not request.user.has_perm('accounts.can_retire_user'):
+            return Response(status=403)
+        code = 204
+
+        self._retire_exam_attempts_user_info(user_id)
+        self._retire_user_allowances(user_id)
+
+        return Response(status=code)
