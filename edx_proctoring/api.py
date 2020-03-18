@@ -690,6 +690,20 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             )
             log.error(log_msg)
 
+    if not external_id and exam['backend'] == 'proctortrack' and taking_as_proctored:
+        # temporary logging added to better understand cases where we end up
+        # with exam attempts with NULL external_ids - a situation, that, theoretically,
+        # shouldn't be occurring (EDUCATOR-4948)
+        log_msg = (
+            u'Registered exam attempt with an external ID {external_id}'
+            u'in {exam_id} for user {user_id}'.format(
+                external_id=external_id,
+                exam_id=exam_id,
+                user_id=user_id,
+            )
+        )
+        log.error(log_msg)
+
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,
         user_id,
