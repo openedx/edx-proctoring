@@ -182,7 +182,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                     and attempt_obj.status != ProctoredExamStudentAttemptStatus.second_review_required
                     and SEND_EMAIL and settings.EXAM_REVIEWER_EMAILS
             ):
-                msg = 'Exam attempt code: {}; video review link: {}; student email: {}'.format(
+                msg = 'Exam attempt code: {}; video review link: {} student email: {}'.format(
                     payload['examMetaData']['examCode'], payload['videoReviewLink'], payload.get('examTakerEmail')
                 )
                 for email in settings.EXAM_REVIEWER_EMAILS:
