@@ -2,20 +2,15 @@
 # http://open-edx-proposals.readthedocs.io/en/latest/oeps/oep-0002.html#specification
 
 nick: proc
-owner: mattcarter
 tags:
     - lms
     - library
 oeps:
-    oep-2: True
-    oep-3: False
-    oep-5: True
-    oep-7: True
-    oep-18: True
-    oep-30:
-        state: False
-        reason: Compliance via https://openedx.atlassian.net/browse/EDUCATOR-4754
-
-track-pulls: true
-supporting_teams:
-  - masters-devs
+    oep-2: true   # Repository metadata
+    oep-3: false  # Async task management
+    oep-7: true   # Python 3
+    oep-18: true  # Dependency management
+    oep-30: true  # PII annotation
+owner:
+    type: team
+    team: edx/masters-devs
