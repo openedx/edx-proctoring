@@ -8,64 +8,64 @@ appdirs==1.4.3            # via virtualenv
 argparse==1.4.0           # via caniusepython3
 astroid==2.3.3            # via pylint, pylint-celery
 backports.functools-lru-cache==1.6.1  # via caniusepython3
-bleach==3.1.1             # via readme-renderer
-caniusepython3==7.2.0     # via -r requirements/quality.in (line 4)
-certifi==2019.11.28       # via requests
+bleach==3.1.4             # via readme-renderer
+caniusepython3==7.2.0     # via -r requirements/quality.in
+certifi==2020.4.5.1       # via requests
 chardet==3.0.4            # via requests
 click-log==0.3.2          # via edx-lint
-click==7.0                # via click-log, edx-lint, pip-tools
-diff-cover==2.6.0         # via -r requirements/dev.in (line 6)
+click==7.1.1              # via click-log, edx-lint, pip-tools
+diff-cover==2.6.1         # via -r requirements/dev.in
 distlib==0.3.0            # via caniusepython3, virtualenv
-django==1.11.28           # via -r requirements/dev.in (line 15), -r requirements/quality.in (line 9), edx-i18n-tools
+django==1.11.29           # via -r requirements/dev.in, -r requirements/quality.in, edx-i18n-tools
 docutils==0.16            # via readme-renderer
-edx-i18n-tools==0.5.0     # via -r requirements/dev.in (line 8)
-edx-lint==1.4.1           # via -r requirements/dev.in (line 7), -r requirements/quality.in (line 5)
+edx-i18n-tools==0.5.0     # via -r requirements/dev.in
+edx-lint==1.4.1           # via -r requirements/dev.in, -r requirements/quality.in
 filelock==3.0.12          # via tox, virtualenv
 idna==2.9                 # via requests
-importlib-metadata==1.5.0  # via inflect, path, pluggy, tox, virtualenv
-importlib-resources==1.0.2  # via virtualenv
+importlib-metadata==1.6.0  # via importlib-resources, inflect, path, pluggy, tox, virtualenv
+importlib-resources==1.4.0  # via virtualenv
 inflect==3.0.2            # via jinja2-pluralize
-isort==4.3.21             # via -r requirements/quality.in (line 6), pylint
+isort==4.3.21             # via -r requirements/quality.in, pylint
 jinja2-pluralize==0.3.0   # via diff-cover
 jinja2==2.11.1            # via diff-cover, jinja2-pluralize
 lazy-object-proxy==1.4.3  # via astroid
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
-packaging==20.1           # via caniusepython3, tox
-path.py==12.4.0           # via -r requirements/dev.in (line 14), edx-i18n-tools
+packaging==20.3           # via caniusepython3, tox
+path.py==12.4.0           # via -r requirements/dev.in, edx-i18n-tools
 path==13.1.0              # via path.py
-pip-tools==4.5.0          # via -r requirements/dev.in (line 9)
+pip-tools==4.5.1          # via -r requirements/dev.in
 pkginfo==1.5.0.1          # via twine
 pluggy==0.13.1            # via diff-cover, tox
 polib==1.1.0              # via edx-i18n-tools
 py==1.8.1                 # via tox
-pycodestyle==2.5.0        # via -r requirements/quality.in (line 7)
-pydocstyle==5.0.2         # via -r requirements/quality.in (line 8)
-pygments==2.5.2           # via diff-cover, readme-renderer
+pycodestyle==2.5.0        # via -r requirements/quality.in
+pydocstyle==5.0.2         # via -r requirements/quality.in
+pygments==2.6.1           # via diff-cover, readme-renderer
 pylint-celery==0.3        # via edx-lint
 pylint-django==2.0.11     # via edx-lint
 pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
 pylint==2.4.2             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
-pyparsing==2.4.6          # via packaging
+pyparsing==2.4.7          # via packaging
 pytz==2019.3              # via django
-pyyaml==5.3               # via edx-i18n-tools
-readme-renderer==24.0     # via twine
+pyyaml==5.3.1             # via edx-i18n-tools
+readme-renderer==25.0     # via twine
 requests-toolbelt==0.9.1  # via twine
 requests==2.23.0          # via caniusepython3, requests-toolbelt, twine
 six==1.14.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pip-tools, readme-renderer, tox, virtualenv
 snowballstemmer==2.0.0    # via pydocstyle
 toml==0.10.0              # via tox
-tox-battery==0.5.2        # via -r requirements/dev.in (line 11)
-tox==3.14.5               # via -r requirements/dev.in (line 10), tox-battery
-tqdm==4.43.0              # via twine
-twine==1.15.0             # via -r requirements/dev.in (line 12), -r requirements/quality.in (line 10)
+tox-battery==0.5.2        # via -r requirements/dev.in
+tox==3.14.6               # via -r requirements/dev.in, tox-battery
+tqdm==4.45.0              # via twine
+twine==1.15.0             # via -r requirements/dev.in, -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
 urllib3==1.25.8           # via requests
-virtualenv==20.0.5        # via tox
+virtualenv==20.0.16       # via tox
 webencodings==0.5.1       # via bleach
-wheel==0.34.2             # via -r requirements/dev.in (line 13)
+wheel==0.34.2             # via -r requirements/dev.in
 wrapt==1.11.2             # via astroid
-zipp==1.2.0               # via importlib-metadata
+zipp==1.2.0               # via importlib-metadata, importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
