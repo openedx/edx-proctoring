@@ -27,14 +27,14 @@ importlib-resources==1.4.0  # via virtualenv
 inflect==3.0.2            # via jinja2-pluralize
 isort==4.3.21             # via -r requirements/quality.in, pylint
 jinja2-pluralize==0.3.0   # via diff-cover
-jinja2==2.11.1            # via diff-cover, jinja2-pluralize
+jinja2==2.11.2            # via diff-cover, jinja2-pluralize
 lazy-object-proxy==1.4.3  # via astroid
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
 packaging==20.3           # via caniusepython3, tox
 path.py==12.4.0           # via -r requirements/dev.in, edx-i18n-tools
 path==13.1.0              # via path.py
-pip-tools==4.5.1          # via -r requirements/dev.in
+pip-tools==5.0.0          # via -r requirements/dev.in
 pkginfo==1.5.0.1          # via twine
 pluggy==0.13.1            # via diff-cover, tox
 polib==1.1.0              # via edx-i18n-tools
@@ -61,11 +61,12 @@ tqdm==4.45.0              # via twine
 twine==1.15.0             # via -r requirements/dev.in, -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
 urllib3==1.25.8           # via requests
-virtualenv==20.0.16       # via tox
+virtualenv==20.0.17       # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.34.2             # via -r requirements/dev.in
 wrapt==1.11.2             # via astroid
 zipp==1.2.0               # via importlib-metadata, importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
+# pip
 # setuptools
