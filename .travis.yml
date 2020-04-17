@@ -11,9 +11,6 @@ env:
   - TOXENV=django22-drf39
   - TOXENV=django22-drf310
   - TOXENV=django22-drflatest
-  - TOXENV=django30-drf39
-  - TOXENV=django30-drf310
-  - TOXENV=django30-drflatest
 
 matrix:
   include:
