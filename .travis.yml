@@ -3,8 +3,10 @@ cache: pip
 python:
 - 3.5
 - '3.8'
+
 services:
 - xvfb
+
 env:
 - TOXENV=django22-drf310
 - TOXENV=django22-drflatest
@@ -14,6 +16,16 @@ env:
 - TOXENV=translations
 - TOXENV=js_tests
 - TOXENV=js_lint
+
+matrix:
+  exclude:
+    - env: TOXENV=quality
+    - env: TOXENV=pii_check
+    - env: TOXENV=version_check
+    - env: TOXENV=translations
+    - env: TOXENV=js_tests
+    - env: TOXENV=js_lint
+
 before_install:
 - export DISPLAY=:99.0
 install:
