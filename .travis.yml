@@ -2,20 +2,12 @@ language: python
 cache: pip
 python:
 - 3.5
+- 3.8
 
 services:
 - xvfb
 
 env:
-- TOXENV=django111-drf39
-- TOXENV=django111-drf310
-- TOXENV=django111-drflatest
-- TOXENV=django20-drf39
-- TOXENV=django20-drf310
-- TOXENV=django20-drflatest
-- TOXENV=django21-drf39
-- TOXENV=django21-drf310
-- TOXENV=django21-drflatest
 - TOXENV=django22-drf310
 - TOXENV=django22-drflatest
 - TOXENV=quality

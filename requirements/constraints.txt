@@ -8,35 +8,8 @@
 # pin when possible.  Writing an issue against the offending project and
 # linking to it here is good.
 
-# This is a backport which can only be installed on Python 2.7
-futures==3.3.0 ; python_version == "2.7"
-
-# Sphinx 2.0.0 drops support for python 2.7 which we still need.
-# pip-compile can't resolve dependencies for Sphinx 1.8.5:
-# https://github.com/jazzband/pip-tools/issues/810
-Sphinx==1.8.4
-
-# A dependency of pytest.  Pytest doesn't constrain it and 6.0.0 onward
-# only works with python 3
-more-itertools==5.0.0
-
-# path.py 12.0 drops support for python 2.7
-path.py==11.5.2 ; python_version == "2.7"
-
-# DRF >= 3.10.0 drops support for python 2
-djangorestframework==3.9.4 ; python_version == "2.7"
-
-# pytest >= 5.0 drops support for python 2
-pytest==4.6.6 ; python_version == "2.7"
-
-# pydocstyle >= 4.0 drops support for python 2
-pydocstyle==3.0.0 ; python_version == "2.7"
-
-# twine >= 2.0 drops support for python 2
-twine==1.15.0 ; python_version == "2.7"
-
-# django-model-utils==4.0.0 version dropped the support for Django 1.11 and Python 2.7 and dropped usage of six
-django-model-utils<4.0.0
-
 # jsonfield2 > 3.0.3 dropped support for python 3.5
 jsonfield2==3.0.3
+
+# Stay on lates LTS release
+Django>=2.2,<2.3
