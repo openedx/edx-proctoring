@@ -20,12 +20,12 @@ django-model-utils==3.2.0  # via -c requirements/constraints.txt, -r requirement
 django-waffle==0.20.0     # via -r requirements/base.in, edx-django-utils, edx-drf-extensions
 django-webpack-loader==0.7.0  # via -r requirements/base.in
 drf-jwt==1.14.0           # via edx-drf-extensions
-edx-django-utils==3.2.0   # via edx-drf-extensions, edx-rest-api-client, edx-when
+edx-django-utils==3.2.1   # via edx-drf-extensions, edx-rest-api-client, edx-when
 edx-drf-extensions==5.0.2  # via -r requirements/base.in, edx-when
 edx-i18n-tools==0.5.0     # via -r requirements/test.in
 edx-opaque-keys==2.0.2    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.1.0  # via -r requirements/base.in
-edx-when==1.2.0           # via -r requirements/base.in
+edx-when==1.2.1           # via -r requirements/base.in
 event-tracking==0.3.0     # via -r requirements/base.in
 execnet==1.7.1            # via pytest-xdist
 freezegun==0.3.15         # via -r requirements/test.in
@@ -68,7 +68,7 @@ python-slugify==4.0.0     # via code-annotations
 pytz==2019.3              # via -r requirements/base.in, django, event-tracking, fs, xblock
 pyyaml==5.3.1             # via code-annotations, edx-i18n-tools, xblock
 requests==2.23.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
-responses==0.10.12        # via -r requirements/test.in
+responses==0.10.14        # via -r requirements/test.in
 rest-condition==1.0.3     # via edx-drf-extensions
 rules==2.2                # via -r requirements/base.in
 selenium==3.141.0         # via -r requirements/test.in, bok-choy
@@ -78,10 +78,10 @@ slumber==0.7.1            # via edx-rest-api-client
 sqlparse==0.3.1           # via django
 stevedore==1.32.0         # via code-annotations, edx-opaque-keys
 sure==1.2.7               # via -r requirements/test.in
-testfixtures==6.14.0      # via -r requirements/test.in
+testfixtures==6.14.1      # via -r requirements/test.in
 text-unidecode==1.3       # via python-slugify
 typing==3.7.4.1           # via fs
-urllib3==1.25.8           # via requests, selenium
+urllib3==1.25.9           # via requests, selenium
 wcwidth==0.1.9            # via pytest
 web-fragments==0.3.1      # via xblock
 webob==1.8.6              # via xblock

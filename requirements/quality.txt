@@ -32,7 +32,7 @@ pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
 pylint==2.4.2             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
 pyparsing==2.4.7          # via packaging
 pytz==2019.3              # via django
-readme-renderer==25.0     # via twine
+readme-renderer==26.0     # via twine
 requests-toolbelt==0.9.1  # via twine
 requests==2.23.0          # via caniusepython3, requests-toolbelt, twine
 six==1.14.0               # via astroid, bleach, edx-lint, packaging, readme-renderer
@@ -40,7 +40,7 @@ snowballstemmer==2.0.0    # via pydocstyle
 tqdm==4.45.0              # via twine
 twine==1.15.0             # via -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
-urllib3==1.25.8           # via requests
+urllib3==1.25.9           # via requests
 webencodings==0.5.1       # via bleach
 wrapt==1.11.2             # via astroid
 
