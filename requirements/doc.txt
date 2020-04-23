@@ -20,12 +20,12 @@ djangorestframework==3.11.0  # via -r requirements/base.in, drf-jwt, edx-drf-ext
 doc8==0.8.0               # via -r requirements/doc.in
 docutils==0.16            # via doc8, readme-renderer, restructuredtext-lint, sphinx
 drf-jwt==1.14.0           # via edx-drf-extensions
-edx-django-utils==3.2.0   # via edx-drf-extensions, edx-rest-api-client, edx-when
+edx-django-utils==3.2.1   # via edx-drf-extensions, edx-rest-api-client, edx-when
 edx-drf-extensions==5.0.2  # via -r requirements/base.in, edx-when
 edx-opaque-keys==2.0.2    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.1.0  # via -r requirements/base.in
 edx-sphinx-theme==1.5.0   # via -r requirements/doc.in
-edx-when==1.2.0           # via -r requirements/base.in
+edx-when==1.2.1           # via -r requirements/base.in
 event-tracking==0.3.0     # via -r requirements/base.in
 fs==2.4.11                # via xblock
 future==0.18.2            # via pyjwkest
@@ -49,7 +49,7 @@ pyparsing==2.4.7          # via packaging
 python-dateutil==2.8.1    # via -r requirements/base.in, edx-drf-extensions, xblock
 pytz==2019.3              # via -r requirements/base.in, babel, django, event-tracking, fs, xblock
 pyyaml==5.3.1             # via xblock
-readme-renderer==25.0     # via -r requirements/doc.in
+readme-renderer==26.0     # via -r requirements/doc.in
 requests==2.23.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber, sphinx
 rest-condition==1.0.3     # via edx-drf-extensions
 restructuredtext-lint==1.3.0  # via doc8
@@ -64,7 +64,7 @@ sphinxcontrib-websupport==1.2.1  # via sphinx
 sqlparse==0.3.1           # via django
 stevedore==1.32.0         # via doc8, edx-opaque-keys
 typing==3.7.4.1           # via fs
-urllib3==1.25.8           # via requests
+urllib3==1.25.9           # via requests
 web-fragments==0.3.1      # via xblock
 webencodings==0.5.1       # via bleach
 webob==1.8.6              # via xblock
