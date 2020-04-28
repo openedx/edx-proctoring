@@ -7,7 +7,7 @@ edX Proctoring Developer Guide
 How do I use proctoring on devstack?
 ------------------------------------
 * Create a test course
-    * Follow the steps here: Including Proctored Exams in Your Course
+    * Follow the steps here: `Including Proctored Exams in Your Course <https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/proctored_exams/proctored_enabling.html>`_
 * Read the `learner guide for using proctoring <http://edx.readthedocs.io/projects/edx-guide-for-students/en/latest/completing_assignments/SFD_proctored_exams.html>`_
 * Start out by trying a practice proctored exam to understand the process
 * The Instructor Dashboard has a "Special Exams" tab for administering proctoring
@@ -88,6 +88,12 @@ Then back in your host shell::
     cd ~/workspace/src/mockprock/
     pip install -e .[server]
     python -m mockprock.server
+
+If you use Z shell (zsh), the command ``pip install -e .[server]`` will fail with ``zsh: no matches found: .[server]``. This is because `zsh uses square brackets for globbing/pattern matching`_. You should instead run the following command.::
+
+   pip install -e ".[server]"
+
+.. _"zsh uses square brackets for globbing/pattern matching": https://stackoverflow.com/questions/30539798/zsh-no-matches-found-requestssecurity
 
 The command will tell you you have to supply an client_id and client_secret. It'll open your browser to the Django admin page where you should create or use an existing credential. You'll also need to add the user associated with the credential to the "mockprock_review" Django group. You can create the group at ``/admin/auth/group/``. Note the client_id and client_secret and restart the server::
 
