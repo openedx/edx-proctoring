@@ -121,7 +121,7 @@ def on_attempt_changed(sender, instance, signal, **kwargs):  # pylint: disable=u
     models.archive_model(models.ProctoredExamStudentAttemptHistory, instance, id='attempt_id')
 
 
-# Hook up the signals to record updates/deletions in the ProctoredExamStudentAllowanceHistory table.
+# Hook up the signals to record updates/deletions in the ProctoredExamSoftwareSecureReview table.
 @receiver(pre_save, sender=models.ProctoredExamSoftwareSecureReview)
 @receiver(pre_delete, sender=models.ProctoredExamSoftwareSecureReview)
 def on_review_changed(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
