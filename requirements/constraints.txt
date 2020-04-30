@@ -10,3 +10,6 @@
 
 # jsonfield2 > 3.0.3 dropped support for python 3.5
 jsonfield2==3.0.3
+
+# Use latest LTS version
+Django<2.3

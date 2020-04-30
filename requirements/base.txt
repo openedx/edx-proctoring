@@ -12,12 +12,12 @@ django-ipware==2.1.0      # via -r requirements/base.in
 django-model-utils==4.0.0  # via -r requirements/base.in, edx-when
 django-waffle==0.20.0     # via -r requirements/base.in, edx-django-utils, edx-drf-extensions
 django-webpack-loader==0.7.0  # via -r requirements/base.in
-django==2.2.12            # via -r requirements/base.in, django-crum, django-model-utils, djangorestframework, drf-jwt, edx-django-utils, edx-drf-extensions, edx-when, event-tracking, jsonfield2, rest-condition
+django==2.2.12            # via -c requirements/constraints.txt, -r requirements/base.in, django-crum, django-model-utils, djangorestframework, drf-jwt, edx-django-utils, edx-drf-extensions, edx-when, event-tracking, jsonfield2, rest-condition
 djangorestframework==3.11.0  # via -r requirements/base.in, drf-jwt, edx-drf-extensions, rest-condition
 drf-jwt==1.14.0           # via edx-drf-extensions
 edx-django-utils==3.2.1   # via edx-drf-extensions, edx-rest-api-client, edx-when
 edx-drf-extensions==5.0.2  # via -r requirements/base.in, edx-when
-edx-opaque-keys==2.0.2    # via -r requirements/base.in, edx-drf-extensions, edx-when
+edx-opaque-keys==2.1.0    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.1.0  # via -r requirements/base.in
 edx-when==1.2.2           # via -r requirements/base.in
 event-tracking==0.3.0     # via -r requirements/base.in
