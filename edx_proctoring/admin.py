@@ -292,9 +292,9 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         review.reviewed_by = request.user
         review.save()
 
-    def get_form(self, request, obj=None, **kwargs):
+    def get_form(self, request, obj=None, change=False, **kwargs):
         """ Returns software secure review form """
-        form = super(ProctoredExamSoftwareSecureReviewAdmin, self).get_form(request, obj, **kwargs)
+        form = super(ProctoredExamSoftwareSecureReviewAdmin, self).get_form(request, obj, change, **kwargs)
         if 'video_url' in form.base_fields:
             del form.base_fields['video_url']
         return form
