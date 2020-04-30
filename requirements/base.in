@@ -2,7 +2,7 @@
 -c constraints.txt
 
 # Django/Framework Packages
-Django
+Django>=2.2,<2.3
 django-model-utils
 djangorestframework
 django-ipware>=1.1.0
