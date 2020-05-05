@@ -222,7 +222,7 @@ For example, andya+test@edx.org
 
 * Enroll for the `proctoring test course <https://courses.stage.edx.org/courses/course-v1:Proctoring2+Proctoring2+Proctoring2/info>`_
 * Sign up for the verified track
-* When paying, use one of the `test credit cards <http://www.cybersource.com/developers/other_resources/quick_references/test_cc_numbers/>`_
+* When paying, use one of the `test credit cards <https://developer.cybersource.com/hello-world/testing-guide.html>`_
 
 Note: you can use any expiration date in the future, and any three digit CVN
 
