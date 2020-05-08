@@ -18,7 +18,7 @@ diff-cover==2.6.1         # via -r requirements/dev.in
 distlib==0.3.0            # via caniusepython3, virtualenv
 django==2.2.12            # via -c requirements/constraints.txt, -r requirements/dev.in, -r requirements/quality.in, edx-i18n-tools
 docutils==0.16            # via readme-renderer
-edx-i18n-tools==0.5.0     # via -r requirements/dev.in
+edx-i18n-tools==0.5.1     # via -r requirements/dev.in
 edx-lint==1.4.1           # via -r requirements/dev.in, -r requirements/quality.in
 filelock==3.0.12          # via tox, virtualenv
 idna==2.9                 # via requests
@@ -34,7 +34,7 @@ mccabe==0.6.1             # via pylint
 packaging==20.3           # via bleach, caniusepython3, tox
 path.py==12.4.0           # via -r requirements/dev.in, edx-i18n-tools
 path==13.1.0              # via path.py
-pip-tools==5.1.0          # via -r requirements/dev.in
+pip-tools==5.1.2          # via -r requirements/dev.in
 pkginfo==1.5.0.1          # via twine
 pluggy==0.13.1            # via diff-cover, tox
 polib==1.1.0              # via edx-i18n-tools
@@ -57,12 +57,12 @@ snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.3.1           # via django
 toml==0.10.0              # via tox
 tox-battery==0.5.2        # via -r requirements/dev.in
-tox==3.14.6               # via -r requirements/dev.in, tox-battery
-tqdm==4.45.0              # via twine
+tox==3.15.0               # via -r requirements/dev.in, tox-battery
+tqdm==4.46.0              # via twine
 twine==1.15.0             # via -r requirements/dev.in, -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
 urllib3==1.25.9           # via requests
-virtualenv==20.0.18       # via tox
+virtualenv==20.0.20       # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.34.2             # via -r requirements/dev.in
 wrapt==1.11.2             # via astroid
