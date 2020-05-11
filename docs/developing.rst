@@ -80,6 +80,9 @@ Add it to your ``private.py``::
 
 Reinstall requirements in lms and studio.
 
+Rebuild static assets to make sure mockprock ui scripts are available::
+   make lms-static
+
 Then back in your host shell::
 
     cd ~/workspace/src/mockprock/
