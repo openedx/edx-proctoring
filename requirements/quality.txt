@@ -23,7 +23,7 @@ lazy-object-proxy==1.4.3  # via astroid
 mccabe==0.6.1             # via pylint
 packaging==20.3           # via bleach, caniusepython3
 pkginfo==1.5.0.1          # via twine
-pycodestyle==2.5.0        # via -r requirements/quality.in
+pycodestyle==2.6.0        # via -r requirements/quality.in
 pydocstyle==5.0.2         # via -r requirements/quality.in
 pygments==2.6.1           # via readme-renderer
 pylint-celery==0.3        # via edx-lint

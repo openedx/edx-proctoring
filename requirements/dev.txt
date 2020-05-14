@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-appdirs==1.4.3            # via virtualenv
+appdirs==1.4.4            # via virtualenv
 argparse==1.4.0           # via caniusepython3
 astroid==2.3.3            # via pylint, pylint-celery
 backports.functools-lru-cache==1.6.1  # via caniusepython3
@@ -18,7 +18,7 @@ diff-cover==2.6.1         # via -r requirements/dev.in
 distlib==0.3.0            # via caniusepython3, virtualenv
 django==2.2.12            # via -c requirements/constraints.txt, -r requirements/dev.in, -r requirements/quality.in, edx-i18n-tools
 docutils==0.16            # via readme-renderer
-edx-i18n-tools==0.5.1     # via -r requirements/dev.in
+edx-i18n-tools==0.5.3     # via -r requirements/dev.in
 edx-lint==1.4.1           # via -r requirements/dev.in, -r requirements/quality.in
 filelock==3.0.12          # via tox, virtualenv
 idna==2.9                 # via requests
@@ -39,7 +39,7 @@ pkginfo==1.5.0.1          # via twine
 pluggy==0.13.1            # via diff-cover, tox
 polib==1.1.0              # via edx-i18n-tools
 py==1.8.1                 # via tox
-pycodestyle==2.5.0        # via -r requirements/quality.in
+pycodestyle==2.6.0        # via -r requirements/quality.in
 pydocstyle==5.0.2         # via -r requirements/quality.in
 pygments==2.6.1           # via diff-cover, readme-renderer
 pylint-celery==0.3        # via edx-lint
@@ -55,7 +55,7 @@ requests==2.23.0          # via caniusepython3, requests-toolbelt, twine
 six==1.14.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pip-tools, readme-renderer, tox, virtualenv
 snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.3.1           # via django
-toml==0.10.0              # via tox
+toml==0.10.1              # via tox
 tox-battery==0.5.2        # via -r requirements/dev.in
 tox==3.15.0               # via -r requirements/dev.in, tox-battery
 tqdm==4.46.0              # via twine

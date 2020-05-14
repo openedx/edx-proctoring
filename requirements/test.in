@@ -12,6 +12,7 @@ httmock>=1.2.3
 httpretty>=0.8.0
 logilab-common>=0.63.2
 mock>=1.0.1
+nose
 pytest-cov                # pytest extension for code coverage statistics
 pytest-django             # pytest extension for better Django support
 pytest-xdist              # pytest extension for parallel execution
