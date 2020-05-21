@@ -28,7 +28,7 @@ jinja2==2.11.2            # via diff-cover, jinja2-pluralize
 lazy-object-proxy==1.4.3  # via astroid
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
-packaging==20.4           # via bleach, tox
+packaging==20.4           # via bleach, caniusepython3, tox
 path.py==12.4.0           # via -r requirements/dev.in, edx-i18n-tools
 path==13.1.0              # via path.py
 pip-tools==5.1.2          # via -r requirements/dev.in
