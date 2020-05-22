@@ -18,14 +18,14 @@ drf-jwt==1.14.0           # via edx-drf-extensions
 edx-django-utils==3.2.2   # via edx-drf-extensions, edx-rest-api-client, edx-when
 edx-drf-extensions==6.0.0  # via -r requirements/base.in, edx-when
 edx-opaque-keys==2.1.0    # via -r requirements/base.in, edx-drf-extensions, edx-when
-edx-rest-api-client==5.2.0  # via -r requirements/base.in
+edx-rest-api-client==5.2.1  # via -r requirements/base.in
 edx-when==1.2.3           # via -r requirements/base.in
 event-tracking==0.3.2     # via -r requirements/base.in
 fs==2.4.11                # via xblock
 future==0.18.2            # via pyjwkest
 idna==2.9                 # via requests
 jsonfield2==3.0.3         # via -c requirements/constraints.txt, -r requirements/base.in
-lxml==4.5.0               # via xblock
+lxml==4.5.1               # via xblock
 markupsafe==1.1.1         # via xblock
 newrelic==5.12.1.141      # via edx-django-utils
 pbr==5.4.5                # via stevedore
