@@ -1669,6 +1669,12 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
             student_view_template = 'timed_exam/expired.html'
         else:
             student_view_template = 'timed_exam/entrance.html'
+    elif is_exam_passed_due(exam, user_id) and ProctoredExamStudentAttemptStatus.is_incomplete_status(attempt_status):
+        # When the exam is past due, we should prevent learners from accessing the exam even if
+        # they already accessed the exam before, but haven't completed.
+        student_view_template = 'timed_exam/expired.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.timed_out:
+        raise NotImplementedError('There is no defined rendering for ProctoredExamStudentAttemptStatus.timed_out!')
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
         return None
@@ -1987,6 +1993,10 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             # emit an event that the user was presented with the option
             # to start timed exam
             emit_event(exam, 'option-presented')
+    elif is_exam_passed_due(exam, user_id) and ProctoredExamStudentAttemptStatus.is_incomplete_status(attempt_status):
+        # When the exam is past due, we should prevent learners from accessing the exam even if
+        # they already accessed the exam before, but haven't completed.
+        student_view_template = 'proctored_exam/expired.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         provider = get_backend_provider(exam)
         if provider.should_block_access_to_exam_material():

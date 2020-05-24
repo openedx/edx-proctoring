@@ -7,6 +7,7 @@ All tests for the api.py
 
 from __future__ import absolute_import
 
+import itertools
 from datetime import datetime, timedelta
 
 import ddt
@@ -54,6 +55,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.timed_exam_msg = u'{exam_name} is a Timed Exam'
         self.timed_exam_submitted = 'You have submitted your timed exam.'
         self.timed_exam_expired = 'The time allotted for this exam has expired.'
+        self.timed_exam_submitted_expired = 'The time allotted for this exam has expired. Your exam has been submitted'
         self.submitted_timed_exam_msg_with_due_date = 'After the due date has passed,'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
         self.exam_time_error_msg = 'A technical error has occurred with your proctored exam'
@@ -873,6 +875,98 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 }
             )
             self.assertIsNotNone(rendered_response)
+
+    @ddt.data(
+        *itertools.product(
+            (
+                ProctoredExamStudentAttemptStatus.created,
+                ProctoredExamStudentAttemptStatus.download_software_clicked,
+                ProctoredExamStudentAttemptStatus.ready_to_start,
+                ProctoredExamStudentAttemptStatus.started,
+                ProctoredExamStudentAttemptStatus.ready_to_submit,
+                ProctoredExamStudentAttemptStatus.declined,
+                ProctoredExamStudentAttemptStatus.timed_out,
+                ProctoredExamStudentAttemptStatus.submitted,
+            ),
+            (
+                True,
+                False,
+            )
+        )
+    )
+    @ddt.unpack
+    def test_get_student_view_with_attempt_status_and_past_duedate(self, attempt_status, is_proctored):
+        """
+        Test for get_student_view on proctored or timed exams which have student attempt,
+        And due date has passed
+        """
+        due_date = datetime.now(pytz.UTC) + timedelta(minutes=40)
+        # due date is 10 minutes before testing time
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=50)
+
+        created_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=30,
+            is_proctored=is_proctored,
+            is_active=True,
+            due_date=due_date,
+            hide_after_due=True
+        )
+
+        exam_attempt = ProctoredExamStudentAttempt.objects.create(
+            proctored_exam=created_exam,
+            user=self.user,
+            allowed_time_limit_mins=30,
+            taking_as_proctored=is_proctored,
+            external_id=created_exam.external_id,
+            status=attempt_status
+        )
+
+        if attempt_status == ProctoredExamStudentAttemptStatus.submitted:
+            exam_attempt.started_at = datetime.now(pytz.UTC)
+            exam_attempt.completed_at = reset_time
+            exam_attempt.save()
+
+        with freeze_time(reset_time):
+            if attempt_status == ProctoredExamStudentAttemptStatus.timed_out:
+                with self.assertRaises(NotImplementedError):
+                    get_student_view(
+                        user_id=self.user.id,
+                        course_id='a/b/c',
+                        content_id='test_content',
+                        context={
+                            'is_proctored': is_proctored,
+                            'display_name': 'Test Exam',
+                            'default_time_limit_mins': 30,
+                            'due_date': due_date,
+                        }
+                    )
+                return
+
+            rendered_response = get_student_view(
+                user_id=self.user.id,
+                course_id='a/b/c',
+                content_id='test_content',
+                context={
+                    'is_proctored': is_proctored,
+                    'display_name': 'Test Exam',
+                    'default_time_limit_mins': 30,
+                    'due_date': due_date
+                }
+            )
+
+            if attempt_status == ProctoredExamStudentAttemptStatus.submitted:
+                expected_message = self.timed_exam_submitted_expired
+                if is_proctored:
+                    expected_message = self.proctored_exam_submitted_msg
+                self.assertIn(expected_message, rendered_response)
+            elif attempt_status == ProctoredExamStudentAttemptStatus.declined:
+                self.assertIsNone(rendered_response)
+            else:
+                self.assertIn(self.exam_expired_msg, rendered_response)
 
     def test_get_no_perm_view(self):
         """
