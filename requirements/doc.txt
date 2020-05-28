@@ -55,10 +55,10 @@ rest-condition==1.0.3     # via edx-drf-extensions
 restructuredtext-lint==1.3.0  # via doc8
 rules==2.2                # via -r requirements/base.in
 semantic-version==2.8.5   # via edx-drf-extensions
-six==1.14.0               # via bleach, django-waffle, doc8, edx-drf-extensions, edx-opaque-keys, edx-sphinx-theme, event-tracking, fs, packaging, pockets, pyjwkest, python-dateutil, readme-renderer, sphinxcontrib-napoleon, stevedore, xblock
+six==1.15.0               # via bleach, django-waffle, doc8, edx-drf-extensions, edx-opaque-keys, edx-sphinx-theme, event-tracking, fs, packaging, pockets, pyjwkest, python-dateutil, readme-renderer, sphinxcontrib-napoleon, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 snowballstemmer==2.0.0    # via sphinx
-sphinx==3.0.3             # via -r requirements/doc.in, edx-sphinx-theme
+sphinx==3.0.4             # via -r requirements/doc.in, edx-sphinx-theme
 sphinxcontrib-applehelp==1.0.2  # via sphinx
 sphinxcontrib-devhelp==1.0.2  # via sphinx
 sphinxcontrib-htmlhelp==1.0.3  # via sphinx

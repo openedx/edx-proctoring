@@ -28,10 +28,10 @@ jinja2==2.11.2            # via diff-cover, jinja2-pluralize
 lazy-object-proxy==1.4.3  # via astroid
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via pylint
-packaging==20.4           # via bleach, caniusepython3, tox
+packaging==20.4           # via bleach, tox
 path.py==12.4.0           # via -r requirements/dev.in, edx-i18n-tools
 path==13.1.0              # via path.py
-pip-tools==5.1.2          # via -r requirements/dev.in
+pip-tools==5.2.0          # via -r requirements/dev.in
 pkginfo==1.5.0.1          # via twine
 pluggy==0.13.1            # via diff-cover, tox
 polib==1.1.0              # via edx-i18n-tools
@@ -49,11 +49,11 @@ pyyaml==5.3.1             # via edx-i18n-tools
 readme-renderer==26.0     # via twine
 requests-toolbelt==0.9.1  # via twine
 requests==2.23.0          # via requests-toolbelt, twine
-six==1.14.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pip-tools, readme-renderer, tox, virtualenv
+six==1.15.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pip-tools, readme-renderer, tox, virtualenv
 snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.3.1           # via django
 toml==0.10.1              # via tox
-tox-battery==0.6.0        # via -r requirements/dev.in
+tox-battery==0.6.1        # via -r requirements/dev.in
 tox==3.15.1               # via -r requirements/dev.in, tox-battery
 tqdm==4.46.0              # via twine
 twine==1.15.0             # via -r requirements/dev.in, -r requirements/quality.in
