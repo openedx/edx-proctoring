@@ -8,7 +8,7 @@ alabaster==0.7.12         # via sphinx
 appdirs==1.4.4            # via fs
 babel==2.8.0              # via sphinx
 bleach==3.1.5             # via readme-renderer
-certifi==2020.4.5.1       # via requests
+certifi==2020.4.5.2       # via requests
 chardet==3.0.4            # via doc8, requests
 django-crum==0.7.6        # via -r requirements/base.in
 django-ipware==2.1.0      # via -r requirements/base.in
@@ -20,12 +20,12 @@ djangorestframework==3.11.0  # via -r requirements/base.in, drf-jwt, edx-drf-ext
 doc8==0.8.1               # via -r requirements/doc.in
 docutils==0.16            # via doc8, readme-renderer, restructuredtext-lint, sphinx
 drf-jwt==1.14.0           # via edx-drf-extensions
-edx-django-utils==3.2.2   # via edx-drf-extensions, edx-rest-api-client, edx-when
+edx-django-utils==3.2.3   # via edx-drf-extensions, edx-rest-api-client, edx-when
 edx-drf-extensions==6.0.0  # via -r requirements/base.in, edx-when
 edx-opaque-keys==2.1.0    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.2.1  # via -r requirements/base.in
 edx-sphinx-theme==1.5.0   # via -r requirements/doc.in
-edx-when==1.2.4           # via -r requirements/base.in
+edx-when==1.2.7           # via -r requirements/base.in
 event-tracking==0.3.2     # via -r requirements/base.in
 fs==2.4.11                # via xblock
 future==0.18.2            # via pyjwkest
@@ -58,7 +58,7 @@ semantic-version==2.8.5   # via edx-drf-extensions
 six==1.15.0               # via bleach, django-waffle, doc8, edx-drf-extensions, edx-opaque-keys, edx-sphinx-theme, event-tracking, fs, packaging, pockets, pyjwkest, python-dateutil, readme-renderer, sphinxcontrib-napoleon, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 snowballstemmer==2.0.0    # via sphinx
-sphinx==3.0.4             # via -r requirements/doc.in, edx-sphinx-theme
+sphinx==3.1.0             # via -r requirements/doc.in, edx-sphinx-theme
 sphinxcontrib-applehelp==1.0.2  # via sphinx
 sphinxcontrib-devhelp==1.0.2  # via sphinx
 sphinxcontrib-htmlhelp==1.0.3  # via sphinx
