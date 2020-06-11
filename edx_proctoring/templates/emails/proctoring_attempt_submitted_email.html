@@ -1,11 +1,14 @@
 {% load i18n %}
 
 <p>
+    {% block introduction %}
     {% blocktrans %}
         Hello {{ username }},
     {% endblocktrans %}
+    {% endblock %}
 </p>
 <p>
+    {% block status_information %}
     {% blocktrans %}
         Your proctored exam "{{ exam_name }}" in
         <a href="{{ course_url }}">{{ course_name }}</a> was submitted
@@ -13,4 +16,5 @@
         rules were followed. You should receive an email with your exam
         status within 5 business days.
     {% endblocktrans %}
+    {% endblock %}
 </p>

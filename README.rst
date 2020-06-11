@@ -98,6 +98,16 @@ In your lms.auth.json file, please add the following *secure* information::
 You will need to restart services after these configuration changes for them to
 take effect.
 
+Email Templates
+---------------
+
+edx-proctoring provides generic base email templates that are rendered and sent to learners based
+on changes to the status of a proctored exam attempt. They have been designed such that you may leverage Django template
+inheritance to customize their content to the proctoring backend. Because proctoring backend plugins are installed in edx-platform,
+you must create an overriding template in the edx-platform repository. The template path should be ``emails/proctoring/{backend}/{template_name}``.
+Note that your template can either completely override the base template in edx-proctoring, or it can extend the base template in order to leverage
+the existing content of the blocks within the base template, particularly if you only need to change a portion of the template.
+
 Debugging
 ------------
 

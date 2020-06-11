@@ -5,9 +5,13 @@ All tests for proctored exam emails.
 
 from __future__ import absolute_import
 
+from copy import deepcopy
+from itertools import product
+
 import ddt
 from mock import MagicMock, patch
 
+from django.conf import settings
 from django.core import mail
 
 from edx_proctoring.api import update_attempt_status
@@ -65,7 +69,6 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         """
         Assert that email is sent on the following statuses of proctoring attempt.
         """
-
         exam_attempt = self._create_started_exam_attempt()
         credit_state = get_runtime_service('credit').get_credit_state(self.user_id, self.course_id)
         update_attempt_status(
@@ -86,6 +89,41 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         self.assertIn('Your proctored exam "Test Exam"', actual_body)
         self.assertIn(credit_state['course_name'], actual_body)
         self.assertIn(expected_message_string, actual_body)
+
+    @ddt.data(
+        [
+            ProctoredExamStudentAttemptStatus.submitted,
+            'proctoring_attempt_submitted_email.html',
+        ],
+        [
+            ProctoredExamStudentAttemptStatus.verified,
+            'proctoring_attempt_satisfactory_email.html',
+        ],
+        [
+            ProctoredExamStudentAttemptStatus.rejected,
+            'proctoring_attempt_unsatisfactory_email.html',
+        ]
+    )
+    @ddt.unpack
+    @patch('edx_proctoring.api.loader.select_template')
+    def test_email_template_select(self, status, template_name, select_template_mock):
+        """
+        Assert that we search for the correct email templates, including any backend specific overriding templates
+        and the base template.
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            status
+        )
+
+        expected_args = [
+            'emails/proctoring/{backend}/{template_name}'.format(
+                backend=exam_attempt.proctored_exam.backend, template_name=template_name),
+            'emails/{template_name}'.format(template_name=template_name)
+        ]
+        select_template_mock.assert_called_once_with(expected_args)
 
     def test_send_email_unicode(self):
         """
@@ -176,21 +214,39 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     @ddt.data(
-        [ProctoredExamStudentAttemptStatus.verified],
-        [ProctoredExamStudentAttemptStatus.rejected],
+        *product(
+            [ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected],
+            [True, False]
+        )
     )
     @ddt.unpack
-    def test_correct_edx_support_url(self, status):
-        exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
-            status
-        )
-
-        # Verify the edX support URL
+    def test_correct_edx_support_url(self, status, override_email):
+        """
+        Test that the correct edX support URL is used in emails. The email should use either the backend specific
+        contact URL, if one is specified, or fall back to the edX contact us support page.
+        """
         contact_url = 'http://{site_name}/support/contact_us'.format(site_name=SITE_NAME)
-        actual_body = self._normalize_whitespace(mail.outbox[0].body)
-        self.assertIn(u'<a href="{contact_url}"> '
-                      u'{contact_url} </a>'.format(contact_url=contact_url),
-                      actual_body)
+        backend_settings = settings.PROCTORING_BACKENDS
+
+        if override_email:
+            contact_url = 'www.example.com'
+            backend_settings = deepcopy(backend_settings)
+            backend_settings['test'] = {
+                'LINK_URLS': {
+                    'contact': contact_url,
+                }
+            }
+
+        with self.settings(PROCTORING_BACKENDS=backend_settings):
+            exam_attempt = self._create_started_exam_attempt()
+            update_attempt_status(
+                exam_attempt.proctored_exam_id,
+                self.user.id,
+                status
+            )
+
+            # Verify the edX support URL
+            actual_body = self._normalize_whitespace(mail.outbox[0].body)
+            self.assertIn(u'<a href="{contact_url}"> '
+                          u'{contact_url} </a>'.format(contact_url=contact_url),
+                          actual_body)
