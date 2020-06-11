@@ -5,7 +5,7 @@
 #    make upgrade
 #
 appdirs==1.4.4            # via fs
-certifi==2020.4.5.1       # via requests
+certifi==2020.4.5.2       # via requests
 chardet==3.0.4            # via requests
 django-crum==0.7.6        # via -r requirements/base.in
 django-ipware==2.1.0      # via -r requirements/base.in
@@ -15,11 +15,11 @@ django-webpack-loader==0.7.0  # via -r requirements/base.in
 django==2.2.13            # via -c requirements/constraints.txt, -r requirements/base.in, django-crum, django-model-utils, djangorestframework, drf-jwt, edx-django-utils, edx-drf-extensions, edx-when, event-tracking, jsonfield2, rest-condition
 djangorestframework==3.11.0  # via -r requirements/base.in, drf-jwt, edx-drf-extensions, rest-condition
 drf-jwt==1.14.0           # via edx-drf-extensions
-edx-django-utils==3.2.2   # via edx-drf-extensions, edx-rest-api-client, edx-when
+edx-django-utils==3.2.3   # via edx-drf-extensions, edx-rest-api-client, edx-when
 edx-drf-extensions==6.0.0  # via -r requirements/base.in, edx-when
 edx-opaque-keys==2.1.0    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.2.1  # via -r requirements/base.in
-edx-when==1.2.4           # via -r requirements/base.in
+edx-when==1.2.7           # via -r requirements/base.in
 event-tracking==0.3.2     # via -r requirements/base.in
 fs==2.4.11                # via xblock
 future==0.18.2            # via pyjwkest
