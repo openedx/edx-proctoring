@@ -1,22 +1,28 @@
 {% load i18n %}
 
 <p>
+    {% block introduction %}
     {% blocktrans %}
         Hello {{ username }},
     {% endblocktrans %}
+    {% endblock %}
 </p>
 <p>
+    {% block status_information %}
     {% blocktrans %}
         Your proctored exam "{{ exam_name }}" in
         <a href="{{ course_url }}">{{ course_name }}</a> was reviewed and you
         met all proctoring requirements.
     {% endblocktrans %}
+    {% endblock %}
 </p>
 <p>
+    {% block contact_information %}
     {% blocktrans %}
     If you have any questions about your results, you can reach edX Support at 
         <a href="{{contact_url}}">
             {{ contact_url }}
         </a>.
     {% endblocktrans %}
+    {% endblock %}
 </p>

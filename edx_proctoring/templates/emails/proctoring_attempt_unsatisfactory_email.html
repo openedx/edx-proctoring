@@ -1,11 +1,14 @@
 {% load i18n %}
 
 <p>
+    {% block introduction %}
     {% blocktrans %}
         Hello {{ username }},
     {% endblocktrans %}
+    {% endblock %}
 </p>
 <p>
+    {% block status_information %}
     {% blocktrans %}
         Your proctored exam "{{ exam_name }}" in
         <a href="{{ course_url }}">{{ course_name }}</a> was reviewed and the
@@ -15,8 +18,10 @@
         or getting help from another person. As a result of the identified issue(s),
         you did not successfully meet the proctored exam requirements.
     {% endblocktrans %}
+    {% endblock %}
 </p>
 <p>
+    {% block contact_information %}
     {% blocktrans %}
         To appeal your proctored exam results, please reach out to edX Support with any relevant information
         about your exam at 
@@ -24,4 +29,5 @@
             {{ contact_url }}
         </a>.
     {% endblocktrans %}
+    {% endblock %}
 </p>

@@ -1127,7 +1127,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     )
     status = exam_attempt_obj.status
     if status == ProctoredExamStudentAttemptStatus.submitted:
-        email_template_path = 'emails/proctoring_attempt_submitted_email.html'
+        template_name = 'proctoring_attempt_submitted_email.html'
         email_subject = (
             _(u'Proctoring Review In Progress For {course_name} {exam_name}').format(
                 course_name=course_name,
@@ -1135,13 +1135,15 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
             )
         )
     elif status == ProctoredExamStudentAttemptStatus.verified:
-        email_template_path = 'emails/proctoring_attempt_satisfactory_email.html'
+        template_name = 'proctoring_attempt_satisfactory_email.html'
     elif status == ProctoredExamStudentAttemptStatus.rejected:
-        email_template_path = 'emails/proctoring_attempt_unsatisfactory_email.html'
+        template_name = 'proctoring_attempt_unsatisfactory_email.html'
     else:
         # Don't send an email for any other attempt status codes
         return None
-    email_template = loader.get_template(email_template_path)
+
+    backend = exam_attempt_obj.proctored_exam.backend
+    email_template = loader.select_template(_get_email_template_paths(template_name, backend))
     try:
         course_info_url = reverse('info', args=[exam_attempt_obj.proctored_exam.course_id])
     except NoReverseMatch:
@@ -1159,10 +1161,13 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         course_name=course_name,
         username=user.username,
     )
-    contact_url = '{scheme}://{site_name}/support/contact_us'.format(
+
+    default_contact_url = '{scheme}://{site_name}/support/contact_us'.format(
         scheme=scheme,
         site_name=constants.SITE_NAME
     )
+    contact_url = getattr(settings, 'PROCTORING_BACKENDS', {}).get(backend, {}).get(
+        'LINK_URLS', {}).get('contact', default_contact_url)
 
     body = email_template.render({
         'username': user.username,
@@ -1183,6 +1188,26 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     )
     email.content_subtype = 'html'
     return email
+
+
+def _get_email_template_paths(template_name, backend):
+    """
+    Get a list of email template paths to search for, depending on the name of the desired template and the
+    exam attempt's exam's backend.
+
+    Arguments:
+        template_name: the filename of the template
+        backend: the name of the backend being used for the exam
+    """
+    base_template = 'emails/{template_name}'.format(template_name=template_name)
+
+    if backend:
+        return [
+            'emails/proctoring/{backend}/{template_name}'.format(
+                backend=backend, template_name=template_name),
+            base_template,
+        ]
+    return [base_template]
 
 
 def remove_exam_attempt(attempt_id, requesting_user):
