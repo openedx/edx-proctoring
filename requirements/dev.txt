@@ -20,7 +20,7 @@ edx-lint==1.4.1           # via -r requirements/dev.in, -r requirements/quality.
 filelock==3.0.12          # via tox, virtualenv
 idna==2.9                 # via requests
 importlib-metadata==1.6.1  # via importlib-resources, inflect, path, pluggy, tox, virtualenv
-importlib-resources==1.5.0  # via virtualenv
+importlib-resources==2.0.1  # via virtualenv
 inflect==3.0.2            # via jinja2-pluralize
 isort==4.3.21             # via -r requirements/quality.in, pylint
 jinja2-pluralize==0.3.0   # via diff-cover
@@ -35,7 +35,7 @@ pip-tools==5.2.1          # via -r requirements/dev.in
 pkginfo==1.5.0.1          # via twine
 pluggy==0.13.1            # via diff-cover, tox
 polib==1.1.0              # via edx-i18n-tools
-py==1.8.1                 # via tox
+py==1.8.2                 # via tox
 pycodestyle==2.6.0        # via -r requirements/quality.in
 pydocstyle==5.0.2         # via -r requirements/quality.in
 pygments==2.6.1           # via diff-cover, readme-renderer
@@ -48,7 +48,7 @@ pytz==2020.1              # via django
 pyyaml==5.3.1             # via edx-i18n-tools
 readme-renderer==26.0     # via twine
 requests-toolbelt==0.9.1  # via twine
-requests==2.23.0          # via requests-toolbelt, twine
+requests==2.24.0          # via requests-toolbelt, twine
 six==1.15.0               # via astroid, bleach, diff-cover, edx-i18n-tools, edx-lint, packaging, pip-tools, readme-renderer, tox, virtualenv
 snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.3.1           # via django
@@ -59,7 +59,7 @@ tqdm==4.46.1              # via twine
 twine==1.15.0             # via -r requirements/dev.in, -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
 urllib3==1.25.9           # via requests
-virtualenv==20.0.21       # via tox
+virtualenv==20.0.23       # via tox
 webencodings==0.5.1       # via bleach
 wheel==0.34.2             # via -r requirements/dev.in
 wrapt==1.11.2             # via astroid

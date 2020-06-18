@@ -25,7 +25,7 @@ edx-drf-extensions==6.0.0  # via -r requirements/base.in, edx-when
 edx-i18n-tools==0.5.3     # via -r requirements/test.in
 edx-opaque-keys==2.1.0    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.2.1  # via -r requirements/base.in
-edx-when==1.2.7           # via -r requirements/base.in
+edx-when==1.2.8           # via -r requirements/base.in
 event-tracking==0.3.2     # via -r requirements/base.in
 execnet==1.7.1            # via pytest-xdist
 freezegun==0.3.15         # via -r requirements/test.in
@@ -42,7 +42,7 @@ logilab-common==1.6.1     # via -r requirements/test.in
 lxml==4.5.1               # via xblock
 markupsafe==1.1.1         # via jinja2, xblock
 mock==3.0.5               # via -r requirements/test.in
-more-itertools==8.3.0     # via pytest
+more-itertools==8.4.0     # via pytest
 newrelic==5.14.0.142      # via edx-django-utils
 nose==1.3.7               # via -r requirements/test.in
 packaging==20.4           # via pytest
@@ -53,13 +53,13 @@ pbr==5.4.5                # via stevedore
 pluggy==0.13.1            # via pytest
 polib==1.1.0              # via edx-i18n-tools
 psutil==1.2.1             # via edx-django-utils
-py==1.8.1                 # via pytest
+py==1.8.2                 # via pytest
 pycryptodomex==3.9.7      # via -r requirements/base.in, pyjwkest
 pyjwkest==1.4.2           # via edx-drf-extensions
 pyjwt==1.7.1              # via drf-jwt, edx-rest-api-client
 pymongo==3.10.1           # via edx-opaque-keys, event-tracking
 pyparsing==2.4.7          # via packaging
-pytest-cov==2.9.0         # via -r requirements/test.in
+pytest-cov==2.10.0        # via -r requirements/test.in
 pytest-django==3.9.0      # via -r requirements/test.in
 pytest-forked==1.1.3      # via pytest-xdist
 pytest-xdist==1.32.0      # via -r requirements/test.in
@@ -68,8 +68,8 @@ python-dateutil==2.8.1    # via -r requirements/base.in, edx-drf-extensions, fre
 python-slugify==4.0.0     # via code-annotations
 pytz==2020.1              # via -r requirements/base.in, django, event-tracking, fs, xblock
 pyyaml==5.3.1             # via code-annotations, edx-i18n-tools, xblock
-requests==2.23.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
-responses==0.10.14        # via -r requirements/test.in
+requests==2.24.0          # via edx-drf-extensions, edx-rest-api-client, httmock, pyjwkest, responses, slumber
+responses==0.10.15        # via -r requirements/test.in
 rest-condition==1.0.3     # via edx-drf-extensions
 rules==2.2                # via -r requirements/base.in
 selenium==3.141.0         # via -r requirements/test.in, bok-choy
