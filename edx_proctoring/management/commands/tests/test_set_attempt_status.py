@@ -2,8 +2,6 @@
 Tests for the set_attempt_status management command
 """
 
-from __future__ import absolute_import
-
 from datetime import datetime
 
 import pytz

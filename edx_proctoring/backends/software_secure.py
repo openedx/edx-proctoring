@@ -2,8 +2,6 @@
 Integration with Software Secure's proctoring system
 """
 
-from __future__ import absolute_import
-
 import base64
 import binascii
 import datetime

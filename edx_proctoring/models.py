@@ -5,7 +5,6 @@ Data models for the proctoring subsystem
 
 # pylint: disable=model-missing-unicode
 
-from __future__ import absolute_import
 
 import six
 from model_utils.models import TimeStampedModel

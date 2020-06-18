@@ -2,8 +2,6 @@
 A wrapper class around all methods exposed in api.py
 """
 
-from __future__ import absolute_import
-
 import types
 
 

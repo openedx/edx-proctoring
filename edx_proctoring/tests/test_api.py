@@ -5,8 +5,6 @@
 All tests for the api.py
 """
 
-from __future__ import absolute_import
-
 from datetime import datetime, timedelta
 from itertools import product
 

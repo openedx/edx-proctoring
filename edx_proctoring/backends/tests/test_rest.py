@@ -1,7 +1,6 @@
 """
 Tests for the REST backend
 """
-from __future__ import absolute_import
 
 import json
 

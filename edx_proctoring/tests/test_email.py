@@ -3,8 +3,6 @@
 All tests for proctored exam emails.
 """
 
-from __future__ import absolute_import
-
 from copy import deepcopy
 from itertools import product
 

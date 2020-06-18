@@ -2,8 +2,6 @@
 Django management command to manually set the attempt status for a user in a proctored exam
 """
 
-from __future__ import absolute_import
-
 from django.core.management.base import BaseCommand, CommandError
 
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus

@@ -2,8 +2,6 @@
 Implementation of a backend provider, which does nothing
 """
 
-from __future__ import absolute_import
-
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 
 

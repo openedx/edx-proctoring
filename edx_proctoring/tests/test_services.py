@@ -4,8 +4,6 @@
 Test for the xBlock service
 """
 
-from __future__ import absolute_import
-
 import types
 import unittest
 from datetime import datetime, timedelta

@@ -1,5 +1,4 @@
 "Tests for generating webpack config json"
-from __future__ import absolute_import
 
 import json
 import os
