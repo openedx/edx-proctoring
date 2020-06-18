@@ -30,7 +30,7 @@ pyparsing==2.4.7          # via packaging
 pytz==2020.1              # via django
 readme-renderer==26.0     # via twine
 requests-toolbelt==0.9.1  # via twine
-requests==2.23.0          # via requests-toolbelt, twine
+requests==2.24.0          # via requests-toolbelt, twine
 six==1.15.0               # via astroid, bleach, edx-lint, packaging, readme-renderer
 snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.3.1           # via django
