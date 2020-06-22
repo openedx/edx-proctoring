@@ -3,7 +3,6 @@ Django Admin pages
 """
 # pylint: disable=no-self-argument, no-member
 
-from __future__ import absolute_import
 
 from datetime import datetime, timedelta
 

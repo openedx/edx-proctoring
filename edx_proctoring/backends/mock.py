@@ -3,8 +3,6 @@ Implements a mock proctoring backend provider to be used for testing,
 which doesn't require the setup and configuration of the Software Secure backend provider.
 """
 
-from __future__ import absolute_import
-
 import threading
 
 from edx_proctoring.backends.backend import ProctoringBackendProvider

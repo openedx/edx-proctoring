@@ -1,7 +1,6 @@
 """
 Status enums for edx-proctoring
 """
-from __future__ import absolute_import
 
 from edx_proctoring.exceptions import ProctoredExamBadReviewStatus
 

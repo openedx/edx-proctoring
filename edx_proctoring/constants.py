@@ -2,8 +2,6 @@
 Lists of constants that can be used in the edX proctoring
 """
 
-from __future__ import absolute_import
-
 import datetime
 
 from django.conf import settings

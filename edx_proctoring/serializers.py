@@ -1,7 +1,5 @@
 """Defines serializers used by the Proctoring API."""
 
-from __future__ import absolute_import
-
 from rest_framework import serializers
 from rest_framework.fields import DateTimeField
 

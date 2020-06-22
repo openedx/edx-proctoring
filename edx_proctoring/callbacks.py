@@ -2,8 +2,6 @@
 Various callback paths that support callbacks from SoftwareSecure
 """
 
-from __future__ import absolute_import
-
 import logging
 
 from waffle import switch_is_active

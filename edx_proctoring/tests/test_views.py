@@ -3,8 +3,6 @@
 All tests for the proctored_exams.py
 """
 
-from __future__ import absolute_import
-
 import json
 from datetime import datetime, timedelta
 

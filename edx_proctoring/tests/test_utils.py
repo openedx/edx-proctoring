@@ -2,8 +2,6 @@
 File that contains tests for the util methods.
 """
 
-from __future__ import absolute_import
-
 import unittest
 from itertools import product
 

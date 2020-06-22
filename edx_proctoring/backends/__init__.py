@@ -1,7 +1,6 @@
 """
 All supporting Proctoring backends
 """
-from __future__ import absolute_import
 
 from django.apps import apps
 
