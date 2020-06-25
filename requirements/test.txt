@@ -8,7 +8,7 @@ apipkg==1.5               # via execnet
 appdirs==1.4.4            # via fs
 attrs==19.3.0             # via pytest
 bok-choy==1.1.1           # via -r requirements/test.in
-certifi==2020.4.5.2       # via requests
+certifi==2020.6.20        # via requests
 chardet==3.0.4            # via requests
 click==7.1.2              # via code-annotations
 code-annotations==0.3.4   # via -r requirements/test.in
@@ -17,7 +17,7 @@ ddt==1.4.1                # via -r requirements/test.in
 django-crum==0.7.6        # via -r requirements/base.in
 django-ipware==2.1.0      # via -r requirements/base.in
 django-model-utils==4.0.0  # via -r requirements/base.in, edx-when
-django-waffle==0.20.0     # via -r requirements/base.in, edx-django-utils, edx-drf-extensions
+django-waffle==1.0.0      # via -r requirements/base.in, edx-django-utils, edx-drf-extensions
 django-webpack-loader==0.7.0  # via -r requirements/base.in
 drf-jwt==1.14.0           # via edx-drf-extensions
 edx-django-utils==3.2.3   # via edx-drf-extensions, edx-rest-api-client, edx-when
@@ -43,7 +43,7 @@ lxml==4.5.1               # via xblock
 markupsafe==1.1.1         # via jinja2, xblock
 mock==3.0.5               # via -r requirements/test.in
 more-itertools==8.4.0     # via pytest
-newrelic==5.14.0.142      # via edx-django-utils
+newrelic==5.14.1.144      # via edx-django-utils
 nose==1.3.7               # via -r requirements/test.in
 packaging==20.4           # via pytest
 path.py==12.4.0           # via edx-i18n-tools
@@ -54,7 +54,7 @@ pluggy==0.13.1            # via pytest
 polib==1.1.0              # via edx-i18n-tools
 psutil==1.2.1             # via edx-django-utils
 py==1.8.2                 # via pytest
-pycryptodomex==3.9.7      # via -r requirements/base.in, pyjwkest
+pycryptodomex==3.9.8      # via -r requirements/base.in, pyjwkest
 pyjwkest==1.4.2           # via edx-drf-extensions
 pyjwt==1.7.1              # via drf-jwt, edx-rest-api-client
 pymongo==3.10.1           # via edx-opaque-keys, event-tracking
@@ -74,7 +74,7 @@ rest-condition==1.0.3     # via edx-drf-extensions
 rules==2.2                # via -r requirements/base.in
 selenium==3.141.0         # via -r requirements/test.in, bok-choy
 semantic-version==2.8.5   # via edx-drf-extensions
-six==1.15.0               # via bok-choy, django-waffle, edx-drf-extensions, edx-i18n-tools, edx-opaque-keys, event-tracking, freezegun, fs, mock, packaging, pathlib2, pyjwkest, pytest-xdist, python-dateutil, responses, stevedore, xblock
+six==1.15.0               # via bok-choy, edx-drf-extensions, edx-i18n-tools, edx-opaque-keys, event-tracking, freezegun, fs, mock, packaging, pathlib2, pyjwkest, pytest-xdist, python-dateutil, responses, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 sqlparse==0.3.1           # via django
 stevedore==1.32.0         # via code-annotations, edx-opaque-keys
@@ -83,7 +83,7 @@ testfixtures==6.14.1      # via -r requirements/test.in
 text-unidecode==1.3       # via python-slugify
 typing==3.7.4.1           # via fs
 urllib3==1.25.9           # via requests, selenium
-wcwidth==0.2.4            # via pytest
+wcwidth==0.2.5            # via pytest
 web-fragments==0.3.2      # via xblock
 webob==1.8.6              # via xblock
 xblock==1.3.1             # via edx-when
