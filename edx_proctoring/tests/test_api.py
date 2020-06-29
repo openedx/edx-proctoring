@@ -10,10 +10,8 @@ from itertools import product
 
 import ddt
 import pytz
-import six
 from freezegun import freeze_time
 from mock import MagicMock, patch
-from six.moves import range  # pylint: disable=ungrouped-imports
 
 from edx_proctoring.api import (
     _are_prerequirements_satisfied,
@@ -538,7 +536,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             self.proctored_exam_id,
             self.user.username,
             ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
-            six.text_type(allowed_extra_time)
+            str(allowed_extra_time)
         )
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
         start_exam_attempt(self.proctored_exam_id, self.user_id)

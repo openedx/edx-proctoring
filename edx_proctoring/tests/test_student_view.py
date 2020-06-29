@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 
 import ddt
 import pytz
-import six
 from freezegun import freeze_time
 from mock import MagicMock, patch
 from waffle.testutils import override_flag
@@ -1159,7 +1158,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             self.timed_exam_id,
             self.user.username,
             ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
-            six.text_type(allowed_extra_time)
+            str(allowed_extra_time)
         )
 
         rendered_response = get_student_view(

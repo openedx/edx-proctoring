@@ -4,9 +4,6 @@
 All tests for the models.py
 """
 
-import six
-from six.moves import range
-
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamReviewPolicy,
@@ -45,7 +42,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
             external_id='123aXqe3',
             time_limit_mins=90
         )
-        output = six.text_type(proctored_exam)
+        output = str(proctored_exam)
         self.assertEqual(output, u"test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive)")
 
         policy = ProctoredExamReviewPolicy.objects.create(
@@ -53,7 +50,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
             proctored_exam=proctored_exam,
             review_policy='Foo Policy'
         )
-        output = six.text_type(policy)
+        output = str(policy)
         self.assertEqual(output, u"ProctoredExamReviewPolicy: tester (test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive))")
 
     def test_save_proctored_exam_student_allowance_history(self):  # pylint: disable=invalid-name
@@ -162,7 +159,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
             time_limit_mins=90
         )
 
-        string = six.text_type(proctored_exam)
+        string = str(proctored_exam)
         self.assertEqual(string, "test_course: Test Exam (inactive)")
 
     def test_delete_proctored_exam_attempt(self):  # pylint: disable=invalid-name

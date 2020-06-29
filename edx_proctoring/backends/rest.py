@@ -7,10 +7,10 @@ import logging
 import time
 import uuid
 import warnings
+from urllib.parse import urlparse  # pylint: disable=import-error, wrong-import-order
 
 import jwt
 from edx_rest_api_client.client import OAuthAPIClient
-from six.moves.urllib.parse import urlparse  # pylint: disable=import-error, wrong-import-order
 from webpack_loader.exceptions import BaseWebpackLoaderException, WebpackBundleLookupError
 from webpack_loader.utils import get_files
 

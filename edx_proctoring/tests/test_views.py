@@ -11,7 +11,6 @@ import pytz
 from freezegun import freeze_time
 from httmock import HTTMock
 from mock import Mock, patch
-from six.moves import range
 
 from django.contrib.auth.models import User
 from django.test.client import Client

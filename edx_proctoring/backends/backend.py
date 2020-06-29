@@ -4,12 +4,10 @@ Defines the abstract base class that all backends should derive from
 
 import abc
 
-import six
-
 from edx_proctoring import constants
 
 
-class ProctoringBackendProvider(six.with_metaclass(abc.ABCMeta)):
+class ProctoringBackendProvider(metaclass=abc.ABCMeta):
     """
     The base abstract class for all proctoring service providers
     """
