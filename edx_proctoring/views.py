@@ -5,7 +5,6 @@ Proctored Exams HTTP-based API endpoints
 import json
 import logging
 
-import six
 import waffle
 from crum import get_current_request
 from rest_framework import status
@@ -137,7 +136,7 @@ def handle_proctored_exception(exc, name=None):  # pylint: disable=inconsistent-
     """
     if isinstance(exc, ProctoredBaseException):
         LOG.exception(name)
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': six.text_type(exc)})
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': str(exc)})
 
 
 class ProctoredAPIView(AuthenticatedAPIView):

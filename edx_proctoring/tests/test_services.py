@@ -9,7 +9,6 @@ import unittest
 from datetime import datetime, timedelta
 
 import pytz
-import six
 
 from edx_proctoring import api as edx_proctoring_api
 from edx_proctoring.exceptions import UserNotFoundException
@@ -53,12 +52,12 @@ class MockCreditService:
             for requirement in self.status['credit_requirement_status']
             if requirement['name'] == req_name and
             requirement['namespace'] == req_namespace and
-            requirement['course_id'] == six.text_type(course_key_or_id)
+            requirement['course_id'] == str(course_key_or_id)
         ]
 
         if not found:
             self.status['credit_requirement_status'].append({
-                'course_id': six.text_type(course_key_or_id),
+                'course_id': str(course_key_or_id),
                 'req_namespace': req_namespace,
                 'namespace': req_namespace,
                 'name': req_name,
@@ -81,7 +80,7 @@ class MockCreditService:
             match = (
                 requirement['name'] == req_name and
                 requirement['namespace'] == req_namespace and
-                requirement['course_id'] == six.text_type(course_key_or_id)
+                requirement['course_id'] == str(course_key_or_id)
             )
             if match:
                 self.status['credit_requirement_status'].remove(requirement)

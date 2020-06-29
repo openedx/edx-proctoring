@@ -12,7 +12,6 @@ import unicodedata
 from hashlib import sha256
 
 import requests
-import six
 from crum import get_current_request
 from Cryptodome.Cipher import DES3
 from waffle import switch_is_active
@@ -52,7 +51,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.exam_register_endpoint = exam_register_endpoint
         self.secret_key_id = secret_key_id
         self.secret_key = secret_key
-        if isinstance(crypto_key, six.text_type):
+        if isinstance(crypto_key, str):
             crypto_key = crypto_key.encode('utf-8')
         self.crypto_key = crypto_key
         self.timeout = 10
@@ -336,13 +335,13 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
                     if isinstance(arr, dict):
                         string += self._body_string(arr, pfx + b'.')
                     else:
-                        string += b'%s:%s\n' % (pfx, six.text_type(arr).encode('utf8'))
+                        string += b'%s:%s\n' % (pfx, str(arr).encode('utf8'))
             elif isinstance(value, dict):
                 string += self._body_string(value, key + b'.')
             else:
                 if value != "" and not value:
                     value = "null"
-                string += b'%s%s:%s\n' % (prefix, key, six.text_type(value).encode('utf8'))
+                string += b'%s%s:%s\n' % (prefix, key, str(value).encode('utf8'))
 
         return string
 

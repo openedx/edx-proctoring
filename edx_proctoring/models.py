@@ -6,7 +6,6 @@ Data models for the proctoring subsystem
 # pylint: disable=model-missing-unicode
 
 
-import six
 from model_utils.models import TimeStampedModel
 
 from django.contrib.auth import get_user_model
@@ -26,7 +25,6 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareS
 USER_MODEL = get_user_model()
 
 
-@six.python_2_unicode_compatible
 class ProctoredExam(TimeStampedModel):
     """
     Information about the Proctored Exam.
@@ -120,7 +118,6 @@ class ProctoredExam(TimeStampedModel):
         return cls.objects.filter(filtered_query)
 
 
-@six.python_2_unicode_compatible
 class ProctoredExamReviewPolicy(TimeStampedModel):
     """
     This is how an instructor can set review policies for a proctored exam
@@ -580,7 +577,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
             ).format(value=value)
             raise AllowanceValueNotAllowedException(err_msg)
         # were we passed a PK?
-        if isinstance(user_info, six.integer_types):
+        if isinstance(user_info, int):
             user_id = user_info
         else:
             # we got a string, so try to resolve it

@@ -10,7 +10,6 @@ import uuid
 from datetime import datetime, timedelta
 
 import pytz
-import six
 from waffle import switch_is_active
 
 from django.conf import settings
@@ -596,7 +595,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             raise StudentExamAttemptAlreadyExistsException(err_msg)
 
     allowed_time_limit_mins = _calculate_allowed_mins(exam, user_id)
-    attempt_code = six.text_type(uuid.uuid4()).upper()
+    attempt_code = str(uuid.uuid4()).upper()
 
     external_id = None
     review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
@@ -660,7 +659,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
                 u'Response: {response}'.format(
                     user_id=user_id,
                     exam_id=exam_id,
-                    response=six.text_type(ex),
+                    response=str(ex),
                     status=ex.http_status
                 )
             )
@@ -674,7 +673,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
                 u'Reponse: {response}'.format(
                     user_id=user_id,
                     exam_id=exam_id,
-                    response=six.text_type(ex),
+                    response=str(ex),
                     status=ex.http_status,
                 )
             )
@@ -1628,7 +1627,7 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     # practice exams always has an attempt status regardless of
     # eligibility
     if credit_service and not exam['is_practice_exam']:
-        credit_state = credit_service.get_credit_state(user_id, six.text_type(course_id), return_course_info=True)
+        credit_state = credit_service.get_credit_state(user_id, str(course_id), return_course_info=True)
         user = USER_MODEL.objects.get(id=user_id)
         if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
             return None
@@ -2124,7 +2123,7 @@ def get_student_view(user_id, course_id, content_id,
         # as Studio will be setting this up
         exam_id = create_exam(
             course_id=course_id,
-            content_id=six.text_type(content_id),
+            content_id=str(content_id),
             exam_name=context['display_name'],
             time_limit_mins=context['default_time_limit_mins'],
             is_proctored=context.get('is_proctored', False),

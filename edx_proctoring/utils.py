@@ -8,7 +8,6 @@ import logging
 from datetime import datetime, timedelta
 
 import pytz
-import six
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from edx_when import api as when_api
 from eventtracking import tracker
@@ -223,8 +222,8 @@ def obscured_user_id(user_id, *extra):
     Any extra information can be added to the hash
     """
     obs_hash = hmac.new(settings.SECRET_KEY.encode('ascii'), digestmod=hashlib.sha1)
-    obs_hash.update(six.text_type(user_id).encode('utf-8'))
-    obs_hash.update(b''.join(six.text_type(ext).encode('utf-8') for ext in extra))
+    obs_hash.update(str(user_id).encode('utf-8'))
+    obs_hash.update(b''.join(str(ext).encode('utf-8') for ext in extra))
     return obs_hash.hexdigest()
 
 
