@@ -326,7 +326,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         # This import is here because developers writing backends which subclass this class
         # may want to import this module and use the other methods, without having to run in the context
         # of django settings, etc.
-        from django.utils.translation import get_language
+        from django.utils.translation import get_language  # pylint: disable=import-outside-toplevel
 
         current_lang = get_language()
         default_lang = settings.LANGUAGE_CODE

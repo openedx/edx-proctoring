@@ -281,7 +281,7 @@ class BackendChooserTests(TestCase):
         """
         Test that we have a list of choices
         """
-        from django.apps import apps
+        from django.apps import apps  # pylint: disable=import-outside-toplevel
         choices = list(apps.get_app_config('edx_proctoring').get_backend_choices())
         choices.sort()
         expected = [

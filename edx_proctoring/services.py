@@ -28,6 +28,7 @@ class ProctoringService:
         Class initializer, which just inspects the libraries and exposes the same functions
         as a direct pass through
         """
+        # pylint: disable=import-outside-toplevel
         from edx_proctoring import api as edx_proctoring_api
         self._bind_to_module_functions(edx_proctoring_api)
 
