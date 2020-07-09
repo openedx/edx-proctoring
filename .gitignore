@@ -51,7 +51,6 @@ Desktop.ini
 # Test Artifacts
 .coverage
 coverage.xml
-nosetests.xml
 reports/
 coverage/
 htmlcov/

@@ -11,6 +11,7 @@ def setup_test_backends():
     """
     Sets up the backend entrypoints required for testing.
     """
+    # pylint: disable=import-outside-toplevel
     from django.apps import apps
     config = apps.get_app_config('edx_proctoring')
     from edx_proctoring.backends.tests.test_backend import TestBackendProvider

@@ -21,6 +21,7 @@ def check_for_category_switch(sender, instance, **kwargs):  # pylint: disable=un
     if instance.id:
         original = sender.objects.get(pk=instance.id)
         if original.is_proctored and instance.is_proctored != original.is_proctored:
+            # pylint: disable=import-outside-toplevel
             from edx_proctoring.serializers import ProctoredExamJSONSafeSerializer
             exam = ProctoredExamJSONSafeSerializer(instance).data
             # from the perspective of the backend, the exam is now inactive.
@@ -43,6 +44,7 @@ def save_exam_on_backend(sender, instance, **kwargs):  # pylint: disable=unused-
         exam_obj = instance.proctored_exam
         review_policy = instance
     if exam_obj.is_proctored:
+        # pylint: disable=import-outside-toplevel
         from edx_proctoring.serializers import ProctoredExamJSONSafeSerializer
         exam = ProctoredExamJSONSafeSerializer(exam_obj).data
         if review_policy:
