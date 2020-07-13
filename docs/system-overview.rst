@@ -21,10 +21,10 @@ and display the state of the current attempt.
 The LMS calls into edx-proctoring to load the relevent template when rendering the
 `student_view()` for an exam section that is proctored.
 
-LMS: https://github.com/edx/edx-platform/blob/a7dff8c21ee794e90bdc0f22876334a7843a032d/common/lib/xmodule/xmodule/seq_module.py#L274
-edx-proctoring: https://github.com/edx/edx-proctoring/blob/78976d93ab6ca5206f259dc420d2f45818fe636c/edx_proctoring/api.py#L1912
-
-Templates for these views are defined in edx-proctoring: https://github.com/edx/edx-proctoring/tree/master/edx_proctoring/templates
+Notable Components:
+- `LMS render student_view() <https://github.com/edx/edx-platform/blob/a7dff8c21ee794e90bdc0f22876334a7843a032d/common/lib/xmodule/xmodule/seq_module.py#L274>`_
+- `edx-proctoring template logic <https://github.com/edx/edx-proctoring/blob/78976d93ab6ca5206f259dc420d2f45818fe636c/edx_proctoring/api.py#L1912>`_
+- `edx-proctoring interstitial templates <https://github.com/edx/edx-proctoring/tree/master/edx_proctoring/templates>`_
 
 JavaScript Message API and Worker
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -36,11 +36,9 @@ state will transition forward only after these messages have been successfully h
 However if a provider does not have a worker interface configured there will be no direct
 communication between edX courseware and the proctoring client.
 
-edX Message API
-https://github.com/edx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js
+`Message API <https://github.com/edx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
 
-(example) Proctortrack worker
-https://github.com/joshivj/edx-proctoring-proctortrack/blob/master/edx_proctoring_proctortrack/static/proctortrack_custom.js
+`(example) Proctortrack worker <https://github.com/joshivj/edx-proctoring-proctortrack/blob/master/edx_proctoring_proctortrack/static/proctortrack_custom.js`_
 
 edx-proctoring
 ^^^^^^^^^^^^^^
@@ -53,20 +51,21 @@ provider-specific plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^
 Integration layer to handle making REST/http requests to the provider's backend.
 This can exist as a Python module or be hard coded into edx-proctoring as a backend.
-More information on configuring backends can be found here: https://github.com/edx/edx-proctoring/blob/master/docs/backends.rst
+
+`More information on configuring backends <https://github.com/edx/edx-proctoring/blob/master/docs/backends.rst>`_
 
 We have two non-testing backends:
-1. Proctortrack: https://github.com/joshivj/edx-proctoring-proctortrack
-2. RPNow: https://github.com/edx/edx-proctoring/blob/447c0bf49f31fa4df2aa2b0339137ccfd173f237/edx_proctoring/backends/software_secure.py
+#. Proctortrack: https://github.com/joshivj/edx-proctoring-proctortrack
+#. RPNow: https://github.com/edx/edx-proctoring/blob/447c0bf49f31fa4df2aa2b0339137ccfd173f237/edx_proctoring/backends/software_secure.py
 
-For backend testing in a local environment see mockprock in the :doc: `developing.rst`
+For testing backends see `mockprock <https://github.com/edx/edx-proctoring/blob/master/docs/developing.rst#using-mockprock-as-a-backend>`_
 
-Exam States and User Flow
---------------------------
+Exam States
+-----------
 When a learner first enters a proctored exam subsection an exam attempt is created
-in the edX system. User actions and the proctoring software will update the status of
-this attempt. The following diagram describes the user flow through those status
-updates.
+in the edX system. User actions and the proctoring provider will update the status of
+this attempt as the exam is completed and reviewed. The following diagram describes the 
+flow through those status updates.
 
 Note this figure does not include error states or display of unmet prerequite requirements
 .. image:: images/attempt_states.png
@@ -75,6 +74,6 @@ Example Action Sequence
 -------------------------
 
 The diagram below describes the happy-path of interactions between components to 
-sucessfully begin a proctored exam.
+sucessfully begin a proctored exam.  
 
 .. image:: images/sequence.png
