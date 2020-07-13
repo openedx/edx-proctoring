@@ -50,7 +50,7 @@ exam configuration and learner attempts in-sync between the two systems.
 
 https://github.com/edx/edx-proctoring/
 
-provider backend plugin
+Provider Backend Plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^
 Integration layer to handle making REST/http requests to the provider's backend.
 This can exist as a Python module or be committed directly into edx-proctoring as a backend.
