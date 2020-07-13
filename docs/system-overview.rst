@@ -37,9 +37,9 @@ state will transition forward only after these messages have been successfully h
 However, if a provider does not have a worker interface configured there will be no direct
 communication between edX courseware and the proctoring client.
 
-`Message API <https://github.com/edx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
+Message Interface: `exam_action_handler.js <https://github.com/edx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
 
-`Proctortrack worker <https://github.com/joshivj/edx-proctoring-proctortrack/blob/master/edx_proctoring_proctortrack/static/proctortrack_custom.js>`_
+Example worker: `proctortrack_custom.js <https://github.com/joshivj/edx-proctoring-proctortrack/blob/master/edx_proctoring_proctortrack/static/proctortrack_custom.js>`_
 
 edx-proctoring
 ^^^^^^^^^^^^^^
@@ -48,12 +48,12 @@ exam configuration and learner attempts.  It exposes a REST and Python interface
 edx-proctoring is also responsible for calling out to the provider's backend (through a plugin) to keep
 exam configuration and learner attempts in-sync between the two systems.
 
-`edx-proctoring <https://github.com/edx/edx-proctoring/>`_
+https://github.com/edx/edx-proctoring/
 
 provider backend plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^
 Integration layer to handle making REST/http requests to the provider's backend.
-This can exist as a Python module or be hard coded into edx-proctoring as a backend.
+This can exist as a Python module or be committed directly into edx-proctoring as a backend.
 
 `More information on configuring backends <https://github.com/edx/edx-proctoring/blob/master/docs/backends.rst>`_
 
