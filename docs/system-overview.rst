@@ -14,19 +14,20 @@ System Components
 Proctored Exam Views
 ^^^^^^^^^^^^^^^^^^^^
 
-Interstitial views within a section that are shown in place of the actual
-exam content. They are used to walk a learner through setup steps
-and display the state of the current attempt when the exam is not in progress.
-
-During a proctored exam, LMS renders different student views based on existing
-exam status. The LMS renders the views by calling into edx-proctoring and load
+During a proctored exam, LMS renders different student views based on the status
+of that exam attempt. The LMS renders the views by calling into edx-proctoring and loading
 the relevent html templates.
+
+The goal of these interstitials is to guide the learner through
+the many steps of attempting a proctored exam, where at many steps there are
+critical details about what the learner needs to do or understand. As such,
+some of the copy on these interstitials is very important.
 
 Notable Code:
 
 - `LMS render student_view() <https://github.com/edx/edx-platform/blob/a7dff8c21ee794e90bdc0f22876334a7843a032d/common/lib/xmodule/xmodule/seq_module.py#L274>`_
 - `edx-proctoring template logic <https://github.com/edx/edx-proctoring/blob/78976d93ab6ca5206f259dc420d2f45818fe636c/edx_proctoring/api.py#L1912>`_
-- `edx-proctoring interstitial templates <https://github.com/edx/edx-proctoring/tree/master/edx_proctoring/templates>`_
+- `edx-proctoring interstitial templates <https://github.com/edx/edx-proctoring/tree/323ea43acbd6f12d5131546e8648dedff719bf9e/edx_proctoring/templates>`_
 
 JavaScript Message API and Worker
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -70,7 +71,13 @@ in the edX system. User actions and the proctoring provider will update the stat
 this attempt as the exam is completed and reviewed. The following diagram describes the 
 flow through those status updates.
 
-Note this figure does not include error states or display of unmet prerequite requirements
+Detailed descriptions of each potential attempt state can be found below. It should be noted that there
+are minor differences in the review process between RPNow and Proctortrack exams.
+
+- `Proctortrack status values <https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/proctored_exams/pt_results.html#values-in-the-status-column>`_
+- `RPNow status values <https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/proctored_exams/rpnow_results.html#values-in-the-status-column>`_
+
+This figure does not include error states or display of unmet prerequite requirements.
 
 .. image:: images/attempt_states.png
 
