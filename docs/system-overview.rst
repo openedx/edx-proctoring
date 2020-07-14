@@ -14,12 +14,13 @@ System Components
 Proctored Exam Views
 ^^^^^^^^^^^^^^^^^^^^
 
-Interstitial views within a section that are shown to in place of the actual
-exam content. They are used to walk a leaner through setup steps
+Interstitial views within a section that are shown in place of the actual
+exam content. They are used to walk a learner through setup steps
 and display the state of the current attempt when the exam is not in progress.
 
-The LMS will call into edx-proctoring to load the relevent template when rendering the
-student view for an exam section that is proctored.
+During a proctored exam, LMS renders different student views based on existing
+exam status. The LMS renders the views by calling into edx-proctoring and load
+the relevent html templates.
 
 Notable Code:
 
@@ -47,8 +48,6 @@ Python plugin that handles the bulk of edX's proctoring logic. It hosts the mode
 exam configuration and learner attempts.  It exposes a REST and Python interface to manage them.
 edx-proctoring is also responsible for calling out to the provider's backend (through a plugin) to keep
 exam configuration and learner attempts in-sync between the two systems.
-
-https://github.com/edx/edx-proctoring/
 
 Provider Backend Plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^
