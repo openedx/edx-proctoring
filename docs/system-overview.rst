@@ -16,9 +16,9 @@ Proctored Exam Views
 
 Interstitial views within a section that are shown to in place of the actual
 exam content. They are used to walk a leaner through setup steps
-and display the state of the current attempt.
+and display the state of the current attempt when the exam is not in progress.
 
-The LMS calls into edx-proctoring to load the relevent template when rendering the
+The LMS will call into edx-proctoring to load the relevent template when rendering the
 student view for an exam section that is proctored.
 
 Notable Code:
