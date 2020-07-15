@@ -65,7 +65,7 @@ JavaScript Worker
 This is an optional component currently used by Proctortrack and our Mockprock provider.
 
 A JavaScript worker included as part of the the provider's python plugin. This will 
-handle any messages emitted by edX courseware and interface directly with the
+handle any messages emitted by the edX web application and interface directly with the
 proctoring software running on the learner's machine. 
 
 Example worker: `proctortrack_custom.js <https://github.com/joshivj/edx-proctoring-proctortrack/blob/master/edx_proctoring_proctortrack/static/proctortrack_custom.js>`_
