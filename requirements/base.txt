@@ -19,15 +19,15 @@ djangorestframework==3.11.0  # via -r requirements/base.in, drf-jwt, edx-drf-ext
 drf-jwt==1.16.2           # via edx-drf-extensions
 edx-django-utils==3.2.3   # via edx-drf-extensions, edx-rest-api-client, edx-when
 edx-drf-extensions==6.1.0  # via -r requirements/base.in, edx-when
-edx-opaque-keys==2.1.0    # via -r requirements/base.in, edx-drf-extensions, edx-when
+edx-opaque-keys==2.1.1    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.2.1  # via -r requirements/base.in
-edx-when==1.2.8           # via -r requirements/base.in
-event-tracking==0.3.2     # via -r requirements/base.in
+edx-when==1.2.9           # via -r requirements/base.in
+event-tracking==0.3.3     # via -r requirements/base.in
 fs==2.4.11                # via xblock
 future==0.18.2            # via pyjwkest
 idna==2.10                # via requests
 jsonfield2==3.0.3         # via -c requirements/constraints.txt, -r requirements/base.in
-lxml==4.5.1               # via xblock
+lxml==4.5.2               # via xblock
 markupsafe==1.1.1         # via xblock
 newrelic==5.14.1.144      # via edx-django-utils
 pbr==5.4.5                # via stevedore
@@ -48,7 +48,7 @@ six==1.15.0               # via cryptography, edx-drf-extensions, edx-opaque-key
 slumber==0.7.1            # via edx-rest-api-client
 sqlparse==0.3.1           # via django
 stevedore==1.32.0         # via edx-opaque-keys
-typing==3.7.4.1           # via fs
+typing==3.7.4.3           # via fs
 urllib3==1.25.9           # via requests
 web-fragments==0.3.2      # via xblock
 webob==1.8.6              # via xblock
