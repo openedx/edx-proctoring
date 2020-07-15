@@ -29,20 +29,6 @@ Notable Code:
 - `edx-proctoring template logic <https://github.com/edx/edx-proctoring/blob/78976d93ab6ca5206f259dc420d2f45818fe636c/edx_proctoring/api.py#L1912>`_
 - `edx-proctoring interstitial templates <https://github.com/edx/edx-proctoring/tree/323ea43acbd6f12d5131546e8648dedff719bf9e/edx_proctoring/templates>`_
 
-JavaScript Message API and Worker
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-A set of functions called by edX courseware to emit messages based on changing
-exam states. These messages may be handled by a JS worker specific to the proctoring provider. 
-That worker is included as part of the the provider's python plugin and will 
-interface directly with the proctoring software running on the learner's machine. Exam
-state will transition forward only after these messages have been successfully handled.
-However, if a provider does not have a worker interface configured there will be no direct
-communication between edX courseware and the proctoring client.
-
-Message Interface: `exam_action_handler.js <https://github.com/edx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
-
-Example worker: `proctortrack_custom.js <https://github.com/joshivj/edx-proctoring-proctortrack/blob/master/edx_proctoring_proctortrack/static/proctortrack_custom.js>`_
-
 edx-proctoring
 ^^^^^^^^^^^^^^
 Python plugin that handles the bulk of edX's proctoring logic. It hosts the models for proctored
@@ -63,6 +49,28 @@ We have two real backends used in production:
 #. RPNow: https://github.com/edx/edx-proctoring/blob/447c0bf49f31fa4df2aa2b0339137ccfd173f237/edx_proctoring/backends/software_secure.py
 
 For testing backends see `mockprock <https://github.com/edx/edx-proctoring/blob/master/docs/developing.rst#using-mockprock-as-a-backend>`_
+
+JavaScript Message Interface
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+A set of functions called by edX courseware to emit browser messages. Certain providers
+may choose to handle these events to facilitate direct communication between the browser
+and a desktop application.  Messages are emitted when the exam content is started and ended.
+Additionally a ping message will poll at a configurable interval. Successful callback responses
+are required for each of these messages to keep the exam from entering an error state.
+
+Message Interface: `exam_action_handler.js <https://github.com/edx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
+
+JavaScript Worker
+^^^^^^^^^^^^^^^^^
+This is an optional component currently used by Proctortrack and our Mockprock provider.
+
+A JavaScript worker included as part of the the provider's python plugin. This will 
+handle any messages emitted by edX courseware and interface directly with the
+proctoring software running on the learner's machine. 
+
+Example worker: `proctortrack_custom.js <https://github.com/joshivj/edx-proctoring-proctortrack/blob/master/edx_proctoring_proctortrack/static/proctortrack_custom.js>`_
+
+See `Example Action Sequence <>`_ for how this interface fits into the exam process.
 
 Exam States
 -----------
@@ -85,6 +93,8 @@ Example Action Sequence
 -------------------------
 
 The diagram below describes the happy-path of interactions between components to 
-sucessfully begin a proctored exam.
+sucessfully begin a proctored exam. This example matches Proctortrack's backend
+implementation and includes any JavaScript events handled by the proctoring app.
+
 
 .. image:: images/sequence.png
