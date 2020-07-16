@@ -24,18 +24,18 @@ docutils==0.16            # via doc8, readme-renderer, restructuredtext-lint, sp
 drf-jwt==1.16.2           # via edx-drf-extensions
 edx-django-utils==3.2.3   # via edx-drf-extensions, edx-rest-api-client, edx-when
 edx-drf-extensions==6.1.0  # via -r requirements/base.in, edx-when
-edx-opaque-keys==2.1.0    # via -r requirements/base.in, edx-drf-extensions, edx-when
+edx-opaque-keys==2.1.1    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.2.1  # via -r requirements/base.in
 edx-sphinx-theme==1.5.0   # via -r requirements/doc.in
-edx-when==1.2.8           # via -r requirements/base.in
-event-tracking==0.3.2     # via -r requirements/base.in
+edx-when==1.2.9           # via -r requirements/base.in
+event-tracking==0.3.3     # via -r requirements/base.in
 fs==2.4.11                # via xblock
 future==0.18.2            # via pyjwkest
 idna==2.10                # via requests
 imagesize==1.2.0          # via sphinx
 jinja2==2.11.2            # via sphinx
 jsonfield2==3.0.3         # via -c requirements/constraints.txt, -r requirements/base.in
-lxml==4.5.1               # via xblock
+lxml==4.5.2               # via xblock
 markupsafe==1.1.1         # via jinja2, xblock
 newrelic==5.14.1.144      # via edx-django-utils
 packaging==20.4           # via bleach, sphinx
@@ -71,7 +71,7 @@ sphinxcontrib-qthelp==1.0.3  # via sphinx
 sphinxcontrib-serializinghtml==1.1.4  # via sphinx
 sqlparse==0.3.1           # via django
 stevedore==1.32.0         # via doc8, edx-opaque-keys
-typing==3.7.4.1           # via fs
+typing==3.7.4.3           # via fs
 urllib3==1.25.9           # via requests
 web-fragments==0.3.2      # via xblock
 webencodings==0.5.1       # via bleach
