@@ -2,7 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
@@ -621,6 +621,9 @@ msgid ""
 "      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Убедитесь, что вы нажали кнопку «Отправить» для каждого задания, прежде чем «Завершить экзамен».\n"
+"    "
 
 #: templates/proctored_exam/ready_to_submit.html:14
 msgid ""
@@ -734,27 +737,27 @@ msgstr ""
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr ""
+msgstr "Этот экзамен имеет ограничение по времени."
 
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
-msgstr ""
+msgstr "Чтобы сдать этот экзамен, вы должны выполнить задания в отведенное время."
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
-msgstr ""
+msgstr "После того, как вы выберете "
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr ""
+msgstr "\"Я готов начать этот экзамен\","
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr ""
+msgstr "у вас будет "
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
-msgstr ""
+msgstr " для выполнения всех заданий и сдачи экзамена."
 
 #: templates/timed_exam/entrance.html:21
 msgid ""
@@ -762,6 +765,9 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"        Я готов начать этот экзамен.\n"
+"      "
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
@@ -789,6 +795,9 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
+"\n"
+"      После того, как вы нажмете кнопку «Завершить экзамен», ваш экзамен будет оценен.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -796,6 +805,9 @@ msgid ""
 "      Yes, submit my timed exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Завершить экзамен\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -803,6 +815,9 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
+"\n"
+"        Продолжить работу над экзаменом\n"
+"      "
 
 #: templates/timed_exam/submitted.html:6
 msgid ""
@@ -810,6 +825,9 @@ msgid ""
 "        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.\n"
 "      "
 msgstr ""
+"\n"
+"        Время отведенное на данный тест истекло. Вы сможете получить оценку за ту часть работы, которую успели выполнить.\n"
+"      "
 
 #: templates/timed_exam/submitted.html:10
 msgid ""
@@ -817,6 +835,9 @@ msgid ""
 "        You have submitted your timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"        Ваши ответы приняты.\n"
+"      "
 
 #: templates/timed_exam/submitted.html:18
 #, python-format
@@ -836,32 +857,32 @@ msgstr ""
 #: utils.py:76
 #, python-brace-format
 msgid "{num_of_hours} hour"
-msgstr ""
+msgstr "{num_of_hours} час"
 
 #: utils.py:79
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr ""
+msgstr "{num_of_hours} ч."
 
 #: utils.py:87 utils.py:97
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
-msgstr ""
+msgstr "{num_of_minutes} мин"
 
 #: utils.py:90
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr ""
+msgstr " {num_of_minutes} мин"
 
 #: utils.py:92
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr ""
+msgstr "{num_of_minutes} мин"
 
 #: utils.py:95
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr ""
+msgstr " {num_of_minutes} мин"
 
 #: views.py:92
 msgid "could not determine the course_id"
