@@ -54,6 +54,10 @@ In edx-platform/lms/envs/private.py and edx-platform/cms/envs/private.py:
         'MUST_BE_VERIFIED_TRACK': False
     }
 
+How does the proctoring system work?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+See `system overview`_ for a description of the proctoring system and it's components.
 
 Using mockprock as a backend
 ----------------------------
@@ -196,6 +200,7 @@ a user which PT can authenticate as.
   of the integration.
 
 .. _our spec: ./backends.rst
+.. _system overview: ./system-overview.rst
 .. _the README: https://github.com/edx/edx-proctoring
 .. _generate a public JWK keypair: https://mkjwk.org/
 .. _More on that here.: https://openedx.atlassian.net/wiki/spaces/EdxOps/pages/13960183/Sandboxes#Sandboxes-Updatingcode
