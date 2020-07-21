@@ -1,7 +1,8 @@
 .PHONY: help upgrade requirements clean quality requirements docs \
 	test test-all coverage pii_check \
 	compile_translations dummy_translations extract_translations \
-	fake_translations pull_translations push_translations
+	fake_translations pull_translations push_translations test test-python \
+	test-js quality-python quality-js
 
 .DEFAULT_GOAL := help
 
@@ -59,8 +60,12 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	tox -e docs
 	$(BROWSER) docs/_build/html/index.html
 
-quality: ## check coding style with pycodestyle and pylint
+quality-js: lint-js
+
+quality-python: ## Run python linters
 	tox -e quality
+
+quality: quality-js quality-python ## Run linters
 
 test-python: clean ## run tests in the current virtualenv
 	pip install -e .
@@ -104,6 +109,11 @@ validate_translations: ## Test translation files
 dummy_translations: ## generate dummy translation (.po) files
 	cd edx_proctoring && i18n_tool dummy
 
+install-js: ## install JavaScript dependencies
+	npm install
+
 build_dummy_translations: extract_translations dummy_translations compile_translations ## generate and compile dummy translation files
 
 check_translations_up_to_date: build_dummy_translations detect_changed_source_translations ## validate translations
+
+test: test-python test-js ## run tests
