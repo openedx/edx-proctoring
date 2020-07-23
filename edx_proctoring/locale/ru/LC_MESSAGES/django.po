@@ -853,6 +853,9 @@ msgid ""
 "        After the due date has passed, you can review the exam, but you cannot change your answers.\n"
 "      "
 msgstr ""
+"\n"
+"        По истечению срока, установленного для данного экзамена, вы сможете просмотреть свои ответы, но не сможете изменить их.\n"
+"      "
 
 #: utils.py:76
 #, python-brace-format
