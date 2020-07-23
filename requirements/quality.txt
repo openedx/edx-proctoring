@@ -34,10 +34,10 @@ requests==2.24.0          # via requests-toolbelt, twine
 six==1.15.0               # via astroid, bleach, edx-lint, packaging, readme-renderer
 snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.3.1           # via django
-tqdm==4.47.0              # via twine
+tqdm==4.48.0              # via twine
 twine==1.15.0             # via -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
-urllib3==1.25.9           # via requests
+urllib3==1.25.10          # via requests
 webencodings==0.5.1       # via bleach
 wrapt==1.11.2             # via astroid
 
