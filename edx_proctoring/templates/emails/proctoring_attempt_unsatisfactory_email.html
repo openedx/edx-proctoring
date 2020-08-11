@@ -13,14 +13,15 @@
         following violation(s),
     {% endblocktrans %}
     {% if comments %} “{{comments}}“{% endif %}
-    {% trans "you did not successfully meet the proctored exam requirements." %}
+    {% blocktrans %}
+        you did not successfully meet the proctored exam requirements and you will no
+        longer be eligible for academic credit.
+    {% endblocktrans %}
 </p>
 <p>
     {% blocktrans %}
-        If you have any questions about your results, contact {{ platform }}
-        support at
-        <a href="mailto:{{ contact_email }}?Subject={{ support_email_subject }}">
-            {{ contact_email }}
-        </a>.
+        If you would like to appeal this decision, please reply directly to this email
+        with an explanation of the violations listed above. You may appeal this decision
+        within 75 days of when this email was sent.
     {% endblocktrans %}
 </p>
