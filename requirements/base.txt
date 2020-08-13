@@ -10,14 +10,14 @@ cffi==1.14.1              # via cryptography
 chardet==3.0.4            # via requests
 cryptography==3.0         # via pyjwt
 django-crum==0.7.7        # via -r requirements/base.in
-django-ipware==3.0.0      # via -r requirements/base.in
+django-ipware==3.0.1      # via -r requirements/base.in
 django-model-utils==4.0.0  # via -r requirements/base.in, edx-when
 django-waffle==1.0.0      # via -r requirements/base.in, edx-django-utils, edx-drf-extensions
 django-webpack-loader==0.7.0  # via -r requirements/base.in
 django==2.2.15            # via -c requirements/constraints.txt, -r requirements/base.in, django-crum, django-model-utils, djangorestframework, drf-jwt, edx-django-utils, edx-drf-extensions, edx-when, event-tracking, jsonfield2, rest-condition
 djangorestframework==3.11.1  # via -r requirements/base.in, drf-jwt, edx-drf-extensions, rest-condition
 drf-jwt==1.16.2           # via edx-drf-extensions
-edx-django-utils==3.6.0   # via edx-drf-extensions, edx-rest-api-client, edx-when
+edx-django-utils==3.7.3   # via edx-drf-extensions, edx-rest-api-client, edx-when
 edx-drf-extensions==6.1.1  # via -r requirements/base.in, edx-when
 edx-opaque-keys==2.1.1    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.2.1  # via -r requirements/base.in
@@ -29,9 +29,9 @@ idna==2.10                # via requests
 jsonfield2==3.0.3         # via -c requirements/constraints.txt, -r requirements/base.in
 lxml==4.5.2               # via xblock
 markupsafe==1.1.1         # via xblock
-newrelic==5.14.1.144      # via edx-django-utils
+newrelic==5.16.0.145      # via edx-django-utils
 pbr==5.4.5                # via stevedore
-psutil==1.2.1             # via edx-django-utils
+psutil==5.7.2             # via edx-django-utils
 pycparser==2.20           # via cffi
 pycryptodomex==3.9.8      # via -r requirements/base.in, pyjwkest
 pyjwkest==1.4.2           # via edx-drf-extensions
@@ -47,7 +47,7 @@ semantic-version==2.8.5   # via edx-drf-extensions
 six==1.15.0               # via cryptography, edx-drf-extensions, edx-opaque-keys, event-tracking, fs, pyjwkest, python-dateutil, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 sqlparse==0.3.1           # via django
-stevedore==1.32.0         # via edx-opaque-keys
+stevedore==1.32.0         # via edx-django-utils, edx-opaque-keys
 typing==3.7.4.3           # via fs
 urllib3==1.25.10          # via requests
 web-fragments==0.3.2      # via xblock
