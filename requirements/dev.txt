@@ -54,7 +54,7 @@ snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.3.1           # via django
 toml==0.10.1              # via tox
 tox-battery==0.6.1        # via -r requirements/dev.in
-tox==3.18.1               # via -r requirements/dev.in, tox-battery
+tox==3.19.0               # via -r requirements/dev.in, tox-battery
 tqdm==4.48.2              # via twine
 twine==1.15.0             # via -r requirements/dev.in, -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
