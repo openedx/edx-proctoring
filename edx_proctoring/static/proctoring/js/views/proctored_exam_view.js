@@ -19,6 +19,7 @@ edx = edx || {};
             this.timerId = null;
             this.timerTick = 0;
             this.secondsLeft = 0;
+            this.statusUpdateFailureCount = 0;
             /* give an extra 5 seconds where the timer holds at 00:00 before page refreshes */
             this.grace_period_secs = 5;
             this.poll_interval = 60;
@@ -149,6 +150,11 @@ edx = edx || {};
         reloadPage: function() {
             location.reload();
         },
+        reloadPageWithoutConfirmation: function() {
+            clearInterval(this.timerId); // stop the timer once the time finishes.
+            $(window).unbind('beforeunload', this.unloadMessage);
+            this.reloadPage();
+        },
         unloadMessage: function() {
             return gettext('Are you sure you want to leave this page? \n' +
                 'To pass your proctored exam you must also pass the online proctoring session review.');
@@ -180,12 +186,22 @@ edx = edx || {};
                     if (data.status === 'error') {
                         // The proctoring session is in error state
                         // refresh the page to bring up the new Proctoring state from the backend.
-                        clearInterval(self.timerId); // stop the timer once the time finishes.
-                        $(window).unbind('beforeunload', self.unloadMessage);
-                        location.reload();
+                        self.reloadPageWithoutConfirmation();
                     } else {
                         self.secondsLeft = data.time_remaining_seconds;
                         self.accessibility_time_string = data.accessibility_time_string;
+                        self.statusUpdateFailureCount = 0;
+                    }
+                }).fail(function() {
+                    // if we are failing a large number of times
+                    // there's likely to be something session related
+                    // wrong (e.g. the learner logged out & back in in a
+                    // separate tab). In those cases we should not
+                    // indefinitely retry. The issue is unlikely to
+                    // continue if the page is reloaded.
+                    self.statusUpdateFailureCount += 1;
+                    if (self.statusUpdateFailureCount > 3) {
+                        self.reloadPageWithoutConfirmation();
                     }
                 });
             }
