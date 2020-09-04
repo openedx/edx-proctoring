@@ -66,6 +66,7 @@ from edx_proctoring.exceptions import (
     StudentExamAttemptAlreadyExistsException,
     StudentExamAttemptDoesNotExistsException,
     StudentExamAttemptedAlreadyStarted,
+    StudentExamAttemptOnPastDueProctoredExam,
     UserNotFoundException
 )
 from edx_proctoring.models import (
@@ -514,13 +515,20 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         exam_id = self._create_exam_with_due_time(due_date=due_date)
 
-        attempt_id = create_exam_attempt(exam_id, self.user_id, taking_as_proctored=taking_as_proctored)
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-
         if taking_as_proctored:
-            self.assertIsNone(attempt)
+            with self.assertRaises(StudentExamAttemptOnPastDueProctoredExam):
+                attempt_id = create_exam_attempt(
+                    exam_id,
+                    self.user_id,
+                    taking_as_proctored=taking_as_proctored
+                )
         else:
+            attempt_id = create_exam_attempt(
+                exam_id,
+                self.user_id,
+                taking_as_proctored=taking_as_proctored
+            )
+            attempt = get_exam_attempt_by_id(attempt_id)
             self.assertIsNotNone(attempt)
             self.assertIsNone(attempt.get('external_id'))
 

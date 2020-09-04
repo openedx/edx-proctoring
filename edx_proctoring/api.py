@@ -35,7 +35,8 @@ from edx_proctoring.exceptions import (
     ProctoredExamReviewPolicyNotFoundException,
     StudentExamAttemptAlreadyExistsException,
     StudentExamAttemptDoesNotExistsException,
-    StudentExamAttemptedAlreadyStarted
+    StudentExamAttemptedAlreadyStarted,
+    StudentExamAttemptOnPastDueProctoredExam
 )
 from edx_proctoring.models import (
     ProctoredExam,
@@ -706,7 +707,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             )
         )
         log.error(log_msg)
-        return None
+        raise StudentExamAttemptOnPastDueProctoredExam
 
     if taking_as_proctored:
         external_id, force_status = _register_proctored_exam_attempt(
