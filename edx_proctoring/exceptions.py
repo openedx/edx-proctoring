@@ -60,6 +60,12 @@ class StudentExamAttemptedAlreadyStarted(ProctoredBaseException):
     """
 
 
+class StudentExamAttemptOnPastDueProctoredExam(ProctoredBaseException):
+    """
+    Raised when trying to create attempt instance on past due proctored exam
+    """
+
+
 class UserNotFoundException(ProctoredBaseException):
     """
     Raised when the user not found.
