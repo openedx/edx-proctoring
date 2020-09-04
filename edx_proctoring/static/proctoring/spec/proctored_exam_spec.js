@@ -130,6 +130,49 @@ describe('ProctoredExamView', function() {
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         expect(edx.courseware.proctored_exam.endExam).toHaveBeenCalled();
     });
+    it('reloads if the timecheck ajax call repeatedly fails', function() {
+        this.server.respondWith(
+            'GET',
+            '/api/edx_proctoring/v1/proctored_exam/attempt/' +
+            this.proctored_exam_view.model.get('attempt_id') +
+            '?sourceid=in_exam&proctored=true',
+            [
+                400,
+                {'Content-Type': 'application/json'},
+                JSON.stringify({
+                    detail:"Attempted to access attempt_id 23 but does not have access to it."
+                })
+            ]
+        );
+        this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval - 1; // to make the ajax call.
+        this.proctored_exam_view.statusUpdateFailureCount = 2;
+        var pageReload = spyOn(this.proctored_exam_view, 'reloadPageWithoutConfirmation');
+        this.proctored_exam_view.updateRemainingTime();
+        this.server.respond();
+        this.proctored_exam_view.updateRemainingTime();
+        expect(pageReload).toHaveBeenCalled();
+    });
+    it('doesn\'t reload if the timecheck ajax call fails only once', function() {
+        this.server.respondWith(
+            'GET',
+            '/api/edx_proctoring/v1/proctored_exam/attempt/' +
+            this.proctored_exam_view.model.get('attempt_id') +
+            '?sourceid=in_exam&proctored=true',
+            [
+                400,
+                {'Content-Type': 'application/json'},
+                JSON.stringify({
+                    detail:"Attempted to access attempt_id 23 but does not have access to it."
+                })
+            ]
+        );
+        this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval - 1; // to make the ajax call.
+        this.proctored_exam_view.statusUpdateFailureCount = 0;
+        var pageReload = spyOn(this.proctored_exam_view, 'reloadPageWithoutConfirmation');
+        this.proctored_exam_view.updateRemainingTime();
+        this.server.respond();
+        expect(pageReload).not.toHaveBeenCalled();
+    });
     it('calls external js global function on off-beat', function() {
         this.proctored_exam_view.model.set('ping_interval', 60);
         edx.courseware.proctored_exam.pingApplication = jasmine.createSpy().and.returnValue(Promise.resolve());
