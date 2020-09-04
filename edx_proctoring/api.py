@@ -564,6 +564,104 @@ def _create_and_decline_attempt(exam_id, user_id):
     )
 
 
+def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, review_policy):
+    """
+    Call the proctoring backend to register the exam attempt. If there are exceptions
+    the external_id returned might be None. If the backend have onboarding status errors,
+    it will be returned with force_status
+    """
+    scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
+    lms_host = '{scheme}://{hostname}'.format(scheme=scheme, hostname=settings.SITE_NAME)
+
+    obs_user_id = obscured_user_id(user_id, exam['backend'])
+    allowed_time_limit_mins = _calculate_allowed_mins(exam, user_id)
+    review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
+
+    # get the name of the user, if the service is available
+    full_name = ''
+    email = None
+    external_id = None
+    force_status = None
+
+    credit_service = get_runtime_service('credit')
+    if credit_service:
+        credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
+        if credit_state:
+            full_name = credit_state['profile_fullname']
+            email = credit_state['student_email']
+
+    context = {
+        'lms_host': lms_host,
+        'time_limit_mins': allowed_time_limit_mins,
+        'attempt_code': attempt_code,
+        'is_sample_attempt': exam['is_practice_exam'],
+        'user_id': obs_user_id,
+        'full_name': full_name,
+        'email': email
+    }
+
+    # see if there is an exam review policy for this exam
+    # if so, then pass it into the provider
+    if review_policy:
+        context.update({
+            'review_policy': review_policy.review_policy
+        })
+
+    # see if there is a review policy exception for this *user*
+    # exceptions are granted on a individual basis as an
+    # allowance
+    if review_policy_exception:
+        context.update({
+            'review_policy_exception': review_policy_exception
+        })
+
+    # now call into the backend provider to register exam attempt
+    try:
+        external_id = get_backend_provider(exam).register_exam_attempt(
+            exam,
+            context=context,
+        )
+    except BackendProviderSentNoAttemptID as ex:
+        log_message = (
+            u'Failed to get the attempt ID for {user_id}'
+            u'in {exam_id} from the backend because the backend'
+            u'did not provide the id in API response, even when the'
+            u'HTTP response status is {status}, '
+            u'Response: {response}'.format(
+                user_id=user_id,
+                exam_id=exam_id,
+                response=str(ex),
+                status=ex.http_status
+            )
+        )
+        log.error(log_message)
+        raise ex
+    except BackendProviderCannotRegisterAttempt as ex:
+        log_message = (
+            u'Failed to create attempt for {user_id} '
+            u'in {exam_id} because backend was unable '
+            u'to register the attempt. Status: {status}, '
+            u'Reponse: {response}'.format(
+                user_id=user_id,
+                exam_id=exam_id,
+                response=str(ex),
+                status=ex.http_status,
+            )
+        )
+        log.error(log_message)
+        raise ex
+    except BackendProviderOnboardingException as ex:
+        force_status = ex.status
+        log_msg = (
+            u'Failed to create attempt for {user_id} '
+            u'in {exam_id} because of onboarding failure: '
+            u'{force_status}'.format(**locals())
+        )
+        log.error(log_msg)
+
+    return external_id, force_status
+
+
 def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only be
@@ -594,113 +692,26 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
 
             raise StudentExamAttemptAlreadyExistsException(err_msg)
 
-    allowed_time_limit_mins = _calculate_allowed_mins(exam, user_id)
     attempt_code = str(uuid.uuid4()).upper()
 
-    external_id = None
     review_policy = ProctoredExamReviewPolicy.get_review_policy_for_exam(exam_id)
-    review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
+    external_id = None
     force_status = None
 
-    if not is_exam_passed_due(exam, user=user_id) and taking_as_proctored:
-        scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
-        lms_host = '{scheme}://{hostname}'.format(scheme=scheme, hostname=settings.SITE_NAME)
-
-        obs_user_id = obscured_user_id(user_id, exam['backend'])
-
-        # get the name of the user, if the service is available
-        full_name = ''
-        email = None
-
-        credit_service = get_runtime_service('credit')
-        if credit_service:
-            credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
-            if credit_state:
-                full_name = credit_state['profile_fullname']
-                email = credit_state['student_email']
-
-        context = {
-            'lms_host': lms_host,
-            'time_limit_mins': allowed_time_limit_mins,
-            'attempt_code': attempt_code,
-            'is_sample_attempt': exam['is_practice_exam'],
-            'user_id': obs_user_id,
-            'full_name': full_name,
-            'email': email
-        }
-
-        # see if there is an exam review policy for this exam
-        # if so, then pass it into the provider
-        if review_policy:
-            context.update({
-                'review_policy': review_policy.review_policy
-            })
-
-        # see if there is a review policy exception for this *user*
-        # exceptions are granted on a individual basis as an
-        # allowance
-        if review_policy_exception:
-            context.update({
-                'review_policy_exception': review_policy_exception
-            })
-
-        # now call into the backend provider to register exam attempt
-        try:
-            external_id = get_backend_provider(exam).register_exam_attempt(
-                exam,
-                context=context,
-            )
-        except BackendProviderSentNoAttemptID as ex:
-            log_message = (
-                u'Failed to get the attempt ID for {user_id}'
-                u'in {exam_id} from the backend because the backend'
-                u'did not provide the id in API response, even when the'
-                u'HTTP response status is {status}, '
-                u'Response: {response}'.format(
-                    user_id=user_id,
-                    exam_id=exam_id,
-                    response=str(ex),
-                    status=ex.http_status
-                )
-            )
-            log.error(log_message)
-            raise ex
-        except BackendProviderCannotRegisterAttempt as ex:
-            log_message = (
-                u'Failed to create attempt for {user_id} '
-                u'in {exam_id} because backend was unable '
-                u'to register the attempt. Status: {status}, '
-                u'Reponse: {response}'.format(
-                    user_id=user_id,
-                    exam_id=exam_id,
-                    response=str(ex),
-                    status=ex.http_status,
-                )
-            )
-            log.error(log_message)
-            raise ex
-        except BackendProviderOnboardingException as ex:
-            force_status = ex.status
-            log_msg = (
-                u'Failed to create attempt for {user_id} '
-                u'in {exam_id} because of onboarding failure: '
-                u'{force_status}'.format(**locals())
-            )
-            log.error(log_msg)
-
-    if not external_id and exam['backend'] == 'proctortrack' and taking_as_proctored:
-        # temporary logging added to better understand cases where we end up
-        # with exam attempts with NULL external_ids - a situation, that, theoretically,
-        # shouldn't be occurring (EDUCATOR-4948)
+    if is_exam_passed_due(exam, user=user_id) and taking_as_proctored:
         log_msg = (
-            u'Registered exam attempt with an external ID {external_id}'
-            u'in {exam_id} for user {user_id}'.format(
-                external_id=external_id,
-                exam_id=exam_id,
-                user_id=user_id,
+            u'user_id {user_id} trying to create exam atttempt for past due proctored exam {exam_id} '
+            u'Do not register an exam attempt! Return None'.format(
+                exam_id=exam_id, user_id=user_id
             )
         )
         log.error(log_msg)
+        return None
+
+    if taking_as_proctored:
+        external_id, force_status = _register_proctored_exam_attempt(
+            user_id, exam_id, exam, attempt_code, review_policy
+        )
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,

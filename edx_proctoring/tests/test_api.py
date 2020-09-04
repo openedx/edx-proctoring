@@ -502,6 +502,28 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             self.assertLessEqual(minutes_before_past_due_date - 1, attempt['allowed_time_limit_mins'])
             self.assertLessEqual(attempt['allowed_time_limit_mins'], minutes_before_past_due_date)
 
+    @ddt.data(
+        True,
+        False
+    )
+    def test_exam_attempt_past_due_datettime(self, taking_as_proctored):
+        """
+        Testing creating the exam attempt while the exam due date is in the past
+        """
+        due_date = datetime.now(pytz.UTC) - timedelta(hours=1)
+
+        exam_id = self._create_exam_with_due_time(due_date=due_date)
+
+        attempt_id = create_exam_attempt(exam_id, self.user_id, taking_as_proctored=taking_as_proctored)
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+
+        if taking_as_proctored:
+            self.assertIsNone(attempt)
+        else:
+            self.assertIsNotNone(attempt)
+            self.assertIsNone(attempt.get('external_id'))
+
     def test_create_an_exam_attempt(self):
         """
         Create an unstarted exam attempt.
