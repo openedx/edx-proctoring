@@ -59,9 +59,9 @@ tqdm==4.48.2              # via twine
 twine==1.15.0             # via -r requirements/dev.in, -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
 urllib3==1.25.10          # via requests
-virtualenv==20.0.30       # via tox
+virtualenv==20.0.31       # via tox
 webencodings==0.5.1       # via bleach
-wheel==0.34.2             # via -r requirements/dev.in
+wheel==0.35.1             # via -r requirements/dev.in
 wrapt==1.11.2             # via astroid
 zipp==1.2.0               # via importlib-metadata, importlib-resources
 
