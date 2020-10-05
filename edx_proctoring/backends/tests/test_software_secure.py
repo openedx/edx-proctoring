@@ -560,21 +560,16 @@ class SoftwareSecureTests(TestCase):
         self.assertIsNone(provider.mark_erroneous_exam_attempt(None, None))
 
     @ddt.data(
-        ['boop-be-boop-bop-bop', False, False],
-        ['boop-be-boop-bop-bop', True, False],
-        [False, False, False],
-        [False, True, True],
+        ['boop-be-boop-bop-bop', False],
+        [False, True],
     )
     @ddt.unpack
-    @patch('edx_proctoring.backends.software_secure.switch_is_active')
     @patch('edx_proctoring.backends.software_secure.get_current_request')
     def test_should_block_access_to_exam_material(
             self,
             cookie_present,
-            switch_active,
             resultant_boolean,
-            mocked_get_current_request,
-            mocked_switch_is_active
+            mocked_get_current_request
     ):
         """
         Test that conditions applied for blocking user from accessing
@@ -582,7 +577,6 @@ class SoftwareSecureTests(TestCase):
         """
         provider = get_backend_provider()
         mocked_get_current_request.return_value.get_signed_cookie.return_value = cookie_present
-        mocked_switch_is_active.return_value = switch_active
         assert bool(provider.should_block_access_to_exam_material()) == resultant_boolean
 
     def test_split_fullname(self):

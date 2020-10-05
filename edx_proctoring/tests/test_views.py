@@ -475,7 +475,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         return attempt
 
-    def _test_repeated_start_exam_callbacks(self, attempt, is_rpnow4_on):
+    def _test_repeated_start_exam_callbacks(self, attempt):
         """
         Given an exam attempt, call the start exam callback twice to verify
         that the status in not incorrectly reverted
@@ -484,11 +484,9 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # hit callback and verify that exam status is 'ready to start'
         attempt_id = attempt['id']
         code = attempt['attempt_code']
-        with patch('edx_proctoring.callbacks.switch_is_active') as mock_switch_is_active:
-            mock_switch_is_active.return_value = is_rpnow4_on
-            self.client.get(
-                reverse('edx_proctoring:anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
-            )
+        self.client.get(
+            reverse('edx_proctoring:anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
+        )
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], "ready_to_start")
 
@@ -500,11 +498,9 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt['status'], "started")
 
         # hit callback again and verify that status has moved to submitted
-        with patch('edx_proctoring.callbacks.switch_is_active') as mock_switch_is_active:
-            mock_switch_is_active.return_value = is_rpnow4_on
-            self.client.get(
-                reverse('edx_proctoring:anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
-            )
+        self.client.get(
+            reverse('edx_proctoring:anonymous.proctoring_launch_callback.start_exam', kwargs={'attempt_code': code})
+        )
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], "submitted")
         self.assertNotEqual(attempt['status'], "started")
@@ -600,17 +596,15 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertIsNotNone(attempt['started_at'])
 
-    @ddt.data(True, False)
-    def test_start_exam_callback_when_created(self, is_rpnow4_on):
+    def test_start_exam_callback_when_created(self):
         """
         Test that hitting software secure callback URL twice when the attempt state begins at
         'created' changes the state from 'started' to 'submitted' and not back to 'ready to start'
         """
         attempt = self._test_exam_attempt_creation()
-        self._test_repeated_start_exam_callbacks(attempt, is_rpnow4_on)
+        self._test_repeated_start_exam_callbacks(attempt)
 
-    @ddt.data(True, False)
-    def test_start_exam_callback_when_download_software_clicked(self, is_rpnow4_on):
+    def test_start_exam_callback_when_download_software_clicked(self):
         """
         Test that hitting software secure callback URL twice when the attempt state begins at
         'download_software_clicked' changes the state to 'submitted' and does not change the
@@ -624,7 +618,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         user_id = attempt['user']['id']
         update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.download_software_clicked)
 
-        self._test_repeated_start_exam_callbacks(attempt, is_rpnow4_on)
+        self._test_repeated_start_exam_callbacks(attempt)
 
     def test_attempt_readback(self):
         """
@@ -1773,8 +1767,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         return response_data['exam_attempt_id']
 
-    @patch('edx_proctoring.callbacks.switch_is_active')
-    def test_exam_callback(self, mock_switch_is_active):
+    def test_exam_callback(self):
         """
         Start an exam (create an exam attempt)
         """
@@ -1785,32 +1778,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt_code = attempt['attempt_code']
         self.assertIsNone(attempt['started_at'])
 
-        mock_switch_is_active.return_value = False
-        response = self.client.get(
-            reverse(
-                'edx_proctoring:anonymous.proctoring_launch_callback.start_exam',
-                args=[attempt_code]
-            )
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertNotIn('exam', response.cookies)
-
-        attempt = get_exam_attempt_by_id(attempt_id)
-        self.assertEqual(attempt['status'], 'ready_to_start')
-
-    @patch('edx_proctoring.callbacks.switch_is_active')
-    def test_exam_callback_rpnowv4(self, mock_switch_is_active):
-        """
-        Start an exam (create an exam attempt)
-        """
-        attempt_id = self._setup_for_test_exam_callback()
-
-        # exam should not have started
-        attempt = get_exam_attempt_by_id(attempt_id)
-        attempt_code = attempt['attempt_code']
-        self.assertIsNone(attempt['started_at'])
-
-        mock_switch_is_active.return_value = True
         response = self.client.get(
             reverse(
                 'edx_proctoring:anonymous.proctoring_launch_callback.start_exam',
