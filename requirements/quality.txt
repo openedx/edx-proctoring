@@ -5,7 +5,7 @@
 #    make upgrade
 #
 astroid==2.3.3            # via pylint, pylint-celery
-bleach==3.1.5             # via readme-renderer
+bleach==3.2.0             # via readme-renderer
 certifi==2020.6.20        # via requests
 chardet==3.0.4            # via requests
 click-log==0.3.2          # via edx-lint
@@ -21,7 +21,7 @@ packaging==20.4           # via bleach
 pkginfo==1.5.0.1          # via twine
 pycodestyle==2.6.0        # via -r requirements/quality.in
 pydocstyle==5.1.1         # via -r requirements/quality.in
-pygments==2.6.1           # via readme-renderer
+pygments==2.7.1           # via readme-renderer
 pylint-celery==0.3        # via edx-lint
 pylint-django==2.0.11     # via edx-lint
 pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
@@ -34,7 +34,7 @@ requests==2.24.0          # via requests-toolbelt, twine
 six==1.15.0               # via astroid, bleach, edx-lint, packaging, readme-renderer
 snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.3.1           # via django
-tqdm==4.48.2              # via twine
+tqdm==4.49.0              # via twine
 twine==1.15.0             # via -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
 urllib3==1.25.10          # via requests
