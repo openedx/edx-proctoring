@@ -4,15 +4,10 @@ Various callback paths that support callbacks from SoftwareSecure
 
 import logging
 
-from waffle import switch_is_active
-
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import loader
 from django.urls import NoReverseMatch, reverse
 
 from edx_proctoring.api import get_exam_attempt_by_code, mark_exam_attempt_as_ready, update_attempt_status
-from edx_proctoring.constants import RPNOWV4_WAFFLE_NAME
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 log = logging.getLogger(__name__)
@@ -53,24 +48,14 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
                         attempt_status=attempt_status,
                     ))
 
-    if switch_is_active(RPNOWV4_WAFFLE_NAME):  # pylint: disable=illegal-waffle-usage
-        course_id = attempt['proctored_exam']['course_id']
-        content_id = attempt['proctored_exam']['content_id']
+    course_id = attempt['proctored_exam']['course_id']
+    content_id = attempt['proctored_exam']['content_id']
 
-        exam_url = ''
-        try:
-            exam_url = reverse('jump_to', args=[course_id, content_id])
-        except NoReverseMatch:
-            log.exception(u"BLOCKING ERROR: Can't find course info url for course %s", course_id)
-        response = HttpResponseRedirect(exam_url)
-        response.set_signed_cookie('exam', attempt['attempt_code'])
-        return response
-
-    template = loader.get_template('proctored_exam/proctoring_launch_callback.html')
-
-    return HttpResponse(
-        template.render({
-            'platform_name': settings.PLATFORM_NAME,
-            'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {})
-        })
-    )
+    exam_url = ''
+    try:
+        exam_url = reverse('jump_to', args=[course_id, content_id])
+    except NoReverseMatch:
+        log.exception(u"BLOCKING ERROR: Can't find course info url for course %s", course_id)
+    response = HttpResponseRedirect(exam_url)
+    response.set_signed_cookie('exam', attempt['attempt_code'])
+    return response

@@ -14,7 +14,6 @@ from hashlib import sha256
 import requests
 from crum import get_current_request
 from Cryptodome.Cipher import DES3
-from waffle import switch_is_active
 
 from django.conf import settings
 from django.urls import reverse
@@ -393,4 +392,4 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         req = get_current_request()
         # pylint: disable=illegal-waffle-usage
-        return switch_is_active(constants.RPNOWV4_WAFFLE_NAME) and not req.get_signed_cookie('exam', default=False)
+        return not req.get_signed_cookie('exam', default=False)
