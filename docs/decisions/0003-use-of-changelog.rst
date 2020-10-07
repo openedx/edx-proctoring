@@ -1,4 +1,4 @@
-1. Use CHANGELOG.rst
+Use CHANGELOG.rst
 ====================
 
 Status
