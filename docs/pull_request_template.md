@@ -1,6 +1,10 @@
-**Description:** Describe in a couple of sentences how this pull request modifies the repository.  Comment on the business context, and highlight any concerns about the changes being introduced.
+**Description:**
 
-**JIRA:** Provide a link to a JIRA ticket, if applicable
+Describe in a couple of sentences how this pull request modifies the repository.
+
+**JIRA:**
+
+[XXX-XXXX](https://openedx.atlassian.net/browse/XXX-XXXX)
 
 **Pre-Merge Checklist:**
 
@@ -8,3 +12,6 @@
 - [ ] Describe your changes in `CHANGELOG.rst`
 - [ ] Confirmed Github reports all automated tests/checks are passing.
 - [ ] Approved by at least one additional reviewer.
+
+**Post-Merge:**
+- [ ] Create a tag matching the new version number.
