@@ -14,4 +14,5 @@ Describe in a couple of sentences how this pull request modifies the repository.
 - [ ] Approved by at least one additional reviewer.
 
 **Post-Merge:**
+
 - [ ] Create a tag matching the new version number.
