@@ -16,7 +16,7 @@ def update_backend(apps, schema_editor):
         for exam in ProctoredExam.objects.filter(backend__isnull=True):
             exam.backend = default_backend
             exam.save()
-            log.info("updated exam %d with backend %d", exam.id, default_backend)
+            log.info("updated exam %d with backend %s", exam.id, default_backend)
     else:
         log.warning("settings.PROCTORING_BACKENDS['DEFAULT'] is not set. Unable to do migration.")
 
