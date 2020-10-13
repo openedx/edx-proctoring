@@ -4,7 +4,7 @@ Use CHANGELOG.rst
 Status
 ------
 
-Proposed
+Accepted (circa October 2020)
 
 Context
 -------
