@@ -63,6 +63,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.footer_msg = 'About Proctored Exams'
         self.timed_footer_msg = 'Can I request additional time to complete my exam?'
         self.wait_deadline_msg = "The result will be visible after"
+        self.inactive_account_msg = "You have not activated your account"
 
     def _render_exam(self, content_id, context_overrides=None):
         """
@@ -1277,3 +1278,18 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         exam_attempt.save()
         rendered_response = self.render_proctored_exam()
         assert onboarding_status in rendered_response
+
+    @ddt.data(
+        render_onboarding_exam,
+        render_practice_exam,
+        render_proctored_exam,
+    )
+    def test_inactive_account_interstitial(self, render_exam):
+        """
+        Test that the correct interstitial is shown for an inactive account
+        """
+        self.user.is_active = False
+        self.user.save()
+
+        rendered_response = render_exam(self)
+        self.assertIn(self.inactive_account_msg, rendered_response)

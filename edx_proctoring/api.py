@@ -1802,6 +1802,18 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
     """
     Common context variables for the Proctored and Practice exams' templates.
     """
+    password_url = ''
+    try:
+        password_assistance_url = reverse('password_assistance')
+        scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
+        password_url = '{scheme}://{site_name}{password_assistance_url}'.format(
+            scheme=scheme,
+            site_name=constants.SITE_NAME,
+            password_assistance_url=password_assistance_url
+        )
+    except NoReverseMatch:
+        log.exception(u"Can't find password reset link")
+
     has_due_date = exam['due_date'] is not None
     attempt_time = attempt.get('allowed_time_limit_mins', None) if attempt else None
 
@@ -1849,6 +1861,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'learner_notification_from_email': provider.learner_notification_from_email,
         'integration_specific_email': get_integration_specific_email(provider),
         'exam_display_name': exam['exam_name'],
+        'reset_link': password_url
     }
     if attempt:
         context['exam_code'] = attempt['attempt_code']
@@ -1870,13 +1883,17 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     """
     Returns a rendered view for the practice Exams
     """
+    user = USER_MODEL.objects.get(id=user_id)
+
     student_view_template = None
 
     attempt = get_exam_attempt(exam_id, user_id)
 
     attempt_status = attempt['status'] if attempt else None
 
-    if not attempt_status:
+    if not user.is_active:
+        student_view_template = 'proctored_exam/inactive_account.html'
+    elif not attempt_status:
         student_view_template = 'practice_exam/entrance.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         provider = get_backend_provider(exam)
@@ -1919,7 +1936,9 @@ def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
 
     attempt_status = attempt['status'] if attempt else None
 
-    if not attempt_status:
+    if not user.is_active:
+        student_view_template = 'proctored_exam/inactive_account.html'
+    elif not attempt_status:
         student_view_template = 'onboarding_exam/entrance.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
@@ -1968,7 +1987,9 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     if attempt_status == ProctoredExamStudentAttemptStatus.declined:
         return None
 
-    if not attempt_status:
+    if not user.is_active:
+        student_view_template = 'proctored_exam/inactive_account.html'
+    elif not attempt_status:
         # student has not started an attempt
         # so, show them:
         #       1) If there are failed prerequisites then block user and say why

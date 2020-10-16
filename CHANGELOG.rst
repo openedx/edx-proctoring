@@ -14,11 +14,17 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.4.8] - 2020-10-19
+~~~~~~~~~~~~~~~~~~~~
+
+* Created a separate error message for inactive users. Refined the
+  existing error message to only show for network error or service disruption.
+
 
 [2.4.7] - 2020-10-06
 ~~~~~~~~~~~~~~~~~~~~
 
-* Removed the rpnowv4_flow waffle flag to cleanup code  
+* Removed the rpnowv4_flow waffle flag to cleanup code
 
 For details of changes prior to this release, please see
 the `GitHub commit history`_.
