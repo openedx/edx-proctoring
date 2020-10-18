@@ -5,7 +5,7 @@
 # EdX Team <info@edx.org>, 2018.
 # 
 # Translators:
-# iron_man <inactive+iron_man@transifex.com>, 2016
+# ca47f5bf05c27c3888896d9870e257ad_00aad6f <5addf4166015f6e11583e89fe2c53975_164880>, 2016
 # İlker IŞIK <m.ilkerisik@hotmail.com>, 2016
 # baris <brscvs@gmail.com>, 2016
 # Muha Aliss <muhaaliss@gmail.com>, 2016
