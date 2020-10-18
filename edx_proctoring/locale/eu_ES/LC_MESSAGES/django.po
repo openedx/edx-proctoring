@@ -28,7 +28,7 @@ msgstr ""
 
 #: admin.py:97
 msgid "All Unreviewed"
-msgstr ""
+msgstr "Berrikusi gabeko guztiak"
 
 #: admin.py:98
 msgid "All Unreviewed Failures"
@@ -592,6 +592,9 @@ msgid ""
 "      Follow these instructions\n"
 "    "
 msgstr ""
+"\n"
+"      Jarraitu argibide hauei\n"
+"    "
 
 #: templates/proctored_exam/ready_to_start.html:10
 #, python-format

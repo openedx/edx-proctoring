@@ -5,14 +5,15 @@
 # EdX Team <info@edx.org>, 2018.
 # 
 # Translators:
-# ca47f5bf05c27c3888896d9870e257ad_00aad6f <5addf4166015f6e11583e89fe2c53975_164880>, 2016
-# Muha Aliss <muhaaliss@gmail.com>, 2016
-# ali selek <aliselek01@gmail.com>, 2016
-# Burak Özalp <realburq@gmail.com>, 2016
-# İlker IŞIK <m.ilkerisik@hotmail.com>, 2016
-# baris <brscvs@gmail.com>, 2016
-# Hakan Şenel <hgsenel@gmail.com>, 2016
-# Ali Işıngör <ali@artistanbul.io>, 2018
+# CptOrange <saraluis12@hotmail.com>, 2016
+# David Azevedo <davidc.azevedo@gmail.com>, 2016
+# Teresa Guerreiro <t.guerreiro@sapo.pt>, 2016
+# Carlos <carlos.c.saraiva@gmail.com>, 2016
+# Developer QUEO <developer@queo.pt>, 2017
+# Manuela Silva <manuelarodsilva@gmail.com>, 2018
+# Cátia Lopes <catia.lopes@bridgelk.com>, 2019
+# Luis Manuel Moreno <luis.moreno@edunext.co>, 2019
+# Rui Ribeiro <info@nau.edu.pt>, 2020
 # 
 msgid ""
 msgstr ""
@@ -20,168 +21,166 @@ msgstr ""
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: Ali Işıngör <ali@artistanbul.io>, 2018\n"
-"Language-Team: Turkish (Turkey) (https://www.transifex.com/open-edx/teams/6205/tr_TR/)\n"
+"Last-Translator: Rui Ribeiro <info@nau.edu.pt>, 2020\n"
+"Language-Team: Portuguese (Portugal) (https://www.transifex.com/open-edx/teams/6205/pt_PT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: tr_TR\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: pt_PT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: admin.py:88
 msgid "internally reviewed"
-msgstr "dâhili olarak gözden geçirildi"
+msgstr ""
 
 #: admin.py:97
 msgid "All Unreviewed"
-msgstr "Tüm İncelenmeyenler"
+msgstr ""
 
 #: admin.py:98
 msgid "All Unreviewed Failures"
-msgstr "Tüm İncelenmeyen Hatalar"
+msgstr ""
 
 #: admin.py:119
 msgid "active proctored exams"
-msgstr "etkinleştirilmiş gözetmenli sınavlar"
+msgstr ""
 
 #: admin.py:177
 msgid "courses with active proctored exams"
-msgstr "gözetmenli sınavlara sahip dersler"
+msgstr ""
 
 #: admin.py:342
 msgid "Course Id"
-msgstr "Ders No"
+msgstr ""
 
 #: admin.py:380
 msgid "Created"
-msgstr "Oluşturuldu"
+msgstr ""
 
 #: admin.py:381
 msgid "Download Software Clicked"
-msgstr "Yazılım İndir'e Tıklandı"
+msgstr ""
 
 #: admin.py:382
 msgid "Ready To Start"
-msgstr "Başlamaya Hazır"
+msgstr ""
 
 #: admin.py:383
 msgid "Started"
-msgstr "Başladı"
+msgstr ""
 
 #: admin.py:384
 msgid "Ready To Submit"
-msgstr "Göndermeye Hazır"
+msgstr ""
 
 #: admin.py:385
 msgid "Declined"
-msgstr "Reddedildi"
+msgstr ""
 
 #: admin.py:386
 msgid "Timed Out"
-msgstr "Zaman Aşımına Uğradı"
+msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr "Girildi"
+msgstr ""
 
 #: admin.py:388
 msgid "Second Review Required"
-msgstr "İkinci Bir İnceleme Gerekli"
+msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "Onaylandı"
+msgstr ""
 
 #: admin.py:390
 msgid "Rejected"
-msgstr "Reddedildi"
+msgstr ""
 
 #: admin.py:391
 msgid "Error"
-msgstr "Hata"
+msgstr ""
 
 #: api.py:902
 msgid "your course"
-msgstr "dersiniz"
+msgstr ""
 
 #: api.py:962
 #, python-brace-format
 msgid "Proctoring Session Results Update for {course_name} {exam_name}"
 msgstr ""
-"{course_name} dersi {exam_name} sınavı için Gözetmenli Sınav Sonuçları "
-"Güncellemesi"
 
 #: api.py:1284
 msgid "Taking As Proctored Exam"
-msgstr "Gözetmenli Sınav Olarak Alınıyor"
+msgstr ""
 
 #: api.py:1289
 msgid "Proctored Option Available"
-msgstr "Gözetmenli Seçenek Mevcut"
+msgstr ""
 
 #: api.py:1294
 msgid "Taking As Open Exam"
-msgstr "Açık Sınav Olarak Alınıyor"
+msgstr ""
 
 #: api.py:1299 api.py:1304
 msgid "Pending Session Review"
-msgstr "Bekleyen Oturum İncelemesi"
+msgstr ""
 
 #: api.py:1309
 msgid "Passed Proctoring"
-msgstr "Başarılı Gözetmenli Sınav"
+msgstr ""
 
 #: api.py:1314 api.py:1319
 msgid "Failed Proctoring"
-msgstr "Başarısız Gözetmenli Sınav"
+msgstr ""
 
 #: api.py:1324
 msgid "Proctored Option No Longer Available"
-msgstr "Gözetmenli Seçenek Artık Mevcut Değil"
+msgstr ""
 
 #: api.py:1333
 msgid "Ungraded Practice Exam"
-msgstr "Puanlanmamış Alıştırma Sınavı"
+msgstr ""
 
 #: api.py:1338
 msgid "Practice Exam Completed"
-msgstr "Alıştırma Sınavı Tamamlandı"
+msgstr ""
 
 #: api.py:1343
 msgid "Practice Exam Failed"
-msgstr "Alıştırma Sınavı Başarısız"
+msgstr ""
 
 #: api.py:1351
 msgid "Timed Exam"
-msgstr "Zamanlanmış Sınav"
+msgstr ""
 
 #: models.py:181
 msgid "pending"
-msgstr "beklemede"
+msgstr ""
 
 #: models.py:182
 msgid "satisfactory"
-msgstr "yeterli"
+msgstr ""
 
 #: models.py:183
 msgid "unsatisfactory"
-msgstr "yetersiz"
+msgstr ""
 
 #: models.py:481
 msgid "Taking as Proctored"
-msgstr "Gözetmenli Olarak Alınıyor"
+msgstr ""
 
 #: models.py:485
 msgid "Is Sample Attempt"
-msgstr "Bir Örnek Denemedir"
+msgstr ""
 
 #: models.py:700
 msgid "Additional Time (minutes)"
-msgstr "Ek Zaman (dakika)"
+msgstr ""
 
 #: models.py:701
 msgid "Review Policy Exception"
-msgstr "İnceleme Politikası İstisnası"
+msgstr ""
 
 #: templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
@@ -200,9 +199,6 @@ msgid ""
 "      Try a proctored exam\n"
 "    "
 msgstr ""
-"\n"
-"      Gözetmenli sınav dene\n"
-"    "
 
 #: templates/practice_exam/entrance.html:9
 msgid ""
@@ -211,14 +207,10 @@ msgid ""
 "      on your grade in the course.\n"
 "    "
 msgstr ""
-"\n"
-"      Ders sonrası gerçek sınavlar için gözetmenli sınavları deneyimleyin.\n"
-"      Alıştırma sınavı ders notunuzu etkilemeyecek.\n"
-"    "
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
-msgstr "Alıştırma sınavıma devam et"
+msgstr ""
 
 #: templates/practice_exam/entrance.html:18
 msgid ""
@@ -226,9 +218,6 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and to perform various checks.\n"
 "      "
 msgstr ""
-"\n"
-"        Gözetmen yazılımının ayarlanmasının her bir adamında size rehberlik edilecek ve çeşitli denetimler yapılacak.\n"
-"      "
 
 #: templates/practice_exam/error.html:4
 msgid ""
@@ -236,9 +225,6 @@ msgid ""
 "      There was a problem with your practice proctoring session\n"
 "    "
 msgstr ""
-"\n"
-"     Gözetmenli alıştırma oturumunuzda bir hata gerçekleşti\n"
-"    "
 
 #: templates/practice_exam/error.html:10
 msgid ""
@@ -246,9 +232,6 @@ msgid ""
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
 "    "
 msgstr ""
-"\n"
-"      Alıştırma sınavı sonucunuz: <b class=\"failure\"> Yetersiz </b>\n"
-"    "
 
 #: templates/practice_exam/error.html:16
 msgid ""
@@ -257,14 +240,10 @@ msgid ""
 "      You can retry this practice exam if you had problems setting up the online proctoring software.\n"
 "    "
 msgstr ""
-"\n"
-"      Alıştırma sınavını tamamlamanızdan önce gözetmenli oturumunuz sona erdi.\n"
-"      Çevrimiçi gözetmen yazılımının kurulumunda bir sorun yaşadıysanız bu alıştırma sınavını tekrar deneyebilirsiniz.\n"
-"    "
 
 #: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
-msgstr "Alıştırma sınavını tekrar dene"
+msgstr ""
 
 #: templates/practice_exam/submitted.html:4
 msgid ""
@@ -272,9 +251,6 @@ msgid ""
 "      You have submitted this practice proctored exam\n"
 "    "
 msgstr ""
-"\n"
-"      Bu gözetmenli alıştırma sınavını gönderdiniz\n"
-"    "
 
 #: templates/practice_exam/submitted.html:10
 msgid ""
@@ -283,14 +259,10 @@ msgid ""
 "      You have completed this practice exam and can continue with your course work.\n"
 "    "
 msgstr ""
-"\n"
-"      Alıştırma sınavları ders notunuzu ya da kredilerinizi etkilemez.\n"
-"      Bu alıştırma sınavını tamamladınız ve dersinize kaldığınız yerden devam edebilirsiniz.\n"
-"    "
 
 #: templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
-msgstr "Bu alıştırma sınavını aynı zamanda deneyebilirsiniz de"
+msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:5
 msgid ""
@@ -298,9 +270,6 @@ msgid ""
 "        Are you sure you want to take this exam without proctoring?\n"
 "      "
 msgstr ""
-"\n"
-"        Bu sınavı gözetmensiz olarak almak istediğinize emin misiniz?\n"
-"      "
 
 #: templates/proctored_exam/confirm-decline.html:10
 msgid ""
@@ -308,17 +277,14 @@ msgid ""
 "        If you take this exam without proctoring, you will <strong> no longer be eligible for academic credit. </strong>\n"
 "      "
 msgstr ""
-"\n"
-"        Bu sınavı gözetmensiz olarak almanız durumunda, <strong> akademik krediye hak kazanamayacaksınız.</strong>\n"
-"      "
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
-msgstr "Sınava Göetmensiz Olarak Devam Et"
+msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr "Geri Dön"
+msgstr ""
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -328,9 +294,6 @@ msgid ""
 "      This exam is proctored\n"
 "    "
 msgstr ""
-"\n"
-"      Bu sınav gözetmenlidir\n"
-"    "
 
 #: templates/proctored_exam/entrance.html:9
 msgid ""
@@ -341,7 +304,7 @@ msgstr ""
 
 #: templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
-msgstr "Gözetmenli sınavıma devam et. Krediye uygun olmak istiyorum."
+msgstr ""
 
 #: templates/proctored_exam/entrance.html:17
 msgid ""
@@ -356,9 +319,6 @@ msgid ""
 "      Error with proctored exam\n"
 "    "
 msgstr ""
-"\n"
-"     Gözetmenli sınavda hata\n"
-"    "
 
 #: templates/proctored_exam/error.html:10
 #, python-format
@@ -382,9 +342,6 @@ msgid ""
 "      View your credit eligibility status on your <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 msgstr ""
-"\n"
-"      Kredi uygunluk durumunuzu <a href=\"%(progress_page_url)s\">İlerleme</a> sayfanızdan görebilirsiniz.\n"
-"    "
 
 #: templates/proctored_exam/error.html:26
 #: templates/proctored_exam/rejected.html:26
@@ -393,9 +350,6 @@ msgid ""
 "      If you have concerns about your proctoring session results, contact your course team.\n"
 "    "
 msgstr ""
-"\n"
-"      Gözetmenli sınav oturumunuzla ilgili endişeleriniz varsa, ders ekibiniz ile iletişime geçin.\n"
-"    "
 
 #: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
 msgid ""
@@ -403,9 +357,6 @@ msgid ""
 "      The due date for this exam has passed\n"
 "    "
 msgstr ""
-"\n"
-"      Bu sınav için teslim tarihi geçti\n"
-"    "
 
 #: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
@@ -413,9 +364,6 @@ msgid ""
 "      Because the due date has passed, you are no longer able to take this exam.\n"
 "    "
 msgstr ""
-"\n"
-"      Bitiş tarihi geçtiğinden, bu sınavı artık alamayacaksınız.\n"
-"    "
 
 #: templates/proctored_exam/failed-prerequisites.html:9
 #, python-format
@@ -431,9 +379,6 @@ msgid ""
 "    You did not satisfy the following prerequisites:\n"
 "    "
 msgstr ""
-"\n"
-"    Aşağıdki ön gereklilikleri karşılamıyorsunuz:\n"
-"    "
 
 #: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
@@ -441,9 +386,6 @@ msgid ""
 "        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
 "      "
 msgstr ""
-"\n"
-"        Karşılanmayan ön gerekliler yüzünden, bu sınavı sadece gözetmensiz olarak alabilirsiniz.\n"
-"      "
 
 #: templates/proctored_exam/failed-prerequisites.html:40
 #, python-format
@@ -452,9 +394,6 @@ msgid ""
 "      If you have questions about the status of your requirements for course credit, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
-"\n"
-"      Ders kredisine yönelik gerekliliklerinizin durumuna ilişkin sorularınız varsa, lütfen %(platform_name)s Destek Ekibi ile iletişime geçin.\n"
-"    "
 
 #: templates/proctored_exam/footer.html:5
 msgid ""
@@ -462,9 +401,6 @@ msgid ""
 "        About Proctored Exams\n"
 "        "
 msgstr ""
-"\n"
-"        Gözetmenli Sınavlar Hakkında\n"
-"        "
 
 #: templates/proctored_exam/id_verification.html:6
 msgid ""
@@ -472,9 +408,6 @@ msgid ""
 "                Complete your verification before starting the proctored exam.\n"
 "            "
 msgstr ""
-"\n"
-"                Gözetmenli sınava başlamadan önce kimlik doğrulamanızı tamamlayın.\n"
-"            "
 
 #: templates/proctored_exam/id_verification.html:11
 msgid ""
@@ -482,9 +415,6 @@ msgid ""
 "                You must successfully complete identity verification before you can start the proctored exam.\n"
 "            "
 msgstr ""
-"\n"
-"                Gözetmenli sınava başlamadan önce kimlik doğrulamasını başarıyla tamamlamalısınız.\n"
-"            "
 
 #: templates/proctored_exam/id_verification.html:17
 msgid ""
@@ -493,10 +423,6 @@ msgid ""
 "                    submit your verification.\n"
 "                "
 msgstr ""
-"\n"
-"                    Doğrulamanız beklemede. Doğrulamanızı gönderdikten 2-3 gün sonra\n"
-"                    sonuçlar açıklanacaktır.\n"
-"                "
 
 #: templates/proctored_exam/id_verification.html:24
 msgid ""
@@ -506,15 +432,10 @@ msgid ""
 "                    then try again.\n"
 "                "
 msgstr ""
-"\n"
-"                    Doğrulama denemeniz başarısız oldu. Lütfen başarılı bir doğrulama işlemi için\n"
-"                    yerine getirilmesi gerekenleri doğrulamak için kılavuz metinlerimizi yeniden okuyun,\n"
-"                    ve ardından tekrar deneyin.\n"
-"                "
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr "Yeniden Doğrulama"
+msgstr ""
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
@@ -523,15 +444,11 @@ msgid ""
 "                    before you can start the proctored exam.\n"
 "                "
 msgstr ""
-"\n"
-"                    Doğrulamanız geçerliliğini kaybetti. Gözetmenli sınava başlamadan önce\n"
-"                    yeni bir kimlik doğrulaması yapmalısınız.\n"
-"                "
 
 #: templates/proctored_exam/id_verification.html:44
 #: templates/proctored_exam/id_verification.html:56
 msgid "Continue to Verification"
-msgstr "Doğrulamaya Devam Et"
+msgstr ""
 
 #: templates/proctored_exam/id_verification.html:49
 msgid ""
@@ -547,9 +464,6 @@ msgid ""
 "      Follow these steps to set up and start your proctored exam.\n"
 "    "
 msgstr ""
-"\n"
-"      Gözetmenli sınavınızı ayarlamak ve başlatmak için aşağıdaki adımları takip edin.\n"
-"    "
 
 #: templates/proctored_exam/instructions.html:11
 msgid ""
@@ -557,9 +471,6 @@ msgid ""
 "        1. Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
 "      "
 msgstr ""
-"\n"
-"        1. Bu eşsiz sınav kodunu kopyalayın. Sınava başlarken bu kodu girmenizi isteyen bir uyarı göreceksiniz.\n"
-"      "
 
 #: templates/proctored_exam/instructions.html:19
 msgid ""
@@ -567,9 +478,6 @@ msgid ""
 "        Select the exam code, then copy it using Command+C (Mac) or Control+C (Windows).\n"
 "      "
 msgstr ""
-"\n"
-"        Sınav kodunu seçin, ardından Command+C (Mac) veya Control+C (Windows) ile kopyalayın.\n"
-"      "
 
 #: templates/proctored_exam/instructions.html:24
 msgid ""
@@ -577,13 +485,10 @@ msgid ""
 "        2. Follow the link below to set up proctoring.\n"
 "      "
 msgstr ""
-"\n"
-"        2. Gözetmenli sınavı ayarlamak için aşağıdaki bağlantıyı kopyalayın.\n"
-"      "
 
 #: templates/proctored_exam/instructions.html:29
 msgid "Start System Check"
-msgstr "Sistem Denetimine Başla"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:32
 msgid ""
@@ -591,9 +496,6 @@ msgid ""
 "        A new window will open. You will run a system check before downloading the proctoring application.\n"
 "      "
 msgstr ""
-"\n"
-"        Yeni bir pencere açılacak. Gözetmen uygulamasını indirmeden önce bir sistem denetimi yapılacak.\n"
-"      "
 
 #: templates/proctored_exam/instructions.html:37
 msgid ""
@@ -610,31 +512,27 @@ msgid ""
 "          3. When you have finished setting up proctoring, start the exam.\n"
 "        "
 msgstr ""
-"\n"
-"          3. Gözetmen ayarlamalarınızı yaptıktan sonra, sınava başlayın.\n"
-"        "
 
 #: templates/proctored_exam/instructions.html:50
 msgid "Start Proctored Exam"
-msgstr "Gözetmenli Sınava Başla"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr "Kapat"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
-msgstr "Gözetmenli Sınav Başlatılamıyor"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:85
 #: templates/proctored_exam/proctoring_opt_out_button.html:5
 msgid "Take this exam without proctoring."
-msgstr "Bu sınavı gözetmensiz olarak al."
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:87
 msgid "Doing so means that you are no longer eligible for academic credit."
 msgstr ""
-"Bu şekilde yapmak, akademik kredinizi dolduramayacağınız anlamına gelir."
 
 #: templates/proctored_exam/pending-prerequisites.html:9
 #, python-format
@@ -650,9 +548,6 @@ msgid ""
 "    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
 "    "
 msgstr ""
-"\n"
-"    Aşağıdaki öngereklilikler <strong>bekleme</strong> aşamasında ve devam etmeden önce tamamlanmaları gerekiyor:\n"
-"    "
 
 #: templates/proctored_exam/pending-prerequisites.html:30
 #, python-format
@@ -664,7 +559,7 @@ msgstr ""
 
 #: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
-msgstr "Gözetmenli Sınav Oturumunuz Başladı"
+msgstr ""
 
 #: templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
@@ -673,9 +568,6 @@ msgid ""
 "href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
 "proctoring rules</a> to pass the proctoring review for your exam. "
 msgstr ""
-" Bu noktadan itibaren, gözetmen denetiminden geçebilmek için <a "
-"href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">çevrimiçi "
-"gözetmenli sınav kurallarını</a> takip etmelisiniz."
 
 #: templates/proctored_exam/proctoring_launch_callback.html:168
 msgid ""
@@ -683,9 +575,6 @@ msgid ""
 "            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
 "          "
 msgstr ""
-"\n"
-"            Sınavınızı bitirmeden bu pencereyi kapatmayın. Bu pencereyi kapatmanız durumunda, gözetmenli sınav oturumunuz sona erecek ve sınavı başarıyla tamamlayamayacaksınız.\n"
-"          "
 
 #: templates/proctored_exam/proctoring_launch_callback.html:173
 #, python-format
@@ -703,9 +592,6 @@ msgid ""
 "        I am not interested in academic credit.\n"
 "      "
 msgstr ""
-"\n"
-"       Akademik krediyle ilgilenmiyorum.\n"
-"      "
 
 #: templates/proctored_exam/ready_to_start.html:5
 msgid ""
@@ -713,9 +599,6 @@ msgid ""
 "      Follow these instructions\n"
 "    "
 msgstr ""
-"\n"
-"      Bu yönergeleri izleyin\n"
-"    "
 
 #: templates/proctored_exam/ready_to_start.html:10
 #, python-format
@@ -734,9 +617,6 @@ msgid ""
 "          Start my exam\n"
 "        "
 msgstr ""
-"\n"
-"          Sınavımı başlat\n"
-"        "
 
 #: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
@@ -744,9 +624,6 @@ msgid ""
 "      Are you sure you want to end your proctored exam?\n"
 "    "
 msgstr ""
-"\n"
-"      Gözetmenli sınavınızı sona erdirmek istediğinize emin misiniz?\n"
-"    "
 
 #: templates/proctored_exam/ready_to_submit.html:9
 #: templates/timed_exam/ready_to_submit.html:9
@@ -755,9 +632,6 @@ msgid ""
 "      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
 "    "
 msgstr ""
-"\n"
-"      Sınavınızı göndermeden önce her problem için \"Gönder\"i seçtiğinize emin olun.\n"
-"    "
 
 #: templates/proctored_exam/ready_to_submit.html:14
 msgid ""
@@ -774,9 +648,6 @@ msgid ""
 "      Yes, end my proctored exam\n"
 "    "
 msgstr ""
-"\n"
-"      Evet, gözetmenli sınavımı sona erdir\n"
-"    "
 
 #: templates/proctored_exam/ready_to_submit.html:27
 msgid ""
@@ -784,9 +655,6 @@ msgid ""
 "        No, I'd like to continue working\n"
 "      "
 msgstr ""
-"\n"
-"        Hayır, çalışmaya devam edeceğim\n"
-"      "
 
 #: templates/proctored_exam/rejected.html:4
 msgid ""
@@ -794,9 +662,6 @@ msgid ""
 "      Your proctoring session was reviewed and did not pass requirements\n"
 "    "
 msgstr ""
-"\n"
-"      Gözetmenli oturumunuz incelendi ve gereklilikleri yerine getirmediğiniz için geçemediniz\n"
-"    "
 
 #: templates/proctored_exam/rejected.html:10
 #, python-format
@@ -813,9 +678,6 @@ msgid ""
 "      You have submitted this proctored exam for review\n"
 "    "
 msgstr ""
-"\n"
-"      Gözetmenli sınavınızı inceleme için gönderdiniz\n"
-"    "
 
 #: templates/proctored_exam/submitted.html:9
 msgid ""
@@ -823,9 +685,6 @@ msgid ""
 "      If the proctoring software window is still open, you can close it now. Confirm that you want to quit the application when you are prompted.\n"
 "    "
 msgstr ""
-"\n"
-"      Gözetmen yazılımınız eğer hâlâ açıksa, şimdi kapatabilirsiniz. Uygulamadan çıkmak istediğinizi onaylamayı unutmayın.\n"
-"    "
 
 #: templates/proctored_exam/submitted.html:14
 msgid ""
@@ -842,9 +701,6 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
-"\n"
-"      Gözetmenli sınavınızın sonucuna dair sorularınız varsa, lütfen %(platform_name)s Destek Ekibi ile iletişime geçin.\n"
-"    "
 
 #: templates/proctored_exam/verified.html:4
 msgid ""
@@ -852,9 +708,6 @@ msgid ""
 "      Your proctoring session was reviewed and passed all requirements\n"
 "    "
 msgstr ""
-"\n"
-"      Gözetmenli oturumunuz incelendi ve tüm gereklilikleri yerine getirdiniz\n"
-"    "
 
 #: templates/proctored_exam/verified.html:10
 msgid ""
@@ -870,12 +723,10 @@ msgid ""
 "      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
 "    "
 msgstr ""
-"\n"
-"      Sınav soru ve cevaplarınızı görmek için, <strong>Sınavımı Gör</strong>'e tıklayın. Sınav değerlendirme durumu sol gezinme bölgesinde gösteriliyor."
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr "Sınavımı görüntüle"
+msgstr ""
 
 #: templates/proctored_exam/visit_exam_content.html:40
 msgid ""
@@ -883,9 +734,6 @@ msgid ""
 "      After the due date for this exam has passed, you will be able to review your answers on this page.\n"
 "    "
 msgstr ""
-"\n"
-"      Bu sınavın son tarihi geçtiğinde, cevaplarınızı bu sayfada tekrar inceleyebileceksiniz.\n"
-"    "
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -894,34 +742,30 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
-"\n"
-"    %(exam_name)s bir Süre Sınırlı Sınav'dır (%(total_time)s)\n"
-"    "
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr "Bu sınava bağlı bir süre sınırı bulunmaktadır."
+msgstr ""
 
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
 msgstr ""
-"Bu sınavdan geçmek için, problemleri size tanınan sürede çözmelisiniz."
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
-msgstr "Seçtikten sonra"
+msgstr ""
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr "Süre sınırlı bu sınava başlamaya hazırım,"
+msgstr ""
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr "sınavı tamamlamak"
+msgstr ""
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
-msgstr "ve göndermek zorundasınız."
+msgstr ""
 
 #: templates/timed_exam/entrance.html:21
 msgid ""
@@ -929,13 +773,10 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
-"\n"
-"        Süre sınırlı bu sınava başlamaya hazırım.\n"
-"      "
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
-msgstr "Sınavımı tamamlamak için ek süre isteyebilir miyim?"
+msgstr ""
 
 #: templates/timed_exam/footer.html:4
 msgid ""
@@ -945,11 +786,6 @@ msgid ""
 "      Ask your course team for information about additional time allowances.\n"
 "    "
 msgstr ""
-"\n"
-"      Bedensel engellerinizin olması halinde,\n"
-"      zaman sınırlı sınavlar için ek süre talep edebilirsiniz.\n"
-"      Ek süre talepleri için gerekli koşulları ders takımınızdan öğrenebilirsiniz.\n"
-"    "
 
 #: templates/timed_exam/ready_to_submit.html:4
 msgid ""
@@ -957,9 +793,6 @@ msgid ""
 "      Are you sure that you want to submit your timed exam?\n"
 "    "
 msgstr ""
-"\n"
-"      Süre sınırlı sınavınızı göndermek istediğinize emin misiniz?\n"
-"    "
 
 #: templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -967,9 +800,6 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
-"\n"
-"     Sınavınızı gönderdikten sonra, sınavınız notlandırılacak.\n"
-"    "
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -977,9 +807,6 @@ msgid ""
 "      Yes, submit my timed exam.\n"
 "    "
 msgstr ""
-"\n"
-"      Evet, süre sınırlı sınavımı gönder.\n"
-"    "
 
 #: templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -987,9 +814,6 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
-"\n"
-"        Hayır, çalışmaya devam edeceğim.\n"
-"      "
 
 #: templates/timed_exam/submitted.html:6
 msgid ""
@@ -997,9 +821,6 @@ msgid ""
 "        The time allotted for this exam has expired. Your exam has been submitted and any work you completed will be graded.\n"
 "      "
 msgstr ""
-"\n"
-"        Bu sınav için ayrılmış süre sona erdi. Sınavınız gönderildi ve yaptığınız tüm işler notlandırılacak.\n"
-"      "
 
 #: templates/timed_exam/submitted.html:10
 msgid ""
@@ -1007,9 +828,6 @@ msgid ""
 "        You have submitted your timed exam.\n"
 "      "
 msgstr ""
-"\n"
-"        Süre sınırlı sınavınızı gönderdiniz.\n"
-"      "
 
 #: templates/timed_exam/submitted.html:18
 #, python-format
@@ -1018,9 +836,6 @@ msgid ""
 "      Your grade for this timed exam will be immediately available on the <a href=\"%(progress_page_url)s\">Progress</a> page.\n"
 "    "
 msgstr ""
-"\n"
-"      Bu süreli sınava dair notunuzu <a href=\"%(progress_page_url)s\">İlerleme</a> sayfasında hemen görebilirsiniz.\n"
-"    "
 
 #: templates/timed_exam/submitted.html:22
 msgid ""
@@ -1029,65 +844,66 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"      Bu sınavın son tarihi geçtiğinde, cevaplarınızı gözden geçirebilecek ama değiştiremeyeceksiniz.\n"
-"    "
+"Depois que a data de entrega, poderá visualizar o exame, mas não poderá alterar suas respostas.\n"
+"      "
 
 #: utils.py:76
 #, python-brace-format
 msgid "{num_of_hours} hour"
-msgstr "{num_of_hours} saat"
+msgstr ""
 
 #: utils.py:79
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr "{num_of_hours} saat"
+msgstr ""
 
 #: utils.py:87 utils.py:97
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
-msgstr "{num_of_minutes} dakika"
+msgstr ""
 
 #: utils.py:90
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr " ve {num_of_minutes} dakika"
+msgstr ""
 
 #: utils.py:92
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr "{num_of_minutes} dakika"
+msgstr ""
 
 #: utils.py:95
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr " ve {num_of_minutes} dakika"
+msgstr ""
 
 #: views.py:92
 msgid "could not determine the course_id"
-msgstr "course_id belirlenemedi"
+msgstr ""
 
 #: views.py:102
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
-"Bu isteği karşılayabilmek için Personel Kullanıcısı olmanız gerekiyor."
+"Deve ser um utilizador da equipa de funcionários para executar esta "
+"solicitação."
 
 #: views.py:334 views.py:546
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
-msgstr "{remaining_time} dakika zamanınız kaldı"
+msgstr ""
 
 #: views.py:340
 msgid "you have less than a minute remaining"
-msgstr "Bir dakikadan az zamanınız kaldı"
+msgstr ""
 
 #: views.py:536
 msgid "timed"
-msgstr "zamanlanmış"
+msgstr ""
 
 #: views.py:537
 msgid "practice"
-msgstr "alıştırma"
+msgstr ""
 
 #: views.py:537
 msgid "proctored"
-msgstr "gözetmenli"
+msgstr ""
