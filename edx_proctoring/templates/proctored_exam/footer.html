@@ -25,10 +25,11 @@
     ).fail(function(){
       enableClickEvent(selector);
       var msg = gettext(
-        "There has been a problem starting your exam.\n\n" +
-        "Possible reasons are that your account has not been fully activated,\n" +
-        "you have are experiencing a network connection problem, or there has been\n" +
-        "a service disruption. Check your account or network connection and try again."
+        "There has been a problem starting your exam.\n\n " +
+        "Possible reasons are that you are experiencing a network connection problem, " +
+        "or there has been a service disruption. Please make sure that you are connected to a stable " +
+        "connection, and try to find a location with a higher bandwidth if possible. " +
+        "We also recommend restarting your device before attempting proctoring again."
       );
       alert(msg);
     });

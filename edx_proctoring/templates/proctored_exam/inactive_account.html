@@ -1,0 +1,38 @@
+{% load i18n %}
+<div class="failure sequence proctored-exam" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      You have not activated your account.
+    {% endblocktrans %}
+  </h3>
+
+  <p>
+    {% blocktrans %}
+      Your {{platform_name}} account has not yet been activated. To take the proctored exam,
+      you are required to activate your account.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+      Please check your registered email's Inbox and Spam folders for an activation email from
+      {{platform_name}}.
+    {% endblocktrans %}
+    {% if reset_link %}
+      {% blocktrans %}
+        If you cannot find this email, you can <a href="{{reset_link}}" target="_blank">reset your password</a> to
+        activate your account.
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans %}
+        If you cannot find this email, you can reset your password to activate your account.
+      {% endblocktrans %}
+    {% endif %}
+  </p>
+  <p>
+    {% blocktrans %}
+      If you continue to have trouble please contact <a href="{{link_urls.contact_us}}" target="_blank">
+      {{platform_name}} Support</a>.
+    {% endblocktrans %}
+  </p>
+</div>
+{% include 'proctored_exam/footer.html' %}
