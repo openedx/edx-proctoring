@@ -12,21 +12,21 @@ billiard==3.6.3.0         # via celery
 bok-choy==1.1.1           # via -r requirements/test.in
 celery==4.4.7             # via event-tracking
 certifi==2020.6.20        # via requests
-cffi==1.14.2              # via cryptography
+cffi==1.14.3              # via cryptography
 chardet==3.0.4            # via requests
 click==7.1.2              # via code-annotations
-code-annotations==0.7.0   # via -r requirements/test.in
+code-annotations==0.9.0   # via -r requirements/test.in
 coverage==5.3             # via pytest-cov
-cryptography==3.1         # via pyjwt
+cryptography==3.1.1       # via pyjwt
 ddt==1.4.1                # via -r requirements/test.in
 django-crum==0.7.7        # via -r requirements/base.in
 django-ipware==3.0.1      # via -r requirements/base.in
 django-model-utils==4.0.0  # via -r requirements/base.in, edx-when
 django-waffle==2.0.0      # via -r requirements/base.in, edx-django-utils, edx-drf-extensions
 django-webpack-loader==0.7.0  # via -r requirements/base.in
-drf-jwt==1.17.1           # via edx-drf-extensions
-edx-django-utils==3.8.0   # via edx-drf-extensions, edx-rest-api-client, edx-when
-edx-drf-extensions==6.1.2  # via -r requirements/base.in, edx-when
+drf-jwt==1.17.2           # via edx-drf-extensions
+edx-django-utils==3.9.0   # via edx-drf-extensions, edx-rest-api-client, edx-when
+edx-drf-extensions==6.2.0  # via -r requirements/base.in, edx-when
 edx-i18n-tools==0.5.3     # via -r requirements/test.in
 edx-opaque-keys==2.1.1    # via -r requirements/base.in, edx-drf-extensions, edx-when
 edx-rest-api-client==5.2.1  # via -r requirements/base.in
@@ -39,23 +39,22 @@ future==0.18.2            # via pyjwkest
 httmock==1.3.0            # via -r requirements/test.in
 httpretty==1.0.2          # via -r requirements/test.in
 idna==2.10                # via requests
-importlib-metadata==1.7.0  # via kombu, path, pluggy, pytest
-iniconfig==1.0.1          # via pytest
+importlib-metadata==2.0.0  # via kombu, path, pluggy, pytest
+iniconfig==1.1.1          # via pytest
 jinja2==2.11.2            # via code-annotations
 jsonfield2==3.0.3         # via -c requirements/constraints.txt, -r requirements/base.in
 kombu==4.6.11             # via celery
 lazy==1.4                 # via bok-choy
 logilab-common==1.6.1     # via -r requirements/test.in
-lxml==4.5.2               # via xblock
+lxml==4.6.1               # via xblock
 markupsafe==1.1.1         # via jinja2, xblock
 mock==3.0.5               # via -r requirements/test.in
-more-itertools==8.5.0     # via pytest
-newrelic==5.18.0.148      # via edx-django-utils
+newrelic==5.20.1.150      # via edx-django-utils
 packaging==20.4           # via pytest
 path.py==12.5.0           # via edx-i18n-tools
 path==13.1.0              # via path.py
 pathlib2==2.3.5           # via pytest
-pbr==5.5.0                # via stevedore
+pbr==5.5.1                # via stevedore
 pluggy==0.13.1            # via pytest
 polib==1.1.0              # via edx-i18n-tools
 psutil==5.7.2             # via edx-django-utils
@@ -67,10 +66,10 @@ pyjwt[crypto]==1.7.1      # via drf-jwt, edx-rest-api-client
 pymongo==3.11.0           # via edx-opaque-keys, event-tracking
 pyparsing==2.4.7          # via packaging
 pytest-cov==2.10.1        # via -r requirements/test.in
-pytest-django==3.10.0     # via -r requirements/test.in
+pytest-django==4.0.0      # via -r requirements/test.in
 pytest-forked==1.3.0      # via pytest-xdist
 pytest-xdist==2.1.0       # via -r requirements/test.in
-pytest==6.0.2             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
+pytest==6.1.1             # via pytest-cov, pytest-django, pytest-forked, pytest-xdist
 python-dateutil==2.8.1    # via -r requirements/base.in, edx-drf-extensions, freezegun, xblock
 python-slugify==4.0.1     # via code-annotations
 pytz==2020.1              # via -r requirements/base.in, celery, django, event-tracking, fs, xblock
@@ -83,14 +82,14 @@ selenium==3.141.0         # via -r requirements/test.in, bok-choy
 semantic-version==2.8.5   # via edx-drf-extensions
 six==1.15.0               # via bok-choy, cryptography, edx-drf-extensions, edx-i18n-tools, edx-opaque-keys, event-tracking, fs, mock, packaging, pathlib2, pyjwkest, python-dateutil, responses, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
-sqlparse==0.3.1           # via django
+sqlparse==0.4.1           # via django
 stevedore==1.32.0         # via code-annotations, edx-django-utils, edx-opaque-keys
 sure==1.2.7               # via -r requirements/test.in
-testfixtures==6.14.2      # via -r requirements/test.in
+testfixtures==6.15.0      # via -r requirements/test.in
 text-unidecode==1.3       # via python-slugify
 toml==0.10.1              # via pytest
 typing==3.7.4.3           # via fs
-urllib3==1.25.10          # via requests, responses, selenium
+urllib3==1.25.11          # via requests, responses, selenium
 vine==1.3.0               # via amqp, celery
 web-fragments==0.3.2      # via xblock
 webob==1.8.6              # via xblock
