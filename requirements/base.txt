@@ -11,26 +11,25 @@ celery==4.4.7             # via event-tracking
 certifi==2020.6.20        # via requests
 cffi==1.14.3              # via cryptography
 chardet==3.0.4            # via requests
-cryptography==3.1.1       # via pyjwt
-django-crum==0.7.7        # via -r requirements/base.in
-django-ipware==3.0.1      # via -r requirements/base.in
-django-model-utils==4.0.0  # via -r requirements/base.in, edx-when
-django-waffle==2.0.0      # via -r requirements/base.in, edx-django-utils, edx-drf-extensions
-django-webpack-loader==0.7.0  # via -r requirements/base.in
-django==2.2.16            # via -c requirements/constraints.txt, -r requirements/base.in, django-crum, django-model-utils, djangorestframework, drf-jwt, edx-django-utils, edx-drf-extensions, edx-when, event-tracking, jsonfield2, rest-condition
-djangorestframework==3.12.1  # via -r requirements/base.in, drf-jwt, edx-drf-extensions, rest-condition
+cryptography==3.2         # via pyjwt
+django-crum==0.7.7        # via -r base.in
+django-ipware==3.0.1      # via -r base.in
+django-model-utils==4.0.0  # via -r base.in, edx-when
+django-waffle==2.0.0      # via -r base.in, edx-django-utils, edx-drf-extensions
+django-webpack-loader==0.7.0  # via -r base.in
+django==2.2.16            # via -c constraints.txt, -r base.in, django-crum, django-model-utils, djangorestframework, drf-jwt, edx-django-utils, edx-drf-extensions, edx-when, event-tracking, jsonfield2, rest-condition
+djangorestframework==3.12.1  # via -r base.in, drf-jwt, edx-drf-extensions, rest-condition
 drf-jwt==1.17.2           # via edx-drf-extensions
 edx-django-utils==3.9.0   # via edx-drf-extensions, edx-rest-api-client, edx-when
-edx-drf-extensions==6.2.0  # via -r requirements/base.in, edx-when
-edx-opaque-keys==2.1.1    # via -r requirements/base.in, edx-drf-extensions, edx-when
-edx-rest-api-client==5.2.1  # via -r requirements/base.in
-edx-when==1.3.0           # via -r requirements/base.in
-event-tracking==1.0.0     # via -r requirements/base.in
+edx-drf-extensions==6.2.0  # via -r base.in, edx-when
+edx-opaque-keys==2.1.1    # via -r base.in, edx-drf-extensions, edx-when
+edx-rest-api-client==5.2.1  # via -r base.in
+edx-when==1.3.0           # via -r base.in
+event-tracking==1.0.0     # via -r base.in
 fs==2.4.11                # via xblock
 future==0.18.2            # via pyjwkest
 idna==2.10                # via requests
-importlib-metadata==2.0.0  # via kombu
-jsonfield2==3.0.3         # via -c requirements/constraints.txt, -r requirements/base.in
+jsonfield2==3.0.3         # via -c constraints.txt, -r base.in
 kombu==4.6.11             # via celery
 lxml==4.6.1               # via xblock
 markupsafe==1.1.1         # via xblock
@@ -38,28 +37,26 @@ newrelic==5.20.1.150      # via edx-django-utils
 pbr==5.5.1                # via stevedore
 psutil==5.7.2             # via edx-django-utils
 pycparser==2.20           # via cffi
-pycryptodomex==3.9.8      # via -r requirements/base.in, pyjwkest
+pycryptodomex==3.9.8      # via -r base.in, pyjwkest
 pyjwkest==1.4.2           # via edx-drf-extensions
 pyjwt[crypto]==1.7.1      # via drf-jwt, edx-rest-api-client
 pymongo==3.11.0           # via edx-opaque-keys, event-tracking
-python-dateutil==2.8.1    # via -r requirements/base.in, edx-drf-extensions, xblock
-pytz==2020.1              # via -r requirements/base.in, celery, django, event-tracking, fs, xblock
+python-dateutil==2.8.1    # via -r base.in, edx-drf-extensions, xblock
+pytz==2020.1              # via -r base.in, celery, django, event-tracking, fs, xblock
 pyyaml==5.3.1             # via xblock
 requests==2.24.0          # via edx-drf-extensions, edx-rest-api-client, pyjwkest, slumber
 rest-condition==1.0.3     # via edx-drf-extensions
-rules==2.2                # via -r requirements/base.in
+rules==2.2                # via -r base.in
 semantic-version==2.8.5   # via edx-drf-extensions
 six==1.15.0               # via cryptography, edx-drf-extensions, edx-opaque-keys, event-tracking, fs, pyjwkest, python-dateutil, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 sqlparse==0.4.1           # via django
 stevedore==1.32.0         # via edx-django-utils, edx-opaque-keys
-typing==3.7.4.3           # via fs
 urllib3==1.25.11          # via requests
 vine==1.3.0               # via amqp, celery
 web-fragments==0.3.2      # via xblock
 webob==1.8.6              # via xblock
 xblock==1.4.0             # via edx-when
-zipp==1.2.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
