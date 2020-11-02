@@ -1595,8 +1595,9 @@ TIMED_EXAM_STATUS_SUMMARY_MAP = {
 
 def get_attempt_status_summary(user_id, course_id, content_id):
     """
-    Returns a summary about the status of the attempt for the user
-    in the course_id and content_id
+    Collects a summary about the status of the attempt.
+
+    Summary is collected for the user in the course_id and content_id.
 
     If the exam is timed exam only then we simply
     return the dictionary with timed exam default summary
@@ -1634,6 +1635,7 @@ def get_attempt_status_summary(user_id, course_id, content_id):
 
     # let's check credit eligibility
     credit_service = get_runtime_service('credit')
+    credit_state = None  # explicit assignment
 
     # practice exams always has an attempt status regardless of
     # eligibility
@@ -1646,8 +1648,10 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     attempt = get_exam_attempt(exam['id'], user_id)
     if attempt:
         status = attempt['status']
-    elif not exam['is_practice_exam'] \
-            and credit_state and has_due_date_passed(credit_state.get('course_end_date', None)):
+    elif (
+        not exam['is_practice_exam'] and credit_state and  # pylint: disable=C0330
+        has_due_date_passed(credit_state.get('course_end_date', None))  # pylint: disable=C0330
+    ):
         status = ProctoredExamStudentAttemptStatus.expired
     else:
         status = ProctoredExamStudentAttemptStatus.eligible

@@ -1747,6 +1747,29 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         self.assertIsNone(summary)
 
+    def test_proctored_exam_status_summary_no_credit_service(self):
+        """
+        Assert that we get the expected status summary.
+
+        Cover case that credit service is unavailable.
+        """
+        set_runtime_service('credit', None)
+        expected = {
+            'status': ProctoredExamStudentAttemptStatus.eligible,
+            'short_description': 'Proctored Option Available',
+            'suggested_icon': 'fa-pencil-square-o',
+            'in_completed_state': False
+        }
+
+        exam = get_exam_by_id(self.proctored_exam_id)
+
+        summary = get_attempt_status_summary(
+            self.user.id,
+            exam['course_id'],
+            exam['content_id']
+        )
+        self.assertIn(summary, [expected])
+
     def test_status_summary_bad(self):
         """
         Make sure we get back a None when getting summary for content that does not
