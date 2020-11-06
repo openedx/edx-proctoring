@@ -1647,16 +1647,16 @@ def get_attempt_status_summary(user_id, course_id, content_id):
             return None
 
     attempt = get_exam_attempt(exam['id'], user_id)
-    due_date_is_passed = has_due_date_passed(credit_state.get('course_end_date', None))
+    due_date_is_passed = has_due_date_passed(credit_state.get('course_end_date')) if credit_state else False
 
     if attempt:
         status = attempt['status']
-    elif not_practice_exam and credit_state and due_date_is_passed:
+    elif not_practice_exam and due_date_is_passed:
         status = ProctoredExamStudentAttemptStatus.expired
     else:
         status = ProctoredExamStudentAttemptStatus.eligible
 
-    status_map = STATUS_SUMMARY_MAP if not exam['is_practice_exam'] else PRACTICE_STATUS_SUMMARY_MAP
+    status_map = STATUS_SUMMARY_MAP if not_practice_exam else PRACTICE_STATUS_SUMMARY_MAP
 
     summary = {}
     if status in status_map:
