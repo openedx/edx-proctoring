@@ -1636,22 +1636,22 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     # let's check credit eligibility
     credit_service = get_runtime_service('credit')
     credit_state = None  # explicit assignment
+    not_practice_exam = not exam.get('is_practice_exam')
 
     # practice exams always has an attempt status regardless of
     # eligibility
-    if credit_service and not exam['is_practice_exam']:
+    if credit_service and not_practice_exam:
         credit_state = credit_service.get_credit_state(user_id, str(course_id), return_course_info=True)
         user = USER_MODEL.objects.get(id=user_id)
         if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
             return None
 
     attempt = get_exam_attempt(exam['id'], user_id)
+    due_date_is_passed = has_due_date_passed(credit_state.get('course_end_date', None))
+
     if attempt:
         status = attempt['status']
-    elif (
-        not exam['is_practice_exam'] and credit_state and  # pylint: disable=C0330
-        has_due_date_passed(credit_state.get('course_end_date', None))  # pylint: disable=C0330
-    ):
+    elif not_practice_exam and credit_state and due_date_is_passed:
         status = ProctoredExamStudentAttemptStatus.expired
     else:
         status = ProctoredExamStudentAttemptStatus.eligible
