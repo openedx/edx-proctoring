@@ -1595,8 +1595,9 @@ TIMED_EXAM_STATUS_SUMMARY_MAP = {
 
 def get_attempt_status_summary(user_id, course_id, content_id):
     """
-    Returns a summary about the status of the attempt for the user
-    in the course_id and content_id
+    Collects a summary about the status of the attempt.
+
+    Summary is collected for the user in the course_id and content_id.
 
     If the exam is timed exam only then we simply
     return the dictionary with timed exam default summary
@@ -1634,25 +1635,28 @@ def get_attempt_status_summary(user_id, course_id, content_id):
 
     # let's check credit eligibility
     credit_service = get_runtime_service('credit')
+    credit_state = None  # explicit assignment
+    not_practice_exam = not exam.get('is_practice_exam')
 
     # practice exams always has an attempt status regardless of
     # eligibility
-    if credit_service and not exam['is_practice_exam']:
+    if credit_service and not_practice_exam:
         credit_state = credit_service.get_credit_state(user_id, str(course_id), return_course_info=True)
         user = USER_MODEL.objects.get(id=user_id)
         if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
             return None
 
     attempt = get_exam_attempt(exam['id'], user_id)
+    due_date_is_passed = has_due_date_passed(credit_state.get('course_end_date')) if credit_state else False
+
     if attempt:
         status = attempt['status']
-    elif not exam['is_practice_exam'] \
-            and credit_state and has_due_date_passed(credit_state.get('course_end_date', None)):
+    elif not_practice_exam and due_date_is_passed:
         status = ProctoredExamStudentAttemptStatus.expired
     else:
         status = ProctoredExamStudentAttemptStatus.eligible
 
-    status_map = STATUS_SUMMARY_MAP if not exam['is_practice_exam'] else PRACTICE_STATUS_SUMMARY_MAP
+    status_map = STATUS_SUMMARY_MAP if not_practice_exam else PRACTICE_STATUS_SUMMARY_MAP
 
     summary = {}
     if status in status_map:

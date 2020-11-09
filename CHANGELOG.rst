@@ -14,6 +14,8 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+* Fix unbound local variable issue in api.get_attempt_status_summary
+
 [2.4.8] - 2020-10-19
 ~~~~~~~~~~~~~~~~~~~~
 
