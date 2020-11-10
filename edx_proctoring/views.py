@@ -38,6 +38,7 @@ from edx_proctoring.api import (
     mark_exam_attempt_as_ready,
     remove_allowance_for_user,
     remove_exam_attempt,
+    reset_practice_exam,
     start_exam_attempt,
     stop_exam_attempt,
     update_attempt_status,
@@ -402,6 +403,11 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 attempt['proctored_exam']['id'],
                 request.user.id,
                 ProctoredExamStudentAttemptStatus.download_software_clicked
+            )
+        elif action == 'reset_practice_exam':
+            exam_attempt_id = reset_practice_exam(
+                attempt['proctored_exam']['id'],
+                request.user.id,
             )
         elif action == 'error':
             backend = attempt['proctored_exam']['backend']
