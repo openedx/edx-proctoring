@@ -292,9 +292,9 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
     /edx_proctoring/v1/proctored_exam/attempt
 
     Supports:
-        HTTP POST: Starts an exam attempt.
         HTTP PUT: Stops an exam attempt.
         HTTP GET: Returns the status of an exam attempt.
+        HTTP DELETE: Delete an exam attempt.
 
 
     HTTP PUT
@@ -313,6 +313,10 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
     HTTP GET
         ** Scenarios **
         return the status of the exam attempt
+
+    HTTP DELETE
+        ** Scenarios **
+        Removes an exam attempt and resets progress. Limited to course staff 
     """
 
     def get(self, request, attempt_id):
@@ -357,7 +361,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
     def put(self, request, attempt_id):
         """
-        HTTP POST handler. To stop an exam.
+        HTTP PUT handler. To stop an exam.
         """
         attempt = get_exam_attempt_by_id(attempt_id)
 
