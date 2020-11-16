@@ -780,7 +780,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         If an attempt is in progress it may not be reset
         """
-        practice_attempt = self._create_exam_attempt(
+        self._create_exam_attempt(
             self.practice_exam_id,
             status=ProctoredExamStudentAttemptStatus.started
         )
@@ -791,7 +791,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         Only practice exams may be reset
         """
-        exam_attempt = self._create_exam_attempt(
+        self._create_exam_attempt(
             self.proctored_exam_id,
             status=ProctoredExamStudentAttemptStatus.started
         )
