@@ -1184,6 +1184,52 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         self.assertEqual(response.status_code, 400)
 
+    def test_reset_attempt_action(self):
+        """
+        Reset a submitted exam back to the created state
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_practice_exam=True
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.student_taking_exam.id,
+            'external_id': proctored_exam.external_id
+        }
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            json.dumps(attempt_data),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+        old_attempt_id = response_data['exam_attempt_id']
+
+        # complete exam, then attempt to reset progress
+        for action in ['submit', 'reset_attempt']:
+            response = self.client.put(
+                reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+                json.dumps({
+                    'action': action,
+                }),
+                content_type='application/json'
+            )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.created)
+
     @patch('edx_proctoring.views.waffle.switch_is_active')
     def test_attempt_ping_failure_when_submitted(self, mocked_switch_is_active):
         """

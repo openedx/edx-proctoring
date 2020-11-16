@@ -316,7 +316,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
     HTTP DELETE
         ** Scenarios **
-        Removes an exam attempt and resets progress. Limited to course staff 
+        Removes an exam attempt and resets progress. Limited to course staff
     """
 
     def get(self, request, attempt_id):
@@ -408,7 +408,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 request.user.id,
                 ProctoredExamStudentAttemptStatus.download_software_clicked
             )
-        elif action == 'reset_practice_exam':
+        elif action == 'reset_attempt':
             exam_attempt_id = reset_practice_exam(
                 attempt['proctored_exam']['id'],
                 request.user.id,
