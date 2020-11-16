@@ -1224,7 +1224,7 @@ def reset_practice_exam(exam_id, user_id):
     Resets a completed practice exam attempt back to the created state.
     """
     log_msg = (
-        u'Resetting practice exam {exam_id} for user {user_id}'.format(
+        'Resetting practice exam {exam_id} for user {user_id}'.format(
             exam_id=exam_id,
             user_id=user_id,
         )
@@ -1232,9 +1232,10 @@ def reset_practice_exam(exam_id, user_id):
     log.info(log_msg)
 
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
-    exam = get_exam_by_id(exam_id)
     if exam_attempt_obj is None:
         raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
+
+    exam = get_exam_by_id(exam_id)
     if not exam['is_practice_exam']:
         msg = (
             'Failed to reset attempt status on exam_id {exam_id} for user_id {user_id}. '
@@ -1246,8 +1247,8 @@ def reset_practice_exam(exam_id, user_id):
         raise ProctoredExamIllegalStatusTransition(msg)
 
     # prevent a reset if the exam is currently in progress
-    in_incompleted_status = ProctoredExamStudentAttemptStatus.is_incomplete_status(exam_attempt_obj.status)
-    if in_incompleted_status:
+    attempt_in_progress = ProctoredExamStudentAttemptStatus.is_incomplete_status(exam_attempt_obj.status)
+    if attempt_in_progress:
         msg = (
             'Failed to reset attempt status on exam_id {exam_id} for user_id {user_id}. '
             'Attempt with status {status} is still in progress!'.format(
