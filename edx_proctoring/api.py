@@ -1269,6 +1269,7 @@ def reset_practice_exam(exam_id, user_id):
 
     return exam_attempt_obj.id
 
+
 def remove_exam_attempt(attempt_id, requesting_user):
     """
     Removes an exam attempt given the attempt id. requesting_user is passed through to the instructor_service.
