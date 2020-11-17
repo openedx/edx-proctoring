@@ -38,6 +38,7 @@ from edx_proctoring.api import (
     mark_exam_attempt_as_ready,
     remove_allowance_for_user,
     remove_exam_attempt,
+    reset_practice_exam,
     start_exam_attempt,
     stop_exam_attempt,
     update_attempt_status,
@@ -291,9 +292,9 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
     /edx_proctoring/v1/proctored_exam/attempt
 
     Supports:
-        HTTP POST: Starts an exam attempt.
         HTTP PUT: Stops an exam attempt.
         HTTP GET: Returns the status of an exam attempt.
+        HTTP DELETE: Delete an exam attempt.
 
 
     HTTP PUT
@@ -312,6 +313,10 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
     HTTP GET
         ** Scenarios **
         return the status of the exam attempt
+
+    HTTP DELETE
+        ** Scenarios **
+        Removes an exam attempt and resets progress. Limited to course staff
     """
 
     def get(self, request, attempt_id):
@@ -356,7 +361,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
     def put(self, request, attempt_id):
         """
-        HTTP POST handler. To stop an exam.
+        HTTP PUT handler. To stop an exam.
         """
         attempt = get_exam_attempt_by_id(attempt_id)
 
@@ -402,6 +407,11 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 attempt['proctored_exam']['id'],
                 request.user.id,
                 ProctoredExamStudentAttemptStatus.download_software_clicked
+            )
+        elif action == 'reset_attempt':
+            exam_attempt_id = reset_practice_exam(
+                attempt['proctored_exam']['id'],
+                request.user.id,
             )
         elif action == 'error':
             backend = attempt['proctored_exam']['backend']

@@ -14,7 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.4.9] - 2020-11-17
+~~~~~~~~~~~~~~~~~~~~
+
 * Fix unbound local variable issue in api.get_attempt_status_summary
+* Added new action to student exam attempt PUT allowing users
+  to reset a completed practice exam.
 
 [2.4.8] - 2020-10-19
 ~~~~~~~~~~~~~~~~~~~~

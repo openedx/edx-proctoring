@@ -1219,6 +1219,57 @@ def _get_email_template_paths(template_name, backend):
     return [base_template]
 
 
+def reset_practice_exam(exam_id, user_id):
+    """
+    Resets a completed practice exam attempt back to the created state.
+    """
+    log_msg = (
+        'Resetting practice exam {exam_id} for user {user_id}'.format(
+            exam_id=exam_id,
+            user_id=user_id,
+        )
+    )
+    log.info(log_msg)
+
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    if exam_attempt_obj is None:
+        raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
+
+    exam = get_exam_by_id(exam_id)
+    if not exam['is_practice_exam']:
+        msg = (
+            'Failed to reset attempt status on exam_id {exam_id} for user_id {user_id}. '
+            'Only practice exams may be reset!'.format(
+                exam_id=exam_id,
+                user_id=user_id,
+            )
+        )
+        raise ProctoredExamIllegalStatusTransition(msg)
+
+    # prevent a reset if the exam is currently in progress
+    attempt_in_progress = ProctoredExamStudentAttemptStatus.is_incomplete_status(exam_attempt_obj.status)
+    if attempt_in_progress:
+        msg = (
+            'Failed to reset attempt status on exam_id {exam_id} for user_id {user_id}. '
+            'Attempt with status {status} is still in progress!'.format(
+                exam_id=exam_id,
+                user_id=user_id,
+                status=exam_attempt_obj.status,
+            )
+        )
+        raise ProctoredExamIllegalStatusTransition(msg)
+
+    exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.created
+    exam_attempt_obj.started_at = None
+    exam_attempt_obj.completed_at = None
+    exam_attempt_obj.allowed_time_limit_mins = None
+    exam_attempt_obj.save()
+
+    emit_event(exam, 'reset_practice_exam', attempt=_get_exam_attempt(exam_attempt_obj))
+
+    return exam_attempt_obj.id
+
+
 def remove_exam_attempt(attempt_id, requesting_user):
     """
     Removes an exam attempt given the attempt id. requesting_user is passed through to the instructor_service.

@@ -45,6 +45,7 @@ from edx_proctoring.api import (
     remove_allowance_for_user,
     remove_exam_attempt,
     remove_review_policy,
+    reset_practice_exam,
     start_exam_attempt,
     start_exam_attempt_by_code,
     stop_exam_attempt,
@@ -755,6 +756,47 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             # There is not an expected changed to the credit requirement table
             # given the attempt status
             self.assertEqual(len(credit_status['credit_requirement_status']), 0)
+
+    def test_reset_practice_exam(self):
+        """
+        Reset returns a user's exam attempt to the created state
+        """
+        with self.assertRaises(StudentExamAttemptDoesNotExistsException):
+            reset_practice_exam(self.practice_exam_id, self.user)
+
+        practice_attempt = self._create_exam_attempt(
+            self.practice_exam_id,
+            status=ProctoredExamStudentAttemptStatus.submitted
+        )
+        reset_practice_exam(self.practice_exam_id, self.user)
+
+        practice_attempt.refresh_from_db()
+        self.assertEqual(practice_attempt.status, ProctoredExamStudentAttemptStatus.created)
+        self.assertIsNone(practice_attempt.started_at)
+        self.assertIsNone(practice_attempt.completed_at)
+        self.assertIsNone(practice_attempt.allowed_time_limit_mins)
+
+    def test_reset_exam_in_progress(self):
+        """
+        If an attempt is in progress it may not be reset
+        """
+        self._create_exam_attempt(
+            self.practice_exam_id,
+            status=ProctoredExamStudentAttemptStatus.started
+        )
+        with self.assertRaises(ProctoredExamIllegalStatusTransition):
+            reset_practice_exam(self.practice_exam_id, self.user)
+
+    def test_reset_non_practice_exam(self):
+        """
+        Only practice exams may be reset
+        """
+        self._create_exam_attempt(
+            self.proctored_exam_id,
+            status=ProctoredExamStudentAttemptStatus.started
+        )
+        with self.assertRaises(ProctoredExamIllegalStatusTransition):
+            reset_practice_exam(self.proctored_exam_id, self.user_id)
 
     def test_stop_a_non_started_exam(self):
         """
