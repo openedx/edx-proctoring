@@ -5,8 +5,8 @@ edx-proctoring
     :target: https://pypi.python.org/pypi/edx-proctoring/
     :alt: PyPI
 
-.. image:: https://travis-ci.org/edx/edx-proctoring.svg?branch=master
-    :target: https://travis-ci.org/edx/edx-proctoring
+.. image:: https://travis-ci.com/edx/edx-proctoring.svg?branch=master
+    :target: https://travis-ci.com/edx/edx-proctoring
     :alt: Travis
 
 .. image:: https://codecov.io/gh/edx/edx-proctoring/branch/master/graph/badge.svg

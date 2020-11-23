@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.4.10] - 2020-11-23
+~~~~~~~~~~~~~~~~~~~~~
+
+* Updated the travis badge in README.rst to point to travis-ci.com instead of travis-ci.org
+
 [2.4.9] - 2020-11-17
 ~~~~~~~~~~~~~~~~~~~~
 
