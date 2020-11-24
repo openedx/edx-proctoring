@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+* Cover `Start System Check` button on the proctoring instruction page with the
+  conditions software download link is provided by the proctoring provider,
+  since some providers do not has that step in the onboarding process.
+
 [2.5.4] - 2020-12-17
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Minor template fix
