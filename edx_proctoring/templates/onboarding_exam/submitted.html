@@ -26,7 +26,25 @@
       so make sure this email has been added to your inbox filter.
     {% endblocktrans %}
   </p>
-
+  {% if experimental_procotoring_features %}
+    <p>
+      {% blocktrans %}
+        If you have made an error in this submission you may restart the onboarding process. 
+        This will reset the waiting period required to review your profile submission. 
+      {% endblocktrans %}
+      </br>
+      {% trans "I understand and want to reset this onboarding exam." as retry_confirm %}
+      <button type="button" class="btn btn-link exam-action-confirm" data-cta-text="{{ retry_confirm }}">
+        {{ retry_confirm }}
+      </button>
+    </p>
+    <p>
+      {% trans "Retry my exam" as retry_exam %}
+      <button type="button" class="exam-action-button proctored-reset-onboarding btn btn-pl-primary btn-base" disabled data-action="reset_attempt" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" data-cta-text="{{ retry_exam }}">
+        {{ retry_exam }}
+      </button>
+    </p>
+  {% endif %}
   <p>
     {% blocktrans %}
       Please contact
@@ -36,4 +54,3 @@
     {% endblocktrans %}
   </p>
 {% endblock %}
-

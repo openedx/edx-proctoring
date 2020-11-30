@@ -20,4 +20,17 @@
       </a> if you have questions.
     {% endblocktrans %}
   </p>
+  {% if experimental_procotoring_features %}
+    <p>
+      {% blocktrans %}
+        You may retry this practice exam at any time to validate your system setup. This will not affect your onboarding profile.
+      {% endblocktrans %}
+    </p>
+    <div>
+      {% trans "Retry my exam" as retry_exam %}
+      <button type="button" class="exam-action-button proctored-reset-onboarding btn btn-pl-primary btn-base" data-action="reset_attempt" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" data-loading-text="<span class='fa fa-circle-o-notch fa-spin'></span> {% trans 'Resetting Onboarding Exam' %}" data-cta-text="{{ retry_exam }}">
+        {{ retry_exam }}
+      </button>
+    </div>
+  {% endif %}
 {% endblock %}

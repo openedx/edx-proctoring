@@ -21,6 +21,12 @@
   {% endblock %}
 </div>
 <script type="text/javascript">
+  $('.exam-action-confirm').click(function(event, ele) {
+    $('.exam-action-button').prop('disabled', false);
+  });
+  $('.exam-action-button').click(
+      edx.courseware.proctored_exam.updateStatusHandler
+  );
   $('.start-timed-exam').click(
     function(event) {
       var action_url = $(this).data('ajax-url');
