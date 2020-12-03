@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.1] - 2020-12-10
+~~~~~~~~~~~~~~~~~~~~
+
+* Add endpoint to expose the learner's onboarding status
+
 [2.5.0] - 2020-12-09
 ~~~~~~~~~~~~~~~~~~~~
 
