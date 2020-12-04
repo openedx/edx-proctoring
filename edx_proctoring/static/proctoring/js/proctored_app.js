@@ -1,4 +1,4 @@
-/* globals ProctoredExamModel:false */
+/* globals ProctoredExamModel:false LearnerOnboardingModel:false */
 $(function() {
     'use strict';
 
@@ -7,5 +7,10 @@ $(function() {
         proctored_template: '#proctored-exam-status-tpl',
         model: new ProctoredExamModel()
     });
+    var proctoredExamInfoView = new edx.courseware.proctored_exam.ProctoredExamInfo({
+        el: $('.proctoring-info-panel'),
+        model: new LearnerOnboardingModel()
+    });
     proctoredExamView.render();
+    proctoredExamInfoView.render();
 });
