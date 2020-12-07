@@ -202,7 +202,9 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         else Returns None.
         """
         try:
-            exam_attempt_obj = self.filter(proctored_exam_id=exam_id, user_id=user_id).latest('created')  # pylint: disable=no-member
+            exam_attempt_obj = self.filter(
+                proctored_exam_id=exam_id, user_id=user_id
+            ).latest('created')  # pylint: disable=no-member
         except ObjectDoesNotExist:  # pylint: disable=no-member
             exam_attempt_obj = None
         return exam_attempt_obj

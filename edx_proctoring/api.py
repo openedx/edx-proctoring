@@ -461,6 +461,7 @@ def _get_exam_attempt(exam_attempt_obj):
 
     return attempt
 
+
 def get_current_exam_attempt(exam_id, user_id):
     """
     Args:
@@ -679,17 +680,14 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
 
     exam = get_exam_by_id(exam_id)
     existing_attempt = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
-    if existing_attempt:
-        if existing_attempt.is_sample_attempt:
-            # Archive the existing attempt by deleting it.
-            existing_attempt.delete_exam_attempt()
-        else:
-            err_msg = (
-                u'Cannot create new exam attempt for exam_id = {exam_id} and '
-                u'user_id = {user_id} because it already exists!'
-            ).format(exam_id=exam_id, user_id=user_id)
+    # only practice exams may have multiple attempts
+    if existing_attempt and not existing_attempt.is_sample_attempt:
+        err_msg = (
+            u'Cannot create new exam attempt for exam_id = {exam_id} and '
+            u'user_id = {user_id} because it already exists!'
+        ).format(exam_id=exam_id, user_id=user_id)
 
-            raise StudentExamAttemptAlreadyExistsException(err_msg)
+        raise StudentExamAttemptAlreadyExistsException(err_msg)
 
     attempt_code = str(uuid.uuid4()).upper()
 
@@ -1257,10 +1255,10 @@ def reset_practice_exam(exam_id, user_id, requesting_user):
         )
         raise ProctoredExamIllegalStatusTransition(msg)
 
-    # resetting a submitted attempt that has not been reviewed will entirely remove that submission.    
+    # resetting a submitted attempt that has not been reviewed will entirely remove that submission.
     if exam_attempt_obj.status == ProctoredExamStudentAttemptStatus.submitted:
         remove_exam_attempt(exam_attempt_obj.id, requesting_user)
-    else: 
+    else:
         exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.onboarding_reset
         exam_attempt_obj.save()
 

@@ -1216,7 +1216,9 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # reject exam, then attempt to reset progress
         set_runtime_service('grades', MockGradesService(rejected_exam_overrides_grade=False))
-        update_attempt_status(proctored_exam.id, self.student_taking_exam.id, ProctoredExamStudentAttemptStatus.rejected)
+        update_attempt_status(
+            proctored_exam.id, self.student_taking_exam.id, ProctoredExamStudentAttemptStatus.rejected
+        )
         response = self.client.put(
             reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
             json.dumps({
