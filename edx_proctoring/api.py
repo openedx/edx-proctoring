@@ -461,8 +461,7 @@ def _get_exam_attempt(exam_attempt_obj):
 
     return attempt
 
-
-def get_exam_attempt(exam_id, user_id):
+def get_current_exam_attempt(exam_id, user_id):
     """
     Args:
         int: exam id
@@ -470,7 +469,7 @@ def get_exam_attempt(exam_id, user_id):
     Returns:
         dict: our exam attempt
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
     return _get_exam_attempt(exam_attempt_obj)
 
 
@@ -679,7 +678,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     log.info(log_msg)
 
     exam = get_exam_by_id(exam_id)
-    existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    existing_attempt = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
     if existing_attempt:
         if existing_attempt.is_sample_attempt:
             # Archive the existing attempt by deleting it.
@@ -752,7 +751,7 @@ def start_exam_attempt(exam_id, user_id):
     Returns: exam_attempt_id (PK)
     """
 
-    existing_attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    existing_attempt = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
 
     if not existing_attempt:
         err_msg = (
@@ -835,8 +834,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     """
     Internal helper to handle state transitions of attempt status
     """
-
-    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
         if raise_if_not_found:
             raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
@@ -967,7 +965,7 @@ def update_attempt_status(exam_id, user_id, to_status,
 
         for other_exam in other_exams:
             # see if there was an attempt on those other exams already
-            attempt = get_exam_attempt(other_exam.id, user_id)
+            attempt = get_current_exam_attempt(other_exam.id, user_id)
             if attempt and ProctoredExamStudentAttemptStatus.is_completed_status(attempt['status']):
                 # don't touch any completed statuses
                 # we won't revoke those
@@ -1088,7 +1086,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     # emit an anlytics event based on the state transition
     # we re-read this from the database in case fields got updated
     # via workflow
-    attempt = get_exam_attempt(exam_id, user_id)
+    attempt = get_current_exam_attempt(exam_id, user_id)
 
     # call back to the backend to register the end of the exam, if necessary
     if backend:
@@ -1219,7 +1217,7 @@ def _get_email_template_paths(template_name, backend):
     return [base_template]
 
 
-def reset_practice_exam(exam_id, user_id):
+def reset_practice_exam(exam_id, user_id, requesting_user):
     """
     Resets a completed practice exam attempt back to the created state.
     """
@@ -1231,7 +1229,7 @@ def reset_practice_exam(exam_id, user_id):
     )
     log.info(log_msg)
 
-    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt(exam_id, user_id)
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:
         raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
 
@@ -1246,12 +1244,12 @@ def reset_practice_exam(exam_id, user_id):
         )
         raise ProctoredExamIllegalStatusTransition(msg)
 
-    # prevent a reset if the exam is currently in progress
+    # prevent a reset if the exam is currently in progress or has already been verified
     attempt_in_progress = ProctoredExamStudentAttemptStatus.is_incomplete_status(exam_attempt_obj.status)
-    if attempt_in_progress:
+    if attempt_in_progress or exam_attempt_obj.status == ProctoredExamStudentAttemptStatus.verified:
         msg = (
             'Failed to reset attempt status on exam_id {exam_id} for user_id {user_id}. '
-            'Attempt with status {status} is still in progress!'.format(
+            'Attempt with status {status} cannot be reset!'.format(
                 exam_id=exam_id,
                 user_id=user_id,
                 status=exam_attempt_obj.status,
@@ -1259,15 +1257,16 @@ def reset_practice_exam(exam_id, user_id):
         )
         raise ProctoredExamIllegalStatusTransition(msg)
 
-    exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.created
-    exam_attempt_obj.started_at = None
-    exam_attempt_obj.completed_at = None
-    exam_attempt_obj.allowed_time_limit_mins = None
-    exam_attempt_obj.save()
+    # resetting a submitted attempt that has not been reviewed will entirely remove that submission.    
+    if exam_attempt_obj.status == ProctoredExamStudentAttemptStatus.submitted:
+        remove_exam_attempt(exam_attempt_obj.id, requesting_user)
+    else: 
+        exam_attempt_obj.status = ProctoredExamStudentAttemptStatus.onboarding_reset
+        exam_attempt_obj.save()
 
     emit_event(exam, 'reset_practice_exam', attempt=_get_exam_attempt(exam_attempt_obj))
 
-    return exam_attempt_obj.id
+    return create_exam_attempt(exam_id, user_id, taking_as_proctored=exam_attempt_obj.taking_as_proctored)
 
 
 def remove_exam_attempt(attempt_id, requesting_user):
@@ -1697,7 +1696,7 @@ def get_attempt_status_summary(user_id, course_id, content_id):
         if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
             return None
 
-    attempt = get_exam_attempt(exam['id'], user_id)
+    attempt = get_current_exam_attempt(exam['id'], user_id)
     due_date_is_passed = has_due_date_passed(credit_state.get('course_end_date')) if credit_state else False
 
     if attempt:
@@ -1748,7 +1747,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
     Returns a rendered view for the Timed Exams
     """
     student_view_template = None
-    attempt = get_exam_attempt(exam_id, user_id)
+    attempt = get_current_exam_attempt(exam_id, user_id)
     has_time_expired = False
 
     attempt_status = attempt['status'] if attempt else None
@@ -1942,7 +1941,7 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
 
     student_view_template = None
 
-    attempt = get_exam_attempt(exam_id, user_id)
+    attempt = get_current_exam_attempt(exam_id, user_id)
 
     attempt_status = attempt['status'] if attempt else None
 
@@ -1987,7 +1986,7 @@ def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
 
     student_view_template = None
 
-    attempt = get_exam_attempt(exam_id, user_id)
+    attempt = get_current_exam_attempt(exam_id, user_id)
 
     attempt_status = attempt['status'] if attempt else None
 
@@ -2033,7 +2032,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
         return None
 
-    attempt = get_exam_attempt(exam_id, user_id)
+    attempt = get_current_exam_attempt(exam_id, user_id)
 
     attempt_status = attempt['status'] if attempt else None
 

@@ -196,13 +196,13 @@ class ProctoredExamStudentAttemptManager(models.Manager):
     """
     Custom manager
     """
-    def get_exam_attempt(self, exam_id, user_id):
+    def get_current_exam_attempt(self, exam_id, user_id):
         """
-        Returns the Student Exam Attempt object if found
+        Returns the most recent Student Exam Attempt object if found
         else Returns None.
         """
         try:
-            exam_attempt_obj = self.get(proctored_exam_id=exam_id, user_id=user_id)  # pylint: disable=no-member
+            exam_attempt_obj = self.filter(proctored_exam_id=exam_id, user_id=user_id).latest('created')  # pylint: disable=no-member
         except ObjectDoesNotExist:  # pylint: disable=no-member
             exam_attempt_obj = None
         return exam_attempt_obj
@@ -351,7 +351,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'
         verbose_name = 'proctored exam attempt'
-        unique_together = (('user', 'proctored_exam'),)
 
     @classmethod
     def create_exam_attempt(cls, exam_id, user_id, student_name, attempt_code,
