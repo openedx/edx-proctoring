@@ -14,6 +14,9 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+* Changed behavior of practice exam reset to create a new exam attempt instead
+  of rolling back state of the current attempt.
+
 [2.4.9] - 2020-11-17
 ~~~~~~~~~~~~~~~~~~~~
 
