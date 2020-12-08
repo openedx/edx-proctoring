@@ -9,7 +9,7 @@ from mock import MagicMock, patch
 
 from django.core.management import call_command
 
-from edx_proctoring.api import create_exam, get_exam_attempt
+from edx_proctoring.api import create_exam, get_current_exam_attempt
 from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -57,7 +57,7 @@ class SetAttemptStatusTests(LoggedInTestCase):
                      user_id=self.user.id,
                      to_status=ProctoredExamStudentAttemptStatus.rejected)
 
-        attempt = get_exam_attempt(self.exam_id, self.user.id)
+        attempt = get_current_exam_attempt(self.exam_id, self.user.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.rejected)
 
         call_command('set_attempt_status',
@@ -65,7 +65,7 @@ class SetAttemptStatusTests(LoggedInTestCase):
                      user_id=self.user.id,
                      to_status=ProctoredExamStudentAttemptStatus.verified)
 
-        attempt = get_exam_attempt(self.exam_id, self.user.id)
+        attempt = get_current_exam_attempt(self.exam_id, self.user.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.verified)
 
     def test_bad_status(self):

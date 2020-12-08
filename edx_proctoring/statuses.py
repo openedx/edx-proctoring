@@ -65,6 +65,9 @@ class ProctoredExamStudentAttemptStatus:
     # the course end date has passed
     expired = 'expired'
 
+    # the onboarding attempt has been reset
+    onboarding_reset = 'onboarding_reset'
+
     # onboarding failure states
     # the user hasn't taken an onboarding exam
     onboarding_missing = 'onboarding_missing'

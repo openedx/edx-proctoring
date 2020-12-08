@@ -46,7 +46,7 @@ from edx_proctoring.urls import urlpatterns
 from edx_proctoring.views import require_course_or_global_staff, require_staff
 from mock_apps.models import Profile
 
-from .test_services import MockCreditService, MockInstructorService
+from .test_services import MockCreditService, MockGradesService, MockInstructorService
 from .utils import LoggedInTestCase
 
 
@@ -452,7 +452,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        return ProctoredExamStudentAttempt.objects.get_exam_attempt(proctored_exam.id, self.user.id)
+        return ProctoredExamStudentAttempt.objects.get_current_exam_attempt(proctored_exam.id, self.user.id)
 
     def _test_exam_attempt_creation(self):
         """
@@ -1202,6 +1202,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             'user_id': self.student_taking_exam.id,
             'external_id': proctored_exam.external_id
         }
+        self.client.login_user(self.student_taking_exam)
         response = self.client.post(
             reverse('edx_proctoring:proctored_exam.attempt.collection'),
             json.dumps(attempt_data),
@@ -1213,21 +1214,25 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertGreater(response_data['exam_attempt_id'], 0)
         old_attempt_id = response_data['exam_attempt_id']
 
-        # complete exam, then attempt to reset progress
-        for action in ['submit', 'reset_attempt']:
-            response = self.client.put(
-                reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
-                json.dumps({
-                    'action': action,
-                }),
-                content_type='application/json'
-            )
+        # reject exam, then attempt to reset progress
+        set_runtime_service('grades', MockGradesService(rejected_exam_overrides_grade=False))
+        update_attempt_status(
+            proctored_exam.id, self.student_taking_exam.id, ProctoredExamStudentAttemptStatus.rejected
+        )
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'reset_attempt',
+            }),
+            content_type='application/json'
+        )
 
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+        new_attempt_id = response_data['exam_attempt_id']
+        self.assertNotEqual(new_attempt_id, old_attempt_id)
 
-        attempt = get_exam_attempt_by_id(old_attempt_id)
+        attempt = get_exam_attempt_by_id(new_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.created)
 
     @patch('edx_proctoring.views.waffle.switch_is_active')

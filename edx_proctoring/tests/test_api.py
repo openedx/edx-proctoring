@@ -29,7 +29,7 @@ from edx_proctoring.api import (
     get_allowances_for_course,
     get_attempt_status_summary,
     get_backend_provider,
-    get_exam_attempt,
+    get_current_exam_attempt,
     get_exam_attempt_by_id,
     get_exam_by_content_id,
     get_exam_by_id,
@@ -630,15 +630,17 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         new_attempt_id = create_exam_attempt(practice_exam_student_attempt.proctored_exam.id, self.user_id)
         self.assertGreater(new_attempt_id, practice_exam_student_attempt.id, "New attempt not created.")
 
-    def test_get_exam_attempt(self):
+    def test_get_current_exam_attempt(self):
         """
-        Test to get the existing exam attempt.
+        Test to get the current exam attempt. Old attempts should be ignored
         """
-        self._create_unstarted_exam_attempt()
-        exam_attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
+        self._create_exam_attempt(self.proctored_exam_id, ProctoredExamStudentAttemptStatus.error)
+        recent_attempt = self._create_unstarted_exam_attempt()
+        exam_attempt = get_current_exam_attempt(self.proctored_exam_id, self.user_id)
 
         self.assertEqual(exam_attempt['proctored_exam']['id'], self.proctored_exam_id)
         self.assertEqual(exam_attempt['user']['id'], self.user_id)
+        self.assertEqual(exam_attempt['id'], recent_attempt.id)
 
     def test_start_uncreated_attempt(self):
         """
@@ -762,19 +764,25 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         Reset returns a user's exam attempt to the created state
         """
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            reset_practice_exam(self.practice_exam_id, self.user)
+            reset_practice_exam(self.practice_exam_id, self.user_id, self.user)
 
         practice_attempt = self._create_exam_attempt(
             self.practice_exam_id,
-            status=ProctoredExamStudentAttemptStatus.submitted
+            status=ProctoredExamStudentAttemptStatus.rejected,
+            is_practice_exam=True,
         )
-        reset_practice_exam(self.practice_exam_id, self.user)
+        reset_practice_exam(self.practice_exam_id, self.user_id, self.user)
+
+        current_attempt = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(
+            self.practice_exam_id, self.user.id
+        )
+        self.assertEqual(current_attempt.status, ProctoredExamStudentAttemptStatus.created)
+        self.assertIsNone(current_attempt.started_at)
+        self.assertIsNone(current_attempt.completed_at)
+        self.assertIsNone(current_attempt.allowed_time_limit_mins)
 
         practice_attempt.refresh_from_db()
-        self.assertEqual(practice_attempt.status, ProctoredExamStudentAttemptStatus.created)
-        self.assertIsNone(practice_attempt.started_at)
-        self.assertIsNone(practice_attempt.completed_at)
-        self.assertIsNone(practice_attempt.allowed_time_limit_mins)
+        self.assertEqual(practice_attempt.status, ProctoredExamStudentAttemptStatus.onboarding_reset)
 
     def test_reset_exam_in_progress(self):
         """
@@ -782,10 +790,11 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         self._create_exam_attempt(
             self.practice_exam_id,
-            status=ProctoredExamStudentAttemptStatus.started
+            status=ProctoredExamStudentAttemptStatus.started,
+            is_practice_exam=True,
         )
         with self.assertRaises(ProctoredExamIllegalStatusTransition):
-            reset_practice_exam(self.practice_exam_id, self.user)
+            reset_practice_exam(self.practice_exam_id, self.user_id, self.user)
 
     def test_reset_non_practice_exam(self):
         """
@@ -793,10 +802,23 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         self._create_exam_attempt(
             self.proctored_exam_id,
-            status=ProctoredExamStudentAttemptStatus.started
+            status=ProctoredExamStudentAttemptStatus.rejected,
+            is_practice_exam=True,
         )
         with self.assertRaises(ProctoredExamIllegalStatusTransition):
-            reset_practice_exam(self.proctored_exam_id, self.user_id)
+            reset_practice_exam(self.proctored_exam_id, self.user_id, self.user)
+
+    def test_reset_verified_exam(self):
+        """
+        If an attempt has been verified it may not be reset
+        """
+        self._create_exam_attempt(
+            self.practice_exam_id,
+            status=ProctoredExamStudentAttemptStatus.verified,
+            is_practice_exam=True,
+        )
+        with self.assertRaises(ProctoredExamIllegalStatusTransition):
+            reset_practice_exam(self.practice_exam_id, self.user_id, self.user)
 
     def test_stop_a_non_started_exam(self):
         """
@@ -1073,11 +1095,11 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
 
         # make sure we reamain in the right status
-        read_back = get_exam_attempt(exam_attempt.proctored_exam_id, self.user.id)
+        read_back = get_current_exam_attempt(exam_attempt.proctored_exam_id, self.user.id)
         self.assertEqual(read_back['status'], to_status)
 
         # make sure an attempt was made for second_exam
-        second_exam_attempt = get_exam_attempt(second_exam_id, self.user_id)
+        second_exam_attempt = get_current_exam_attempt(second_exam_id, self.user_id)
         if expected_second_status:
             self.assertIsNotNone(second_exam_attempt)
             self.assertEqual(second_exam_attempt['status'], expected_second_status)
@@ -1085,9 +1107,9 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             self.assertIsNone(second_exam_attempt)
 
         # no auto-generated attempts for practice and timed exams
-        self.assertIsNone(get_exam_attempt(practice_exam_id, self.user_id))
-        self.assertIsNone(get_exam_attempt(timed_exam_id, self.user_id))
-        self.assertIsNone(get_exam_attempt(inactive_exam_id, self.user_id))
+        self.assertIsNone(get_current_exam_attempt(practice_exam_id, self.user_id))
+        self.assertIsNone(get_current_exam_attempt(timed_exam_id, self.user_id))
+        self.assertIsNone(get_current_exam_attempt(inactive_exam_id, self.user_id))
 
     def test_grade_override(self):
         """

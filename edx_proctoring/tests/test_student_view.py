@@ -15,7 +15,7 @@ from mock import MagicMock, patch
 
 from edx_proctoring.api import (
     add_allowance_for_user,
-    get_exam_attempt,
+    get_current_exam_attempt,
     get_exam_by_id,
     get_student_view,
     update_attempt_status,
@@ -269,7 +269,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
 
         if req_status == 'declined' and not expected_content:
             # also we should have auto-declined if a pre-requisite was declined
-            attempt = get_exam_attempt(self.proctored_exam_id, self.user_id)
+            attempt = get_current_exam_attempt(self.proctored_exam_id, self.user_id)
             self.assertIsNotNone(attempt)
             self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
 
