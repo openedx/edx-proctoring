@@ -683,8 +683,8 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     # only practice exams may have multiple attempts
     if existing_attempt and not existing_attempt.is_sample_attempt:
         err_msg = (
-            u'Cannot create new exam attempt for exam_id = {exam_id} and '
-            u'user_id = {user_id} because it already exists!'
+            'Cannot create new exam attempt for exam_id = {exam_id} and '
+            'user_id = {user_id} because it already exists!'
         ).format(exam_id=exam_id, user_id=user_id)
 
         raise StudentExamAttemptAlreadyExistsException(err_msg)
