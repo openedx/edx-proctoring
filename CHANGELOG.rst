@@ -14,9 +14,13 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.0] - 2020-12-09
+~~~~~~~~~~~~~~~~~~~~
+
 * Changed behavior of practice exam reset to create a new exam attempt instead
   of rolling back state of the current attempt.
 * Added new proctoring info panel to expose onboarding exam status to learners
+* Added option to reset a failed or pending onboarding exam.
 
 [2.4.9] - 2020-11-17
 ~~~~~~~~~~~~~~~~~~~~
