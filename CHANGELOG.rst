@@ -16,6 +16,7 @@ Unreleased
 
 * Changed behavior of practice exam reset to create a new exam attempt instead
   of rolling back state of the current attempt.
+* Added new proctoring info panel to expose onboarding exam status to learners
 
 [2.4.9] - 2020-11-17
 ~~~~~~~~~~~~~~~~~~~~
