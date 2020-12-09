@@ -13,3 +13,7 @@ jsonfield2==3.0.3
 
 # Use latest LTS version
 Django<2.3
+
+
+# maintaining the production version.
+celery<5.0
