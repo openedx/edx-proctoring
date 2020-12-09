@@ -412,7 +412,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
             exam_attempt_id = reset_practice_exam(
                 attempt['proctored_exam']['id'],
                 request.user.id,
-                requesting_user=request.user.id,
+                requesting_user=request.user,
             )
         elif action == 'error':
             backend = attempt['proctored_exam']['backend']
