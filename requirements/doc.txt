@@ -11,13 +11,13 @@ babel==2.9.0              # via sphinx
 billiard==3.6.3.0         # via celery
 bleach==3.2.1             # via readme-renderer
 celery==4.4.7             # via event-tracking
-certifi==2020.11.8        # via requests
+certifi==2020.12.5        # via requests
 cffi==1.14.4              # via cryptography
 chardet==3.0.4            # via doc8, requests
 cryptography==3.2.1       # via pyjwt
 django-crum==0.7.9        # via -r requirements/base.in, edx-django-utils
 django-ipware==3.0.2      # via -r requirements/base.in
-django-model-utils==4.0.0  # via -r requirements/base.in, edx-when
+django-model-utils==4.1.1  # via -r requirements/base.in, edx-when
 django-waffle==2.0.0      # via -r requirements/base.in, edx-django-utils, edx-drf-extensions
 django-webpack-loader==0.7.0  # via -r requirements/base.in
 django==2.2.17            # via -c requirements/constraints.txt, -r requirements/base.in, django-crum, django-model-utils, djangorestframework, drf-jwt, edx-django-utils, edx-drf-extensions, edx-when, event-tracking, jsonfield2, rest-condition
@@ -36,23 +36,23 @@ fs==2.4.11                # via xblock
 future==0.18.2            # via pyjwkest
 idna==2.10                # via requests
 imagesize==1.2.0          # via sphinx
-importlib-metadata==2.1.0  # via kombu
+importlib-metadata==2.1.1  # via kombu
 jinja2==2.11.2            # via sphinx
 jsonfield2==3.0.3         # via -c requirements/constraints.txt, -r requirements/base.in
 kombu==4.6.11             # via celery
-lxml==4.6.1               # via xblock
+lxml==4.6.2               # via xblock
 markupsafe==1.1.1         # via jinja2, xblock
 newrelic==5.22.1.152      # via edx-django-utils
-packaging==20.4           # via bleach, sphinx
+packaging==20.7           # via bleach, sphinx
 pbr==5.5.1                # via stevedore
 pockets==0.9.1            # via sphinxcontrib-napoleon
 psutil==5.7.3             # via edx-django-utils
 pycparser==2.20           # via cffi
 pycryptodomex==3.9.9      # via -r requirements/base.in, pyjwkest
-pygments==2.7.2           # via doc8, readme-renderer, sphinx
+pygments==2.7.3           # via doc8, readme-renderer, sphinx
 pyjwkest==1.4.2           # via edx-drf-extensions
 pyjwt[crypto]==1.7.1      # via drf-jwt, edx-rest-api-client
-pymongo==3.11.1           # via edx-opaque-keys, event-tracking
+pymongo==3.11.2           # via edx-opaque-keys, event-tracking
 pyparsing==2.4.7          # via packaging
 python-dateutil==2.8.1    # via -r requirements/base.in, edx-drf-extensions, xblock
 pytz==2020.4              # via -r requirements/base.in, babel, celery, django, event-tracking, fs, xblock
@@ -63,7 +63,7 @@ rest-condition==1.0.3     # via edx-drf-extensions
 restructuredtext-lint==1.3.2  # via doc8
 rules==2.2                # via -r requirements/base.in
 semantic-version==2.8.5   # via edx-drf-extensions
-six==1.15.0               # via bleach, cryptography, doc8, edx-drf-extensions, edx-opaque-keys, edx-sphinx-theme, event-tracking, fs, packaging, pockets, pyjwkest, python-dateutil, readme-renderer, sphinxcontrib-napoleon, stevedore, xblock
+six==1.15.0               # via bleach, cryptography, doc8, edx-drf-extensions, edx-opaque-keys, edx-sphinx-theme, event-tracking, fs, pockets, pyjwkest, python-dateutil, readme-renderer, sphinxcontrib-napoleon, stevedore, xblock
 slumber==0.7.1            # via edx-rest-api-client
 snowballstemmer==2.0.0    # via sphinx
 sphinx==3.3.1             # via -r requirements/doc.in, edx-sphinx-theme

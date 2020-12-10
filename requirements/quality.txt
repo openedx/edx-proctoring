@@ -6,7 +6,7 @@
 #
 astroid==2.3.3            # via pylint, pylint-celery
 bleach==3.2.1             # via readme-renderer
-certifi==2020.11.8        # via requests
+certifi==2020.12.5        # via requests
 chardet==3.0.4            # via requests
 click-log==0.3.2          # via edx-lint
 click==7.1.2              # via click-log, edx-lint
@@ -17,11 +17,11 @@ idna==2.10                # via requests
 isort==4.3.21             # via -r requirements/quality.in, pylint
 lazy-object-proxy==1.4.3  # via astroid
 mccabe==0.6.1             # via pylint
-packaging==20.4           # via bleach
+packaging==20.7           # via bleach
 pkginfo==1.6.1            # via twine
 pycodestyle==2.6.0        # via -r requirements/quality.in
 pydocstyle==5.1.1         # via -r requirements/quality.in
-pygments==2.7.2           # via readme-renderer
+pygments==2.7.3           # via readme-renderer
 pylint-celery==0.3        # via edx-lint
 pylint-django==2.0.11     # via edx-lint
 pylint-plugin-utils==0.6  # via pylint-celery, pylint-django
@@ -31,10 +31,10 @@ pytz==2020.4              # via django
 readme-renderer==28.0     # via twine
 requests-toolbelt==0.9.1  # via twine
 requests==2.25.0          # via requests-toolbelt, twine
-six==1.15.0               # via astroid, bleach, edx-lint, packaging, readme-renderer
+six==1.15.0               # via astroid, bleach, edx-lint, readme-renderer
 snowballstemmer==2.0.0    # via pydocstyle
 sqlparse==0.4.1           # via django
-tqdm==4.53.0              # via twine
+tqdm==4.54.1              # via twine
 twine==1.15.0             # via -r requirements/quality.in
 typed-ast==1.4.1          # via astroid
 urllib3==1.26.2           # via requests
