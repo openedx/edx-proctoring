@@ -143,6 +143,7 @@ Backbone.ModalView =
                 }
 
                 var container = this.modalContainer;
+                /* istanbul ignore next */
                 $(this.modalContainer)
                     .fadeOut(
                     this.options.fadeOutDuration,
