@@ -4,6 +4,7 @@ Proctored Exams HTTP-based API endpoints
 
 import json
 import logging
+from itertools import chain
 
 import waffle
 from crum import get_current_request
@@ -283,6 +284,97 @@ class ProctoredExamView(ProctoredAPIView):
                     course_id=course_id,
                     active_only=True
                 )
+        return Response(data)
+
+
+class StudentOnboardingStatusView(ProctoredAPIView):
+    """
+    Endpoint for the StudentOnboardingStatusView
+
+    Supports:
+        HTTP GET: returns the learner's onboarding status relative to the given course_id
+
+    HTTP GET
+        /edx_proctoring/v1/user_onboarding/status?course_id={course_id}&username={username}
+
+    **Query Parameters**
+        * 'course_id': The unique identifier for the course.
+        * 'username': Optional. If not given, the endpoint will return the user's own status.
+            ** In order to view other users' statuses, the user must be course or global staff.
+
+    **Response Values**
+        * 'onboarding_status': String specifying the learner's onboarding status.
+            ** Will return NULL if there are no onboarding attempts, or the given user does not exist
+        * 'onboarding_link': Link to the onboarding exam.
+    """
+    def get(self, request):
+        """
+        HTTP GET handler. Returns the learner's onboarding status.
+        """
+        data = {
+            'onboarding_status': None,
+            'onboarding_link': None
+        }
+
+        attempt_filters = {
+            'proctored_exam__is_practice_exam': True,
+            'taking_as_proctored': True,
+            'user__username': request.user.username
+        }
+
+        username = request.GET.get('username')
+        course_id = request.GET.get('course_id')
+
+        if not course_id:
+            # This parameter is currently required, as the onboarding experience is tied
+            # to a single course. However, this could be dropped in future iterations.
+            return Response(
+                status=400,
+                data={'detail': _('Missing required query parameter course_id')}
+            )
+
+        if username:
+            # Check that the user is staff if trying to view another user's status
+            if username != request.user.username:
+                if ((course_id and not is_user_course_or_global_staff(request.user, course_id)) or
+                        (not course_id and not request.user.is_staff)):
+                    return Response(
+                        status=status.HTTP_403_FORBIDDEN,
+                        data={'detail': _('Must be a Staff User to Perform this request.')}
+                    )
+            attempt_filters['user__username'] = username
+
+        # If there are multiple onboarding exams, use the first exam
+        onboarding_exam = ProctoredExam.objects.filter(
+            course_id=course_id,
+            is_active=True,
+            is_practice_exam=True,
+            is_proctored=True
+        ).order_by('-created').first()
+        if not onboarding_exam:
+            return Response(
+                status=404,
+                data={'detail': _('There is no onboarding exam related to this course id.')}
+            )
+        # Also filter attempts by the course_id
+        attempt_filters['proctored_exam__course_id'] = course_id
+
+        data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
+
+        recent_attempts = ProctoredExamStudentAttempt.objects.filter(**attempt_filters).order_by('-modified')
+        past_attempts = ProctoredExamStudentAttemptHistory.objects.filter(**attempt_filters).order_by('-modified')
+        attempts = list(chain(recent_attempts, past_attempts))
+        if len(attempts) == 0:
+            # If there are no attempts, return the data with 'onboarding_status' set to None
+            return Response(data)
+
+        # Default to the most recent attempt if there are no verified attempts
+        relevant_attempt = attempts[0]
+        for attempt in attempts:
+            if attempt.status == ProctoredExamStudentAttemptStatus.verified:
+                relevant_attempt = attempt
+        data['onboarding_status'] = relevant_attempt.status
+
         return Response(data)
 
 
@@ -1091,7 +1183,7 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
     """
     Manage user information stored on the backends
     """
-    def post(self, request, user_id):  # pylint: disable=unused-argument
+    def post(self, request, user_id, **kwargs):  # pylint: disable=unused-argument
         """
         Deletes all user data for the particular user_id
         from all configured backends
