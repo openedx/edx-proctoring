@@ -76,7 +76,7 @@ describe('ProctoredExamInfo', function() {
 
     it('should not render proctoring info panel if no course id is provided', function() {
         setFixtures('<div class="proctoring-info-panel" data-course-id=""></div>');
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/?course_id=',
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=',
             [
                 400,
                 {
@@ -97,7 +97,7 @@ describe('ProctoredExamInfo', function() {
     });
 
     it('should not render proctoring info panel for exam with 404 response', function() {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/?course_id=test_course_id',
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
                 404,
                 {
@@ -118,7 +118,7 @@ describe('ProctoredExamInfo', function() {
     });
 
     it('should render proctoring info panel correctly for exam with other status', function() {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/?course_id=test_course_id',
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
                 200,
                 {
@@ -147,7 +147,7 @@ describe('ProctoredExamInfo', function() {
     });
 
     it('should render proctoring info panel correctly for exam with empty string status', function() {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/?course_id=test_course_id',
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
                 200,
                 {
@@ -176,7 +176,7 @@ describe('ProctoredExamInfo', function() {
     });
 
     it('should render proctoring info panel correctly for created exam', function() {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/?course_id=test_course_id',
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
                 200,
                 {
@@ -203,7 +203,7 @@ describe('ProctoredExamInfo', function() {
     });
 
     it('should render proctoring info panel correctly for started exam', function() {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/?course_id=test_course_id',
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
                 200,
                 {
@@ -230,7 +230,7 @@ describe('ProctoredExamInfo', function() {
     });
 
     it('should render proctoring info panel correctly for second_review_required exam', function() {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/?course_id=test_course_id',
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
                 200,
                 {
@@ -256,7 +256,7 @@ describe('ProctoredExamInfo', function() {
     });
 
     it('should render proctoring info panel correctly for verified exam', function() {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/?course_id=test_course_id',
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
                 200,
                 {
@@ -282,7 +282,7 @@ describe('ProctoredExamInfo', function() {
     });
 
     it('should render proctoring info panel correctly for rejected exam', function() {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/?course_id=test_course_id',
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
                 200,
                 {

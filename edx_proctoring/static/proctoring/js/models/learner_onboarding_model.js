@@ -2,7 +2,7 @@
     'use strict';
 
     var LearnerOnboardingModel = Backbone.Model.extend({
-        url: '/api/edx_proctoring/v1/user_onboarding/status/'
+        url: '/api/edx_proctoring/v1/user_onboarding/status'
     });
 
     this.LearnerOnboardingModel = LearnerOnboardingModel;
