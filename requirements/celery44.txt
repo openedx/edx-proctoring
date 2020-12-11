@@ -1,0 +1,5 @@
+amqp==2.6.1               # via kombu
+billiard==3.6.3.0         # via celery
+celery==4.4.7             # via -c requirements/constraints.txt, event-tracking
+kombu==4.6.11             # via celery
+vine==1.3.0               # via amqp, celery
