@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.2] - 2020-12-10
+~~~~~~~~~~~~~~~~~~~~
+
+* Fixed bug for proctoring info panel
+
 [2.5.1] - 2020-12-10
 ~~~~~~~~~~~~~~~~~~~~
 
