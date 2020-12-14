@@ -15,5 +15,6 @@ jsonfield2==3.0.3
 Django<2.3
 
 
-# maintaining the production version.
-celery<5.0
+# pinning it to latest release.
+celery==5.0.4
+

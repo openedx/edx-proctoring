@@ -7,10 +7,8 @@ services:
 - xvfb
 
 env:
-- TOXENV=celery44-django22-drf310
-- TOXENV=celery44-django22-drflatest
-- TOXENV=celery50-django22-drf310
-- TOXENV=celery50-django22-drflatest
+- TOXENV=django22-drf310
+- TOXENV=django22-drflatest
 - TOXENV=quality
 - TOXENV=pii_check
 - TOXENV=version_check
