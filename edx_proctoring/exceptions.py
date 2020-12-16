@@ -1,12 +1,14 @@
 """
 Specialized exceptions for the Notification subsystem
 """
+from rest_framework import status
 
 
 class ProctoredBaseException(Exception):
     """
     A common base class for all exceptions
     """
+    http_status = status.HTTP_400_BAD_REQUEST
 
 
 class ProctoredExamAlreadyExists(ProctoredBaseException):
@@ -111,6 +113,7 @@ class ProctoredExamPermissionDenied(ProctoredBaseException):
     """
     Raised when the calling user does not have access to the requested object.
     """
+    http_status = status.HTTP_403_FORBIDDEN
 
 
 class ProctoredExamSuspiciousLookup(ProctoredBaseException):
