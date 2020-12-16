@@ -14,10 +14,32 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-[2.4.10] - 2020-11-23
+[2.5.4] - 2020-12-16
 ~~~~~~~~~~~~~~~~~~~~~
 
 * Updated the travis badge in README.rst to point to travis-ci.com instead of travis-ci.org
+
+[2.5.3] - 2020-12-10
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Upgrade celery to 5.0.4
+
+[2.5.2] - 2020-12-10
+~~~~~~~~~~~~~~~~~~~~
+
+* Fixed bug for proctoring info panel
+
+[2.5.1] - 2020-12-10
+~~~~~~~~~~~~~~~~~~~~
+
+* Add endpoint to expose the learner's onboarding status
+
+[2.5.0] - 2020-12-09
+~~~~~~~~~~~~~~~~~~~~
+
+* Changed behavior of practice exam reset to create a new exam attempt instead
+  of rolling back state of the current attempt.
+* Added new proctoring info panel to expose onboarding exam status to learners
+* Added option to reset a failed or pending onboarding exam.
 
 [2.4.9] - 2020-11-17
 ~~~~~~~~~~~~~~~~~~~~
