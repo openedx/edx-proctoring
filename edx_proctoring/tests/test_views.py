@@ -1077,7 +1077,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertRaises(ProctoredExamPermissionDenied)
 
     def test_remove_attempt(self):
@@ -1196,7 +1196,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response = self.client.get(
             reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
 
     def test_read_non_existing_attempt(self):
         """
@@ -1783,7 +1783,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             {}
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
 
     def test_stop_unstarted_attempt(self):
         """
@@ -2356,7 +2356,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             {},
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertRaises(ProctoredExamPermissionDenied)
 
 

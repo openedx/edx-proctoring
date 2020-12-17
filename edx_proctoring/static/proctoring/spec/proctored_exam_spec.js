@@ -130,6 +130,27 @@ describe('ProctoredExamView', function() {
         this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
         expect(edx.courseware.proctored_exam.endExam).toHaveBeenCalled();
     });
+    it('reloads the page after unauthorized ajax ping', function() {
+        var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
+        this.server.respondWith(
+            'GET',
+            '/api/edx_proctoring/v1/proctored_exam/attempt/' +
+            this.proctored_exam_view.model.get('attempt_id') +
+            '?sourceid=in_exam&proctored=true',
+            [
+                403,
+                {'Content-Type': 'application/json'},
+                JSON.stringify({
+                    message: 'Attempted to access attempt_id but user does not have access'
+                })
+            ]
+        );
+        this.proctored_exam_view.timerTick = this.proctored_exam_view.poll_interval - 1; // to make the ajax call.
+        this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
+        this.server.respond();
+        this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
+        expect(reloadPage).toHaveBeenCalled();
+    });
     it('calls external js global function on off-beat', function() {
         this.proctored_exam_view.model.set('ping_interval', 60);
         edx.courseware.proctored_exam.pingApplication = jasmine.createSpy().and.returnValue(Promise.resolve());
@@ -147,22 +168,6 @@ describe('ProctoredExamView', function() {
                 request.respond(200,
                     {'Content-Type': 'application/json'},
                     '{"exam_attempt_id": "abcde"}'
-                );
-            }
-        );
-        this.proctored_exam_view.endExamForFailureState().done(function() {
-            expect(reloadPage).toHaveBeenCalled();
-            done();
-        });
-        this.server.respond();
-    });
-    it('reloads the page after unauthorized ajax call', function(done) {
-        var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
-        this.server.respondWith(
-            function(request) {
-                request.respond(403,
-                    {'Content-Type': 'application/json'},
-                    '{"message": "Attempted to access attempt_id but user does not have access"}'
                 );
             }
         );

@@ -183,7 +183,7 @@ edx = edx || {};
                             // refresh the page to bring up the new Proctoring state from the backend.
                             clearInterval(self.timerId); // stop the timer once the time finishes.
                             $(window).unbind('beforeunload', self.unloadMessage);
-                            location.reload();
+                            self.reloadPage();
                         } else {
                             self.secondsLeft = data.time_remaining_seconds;
                             self.accessibility_time_string = data.accessibility_time_string;
@@ -191,10 +191,10 @@ edx = edx || {};
                     })
                     .error(function(error) {
                         // if unauthorized refresh the page to kick user out of exam
-                        if (error.status == 403) {
+                        if (error.status === 403) {
                             clearInterval(self.timerId);
                             $(window).unbind('beforeunload', self.unloadMessage);
-                            location.reload();
+                            self.reloadPage();
                         }
                     });
             }
