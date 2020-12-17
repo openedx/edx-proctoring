@@ -29,9 +29,11 @@
           {% endblocktrans %}
         </p>
       {% endif %}
-      <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
+      {% if software_download_url %}
+        <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
+      {% endif %}
       <div class="footer-sequence border-b-0 padding-b-0">
-        <button href="#" class="exam-action-button js-start-proctored-exam btn btn-secondary">{% trans "Start Exam" %}</button>
+        <button href="#" class="exam-action-button js-start-proctored-exam btn btn-{% if software_download_url %}secondary{% else %}primary{% endif %}">{% trans "Start Exam" %}</button>
       </div>
     {% else %}
       <h4>
@@ -72,7 +74,9 @@
       <li>{% blocktrans %}Have a computer with a functioning webcam{% endblocktrans %}</li>
       <li>{% blocktrans %}Have your valid photo ID (e.g. driver's license or passport) ready{% endblocktrans %}</li>
     </ul>
-    <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
+    {% if software_download_url %}
+      <button id="software_download_link" class="exam-action-button btn-pl-primary" data-action="click_download_software">{% trans "Start System Check" %}</button>
+    {% endif %}
       <h4>
         {% blocktrans %}
           Step 3
@@ -218,6 +222,6 @@
     $(this).focus();
   })
   .blur(function () {
-    $(this).text(gettext("Copy Exam Code")); 
+    $(this).text(gettext("Copy Exam Code"));
   });
 </script>
