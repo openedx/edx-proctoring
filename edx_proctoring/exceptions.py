@@ -103,10 +103,10 @@ class BackendProviderOnboardingException(ProctoredBaseException):
     Raised when a back-end provider cannot register an attempt
     because of missing/failed onboarding requirements
     """
-    def __init__(self, status):
+    def __init__(self, exam_status):
         """ Init method of exception """
-        super(BackendProviderOnboardingException, self).__init__(self, status)
-        self.status = status
+        super(BackendProviderOnboardingException, self).__init__(self, exam_status)
+        self.status = exam_status
 
 
 class ProctoredExamPermissionDenied(ProctoredBaseException):
