@@ -156,6 +156,22 @@ describe('ProctoredExamView', function() {
         });
         this.server.respond();
     });
+    it('reloads the page after unauthorized ajax call', function(done) {
+        var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
+        this.server.respondWith(
+            function(request) {
+                request.respond(403,
+                    {'Content-Type': 'application/json'},
+                    '{"message": "Attempted to access attempt_id but user does not have access"}'
+                );
+            }
+        );
+        this.proctored_exam_view.endExamForFailureState().done(function() {
+            expect(reloadPage).toHaveBeenCalled();
+            done();
+        });
+        this.server.respond();
+    });
     it('does not reload the page after failure-state ajax call when server responds with no attempt id',
         function(done) {
             var reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');

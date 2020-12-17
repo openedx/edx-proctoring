@@ -176,18 +176,27 @@ edx = edx || {};
             if (self.timerTick % self.poll_interval === 0) {
                 url = self.model.url + '/' + self.model.get('attempt_id');
                 queryString = '?sourceid=in_exam&proctored=' + self.model.get('taking_as_proctored');
-                $.ajax(url + queryString).success(function(data) {
-                    if (data.status === 'error') {
-                        // The proctoring session is in error state
-                        // refresh the page to bring up the new Proctoring state from the backend.
-                        clearInterval(self.timerId); // stop the timer once the time finishes.
-                        $(window).unbind('beforeunload', self.unloadMessage);
-                        location.reload();
-                    } else {
-                        self.secondsLeft = data.time_remaining_seconds;
-                        self.accessibility_time_string = data.accessibility_time_string;
-                    }
-                });
+                $.ajax(url + queryString)
+                    .success(function(data) {
+                        if (data.status === 'error') {
+                            // The proctoring session is in error state
+                            // refresh the page to bring up the new Proctoring state from the backend.
+                            clearInterval(self.timerId); // stop the timer once the time finishes.
+                            $(window).unbind('beforeunload', self.unloadMessage);
+                            location.reload();
+                        } else {
+                            self.secondsLeft = data.time_remaining_seconds;
+                            self.accessibility_time_string = data.accessibility_time_string;
+                        }
+                    })
+                    .error(function(error) {
+                        // if unauthorized refresh the page to kick user out of exam
+                        if (error.status == 403) {
+                            clearInterval(self.timerId);
+                            $(window).unbind('beforeunload', self.unloadMessage);
+                            location.reload();
+                        }
+                    });
             }
             self.$el.find('div.exam-timer').attr('class');
             newState = self.model.getRemainingTimeState(self.secondsLeft);
