@@ -400,6 +400,18 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         )
         self.assertIsNotNone(rendered_response)
 
+    def test_proctoring_instruction_without_software_download_link(self):
+        """
+        Test for get_student_view proctored exam without software download link.
+
+        Other providers could have no onboarding step requires software download
+        Redundant `Start System Check` button is absent in that case.
+        """
+
+        self._create_unstarted_exam_attempt()
+        rendered_response = self.render_proctored_exam()
+        self.assertNotIn('id="software_download_link"', rendered_response)
+
     @ddt.data(False, True)
     def test_get_studentview_unstarted_exam(self, allow_proctoring_opt_out):
         """
