@@ -349,6 +349,10 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # else always false
     is_status_acknowledged = models.BooleanField(default=False)
 
+    # if the attempt enters an error state, the remaining time should
+    # be saved in order to allow the learner to resume
+    time_remaining_seconds = models.IntegerField(null=True)
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'

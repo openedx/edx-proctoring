@@ -18,6 +18,9 @@ Unreleased
   conditions software download link is provided by the proctoring provider,
   since some providers do not has that step in the onboarding process.
 * Changed handler for exam ping to remove learner from the exam on 403 error.
+* Added `time_remaining_seconds` field to the exam attempt model in order to
+  allow the remaining time on an exam attempt to be saved after it enters an
+  error state.
 
 [2.5.4] - 2020-12-17
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

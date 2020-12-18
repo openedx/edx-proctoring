@@ -524,7 +524,12 @@ def update_exam_attempt(attempt_id, **kwargs):
     for key, value in kwargs.items():
         # only allow a limit set of fields to update
         # namely because status transitions can trigger workflow
-        if key not in ['last_poll_timestamp', 'last_poll_ipaddr', 'is_status_acknowledged']:
+        if key not in [
+                'last_poll_timestamp',
+                'last_poll_ipaddr',
+                'is_status_acknowledged',
+                'time_remaining_seconds',
+        ]:
             err_msg = (
                 u'You cannot call into update_exam_attempt to change '
                 u'field {key}'.format(key=key)

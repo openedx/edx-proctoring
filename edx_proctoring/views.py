@@ -513,6 +513,10 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 not attempt['status'] == ProctoredExamStudentAttemptStatus.submitted
             )
             if should_block_user:
+                update_exam_attempt(
+                    attempt_id,
+                    time_remaining_seconds=get_time_remaining_for_attempt(attempt)
+                )
                 exam_attempt_id = update_attempt_status(
                     attempt['proctored_exam']['id'],
                     request.user.id,
