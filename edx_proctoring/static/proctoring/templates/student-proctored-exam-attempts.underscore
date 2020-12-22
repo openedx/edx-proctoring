@@ -1,6 +1,6 @@
 <div class="wrapper-content wrapper">
     <% var is_proctored_attempts = proctored_exam_attempts.length !== 0 %>
-        <section class="content exam-attempts-content">
+        <div class="content exam-attempts-content">
             <div class="top-header">
                 <div class='search-attempts'>
                     <input type="text" id="search_attempt_id" placeholder="e.g johndoe or john.doe@gmail.com"
@@ -126,5 +126,5 @@
                 <p> No exam results found. </p>
             <% } %>
 
-        </section>
+        </div>
 </div>

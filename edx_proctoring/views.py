@@ -138,7 +138,7 @@ def handle_proctored_exception(exc, name=None):  # pylint: disable=inconsistent-
     """
     if isinstance(exc, ProctoredBaseException):
         LOG.exception(name)
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': str(exc)})
+        return Response(status=exc.http_status, data={'detail': str(exc)})
 
 
 class ProctoredAPIView(AuthenticatedAPIView):

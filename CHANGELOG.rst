@@ -14,10 +14,18 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-[2.5.4] - 2020-12-16
-~~~~~~~~~~~~~~~~~~~~~
+* Cover `Start System Check` button on the proctoring instruction page with the
+  conditions software download link is provided by the proctoring provider,
+  since some providers do not has that step in the onboarding process.
+* Changed handler for exam ping to remove learner from the exam on 403 error.
 
+[2.5.5] - 2020-12-22
+~~~~~~~~~~~~~~~~~~~~~
 * Updated the travis badge in README.rst to point to travis-ci.com instead of travis-ci.org
+
+[2.5.4] - 2020-12-17
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Minor template fix
 
 [2.5.3] - 2020-12-10
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
