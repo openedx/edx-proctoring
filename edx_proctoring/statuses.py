@@ -65,6 +65,9 @@ class ProctoredExamStudentAttemptStatus:
     # the course end date has passed
     expired = 'expired'
 
+    # the learner is ready to resume their errored proctored exam
+    ready_to_resume = 'ready_to_resume'
+
     # the onboarding attempt has been reset
     onboarding_reset = 'onboarding_reset'
 
@@ -88,7 +91,7 @@ class ProctoredExamStudentAttemptStatus:
         """
         return status in [
             cls.declined, cls.timed_out, cls.submitted, cls.second_review_required,
-            cls.verified, cls.rejected, cls.error,
+            cls.verified, cls.rejected, cls.error, cls.ready_to_resume,
             cls.onboarding_missing, cls.onboarding_pending, cls.onboarding_failed, cls.onboarding_expired
         ]
 

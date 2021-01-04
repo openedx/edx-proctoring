@@ -1878,6 +1878,63 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(attempt['last_poll_ipaddr'], '1.1.1.1')
         self.assertEqual(attempt['time_remaining_seconds'], 600)
 
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.eligible,
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
+        ProctoredExamStudentAttemptStatus.ready_to_start,
+        ProctoredExamStudentAttemptStatus.started,
+        ProctoredExamStudentAttemptStatus.ready_to_submit,
+        ProctoredExamStudentAttemptStatus.declined,
+        ProctoredExamStudentAttemptStatus.timed_out,
+        ProctoredExamStudentAttemptStatus.submitted,
+        ProctoredExamStudentAttemptStatus.second_review_required,
+        ProctoredExamStudentAttemptStatus.rejected,
+        ProctoredExamStudentAttemptStatus.expired
+    )
+    def test_update_exam_attempt_ready_to_resume_invalid_transition(self, initial_status):
+        """
+        Assert that an attempted transition of a proctored exam attempt from a non-error state
+        to the ready_to_resume_state raises a ProctoredExamIllegalStatusTransition exception.
+        """
+        exam_attempt = self._create_exam_attempt(self.proctored_exam_id, status=initial_status)
+
+        with self.assertRaises(ProctoredExamIllegalStatusTransition):
+            update_attempt_status(
+                exam_attempt.proctored_exam_id,
+                self.user.id,
+                ProctoredExamStudentAttemptStatus.ready_to_resume
+            )
+
+    def test_update_exam_attempt_ready_to_resume(self):
+        """
+        Assert that an attempted transition of a proctored exam attempt from an error state
+        to a ready_to_resume state completes successfully and does not raise a
+        ProctoredExamIllegalStatusTransition exception.
+        """
+        exam_attempt = self._create_started_exam_attempt()
+
+        attempt = get_exam_attempt_by_id(exam_attempt.id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.started)
+
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.error
+        )
+
+        attempt = get_exam_attempt_by_id(exam_attempt.id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+        update_attempt_status(
+            exam_attempt.proctored_exam_id,
+            self.user.id,
+            ProctoredExamStudentAttemptStatus.ready_to_resume
+        )
+
+        attempt = get_exam_attempt_by_id(exam_attempt.id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
+
     def test_requirement_status_order(self):
         """
         Make sure that we get a correct ordered list of all statuses sorted in the correct

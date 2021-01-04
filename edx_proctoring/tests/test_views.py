@@ -2402,6 +2402,73 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 403)
         self.assertRaises(ProctoredExamPermissionDenied)
 
+    def test_mark_ready_to_resume_attempt(self):
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+        )
+
+        # POST an exam attempt.
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': False,
+        }
+
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        # Verify exam attempt was created correctly.
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+
+        old_attempt_id = response_data['exam_attempt_id']
+
+        # Make sure the exam has not started.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertIsNone(attempt['started_at'])
+
+        # Transition the exam attempt into the error state.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'error',
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+        # Make sure the exam attempt is in the error state.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+        # Transition the exam attempt into the ready_to_resume state.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'mark_ready_to_resume',
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+        # Make sure the exam attempt is in the ready_to_resume state.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
+
 
 class TestExamAllowanceView(LoggedInTestCase):
     """

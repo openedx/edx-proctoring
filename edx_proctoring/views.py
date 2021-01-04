@@ -384,22 +384,25 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
     /edx_proctoring/v1/proctored_exam/attempt
 
     Supports:
-        HTTP PUT: Stops an exam attempt.
+        HTTP PUT: Update an exam attempt's status.
         HTTP GET: Returns the status of an exam attempt.
         HTTP DELETE: Delete an exam attempt.
 
 
     HTTP PUT
-    Stops the existing exam attempt in progress
+    Updates the exam attempt status based on a provided action.
     PUT data : {
         ....
     }
 
-    **PUT data Parameters**
-        * exam_id: The unique identifier for the proctored exam attempt.
+    PUT Query Parameters
+        'attempt_id': The unique identifier for the proctored exam attempt.
+
+    PUT data Parameters
+        'action': The action to perform on the proctored exam attempt, specified by the `attempt_id` query paremeter.
 
     **Response Values**
-        * {'exam_attempt_id': ##}, The exam_attempt_id of the Proctored Exam Attempt..
+        * {'exam_attempt_id': ##}, The exam_attempt_id of the Proctored Exam Attempt.
 
 
     HTTP GET
@@ -453,7 +456,15 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
     def put(self, request, attempt_id):
         """
-        HTTP PUT handler. To stop an exam.
+        HTTP PUT handler to update exam attempt status based on an action.
+
+        Parameters:
+            request: The request object.
+            attempt_id: The attempt ID of the proctored exam attempt whose status should be changed.
+
+        Returns:
+            A Response object containing the `exam_attempt_id`.
+
         """
         attempt = get_exam_attempt_by_id(attempt_id)
 
@@ -534,6 +545,13 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 request.user.id,
                 ProctoredExamStudentAttemptStatus.declined
             )
+        elif action == 'mark_ready_to_resume':
+            exam_attempt_id = update_attempt_status(
+                attempt['proctored_exam']['id'],
+                request.user.id,
+                ProctoredExamStudentAttemptStatus.ready_to_resume
+            )
+
         data = {"exam_attempt_id": exam_attempt_id}
         return Response(data)
 
