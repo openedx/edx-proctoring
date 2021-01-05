@@ -10,8 +10,9 @@
 # Najwan Al Rousan <najwanrousan@gmail.com>, 2016
 # Ahmed Jazzar <ahmed.mojaz@gmail.com>, 2016
 # Omar Al-Ithawi <omar.al.dolaimy@gmail.com>, 2017
-# Andy Armstrong <andya@edx.org>, 2017
 # shefaa abu jabel <shefaa.aj@gmail.com>, 2017
+# NELC Open edX Translation <openedx@elc.edu.sa>, 2020
+# Bianca Severino <biancasev@gmail.com>, 2021
 # 
 msgid ""
 msgstr ""
@@ -19,7 +20,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: shefaa abu jabel <shefaa.aj@gmail.com>, 2017\n"
+"Last-Translator: Bianca Severino <biancasev@gmail.com>, 2021\n"
 "Language-Team: Arabic (https://www.transifex.com/open-edx/teams/6205/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -190,6 +191,9 @@ msgid ""
 "contact %(platform)s support at %(contact_email)s.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"هذا البريد الإلكتروني لإبلاغك بأن حالة مراجعة الجلسة المراقبة لامتحان %(exam_name)sفي مساق <a href=\"%(course_url)s\">%(course_name)s</a>هي %(status)s. عند وجود أي تساؤل حول المراقبة يرجى الاتصال بفريق دعم %(platform)sعلى البريد الإلكتروني%(contact_email)s.\n"
 
 #: templates/practice_exam/entrance.html:4
 msgid ""
@@ -325,6 +329,8 @@ msgid ""
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
+"\n"
+"حتى تكون مؤهلاً للحصول على نقاط المساق أو اعتماد MicroMasters، يجب أن تجتاز الاستعراض المراقب لهذا الامتحان"
 
 #: templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
@@ -715,6 +721,10 @@ msgid ""
 "                submitted for review. </br>\n"
 "      "
 msgstr ""
+"\n"
+"&#8226؛ عند بدء الامتحان سيكون لديك  %(total_time)s لإكماله. </br>\n"
+"</br>\n"
+"&#8226؛ عند انتهاء الوقت قبل إتمامك الامتحان فسوف يتم تقديم إجاباتك الكاملة للاستعراض.</br>"
 
 #: templates/proctored_exam/ready_to_start.html:19
 msgid ""
@@ -822,6 +832,9 @@ msgid ""
 "      &#8226; Proctoring results are usually available within 5 business days after you submit your exam.\n"
 "    "
 msgstr ""
+"\n"
+"&#8226؛ بعد الخروج من الجلسة المراقبة، سيتم تحميل البيانات المسجلة للمراجعة. </br>\n"
+"&#8226؛ نتائج المراقبة عادة ما تكون متوفرة خلال 5 أيام عمل بعد تقديم الامتحان."
 
 #: templates/proctored_exam/submitted.html:23
 #, python-format
