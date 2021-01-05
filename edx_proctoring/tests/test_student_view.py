@@ -705,7 +705,11 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         )
         self.assertIn(self.wait_deadline_msg, rendered_response)
 
-    def test_proctored_exam_attempt_with_past_due_datetime(self):
+    @ddt.data(
+        False,
+        True,
+    )
+    def test_proctored_exam_attempt_with_past_due_datetime(self, is_onboarding_exam):
         """
         Test for get_student_view for proctored exam with past due datetime
         """
@@ -713,7 +717,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         due_date = datetime.now(pytz.UTC) + timedelta(days=1)
 
         # exam is created with due datetime which has already passed
-        self._create_exam_with_due_time(due_date=due_date)
+        self._create_exam_with_due_time(due_date=due_date, is_practice_exam=is_onboarding_exam)
 
         # due_date is exactly after 24 hours, if student arrives after 2 days
         # then he can not attempt the proctored exam
@@ -740,7 +744,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 content_id=self.content_id_for_exam_with_due_date,
                 context={
                     'is_proctored': True,
-                    'is_practice_exam': True,
+                    'is_practice_exam': is_onboarding_exam,
                     'display_name': self.exam_name,
                     'default_time_limit_mins': self.default_time_limit,
                     'due_date': due_date,
