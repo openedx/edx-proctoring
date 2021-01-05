@@ -5,18 +5,11 @@
 # EdX Team <info@edx.org>, 2018.
 # 
 # Translators:
-# Zapadenska <oruda@ymail.com>, 2016
-# annburdyliak <annburdyliak@ya.ru>, 2016
-# aed7ad9d75d010b63d79e2c3891aea63_fb18719 <8b0617f0cc0569340367bf1571e18cac_188092>, 2016
-# Denis <prohibiti@gmail.com>, 2016
-# Андрей Поляков <polyakov.andrey@gmail.com>, 2016
-# IvanPrimachenko <jastudent1@gmail.com>, 2016
-# olexiim <olexiim@gmail.com>, 2016
-# Irene Korotkova <irca.gav@gmail.com>, 2017
-# Andrey Kryachko, 2018
-# Валентина Пицик <lushalusha007@gmail.com>, 2019
-# Andrey Mishchenko <andrey.mishchenko@raccoongang.com>, 2020
-# Danylo Shcherbak <danylo.shcherbak@raccoongang.com>, 2020
+# Pinman <bogdan.stefan@outlook.com>, 2016
+# Manuel Pacurar, 2017
+# Mihaela Caraulasu <mihaela@accelerole.com>, 2017
+# Lucian Horga <lucian.horga@devtelsoftware.com>, 2020
+# George Turtureanu <contact@didactiv.org>, 2020
 # 
 msgid ""
 msgstr ""
@@ -24,13 +17,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: Danylo Shcherbak <danylo.shcherbak@raccoongang.com>, 2020\n"
-"Language-Team: Ukrainian (https://www.transifex.com/open-edx/teams/6205/uk/)\n"
+"Last-Translator: George Turtureanu <contact@didactiv.org>, 2020\n"
+"Language-Team: Romanian (https://www.transifex.com/open-edx/teams/6205/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: uk\n"
-"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
 
 #: admin.py:88
 msgid "internally reviewed"
@@ -54,7 +47,7 @@ msgstr ""
 
 #: admin.py:342
 msgid "Course Id"
-msgstr ""
+msgstr "Id curs"
 
 #: admin.py:380
 msgid "Created"
@@ -70,7 +63,7 @@ msgstr ""
 
 #: admin.py:383
 msgid "Started"
-msgstr "Розпочався"
+msgstr ""
 
 #: admin.py:384
 msgid "Ready To Submit"
@@ -86,7 +79,7 @@ msgstr ""
 
 #: admin.py:387
 msgid "Submitted"
-msgstr ""
+msgstr "Trimisă la"
 
 #: admin.py:388
 msgid "Second Review Required"
@@ -94,15 +87,15 @@ msgstr ""
 
 #: admin.py:389
 msgid "Verified"
-msgstr "Перевірений"
+msgstr "Verificat"
 
 #: admin.py:390
 msgid "Rejected"
-msgstr ""
+msgstr "Respins"
 
 #: admin.py:391
 msgid "Error"
-msgstr ""
+msgstr "Eroare"
 
 #: api.py:902
 msgid "your course"
@@ -159,7 +152,7 @@ msgstr ""
 
 #: models.py:181
 msgid "pending"
-msgstr ""
+msgstr "în așteptare"
 
 #: models.py:182
 msgid "satisfactory"
@@ -287,7 +280,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr ""
+msgstr "Mergeți Înapoi"
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -438,7 +431,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr ""
+msgstr "Reîncercați Verificare"
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
@@ -518,11 +511,11 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:50
 msgid "Start Proctored Exam"
-msgstr "Розпочати контрольовані іспити"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:60
 msgid "Close"
-msgstr ""
+msgstr "Închide"
 
 #: templates/proctored_exam/instructions.html:65
 msgid "Cannot Start Proctored Exam"
