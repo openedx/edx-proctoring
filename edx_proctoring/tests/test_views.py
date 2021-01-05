@@ -5,6 +5,7 @@ All tests for the proctored_exams.py
 
 import json
 from datetime import datetime, timedelta
+from math import floor
 
 import ddt
 import pytz
@@ -922,6 +923,48 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertLessEqual(response_data['time_remaining_seconds'], 108000)
         # check that humanized time
         self.assertEqual(response_data['accessibility_time_string'], 'you have 30 hours remaining')
+
+    def test_save_time_on_error(self):
+        """
+        Test that remaining time is saved to the attempt when it reaches an error state
+        """
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=1800
+        )
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        response_data = json.loads(response.content.decode('utf-8'))
+        attempt_id = response_data['exam_attempt_id']
+        # Initial attempt without time saved
+        attempt = ProctoredExamStudentAttempt.objects.get(id=attempt_id)
+        self.assertIsNone(attempt.time_remaining_seconds)
+        with freeze_time(datetime.now()):
+            # Update the attempt to an error state
+            self.client.put(
+                reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id]),
+                json.dumps({
+                    'action': 'error',
+                }),
+                content_type='application/json'
+            )
+            attempt = ProctoredExamStudentAttempt.objects.get(id=attempt_id)
+            response = self.client.get(
+                reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
+            )
+            response_data = json.loads(response.content.decode('utf-8'))
+            # Time saved to the attempt object should match the response
+            self.assertEqual(attempt.time_remaining_seconds, floor(response_data['time_remaining_seconds']))
 
     def test_time_due_date_between_two_days(self):
         """
