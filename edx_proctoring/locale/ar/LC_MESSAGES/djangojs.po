@@ -10,8 +10,9 @@
 # Nabeel El-Dughailib <nabeel@qordoba.com>, 2016
 # Ahmed Jazzar <ahmed.mojaz@gmail.com>, 2016
 # Omar Al-Ithawi <omar.al.dolaimy@gmail.com>, 2017
-# Andy Armstrong <andya@edx.org>, 2017
 # shefaa abu jabel <shefaa.aj@gmail.com>, 2017
+# NELC Open edX Translation <openedx@elc.edu.sa>, 2020
+# Zimeng Chen, 2021
 # 
 msgid ""
 msgstr ""
@@ -19,7 +20,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2017-02-15 17:16-0500\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: shefaa abu jabel <shefaa.aj@gmail.com>, 2017\n"
+"Last-Translator: Zimeng Chen, 2021\n"
 "Language-Team: Arabic (https://www.transifex.com/open-edx/teams/6205/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -41,15 +42,15 @@ msgstr "كل الرسوبات التي لم تتم معالجتها"
 
 #: admin.py:119
 msgid "active proctored exams"
-msgstr "الامتحانات المراقبة الفاعلة"
+msgstr "الامتحانات المراقبة المفعّلة"
 
 #: admin.py:177
 msgid "courses with active proctored exams"
-msgstr "الدورات التعليمية التي فيها امتحانات مراقبة فاعلة"
+msgstr "المساقات التي فيها امتحانات مراقبة فاعلة"
 
 #: admin.py:342
 msgid "Course Id"
-msgstr "معرف الدورة التعليمية"
+msgstr "الرمز التعريفي للمساق "
 
 #: admin.py:380
 msgid "Created"
@@ -77,7 +78,7 @@ msgstr "مرفوض"
 
 #: admin.py:386
 msgid "Timed Out"
-msgstr "نفد وقته"
+msgstr "انتهى الوقت"
 
 #: admin.py:387
 msgid "Submitted"
@@ -101,7 +102,7 @@ msgstr "خطأ"
 
 #: api.py:902
 msgid "your course"
-msgstr "دورتك التعليمية"
+msgstr "مساقك التعليمي"
 
 #: api.py:962
 #, python-brace-format
@@ -142,15 +143,15 @@ msgstr "امتحان تمرين دون علامة"
 
 #: api.py:1338
 msgid "Practice Exam Completed"
-msgstr "امتحان تمرين مكتمل"
+msgstr "امتحان تدريبي مكتمل"
 
 #: api.py:1343
 msgid "Practice Exam Failed"
-msgstr "امتحان تمرين راسب"
+msgstr "امتحان تدريبي راسب"
 
 #: api.py:1351
 msgid "Timed Exam"
-msgstr "امتحان موقوت"
+msgstr "امتحان مؤقت"
 
 #: models.py:181
 msgid "pending"
@@ -190,6 +191,9 @@ msgid ""
 "contact %(platform)s support at %(contact_email)s.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"هذا البريد الإلكتروني لإبلاغك بأن حالة مراجعة الجلسة المراقبة لامتحان %(exam_name)sفي مساق <a href=\"%(course_url)s\">%(course_name)s</a>هي %(status)s. عند وجود أي تساؤل حول المراقبة يرجى الاتصال بفريق دعم %(platform)sعلى البريد الإلكتروني%(contact_email)s.\n"
 
 #: templates/practice_exam/entrance.html:4
 msgid ""
@@ -213,7 +217,7 @@ msgstr ""
 
 #: templates/practice_exam/entrance.html:15
 msgid "Continue to my practice exam"
-msgstr "الاستمرار إلى امتحان التمرين"
+msgstr "الاستمرار إلى الامتحان التدريبي"
 
 #: templates/practice_exam/entrance.html:18
 msgid ""
@@ -232,7 +236,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"كانت هناك مشكلة في جلسة تمرين المراقبة الخاصة بك"
+"كانت هناك مشكلة في جلسة تدريب المراقبة الخاصة بك"
 
 #: templates/practice_exam/error.html:10
 msgid ""
@@ -241,7 +245,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"نتيجة تمرين المراقبة: <b class=\"failure\"> غير مرضِ </b>"
+"نتيجة امتحان المراقبة: <b class=\"failure\"> غير مرضِ </b>"
 
 #: templates/practice_exam/error.html:16
 msgid ""
@@ -251,12 +255,12 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"انتهت جلسة المراقبة قبل انتهاء امتحان التمرن.\n"
+"انتهت جلسة المراقبة قبل انتهاء امتحان التدريب.\n"
 "يمكنك إعادة محاولة هذا الامتحان إذا كان لديك مشكلة في اعداد برنامج المراقبة عبر الانترنت."
 
 #: templates/practice_exam/error.html:25
 msgid "Try this practice exam again"
-msgstr "جرب امتحان التمرن مرة أخرى"
+msgstr "جرب امتحان التدريب مرة أخرى"
 
 #: templates/practice_exam/submitted.html:4
 msgid ""
@@ -265,7 +269,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"لقد قمت بتقديم امتحان التمرن على المراقبة"
+"لقد قمت بتقديم امتحان تدريبي على المراقبة"
 
 #: templates/practice_exam/submitted.html:10
 msgid ""
@@ -275,12 +279,12 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"امتحانات التمرن لا تؤثر على درجتك أو نقاطك.\n"
-"لقد أكملت امتحان التمرن هذا ويمكنك الاستمرار في الدورة التعليمية."
+"التدريبات لا تؤثر على درجتك أو نقاطك.\n"
+"لقد أكملت هذا التدريب ويمكنك الاستمرار في المساق."
 
 #: templates/practice_exam/submitted.html:18
 msgid "You can also retry this practice exam"
-msgstr "يمكنك أيضاً إعادة محاولة امتحان التمرين هذا"
+msgstr "يمكنك أيضاً إعادة المحاولة لهذا التدريب "
 
 #: templates/proctored_exam/confirm-decline.html:5
 msgid ""
@@ -298,7 +302,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"إذا خضعت لهذا الامتحان دون مراقبة،  <strong> لن تكون مؤخلاً بعد الآن للحصول على نقاط أكاديمية. </strong>"
+"إذا خضعت لهذا الامتحان دون مراقبة،  <strong> لن تكون مؤهلًا بعد الآن للحصول على نقاط أكاديمية. </strong>"
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
@@ -325,6 +329,8 @@ msgid ""
 "      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
+"\n"
+"حتى تكون مؤهلاً للحصول على نقاط المساق التعليمي أو اعتماد MicroMasters، يجب أن تجتاز الاستعراض المراقب لهذا الامتحان"
 
 #: templates/proctored_exam/entrance.html:14
 msgid "Continue to my proctored exam. I want to be eligible for credit."
@@ -377,7 +383,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"عرض حالة النقاط الخاصة بك على <a href=\"%(progress_page_url)s\">تقدم</a> page."
+"عرض حالة النقاط الخاصة بك على صفحة <a href=\"%(progress_page_url)s\">تقدمك</a> ."
 
 #: templates/proctored_exam/error.html:26
 #: templates/proctored_exam/rejected.html:26
@@ -387,7 +393,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"إذا كان لديك مخاوف بشأن نتائج جلسة المراقبة الخاصة بك، اتصل بفريق الدورة التعليمية."
+"عند القلق بشأن جلسة المراقبة الخاصة بك يرجى الاتصال بطاقم المساق."
 
 #: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
 msgid ""
@@ -396,7 +402,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"لقد مر الموعد المقرر لهذا الامتحان"
+"الموعد المقرر لهذا الامتحان انتهى"
 
 #: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
@@ -405,7 +411,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"لأن الموعد المحدد قد مر، لم تعد قادراً على الخضوع لهذا الامتحان"
+"لم تعد قادرًا على دخول هذا الامتحان لفوات الموعد."
 
 #: templates/proctored_exam/failed-prerequisites.html:9
 #, python-format
@@ -415,7 +421,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"لم تستوف متطلبا هذا الامتحان المراقب ولست مؤهلاً للحصول على نقاط. راجع صفحة <a href=\"%(progress_page_url)s\">التقدم</a> الخاصة بك للاطلاع على قائمة المتطلبات والحالة لكل امتحان."
+"لم تستوف متطلبات هذا الامتحان المراقب ولست مؤهلاً للحصول على نقاط. راجع صفحة <a href=\"%(progress_page_url)s\">التقدم</a> الخاصة بك للاطلاع على قائمة المتطلبات والحالة لكل امتحان."
 
 #: templates/proctored_exam/failed-prerequisites.html:14
 msgid ""
@@ -424,7 +430,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"لم تستوف المتطلبات التالية:"
+"لم يتم استيفاء المتطلبات التالية:"
 
 #: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
@@ -514,7 +520,7 @@ msgstr ""
 #: templates/proctored_exam/id_verification.html:44
 #: templates/proctored_exam/id_verification.html:56
 msgid "Continue to Verification"
-msgstr "الاستمرار إلى التأكيد"
+msgstr "الاستمرار للتحقق"
 
 #: templates/proctored_exam/id_verification.html:49
 msgid ""
@@ -544,7 +550,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"1. انسخ هذا الرمز الخصا بالامتحان. سوف يطلب منك لصق هذا الرمز في وقت لاحق قبل بدء الامتحان."
+"1. انسخ رمز الامتحان هذا. سوف يطلب منك لصق هذا الرمز في وقت لاحق قبل بدء الامتحان."
 
 #: templates/proctored_exam/instructions.html:19
 msgid ""
@@ -588,7 +594,7 @@ msgstr ""
 "\n"
 "سوف يطلب منك تأكيد هويتك كجزء من إعداد الامتحان المراقب.\n"
 "تأكد من أنك تستعمل جهاز كمبيوتر مع كاميرا ويب، وبأنه لديك صورة هوية صالحة\n"
-"مثل رخصة القيادة أو جواز السفر، قبل المتابعة."
+"مثل رخصة القيادة أو جواز السفرقبل المتابعة."
 
 #: templates/proctored_exam/instructions.html:44
 msgid ""
@@ -597,7 +603,7 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"3. عند الانتهاء من إنشاء المراقبة، ابدء الامتحان"
+"3. عند الانتهاء من إنشاء المراقبة، ابدأ الامتحان"
 
 #: templates/proctored_exam/instructions.html:50
 msgid "Start Proctored Exam"
@@ -628,7 +634,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"ام تكمل المتطلبات الأساسية لهذا الامتحان. يجب الوفاء بجميع المتطلبات قبل أن تتمكن من الخضوع لهذا الامتحان المراقب والحصول على نقاط. يمكنك رؤية <a href=\"%(progress_page_url)s\">التقدم </a> للحصول على قائمة المتطلبات التي يجب استيفائها."
+"لم تكمل المتطلبات الأساسية لهذا الامتحان. يجب استيفاء جميع المتطلبات قبل الخضوع لهذا الامتحان المراقب والحصول على نقاط. يمكنك رؤية <a href=\"%(progress_page_url)s\">التقدم </a> للحصول على قائمة المتطلبات التي يجب استيفائها."
 
 #: templates/proctored_exam/pending-prerequisites.html:14
 msgid ""
@@ -683,7 +689,7 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"عد إلى نافذة %(platform_name)s الدورة التعليمية لبدء الامتحان الخاص بك. عند الانتهاء من الامتحان والإشارة إلى\n"
+"عد إلى نافذة %(platform_name)s المساق لبدء الامتحان الخاص بك. عند الانتهاء من الامتحان والإشارة إلى\n"
 "أنك أنهيت الامتحان، يمكنك إغلاق هذه النافذة لإنهاء الجلسة المراقبة\n"
 "وتحميل بيانات الجلسة المراقبة من أجل مراجعتها"
 
@@ -715,6 +721,9 @@ msgid ""
 "                submitted for review. </br>\n"
 "      "
 msgstr ""
+"\n"
+"&#8226؛ عند بدء الامتحان سيكون لديك  %(total_time)s لإكماله.</br>\n"
+"&#8226؛ عند انتهاء الوقت قبل إتمامك الامتحان فسوف يتم تقديم إجاباتك الكاملة للاستعراض.</br>"
 
 #: templates/proctored_exam/ready_to_start.html:19
 msgid ""
@@ -754,8 +763,8 @@ msgid ""
 msgstr ""
 "\n"
 "بعد تقديم الامتحان الخاص بك، سوف يتم تقييم اجاباتك واسعراض الجلسة المراقبة.\n"
-"قد لا تكون مؤهلاً للحصول على نقاط أكاديمية لهذه الدورة إذا استكملت جميع الامتحانات المطلوبة\n"
-"وحصلت على العلامة التي تلبي متطلبات الحصول على نقاط للدورة التعليمية"
+"قد لا تكون مؤهلاً للحصول على نقاط أكاديمية لهذا المساق إذا استكملت جميع الامتحانات المطلوبة\n"
+"وحصلت على العلامة التي تخولك للحصول على نقاط المساق ."
 
 #: templates/proctored_exam/ready_to_submit.html:21
 msgid ""
@@ -793,7 +802,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"أنت لم تعد مؤهل للحصول على نقاط أكاديمية لهذه الدورة، بغض النظر عن علامتك\n"
+"أنت لم تعد مؤهل للحصول على نقاط أكاديمية لهذا المساق، بغض النظر عن علامتك\n"
 "النهائية.\n"
 "إذا كان لديك أسئلة حول حالة نتائج الامتحانات المراقبة، اتصل %(platform_name)s بالدعم"
 
@@ -843,7 +852,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"تم استعراض جلستك الموقوتة ولقد استوفيت جميع المتطلبات."
+"تم استعراض جلستك المؤقتة واستوفيت جميع المتطلبات."
 
 #: templates/proctored_exam/verified.html:10
 msgid ""
@@ -853,8 +862,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"أنت مؤهل لشراء النقاط الأكاديمية لهذه الدورة الدراسية إذا استكملت جميع الامتحانات المطلوبة\n"
-"وأيضاً حصلت على علامة نهائية التي تلبي متطلبات الحصول على نقاط مقابل هذه الدورة."
+"أنت مؤهل لشراء النقاط الأكاديمية لهذا المساق إذا استكملت جميع الامتحانات المطلوبة\n"
+"وأيضاً حصلت على العلامة النهائية التي تخولك للحصول على نقاط مقابل هذا المساق."
 
 #: templates/proctored_exam/visit_exam_content.html:5
 msgid ""
@@ -886,16 +895,15 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"%(exam_name)s هو امتحان موقوت  (%(total_time)s)"
+"%(exam_name)s هو امتحان مؤقت  (%(total_time)s)"
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr "هناك مدة محددة المرتبطة بهذا الامتحان."
+msgstr "هذا الامتحان محدد بمدة زمنية."
 
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
-msgstr ""
-"من أجل اجتياز هذا الامتحان، يجب عليك حل جميع المشاكل ضمن الوقت المسموح به."
+msgstr "لاجتياز هذا الامتحان يجب عليك حل جميع المسائل أثناء الوقت المسموح به."
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
@@ -903,11 +911,11 @@ msgstr "بعد أن تختار"
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr "أنا جاهز لبدء الامتحان الموقوت"
+msgstr "أنا مستعد لبدء الامتحان المؤقت"
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr "سيكون عليك"
+msgstr "سيتوجب عليك"
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
@@ -920,7 +928,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"أنا جاهز لبدء هذا الامتحان الموقوت."
+"أنا جاهز لبدء هذا الامتحان المؤقت."
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
@@ -936,8 +944,8 @@ msgid ""
 msgstr ""
 "\n"
 "إذا كنت تعاني من عجز،\n"
-"من الممكن أن تكون مؤهل للحصول على وقت إضافي في الامتحان الموقوت.\n"
-"اسأل فريق الدورة الدراسية للحصول على معلومات حول الحالات التي يسمح فيها بالحصول على وقت إضافي"
+"من الممكن أن تكون مؤهل للحصول على وقت إضافي في الامتحان المؤقت.\n"
+"اسأل طاقم المساق للحصول على معلومات حول الحالات التي يسمح فيها بالحصول على وقت إضافي"
 
 #: templates/timed_exam/ready_to_submit.html:4
 msgid ""
@@ -946,7 +954,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"هل أنت متأكد بأنك تريد أن تقدم الامتحان الموقوت الخاص بك؟"
+"هل أنت متأكد بأنك تريد أن تقدم امتحانك المؤقت؟"
 
 #: templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -964,7 +972,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"نعم، قم بتقديم امتحاني الموقت."
+"نعم، قم بتقديم امتحاني المؤقت."
 
 #: templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -982,7 +990,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"انتهى الوقت المخصص لهذا الامتحان. تم تقديم امتحانك وسوف يتم وضع علامات على أي عمل قمت باتمامه."
+"انتهى الوقت المخصص لهذا الامتحان. تم تقديم امتحانك وسوف يتم وضع علامات على أي عمل قمت بإتمامه."
 
 #: templates/timed_exam/submitted.html:10
 msgid ""
@@ -991,7 +999,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"لقد قدمت امتحانك الموقوت."
+"لقد قدمت امتحانك المؤقت."
 
 #: templates/timed_exam/submitted.html:18
 #, python-format
@@ -1001,7 +1009,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"علاماتك في الامتحان الموقوت سوف تكون متوفرة فوراً في صفحة <a href=\"%(progress_page_url)s\">التقدم</a>"
+"علاماتك في الامتحان المؤقت سوف تكون ظاهرة فوراً في صفحة <a href=\"%(progress_page_url)s\">التقدم</a>"
 
 #: templates/timed_exam/submitted.html:22
 msgid ""
@@ -1044,7 +1052,7 @@ msgstr "و  {num_of_minutes} دقائق"
 
 #: views.py:92
 msgid "could not determine the course_id"
-msgstr "لم نتمكن من تحديد معرف الدورة التعليمية"
+msgstr "لم نتمكن من تحديد رمز المساق التعليمي"
 
 #: views.py:102
 msgid "Must be a Staff User to Perform this request."
@@ -1061,7 +1069,7 @@ msgstr "بقي لديك أقل من دقيقة"
 
 #: views.py:536
 msgid "timed"
-msgstr "موقوت"
+msgstr "مضبوط بوقت"
 
 #: views.py:537
 msgid "practice"

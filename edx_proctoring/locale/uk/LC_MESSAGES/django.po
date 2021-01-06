@@ -15,6 +15,7 @@
 # Irene Korotkova <irca.gav@gmail.com>, 2017
 # Andrey Kryachko, 2018
 # Валентина Пицик <lushalusha007@gmail.com>, 2019
+# Andrey Mishchenko <andrey.mishchenko@raccoongang.com>, 2020
 # Danylo Shcherbak <danylo.shcherbak@raccoongang.com>, 2020
 # 
 msgid ""
