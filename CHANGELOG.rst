@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.7] - 2021-01-08
+~~~~~~~~~~~~~~~~~~~~
+* Allow the creation of multiple exam attempts for a single user in a single exam, as long
+  as the most recent attempt is `ready_to_resume` or `resumed`. When an exam is resumed, the
+  time remaining is saved to the new attempt and is used to calculate the expiration time.
+
 [2.5.6] - 2021-01-06
 ~~~~~~~~~~~~~~~~~~~~
 * Updated the StudentProctoredExamAttempt view's PUT handler to allow for a 

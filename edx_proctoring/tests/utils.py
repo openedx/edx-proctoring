@@ -274,7 +274,8 @@ class ProctoredExamTestCase(LoggedInTestCase):
             is_active=False
         )
 
-    def _create_exam_attempt(self, exam_id, status=ProctoredExamStudentAttemptStatus.created, is_practice_exam=False):
+    def _create_exam_attempt(self, exam_id, status=ProctoredExamStudentAttemptStatus.created,
+                             is_practice_exam=False, time_remaining_seconds=None):
         """
         Creates the ProctoredExamStudentAttempt object.
         """
@@ -286,6 +287,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
             allowed_time_limit_mins=10,
             taking_as_proctored=True,
             is_sample_attempt=is_practice_exam,
+            time_remaining_seconds=time_remaining_seconds,
         )
 
         if status in (ProctoredExamStudentAttemptStatus.started,

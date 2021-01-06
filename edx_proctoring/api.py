@@ -669,9 +669,13 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
 
 def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
-    Creates an exam attempt for user_id against exam_id. There should only be
-    one exam_attempt per user per exam. Multiple attempts by user will be archived
-    in a separate table
+    Creates an exam attempt for user_id against exam_id. There should only
+    be one exam_attempt per user per exam, with one exception described below.
+    Multiple attempts by user will be archived in a separate table.
+
+    If the attempt enters an error state, it must be marked as ready to resume,
+    and another attempt must be made in order to resume the exam. This is the
+    only case where multiple attempts for the same exam should exist.
     """
     # for now the student is allowed the exam default
 
@@ -685,14 +689,20 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
 
     exam = get_exam_by_id(exam_id)
     existing_attempt = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
-    # only practice exams may have multiple attempts
-    if existing_attempt and not existing_attempt.is_sample_attempt:
-        err_msg = (
-            'Cannot create new exam attempt for exam_id = {exam_id} and '
-            'user_id = {user_id} because it already exists!'
-        ).format(exam_id=exam_id, user_id=user_id)
+    time_remaining_seconds = None
+    # only practice exams and exams with resume states may have multiple attempts
+    if existing_attempt:
+        if ProctoredExamStudentAttemptStatus.is_resume_status(existing_attempt.status):
+            # save remaining time and mark the most recent attempt as resumed, if it isn't already
+            time_remaining_seconds = existing_attempt.time_remaining_seconds
+            mark_exam_attempt_as_resumed(exam_id, user_id)
+        elif not existing_attempt.is_sample_attempt:
+            err_msg = (
+                'Cannot create new exam attempt for exam_id = {exam_id} and '
+                'user_id = {user_id} because it already exists!'
+            ).format(exam_id=exam_id, user_id=user_id)
 
-        raise StudentExamAttemptAlreadyExistsException(err_msg)
+            raise StudentExamAttemptAlreadyExistsException(err_msg)
 
     attempt_code = str(uuid.uuid4()).upper()
 
@@ -725,6 +735,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         external_id,
         review_policy_id=review_policy.id if review_policy else None,
         status=force_status,
+        time_remaining_seconds=time_remaining_seconds,
     )
 
     # Emit event when exam attempt created
@@ -830,6 +841,13 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
     return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_start)
 
 
+def mark_exam_attempt_as_resumed(exam_id, user_id):
+    """
+    Marks the current exam attempt as resumed
+    """
+    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.resumed)
+
+
 def is_state_transition_legal(from_status, to_status):
     """
     Determine and return as a boolean whether a proctored exam attempt state transition
@@ -849,6 +867,12 @@ def is_state_transition_legal(from_status, to_status):
     # only allow a state transition to the ready_to_resume state from an error state
     if (to_status == ProctoredExamStudentAttemptStatus.ready_to_resume and
             from_status != ProctoredExamStudentAttemptStatus.error):
+        return False
+    # only allowed state transition to the resumed state from ready_to_resume (or resumed).
+    # this accounts for cases where the previous attempt was marked as resumed, but a new
+    # attempt failed to be created.
+    if (to_status == ProctoredExamStudentAttemptStatus.resumed and
+            not ProctoredExamStudentAttemptStatus.is_resume_status(from_status)):
         return False
     return True
 
@@ -1819,7 +1843,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
 
         if not allowed_time_limit_mins:
             # no existing attempt or user has not started exam yet, so compute the user's allowed
-            # time limit, including any accommodations
+            # time limit, including any accommodations or time saved from a previous attempt
             allowed_time_limit_mins = _calculate_allowed_mins(exam, user_id)
 
         total_time = humanized_time(allowed_time_limit_mins)
@@ -1859,10 +1883,15 @@ def _calculate_allowed_mins(exam, user_id):
     due_datetime = get_exam_due_date(exam, user_id)
     allowed_time_limit_mins = exam['time_limit_mins']
 
-    # add in the allowed additional time
-    allowance_extra_mins = ProctoredExamStudentAllowance.get_additional_time_granted(exam.get('id'), user_id)
-    if allowance_extra_mins:
-        allowed_time_limit_mins += allowance_extra_mins
+    current_attempt = get_current_exam_attempt(exam['id'], user_id)
+    if current_attempt and current_attempt['time_remaining_seconds']:
+        # if resuming from a previous attempt, use the time remaining
+        allowed_time_limit_mins = int(current_attempt['time_remaining_seconds'] / 60)
+    else:
+        # add in the allowed additional time
+        allowance_extra_mins = ProctoredExamStudentAllowance.get_additional_time_granted(exam.get('id'), user_id)
+        if allowance_extra_mins:
+            allowed_time_limit_mins += allowance_extra_mins
 
     if due_datetime:
         current_datetime = datetime.now(pytz.UTC)

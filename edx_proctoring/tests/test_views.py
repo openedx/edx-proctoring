@@ -5,7 +5,7 @@ All tests for the proctored_exams.py
 
 import json
 from datetime import datetime, timedelta
-from math import floor
+from math import ceil, floor
 
 import ddt
 import pytz
@@ -964,7 +964,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             )
             response_data = json.loads(response.content.decode('utf-8'))
             # Time saved to the attempt object should match the response
-            self.assertEqual(attempt.time_remaining_seconds, floor(response_data['time_remaining_seconds']))
+            self.assertIn(
+                attempt.time_remaining_seconds,
+                [floor(response_data['time_remaining_seconds']), ceil(response_data['time_remaining_seconds'])]
+            )
 
     def test_time_due_date_between_two_days(self):
         """
@@ -2468,6 +2471,74 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # Make sure the exam attempt is in the ready_to_resume state.
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
+
+    def test_resume_exam_attempt(self):
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+        )
+
+        # POST an exam attempt.
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        response_data = json.loads(response.content.decode('utf-8'))
+        old_attempt_id = response_data['exam_attempt_id']
+
+        # Transition the exam attempt into the error state.
+        self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'error',
+            }),
+            content_type='application/json'
+        )
+
+        # POST a new exam attempt - this should fail because the attempt isn't ready to resume yet
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 400)
+
+        # Transition the exam attempt into the ready_to_resume state.
+        self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'mark_ready_to_resume',
+            }),
+            content_type='application/json'
+        )
+
+        # POST a new exam attempt, which should pass this time
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+
+        # GET both created attempts
+        url = reverse('edx_proctoring:proctored_exam.attempts.course', kwargs={'course_id': proctored_exam.course_id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 2)
+        # assert that the older attempt has transitioned to the 'resumed' status
+        self.assertEqual(
+            response_data['proctored_exam_attempts'][1]['status'],
+            ProctoredExamStudentAttemptStatus.resumed
+        )
 
 
 class TestExamAllowanceView(LoggedInTestCase):
