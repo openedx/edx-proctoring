@@ -1996,7 +1996,11 @@ def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
     if not user.is_active:
         student_view_template = 'proctored_exam/inactive_account.html'
     elif not attempt_status:
-        student_view_template = 'onboarding_exam/entrance.html'
+        # if exam due date has passed, then we can't take the exam
+        if is_exam_passed_due(exam, user_id):
+            student_view_template = 'proctored_exam/expired.html'
+        else:
+            student_view_template = 'onboarding_exam/entrance.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
         return None
