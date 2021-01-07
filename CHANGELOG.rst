@@ -15,6 +15,7 @@ Unreleased
 ~~~~~~~~~~
 
 [2.5.6] - 2021-01-06
+~~~~~~~~~~~~~~~~~~~~
 * Updated the StudentProctoredExamAttempt view's PUT handler to allow for a 
   new action "mark_ready_to_resume", which transitions exam attempts in the "error" state
   to a "ready_to_resume" state.
