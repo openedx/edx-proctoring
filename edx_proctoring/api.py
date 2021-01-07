@@ -830,6 +830,29 @@ def mark_exam_attempt_as_ready(exam_id, user_id):
     return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_start)
 
 
+def is_state_transition_legal(from_status, to_status):
+    """
+    Determine and return as a boolean whether a proctored exam attempt state transition
+    from from_status to to_status is an allowed state transition.
+
+    Arguments:
+        from_status: original status of a proctored exam attempt
+        to_status: future status of a proctored exam attempt
+    """
+    in_completed_status = ProctoredExamStudentAttemptStatus.is_completed_status(from_status)
+    to_incompleted_status = ProctoredExamStudentAttemptStatus.is_incomplete_status(to_status)
+
+    # don't allow state transitions from a completed state to an incomplete state
+    # if a re-attempt is desired then the current attempt must be deleted
+    if in_completed_status and to_incompleted_status:
+        return False
+    # only allow a state transition to the ready_to_resume state from an error state
+    if (to_status == ProctoredExamStudentAttemptStatus.ready_to_resume and
+            from_status != ProctoredExamStudentAttemptStatus.error):
+        return False
+    return True
+
+
 # pylint: disable=inconsistent-return-statements
 def update_attempt_status(exam_id, user_id, to_status,
                           raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None,
@@ -862,24 +885,20 @@ def update_attempt_status(exam_id, user_id, to_status,
         to_status = ProctoredExamStudentAttemptStatus.submitted
 
     exam = get_exam_by_id(exam_id)
-    # don't allow state transitions from a completed state to an incomplete state
-    # if a re-attempt is desired then the current attempt must be deleted
-    #
-    in_completed_status = ProctoredExamStudentAttemptStatus.is_completed_status(from_status)
-    to_incompleted_status = ProctoredExamStudentAttemptStatus.is_incomplete_status(to_status)
 
-    if in_completed_status and to_incompleted_status:
-        err_msg = (
-            u'A status transition from {from_status} to {to_status} was attempted '
-            u'on exam_id {exam_id} for user_id {user_id}. This is not '
-            u'allowed!'.format(
+    if not is_state_transition_legal(from_status, to_status):
+        illegal_status_transition_msg = (
+            'A status transition from {from_status} to {to_status} was attempted '
+            'on exam_id {exam_id} for user_id {user_id}. This is not '
+            'allowed!'.format(
                 from_status=from_status,
                 to_status=to_status,
                 exam_id=exam_id,
                 user_id=user_id
             )
         )
-        raise ProctoredExamIllegalStatusTransition(err_msg)
+
+        raise ProctoredExamIllegalStatusTransition(illegal_status_transition_msg)
 
     # OK, state transition is fine, we can proceed
     exam_attempt_obj.status = to_status
