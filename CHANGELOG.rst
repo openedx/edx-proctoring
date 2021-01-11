@@ -14,6 +14,13 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.9] - 2021-01-13
+~~~~~~~~~~~~~~~~~~~~
+*  Added `is_attempt_active` field to ProctoredExamSoftwareSecureReview and
+  ProctoredExamSoftwareSecureReviewHistory models to note if the attempt for
+  that review has been archived. When an attempt is archived and if it is associated
+  with a review, this field will be set to False
+
 [2.5.8] - 2021-01-12
 ~~~~~~~~~~~~~~~~~~~~
 * Ignore the `ProctoredExamStudentAttemptHistory` table when viewing onboarding status.
@@ -28,7 +35,7 @@ Unreleased
 
 [2.5.6] - 2021-01-06
 ~~~~~~~~~~~~~~~~~~~~
-* Updated the StudentProctoredExamAttempt view's PUT handler to allow for a 
+* Updated the StudentProctoredExamAttempt view's PUT handler to allow for a
   new action "mark_ready_to_resume", which transitions exam attempts in the "error" state
   to a "ready_to_resume" state.
 
