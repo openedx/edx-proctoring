@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.8] - 2021-01-12
+~~~~~~~~~~~~~~~~~~~~
+* Ignore the `ProctoredExamStudentAttemptHistory` table when viewing onboarding status.
+  This fixes a bug where the status would return `verified` even after all attempts had
+  been deleted.
+
 [2.5.7] - 2021-01-08
 ~~~~~~~~~~~~~~~~~~~~
 * Allow the creation of multiple exam attempts for a single user in a single exam, as long

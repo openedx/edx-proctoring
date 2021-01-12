@@ -4,7 +4,6 @@ Proctored Exams HTTP-based API endpoints
 
 import json
 import logging
-from itertools import chain
 
 import waffle
 from crum import get_current_request
@@ -361,9 +360,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
 
-        recent_attempts = ProctoredExamStudentAttempt.objects.filter(**attempt_filters).order_by('-modified')
-        past_attempts = ProctoredExamStudentAttemptHistory.objects.filter(**attempt_filters).order_by('-modified')
-        attempts = list(chain(recent_attempts, past_attempts))
+        attempts = ProctoredExamStudentAttempt.objects.filter(**attempt_filters).order_by('-modified')
         if len(attempts) == 0:
             # If there are no attempts, return the data with 'onboarding_status' set to None
             return Response(data)
