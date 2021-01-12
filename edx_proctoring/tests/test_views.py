@@ -415,6 +415,7 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
     """
     def setUp(self):
         super(TestStudentOnboardingStatusView, self).setUp()
+        set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
         self.other_user = User.objects.create(username='otheruser', password='test')
 
@@ -444,6 +445,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         return attempt
 
     def test_no_course_id(self):
+        """
+        Test that a request without a course_id returns 400 error
+        """
         response = self.client.get(reverse('edx_proctoring:user_onboarding.status'))
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -451,6 +455,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         self.assertEqual(response_data['detail'], message)
 
     def test_no_username(self):
+        """
+        Test that a request without a username returns the user's own onboarding status
+        """
         onboarding_exam = self._create_onboarding_exam()
         # Create the user's own attempt
         own_attempt = self._create_onboarding_exam_attempt(onboarding_exam, self.user)
@@ -470,6 +477,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         self.assertEqual(response_data['onboarding_status'], ProctoredExamStudentAttemptStatus.submitted)
 
     def test_unauthorized(self):
+        """
+        Test that non-staff cannot view other users' onboarding status
+        """
         onboarding_exam = self._create_onboarding_exam()
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
@@ -481,6 +491,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         self.assertEqual(response_data['detail'], message)
 
     def test_staff_authorization(self):
+        """
+        Test that staff can view other users' onboarding status
+        """
         self.user.is_staff = True
         self.user.save()
         onboarding_exam = self._create_onboarding_exam()
@@ -500,6 +513,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_no_onboarding_exam(self):
+        """
+        Test that the request returns a 404 error if there is no matching onboarding exam
+        """
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
             + '?course_id=edX/DemoX/Demo_Course'
@@ -510,6 +526,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         self.assertEqual(response_data['detail'], message)
 
     def test_no_exam_attempts(self):
+        """
+        Test that the onboarding status is None if there are no exam attempts
+        """
         onboarding_exam = self._create_onboarding_exam()
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
@@ -524,6 +543,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         ))
 
     def test_no_verified_attempts(self):
+        """
+        Test that if there are no verified attempts, the most recent status is returned
+        """
         onboarding_exam = self._create_onboarding_exam()
         # Create first attempt
         attempt = self._create_onboarding_exam_attempt(onboarding_exam, self.user)
@@ -555,6 +577,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         ))
 
     def test_get_verified_attempt(self):
+        """
+        Test that if there is at least one verified attempt, the status returned is always verified
+        """
         onboarding_exam = self._create_onboarding_exam()
         # Create first attempt
         attempt = self._create_onboarding_exam_attempt(onboarding_exam, self.user)
@@ -586,6 +611,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         ))
 
     def test_only_onboarding_exam(self):
+        """
+        Test that only onboarding exam attempts are evaluated when requesting onboarding status
+        """
         # Create an onboarding exam, along with a practice exam and
         # a proctored exam, all in the same course
         onboarding_exam = self._create_onboarding_exam()
@@ -618,6 +646,38 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         onboarding_link = reverse('jump_to', args=['a/b/c', onboarding_exam.content_id])
         self.assertEqual(response_data['onboarding_link'], onboarding_link)
+
+    def test_ignore_history_table(self):
+        """
+        Test that deleted attempts are not evaluated when requesting onboarding status
+        """
+        self.user.is_staff = True
+        self.user.save()
+        # Create an exam + attempt
+        onboarding_exam = self._create_onboarding_exam()
+        attempt = self._create_onboarding_exam_attempt(onboarding_exam, self.user)
+        # Verify the attempt and assert that the status returns correctly
+        attempt.status = ProctoredExamStudentAttemptStatus.verified
+        attempt.save()
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(onboarding_exam.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_status'], ProctoredExamStudentAttemptStatus.verified)
+        # Delete the attempt
+        self.client.delete(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt.id])
+        )
+        # Assert that the status has been cleared and is no longer verified
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(onboarding_exam.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertIsNone(response_data['onboarding_status'])
 
 
 @ddt.ddt
