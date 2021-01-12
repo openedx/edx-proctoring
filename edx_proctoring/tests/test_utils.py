@@ -3,12 +3,52 @@ File that contains tests for the util methods.
 """
 
 import unittest
+from datetime import datetime
 from itertools import product
 
 import ddt
+import pytz
+from freezegun import freeze_time
 
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_proctoring.utils import _emit_event, humanized_time, is_reattempting_exam
+from edx_proctoring.utils import _emit_event, get_time_remaining_for_attempt, humanized_time, is_reattempting_exam
+
+
+class TestGetTimeRemainingForAttempt(unittest.TestCase):
+    """
+    Class to test get_time_remaining_for_attempt
+    """
+    def setUp(self):
+        """
+        Initialize
+        """
+        super(TestGetTimeRemainingForAttempt, self).setUp()
+        self.now_utc = datetime.now(pytz.UTC)
+
+    def test_not_started(self):
+        """
+        Test to return 0 if the exam attempt has not been started.
+        """
+        attempt = {
+            'started_at': None,
+            'allowed_time_limit_mins': 10,
+            'time_remaining_seconds': None
+        }
+        time_remaining_seconds = get_time_remaining_for_attempt(attempt)
+        self.assertEqual(time_remaining_seconds, 0)
+
+    def test_get_time_remaining_started(self):
+        """
+        Test to get the time remaining on an attempt after the exam has started.
+        """
+        with freeze_time(self.now_utc):
+            attempt = {
+                'started_at': self.now_utc,
+                'allowed_time_limit_mins': 10,
+                'time_remaining_seconds': None
+            }
+            time_remaining_seconds = get_time_remaining_for_attempt(attempt)
+            self.assertEqual(time_remaining_seconds, 600)
 
 
 class TestHumanizedTime(unittest.TestCase):

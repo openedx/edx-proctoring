@@ -45,6 +45,7 @@ def get_time_remaining_for_attempt(attempt):
 
     # need to adjust for allowances
     expires_at = attempt['started_at'] + timedelta(minutes=attempt['allowed_time_limit_mins'])
+
     now_utc = datetime.now(pytz.UTC)
 
     if expires_at > now_utc:
