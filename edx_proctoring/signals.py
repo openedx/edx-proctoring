@@ -119,6 +119,13 @@ def on_attempt_changed(sender, instance, signal, **kwargs):  # pylint: disable=u
             result = backend.remove_exam_attempt(instance.proctored_exam.external_id, instance.external_id)
             if not result:
                 log.error(u'Failed to remove attempt %d from %s', instance.id, backend.verbose_name)
+
+        current_review = models.ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(
+            attempt_code=instance.attempt_code
+        )
+        if current_review:
+            current_review.is_attempt_active = False
+            current_review.save()
     models.archive_model(models.ProctoredExamStudentAttemptHistory, instance, id='attempt_id')
 
 

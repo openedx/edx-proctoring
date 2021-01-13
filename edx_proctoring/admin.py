@@ -228,7 +228,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     The admin panel for SoftwareSecure Review records
     """
 
-    readonly_fields = ['attempt_code', 'exam', 'student', 'reviewed_by', 'modified']
+    readonly_fields = ['attempt_code', 'is_attempt_active', 'exam', 'student', 'reviewed_by', 'modified']
     list_filter = [
         ReviewListFilter,
         ProctoredExamListFilter,
@@ -271,6 +271,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         'exam_name_for_review',
         'student_username_for_review',
         'attempt_code',
+        'is_attempt_active',
         'modified',
         'reviewed_by',
         'review_status'
