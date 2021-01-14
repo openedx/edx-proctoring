@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.10] - 2021-01-15
+~~~~~~~~~~~~~~~~~~~~~
+* Added management command to update `is_attempt_active` field on review models
+
 [2.5.9] - 2021-01-13
 ~~~~~~~~~~~~~~~~~~~~
 * Added `is_attempt_active` field to ProctoredExamSoftwareSecureReview and
