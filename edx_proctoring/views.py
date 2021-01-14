@@ -419,8 +419,8 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         if not attempt:
             err_msg = (
-                u'Attempted to access attempt_id {attempt_id} but '
-                u'it does not exist.'.format(
+                'Attempted to access attempt_id {attempt_id} but '
+                'it does not exist.'.format(
                     attempt_id=attempt_id
                 )
             )
@@ -428,8 +428,8 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
         # make sure the the attempt belongs to the calling user_id
         if attempt['user']['id'] != request.user.id:
             err_msg = (
-                u'Attempted to access attempt_id {attempt_id} but '
-                u'does not have access to it.'.format(
+                'Attempted to access attempt_id {attempt_id} but '
+                'does not have access to it.'.format(
                     attempt_id=attempt_id
                 )
             )
@@ -440,13 +440,13 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         attempt['time_remaining_seconds'] = time_remaining_seconds
 
-        accessibility_time_string = _(u'you have {remaining_time} remaining').format(
+        accessibility_time_string = _('you have {remaining_time} remaining').format(
             remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0))))
 
         # special case if we are less than a minute, since we don't produce
         # text translations of granularity at the seconds range
         if time_remaining_seconds < 60:
-            accessibility_time_string = _(u'you have less than a minute remaining')
+            accessibility_time_string = _('you have less than a minute remaining')
 
         attempt['accessibility_time_string'] = accessibility_time_string
         return Response(attempt)
@@ -467,51 +467,64 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         if not attempt:
             err_msg = (
-                u'Attempted to access attempt_id {attempt_id} but '
-                u'it does not exist.'.format(
+                'Attempted to access attempt_id {attempt_id} but '
+                'it does not exist.'.format(
                     attempt_id=attempt_id
                 )
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
 
-        # make sure the the attempt belongs to the calling user_id
-        if attempt['user']['id'] != request.user.id:
-            err_msg = (
-                u'Attempted to access attempt_id {attempt_id} but '
-                u'does not have access to it.'.format(
-                    attempt_id=attempt_id
-                )
-            )
-            raise ProctoredExamPermissionDenied(err_msg)
-
+        course_id = attempt['proctored_exam']['id']
+        user_id = request.user.id
         action = request.data.get('action')
+
+        err_msg = (
+            'Attempted to access attempt_id {attempt_id} but '
+            'does not have access to it.'.format(
+                attempt_id=attempt_id
+            )
+        )
+
+        # only allow a staff user to change another user's exam attempt status via the 'mark_ready_to_resume' action
+        # all other requests to change another user's attempt status raise a ProctoredExamPermissionDenied exception
+        requested_user_id = request.data.get('user_id')
+        if requested_user_id:
+            if (course_id and is_user_course_or_global_staff(request.user, course_id)
+                    and action == 'mark_ready_to_resume'):
+                user_id = int(requested_user_id)
+            else:
+                raise ProctoredExamPermissionDenied(err_msg)
+
+        # make sure the the attempt belongs to the user_id
+        if attempt['user']['id'] != user_id:
+            raise ProctoredExamPermissionDenied(err_msg)
 
         if action == 'stop':
             exam_attempt_id = stop_exam_attempt(
                 exam_id=attempt['proctored_exam']['id'],
-                user_id=request.user.id
+                user_id=user_id
             )
         elif action == 'start':
             exam_attempt_id = start_exam_attempt(
                 exam_id=attempt['proctored_exam']['id'],
-                user_id=request.user.id
+                user_id=user_id
             )
         elif action == 'submit':
             exam_attempt_id = update_attempt_status(
                 attempt['proctored_exam']['id'],
-                request.user.id,
+                user_id,
                 ProctoredExamStudentAttemptStatus.submitted
             )
         elif action == 'click_download_software':
             exam_attempt_id = update_attempt_status(
                 attempt['proctored_exam']['id'],
-                request.user.id,
+                user_id,
                 ProctoredExamStudentAttemptStatus.download_software_clicked
             )
         elif action == 'reset_attempt':
             exam_attempt_id = reset_practice_exam(
                 attempt['proctored_exam']['id'],
-                request.user.id,
+                user_id,
                 requesting_user=request.user,
             )
         elif action == 'error':
@@ -527,25 +540,25 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 )
                 exam_attempt_id = update_attempt_status(
                     attempt['proctored_exam']['id'],
-                    request.user.id,
+                    user_id,
                     ProctoredExamStudentAttemptStatus.error
                 )
             else:
                 exam_attempt_id = False
-            LOG.warning(u'Browser JS reported problem with proctoring desktop '
-                        u'application. Did block user: %s, for attempt: %s',
+            LOG.warning('Browser JS reported problem with proctoring desktop '
+                        'application. Did block user: %s, for attempt: %s',
                         should_block_user,
                         attempt['id'])
         elif action == 'decline':
             exam_attempt_id = update_attempt_status(
                 attempt['proctored_exam']['id'],
-                request.user.id,
+                user_id,
                 ProctoredExamStudentAttemptStatus.declined
             )
         elif action == 'mark_ready_to_resume':
             exam_attempt_id = update_attempt_status(
                 attempt['proctored_exam']['id'],
-                request.user.id,
+                user_id,
                 ProctoredExamStudentAttemptStatus.ready_to_resume
             )
 
@@ -561,8 +574,8 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         if not attempt:
             err_msg = (
-                u'Attempted to access attempt_id {attempt_id} but '
-                u'it does not exist.'.format(
+                'Attempted to access attempt_id {attempt_id} but '
+                'it does not exist.'.format(
                     attempt_id=attempt_id
                 )
             )
@@ -669,7 +682,7 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
                 'critically_low_threshold_sec': critically_low_threshold,
                 'course_id': exam['course_id'],
                 'attempt_id': attempt['id'],
-                'accessibility_time_string': _(u'you have {remaining_time} remaining').format(
+                'accessibility_time_string': _('you have {remaining_time} remaining').format(
                     remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
                 ),
                 'attempt_status': attempt['status'],
@@ -707,7 +720,7 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
         # because student can attempt the practice after the due date
         if not exam.get("is_practice_exam") and is_exam_passed_due(exam, request.user):
             raise ProctoredExamPermissionDenied(
-                u'Attempted to access expired exam with exam_id {exam_id}'.format(exam_id=exam_id)
+                'Attempted to access expired exam with exam_id {exam_id}'.format(exam_id=exam_id)
             )
 
         exam_attempt_id = create_exam_attempt(
@@ -893,8 +906,8 @@ class ProctoredExamAttemptReviewStatus(ProctoredAPIView):
         # make sure the the attempt belongs to the calling user_id
         if attempt and attempt['user']['id'] != request.user.id:
             err_msg = (
-                u'Attempted to access attempt_id {attempt_id} but '
-                u'does not have access to it.'.format(
+                'Attempted to access attempt_id {attempt_id} but '
+                'does not have access to it.'.format(
                     attempt_id=attempt_id
                 )
             )
@@ -946,8 +959,8 @@ class BaseReviewCallback:
         if review:
             if not constants.ALLOW_REVIEW_UPDATES:
                 err_msg = (
-                    u'We already have a review submitted regarding '
-                    u'attempt_code {attempt_code}. We do not allow for updates!'.format(
+                    'We already have a review submitted regarding '
+                    'attempt_code {attempt_code}. We do not allow for updates!'.format(
                         attempt_code=attempt_code
                     )
                 )
@@ -955,9 +968,9 @@ class BaseReviewCallback:
 
             # we allow updates
             warn_msg = (
-                u'We already have a review submitted from our proctoring provider regarding '
-                u'attempt_code {attempt_code}. We have been configured to allow for '
-                u'updates and will continue...'.format(
+                'We already have a review submitted from our proctoring provider regarding '
+                'attempt_code {attempt_code}. We have been configured to allow for '
+                'updates and will continue...'.format(
                     attempt_code=attempt_code
                 )
             )
@@ -989,8 +1002,8 @@ class BaseReviewCallback:
         course_id = attempt['proctored_exam']['course_id']
         if review.reviewed_by is not None and not is_user_course_or_global_staff(review.reviewed_by, course_id):
             LOG.warning(
-                u'User %(user)s does not have the required permissions to submit '
-                u'a review for attempt_code %(attempt_code)s.',
+                'User %(user)s does not have the required permissions to submit '
+                'a review for attempt_code %(attempt_code)s.',
                 {'user': review.reviewed_by, 'attempt_code': attempt_code}
             )
 
@@ -1015,7 +1028,7 @@ class BaseReviewCallback:
                 course_id = attempt['proctored_exam']['course_id']
                 exam_id = attempt['proctored_exam']['id']
                 review_url = request.build_absolute_uri(
-                    u'{}?attempt={}'.format(
+                    '{}?attempt={}'.format(
                         reverse('edx_proctoring:instructor_dashboard_exam', args=[course_id, exam_id]),
                         attempt['external_id']
                     ))
@@ -1040,8 +1053,8 @@ class ProctoredExamReviewCallback(ProctoredAPIView, BaseReviewCallback):
         attempt = get_exam_attempt_by_external_id(external_id)
         if attempt is None:
             err_msg = (
-                u'Attempted to access external exam id {external_id} but '
-                u'it does not exist.'.format(
+                'Attempted to access external exam id {external_id} but '
+                'it does not exist.'.format(
                     external_id=external_id
                 )
             )
@@ -1105,7 +1118,7 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
         if not attempt_obj:
             # still can't find, error out
             err_msg = (
-                u'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
+                'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
         serialized = ProctoredExamStudentAttemptSerializer(attempt_obj).data
@@ -1164,13 +1177,13 @@ class InstructorDashboard(AuthenticatedAPIView):
 
         if not exam:
             return Response(
-                data=_(u'No exams in course {course_id}.').format(course_id=course_id),
+                data=_('No exams in course {course_id}.').format(course_id=course_id),
                 status=404,
                 headers={'X-Frame-Options': 'sameorigin'}
             )
         if not backend:
             return Response(
-                data=_(u'No proctored exams in course {course_id}').format(course_id=course_id),
+                data=_('No proctored exams in course {course_id}').format(course_id=course_id),
                 status=404,
                 headers={'X-Frame-Options': 'sameorigin'}
             )
@@ -1189,7 +1202,7 @@ class InstructorDashboard(AuthenticatedAPIView):
         )
         if not url:
             return Response(
-                data=_(u'No instructor dashboard for {proctor_service}').format(
+                data=_('No instructor dashboard for {proctor_service}').format(
                     proctor_service=backend.verbose_name
                 ),
                 status=404,
@@ -1220,11 +1233,11 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
                 if backend_name in seen or not attempt.taking_as_proctored:
                     continue
                 backend_user_id = obscured_user_id(user_id, backend_name)
-                LOG.info(u'retiring user %s from %s', user_id, backend_name)
+                LOG.info('retiring user %s from %s', user_id, backend_name)
                 try:
                     result = get_backend_provider(name=backend_name).retire_user(backend_user_id)
                 except ProctoredBaseException:
-                    LOG.exception(u'attempting to delete %s (%s) from %s', user_id, backend_user_id, backend_name)
+                    LOG.exception('attempting to delete %s (%s) from %s', user_id, backend_user_id, backend_name)
                     result = False
                 if result is not None:
                     results[backend_name] = result
