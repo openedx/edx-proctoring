@@ -16,7 +16,7 @@ Unreleased
 
 [2.5.9] - 2021-01-13
 ~~~~~~~~~~~~~~~~~~~~
-*  Added `is_attempt_active` field to ProctoredExamSoftwareSecureReview and
+* Added `is_attempt_active` field to ProctoredExamSoftwareSecureReview and
   ProctoredExamSoftwareSecureReviewHistory models to note if the attempt for
   that review has been archived. When an attempt is archived and if it is associated
   with a review, this field will be set to False
