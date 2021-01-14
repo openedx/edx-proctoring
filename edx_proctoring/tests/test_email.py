@@ -8,16 +8,18 @@ from itertools import product
 
 import ddt
 from mock import MagicMock, patch
+from opaque_keys import InvalidKeyError
 
 from django.conf import settings
 from django.core import mail
+from django.core.exceptions import ObjectDoesNotExist
 
 from edx_proctoring.api import update_attempt_status
 from edx_proctoring.constants import SITE_NAME
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
-from .test_services import MockCertificateService, MockCreditService, MockGradesService
+from .test_services import MockCertificateService, MockCreditService, MockGradesService, MockInstructorService
 from .utils import ProctoredExamTestCase
 
 
@@ -33,9 +35,9 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         Initialize
         """
         super().setUp()
-
         set_runtime_service('grades', MockGradesService())
         set_runtime_service('certificates', MockCertificateService())
+        set_runtime_service('instructor', MockInstructorService())
 
     def tearDown(self):
         """
@@ -44,6 +46,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         super().tearDown()
         set_runtime_service('grades', None)
         set_runtime_service('certificates', None)
+        set_runtime_service('instructor', None)
 
     @ddt.data(
         [
@@ -87,6 +90,57 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         self.assertIn('Your proctored exam "Test Exam"', actual_body)
         self.assertIn(credit_state['course_name'], actual_body)
         self.assertIn(expected_message_string, actual_body)
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.verified,
+        ProctoredExamStudentAttemptStatus.rejected
+    )
+    def test_escalation_email_included(self, status):
+        """
+        Test that verified and rejected emails include a proctoring escalation email if given.
+        """
+        instructor_service = get_runtime_service('instructor')
+        mock_escalation_email = 'escalation@test.com'
+        instructor_service.mock_proctoring_escalation_email(mock_escalation_email)
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(exam_attempt.proctored_exam_id, self.user.id, status)
+
+        actual_body = self._normalize_whitespace(mail.outbox[0].body)
+        self.assertIn(mock_escalation_email, actual_body)
+        self.assertNotIn('support/contact_us', actual_body)
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.verified,
+        ProctoredExamStudentAttemptStatus.rejected
+    )
+    def test_escalation_email_not_included(self, status):
+        """
+        Test that verified and rejected emails link to support if an escalation email is
+        not given.
+        """
+        set_runtime_service('instructor', None)
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(exam_attempt.proctored_exam_id, self.user.id, status)
+
+        actual_body = self._normalize_whitespace(mail.outbox[0].body)
+        self.assertIn('support/contact_us', actual_body)
+
+    @ddt.data(InvalidKeyError('foo', 'bar'), ObjectDoesNotExist)
+    def test_proctoring_escalation_email_exceptions(self, error):
+        """
+        Test that when an error is raised when trying to retrieve a proctoring escalation
+        email, it sets `proctoring_escalation_email` to None and link to support is used instead
+        """
+        instructor_service = get_runtime_service('instructor')
+        instructor_service.mock_proctoring_escalation_email_error(error)
+
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(exam_attempt.proctored_exam_id, self.user.id, ProctoredExamStudentAttemptStatus.verified)
+
+        actual_body = self._normalize_whitespace(mail.outbox[0].body)
+        self.assertIn('support/contact_us', actual_body)
 
     @ddt.data(
         [

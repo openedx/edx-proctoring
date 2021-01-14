@@ -88,7 +88,8 @@ from .test_services import (
     MockCreditService,
     MockCreditServiceNone,
     MockCreditServiceWithCourseEndDate,
-    MockGradesService
+    MockGradesService,
+    MockInstructorService
 )
 from .utils import ProctoredExamTestCase
 
@@ -106,6 +107,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         super().setUp()
         set_runtime_service('certificates', MockCertificateService())
+        set_runtime_service('instructor', MockInstructorService())
 
     def tearDown(self):
         """
@@ -113,6 +115,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         super().tearDown()
         set_runtime_service('certificates', None)
+        set_runtime_service('instructor', None)
 
     def _add_allowance_for_user(self):
         """

@@ -10,9 +10,11 @@ import uuid
 from datetime import datetime, timedelta
 
 import pytz
+from opaque_keys import InvalidKeyError
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail.message import EmailMessage
 from django.template import loader
 from django.urls import NoReverseMatch, reverse
@@ -1125,7 +1127,8 @@ def update_attempt_status(exam_id, user_id, to_status,
     email = create_proctoring_attempt_status_email(
         user_id,
         exam_attempt_obj,
-        course_name
+        course_name,
+        exam['course_id']
     )
     if email:
         email.send()
@@ -1163,7 +1166,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     return attempt['id']
 
 
-def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_name):
+def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_name, course_key):
     """
     Creates an email about change in proctoring attempt status.
     """
@@ -1220,8 +1223,26 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         scheme=scheme,
         site_name=constants.SITE_NAME
     )
-    contact_url = getattr(settings, 'PROCTORING_BACKENDS', {}).get(backend, {}).get(
-        'LINK_URLS', {}).get('contact', default_contact_url)
+
+    # If the course has a proctoring escalation email set, use that rather than edX Support.
+    # Currently only courses using Proctortrack will have this set.
+    proctoring_escalation_email = None
+    instructor_service = get_runtime_service('instructor')
+    if instructor_service:
+        try:
+            proctoring_escalation_email = instructor_service.get_proctoring_escalation_email(course_key)
+        except (InvalidKeyError, ObjectDoesNotExist):
+            log.warning(
+                'Could not retrieve proctoring escalation email with course key: {}'.format(course_key)
+            )
+
+    if proctoring_escalation_email:
+        contact_url = 'mailto:{}'.format(proctoring_escalation_email)
+        contact_url_text = proctoring_escalation_email
+    else:
+        contact_url = getattr(settings, 'PROCTORING_BACKENDS', {}).get(backend, {}).get(
+            'LINK_URLS', {}).get('contact', default_contact_url)
+        contact_url_text = contact_url
 
     body = email_template.render({
         'username': user.username,
@@ -1232,6 +1253,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         'platform': constants.PLATFORM_NAME,
         'support_email_subject': support_email_subject,
         'contact_url': contact_url,
+        'contact_url_text': contact_url_text,
     })
 
     email = EmailMessage(

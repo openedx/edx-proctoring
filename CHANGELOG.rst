@@ -13,7 +13,13 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
-* Replace Travis CI with Github Actions
+
+[2.6.0] - 2021-01-21
+~~~~~~~~~~~~~~~~~~~~~
+* Replace Travis CI with Github Actions.
+* If a course has a proctoring escalation email set, emails that are sent when an
+  exam attempt is verified or rejected will contain that email address rather than a
+  link to support.
 
 [2.5.13] - 2021-01-20
 ~~~~~~~~~~~~~~~~~~~~~
