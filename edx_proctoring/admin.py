@@ -294,7 +294,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         """ Returns software secure review form """
-        form = super(ProctoredExamSoftwareSecureReviewAdmin, self).get_form(request, obj, change, **kwargs)
+        form = super().get_form(request, obj, change, **kwargs)
         if 'video_url' in form.base_fields:
             del form.base_fields['video_url']
         return form
@@ -303,7 +303,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         """ Checks if lookup allowed or not """
         if key == 'exam__course_id':
             return True
-        return super(ProctoredExamSoftwareSecureReviewAdmin, self).lookup_allowed(key, value)
+        return super().lookup_allowed(key, value)
 
 
 class ProctoredExamSoftwareSecureReviewHistoryAdmin(ProctoredExamSoftwareSecureReviewAdmin):

@@ -101,13 +101,14 @@ class EdxProctoringConfig(AppConfig):
         if name is None:
             try:
                 name = settings.PROCTORING_BACKENDS['DEFAULT']
-            except (KeyError, AttributeError):
-                raise ImproperlyConfigured(u"No default proctoring backend set in settings.PROCTORING_BACKENDS")
+            except (KeyError, AttributeError) as exc:
+                raise ImproperlyConfigured(u"No default proctoring backend set in settings.PROCTORING_BACKENDS") \
+                    from exc
         try:
             return self.backends[name]
-        except KeyError:
+        except KeyError as error:
             raise NotImplementedError(u"No proctoring backend configured for '{}'.  "
-                                      u"Available: {}".format(name, list(self.backends)))
+                                      u"Available: {}".format(name, list(self.backends))) from error
 
     def ready(self):
         """

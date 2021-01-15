@@ -41,7 +41,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         """
         Build out test harnessing
         """
-        super(ProctoredExamStudentViewTests, self).setUp()
+        super().setUp()
 
         # Messages for get_student_view
         self.start_an_exam_msg = 'This exam is proctored'

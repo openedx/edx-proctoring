@@ -18,7 +18,7 @@ class TestWorkerConfig(unittest.TestCase):
     "Tests for generating webpack config json"
 
     def setUp(self):  # pylint: disable=super-method-not-called
-        super(TestWorkerConfig, self).setUp()
+        super().setUp()
         self.outfile = tempfile.mktemp(prefix='test-%d' % os.getpid())
         self.to_del = [self.outfile]
 

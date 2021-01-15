@@ -29,7 +29,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
         """
         Build out test harnessing
         """
-        super(ProctoredExamModelTests, self).setUp()
+        super().setUp()
 
     def test_unicode(self):
         """

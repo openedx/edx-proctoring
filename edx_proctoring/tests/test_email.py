@@ -32,7 +32,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         """
         Initialize
         """
-        super(ProctoredExamEmailTests, self).setUp()
+        super().setUp()
 
         set_runtime_service('grades', MockGradesService())
         set_runtime_service('certificates', MockCertificateService())
@@ -41,7 +41,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         """
         When tests are done
         """
-        super(ProctoredExamEmailTests, self).tearDown()
+        super().tearDown()
         set_runtime_service('grades', None)
         set_runtime_service('certificates', None)
 
