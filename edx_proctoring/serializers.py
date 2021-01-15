@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from rest_framework.fields import DateTimeField
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from edx_proctoring.models import (
     ProctoredExam,
@@ -11,6 +11,8 @@ from edx_proctoring.models import (
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAttempt
 )
+
+User = get_user_model()
 
 
 class ProctoredExamSerializer(serializers.ModelSerializer):

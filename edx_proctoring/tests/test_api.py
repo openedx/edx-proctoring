@@ -104,14 +104,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         Initialize
         """
-        super(ProctoredExamApiTests, self).setUp()
+        super().setUp()
         set_runtime_service('certificates', MockCertificateService())
 
     def tearDown(self):
         """
         When tests are done
         """
-        super(ProctoredExamApiTests, self).tearDown()
+        super().tearDown()
         set_runtime_service('certificates', None)
 
     def _add_allowance_for_user(self):

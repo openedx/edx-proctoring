@@ -22,7 +22,7 @@ class TestGetTimeRemainingForAttempt(unittest.TestCase):
         """
         Initialize
         """
-        super(TestGetTimeRemainingForAttempt, self).setUp()
+        super().setUp()
         self.now_utc = datetime.now(pytz.UTC)
 
     def test_not_started(self):

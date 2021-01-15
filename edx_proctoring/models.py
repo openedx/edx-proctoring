@@ -185,7 +185,7 @@ class ProctoredExamReviewPolicyHistory(TimeStampedModel):
         db_table = 'proctoring_proctoredexamreviewpolicyhistory'
         verbose_name = 'proctored exam review policy history'
 
-    def delete(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def delete(self, *args, **kwargs):  # pylint: disable=signature-differs
         """
         Don't allow deletions!
         """
@@ -490,7 +490,7 @@ class QuerySetWithUpdateOverride(models.QuerySet):
     """
     def update(self, **kwargs):
         """ Create a copy after update """
-        super(QuerySetWithUpdateOverride, self).update(**kwargs)
+        super().update(**kwargs)
         archive_model(ProctoredExamStudentAllowanceHistory, self.get(), id='allowance_id')
 
 

@@ -118,7 +118,7 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
         """
         Called when the exam attempt has been created but not started
         """
-        return super(PassthroughBackendProvider, self).register_exam_attempt(
+        return super().register_exam_attempt(
             exam,
             context
         )
@@ -128,7 +128,7 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
         Method that is responsible for communicating with the backend provider
         to establish a new proctored exam
         """
-        return super(PassthroughBackendProvider, self).start_exam_attempt(
+        return super().start_exam_attempt(
             exam,
             attempt
         )
@@ -138,7 +138,7 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
         Method that is responsible for communicating with the backend provider
         to establish a new proctored exam
         """
-        return super(PassthroughBackendProvider, self).stop_exam_attempt(
+        return super().stop_exam_attempt(
             exam,
             attempt
         )
@@ -149,13 +149,13 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
         backend provider to mark a proctored session as having
         encountered a technical error
         """
-        return super(PassthroughBackendProvider, self).mark_erroneous_exam_attempt(
+        return super().mark_erroneous_exam_attempt(
             exam,
             attempt
         )
 
     def remove_exam_attempt(self, exam, attempt):
-        return super(PassthroughBackendProvider, self).remove_exam_attempt(
+        return super().remove_exam_attempt(
             exam,
             attempt
         )
@@ -165,16 +165,16 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
         Returns the URL that the user needs to go to in order to download
         the corresponding desktop software
         """
-        return super(PassthroughBackendProvider, self).get_software_download_url()
+        return super().get_software_download_url()
 
     def on_review_callback(self, attempt, payload):
         """
         Called when the reviewing 3rd party service posts back the results
         """
-        return super(PassthroughBackendProvider, self).on_review_callback(attempt, payload)
+        return super().on_review_callback(attempt, payload)
 
     def on_exam_saved(self, exam):
-        return super(PassthroughBackendProvider, self).on_exam_saved(exam)
+        return super().on_exam_saved(exam)
 
 
 class TestBackends(TestCase):

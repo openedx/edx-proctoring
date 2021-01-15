@@ -40,10 +40,7 @@ class Command(BaseCommand):
         Management command entry point, simply call into the signal firiing
         """
         # pylint: disable=import-outside-toplevel
-        from edx_proctoring.api import (
-            update_attempt_status,
-            get_exam_by_id
-        )
+        from edx_proctoring.api import get_exam_by_id, update_attempt_status
 
         exam_id = options['exam_id']
         user_id = options['user_id']

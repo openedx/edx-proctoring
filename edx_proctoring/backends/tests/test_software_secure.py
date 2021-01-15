@@ -10,7 +10,7 @@ import ddt
 from httmock import HTTMock, all_requests
 from mock import MagicMock, patch
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
@@ -30,6 +30,8 @@ from edx_proctoring.tests.test_services import (
     MockGradesService,
     MockInstructorService
 )
+
+User = get_user_model()
 
 
 @all_requests
@@ -88,7 +90,7 @@ class SoftwareSecureTests(TestCase):
         """
         Initialize
         """
-        super(SoftwareSecureTests, self).setUp()
+        super().setUp()
         self.user = User(username='foo', email='foo@bar.com')
         self.user.save()
 
@@ -101,7 +103,7 @@ class SoftwareSecureTests(TestCase):
         """
         When tests are done
         """
-        super(SoftwareSecureTests, self).tearDown()
+        super().tearDown()
         set_runtime_service('credit', None)
         set_runtime_service('grades', None)
         set_runtime_service('certificates', None)

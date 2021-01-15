@@ -8,7 +8,7 @@ import ddt
 from crum import set_current_request
 from mock import call, patch
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.test import RequestFactory
 from django.urls import reverse
 
@@ -36,6 +36,8 @@ from edx_proctoring.views import ProctoredExamReviewCallback, is_user_course_or_
 
 from .utils import LoggedInTestCase
 
+User = get_user_model()
+
 
 @ddt.ddt
 class ReviewTests(LoggedInTestCase):
@@ -43,7 +45,7 @@ class ReviewTests(LoggedInTestCase):
     Tests for reviews
     """
     def setUp(self):
-        super(ReviewTests, self).setUp()
+        super().setUp()
         self.dummy_request = RequestFactory().get('/')
         self.exam_creation_params = {
             'course_id': 'foo/bar/baz',
@@ -69,7 +71,7 @@ class ReviewTests(LoggedInTestCase):
         set_current_request(self.dummy_request)
 
     def tearDown(self):
-        super(ReviewTests, self).tearDown()
+        super().tearDown()
         set_runtime_service('credit', None)
         set_runtime_service('grades', None)
         set_runtime_service('certificates', None)

@@ -87,7 +87,7 @@ class BackendProviderCannotRegisterAttempt(ProctoredBaseException):
 
     def __init__(self, content, http_status):
         """ Init method of exception """
-        super(BackendProviderCannotRegisterAttempt, self).__init__(self, content)
+        super().__init__(self, content)
         self.http_status = http_status
 
 
@@ -105,7 +105,7 @@ class BackendProviderOnboardingException(ProctoredBaseException):
     """
     def __init__(self, exam_status):
         """ Init method of exception """
-        super(BackendProviderOnboardingException, self).__init__(self, exam_status)
+        super().__init__(self, exam_status)
         self.status = exam_status
 
 

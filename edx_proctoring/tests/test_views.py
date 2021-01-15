@@ -13,7 +13,7 @@ from freezegun import freeze_time
 from httmock import HTTMock
 from mock import Mock, patch
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.urls import NoReverseMatch, reverse
 
@@ -50,6 +50,8 @@ from mock_apps.models import Profile
 from .test_services import MockCreditService, MockGradesService, MockInstructorService
 from .utils import LoggedInTestCase
 
+User = get_user_model()
+
 
 class ProctoredExamsApiTests(LoggedInTestCase):
     """
@@ -60,7 +62,7 @@ class ProctoredExamsApiTests(LoggedInTestCase):
         """
         Build out test harnessing
         """
-        super(ProctoredExamsApiTests, self).setUp()
+        super().setUp()
         set_runtime_service('credit', MockCreditService())
 
     def test_no_anonymous_access(self):
@@ -92,7 +94,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
     Tests for the ProctoredExamView
     """
     def setUp(self):
-        super(ProctoredExamViewTests, self).setUp()
+        super().setUp()
         self.user.is_staff = True
         self.user.save()
         self.client.login_user(self.user)
@@ -414,7 +416,7 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
     Tests for StudentOnboardingStatusView
     """
     def setUp(self):
-        super(TestStudentOnboardingStatusView, self).setUp()
+        super().setUp()
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
         self.other_user = User.objects.create(username='otheruser', password='test')
@@ -686,7 +688,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
     Tests for the StudentProctoredExamAttempt
     """
     def setUp(self):
-        super(TestStudentProctoredExamAttempt, self).setUp()
+        super().setUp()
         self.user.is_staff = True
         self.user.save()
         self.second_user = User(username='tester2', email='tester2@test.com')
@@ -2606,7 +2608,7 @@ class TestExamAllowanceView(LoggedInTestCase):
     Tests for the ExamAllowanceView
     """
     def setUp(self):
-        super(TestExamAllowanceView, self).setUp()
+        super().setUp()
         self.user.is_staff = True
         self.user.save()
         self.client.login_user(self.user)
@@ -3027,7 +3029,7 @@ class TestActiveExamsForUserView(LoggedInTestCase):
     Tests for the ActiveExamsForUserView
     """
     def setUp(self):
-        super(TestActiveExamsForUserView, self).setUp()
+        super().setUp()
         self.user.is_staff = True
         self.user.save()
         self.client.login_user(self.user)
@@ -3078,7 +3080,7 @@ class TestInstructorDashboard(LoggedInTestCase):
     Tests for launching the instructor dashboard
     """
     def setUp(self):
-        super(TestInstructorDashboard, self).setUp()
+        super().setUp()
         profile = Profile()
         profile.name = 'boo radley'
         profile.user = self.user
@@ -3271,7 +3273,7 @@ class TestBackendUserDeletion(LoggedInTestCase):
     Tests for deleting user data from backends
     """
     def setUp(self):
-        super(TestBackendUserDeletion, self).setUp()
+        super().setUp()
         self.user.is_staff = True
         self.user.save()
         self.second_user = User(username='tester2', email='tester2@test.com')
@@ -3328,7 +3330,7 @@ class TestUserRetirement(LoggedInTestCase):
     Tests for deleting user PII for proctoring
     """
     def setUp(self):
-        super(TestUserRetirement, self).setUp()
+        super().setUp()
         self.user.is_staff = True
         self.user.save()
         self.user_to_retire = User(username='tester2', email='tester2@test.com')

@@ -13,8 +13,7 @@ from eventtracking import tracker
 from eventtracking.tracker import TRACKERS, Tracker
 
 from django.conf import settings
-from django.contrib.auth import login
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model, login
 from django.http import HttpRequest
 from django.test import TestCase
 from django.test.client import Client
@@ -24,6 +23,8 @@ from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService
+
+User = get_user_model()
 
 
 class TestClient(Client):
@@ -71,7 +72,7 @@ class LoggedInTestCase(TestCase):
         """
         Setup for tests
         """
-        super(LoggedInTestCase, self).setUp()
+        super().setUp()
         self.client = TestClient()
         self.user = User(username='tester', email='tester@test.com')
         self.user.save()
@@ -97,7 +98,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
         """
         Build out test harnessing
         """
-        super(ProctoredExamTestCase, self).setUp()
+        super().setUp()
         self.default_time_limit = 21
         self.course_id = 'a/b/c'
         self.content_id_for_exam_with_due_date = 'test_content_due_date_id'
@@ -192,7 +193,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
         """
         Cleanup
         """
-        super(ProctoredExamTestCase, self).tearDown()
+        super().tearDown()
         del TRACKERS['default']
 
     def _create_proctored_exam(self):

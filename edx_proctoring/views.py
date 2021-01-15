@@ -150,7 +150,7 @@ class ProctoredAPIView(AuthenticatedAPIView):
         """
         resp = handle_proctored_exception(exc, name=self.__class__.__name__)
         if not resp:
-            resp = super(ProctoredAPIView, self).handle_exception(exc)
+            resp = super().handle_exception(exc)
         return resp
 
 

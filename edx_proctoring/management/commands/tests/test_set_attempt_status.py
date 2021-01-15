@@ -27,7 +27,7 @@ class SetAttemptStatusTests(LoggedInTestCase):
         """
         Build up test data
         """
-        super(SetAttemptStatusTests, self).setUp()
+        super().setUp()
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('grades', MockGradesService())
         set_runtime_service('certificates', MockCertificateService())

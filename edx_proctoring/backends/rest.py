@@ -316,7 +316,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         except Exception as exc:  # pylint: disable=broad-except
             # pylint: disable=no-member
             content = exc.response.content if hasattr(exc, 'response') else response.content
-            raise BackendProviderCannotRetireUser(content)
+            raise BackendProviderCannotRetireUser(content) from exc
         return data
 
     def _get_language_headers(self):

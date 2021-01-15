@@ -363,8 +363,9 @@ def add_allowance_for_user(exam_id, user_info, key, value):
 
     try:
         student_allowance, action = ProctoredExamStudentAllowance.add_allowance_for_user(exam_id, user_info, key, value)
-    except ProctoredExamNotActiveException:
-        raise ProctoredExamNotActiveException  # let this exception raised so that we get 400 in case of inactive exam
+    except ProctoredExamNotActiveException as error:
+        # let this exception raised so that we get 400 in case of inactive exam
+        raise ProctoredExamNotActiveException from error
 
     if student_allowance is not None:
         # emit an event for 'allowance.created|updated'
