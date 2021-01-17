@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 18:36+0000\n"
+"POT-Creation-Date: 2021-01-17 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: swaleh amin <mkupuofirstnameswaleh@yahoo.com>, 2021\n"
 "Language-Team: Swahili (Kenya) (https://www.transifex.com/open-edx/teams/6205/sw_KE/)\n"
@@ -46,138 +46,138 @@ msgstr "mitihani hai iliyowekewa ulinzi"
 msgid "courses with active proctored exams"
 msgstr "kozi yenye mitihani hai yenye ulinzi "
 
-#: admin.py:335
+#: admin.py:336
 msgid "Course Id"
 msgstr "utambulisho wa Kozi"
 
-#: admin.py:373
+#: admin.py:374
 msgid "Created"
 msgstr "imebuniwa"
 
-#: admin.py:374
+#: admin.py:375
 msgid "Download Software Clicked"
 msgstr "pakua  programu uliyobofya"
 
-#: admin.py:375
+#: admin.py:376
 msgid "Ready To Start"
 msgstr "Tayari kuanza"
 
-#: admin.py:376
+#: admin.py:377
 msgid "Started"
 msgstr "Imeanza"
 
-#: admin.py:377
+#: admin.py:378
 msgid "Ready To Submit"
 msgstr "Tayari kwa kuwasilihwa"
 
-#: admin.py:378
+#: admin.py:379
 msgid "Declined"
 msgstr "Imekataliwa"
 
-#: admin.py:379
+#: admin.py:380
 msgid "Timed Out"
 msgstr "nje ya muda"
 
-#: admin.py:380
+#: admin.py:381
 msgid "Submitted"
 msgstr "Fikishwa"
 
-#: admin.py:381
+#: admin.py:382
 msgid "Second Review Required"
 msgstr "Yanahitajika mapitio ya mara ya pili"
 
-#: admin.py:382
+#: admin.py:383
 msgid "Verified"
 msgstr "Thibitishwa"
 
-#: admin.py:383
+#: admin.py:384
 msgid "Rejected"
 msgstr "Imekataliwa"
 
-#: admin.py:384
+#: admin.py:385
 msgid "Error"
 msgstr "Hitlafu"
 
-#: admin.py:388
+#: admin.py:389
 msgid "Onboarding Missing"
 msgstr ""
 
-#: admin.py:389
+#: admin.py:390
 msgid "Onboarding Failed"
 msgstr ""
 
-#: admin.py:390
+#: admin.py:391
 msgid "Onboarding Pending"
 msgstr ""
 
-#: admin.py:391
+#: admin.py:392
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:1090
+#: api.py:1115
 msgid "your course"
 msgstr "kozi yako"
 
-#: api.py:1152
+#: api.py:1177
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1161
+#: api.py:1186
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1188
+#: api.py:1213
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 
-#: api.py:1594
+#: api.py:1619
 msgid "Taking As Proctored Exam"
 msgstr "Kuchukua kama mtihani uliosimamiwa"
 
-#: api.py:1599
+#: api.py:1624
 msgid "Proctored Option Available"
 msgstr "Chaguzi ya usimamizi inapatikana"
 
-#: api.py:1604
+#: api.py:1629
 msgid "Taking As Open Exam"
 msgstr "Kufanya kama mtihani huru"
 
-#: api.py:1609 api.py:1614
+#: api.py:1634 api.py:1639
 msgid "Pending Session Review"
 msgstr " Kipindi kinayosubiriwa kupitiwa "
 
-#: api.py:1619
+#: api.py:1644
 msgid "Passed Proctoring"
 msgstr "Imepitishwa usimamizi"
 
-#: api.py:1624 api.py:1629
+#: api.py:1649 api.py:1654
 msgid "Failed Proctoring"
 msgstr "imeshindwa uwangalizi"
 
-#: api.py:1634
+#: api.py:1659
 msgid "Proctored Option No Longer Available"
 msgstr "angalizo la chaguo Hairuhusu kupatikana "
 
-#: api.py:1643
+#: api.py:1668
 msgid "Ungraded Practice Exam"
 msgstr "mtihani wa majaribio ambao haujawekewa daraja"
 
-#: api.py:1648
+#: api.py:1673
 msgid "Practice Exam Completed"
 msgstr "Mtihani wa majaribio umekamilika"
 
-#: api.py:1653
+#: api.py:1678
 msgid "Practice Exam Failed"
 msgstr "mtihani wa majaribio ulioshindwa"
 
-#: api.py:1661
+#: api.py:1686
 msgid "Timed Exam"
 msgstr "Mtihani Uliopewa Muda Maalum"
 
-#: api.py:2186
+#: api.py:2216
 msgid "Onboarding status question"
 msgstr ""
 
@@ -189,11 +189,11 @@ msgstr "Kufanya mtihani kwa usimamizi"
 msgid "Is Sample Attempt"
 msgstr "Ni mfano wa jaribio"
 
-#: models.py:519
+#: models.py:520
 msgid "Additional Time (minutes)"
 msgstr "Ongezeko la muda (dakika)"
 
-#: models.py:520
+#: models.py:521
 msgid "Review Policy Exception"
 msgstr "Kupitia tena Sera zilizobaguliwa"
 
@@ -1391,88 +1391,88 @@ msgid ""
 "            "
 msgstr ""
 
-#: utils.py:75
+#: utils.py:76
 #, python-brace-format
 msgid "{num_of_hours} hour"
 msgstr "saa {num_of_hours} "
 
-#: utils.py:78
+#: utils.py:79
 #, python-brace-format
 msgid "{num_of_hours} hours"
 msgstr "saa {num_of_hours}"
 
-#: utils.py:86 utils.py:96
+#: utils.py:87 utils.py:97
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
 msgstr "dakika {num_of_minutes}"
 
-#: utils.py:89
+#: utils.py:90
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
 msgstr " na dakika {num_of_minutes} "
 
-#: utils.py:91
+#: utils.py:92
 #, python-brace-format
 msgid "{num_of_minutes} minute"
 msgstr "dakika{num_of_minutes}"
 
-#: utils.py:94
+#: utils.py:95
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
 msgstr " na dakika {num_of_minutes}"
 
-#: views.py:110
+#: views.py:109
 msgid "could not determine the course_id"
 msgstr "haikuweza kutambua utambulisho wa kozi"
 
-#: views.py:119 views.py:343
+#: views.py:118 views.py:342
 msgid "Must be a Staff User to Perform this request."
 msgstr "Lazima uwe Mtumiaji  Mfanyakazi ili uweze Kujibu ombi hili."
 
-#: views.py:333
+#: views.py:332
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:357
+#: views.py:356
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:446 views.py:675
+#: views.py:443 views.py:672
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "umebakiwa na {remaining_time}"
 
-#: views.py:452
+#: views.py:449
 msgid "you have less than a minute remaining"
 msgstr "umebakiwa na chini ya dakika moja"
 
-#: views.py:664
+#: views.py:661
 msgid "a timed exam"
 msgstr ""
 
-#: views.py:665
+#: views.py:662
 msgid "a proctored exam"
 msgstr ""
 
-#: views.py:666
+#: views.py:663
 msgid "an onboarding exam"
 msgstr ""
 
-#: views.py:666
+#: views.py:663
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:1170
+#: views.py:1167
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1176
+#: views.py:1173
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1195
+#: views.py:1192
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
