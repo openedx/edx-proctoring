@@ -479,6 +479,7 @@ def prettify_course_id(course_id):
     return course_id.replace('+', ' ').replace('/', ' ').replace('course-v1:', '')
 
 
+admin.site.register(ProctoredExam)
 admin.site.register(ProctoredExamStudentAttempt, ProctoredExamStudentAttemptAdmin)
 admin.site.register(ProctoredExamReviewPolicy, ProctoredExamReviewPolicyAdmin)
 admin.site.register(ProctoredExamSoftwareSecureReview, ProctoredExamSoftwareSecureReviewAdmin)
