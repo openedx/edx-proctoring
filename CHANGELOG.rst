@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.11] - 2021-01-19
+~~~~~~~~~~~~~~~~~~~~~
+* Added ProctoredExam to django admin
+
 [2.5.10] - 2021-01-15
 ~~~~~~~~~~~~~~~~~~~~~
 * Added management command to update `is_attempt_active` field on review models
