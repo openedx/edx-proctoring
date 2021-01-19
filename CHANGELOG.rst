@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Replace Travis CI with Github Actions
 
 [2.5.13] - 2021-01-20
 ~~~~~~~~~~~~~~~~~~~~~
