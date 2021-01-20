@@ -27,6 +27,29 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import locate_attempt_by_attempt_code
 
 
+class ProctoredExamForm(forms.ModelForm):
+    """
+    Admin form for reading/updating a Proctored Exam
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['external_id'].required = False
+        self.fields['due_date'].required = False
+        self.fields['backend'].required = False
+
+    class Meta:
+        model = ProctoredExam
+        fields = '__all__'
+
+
+class ProctoredExamAdmin(admin.ModelAdmin):
+    """
+    Admin panel for Proctored Exams
+    """
+    form = ProctoredExamForm
+    search_fields = ['course_id', 'exam_name']
+
+
 class ProctoredExamReviewPolicyAdmin(admin.ModelAdmin):
     """
     The admin panel for Review Policies
@@ -479,7 +502,7 @@ def prettify_course_id(course_id):
     return course_id.replace('+', ' ').replace('/', ' ').replace('course-v1:', '')
 
 
-admin.site.register(ProctoredExam)
+admin.site.register(ProctoredExam, ProctoredExamAdmin)
 admin.site.register(ProctoredExamStudentAttempt, ProctoredExamStudentAttemptAdmin)
 admin.site.register(ProctoredExamReviewPolicy, ProctoredExamReviewPolicyAdmin)
 admin.site.register(ProctoredExamSoftwareSecureReview, ProctoredExamSoftwareSecureReviewAdmin)

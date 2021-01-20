@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.12] - 2021-01-20
+~~~~~~~~~~~~~~~~~~~~~
+* Allow blank fields in Django admin for `external_id`, `due_date`, and `backend`
+  in proctored exams.
+
 [2.5.11] - 2021-01-19
 ~~~~~~~~~~~~~~~~~~~~~
 * Added ProctoredExam to django admin
