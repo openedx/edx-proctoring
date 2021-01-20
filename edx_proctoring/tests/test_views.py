@@ -1888,7 +1888,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.second_user)
         response = self.client.put(
             reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
-            {}
+            {},
+            content_type='application/json'
         )
 
         self.assertEqual(response.status_code, 403)
@@ -2467,7 +2468,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 403)
         self.assertRaises(ProctoredExamPermissionDenied)
 
-    def test_mark_ready_to_resume_attempt(self):
+    def test_mark_ready_to_resume_attempt_for_self(self):
         # Create an exam.
         proctored_exam = ProctoredExam.objects.create(
             course_id='a/b/c',
@@ -2533,6 +2534,312 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # Make sure the exam attempt is in the ready_to_resume state.
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
+
+    def test_mark_ready_to_resume_attempt_for_other_as_staff(self):
+        """
+        Assert that a staff user can submit a "mark_ready_to_resume" action on
+        behalf of another user when supplying the user's id in the request body.
+        """
+        # Log in as student taking the exam.
+        self.client.login_user(self.student_taking_exam)
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+        )
+
+        # POST an exam attempt.
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': False,
+        }
+
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        # Verify exam attempt was created correctly.
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+
+        old_attempt_id = response_data['exam_attempt_id']
+
+        # Make sure the exam has not started.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertIsNone(attempt['started_at'])
+
+        # Transition the exam attempt into the error state.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'error',
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+        # Make sure the exam attempt is in the error state.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+        # Log in the staff user.
+        self.client.login_user(self.user)
+
+        # Transition the exam attempt into the ready_to_resume state.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'mark_ready_to_resume',
+                'user_id': self.student_taking_exam.id,
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+        # Make sure the exam attempt is in the ready_to_resume state.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
+
+    def test_mark_ready_to_resume_attempt_for_other_as_staff_no_user_id(self):
+        """
+        Assert that a staff user cannot submit any action on behalf of another user without
+        specifying the user's id in the request body.Assert that a ProctoredExamPermissionDenied
+        exception is raised and that the attempt is unchanged.
+        """
+        # Log in as student taking the exam.
+        self.client.login_user(self.student_taking_exam)
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+        )
+
+        # POST an exam attempt.
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': False,
+        }
+
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        # Verify exam attempt was created correctly.
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+
+        old_attempt_id = response_data['exam_attempt_id']
+
+        # Make sure the exam has not started.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertIsNone(attempt['started_at'])
+
+        # Transition the exam attempt into the error state.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'error',
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+        # Make sure the exam attempt is in the error state.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+        # Log in the staff user.
+        self.client.login_user(self.user)
+
+        # Transition the exam attempt into the ready_to_resume state.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'mark_ready_to_resume',
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertRaises(ProctoredExamPermissionDenied)
+
+        # Make sure the exam attempt is in the old state.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+    def test_mark_ready_to_resume_attempt_for_other_not_as_staff(self):
+        """
+        Assert that a non-staff user cannot submit any action on behalf of another user.
+        Assert that a ProctoredExamPermissionDenied exception
+        is raised and that the attempt is unchanged.
+        """
+        # Don't treat users as course staff by default, so that second_user is
+        # not treated as course staff.
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+
+        # Log in as student taking the exam.
+        self.client.login_user(self.student_taking_exam)
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+        )
+
+        # POST an exam attempt.
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': False,
+        }
+
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        # Verify exam attempt was created correctly.
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+
+        old_attempt_id = response_data['exam_attempt_id']
+
+        # Make sure the exam has not started.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertIsNone(attempt['started_at'])
+
+        # Transition the exam attempt into the error state.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'error',
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['exam_attempt_id'], old_attempt_id)
+
+        # Make sure the exam attempt is in the error state.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+        # Log in the second non-staff user.
+        self.client.login_user(self.second_user)
+
+        # Transition the exam attempt into the ready_to_resume state.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': 'mark_ready_to_resume',
+                'user_id': self.student_taking_exam.id,
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertRaises(ProctoredExamPermissionDenied)
+
+        # Make sure the exam attempt is in the old state.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+    @ddt.data(
+        'stop',
+        'start',
+        'submit',
+        'click_download_software',
+        'reset_attempt',
+        'error',
+        'decline',
+    )
+    def test_action_not_mark_ready_to_resume_attempt_for_other_as_staff(self, action):
+        """
+        Assert that a staff user cannot submit any action on behalf of another user other
+        than "mark_ready_to_resume". Assert that a ProctoredExamPermissionDenied exception
+        is raised and that the attempt is unchanged.
+        """
+        # Log in as student taking the exam.
+        self.client.login_user(self.student_taking_exam)
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+        )
+
+        # POST an exam attempt.
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': False,
+        }
+
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        # Verify exam attempt was created correctly.
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertGreater(response_data['exam_attempt_id'], 0)
+
+        old_attempt_id = response_data['exam_attempt_id']
+
+        # Make sure the exam has not started.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertIsNone(attempt['started_at'])
+
+        # Log in the staff user.
+        self.client.login_user(self.user)
+
+        # Transition the exam attempt into the state defined by the action argument.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
+            json.dumps({
+                'action': action,
+                'user_id': self.student_taking_exam.id,
+            }),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertRaises(ProctoredExamPermissionDenied)
+
+        # Make sure the exam attempt is in the ready_to_resume state.
+        attempt = get_exam_attempt_by_id(old_attempt_id)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.created)
 
     def test_resume_exam_attempt(self):
         # Create an exam.

@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.5.13] - 2021-01-20
+~~~~~~~~~~~~~~~~~~~~~
+* Allow staff users to modify another user's exam attempt status via the
+  the StudentProctoredExamAttempt view's PUT handler only when the action is
+  "mark_ready_to_resume" and the user ID is passed in via the request data.
+
 [2.5.12] - 2021-01-20
 ~~~~~~~~~~~~~~~~~~~~~
 * Allow blank fields in Django admin for `external_id`, `due_date`, and `backend`
