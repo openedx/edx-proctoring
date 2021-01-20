@@ -4,6 +4,8 @@
 All tests for the models.py
 """
 
+from django.contrib.auth import get_user_model
+
 from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamReviewPolicy,
@@ -16,6 +18,8 @@ from edx_proctoring.models import (
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from .utils import LoggedInTestCase
+
+User = get_user_model()
 
 # pragma pylint: disable=useless-super-delegation
 
@@ -279,8 +283,9 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
 
         # create number of exam attempts
         for i in range(90):
+            user = User.objects.create(username='tester{0}'.format(i), email='tester{0}@test.com'.format(i))
             ProctoredExamStudentAttempt.create_exam_attempt(
-                proctored_exam.id, i, 'test_name{0}'.format(i),
+                proctored_exam.id, user.id, 'test_name{0}'.format(i),
                 'test_attempt_code{0}'.format(i), True, False, 'test_external_id{0}'.format(i)
             )
 
