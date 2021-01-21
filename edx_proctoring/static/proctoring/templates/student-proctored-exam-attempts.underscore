@@ -1,4 +1,63 @@
 <div class="wrapper-content wrapper">
+    <style>
+        .actions-dropdown {
+            display: none;
+            position: absolute;
+            top: ($baseline*2);
+            right: 0;
+            z-index: 10;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1)
+        }
+
+        .actions-dropdown.is-visible {
+            display: block;
+            pointer-events: auto;
+        }
+
+        .wrapper-action-more .action-more, .wrapper-action-more .action-more:hover, .wrapper-action-more .action-more:focus {
+            background-image: none;
+            background-color: rgba(0, 0, 0, 0);
+            box-shadow: none;
+        }
+
+        .wrapper-action-more .action-more {
+            border: 1px solid transparent;
+        }
+        
+        .wrapper-action-more .action-more:hover, .wrapper-action-more .action-more:focus  {
+            border: 1px solid #e4e4e4;
+        }
+
+        .actions-dropdown-list {
+            list-style: none;
+            margin: 0;
+            text-indent: 0;
+
+            border-radius: 3px;
+            border: 1px solid #c8c8c8;
+            padding: 10px;
+            background: white;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        .actions-drop-down-list li {
+            margin: 0;
+            padding: 0;
+        }
+
+        a.action {
+            text-decoration: none !important;
+        }
+
+        a.action:hover {
+            text-decoration: underline !important;
+        }
+
+        .actions-item:not(:last-child) {
+            margin-bottom: 10px;
+        }
+
+    </style>
     <% var is_proctored_attempts = proctored_exam_attempts.length !== 0 %>
         <div class="content exam-attempts-content">
             <div class="top-header">
@@ -91,7 +150,7 @@
                 </thead>
                 <% if (is_proctored_attempts) { %>
                 <tbody>
-                    <% _.each(proctored_exam_attempts, function(proctored_exam_attempt){ %>
+                    <% _.each(proctored_exam_attempts, function(proctored_exam_attempt, dashboard_index){ %>
                         <tr class="allowance-items">
                             <td>
                                 <%- interpolate(gettext(' %(username)s '), { username: proctored_exam_attempt.user.username }, true) %>
@@ -111,8 +170,36 @@
                             <% } %>
                             </td>
                             <td>
-                             <% if (proctored_exam_attempt.status){ %>
-                                <a href="#" class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>
+                                <% if (proctored_exam_attempt.status){ %>
+                                    <% if (enable_exam_resume_proctoring_improvements) { %>
+                                        <% if (proctored_exam_attempt.status == "error" ) { %>
+                                            <div class="wrapper-action-more">
+                                                <button class="action action-more" type="button" id="actions-dropdown-link-<%= dashboard_index %>" aria-haspopup="true" aria-expanded="false" aria-controls="actions-dropdown-<%= dashboard_index %>" data-dashboard-index="<%= dashboard_index %>">
+                                                    <span class="fa fa-cog" aria-hidden="true"></span>
+                                                </button>
+                                                <div class="actions-dropdown" id="actions-dropdown-<%= dashboard_index %>" tabindex="-1">
+                                                    <ul class="actions-dropdown-list" id="actions-dropdown-list-<%= dashboard_index %>" aria-label="<%- gettext("Available Actions") %>" role="menu">
+                                                        <li class="actions-item" role="menuitem">
+                                                            <a href="#" class="action resume-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" data-user-id="<%= proctored_exam_attempt.user.id %>" >
+                                                                <%- gettext("Resume") %>
+                                                            </a>
+                                                        </li>
+                                                        <li class="actions-item" role="menuitem">
+                                                            <a href="#" class="action remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >
+                                                                <%- gettext("Reset") %>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        <% } else { %>
+                                            <a href="#" class="action remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >
+                                                <%- gettext("Reset") %>
+                                            </a>
+                                        <% } %>
+                                    <% } else { %>
+                                        <a href="#" class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>
+                                    <% } %>
                             </td>
                             <% } else { %>
                                 N/A

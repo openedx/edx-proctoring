@@ -9,7 +9,7 @@ edx = edx || {};
         initialize: function() {
             var self = this;
             this.setElement($('.student-review-dashboard-container'));
-            this.tempate_url = '/static/proctoring/templates/dashboard.underscore';
+            this.template_url = '/static/proctoring/templates/dashboard.underscore';
             this.iframeHTML = null;
             this.doRender = true;
             this.context = {
@@ -24,7 +24,7 @@ edx = edx || {};
         },
         loadTemplateData: function() {
             var self = this;
-            $.ajax({url: self.tempate_url, dataType: 'html'})
+            $.ajax({url: self.template_url, dataType: 'html'})
                 .done(function(templateHtml) {
                     self.iframeHTML = _.template(templateHtml)(self.context);
                 });

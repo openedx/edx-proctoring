@@ -11,6 +11,7 @@ edx = edx || {};
         created: gettext('Created'),
         download_software_clicked: gettext('Download Software Clicked'),
         ready_to_start: gettext('Ready to start'),
+        ready_to_resume: gettext('Ready to resume'),
         started: gettext('Started'),
         ready_to_submit: gettext('Ready to submit'),
         declined: gettext('Declined'),
@@ -45,10 +46,16 @@ edx = edx || {};
         initialize: function() {
             this.setElement($('.student-proctored-exam-container'));
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptCollection();
-            this.tempate_url = '/static/proctoring/templates/student-proctored-exam-attempts.underscore';
+            this.template_url = '/static/proctoring/templates/student-proctored-exam-attempts.underscore';
             this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel();
             this.course_id = this.$el.data('course-id');
             this.template = null;
+
+            this.enable_exam_resume_proctoring_improvements =
+                this.$el.data('enable-exam-resume-proctoring-improvements');
+            this.enable_exam_resume_proctoring_improvements = this.enable_exam_resume_proctoring_improvements &&
+                this.enable_exam_resume_proctoring_improvements.toLowerCase() === 'true';
+
 
             this.initial_url = this.collection.url;
             this.attempt_url = this.model.url;
@@ -64,9 +71,14 @@ edx = edx || {};
         },
         events: {
             'click .remove-attempt': 'onRemoveAttempt',
+            'click .resume-attempt': 'onResumeAttempt',
             'click li > a.target-link': 'getPaginatedAttempts',
             'click .search-attempts > span.search': 'searchAttempts',
-            'click .search-attempts > span.clear-search': 'clearSearch'
+            'click .search-attempts > span.clear-search': 'clearSearch',
+            'click .action-more': 'toggleExamAttemptActionDropdownMenu'
+        },
+        toggleExamAttemptActionDropdownMenu: function(event) {
+            edx.dashboard.dropdown.toggleExamAttemptActionDropdownMenu(event);
         },
         searchAttempts: function(event) {
             var searchText = $('#search_attempt_id').val();
@@ -113,7 +125,7 @@ edx = edx || {};
         },
         loadTemplateData: function() {
             var self = this;
-            $.ajax({url: self.tempate_url, dataType: 'html'})
+            $.ajax({url: self.template_url, dataType: 'html'})
                 .done(function(templateData) {
                     self.template = _.template(templateData);
                     self.hydrate();
@@ -172,7 +184,8 @@ edx = edx || {};
                     inSearchMode: this.inSearchMode,
                     searchText: this.searchText,
                     start_page: startPage,
-                    end_page: endPage
+                    end_page: endPage,
+                    enable_exam_resume_proctoring_improvements: this.enable_exam_resume_proctoring_improvements
                 };
                 _.extend(data, viewHelper);
                 html = this.template(data);
@@ -199,6 +212,38 @@ edx = edx || {};
                     'X-CSRFToken': this.getCSRFToken()
                 },
                 type: 'DELETE',
+                success: function() {
+                    // fetch the attempts again.
+                    self.hydrate();
+                    $('body').css('cursor', 'auto');
+                }
+            });
+        },
+        onResumeAttempt: function(event) {
+            var $target, attemptId, userId;
+            var self = this;
+            event.preventDefault();
+
+            // confirm the user's intent
+            // eslint-disable-next-line no-alert
+            if (!confirm(gettext('Are you sure you want to resume this student\'s exam attempt?'))) {
+                return;
+            }
+            $('body').css('cursor', 'wait');
+            $target = $(event.currentTarget);
+            attemptId = $target.data('attemptId');
+            userId = $target.data('userId');
+
+            self.model.url = this.attempt_url + attemptId;
+            self.model.fetch({
+                headers: {
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                type: 'PUT',
+                data: {
+                    action: 'mark_ready_to_resume',
+                    user_id: userId
+                },
                 success: function() {
                     // fetch the attempts again.
                     self.hydrate();
