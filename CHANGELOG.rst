@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.6.2] - 2021-01-25
+~~~~~~~~~~~~~~~~~~~~~
+* Update endpoint that returns onboarding exam status to account for
+  users enrollment mode.
+
 [2.6.1] - 2021-01-25
 ~~~~~~~~~~~~~~~~~~~~~
 * Add a dropdown component.
