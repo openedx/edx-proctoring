@@ -124,6 +124,8 @@ class MockInstructorService:
         """
         self.is_user_course_staff = is_user_course_staff
         self.notifications = []
+        self.proctoring_escalation_email = None
+        self.proctoring_escalation_error = None
 
     # pylint: disable=unused-argument
     def delete_student_attempt(self, student_identifier, course_id, content_id, requesting_user):
@@ -146,6 +148,26 @@ class MockInstructorService:
         Mocked implementation of send_support_notification
         """
         self.notifications.append((course_id, exam_name, student_username, review_status, review_url))
+
+    def get_proctoring_escalation_email(self, course_key):  # pylint: disable=unused-argument
+        """
+        Get a mock return value for get_proctoring_escalation_email
+        """
+        if self.proctoring_escalation_error:
+            raise self.proctoring_escalation_error
+        return self.proctoring_escalation_email
+
+    def mock_proctoring_escalation_email(self, email):
+        """
+        Change the default return value for get_proctoring_escalation_email
+        """
+        self.proctoring_escalation_email = email
+
+    def mock_proctoring_escalation_email_error(self, error):
+        """
+        Mock an error that raises from get_proctoring_escalation_email
+        """
+        self.proctoring_escalation_error = error
 
 
 class TestProctoringService(unittest.TestCase):

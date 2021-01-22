@@ -64,6 +64,7 @@ class ProctoredExamsApiTests(LoggedInTestCase):
         """
         super().setUp()
         set_runtime_service('credit', MockCreditService())
+        set_runtime_service('instructor', MockInstructorService())
 
     def test_no_anonymous_access(self):
         """
@@ -99,6 +100,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.user.save()
         self.client.login_user(self.user)
         set_runtime_service('credit', MockCreditService())
+        set_runtime_service('instructor', MockInstructorService())
 
     def test_create_exam(self):
         """
