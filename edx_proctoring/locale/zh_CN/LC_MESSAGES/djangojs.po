@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-17 18:35+0000\n"
+"POT-Creation-Date: 2021-01-24 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Omar Al-Ithawi <i@omardo.com>, 2021\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/open-edx/teams/6205/zh_CN/)\n"
@@ -34,158 +34,162 @@ msgstr ""
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: admin.py:86
+#: admin.py:109
 msgid "internally reviewed"
 msgstr "内部审核"
 
-#: admin.py:95
+#: admin.py:118
 msgid "All Unreviewed"
 msgstr "全部未审核"
 
-#: admin.py:96
+#: admin.py:119
 msgid "All Unreviewed Failures"
 msgstr "所有未审核的失败项"
 
-#: admin.py:116
+#: admin.py:139
 msgid "active proctored exams"
 msgstr "已激活监考功能"
 
-#: admin.py:174
+#: admin.py:197
 msgid "courses with active proctored exams"
 msgstr "已激活监考模式的课程"
 
-#: admin.py:336
+#: admin.py:359
 msgid "Course Id"
 msgstr "课程编号"
 
-#: admin.py:374
+#: admin.py:397
 msgid "Created"
 msgstr "创建"
 
-#: admin.py:375
+#: admin.py:398
 msgid "Download Software Clicked"
 msgstr "已点击下载软件"
 
-#: admin.py:376
+#: admin.py:399
 msgid "Ready To Start"
 msgstr "准备开始"
 
-#: admin.py:377
+#: admin.py:400
 msgid "Started"
 msgstr "已经开始"
 
-#: admin.py:378
+#: admin.py:401
 msgid "Ready To Submit"
 msgstr "准备提交"
 
-#: admin.py:379
+#: admin.py:402
 msgid "Declined"
 msgstr "拒绝"
 
-#: admin.py:380
+#: admin.py:403
 msgid "Timed Out"
 msgstr "时间到"
 
-#: admin.py:381
+#: admin.py:404
 msgid "Submitted"
 msgstr "已提交"
 
-#: admin.py:382
+#: admin.py:405
 msgid "Second Review Required"
 msgstr "需要二次审核"
 
-#: admin.py:383
+#: admin.py:406
 msgid "Verified"
 msgstr "已认证"
 
-#: admin.py:384
+#: admin.py:407
 msgid "Rejected"
 msgstr "拒绝"
 
-#: admin.py:385
+#: admin.py:408
 msgid "Error"
 msgstr "错误"
 
-#: admin.py:389
+#: admin.py:409
+msgid "Ready To Resume"
+msgstr ""
+
+#: admin.py:413
 msgid "Onboarding Missing"
 msgstr ""
 
-#: admin.py:390
+#: admin.py:414
 msgid "Onboarding Failed"
 msgstr ""
 
-#: admin.py:391
+#: admin.py:415
 msgid "Onboarding Pending"
 msgstr ""
 
-#: admin.py:392
+#: admin.py:416
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:1115
+#: api.py:1117
 msgid "your course"
 msgstr "您的课程"
 
-#: api.py:1177
+#: api.py:1180
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1186
+#: api.py:1189
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1213
+#: api.py:1216
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 
-#: api.py:1619
+#: api.py:1641
 msgid "Taking As Proctored Exam"
 msgstr "切换至监考模式"
 
-#: api.py:1624
+#: api.py:1646
 msgid "Proctored Option Available"
 msgstr "可启用监考模式"
 
-#: api.py:1629
+#: api.py:1651
 msgid "Taking As Open Exam"
 msgstr "切换至开卷模式"
 
-#: api.py:1634 api.py:1639
+#: api.py:1656 api.py:1661
 msgid "Pending Session Review"
 msgstr "等待审核"
 
-#: api.py:1644
+#: api.py:1666
 msgid "Passed Proctoring"
 msgstr "已通过监考"
 
-#: api.py:1649 api.py:1654
+#: api.py:1671 api.py:1676
 msgid "Failed Proctoring"
 msgstr "未通过监考"
 
-#: api.py:1659
+#: api.py:1681
 msgid "Proctored Option No Longer Available"
 msgstr "无法再启用监考模式"
 
-#: api.py:1668
+#: api.py:1690
 msgid "Ungraded Practice Exam"
 msgstr "不计分模拟考试"
 
-#: api.py:1673
+#: api.py:1695
 msgid "Practice Exam Completed"
 msgstr "已完成模拟考"
 
-#: api.py:1678
+#: api.py:1700
 msgid "Practice Exam Failed"
 msgstr "模拟考失败"
 
-#: api.py:1686
+#: api.py:1708
 msgid "Timed Exam"
 msgstr "计时考试"
 
-#: api.py:2216
+#: api.py:2238
 msgid "Onboarding status question"
 msgstr ""
 
@@ -236,9 +240,9 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"    If you have any questions about your results, you can reach edX Support at \n"
+"    If you have any questions about your results, you can reach out at \n"
 "        <a href=\"%(contact_url)s\">\n"
-"            %(contact_url)s\n"
+"            %(contact_url_text)s\n"
 "        </a>.\n"
 "    "
 msgstr ""
@@ -273,10 +277,10 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"        To appeal your proctored exam results, please reach out to edX Support with any relevant information\n"
+"        To appeal your proctored exam results, please reach out with any relevant information\n"
 "        about your exam at \n"
 "        <a href=\"%(contact_url)s\">\n"
-"            %(contact_url)s\n"
+"            %(contact_url_text)s\n"
 "        </a>.\n"
 "    "
 msgstr ""
@@ -1446,7 +1450,7 @@ msgstr ""
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:443 views.py:672
+#: views.py:443 views.py:685
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "剩余时间{remaining_time}"
@@ -1455,33 +1459,33 @@ msgstr "剩余时间{remaining_time}"
 msgid "you have less than a minute remaining"
 msgstr "剩余时间不足一分钟"
 
-#: views.py:661
+#: views.py:674
 msgid "a timed exam"
 msgstr ""
 
-#: views.py:662
+#: views.py:675
 msgid "a proctored exam"
 msgstr ""
 
-#: views.py:663
+#: views.py:676
 msgid "an onboarding exam"
 msgstr ""
 
-#: views.py:663
+#: views.py:676
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:1167
+#: views.py:1180
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1173
+#: views.py:1186
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1192
+#: views.py:1205
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
