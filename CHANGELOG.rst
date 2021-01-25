@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add exam removal endpoint to be used on the instructor dashboard in place of the
+  current exam attempt reset endpoint as we now have multiple attempts. This new
+  endpoint is only accessible to course and edX staff
 
 [2.6.2] - 2021-01-25
 ~~~~~~~~~~~~~~~~~~~~~

@@ -117,6 +117,11 @@ urlpatterns = [
         views.AnonymousReviewCallback.as_view(),
         name='anonymous.proctoring_review_callback'
     ),
+    url(
+        r'edx_proctoring/v1/proctored_exam/exam_id/(?P<exam_id>\d+)/user_id/(?P<user_id>[\d]+)/reset_attempts$',
+        views.StudentProctoredExamResetAttempts.as_view(),
+        name='proctored_exam.attempts.reset'
+    ),
     url(r'^', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
