@@ -14,6 +14,21 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.6.1] - 2021-01-25
+~~~~~~~~~~~~~~~~~~~~~
+* Add a dropdown component.
+* If the "data-enable-exam-resume-proctoring-improvements" data attribute on the element of the ProctoredExamAttemptView
+  Backbone is true,
+
+  * use the dropdown menu component on the Instructor Dashboard Proctored Exam Attempt panel for proctored exam attempts in the error state, providing the following options:
+    
+    * Resume, which transitions the exam attempt into the ready_to_resume state.
+    * Reset, which behaves the same as the previous reset functionality, originally exposed via the [x] link.
+  * change the [x] link to Reset for exam attempts in other states.
+
+* If the "data-enable-exam-resume-proctoring-improvements" data attribute on the element of the ProctoredExamAttemptView Backbone is
+  false there is no change.
+
 [2.6.0] - 2021-01-21
 ~~~~~~~~~~~~~~~~~~~~~
 * Replace Travis CI with Github Actions.

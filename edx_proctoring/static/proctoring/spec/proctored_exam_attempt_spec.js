@@ -13,45 +13,49 @@ describe('ProctoredExamAttemptView', function() {
         }
 
     }];
-    var expectedProctoredExamAttemptJson = [{
-        attempt_url: '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/edX/DemoX/Demo_Course',
-        pagination_info: {
-            current_page: 1,
-            has_next: false,
-            has_previous: false,
-            total_pages: 1
-        },
-        proctored_exam_attempts: [{
-            allowed_time_limit_mins: 1,
-            attempt_code: '20C32387-372E-48BD-BCAC-A2BE9DC91E09',
-            completed_at: null,
-            created: '2015-08-10T09:15:45Z',
-            external_id: '40eceb15-bcc3-4791-b43f-4e843afb7ae8',
-            id: 43,
-            is_sample_attempt: false,
-            last_poll_ipaddr: null,
-            last_poll_timestamp: null,
-            modified: '2015-08-10T09:15:45Z',
-            started_at: '2015-08-10T09:15:45Z',
-            status: 'started',
-            taking_as_proctored: true,
-            proctored_exam: {
-                content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
-                course_id: 'edX/DemoX/Demo_Course',
-                exam_name: 'Normal Exam',
-                external_id: null,
-                id: 17,
-                is_active: true,
-                is_practice_exam: false,
-                is_proctored: true,
-                time_limit_mins: 1
-            },
-            user: {
-                username: 'testuser1',
-                email: 'testuser1@test.com'
-            }
-        }]
-    }];
+    function getExpectedProctoredExamAttemptWithAttemptStatusJson(status) {
+        return (
+            [{
+                attempt_url: '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/edX/DemoX/Demo_Course',
+                pagination_info: {
+                    current_page: 1,
+                    has_next: false,
+                    has_previous: false,
+                    total_pages: 1
+                },
+                proctored_exam_attempts: [{
+                    allowed_time_limit_mins: 1,
+                    attempt_code: '20C32387-372E-48BD-BCAC-A2BE9DC91E09',
+                    completed_at: null,
+                    created: '2015-08-10T09:15:45Z',
+                    external_id: '40eceb15-bcc3-4791-b43f-4e843afb7ae8',
+                    id: 43,
+                    is_sample_attempt: false,
+                    last_poll_ipaddr: null,
+                    last_poll_timestamp: null,
+                    modified: '2015-08-10T09:15:45Z',
+                    started_at: '2015-08-10T09:15:45Z',
+                    status: status,
+                    taking_as_proctored: true,
+                    proctored_exam: {
+                        content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
+                        course_id: 'edX/DemoX/Demo_Course',
+                        exam_name: 'Normal Exam',
+                        external_id: null,
+                        id: 17,
+                        is_active: true,
+                        is_practice_exam: false,
+                        is_proctored: true,
+                        time_limit_mins: 1
+                    },
+                    user: {
+                        username: 'testuser1',
+                        email: 'testuser1@test.com'
+                    }
+                }]
+            }]
+        );
+    }
 
     beforeEach(function() {
         html = '<div class="wrapper-content wrapper">' +
@@ -96,7 +100,8 @@ describe('ProctoredExamAttemptView', function() {
         '</tr></thead>' +
         '<% if (is_proctored_attempts) { %>' +
         '<tbody>' +
-        '<% _.each(proctored_exam_attempts, function(proctored_exam_attempt){ %><tr class="allowance-items">' +
+        '<% _.each(proctored_exam_attempts, function(proctored_exam_attempt, dashboard_index){' +
+        '%><tr class="allowance-items">' +
         '<td>' +
         ' <%= proctored_exam_attempt.user.username %> ' +
         ' </td>' +
@@ -117,8 +122,40 @@ describe('ProctoredExamAttemptView', function() {
         ' <% if (proctored_exam_attempt.status){ %> <%= proctored_exam_attempt.status %> <% } else { %> N/A  <% } %> ' +
         '</td>' +
         '<td>' +
-        ' <% if (proctored_exam_attempt.status){ %> ' +
-        '<a href="#" class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>  </td>' +
+        '<% if (proctored_exam_attempt.status){ %> ' +
+        '<% if (enable_exam_resume_proctoring_improvements) { %>' +
+        '<% if (proctored_exam_attempt.status == "error") { %>' +
+        '<div class="wrapper-action-more">' +
+        '<button class="action action-more" type="button" id="actions-dropdown-link-<%= dashboard_index %>"' +
+        'aria-haspopup="true" aria-expanded="false" aria-controls="actions-dropdown-<%= dashboard_index %>"' +
+        'data-dashboard-index="<%= dashboard_index %>">' +
+        '<span class="fa fa-cog" aria-hidden="true"></span>' +
+        '</button>' +
+        '<div class="actions-dropdown" id="actions-dropdown-<%= dashboard_index %>" tabindex="-1">' +
+        '<ul class="actions-dropdown-list" id="actions-dropdown-list-<%= dashboard_index %>"' +
+        'aria-label="<%- gettext("Available Actions") %>" role="menu">' +
+        '<li class="actions-item" role="menuitem">' +
+        '<a href="#" class="action resume-attempt"' +
+        'data-attempt-id="<%= proctored_exam_attempt.id %>" data-user-id="<%= proctored_exam_attempt.user.id %>" >' +
+        '<%- gettext("Resume") %>' +
+        '</a>' +
+        '</li>' +
+        '<li class="actions-item" id="actions-item-email-settings-<%= dashboard_index %>" role="menuitem">' +
+        '<a href="#" class="action remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >' +
+        '<%- gettext("Reset") %>' +
+        '</a>' +
+        '</li>' +
+        '</ul>' +
+        '</div>' +
+        '</div>' +
+        '<% } else { %>' +
+        '<a href="#" class="action remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >' +
+        '<%- gettext("Reset") %>' +
+        '</a>' +
+        '<% } %>' +
+        '<% } else { %>' +
+        '<a href="#" class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>' +
+        '<% } %>' +
         ' <% } else { %>N/A <% } %>' +
         '</tr>' +
         ' <% }); %> ' +
@@ -153,7 +190,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(expectedProctoredExamAttemptJson)
+                JSON.stringify(getExpectedProctoredExamAttemptWithAttemptStatusJson('started'))
             ]
         );
         this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
@@ -172,7 +209,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(expectedProctoredExamAttemptJson)
+                JSON.stringify(getExpectedProctoredExamAttemptWithAttemptStatusJson('started'))
             ]
         );
         this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
@@ -231,7 +268,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(expectedProctoredExamAttemptJson)
+                JSON.stringify(getExpectedProctoredExamAttemptWithAttemptStatusJson('started'))
             ]
         );
 
@@ -255,7 +292,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(expectedProctoredExamAttemptJson)
+                JSON.stringify(getExpectedProctoredExamAttemptWithAttemptStatusJson('started'))
             ]
         );
 
@@ -278,7 +315,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(expectedProctoredExamAttemptJson)
+                JSON.stringify(getExpectedProctoredExamAttemptWithAttemptStatusJson('started'))
             ]
         );
         this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
@@ -323,7 +360,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(expectedProctoredExamAttemptJson)
+                JSON.stringify(getExpectedProctoredExamAttemptWithAttemptStatusJson('started'))
             ]
         );
 
@@ -337,5 +374,85 @@ describe('ProctoredExamAttemptView', function() {
         // after resetting the attempts, selector matches the existing attempts
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('testuser1');
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
+    });
+    it('should mark exam attempt "ready_to_resume" on resume', function() {
+        // enable the dropdown via the enable-exam-resume-proctoring-improvements data attribute
+        setFixtures('<div class="student-proctored-exam-container" data-course-id="test_course_id" ' +
+            'data-enable-exam-resume-proctoring-improvements="True"></div>');
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(getExpectedProctoredExamAttemptWithAttemptStatusJson('error'))
+            ]
+        );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
+
+        // Process all requests so far
+        this.server.respond();
+        this.server.respond();
+
+        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items')).toContainHtml('<td> testuser1  </td>');
+        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
+        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('error');
+
+        expect(this.proctored_exam_attempt_view.$el.find('button.action').html()).not.toHaveLength(0);
+        expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').hasClass('is-visible')).toEqual(false);
+
+        this.server.respondWith('PUT', '/api/edx_proctoring/v1/proctored_exam/attempt/43',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify([])
+            ]
+        );
+
+        // again fetch the results after the proctored exam attempt is marked ready_to_resume
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(getExpectedProctoredExamAttemptWithAttemptStatusJson('ready_to_resume'))
+            ]
+        );
+
+        spyOn(window, 'confirm').and.callFake(function() {
+            return true;
+        });
+
+        // click the gear button to open the action dropdown
+        spyOnEvent('.action-more', 'click');
+        $('.action-more').trigger('click');
+
+        expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').hasClass('is-visible')).toEqual(true);
+        expect(this.proctored_exam_attempt_view.$el.find(
+            '.actions-dropdown .actions-dropdown-list .actions-item .action'
+        )[0].text).toContain('Resume');
+        expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown .actions-dropdown-list '
+        + '.actions-item .action')[1].text).toContain('Reset');
+
+        // trigger the resume attempt event.
+        spyOnEvent('.resume-attempt', 'click');
+        $('.resume-attempt').trigger('click');
+
+        expect(window.confirm.calls.argsFor(0)[0]).toEqual(
+            'Are you sure you want to resume this student\'s exam attempt?'
+        );
+
+        // process the resume attempt requests.
+        this.server.respond();
+        this.server.respond();
+
+        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('testuser1');
+        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
+        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('ready_to_resume');
+        expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').hasClass('is-visible')).toEqual(false);
     });
 });

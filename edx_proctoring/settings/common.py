@@ -29,7 +29,8 @@ def plugin_settings(settings):
             'proctoring/js/views/proctored_exam_info.js',
             'proctoring/js/views/proctored_exam_instructor_launch.js',
             'proctoring/js/proctored_app.js',
-            'proctoring/js/exam_action_handler.js'
+            'proctoring/js/exam_action_handler.js',
+            'proctoring/js/dropdown.js'
         ]
     )
     if hasattr(settings, 'PIPELINE'):

@@ -48,7 +48,8 @@ module.exports = function(config) {
             'edx_proctoring/static/proctoring/js/models/*.js',
             'edx_proctoring/static/proctoring/js/collections/*.js',
             'edx_proctoring/static/proctoring/js/views/*.js',
-            'edx_proctoring/static/proctoring/spec/*.js'
+            'edx_proctoring/static/proctoring/spec/*.js',
+            'edx_proctoring/static/proctoring/js/dropdown.js'
         ],
 
         // preprocess matching files before serving them to the browser
