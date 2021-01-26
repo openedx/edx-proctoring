@@ -32,7 +32,12 @@ describe('ProctoredExamInfo', function() {
             '<div class="onboarding-reminder">' +
             '<% if (showOnboardingReminder) { %>' +
             '<h4 class="message-title">' +
-            '<%= gettext("You must complete the onboarding process prior to taking any proctored exam.") %></h4>' +
+            '<% if (showOnboardingExamLink) { %>' +
+            '<%= gettext("You must complete the onboarding process prior to taking any proctored exam.") %>' +
+            '<% } else { %>' +
+            '<%= gettext("Your submitted profile is in review.") %>' +
+            '<% } %>' +
+            '</h4>' +
             '<p class="message-copy">' +
             '<%= gettext("Onboarding profile review, including identity verification, can take 2+ business days.") %>' +
             '</p>' +
@@ -229,6 +234,32 @@ describe('ProctoredExamInfo', function() {
             .toContain('Complete Onboarding');
     });
 
+    it('should render proctoring info panel correctly for submitted onboarding exam', function() {
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedProctoredExamInfoJson('submitted'))
+            ]
+        );
+        this.proctored_exam_info = new edx.courseware.proctored_exam.ProctoredExamInfo({
+            el: $('.proctoring-info-panel'),
+            model: new LearnerOnboardingModel()
+        });
+        this.server.respond();
+        this.server.respond();
+        expect(this.proctored_exam_info.$el.find('.proctoring-info').css('border-top'))
+            .toEqual('5px solid rgb(13, 78, 108)');
+        expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
+            .toContain('Submitted');
+        expect(this.proctored_exam_info.$el.find('.onboarding-reminder').html())
+            .toContain('Your submitted profile is in review.');
+        expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
+            .not.toContain('Complete Onboarding');
+    });
+
     it('should render proctoring info panel correctly for second_review_required exam', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
@@ -250,7 +281,7 @@ describe('ProctoredExamInfo', function() {
         expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
             .toContain('Submitted');
         expect(this.proctored_exam_info.$el.find('.onboarding-reminder').html())
-            .toContain('You must complete the onboarding process');
+            .toContain('Your submitted profile is in review.');
         expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
             .not.toContain('Complete Onboarding');
     });

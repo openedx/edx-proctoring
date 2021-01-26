@@ -17,6 +17,11 @@ Unreleased
   current exam attempt reset endpoint as we now have multiple attempts. This new
   endpoint is only accessible to course and edX staff
 
+[2.6.3] - 2021-01-26
+~~~~~~~~~~~~~~~~~~~~~
+* Update the learner onboarding status panel on "submitted" state so learner knows they need to wait
+* Added npm-shrinkwrap.json to pin the graceful-fs to version 4.2.2 to solve "primordials" exception during gulp test
+
 [2.6.2] - 2021-01-25
 ~~~~~~~~~~~~~~~~~~~~~
 * Update endpoint that returns onboarding exam status to account for
