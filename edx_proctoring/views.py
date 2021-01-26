@@ -357,8 +357,9 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             )
 
         user = get_user_model().objects.get(username=(username or request.user.username))
+        serialized_onboarding_exam = ProctoredExamSerializer(onboarding_exam).data
 
-        if not user.has_perm('edx_proctoring.can_take_proctored_exam', onboarding_exam):
+        if not user.has_perm('edx_proctoring.can_take_proctored_exam', serialized_onboarding_exam):
             return Response(
                 status=404,
                 data={'detail': _('There is no exam accessible to this user.')}
