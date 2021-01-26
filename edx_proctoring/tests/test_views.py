@@ -85,8 +85,12 @@ class ProctoredExamsApiTests(LoggedInTestCase):
                         try:
                             response = self.client.get(reverse(name, args=["0/0/0"]))
                         except NoReverseMatch:
-                            # some require 2 args.
-                            response = self.client.get(reverse(name, args=["0/0/0", 0]))
+                            try:
+                                # some require 2 args. Try first with course id regex match
+                                response = self.client.get(reverse(name, args=["0/0/0", 0]))
+                            except NoReverseMatch:
+                                # next try with a user id or exam id regex match
+                                response = self.client.get(reverse(name, args=["000", 0]))
 
                 self.assertEqual(response.status_code, 403)
 
@@ -3760,3 +3764,129 @@ class TestUserRetirement(LoggedInTestCase):
         retired_allowance_history = ProctoredExamStudentAllowanceHistory \
             .objects.filter(user=self.user_to_retire.id).first()
         assert retired_allowance_history.value == ''
+
+
+@ddt.ddt
+class TestResetAttemptsView(LoggedInTestCase):
+    """
+    Tests for resetting all active attempts for a given user and exam
+    """
+    def setUp(self):
+        super().setUp()
+        set_runtime_service('credit', MockCreditService())
+        set_runtime_service('instructor', MockInstructorService())
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login_user(self.user)
+
+        self.exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+    def _create_attempts(self, last_status):
+        """
+        Set up for multiple active attempts
+        """
+        first_attempt_id = create_exam_attempt(
+            self.exam_id,
+            self.user.id,
+            True
+        )
+        ready_first = ProctoredExamStudentAttempt.objects.get(id=first_attempt_id)
+        ready_first.status = ProctoredExamStudentAttemptStatus.ready_to_resume
+        ready_first.save()
+        second_attempt_id = create_exam_attempt(
+            self.exam_id,
+            self.user.id,
+            True
+        )
+        ready_second = ProctoredExamStudentAttempt.objects.get(id=second_attempt_id)
+        ready_second.status = ProctoredExamStudentAttemptStatus.ready_to_resume
+        ready_second.save()
+        third_attempt_id = create_exam_attempt(
+            self.exam_id,
+            self.user.id,
+            True
+        )
+        third_attempt = ProctoredExamStudentAttempt.objects.get(id=third_attempt_id)
+        third_attempt.status = last_status
+        third_attempt.save()
+
+        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=self.user.id, proctored_exam_id=self.exam_id)
+        assert len(attempts) == 3
+
+    def test_404_with_no_attempts(self):
+        """
+        Test that endpoint responds with a 404 when there are no attempts
+        """
+        response = self.client.delete(
+            reverse('edx_proctoring:proctored_exam.attempts.reset',
+                    kwargs={'exam_id': self.exam_id, 'user_id': self.user.id})
+        )
+        assert response.status_code == 404
+
+    def test_404_with_no_user_id(self):
+        """
+        Test that endpoint responds with a 404 when given user id and exam id have no attempts
+        """
+        self._create_attempts('verified')
+        response = self.client.delete(
+            reverse('edx_proctoring:proctored_exam.attempts.reset',
+                    kwargs={'exam_id': self.exam_id, 'user_id': 111111})
+        )
+        assert response.status_code == 404
+
+    def test_deletes_all_attempts(self):
+        """
+        Test that all attempts are deleted
+        """
+        self._create_attempts('verified')
+
+        self.client.delete(
+            reverse('edx_proctoring:proctored_exam.attempts.reset',
+                    kwargs={'exam_id': self.exam_id, 'user_id': self.user.id})
+        )
+        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=self.user.id, proctored_exam_id=self.exam_id)
+        assert len(attempts) == 0
+
+    @ddt.data(
+        (ProctoredExamStudentAttemptStatus.verified, 'satisfied'),
+        (ProctoredExamStudentAttemptStatus.submitted, 'submitted'),
+        (ProctoredExamStudentAttemptStatus.declined, 'declined'),
+        (ProctoredExamStudentAttemptStatus.error, 'failed'),
+    )
+    @ddt.unpack
+    def test_credit_update(self, to_status, requirement_status):
+        """
+        Test that credit requirement is updated with multiple attempts
+        """
+        self._create_attempts('started')
+
+        last_attempt = ProctoredExamStudentAttempt.objects.get(status='started')
+        update_attempt_status(
+            self.exam_id,
+            self.user.id,
+            to_status
+        )
+
+        credit_service = get_runtime_service('credit')
+        credit_status = credit_service.get_credit_state(self.user.id, last_attempt.proctored_exam.course_id)
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            requirement_status
+        )
+
+        self.client.delete(
+            reverse('edx_proctoring:proctored_exam.attempts.reset',
+                    kwargs={'exam_id': self.exam_id, 'user_id': self.user.id})
+        )
+        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=self.user.id, proctored_exam_id=self.exam_id)
+        assert len(attempts) == 0
+
+        credit_status = credit_service.get_credit_state(self.user.id, last_attempt.proctored_exam.course_id)
+        self.assertEqual(len(credit_status['credit_requirement_status']), 0)

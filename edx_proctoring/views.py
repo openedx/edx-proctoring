@@ -1298,3 +1298,21 @@ class UserRetirement(AuthenticatedAPIView):
         self._retire_user_allowances(user_id)
 
         return Response(status=code)
+
+
+class StudentProctoredExamResetAttempts(ProctoredAPIView):
+    """
+    Endpoint for deleting all attempts associated with a given exam and a given user
+    """
+
+    @method_decorator(require_course_or_global_staff)
+    def delete(self, request, exam_id, user_id):
+        """
+        HTTP DELETE handler, deletes all attempts for a given exam and username
+        """
+        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id, proctored_exam_id=exam_id)
+        if len(attempts) == 0:
+            return Response(data='There are no attempts related to this user id and exam id', status=404)
+        for attempt in attempts:
+            remove_exam_attempt(attempt.id, request.user)
+        return Response()
