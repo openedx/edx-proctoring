@@ -43,6 +43,7 @@ from edx_proctoring.models import (
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.tests import mock_perm
 from edx_proctoring.urls import urlpatterns
 from edx_proctoring.views import require_course_or_global_staff, require_staff
 from mock_apps.models import Profile
@@ -682,6 +683,21 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertIsNone(response_data['onboarding_status'])
+
+    def test_ineligible_for_exam(self):
+        """
+        Test that the request returns a 404 error if the user is not eligible for proctored exams
+        """
+        onboarding_exam = self._create_onboarding_exam()
+        with mock_perm('edx_proctoring.can_take_proctored_exam'):
+            response = self.client.get(
+                reverse('edx_proctoring:user_onboarding.status')
+                + '?course_id={}'.format(onboarding_exam.course_id)
+            )
+        self.assertEqual(response.status_code, 404)
+        response_data = json.loads(response.content.decode('utf-8'))
+        message = 'There is no exam accessible to this user.'
+        self.assertEqual(response_data['detail'], message)
 
 
 @ddt.ddt

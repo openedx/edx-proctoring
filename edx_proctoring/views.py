@@ -355,6 +355,15 @@ class StudentOnboardingStatusView(ProctoredAPIView):
                 status=404,
                 data={'detail': _('There is no onboarding exam related to this course id.')}
             )
+
+        user = get_user_model().objects.get(username=(username or request.user.username))
+
+        if not user.has_perm('edx_proctoring.can_take_proctored_exam', onboarding_exam):
+            return Response(
+                status=404,
+                data={'detail': _('There is no exam accessible to this user.')}
+            )
+
         # Also filter attempts by the course_id
         attempt_filters['proctored_exam__course_id'] = course_id
 
