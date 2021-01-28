@@ -1437,7 +1437,7 @@ def get_all_exam_attempts(course_id):
 
 def get_filtered_exam_attempts(course_id, search_by):
     """
-    Returns all exam attempts for a course id filtered by  the search_by string in user names and emails.
+    Returns all exam attempts for a course id filtered by the search_by string in user names and emails.
     """
     exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(course_id, search_by)
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
@@ -2423,3 +2423,14 @@ def get_integration_specific_email(provider):
     Return the edX contact email to use for a particular provider.
     """
     return getattr(provider, 'integration_specific_email', None) or constants.DEFAULT_CONTACT_EMAIL
+
+
+def get_enrollments_for_course(course_id):
+    """
+    Return all enrollments for a course from the LMS Enrollments runtime API.
+
+    Parameters:
+    * course_id: course ID for the course
+    """
+    enrollments_sevice = get_runtime_service('enrollments')
+    return enrollments_sevice.get_active_enrollments_by_course(course_id)

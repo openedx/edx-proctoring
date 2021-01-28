@@ -235,3 +235,43 @@ class SoftwareSecureReviewStatus:
             )
             raise ProctoredExamBadReviewStatus(err_msg)
         return True
+
+
+class InstructorDashboardOnboardingAttemptStatus:
+    """
+    A class to enumerate the different statuses a proctored exam attempt
+    in an onboarding exam can have and to map them to internal database statutes.
+    These are intended to be used in externally facing applications, such
+    as the Instructor Dashboard.
+    """
+    not_started = 'not_started'
+    setup_started = 'setup_started'
+    proctoring_started = 'proctoring_started'
+    submitted = 'submitted'
+    rejected = 'rejected'
+    verified = 'verified'
+    error = 'error'
+
+    onboarding_statuses = {
+        ProctoredExamStudentAttemptStatus.created: setup_started,
+        ProctoredExamStudentAttemptStatus.download_software_clicked: setup_started,
+        ProctoredExamStudentAttemptStatus.ready_to_start: setup_started,
+        ProctoredExamStudentAttemptStatus.started: proctoring_started,
+        ProctoredExamStudentAttemptStatus.ready_to_submit: proctoring_started,
+        ProctoredExamStudentAttemptStatus.submitted: submitted,
+        ProctoredExamStudentAttemptStatus.verified: verified,
+        ProctoredExamStudentAttemptStatus.error: error,
+    }
+
+    @classmethod
+    def get_onboarding_status_from_attempt_status(cls, status):
+        """
+        Get the externally facing proctored exam attempt onboarding status
+        from an internal database proctored exam attempt status.
+
+        Parameters:
+            * status: a ProctoredExamStudentAttemptStatus status
+        """
+        if status:
+            return cls.onboarding_statuses.get(status)
+        return cls.not_started

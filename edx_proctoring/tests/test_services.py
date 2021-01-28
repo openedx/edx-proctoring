@@ -307,3 +307,22 @@ class MockCertificateService:
         Returns invalidated certificate for key (user_id + course_key)
         """
         return self.generated_certificate.get((user_id, course_key_or_id))
+
+
+class MockEnrollment:
+    """
+    Mock Enrollment
+    """
+    def __init__(self, user):
+        self.user = user
+
+
+class MockEnrollmentsService:
+    """Mock Enrollments service"""
+    def __init__(self, enrollments):
+        """Initialize mock enrollments"""
+        self.enrollments = [MockEnrollment(enrollment['user']) for enrollment in enrollments]
+
+    def get_active_enrollments_by_course(self, course_id):
+        """Returns mock enrollments"""
+        return self.enrollments

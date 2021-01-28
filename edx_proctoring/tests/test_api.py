@@ -30,6 +30,7 @@ from edx_proctoring.api import (
     get_attempt_status_summary,
     get_backend_provider,
     get_current_exam_attempt,
+    get_enrollments_for_course,
     get_exam_attempt_by_id,
     get_exam_by_content_id,
     get_exam_by_id,
@@ -88,6 +89,7 @@ from .test_services import (
     MockCreditService,
     MockCreditServiceNone,
     MockCreditServiceWithCourseEndDate,
+    MockEnrollmentsService,
     MockGradesService,
     MockInstructorService
 )
@@ -2448,3 +2450,24 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         del test_backend.integration_specific_email
         assert get_integration_specific_email(test_backend) == DEFAULT_CONTACT_EMAIL
+
+    def test_get_enrollments(self):
+        enrollments = [
+            {
+                'user': 'user_1',
+            },
+            {
+                'user': 'user_2',
+            },
+            {
+                'user': 'user_3',
+            },
+        ]
+        expected_enrollments = [enrollment['user'] for enrollment in enrollments]
+
+        with patch(
+                'edx_proctoring.tests.test_services.MockEnrollmentsService.get_active_enrollments_by_course',
+                return_value=expected_enrollments
+        ):
+            set_runtime_service('enrollments', MockEnrollmentsService(enrollments))
+            self.assertEqual(expected_enrollments, get_enrollments_for_course('course_id'))

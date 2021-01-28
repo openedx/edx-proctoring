@@ -14,6 +14,9 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.1.0] - 2021-02-08
+~~~~~~~~~~~~~~~~~~~~
+* Add endpoint to return onboarding status information for users in a course.
 
 [3.0.0] - 2021-02-05
 ~~~~~~~~~~~~~~~~~~~~~
