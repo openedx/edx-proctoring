@@ -73,7 +73,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         headers = {
             "Content-Type": 'application/json'
         }
-        # pylint: disable=unicode-format-string
         http_date = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
         signature = self._sign_doc(data, 'POST', headers, http_date)
 
@@ -251,9 +250,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         (first_name, last_name) = self._split_fullname(full_name)
 
         now = datetime.datetime.utcnow()
-        # pylint: disable=unicode-format-string
         start_time_str = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
-        # pylint: disable=unicode-format-string
         end_time_str = (now + datetime.timedelta(minutes=time_limit_mins)).strftime("%a, %d %b %Y %H:%M:%S GMT")
         # remove all illegal characters from the exam name
         exam_name = exam['exam_name']
