@@ -306,7 +306,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
         """
         Create onboarding attempt
         """
-        return self._create_exam_attempt(self.onboarding_exam_id)
+        return self._create_exam_attempt(self.onboarding_exam_id, is_practice_exam=True)
 
     def _create_unstarted_exam_attempt(self, is_proctored=True, is_practice=False):
         """

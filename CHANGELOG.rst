@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.6.5] - 2021-01-28
+~~~~~~~~~~~~~~~~~~~~~
+* Update error interstitial to use the reset_exam_attempt flow that is used for other
+  onboarding attempt reset
+
 [2.6.4] - 2021-01-26
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix bug that was preventing exams from being reset
@@ -38,7 +43,7 @@ Unreleased
   Backbone is true,
 
   * use the dropdown menu component on the Instructor Dashboard Proctored Exam Attempt panel for proctored exam attempts in the error state, providing the following options:
-    
+
     * Resume, which transitions the exam attempt into the ready_to_resume state.
     * Reset, which behaves the same as the previous reset functionality, originally exposed via the [x] link.
   * change the [x] link to Reset for exam attempts in other states.

@@ -6,12 +6,15 @@ All tests for the api.py
 """
 
 import itertools
+import json
 from datetime import datetime, timedelta
 
 import ddt
 import pytz
 from freezegun import freeze_time
 from mock import MagicMock, patch
+
+from django.urls import reverse
 
 from edx_proctoring.api import (
     add_allowance_for_user,
@@ -26,7 +29,12 @@ from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests import mock_perm
 
-from .test_services import MockCreditServiceNone, MockCreditServiceWithCourseEndDate
+from .test_services import (
+    MockCreditService,
+    MockCreditServiceNone,
+    MockCreditServiceWithCourseEndDate,
+    MockInstructorService
+)
 from .utils import ProctoredExamTestCase
 
 
@@ -1309,3 +1317,54 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
 
         rendered_response = render_exam(self)
         self.assertIn(self.inactive_account_msg, rendered_response)
+
+    @ddt.data(
+        (render_onboarding_exam, ProctoredExamStudentAttemptStatus.submitted, True),
+        (render_onboarding_exam, ProctoredExamStudentAttemptStatus.error, True),
+        (render_practice_exam, ProctoredExamStudentAttemptStatus.submitted, False),
+        (render_practice_exam, ProctoredExamStudentAttemptStatus.error, False),
+    )
+    @ddt.unpack
+    def test_reset_on_interstitial(self, render_exam, original_status, is_onboarding):
+        """
+        Test that reset button exists on appropriate interstitials, and that the
+        reset is done correctly
+        """
+        set_runtime_service('credit', MockCreditService())
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+
+        if is_onboarding:
+            exam_attempt = self._create_onboarding_attempt()
+        else:
+            exam_attempt = self._create_started_practice_exam_attempt()
+        exam_attempt.status = original_status
+        exam_attempt.save()
+
+        # check that only one attempt exists in history table
+        active_attempts = ProctoredExamStudentAttempt.objects.filter(status=original_status)
+        self.assertEqual(len(active_attempts), 1)
+
+        # there's not a great way to mock clicking on a button, so we
+        # will check that the button is rendered, and then call the endpoint
+        # that would be hit with a button click. This doesn't differ that much
+        # from the test_reset_attempt_action in test_views.py, other than
+        # that it tests some frontend and backend, and checks for multiple statuses
+        # and exam types
+
+        # check that button exists
+        rendered_response = render_exam(self)
+        self.assertIn('exam-action-button', rendered_response)
+
+        # call url that would be called if button were clicked
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[exam_attempt.id]),
+            json.dumps({
+                'action': 'reset_attempt',
+            }),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # check that only one new attempt has been created
+        created_attempts = ProctoredExamStudentAttempt.objects.filter(status=ProctoredExamStudentAttemptStatus.created)
+        self.assertEqual(len(created_attempts), 1)
