@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-24 18:35+0000\n"
+"POT-Creation-Date: 2021-01-31 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Katerina Ligkovanli <kaligova@gmail.com>, 2021\n"
 "Language-Team: Greek (https://www.transifex.com/open-edx/teams/6205/el/)\n"
@@ -365,10 +365,6 @@ msgid ""
 "  "
 msgstr ""
 
-#: templates/onboarding_exam/error.html:20
-msgid "Try again"
-msgstr ""
-
 #: templates/onboarding_exam/ready_to_submit.html:6
 #, python-format
 msgid ""
@@ -397,10 +393,14 @@ msgstr ""
 
 #: templates/onboarding_exam/rejected.html:22
 #: templates/onboarding_exam/submitted.html:42
+#: templates/practice_exam/error.html:29
+#: templates/practice_exam/submitted.html:18
 msgid "Retry my exam"
 msgstr ""
 
 #: templates/onboarding_exam/rejected.html:23
+#: templates/practice_exam/error.html:30
+#: templates/practice_exam/submitted.html:19
 msgid "Resetting Onboarding Exam"
 msgstr ""
 
@@ -532,10 +532,6 @@ msgid ""
 "      "
 msgstr ""
 
-#: templates/practice_exam/error.html:32
-msgid "Try this practice exam again"
-msgstr ""
-
 #: templates/practice_exam/submitted.html:5
 msgid ""
 "\n"
@@ -549,10 +545,6 @@ msgid ""
 "        Practice exams do not affect your grade.\n"
 "        You have completed this practice exam and can continue with your course work.\n"
 "      "
-msgstr ""
-
-#: templates/practice_exam/submitted.html:19
-msgid "You can also retry this practice exam"
 msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:5
@@ -1340,42 +1332,46 @@ msgstr ""
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:443 views.py:685
+#: views.py:365
+msgid "There is no exam accessible to this user."
+msgstr ""
+
+#: views.py:453 views.py:695
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr ""
 
-#: views.py:449
+#: views.py:459
 msgid "you have less than a minute remaining"
 msgstr ""
 
-#: views.py:674
+#: views.py:684
 msgid "a timed exam"
 msgstr ""
 
-#: views.py:675
+#: views.py:685
 msgid "a proctored exam"
 msgstr ""
 
-#: views.py:676
+#: views.py:686
 msgid "an onboarding exam"
 msgstr ""
 
-#: views.py:676
+#: views.py:686
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:1180
+#: views.py:1190
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1186
+#: views.py:1196
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1205
+#: views.py:1215
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""

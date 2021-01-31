@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-24 18:35+0000\n"
+"POT-Creation-Date: 2021-01-31 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2021\n"
 "Language-Team: French (Canada) (https://www.transifex.com/open-edx/teams/6205/fr_CA/)\n"
@@ -429,10 +429,6 @@ msgstr ""
 "    Vous devriez réessayer cet examen d'intégration.\n"
 "  "
 
-#: templates/onboarding_exam/error.html:20
-msgid "Try again"
-msgstr "Essayer de nouveau"
-
 #: templates/onboarding_exam/ready_to_submit.html:6
 #, python-format
 msgid ""
@@ -473,10 +469,14 @@ msgstr ""
 
 #: templates/onboarding_exam/rejected.html:22
 #: templates/onboarding_exam/submitted.html:42
+#: templates/practice_exam/error.html:29
+#: templates/practice_exam/submitted.html:18
 msgid "Retry my exam"
 msgstr "Réessayer mon examen"
 
 #: templates/onboarding_exam/rejected.html:23
+#: templates/practice_exam/error.html:30
+#: templates/practice_exam/submitted.html:19
 msgid "Resetting Onboarding Exam"
 msgstr "Réinitialisation de l'examen d'intégration"
 
@@ -667,10 +667,6 @@ msgstr ""
 "        Vous pouvez réessayer cet examen de pratique si vous rencontrez des problèmes lors de la configuration du logiciel de surveillance en ligne.\n"
 "      "
 
-#: templates/practice_exam/error.html:32
-msgid "Try this practice exam again"
-msgstr "Réessayer cet examen pratique"
-
 #: templates/practice_exam/submitted.html:5
 msgid ""
 "\n"
@@ -692,10 +688,6 @@ msgstr ""
 "        Les examens de pratique n'affectent pas votre note.\n"
 "        Vous avez terminé cet examen de pratique et pouvez continuer votre travail de cours.\n"
 "      "
-
-#: templates/practice_exam/submitted.html:19
-msgid "You can also retry this practice exam"
-msgstr "Vous pouvez également réessayer cet examen pratique"
 
 #: templates/proctored_exam/confirm-decline.html:5
 msgid ""
@@ -1748,42 +1740,46 @@ msgstr "Paramètre de requête obligatoire course_id manquant"
 msgid "There is no onboarding exam related to this course id."
 msgstr "Il n'y a pas d'examen d'intégration lié à cet identifiant de cours."
 
-#: views.py:443 views.py:685
+#: views.py:365
+msgid "There is no exam accessible to this user."
+msgstr ""
+
+#: views.py:453 views.py:695
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "il vous reste {remaining_time}"
 
-#: views.py:449
+#: views.py:459
 msgid "you have less than a minute remaining"
 msgstr "il vous reste moins d'une minute"
 
-#: views.py:674
+#: views.py:684
 msgid "a timed exam"
 msgstr "un examen chronométré"
 
-#: views.py:675
+#: views.py:685
 msgid "a proctored exam"
 msgstr "un examen surveillé"
 
-#: views.py:676
+#: views.py:686
 msgid "an onboarding exam"
 msgstr "un examen d'intégration"
 
-#: views.py:676
+#: views.py:686
 msgid "a practice exam"
 msgstr "un examen de pratique"
 
-#: views.py:1180
+#: views.py:1190
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "Aucun examen dans le cours {course_id}."
 
-#: views.py:1186
+#: views.py:1196
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "Aucun examen surveillé dans le cours {course_id}"
 
-#: views.py:1205
+#: views.py:1215
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "Aucun tableau de bord d'instructeur pour {proctor_service}"
