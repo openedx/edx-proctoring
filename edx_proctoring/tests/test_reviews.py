@@ -5,6 +5,7 @@ Review callback tests
 import json
 
 import ddt
+import mock
 from crum import set_current_request
 from mock import call, patch
 
@@ -545,8 +546,12 @@ class ReviewTests(LoggedInTestCase):
         self.assertTrue(review.is_attempt_active)
 
         # now delete the attempt, which puts it into the archive table
-        remove_exam_attempt(self.attempt_id, requesting_user=self.user)
+        with mock.patch('edx_proctoring.api.update_attempt_status') as mock_update_status:
+            remove_exam_attempt(self.attempt_id, requesting_user=self.user)
 
         # check that the field has been updated
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
         self.assertFalse(review.is_attempt_active)
+
+        # check that update_attempt_status has not been called, as the attempt has been archived
+        mock_update_status.assert_not_called()
