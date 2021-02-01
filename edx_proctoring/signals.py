@@ -2,7 +2,7 @@
 
 import logging
 
-from django.db.models.signals import post_save, pre_delete, pre_save
+from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
 from edx_proctoring import api, constants, models
@@ -119,19 +119,23 @@ def on_attempt_changed(sender, instance, signal, **kwargs):  # pylint: disable=u
             result = backend.remove_exam_attempt(instance.proctored_exam.external_id, instance.external_id)
             if not result:
                 log.error(u'Failed to remove attempt %d from %s', instance.id, backend.verbose_name)
-
-        # check to see if there is a review that should be updated
-        current_review = models.ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(
-            attempt_code=instance.attempt_code
-        )
-        # archive attempt before updating the review
-        models.archive_model(models.ProctoredExamStudentAttemptHistory, instance, id='attempt_id')
-        if current_review:
-            # update field to note that attempt is no longer active
-            current_review.is_attempt_active = False
-            current_review.save()
-        return
     models.archive_model(models.ProctoredExamStudentAttemptHistory, instance, id='attempt_id')
+
+
+@receiver(post_delete, sender=models.ProctoredExamStudentAttempt)
+def finish_attempt_flow(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
+    """
+    After an attempt has been archived, update the associated review if needed
+    """
+    # check to see if there is a review that should be updated
+    # should be fine to use instance here, as we are not looking for the exact object in a db
+    current_review = models.ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(
+        attempt_code=instance.attempt_code
+    )
+    if current_review:
+        # update field to note that attempt is no longer active
+        current_review.is_attempt_active = False
+        current_review.save()
 
 
 # Hook up the signals to record updates/deletions in the ProctoredExamSoftwareSecureReview table.

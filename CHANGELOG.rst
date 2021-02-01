@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.6.6] - 2021-02-01
+~~~~~~~~~~~~~~~~~~~~~
+* Bug fix for issue that prevented exam resets
+
 [2.6.5] - 2021-01-28
 ~~~~~~~~~~~~~~~~~~~~~
 * Update error interstitial to use the reset_exam_attempt flow that is used for other
