@@ -1,7 +1,6 @@
 # This file describes this Open edX repo, as described in OEP-2:
 # http://open-edx-proposals.readthedocs.io/en/latest/oeps/oep-0002.html#specification
 
-nick: proc
 tags:
     - lms
     - library
@@ -11,6 +10,3 @@ oeps:
     oep-7: true   # Python 3
     oep-18: true  # Dependency management
     oep-30: true  # PII annotation
-owner:
-    type: team
-    team: edx/masters-devs
