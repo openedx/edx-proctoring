@@ -350,7 +350,8 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             is_practice_exam=True,
             is_proctored=True
         ).order_by('-created').first()
-        if not onboarding_exam:
+        if (not onboarding_exam
+                or not get_backend_provider(name=onboarding_exam.backend).supports_onboarding):
             return Response(
                 status=404,
                 data={'detail': _('There is no onboarding exam related to this course id.')}

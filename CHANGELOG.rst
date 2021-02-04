@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[2.6.7] - 2021-02-04
+~~~~~~~~~~~~~~~~~~~~~
+* Bug fix for onboarding info panel showing for all proctoring backends, independent of support for onboardin exams
+
 [2.6.6] - 2021-02-01
 ~~~~~~~~~~~~~~~~~~~~~
 * Bug fix for issue that prevented exam resets
