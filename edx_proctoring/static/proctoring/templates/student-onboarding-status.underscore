@@ -1,0 +1,139 @@
+<div class="wrapper-content wrapper">
+    <style>
+        .filter-form {
+            display: flex;
+            align-items: baseline;
+        }
+
+        .status-checkboxes {
+            list-style-type: none;
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0;
+            padding: 0;
+        }
+
+        .status-checkboxes li {
+            display: flex;
+            align-items: baseline;
+            margin: 10px 20px 10px 0;
+        }
+
+        .status-checkboxes li input {
+            margin-right: 5px;
+        }
+
+        .clear-filters {
+            margin-left: 10px;
+        }
+
+        .no-onboarding-data {
+            margin: 20px;
+            font-weight: bold;
+        }
+    </style>
+    <% var isOnboardingItems = onboardingItems.length !== 0 %>
+        <div class="content onboarding-status-content">
+            <div class="top-header">
+                <div class="search-onboarding">
+                    <input type="text" id="search_onboarding_id" placeholder="e.g johndoe or john.doe@gmail.com"
+                    <% if (inSearchMode) { %>
+                        value="<%= searchText %>"
+                    <%} %>
+                    />
+                    <span class="search"><span class="icon fa fa-search" aria-hidden="true"></span></span>
+                    <span class="clear-search"><span class="icon fa fa-remove" aria-hidden="true"></span></span>
+                </div>
+                <ul class="pagination">
+                    <% if (!previousPage){ %>
+                    <li class="disabled">
+                    <a aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <% } else { %>
+                    <li>
+                        <a class="target-link " data-page-number="<%= currentPage - 1 %>"
+                        href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <% }%>
+                    <% for(var n = startPage; n <= endPage; n++) { %>
+                        <li>
+                            <a class="target-link <% if (currentPage == n){ %> active <% } %>" data-page-number="<%= n %>" href="#">
+                                <%= n %>
+                            </a>
+                        </li>
+                    <% } %>
+                    <% if (!nextPage){ %>
+                    <li class="disabled">
+                    <a aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                    <% } else { %>
+                    <li>
+                    <a class="target-link" href="#" aria-label="Next" data-page-number="<%= currentPage + 1 %>"
+                    >
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                    </li>
+                    <% }%>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <form class="filter-form">
+                <ul class="status-checkboxes">
+                    <% _.each(onboardingStatuses, function(status){ %>
+                        <li>
+                            <input type="checkbox" id="<%= status %>" name="status-filters" value="<%= status %>" 
+                            <% if (filters.includes(status)) { %>checked="true"<% } %>>
+                            <label for="<%= status %>">
+                                <%- interpolate(gettext(" %(onboardingStatus)s "), 
+                                { onboardingStatus: getOnboardingStatus(status) }, true) %>
+                            </label>
+                        </li>
+                    <% }); %>
+                </ul>
+                <button type="submit">Apply Filters</button>
+                <button type="button" class="clear-filters" aria-hidden="true">
+                    <span class="icon fa fa-remove"></span>
+                </button>
+            </form>
+            <table class="onboarding-status-table">
+                <thead>
+                    <tr class="onboarding-status-headings">
+                        <th class="username-heading"><%- gettext("Username") %></th>
+                        <th class="onboarding-status-heading"><%- gettext("Onboarding Status") %></th>
+                        <th class="last-updated-heading"><%- gettext("Last Modified") %> </th>
+                    </tr>
+                </thead>
+                <% if (isOnboardingItems) { %>
+                <tbody>
+                    <% _.each(onboardingItems, function(item){ %>
+                        <tr class="onboarding-items">
+                            <td>
+                                <%- interpolate(gettext(" %(username)s "), { username: item.username }, true) %>
+                            </td>
+                            <td>
+                                <%- interpolate(gettext(" %(onboardingStatus)s "), 
+                                { onboardingStatus: getOnboardingStatus(item.status) }, true) %>
+                            </td>
+                            <td><%= getDateFormat(item.modified) %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+                <% } %>
+            </table>
+            <% if (!isOnboardingItems) { %>
+                <p class="no-onboarding-data">
+                    There are no learners <% if (filters.length > 0 || searchText) { %>
+                        who fit this criteria.
+                    <%} else {%>
+                        in this course who require onboarding exams.
+                    <%} %>
+                </p>
+            <% } %>
+        </div>
+</div>
