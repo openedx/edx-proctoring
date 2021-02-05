@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+
+[3.0.0] - 2021-02-05
+~~~~~~~~~~~~~~~~~~~~~
+* Update the secret key to the proctoring specific one so we are fixing for the learners being impacted by rotated django secret.
+
 [2.6.7] - 2021-02-04
 ~~~~~~~~~~~~~~~~~~~~~
 * Bug fix for onboarding info panel showing for all proctoring backends, independent of support for onboardin exams
