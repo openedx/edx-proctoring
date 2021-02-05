@@ -222,7 +222,7 @@ def obscured_user_id(user_id, *extra):
     Obscures the user id, returning a sha1 hash
     Any extra information can be added to the hash
     """
-    obs_hash = hmac.new(settings.SECRET_KEY.encode('ascii'), digestmod=hashlib.sha1)
+    obs_hash = hmac.new(settings.PROCTORING_USER_OBFUSCATION_KEY.encode('ascii'), digestmod=hashlib.sha1)
     obs_hash.update(str(user_id).encode('utf-8'))
     obs_hash.update(b''.join(str(ext).encode('utf-8') for ext in extra))
     return obs_hash.hexdigest()
