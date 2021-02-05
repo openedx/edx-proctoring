@@ -13,6 +13,8 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add a script to generate obscure_user_ids for proctoring vendors to use.
+
 
 [3.6.2] - 2021-02-22
 ~~~~~~~~~~~~~~~~~~~~
