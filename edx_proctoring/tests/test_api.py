@@ -753,7 +753,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = stop_exam_attempt(
-            proctored_exam_student_attempt.proctored_exam.id, self.user_id
+            proctored_exam_student_attempt.id
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
@@ -801,8 +801,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             to_status
         )
 
@@ -895,7 +894,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         Stop an exam attempt that had not started yet.
         """
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            stop_exam_attempt(self.proctored_exam_id, self.user_id)
+            stop_exam_attempt(0)
 
     def test_mark_exam_attempt_timeout(self):
         """
@@ -903,12 +902,12 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
 
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            mark_exam_attempt_timeout(self.proctored_exam_id, self.user_id)
+            mark_exam_attempt_timeout(0)
 
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = mark_exam_attempt_timeout(
-            proctored_exam_student_attempt.proctored_exam.id, self.user_id
+            proctored_exam_student_attempt.id
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
@@ -918,12 +917,12 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
 
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            mark_exam_attempt_as_ready(self.proctored_exam_id, self.user_id)
+            mark_exam_attempt_as_ready(0)
 
         proctored_exam_student_attempt = self._create_unstarted_exam_attempt()
         self.assertIsNone(proctored_exam_student_attempt.completed_at)
         proctored_exam_attempt_id = mark_exam_attempt_as_ready(
-            proctored_exam_student_attempt.proctored_exam.id, self.user_id
+            proctored_exam_student_attempt.id
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
@@ -987,9 +986,9 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         # create the second attempt, transitioning from error to ready_to_resume
         second_exam_attempt_id = create_exam_attempt(exam_id=self.proctored_exam_id, user_id=self.user_id)
-        update_attempt_status(self.proctored_exam_id, self.user_id, ProctoredExamStudentAttemptStatus.error)
+        update_attempt_status(second_exam_attempt_id, ProctoredExamStudentAttemptStatus.error)
         update_exam_attempt(second_exam_attempt_id, time_remaining_seconds=500)
-        update_attempt_status(self.proctored_exam_id, self.user_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
+        update_attempt_status(second_exam_attempt_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
         # create the third attempt, then assert that all attempts return correctly
         third_exam_attempt_id = create_exam_attempt(exam_id=self.proctored_exam_id, user_id=self.user_id)
         all_attempts = get_filtered_exam_attempts(self.course_id, self.user.username)
@@ -1067,8 +1066,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.submitted
         )
 
@@ -1088,8 +1086,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.error
         )
 
@@ -1132,6 +1129,12 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             True,
             ProctoredExamStudentAttemptStatus.submitted,
             ProctoredExamStudentAttemptStatus.submitted
+        ),
+        (
+            ProctoredExamStudentAttemptStatus.declined,
+            True,
+            ProctoredExamStudentAttemptStatus.created,
+            ProctoredExamStudentAttemptStatus.declined
         ),
     )
     @ddt.unpack
@@ -1181,15 +1184,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
 
         if create_attempt:
-            create_exam_attempt(second_exam_id, self.user_id, taking_as_proctored=False)
+            attempt_id = create_exam_attempt(second_exam_id, self.user_id, taking_as_proctored=False)
 
             if second_attempt_status:
-                update_attempt_status(second_exam_id, self.user_id, second_attempt_status)
+                update_attempt_status(attempt_id, second_attempt_status)
 
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             to_status
         )
 
@@ -1231,8 +1233,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
 
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.rejected
         )
 
@@ -1292,8 +1293,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         # will remove the override for the learner's subsection grade on the exam that was created
         # when the attempt entered the rejected state.
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.verified
         )
 
@@ -1328,8 +1328,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         set_runtime_service('grades', grades_service)
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.rejected,
             update_attributable_to=self.user
         )
@@ -1347,8 +1346,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         set_runtime_service('grades', grades_service)
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.rejected
         )
 
@@ -1375,8 +1373,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
 
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.rejected
         )
 
@@ -1406,8 +1403,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         # Transitioning from rejected to verified will also have no effect
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.verified
         )
 
@@ -1452,15 +1448,13 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             from_status
         )
 
         with self.assertRaises(ProctoredExamIllegalStatusTransition):
             update_attempt_status(
-                exam_attempt.proctored_exam_id,
-                self.user.id,
+                exam_attempt.id,
                 to_status
             )
 
@@ -1473,8 +1467,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_attempt = self._create_started_exam_attempt()
         random_timestamp = datetime.now(pytz.UTC) - timedelta(hours=4)
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.timed_out,
             timeout_timestamp=random_timestamp
         )
@@ -1515,8 +1508,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_attempt = self._create_exam_attempt(self.proctored_exam_id, from_status)
 
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             to_status,
         )
         exam_attempt = get_exam_attempt_by_id(exam_attempt.id)
@@ -1540,8 +1532,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_attempt.proctored_exam.save()
 
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.started
         )
 
@@ -1565,8 +1556,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_attempt = self._create_started_exam_attempt()
         random_timestamp = datetime.now(pytz.UTC) - timedelta(hours=4)
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.timed_out,
             timeout_timestamp=random_timestamp
         )
@@ -1589,12 +1579,11 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
 
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
-            update_attempt_status(0, 0, ProctoredExamStudentAttemptStatus.timed_out)
+            update_attempt_status(0, ProctoredExamStudentAttemptStatus.timed_out)
 
         # also check the raise_if_not_found flag
         self.assertIsNone(
             update_attempt_status(
-                0,
                 0,
                 ProctoredExamStudentAttemptStatus.timed_out,
                 raise_if_not_found=False
@@ -1608,8 +1597,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_attempt = self._create_started_exam_attempt()
         set_runtime_service('credit', MockCreditServiceNone())
         new_attempt = update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.verified
         )
 
@@ -1730,8 +1718,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         exam_attempt = self._create_exam_attempt(self.proctored_exam_id)
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             status
         )
 
@@ -1777,8 +1764,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         exam_attempt = self._create_started_practice_exam_attempt()
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             status
         )
 
@@ -1851,8 +1837,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_attempt = self._create_started_practice_exam_attempt()
 
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             status
         )
 
@@ -2001,8 +1986,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         with self.assertRaises(ProctoredExamIllegalStatusTransition):
             update_attempt_status(
-                exam_attempt.proctored_exam_id,
-                self.user.id,
+                exam_attempt.id,
                 ProctoredExamStudentAttemptStatus.ready_to_resume
             )
 
@@ -2018,8 +2002,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.started)
 
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.error
         )
 
@@ -2027,8 +2010,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
 
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.ready_to_resume
         )
 
@@ -2058,8 +2040,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         with self.assertRaises(ProctoredExamIllegalStatusTransition):
             update_attempt_status(
-                exam_attempt.proctored_exam_id,
-                self.user.id,
+                exam_attempt.id,
                 ProctoredExamStudentAttemptStatus.resumed
             )
 
@@ -2074,8 +2055,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         exam_attempt = self._create_exam_attempt(self.proctored_exam_id, status=from_status)
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.resumed
         )
         attempt = get_exam_attempt_by_id(exam_attempt.id)
@@ -2429,9 +2409,9 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         assert get_exam_attempt_by_id(attempt_id)['status'] == ProctoredExamStudentAttemptStatus.onboarding_missing
 
         # now create the practice attempt
-        create_exam_attempt(self.onboarding_exam_id, self.user_id)
+        onboarding_attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id)
         # and move the status to verified
-        update_attempt_status(self.onboarding_exam_id, self.user_id, ProctoredExamStudentAttemptStatus.verified)
+        update_attempt_status(onboarding_attempt_id, ProctoredExamStudentAttemptStatus.verified)
         # now the original attempt will be deleted
         assert get_exam_attempt_by_id(attempt_id) is None
         # ensure that the attempt is still in the history table

@@ -14,18 +14,11 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '-e',
-            '--exam',
-            metavar='EXAM_ID',
-            dest='exam_id',
-            help='exam_id to change',
-        )
-        parser.add_argument(
-            '-u',
-            '--user',
-            metavar='USER',
-            dest='user_id',
-            help='user_id of user to affect',
+            '-a',
+            '--attempt',
+            metavar='ATTEMPT_ID',
+            dest='attempt_id',
+            help='attempt_id to change',
         )
         parser.add_argument(
             '-t',
@@ -40,17 +33,15 @@ class Command(BaseCommand):
         Management command entry point, simply call into the signal firiing
         """
         # pylint: disable=import-outside-toplevel
-        from edx_proctoring.api import get_exam_by_id, update_attempt_status
+        from edx_proctoring.api import update_attempt_status
 
-        exam_id = options['exam_id']
-        user_id = options['user_id']
+        attempt_id = options['attempt_id']
         to_status = options['to_status']
 
         msg = (
-            u'Running management command to update user {user_id} '
-            u'attempt status on exam_id {exam_id} to {to_status}'.format(
-                user_id=user_id,
-                exam_id=exam_id,
+            u'Running management command to update '
+            u'attempt {attempt_id} status to {to_status}'.format(
+                attempt_id=attempt_id,
                 to_status=to_status
             )
         )
@@ -59,9 +50,6 @@ class Command(BaseCommand):
         if not ProctoredExamStudentAttemptStatus.is_valid_status(to_status):
             raise CommandError(u'{to_status} is not a valid attempt status!'.format(to_status=to_status))
 
-        # get exam, this will throw exception if does not exist, so let it bomb out
-        get_exam_by_id(exam_id)
-
-        update_attempt_status(exam_id, user_id, to_status)
+        update_attempt_status(attempt_id, to_status)
 
         self.stdout.write('Completed!')

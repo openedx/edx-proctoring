@@ -189,8 +189,7 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
         # (i.e. updating credit eligibility table)
         # archived attempts should not trigger the workflow
         api.update_attempt_status(
-            attempt['proctored_exam']['id'],
-            attempt['user']['id'],
+            attempt['id'],
             attempt_status,
             raise_if_not_found=False,
             update_attributable_to=review.reviewed_by or None

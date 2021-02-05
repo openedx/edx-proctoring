@@ -440,8 +440,7 @@ def _check_for_attempt_timeout(attempt):
 
         if has_time_expired:
             update_attempt_status(
-                attempt['proctored_exam']['id'],
-                attempt['user']['id'],
+                attempt['id'],
                 ProctoredExamStudentAttemptStatus.timed_out,
                 timeout_timestamp=expires_at
             )
@@ -563,10 +562,9 @@ def _create_and_decline_attempt(exam_id, user_id):
     it will auto-decline further exams too
     """
 
-    create_exam_attempt(exam_id, user_id)
+    attempt_id = create_exam_attempt(exam_id, user_id)
     update_attempt_status(
-        exam_id,
-        user_id,
+        attempt_id,
         ProctoredExamStudentAttemptStatus.declined,
         raise_if_not_found=False
     )
@@ -698,7 +696,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         if ProctoredExamStudentAttemptStatus.is_resume_status(existing_attempt.status):
             # save remaining time and mark the most recent attempt as resumed, if it isn't already
             time_remaining_seconds = existing_attempt.time_remaining_seconds
-            mark_exam_attempt_as_resumed(exam_id, user_id)
+            mark_exam_attempt_as_resumed(existing_attempt.id)
         elif not existing_attempt.is_sample_attempt:
             err_msg = (
                 'Cannot create new exam attempt for exam_id = {exam_id} and '
@@ -815,40 +813,39 @@ def _start_exam_attempt(existing_attempt):
         raise StudentExamAttemptedAlreadyStarted(err_msg)
 
     update_attempt_status(
-        existing_attempt.proctored_exam_id,
-        existing_attempt.user_id,
+        existing_attempt.id,
         ProctoredExamStudentAttemptStatus.started
     )
 
     return existing_attempt.id
 
 
-def stop_exam_attempt(exam_id, user_id):
+def stop_exam_attempt(attempt_id):
     """
     Marks the exam attempt as completed (sets the completed_at field and updates the record)
     """
-    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_submit)
+    return update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.ready_to_submit)
 
 
-def mark_exam_attempt_timeout(exam_id, user_id):
+def mark_exam_attempt_timeout(attempt_id):
     """
     Marks the exam attempt as timed_out
     """
-    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.timed_out)
+    return update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.timed_out)
 
 
-def mark_exam_attempt_as_ready(exam_id, user_id):
+def mark_exam_attempt_as_ready(attempt_id):
     """
     Marks the exam attemp as ready to start
     """
-    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.ready_to_start)
+    return update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.ready_to_start)
 
 
-def mark_exam_attempt_as_resumed(exam_id, user_id):
+def mark_exam_attempt_as_resumed(attempt_id):
     """
     Marks the current exam attempt as resumed
     """
-    return update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.resumed)
+    return update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.resumed)
 
 
 def is_state_transition_legal(from_status, to_status):
@@ -881,17 +878,21 @@ def is_state_transition_legal(from_status, to_status):
 
 
 # pylint: disable=inconsistent-return-statements
-def update_attempt_status(exam_id, user_id, to_status,
+def update_attempt_status(attempt_id, to_status,
                           raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None,
                           update_attributable_to=None):
     """
     Internal helper to handle state transitions of attempt status
     """
-    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+
     if exam_attempt_obj is None:
         if raise_if_not_found:
             raise StudentExamAttemptDoesNotExistsException('Error. Trying to look up an exam that does not exist.')
         return
+
+    exam_id = exam_attempt_obj.proctored_exam.id
+    user_id = exam_attempt_obj.user.id
 
     from_status = exam_attempt_obj.status
 
@@ -1021,12 +1022,13 @@ def update_attempt_status(exam_id, user_id, to_status,
                 continue
 
             if not attempt:
-                create_exam_attempt(other_exam.id, user_id, taking_as_proctored=False)
+                current_attempt_id = create_exam_attempt(other_exam.id, user_id, taking_as_proctored=False)
+            else:
+                current_attempt_id = attempt['id']
 
             # update any new or existing status to declined
             update_attempt_status(
-                other_exam.id,
-                user_id,
+                current_attempt_id,
                 ProctoredExamStudentAttemptStatus.declined,
                 cascade_effects=False
             )
@@ -1136,7 +1138,7 @@ def update_attempt_status(exam_id, user_id, to_status,
     # emit an anlytics event based on the state transition
     # we re-read this from the database in case fields got updated
     # via workflow
-    attempt = get_current_exam_attempt(exam_id, user_id)
+    attempt = get_exam_attempt_by_id(attempt_id)
 
     # call back to the backend to register the end of the exam, if necessary
     if backend:
