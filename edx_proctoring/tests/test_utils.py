@@ -11,7 +11,13 @@ import pytz
 from freezegun import freeze_time
 
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_proctoring.utils import _emit_event, get_time_remaining_for_attempt, humanized_time, is_reattempting_exam
+from edx_proctoring.utils import (
+    _emit_event,
+    get_time_remaining_for_attempt,
+    humanized_time,
+    is_reattempting_exam,
+    obscured_user_id
+)
 
 
 class TestGetTimeRemainingForAttempt(unittest.TestCase):
@@ -144,3 +150,8 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(
             is_reattempting_exam(from_status, 'foo')
         )
+
+    def test_obscured_user_id(self):
+        user_id = 32432455
+        expected_obscured_user_id = '9b82efd5d28f1a170b23b8f648c3093e75a0a0ca'
+        self.assertEqual(expected_obscured_user_id, obscured_user_id(user_id))
