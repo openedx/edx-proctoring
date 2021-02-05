@@ -15,7 +15,7 @@ Unreleased
 ~~~~~~~~~~
 
 
-[2.6.8] - 2021-02-05
+[3.0.0] - 2021-02-05
 ~~~~~~~~~~~~~~~~~~~~~
 * Update the secret key to the proctoring specific one so we are fixing for the learners being impacted by rotated django secret.
 
