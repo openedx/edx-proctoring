@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-31 18:35+0000\n"
+"POT-Creation-Date: 2021-02-07 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Cátia Lopes <catia.lopes@bridgelk.com>, 2021\n"
 "Language-Team: Portuguese (Portugal) (https://www.transifex.com/open-edx/teams/6205/pt_PT/)\n"
@@ -1333,50 +1333,50 @@ msgstr ""
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:356
+#: views.py:357
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:365
+#: views.py:366
 msgid "There is no exam accessible to this user."
 msgstr ""
 
-#: views.py:453 views.py:695
+#: views.py:454 views.py:696
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr ""
 
-#: views.py:459
+#: views.py:460
 msgid "you have less than a minute remaining"
 msgstr ""
 
-#: views.py:684
+#: views.py:685
 msgid "a timed exam"
 msgstr ""
 
-#: views.py:685
+#: views.py:686
 msgid "a proctored exam"
 msgstr ""
 
-#: views.py:686
+#: views.py:687
 msgid "an onboarding exam"
 msgstr ""
 
-#: views.py:686
+#: views.py:687
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:1190
+#: views.py:1191
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1196
+#: views.py:1197
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1215
+#: views.py:1216
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
