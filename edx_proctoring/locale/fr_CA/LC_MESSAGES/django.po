@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-31 18:35+0000\n"
+"POT-Creation-Date: 2021-02-07 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2021\n"
 "Language-Team: French (Canada) (https://www.transifex.com/open-edx/teams/6205/fr_CA/)\n"
@@ -1736,50 +1736,50 @@ msgstr ""
 msgid "Missing required query parameter course_id"
 msgstr "Paramètre de requête obligatoire course_id manquant"
 
-#: views.py:356
+#: views.py:357
 msgid "There is no onboarding exam related to this course id."
 msgstr "Il n'y a pas d'examen d'intégration lié à cet identifiant de cours."
 
-#: views.py:365
+#: views.py:366
 msgid "There is no exam accessible to this user."
 msgstr ""
 
-#: views.py:453 views.py:695
+#: views.py:454 views.py:696
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "il vous reste {remaining_time}"
 
-#: views.py:459
+#: views.py:460
 msgid "you have less than a minute remaining"
 msgstr "il vous reste moins d'une minute"
 
-#: views.py:684
+#: views.py:685
 msgid "a timed exam"
 msgstr "un examen chronométré"
 
-#: views.py:685
+#: views.py:686
 msgid "a proctored exam"
 msgstr "un examen surveillé"
 
-#: views.py:686
+#: views.py:687
 msgid "an onboarding exam"
 msgstr "un examen d'intégration"
 
-#: views.py:686
+#: views.py:687
 msgid "a practice exam"
 msgstr "un examen de pratique"
 
-#: views.py:1190
+#: views.py:1191
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "Aucun examen dans le cours {course_id}."
 
-#: views.py:1196
+#: views.py:1197
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "Aucun examen surveillé dans le cours {course_id}"
 
-#: views.py:1215
+#: views.py:1216
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "Aucun tableau de bord d'instructeur pour {proctor_service}"
