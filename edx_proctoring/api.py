@@ -877,6 +877,47 @@ def is_state_transition_legal(from_status, to_status):
     return True
 
 
+def can_update_credit_grades_and_email(attempts, to_status):
+    """
+    Determine and return as a boolean whether an attempt should trigger an update to credit and grades
+
+    Arguments:
+        attempts: a list of all currently active attempts for a given user_id and exam_id
+        to_status: future status of a proctored exam attempt
+    """
+    statuses = [attempt['status'] for attempt in attempts]
+    if len(statuses) == 1:
+        # if there is only one attempt for a user in an exam, it can be responsible for updates to credits and grades
+        return True
+    if to_status in [ProctoredExamStudentAttemptStatus.declined, ProctoredExamStudentAttemptStatus.error]:
+        # can only decline/error the most recent attempt, so return true
+        # these should not send emails but will update credits and grades
+        return True
+    if to_status == ProctoredExamStudentAttemptStatus.submitted:
+        # we only want to update a submitted status if there are no rejected past attempts
+        for status in statuses:
+            if status == ProctoredExamStudentAttemptStatus.rejected:
+                return False
+        return True
+    if to_status == ProctoredExamStudentAttemptStatus.verified:
+        # if we are updating an attempt to verified, we can only return true if all other attempts are verified
+        for status in statuses:
+            if status != ProctoredExamStudentAttemptStatus.verified:
+                return False
+        return True
+    if to_status == ProctoredExamStudentAttemptStatus.rejected:
+        if (
+            statuses.count(ProctoredExamStudentAttemptStatus.rejected) > 1 or
+            ProctoredExamStudentAttemptStatus.declined in statuses
+        ):
+            # if there is more than one rejection, do not update grades/certificate/email again
+            # or if there is a declined status, do not update grades/certificate/email again
+            return False
+        return True
+
+    return False
+
+
 # pylint: disable=inconsistent-return-statements
 def update_attempt_status(attempt_id, to_status,
                           raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None,
@@ -913,6 +954,7 @@ def update_attempt_status(attempt_id, to_status,
         to_status = ProctoredExamStudentAttemptStatus.submitted
 
     exam = get_exam_by_id(exam_id)
+    backend = get_backend_provider(exam)
 
     if not is_state_transition_legal(from_status, to_status):
         illegal_status_transition_msg = (
@@ -950,190 +992,192 @@ def update_attempt_status(attempt_id, to_status,
 
     exam_attempt_obj.save()
 
-    # see if the status transition this changes credit requirement status
-    if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
+    all_attempts = get_user_attempts_by_exam_id(user_id, exam_id)
 
-        # trigger credit workflow, as needed
-        credit_service = get_runtime_service('credit')
+    if can_update_credit_grades_and_email(all_attempts, to_status):
 
-        if to_status == ProctoredExamStudentAttemptStatus.verified:
-            credit_requirement_status = 'satisfied'
-        elif to_status == ProctoredExamStudentAttemptStatus.submitted:
-            credit_requirement_status = 'submitted'
-        elif to_status == ProctoredExamStudentAttemptStatus.declined:
-            credit_requirement_status = 'declined'
-        else:
-            credit_requirement_status = 'failed'
+        # see if the status transition this changes credit requirement status
+        if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
 
-        log_msg = (
-            u'Calling set_credit_requirement_status for '
-            u'user_id {user_id} on {course_id} for '
-            u'content_id {content_id}. Status: {status}'.format(
+            # trigger credit workflow, as needed
+            credit_service = get_runtime_service('credit')
+
+            if to_status == ProctoredExamStudentAttemptStatus.verified:
+                credit_requirement_status = 'satisfied'
+            elif to_status == ProctoredExamStudentAttemptStatus.submitted:
+                credit_requirement_status = 'submitted'
+            elif to_status == ProctoredExamStudentAttemptStatus.declined:
+                credit_requirement_status = 'declined'
+            else:
+                credit_requirement_status = 'failed'
+
+            log_msg = (
+                u'Calling set_credit_requirement_status for '
+                u'user_id {user_id} on {course_id} for '
+                u'content_id {content_id}. Status: {status}'.format(
+                    user_id=exam_attempt_obj.user_id,
+                    course_id=exam['course_id'],
+                    content_id=exam_attempt_obj.proctored_exam.content_id,
+                    status=credit_requirement_status
+                )
+            )
+            log.info(log_msg)
+
+            credit_service.set_credit_requirement_status(
                 user_id=exam_attempt_obj.user_id,
-                course_id=exam['course_id'],
-                content_id=exam_attempt_obj.proctored_exam.content_id,
+                course_key_or_id=exam['course_id'],
+                req_namespace='proctored_exam',
+                req_name=exam_attempt_obj.proctored_exam.content_id,
                 status=credit_requirement_status
             )
-        )
-        log.info(log_msg)
 
-        credit_service.set_credit_requirement_status(
-            user_id=exam_attempt_obj.user_id,
-            course_key_or_id=exam['course_id'],
-            req_namespace='proctored_exam',
-            req_name=exam_attempt_obj.proctored_exam.content_id,
-            status=credit_requirement_status
-        )
+        if cascade_effects and ProctoredExamStudentAttemptStatus.is_a_cascadable_failure(to_status):
+            if to_status == ProctoredExamStudentAttemptStatus.declined:
+                # if user declines attempt, make sure we clear out the external_id and
+                # taking_as_proctored fields
+                exam_attempt_obj.taking_as_proctored = False
+                exam_attempt_obj.external_id = None
+                exam_attempt_obj.save()
 
-    if cascade_effects and ProctoredExamStudentAttemptStatus.is_a_cascadable_failure(to_status):
-        if to_status == ProctoredExamStudentAttemptStatus.declined:
-            # if user declines attempt, make sure we clear out the external_id and
-            # taking_as_proctored fields
-            exam_attempt_obj.taking_as_proctored = False
-            exam_attempt_obj.external_id = None
-            exam_attempt_obj.save()
-
-        # some state transitions (namely to a rejected or declined status)
-        # will mark other exams as declined because once we fail or decline
-        # one exam all other (un-completed) proctored exams will be likewise
-        # updated to reflect a declined status
-        # get all other unattempted exams and mark also as declined
-        all_other_exams = ProctoredExam.get_all_exams_for_course(
-            exam_attempt_obj.proctored_exam.course_id,
-            active_only=True
-        )
-
-        # we just want other exams which are proctored and are not practice
-        other_exams = [
-            other_exam
-            for other_exam in all_other_exams
-            if (
-                other_exam.content_id != exam_attempt_obj.proctored_exam.content_id and
-                other_exam.is_proctored and not other_exam.is_practice_exam
-            )
-        ]
-
-        for other_exam in other_exams:
-            # see if there was an attempt on those other exams already
-            attempt = get_current_exam_attempt(other_exam.id, user_id)
-            if attempt and ProctoredExamStudentAttemptStatus.is_completed_status(attempt['status']):
-                # don't touch any completed statuses
-                # we won't revoke those
-                continue
-
-            if not attempt:
-                current_attempt_id = create_exam_attempt(other_exam.id, user_id, taking_as_proctored=False)
-            else:
-                current_attempt_id = attempt['id']
-
-            # update any new or existing status to declined
-            update_attempt_status(
-                current_attempt_id,
-                ProctoredExamStudentAttemptStatus.declined,
-                cascade_effects=False
+            # some state transitions (namely to a rejected or declined status)
+            # will mark other exams as declined because once we fail or decline
+            # one exam all other (un-completed) proctored exams will be likewise
+            # updated to reflect a declined status
+            # get all other unattempted exams and mark also as declined
+            all_other_exams = ProctoredExam.get_all_exams_for_course(
+                exam_attempt_obj.proctored_exam.course_id,
+                active_only=True
             )
 
-    backend = get_backend_provider(exam)
+            # we just want other exams which are proctored and are not practice
+            other_exams = [
+                other_exam
+                for other_exam in all_other_exams
+                if (
+                    other_exam.content_id != exam_attempt_obj.proctored_exam.content_id and
+                    other_exam.is_proctored and not other_exam.is_practice_exam
+                )
+            ]
 
-    if ProctoredExamStudentAttemptStatus.needs_grade_override(to_status):
-        grades_service = get_runtime_service('grades')
+            for other_exam in other_exams:
+                # see if there was an attempt on those other exams already
+                attempt = get_current_exam_attempt(other_exam.id, user_id)
+                if attempt and ProctoredExamStudentAttemptStatus.is_completed_status(attempt['status']):
+                    # don't touch any completed statuses
+                    # we won't revoke those
+                    continue
 
-        if grades_service.should_override_grade_on_rejected_exam(exam['course_id']):
-            log_msg = (
-                u'Overriding exam subsection grade for '
-                u'user_id {user_id} on {course_id} for '
-                u'content_id {content_id}. Override '
-                u'earned_all: {earned_all}, '
-                u'earned_graded: {earned_graded}.'.format(
+                if not attempt:
+                    current_attempt_id = create_exam_attempt(other_exam.id, user_id, taking_as_proctored=False)
+                else:
+                    current_attempt_id = attempt['id']
+
+                # update any new or existing status to declined
+                update_attempt_status(
+                    current_attempt_id,
+                    ProctoredExamStudentAttemptStatus.declined,
+                    cascade_effects=False
+                )
+
+        if ProctoredExamStudentAttemptStatus.needs_grade_override(to_status):
+            grades_service = get_runtime_service('grades')
+
+            if grades_service.should_override_grade_on_rejected_exam(exam['course_id']):
+                log_msg = (
+                    u'Overriding exam subsection grade for '
+                    u'user_id {user_id} on {course_id} for '
+                    u'content_id {content_id}. Override '
+                    u'earned_all: {earned_all}, '
+                    u'earned_graded: {earned_graded}.'.format(
+                        user_id=exam_attempt_obj.user_id,
+                        course_id=exam['course_id'],
+                        content_id=exam_attempt_obj.proctored_exam.content_id,
+                        earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
+                        earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
+                    )
+                )
+                log.info(log_msg)
+
+                grades_service.override_subsection_grade(
                     user_id=exam_attempt_obj.user_id,
-                    course_id=exam['course_id'],
-                    content_id=exam_attempt_obj.proctored_exam.content_id,
+                    course_key_or_id=exam['course_id'],
+                    usage_key_or_id=exam_attempt_obj.proctored_exam.content_id,
                     earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
-                    earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
+                    earned_graded=REJECTED_GRADE_OVERRIDE_EARNED,
+                    overrider=update_attributable_to,
+                    comment=(u'Failed {backend} proctoring'.format(backend=backend.verbose_name)
+                             if backend
+                             else 'Failed Proctoring')
                 )
-            )
-            log.info(log_msg)
 
-            grades_service.override_subsection_grade(
-                user_id=exam_attempt_obj.user_id,
-                course_key_or_id=exam['course_id'],
-                usage_key_or_id=exam_attempt_obj.proctored_exam.content_id,
-                earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
-                earned_graded=REJECTED_GRADE_OVERRIDE_EARNED,
-                overrider=update_attributable_to,
-                comment=(u'Failed {backend} proctoring'.format(backend=backend.verbose_name)
-                         if backend
-                         else 'Failed Proctoring')
-            )
+                certificates_service = get_runtime_service('certificates')
 
-            certificates_service = get_runtime_service('certificates')
+                log.info(
+                    u'Invalidating certificate for user_id {user_id} in course {course_id} whose '
+                    u'grade dropped below passing threshold due to suspicious proctored exam'.format(
+                        user_id=exam_attempt_obj.user_id,
+                        course_id=exam['course_id']
+                    )
+                )
 
-            log.info(
-                u'Invalidating certificate for user_id {user_id} in course {course_id} whose '
-                u'grade dropped below passing threshold due to suspicious proctored exam'.format(
+                # invalidate certificate after overriding subsection grade
+                certificates_service.invalidate_certificate(
                     user_id=exam_attempt_obj.user_id,
-                    course_id=exam['course_id']
+                    course_key_or_id=exam['course_id']
                 )
-            )
 
-            # invalidate certificate after overriding subsection grade
-            certificates_service.invalidate_certificate(
-                user_id=exam_attempt_obj.user_id,
-                course_key_or_id=exam['course_id']
-            )
+        if (to_status == ProctoredExamStudentAttemptStatus.verified and
+                ProctoredExamStudentAttemptStatus.needs_grade_override(from_status)):
+            grades_service = get_runtime_service('grades')
 
-    if (to_status == ProctoredExamStudentAttemptStatus.verified and
-            ProctoredExamStudentAttemptStatus.needs_grade_override(from_status)):
-        grades_service = get_runtime_service('grades')
+            if grades_service.should_override_grade_on_rejected_exam(exam['course_id']):
+                log_msg = (
+                    u'Deleting override of exam subsection grade for '
+                    u'user_id {user_id} on {course_id} for '
+                    u'content_id {content_id}. Override '
+                    u'earned_all: {earned_all}, '
+                    u'earned_graded: {earned_graded}.'.format(
+                        user_id=exam_attempt_obj.user_id,
+                        course_id=exam['course_id'],
+                        content_id=exam_attempt_obj.proctored_exam.content_id,
+                        earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
+                        earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
+                    )
+                )
+                log.info(log_msg)
 
-        if grades_service.should_override_grade_on_rejected_exam(exam['course_id']):
-            log_msg = (
-                u'Deleting override of exam subsection grade for '
-                u'user_id {user_id} on {course_id} for '
-                u'content_id {content_id}. Override '
-                u'earned_all: {earned_all}, '
-                u'earned_graded: {earned_graded}.'.format(
+                grades_service.undo_override_subsection_grade(
                     user_id=exam_attempt_obj.user_id,
-                    course_id=exam['course_id'],
-                    content_id=exam_attempt_obj.proctored_exam.content_id,
-                    earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
-                    earned_graded=REJECTED_GRADE_OVERRIDE_EARNED
+                    course_key_or_id=exam['course_id'],
+                    usage_key_or_id=exam_attempt_obj.proctored_exam.content_id,
                 )
-            )
-            log.info(log_msg)
 
-            grades_service.undo_override_subsection_grade(
-                user_id=exam_attempt_obj.user_id,
-                course_key_or_id=exam['course_id'],
-                usage_key_or_id=exam_attempt_obj.proctored_exam.content_id,
-            )
-
-    # call service to get course name.
-    credit_service = get_runtime_service('credit')
-    credit_state = credit_service.get_credit_state(
-        exam_attempt_obj.user_id,
-        exam_attempt_obj.proctored_exam.course_id,
-        return_course_info=True
-    )
-
-    default_name = _('your course')
-    if credit_state:
-        course_name = credit_state.get('course_name', default_name)
-    else:
-        course_name = default_name
-        log.info(
-            u"Could not find credit_state for user id %r in the course %r.",
+        # call service to get course name.
+        credit_service = get_runtime_service('credit')
+        credit_state = credit_service.get_credit_state(
             exam_attempt_obj.user_id,
-            exam_attempt_obj.proctored_exam.course_id
+            exam_attempt_obj.proctored_exam.course_id,
+            return_course_info=True
         )
-    email = create_proctoring_attempt_status_email(
-        user_id,
-        exam_attempt_obj,
-        course_name,
-        exam['course_id']
-    )
-    if email:
-        email.send()
+
+        default_name = _('your course')
+        if credit_state:
+            course_name = credit_state.get('course_name', default_name)
+        else:
+            course_name = default_name
+            log.info(
+                u"Could not find credit_state for user id %r in the course %r.",
+                exam_attempt_obj.user_id,
+                exam_attempt_obj.proctored_exam.course_id
+            )
+        email = create_proctoring_attempt_status_email(
+            user_id,
+            exam_attempt_obj,
+            course_name,
+            exam['course_id']
+        )
+        if email:
+            email.send()
 
     # emit an anlytics event based on the state transition
     # we re-read this from the database in case fields got updated
@@ -1443,6 +1487,14 @@ def get_filtered_exam_attempts(course_id, search_by):
     """
     exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(course_id, search_by)
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
+
+
+def get_user_attempts_by_exam_id(user_id, exam_id):
+    """
+    Returns all exam attempts for a given user and exam
+    """
+    exam_attempts = ProctoredExamStudentAttempt.objects.get_user_attempts_by_exam_id(user_id, exam_id)
+    return [ProctoredExamStudentAttemptSerializer(active_attempt).data for active_attempt in exam_attempts]
 
 
 def get_last_exam_completion_date(course_id, username):

@@ -13,6 +13,8 @@ import pytz
 from freezegun import freeze_time
 from mock import MagicMock, patch
 
+from django.core import mail
+
 from edx_proctoring.api import (
     _are_prerequirements_satisfied,
     _check_for_attempt_timeout,
@@ -40,6 +42,7 @@ from edx_proctoring.api import (
     get_integration_specific_email,
     get_last_exam_completion_date,
     get_review_policy_by_exam_id,
+    get_user_attempts_by_exam_id,
     is_backend_dashboard_available,
     mark_exam_attempt_as_ready,
     mark_exam_attempt_timeout,
@@ -711,6 +714,25 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(exam_attempt['proctored_exam']['id'], self.proctored_exam_id)
         self.assertEqual(exam_attempt['user']['id'], self.user_id)
         self.assertEqual(exam_attempt['id'], recent_attempt.id)
+
+    def test_get_user_attempts_by_exam_id(self):
+        """
+        Test to get all attempts by exam id
+        """
+        first_attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
+        update_attempt_status(first_attempt_id, ProctoredExamStudentAttemptStatus.error)
+        update_attempt_status(first_attempt_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
+
+        second_attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
+        update_attempt_status(second_attempt_id, ProctoredExamStudentAttemptStatus.error)
+        update_attempt_status(second_attempt_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
+
+        third_attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
+        update_attempt_status(third_attempt_id, ProctoredExamStudentAttemptStatus.error)
+        update_attempt_status(third_attempt_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
+
+        attempts = get_user_attempts_by_exam_id(self.user_id, self.proctored_exam_id)
+        self.assertEqual(len(attempts), 3)
 
     def test_start_uncreated_attempt(self):
         """
@@ -2451,3 +2473,224 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         ):
             set_runtime_service('enrollments', MockEnrollmentsService(enrollments))
             self.assertEqual(expected_enrollments, get_enrollments_for_course('course_id'))
+
+    @ddt.data(
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.declined, True),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started, True),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.submitted, True),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.error, True),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected, True),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.verified, True),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.declined, True),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started, True),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.submitted, True),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.error, True),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.rejected, True),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.verified, True),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.declined, False),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.started, False),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.submitted, False),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.error, False),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected, False),
+        (ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.verified, False),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.declined, False),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.started, False),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.submitted, False),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.error, False),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.rejected, False),
+        (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.verified, False),
+    )
+    @ddt.unpack  # pylint: disable=too-many-statements
+    def test_grade_certificate_release_with_multiple_attempts(
+        self,
+        first_attempt_status,
+        second_attempt_status,
+        update_in_order
+    ):
+        set_runtime_service('grades', MockGradesService())
+
+        # create attempt
+        first_attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
+        # move to ready to resume
+        update_attempt_status(first_attempt_id, ProctoredExamStudentAttemptStatus.error)
+        update_attempt_status(first_attempt_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
+        # check that status has been updated
+        self.assertEqual(
+            get_exam_attempt_by_id(first_attempt_id)['status'],
+            ProctoredExamStudentAttemptStatus.ready_to_resume
+        )
+        # create second attempt
+        second_attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
+        # check that status has been updated
+        self.assertEqual(
+            get_exam_attempt_by_id(second_attempt_id)['status'],
+            ProctoredExamStudentAttemptStatus.created
+        )
+        self.assertEqual(
+            get_exam_attempt_by_id(first_attempt_id)['status'],
+            ProctoredExamStudentAttemptStatus.resumed
+        )
+
+        if update_in_order:
+            updating_first = {'id': first_attempt_id, 'status': first_attempt_status}
+            updating_second = {'id': second_attempt_id, 'status': second_attempt_status}
+        else:
+            updating_first = {'id': second_attempt_id, 'status': second_attempt_status}
+            updating_second = {'id': first_attempt_id, 'status': first_attempt_status}
+
+        credit_service = get_runtime_service('credit')
+        grades_service = get_runtime_service('grades')
+        course_id = get_exam_attempt_by_id(first_attempt_id)['proctored_exam']['course_id']
+        content_id = get_exam_attempt_by_id(first_attempt_id)['proctored_exam']['content_id']
+
+        grades_service.init_grade(
+            user_id=self.user.id,
+            course_key_or_id=course_id,
+            usage_key_or_id=content_id,
+            earned_all=5.0,
+            earned_graded=5.0
+        )
+
+        # check initial credit status
+        credit_status = credit_service.get_credit_state(self.user.id, course_id)
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            'failed'
+        )
+
+        # run first update
+        update_attempt_status(updating_first['id'], updating_first['status'])
+
+        # check that credit and emails have been sent if appropriate
+        if updating_first['status'] == ProctoredExamStudentAttemptStatus.rejected:
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'failed'
+            )
+            self.assertEqual(len(mail.outbox), 1)
+        elif updating_first['status'] == ProctoredExamStudentAttemptStatus.submitted:
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'submitted'
+            )
+            self.assertEqual(len(mail.outbox), 1)
+        elif updating_first['status'] == ProctoredExamStudentAttemptStatus.error:
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'failed'
+            )
+            self.assertEqual(len(mail.outbox), 0)
+        elif updating_first['status'] == ProctoredExamStudentAttemptStatus.declined:
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'declined'
+            )
+            self.assertEqual(len(mail.outbox), 0)
+        else:
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'failed'
+            )
+            self.assertEqual(len(mail.outbox), 0)
+
+        # run second update
+        update_attempt_status(updating_second['id'], updating_second['status'])
+
+        # check that credit an emails have been sent when appropriate
+        if 'declined' in [updating_first['status'], updating_second['status']]:
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'declined'
+            )
+            if 'rejected' in [updating_first['status'], updating_second['status']]:
+                assert len(mail.outbox) <= 1
+            else:
+                self.assertEqual(len(mail.outbox), 0)
+        elif (
+            'submitted' in [updating_first['status'], updating_second['status']] and
+            'rejected' in [updating_first['status'], updating_second['status']]
+        ):
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'failed'
+            )
+            # possible to  have both submitted and rejected email if submitted came first
+            assert 2 >= len(mail.outbox) >= 1
+        elif (
+            'declined' not in [updating_first['status'], updating_second['status']] and
+            'rejected' in [updating_first['status'], updating_second['status']]
+        ):
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'failed'
+            )
+            self.assertEqual(len(mail.outbox), 1)
+        elif (
+            'rejected' not in [updating_first['status'], updating_second['status']] and
+            'submitted' in [updating_first['status'], updating_second['status']]
+        ):
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'submitted'
+            )
+            # possible to have both submitted and verified emails
+            assert 2 >= len(mail.outbox) >= 1
+        elif (
+            'rejected' not in [updating_first['status'], updating_second['status']] and
+            'error' in [updating_first['status'], updating_second['status']]
+        ):
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'failed'
+            )
+            self.assertEqual(len(mail.outbox), 0)
+        elif [updating_first['status'], updating_second['status']].count('verified') == 2:
+            credit_status = credit_service.get_credit_state(self.user.id, course_id)
+            self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+            self.assertEqual(
+                credit_status['credit_requirement_status'][0]['status'],
+                'satisfied'
+            )
+            self.assertEqual(len(mail.outbox), 1)
+
+        # check for grade override
+        override = grades_service.get_subsection_grade_override(
+            user_id=self.user.id,
+            course_key_or_id=course_id,
+            usage_key_or_id=content_id
+        )
+        # rejected will not override declined
+        if (
+            'rejected' in [updating_first['status'], updating_second['status']] and
+            updating_first['status'] != 'declined'
+        ):
+            self.assertDictEqual({
+                'earned_all': override.earned_all_override,
+                'earned_graded': override.earned_graded_override
+            }, {
+                'earned_all': 0.0,
+                'earned_graded': 0.0
+            })
+        else:
+            self.assertEqual(override, None)
