@@ -256,6 +256,31 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.on_review_callback(None, None))
         self.assertIsNone(provider.on_exam_saved(None))
 
+    @patch('logging.Logger.exception')
+    @patch('edx_proctoring.callbacks.get_exam_attempt_by_code')
+    @patch('edx_proctoring.callbacks.update_attempt_status')
+    def test_mock_provider_exception(self, _, get_attempt_mock, logger_mock):
+        """
+        Test that the mock backend provider logs exception
+        """
+        provider = MockProctoringBackendProvider()
+
+        attempt_code = 'test_code'
+
+        get_attempt_mock.return_value = {
+            'status': 'submitted',
+            'attempt_code': attempt_code,
+            'id': 1,
+            'proctored_exam': {'course_id': '', 'content_id': ''}
+        }
+        provider.register_exam_attempt(None, {'attempt_code': attempt_code})
+        time.sleep(2)
+
+        self.assertTrue(get_attempt_mock.called)
+
+        log_format_string = (u"BLOCKING ERROR: Can't find course info url for course %s")
+        logger_mock.assert_any_call(log_format_string, '')
+
 
 class BackendChooserTests(TestCase):
     """

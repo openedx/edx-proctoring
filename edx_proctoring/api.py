@@ -1032,12 +1032,11 @@ def update_attempt_status(attempt_id, to_status,
             )
 
         if cascade_effects and ProctoredExamStudentAttemptStatus.is_a_cascadable_failure(to_status):
-            if to_status == ProctoredExamStudentAttemptStatus.declined:
-                # if user declines attempt, make sure we clear out the external_id and
-                # taking_as_proctored fields
-                exam_attempt_obj.taking_as_proctored = False
-                exam_attempt_obj.external_id = None
-                exam_attempt_obj.save()
+            # if user declines attempt, make sure we clear out the external_id and
+            # taking_as_proctored fields
+            exam_attempt_obj.taking_as_proctored = False
+            exam_attempt_obj.external_id = None
+            exam_attempt_obj.save()
 
             # some state transitions (namely to a rejected or declined status)
             # will mark other exams as declined because once we fail or decline
