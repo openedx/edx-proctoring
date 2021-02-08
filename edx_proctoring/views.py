@@ -4,6 +4,7 @@ Proctored Exams HTTP-based API endpoints
 
 import json
 import logging
+from urllib.parse import urlencode
 
 import waffle
 from crum import get_current_request
@@ -15,7 +16,7 @@ from rest_framework.views import APIView
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.paginator import Paginator
 from django.shortcuts import redirect
 from django.urls import NoReverseMatch, reverse
 from django.utils.decorators import method_decorator
@@ -30,6 +31,7 @@ from edx_proctoring.api import (
     get_all_exams_for_course,
     get_allowances_for_course,
     get_backend_provider,
+    get_enrollments_for_course,
     get_exam_attempt_by_external_id,
     get_exam_attempt_by_id,
     get_exam_by_content_id,
@@ -63,7 +65,12 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, ReviewStatus, SoftwareSecureReviewStatus
+from edx_proctoring.statuses import (
+    InstructorDashboardOnboardingAttemptStatus,
+    ProctoredExamStudentAttemptStatus,
+    ReviewStatus,
+    SoftwareSecureReviewStatus
+)
 from edx_proctoring.utils import (
     AuthenticatedAPIView,
     get_time_remaining_for_attempt,
@@ -384,6 +391,206 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         data['onboarding_status'] = relevant_attempt.status
 
         return Response(data)
+
+
+class StudentOnboardingStatusByCourseView(ProctoredAPIView):
+    """
+    Endpoint for the StudentOnboardingStatusByCourseView
+
+    Supports:
+        HTTP GET: return information about learners' onboarding status relative to the given course_id
+
+    HTTP GET
+        /edx_proctoring/v1/user_onboarding/status/course_id/{course_id}?page={}&text_search={}&status={}
+
+    **Query Parameters**
+        * page: Optional. The page of the paginated data requested. If this parameter is not provided,
+          it defaults to 1.
+        * text_search: Optional. A search string to perform a case insensitive search for users by either their username
+          or email.
+        * statuses: Optional. A string representing status(es) of InstructorDashboardOnboardingAttemptStatus
+          to filter the exam attempts by.
+
+    **Response Values**
+        HTTP GET:
+            The response will contain a dictionary with the following keys.
+            * results: a list of dictionaries, where each dictionary contains the following
+              information about a learner's onboarding status:
+                * username: the user's username
+                * status: the status of the user's onboarding attempt as should be displayed by
+                  the Instructor Dashboard; it will be one of InstructorDashboardOnboardingAttemptStatus
+                * modified: the date and time the user last modified the onboarding exam attempt;
+                  the value will be None if no attempt in an onboarding exam exists for this user
+            * count: the total number of results
+            * previous: a link to the previous page of results, if it exists - None otherwise
+            * next: a link to the next page of results, if it exists - None otherwise
+            * num_pages: the total number of pages of results
+
+    **Exceptions**
+        HTTP GET:
+            * 404 if the requesting user is not staff or course staff for the course associated with
+            the supplied course ID
+            * 404 if there is no onboarding exam in the course associated with the supplied course ID
+    """
+    @method_decorator(require_course_or_global_staff)
+    def get(self, request, course_id):
+        """
+        HTTP GET handler.
+        """
+        # get last created onboarding exam if there are multiple
+        onboarding_exam = (ProctoredExam.get_practice_proctored_exams_for_course(course_id)
+                           .order_by('-created').first())
+        if not onboarding_exam or not get_backend_provider(name=onboarding_exam.backend).supports_onboarding:
+            return Response(
+                status=404,
+                data={'detail': _('There is no onboarding exam related to this course id.')}
+            )
+        serialized_onboarding_exam = ProctoredExamSerializer(onboarding_exam).data
+
+        data_page = request.GET.get('page', 1)
+        text_search = request.GET.get('text_search')
+        statuses_filter = request.GET.get('statuses')
+
+        enrollments = get_enrollments_for_course(course_id)
+        # filter down enrollments for users that can take proctored exams
+        allowed_enrollments_users = [
+            enrollment.user
+            for enrollment
+            in enrollments
+            if enrollment.user.has_perm('edx_proctoring.can_take_proctored_exam', serialized_onboarding_exam)
+        ]
+
+        # filter allowed_enrollments_users by text_search
+        allowed_enrollments_users = self._filter_users_by_username_or_email(allowed_enrollments_users, text_search)
+
+        # get exam attempts for users for the exam
+        exam_attempts = ProctoredExamStudentAttempt.objects.get_exam_attempts_for_users_by_exam_id(
+            onboarding_exam.id,
+            allowed_enrollments_users
+        ).values('user_id', 'status', 'modified')
+
+        # select the most recent exam attempt per user
+        exam_attempts_per_user = self._get_most_recent_exam_attempt_per_user(exam_attempts)
+
+        onboarding_data = []
+        for user in allowed_enrollments_users:
+            user_attempt = exam_attempts_per_user.get(user.id, {})
+
+            data = {}
+            data['username'] = user.username
+            data['status'] = (InstructorDashboardOnboardingAttemptStatus
+                              .get_onboarding_status_from_attempt_status(user_attempt.get('status')))
+            data['modified'] = user_attempt.get('modified')
+
+            onboarding_data.append(data)
+
+        # filter the data by status filter
+        # we filter late than the text_search because users without exam attempts
+        # will have an onboarding status of "not_started", and we want to be
+        # able to filter on that status
+        if statuses_filter:
+            statuses = set(statuses_filter.split(','))
+            onboarding_data = [
+                data for data
+                in onboarding_data
+                if data['status'] in statuses
+            ]
+
+        query_params = self._get_query_params(text_search, statuses_filter)
+        paginated_data = self._paginate_data(onboarding_data, data_page, onboarding_exam.course_id, query_params)
+        return Response(paginated_data)
+
+    def _get_query_params(self, text_search, statuses_filter):
+        """
+        Return the query parameters as a dictionary, only including key value pairs
+        for supplied keys.
+
+        Parameters:
+        * text_search: the text search query parameter
+        * statuses_filter: the statuses filter query parameter
+        """
+        query_params = {}
+        if text_search:
+            query_params['text_search'] = text_search
+        if statuses_filter:
+            query_params['statuses'] = statuses_filter
+        return query_params
+
+    def _get_most_recent_exam_attempt_per_user(self, attempts):
+        """
+        Given attempts, return, for each learner, their most recent exam attempt.
+
+        Parameters:
+        * attempts: an iterable of attempt objects
+        """
+        exam_attempts_per_user = {}
+        for attempt in attempts:
+            existing_attempt = exam_attempts_per_user.get(attempt['user_id'])
+
+            if existing_attempt:
+                if attempt['modified'] > existing_attempt['modified']:
+                    exam_attempts_per_user[attempt['user_id']] = attempt
+            else:
+                exam_attempts_per_user[attempt['user_id']] = attempt
+
+        return exam_attempts_per_user
+
+    def _filter_users_by_username_or_email(self, users, text_search):
+        """
+        Given users, return users for whom there is insensitive partial or full match of
+        either their username or email.
+
+        Parameters:
+        * users: users against which to do the search
+        * text_search: the string aginst which to do a match
+        """
+        if text_search:
+            text_search = text_search.lower()
+            return [
+                user
+                for user in users
+                if text_search in user.username.lower() or text_search in user.email.lower()
+            ]
+        return users
+
+    def _paginate_data(self, data, page_number, course_id, query_params):
+        """
+        Given data and a page number, return the page of data requested by the page number,
+        along with pagination metadata.
+
+        Parameters:
+        * data: the data to be paginated
+        * page_number: the page number requested
+        * course_id: the course ID associated with the data; this is used to generate next and previous links
+        """
+        paginator = Paginator(data, ATTEMPTS_PER_PAGE)
+        data_page = paginator.get_page(page_number)
+
+        return {
+            'count': len(data),
+            'previous': self._get_url(
+                course_id, **query_params, page=data_page.number-1
+                ) if data_page.has_previous() else None,
+            'next': self._get_url(
+                course_id, **query_params, page=data_page.number+1
+                ) if data_page.has_next() else None,
+            'num_pages': paginator.num_pages,
+            'results': data_page.object_list,
+        }
+
+    def _get_url(self, course_id, **kwargs):
+        """
+        Get url for the view with correct query string.
+
+        Parameters:
+        * course_id: the course ID for the course
+        * kwargs: the key value pairs to use in the query string
+        """
+        url = reverse('edx_proctoring:user_onboarding.status.course',
+                      kwargs={'course_id': course_id}
+                      )
+        query_string = urlencode(kwargs)
+        return url + '?' + query_string
 
 
 class StudentProctoredExamAttempt(ProctoredAPIView):
@@ -781,14 +988,7 @@ class StudentProctoredExamAttemptsByCourse(ProctoredAPIView):
 
         paginator = Paginator(exam_attempts, ATTEMPTS_PER_PAGE)
         page = request.GET.get('page')
-        try:
-            exam_attempts_page = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            exam_attempts_page = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            exam_attempts_page = paginator.page(paginator.num_pages)
+        exam_attempts_page = paginator.get_page(page)
 
         data = {
             'proctored_exam_attempts': [

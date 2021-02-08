@@ -89,6 +89,11 @@ urlpatterns = [
         name='user_onboarding.status'
     ),
     url(
+        r'edx_proctoring/v1/user_onboarding/status/course_id/{}$'.format(settings.COURSE_ID_PATTERN),
+        views.StudentOnboardingStatusByCourseView.as_view(),
+        name='user_onboarding.status.course'
+    ),
+    url(
         r'edx_proctoring/v1/instructor/{}$'.format(settings.COURSE_ID_PATTERN),
         views.InstructorDashboard.as_view(),
         name='instructor_dashboard_course'

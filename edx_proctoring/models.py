@@ -117,6 +117,21 @@ class ProctoredExam(TimeStampedModel):
 
         return cls.objects.filter(filtered_query)
 
+    @classmethod
+    def get_practice_proctored_exams_for_course(cls, course_id):
+        """
+        Return all practice proctored exams for a course.
+
+        Arguments
+        * course_id: course ID of the course
+        """
+        return cls.objects.filter(
+            course_id=course_id,
+            is_active=True,
+            is_practice_exam=True,
+            is_proctored=True
+        )
+
 
 class ProctoredExamReviewPolicy(TimeStampedModel):
     """
@@ -247,6 +262,27 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         """
         filtered_query = Q(proctored_exam__course_id=course_id)
         return self.filter(filtered_query).order_by('-created')  # pylint: disable=no-member
+
+    def get_all_exam_attempts_by_exam_id(self, exam_id):
+        """
+        Returns all the exam attempts in an exam with the given exam ID.
+
+        Parameters:
+        * exam_id: ID of the exam
+        """
+        return self.filter(proctored_exam_id=exam_id)
+
+    def get_exam_attempts_for_users_by_exam_id(self, exam_id, users):
+        """
+        Returns all the exam attempts for iterable users in an exam with the given exam ID.
+
+        Parameters:
+        * exam_id: ID of the exam
+        * users: an iterable of users to filter by
+        """
+        queryset = self.get_all_exam_attempts_by_exam_id(exam_id)
+        queryset = queryset.filter(user__in=users)
+        return queryset
 
     def get_filtered_exam_attempts(self, course_id, search_by):
         """

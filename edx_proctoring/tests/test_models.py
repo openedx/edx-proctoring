@@ -145,6 +145,45 @@ class ProctoredExamModelTests(LoggedInTestCase):
         proctored_exam_student_history = ProctoredExamStudentAllowanceHistory.objects.filter(user_id=1)
         self.assertEqual(len(proctored_exam_student_history), 1)
 
+    def test_get_practice_proctored_exams_for_course(self):
+        """
+        Test get_practice_proctored_exams_for_course method returns only active
+        practice proctored exams.
+        """
+        course_id = 'test_course'
+        # create proctored exam
+        ProctoredExam.objects.create(
+            course_id=course_id,
+            content_id='test_content_1',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=True,
+        )
+        # create practice proctored exam
+        ProctoredExam.objects.create(
+            course_id=course_id,
+            content_id='test_content_2',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=True,
+            is_practice_exam=True,
+        )
+        practice_proctored_exams = ProctoredExam.objects.filter(
+            course_id=course_id,
+            is_active=True,
+            is_proctored=True,
+            is_practice_exam=True
+        )
+
+        self.assertQuerysetEqual(
+            ProctoredExam.get_practice_proctored_exams_for_course(course_id),
+            [repr(exam) for exam in practice_proctored_exams]
+        )
+
 
 class ProctoredExamStudentAttemptTests(LoggedInTestCase):
     """
