@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.2.0] - 2021-02-10
+~~~~~~~~~~~~~~~~~~~~
+* Update to update_attempt_status function to account for multiple attempts per exam
+* Update to grade, credit, and status email updates based on multiple attempts
+
 [3.1.0] - 2021-02-08
 ~~~~~~~~~~~~~~~~~~~~
 * Add endpoint to return onboarding status information for users in a course.
@@ -24,7 +29,7 @@ Unreleased
 
 [2.6.7] - 2021-02-04
 ~~~~~~~~~~~~~~~~~~~~~
-* Bug fix for onboarding info panel showing for all proctoring backends, independent of support for onboardin exams
+* Bug fix for onboarding info panel showing for all proctoring backends, independent of support for onboarding exams
 
 [2.6.6] - 2021-02-01
 ~~~~~~~~~~~~~~~~~~~~~

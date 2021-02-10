@@ -719,8 +719,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         if action == 'stop':
             exam_attempt_id = stop_exam_attempt(
-                exam_id=attempt['proctored_exam']['id'],
-                user_id=user_id
+                attempt_id
             )
         elif action == 'start':
             exam_attempt_id = start_exam_attempt(
@@ -729,14 +728,12 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
             )
         elif action == 'submit':
             exam_attempt_id = update_attempt_status(
-                attempt['proctored_exam']['id'],
-                user_id,
+                attempt_id,
                 ProctoredExamStudentAttemptStatus.submitted
             )
         elif action == 'click_download_software':
             exam_attempt_id = update_attempt_status(
-                attempt['proctored_exam']['id'],
-                user_id,
+                attempt_id,
                 ProctoredExamStudentAttemptStatus.download_software_clicked
             )
         elif action == 'reset_attempt':
@@ -757,8 +754,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                     time_remaining_seconds=get_time_remaining_for_attempt(attempt)
                 )
                 exam_attempt_id = update_attempt_status(
-                    attempt['proctored_exam']['id'],
-                    user_id,
+                    attempt_id,
                     ProctoredExamStudentAttemptStatus.error
                 )
             else:
@@ -769,14 +765,12 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                         attempt['id'])
         elif action == 'decline':
             exam_attempt_id = update_attempt_status(
-                attempt['proctored_exam']['id'],
-                user_id,
+                attempt_id,
                 ProctoredExamStudentAttemptStatus.declined
             )
         elif action == 'mark_ready_to_resume':
             exam_attempt_id = update_attempt_status(
-                attempt['proctored_exam']['id'],
-                user_id,
+                attempt_id,
                 ProctoredExamStudentAttemptStatus.ready_to_resume
             )
 
@@ -951,8 +945,7 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
         # use must take as open book, and loose credit eligibility
         if exam['is_proctored'] and not attempt_proctored:
             update_attempt_status(
-                exam_id,
-                request.user.id,
+                exam_attempt_id,
                 ProctoredExamStudentAttemptStatus.declined
             )
         elif start_immediately:
@@ -1144,7 +1137,7 @@ class ExamReadyCallback(ProctoredAPIView):
             return Response(data='You have entered an exam code that is not valid.', status=404)
         if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
                                  ProctoredExamStudentAttemptStatus.download_software_clicked]:
-            mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
+            mark_exam_attempt_as_ready(attempt['id'])
         return Response(data='OK')
 
 

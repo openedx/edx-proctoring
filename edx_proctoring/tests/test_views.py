@@ -445,11 +445,11 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         """
         onboarding_exam = create_onboarding_exam()
         # Create the user's own attempt
-        create_exam_attempt(onboarding_exam.id, self.user.id, True)
-        update_attempt_status(onboarding_exam.id, self.user.id, ProctoredExamStudentAttemptStatus.submitted)
+        attempt_id = create_exam_attempt(onboarding_exam.id, self.user.id, True)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
         # Create another user's attempt
-        create_exam_attempt(onboarding_exam.id, self.other_user.id, True)
-        update_attempt_status(onboarding_exam.id, self.other_user.id, ProctoredExamStudentAttemptStatus.verified)
+        other_attempt_id = create_exam_attempt(onboarding_exam.id, self.other_user.id, True)
+        update_attempt_status(other_attempt_id, ProctoredExamStudentAttemptStatus.verified)
         # Assert that the onboarding status returned is 'submitted'
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
@@ -531,8 +531,8 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         """
         onboarding_exam = create_onboarding_exam()
         # Create first attempt
-        create_exam_attempt(onboarding_exam.id, self.user.id, True)
-        update_attempt_status(onboarding_exam.id, self.user.id, ProctoredExamStudentAttemptStatus.submitted)
+        attempt_id = create_exam_attempt(onboarding_exam.id, self.user.id, True)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
             + '?course_id={}'.format(onboarding_exam.course_id)
@@ -564,8 +564,8 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         """
         onboarding_exam = create_onboarding_exam()
         # Create first attempt
-        create_exam_attempt(onboarding_exam.id, self.user.id, True)
-        update_attempt_status(onboarding_exam.id, self.user.id, ProctoredExamStudentAttemptStatus.verified)
+        attempt_id = create_exam_attempt(onboarding_exam.id, self.user.id, True)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.verified)
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
             + '?course_id={}'.format(onboarding_exam.course_id)
@@ -637,8 +637,8 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         # Create an exam + attempt
         onboarding_exam = create_onboarding_exam()
         # Verify the attempt and assert that the status returns correctly
-        create_exam_attempt(onboarding_exam.id, self.user.id, True)
-        attempt_id = update_attempt_status(onboarding_exam.id, self.user.id, ProctoredExamStudentAttemptStatus.verified)
+        attempt_id = create_exam_attempt(onboarding_exam.id, self.user.id, True)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.verified)
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
             + '?course_id={}'.format(onboarding_exam.course_id)
@@ -733,7 +733,7 @@ class TestStudentOnboardingStatusByCourseView(LoggedInTestCase):
         create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
         onboarding_attempt_2_id = create_exam_attempt(onboarding_exam_2.id, self.user.id, True)
 
-        update_attempt_status(onboarding_exam_2.id, self.user.id, ProctoredExamStudentAttemptStatus.submitted)
+        update_attempt_status(onboarding_attempt_2_id, ProctoredExamStudentAttemptStatus.submitted)
         # get serialized onboarding_attempt because modified time has changed
         serialized_onboarding_attempt = get_exam_attempt_by_id(onboarding_attempt_2_id)
 
@@ -1015,8 +1015,7 @@ class TestStudentOnboardingStatusByCourseView(LoggedInTestCase):
         first_attempt_id = create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
         second_attempt_id = create_exam_attempt(self.onboarding_exam.id, self.learner_1.id, True)
         update_attempt_status(
-            self.onboarding_exam.id,
-            self.learner_1,
+            second_attempt_id,
             ProctoredExamStudentAttemptStatus.download_software_clicked
         )
 
@@ -1064,7 +1063,7 @@ class TestStudentOnboardingStatusByCourseView(LoggedInTestCase):
         first_attempt_id = create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
         second_attempt_id = create_exam_attempt(self.onboarding_exam.id, self.learner_1.id, True)
 
-        update_attempt_status(self.onboarding_exam.id, self.learner_1, ProctoredExamStudentAttemptStatus.verified)
+        update_attempt_status(second_attempt_id, ProctoredExamStudentAttemptStatus.verified)
 
         # get serialized onboarding_attempt to get modified time
         first_serialized_onboarding_attempt = get_exam_attempt_by_id(first_attempt_id)
@@ -1128,7 +1127,7 @@ class TestStudentOnboardingStatusByCourseView(LoggedInTestCase):
 
         if attempt_status:
             onboarding_attempt_id = create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
-            update_attempt_status(self.onboarding_exam.id, self.user.id, attempt_status)
+            update_attempt_status(onboarding_attempt_id, attempt_status)
 
             # get serialized onboarding_attempt because modified time has changed
             serialized_onboarding_attempt = get_exam_attempt_by_id(onboarding_attempt_id)
@@ -1168,11 +1167,11 @@ class TestStudentOnboardingStatusByCourseView(LoggedInTestCase):
         self.assertEqual(response_data, expected_data)
 
     def test_multiple_exam_attempts(self):
-        create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
+        attempt_id = create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
 
         # create a second exam attempt by resetting the onboarding attempt
         set_runtime_service('grades', MockGradesService(rejected_exam_overrides_grade=False))
-        update_attempt_status(self.onboarding_exam.id, self.user.id, ProctoredExamStudentAttemptStatus.rejected)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.rejected)
         second_exam_attempt_id = reset_practice_exam(self.onboarding_exam.id, self.user.id, self.user)
 
         # get serialized onboarding_attempt to get modified time
@@ -1348,9 +1347,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt['status'], "ready_to_start")
 
         # update exam status to 'started'
-        exam_id = attempt['proctored_exam']['id']
-        user_id = attempt['user']['id']
-        update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.started)
+        update_attempt_status(attempt['id'], ProctoredExamStudentAttemptStatus.started)
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], "started")
 
@@ -1471,9 +1468,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = self._test_exam_attempt_creation()
 
         # Update attempt status to 'download_software_clicked'
-        exam_id = attempt['proctored_exam']['id']
-        user_id = attempt['user']['id']
-        update_attempt_status(exam_id, user_id, ProctoredExamStudentAttemptStatus.download_software_clicked)
+        update_attempt_status(attempt['id'], ProctoredExamStudentAttemptStatus.download_software_clicked)
 
         self._test_repeated_start_exam_callbacks(attempt)
 
@@ -1725,8 +1720,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # now switched to a submitted state
         update_attempt_status(
-            proctored_exam.id,
-            self.user.id,
+            attempt_id,
             ProctoredExamStudentAttemptStatus.submitted
         )
 
@@ -2119,7 +2113,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # reject exam, then attempt to reset progress
         set_runtime_service('grades', MockGradesService(rejected_exam_overrides_grade=False))
         update_attempt_status(
-            proctored_exam.id, self.student_taking_exam.id, ProctoredExamStudentAttemptStatus.rejected
+            old_attempt_id, ProctoredExamStudentAttemptStatus.rejected
         )
         response = self.client.put(
             reverse('edx_proctoring:proctored_exam.attempt', args=[old_attempt_id]),
@@ -4413,41 +4407,3 @@ class TestResetAttemptsView(LoggedInTestCase):
         )
         attempts = ProctoredExamStudentAttempt.objects.filter(user_id=self.user.id, proctored_exam_id=self.exam_id)
         assert len(attempts) == 0
-
-    @ddt.data(
-        (ProctoredExamStudentAttemptStatus.verified, 'satisfied'),
-        (ProctoredExamStudentAttemptStatus.submitted, 'submitted'),
-        (ProctoredExamStudentAttemptStatus.declined, 'declined'),
-        (ProctoredExamStudentAttemptStatus.error, 'failed'),
-    )
-    @ddt.unpack
-    def test_credit_update(self, to_status, requirement_status):
-        """
-        Test that credit requirement is updated with multiple attempts
-        """
-        self._create_attempts('started')
-
-        last_attempt = ProctoredExamStudentAttempt.objects.get(status='started')
-        update_attempt_status(
-            self.exam_id,
-            self.user.id,
-            to_status
-        )
-
-        credit_service = get_runtime_service('credit')
-        credit_status = credit_service.get_credit_state(self.user.id, last_attempt.proctored_exam.course_id)
-        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
-        self.assertEqual(
-            credit_status['credit_requirement_status'][0]['status'],
-            requirement_status
-        )
-
-        self.client.delete(
-            reverse('edx_proctoring:proctored_exam.attempts.reset',
-                    kwargs={'exam_id': self.exam_id, 'user_id': self.user.id})
-        )
-        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=self.user.id, proctored_exam_id=self.exam_id)
-        assert len(attempts) == 0
-
-        credit_status = credit_service.get_credit_state(self.user.id, last_attempt.proctored_exam.course_id)
-        self.assertEqual(len(credit_status['credit_requirement_status']), 0)

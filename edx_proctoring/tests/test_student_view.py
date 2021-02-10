@@ -426,7 +426,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         Test for get_student_view proctored exam which has not started yet.
         """
 
-        self._create_unstarted_exam_attempt()
+        attempt = self._create_unstarted_exam_attempt()
 
         # Verify that the option to skip proctoring is shown if allowed
         rendered_response = self.render_proctored_exam({
@@ -441,8 +441,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         # Now make sure content remains the same if the status transitions
         # to 'download_software_clicked'.
         update_attempt_status(
-            self.proctored_exam_id,
-            self.user_id,
+            attempt.id,
             ProctoredExamStudentAttemptStatus.download_software_clicked
         )
         rendered_response = self.render_proctored_exam()
@@ -834,8 +833,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         # now make sure if this status transitions to 'second_review_required'
         # the student will still see a 'submitted' message
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            exam_attempt.user_id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.second_review_required
         )
         rendered_response = self.render_proctored_exam()

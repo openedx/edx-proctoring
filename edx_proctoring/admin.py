@@ -483,7 +483,7 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
         """
         try:
             if change:
-                update_attempt_status(obj.proctored_exam.id, obj.user.id, form.cleaned_data['status'])
+                update_attempt_status(obj.id, form.cleaned_data['status'])
         except (ProctoredExamIllegalStatusTransition, StudentExamAttemptDoesNotExistsException) as ex:
             messages.error(request, ex.message)
 

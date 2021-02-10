@@ -73,8 +73,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         exam_attempt = self._create_started_exam_attempt()
         credit_state = get_runtime_service('credit').get_credit_state(self.user_id, self.course_id)
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             status
         )
         self.assertEqual(len(mail.outbox), 1)
@@ -104,7 +103,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         instructor_service.mock_proctoring_escalation_email(mock_escalation_email)
 
         exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(exam_attempt.proctored_exam_id, self.user.id, status)
+        update_attempt_status(exam_attempt.id, status)
 
         actual_body = self._normalize_whitespace(mail.outbox[0].body)
         self.assertIn(mock_escalation_email, actual_body)
@@ -122,7 +121,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         set_runtime_service('instructor', None)
 
         exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(exam_attempt.proctored_exam_id, self.user.id, status)
+        update_attempt_status(exam_attempt.id, status)
 
         actual_body = self._normalize_whitespace(mail.outbox[0].body)
         self.assertIn('support/contact_us', actual_body)
@@ -137,7 +136,10 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         instructor_service.mock_proctoring_escalation_email_error(error)
 
         exam_attempt = self._create_started_exam_attempt()
-        update_attempt_status(exam_attempt.proctored_exam_id, self.user.id, ProctoredExamStudentAttemptStatus.verified)
+        update_attempt_status(
+            exam_attempt.id,
+            ProctoredExamStudentAttemptStatus.verified
+        )
 
         actual_body = self._normalize_whitespace(mail.outbox[0].body)
         self.assertIn('support/contact_us', actual_body)
@@ -165,8 +167,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         """
         exam_attempt = self._create_started_exam_attempt()
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             status
         )
 
@@ -188,8 +189,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         exam_attempt = self._create_started_exam_attempt()
         credit_state = get_runtime_service('credit').get_credit_state(self.user_id, self.course_id)
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             ProctoredExamStudentAttemptStatus.submitted
         )
         self.assertEqual(len(mail.outbox), 1)
@@ -223,8 +223,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         """
         exam_attempt = self._create_exam_attempt(self.proctored_exam_id)
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             to_status
         )
         self.assertEqual(len(mail.outbox), 0)
@@ -241,8 +240,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
 
         exam_attempt = self._create_started_exam_attempt(is_sample_attempt=True)
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             status
         )
         self.assertEqual(len(mail.outbox), 0)
@@ -259,8 +257,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
 
         exam_attempt = self._create_started_exam_attempt(is_proctored=False)
         update_attempt_status(
-            exam_attempt.proctored_exam_id,
-            self.user.id,
+            exam_attempt.id,
             status
         )
         self.assertEqual(len(mail.outbox), 0)
@@ -292,8 +289,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         with self.settings(PROCTORING_BACKENDS=backend_settings):
             exam_attempt = self._create_started_exam_attempt()
             update_attempt_status(
-                exam_attempt.proctored_exam_id,
-                self.user.id,
+                exam_attempt.id,
                 status
             )
 

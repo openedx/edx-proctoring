@@ -325,6 +325,12 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         self.filter(user_id=user_id,
                     status__in=ProctoredExamStudentAttemptStatus.onboarding_errors).delete()
 
+    def get_user_attempts_by_exam_id(self, user_id, exam_id):
+        """
+        Returns attempts for a given exam and user
+        """
+        return self.filter(user_id=user_id, proctored_exam_id=exam_id)
+
 
 class ProctoredExamStudentAttempt(TimeStampedModel):
     """

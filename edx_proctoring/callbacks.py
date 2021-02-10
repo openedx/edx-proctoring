@@ -31,16 +31,14 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
             content='You have entered an exam code that is not valid.',
             status=404
         )
-    proctored_exam_id = attempt['proctored_exam']['id']
     attempt_status = attempt['status']
-    user_id = attempt['user']['id']
     if attempt_status in [ProctoredExamStudentAttemptStatus.created,
                           ProctoredExamStudentAttemptStatus.download_software_clicked]:
-        mark_exam_attempt_as_ready(proctored_exam_id, user_id)
+        mark_exam_attempt_as_ready(attempt['id'])
 
     # if a user attempts to re-enter an exam that has not yet been submitted, submit the exam
     if ProctoredExamStudentAttemptStatus.is_in_progress_status(attempt_status):
-        update_attempt_status(proctored_exam_id, user_id, ProctoredExamStudentAttemptStatus.submitted)
+        update_attempt_status(attempt['id'], ProctoredExamStudentAttemptStatus.submitted)
     else:
         log.warning(u"Attempted to enter proctored exam attempt {attempt_id} when status was {attempt_status}"
                     .format(

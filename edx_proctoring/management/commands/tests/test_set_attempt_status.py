@@ -58,17 +58,16 @@ class SetAttemptStatusTests(LoggedInTestCase):
         Run the management command
         """
 
+        attempt = get_current_exam_attempt(self.exam_id, self.user.id)
         call_command('set_attempt_status',
-                     exam_id=self.exam_id,
-                     user_id=self.user.id,
+                     attempt_id=attempt['id'],
                      to_status=ProctoredExamStudentAttemptStatus.rejected)
 
         attempt = get_current_exam_attempt(self.exam_id, self.user.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.rejected)
 
         call_command('set_attempt_status',
-                     exam_id=self.exam_id,
-                     user_id=self.user.id,
+                     attempt_id=attempt['id'],
                      to_status=ProctoredExamStudentAttemptStatus.verified)
 
         attempt = get_current_exam_attempt(self.exam_id, self.user.id)
@@ -79,8 +78,8 @@ class SetAttemptStatusTests(LoggedInTestCase):
         Try passing a bad status
         """
 
+        attempt = get_current_exam_attempt(self.exam_id, self.user.id)
         with self.assertRaises(Exception):
             call_command('set_attempt_status',
-                         exam_id=self.exam_id,
-                         user_id=self.user.id,
+                         attempt_id=attempt['id'],
                          to_status='bad')
