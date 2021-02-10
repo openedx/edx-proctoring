@@ -19,6 +19,7 @@ from django.urls import reverse
 from edx_proctoring.api import (
     add_allowance_for_user,
     get_current_exam_attempt,
+    get_exam_attempt_by_id,
     get_exam_by_id,
     get_student_view,
     update_attempt_status,
@@ -28,6 +29,7 @@ from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, 
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests import mock_perm
+from edx_proctoring.utils import humanized_time
 
 from .test_services import (
     MockCreditService,
@@ -65,6 +67,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.proctored_exam_optout_msg = 'Take this exam without proctoring'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
         self.proctored_exam_submitted_msg = 'You have submitted this proctored exam for review'
+        self.proctored_exam_ready_to_resume_msg = 'Your exam is ready to be resumed.'
         self.take_exam_without_proctoring_msg = 'Take this exam without proctoring'
         self.ready_to_start_msg = 'Important'
         self.wrong_browser_msg = 'The content of this exam can only be viewed'
@@ -1366,3 +1369,48 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         # check that only one new attempt has been created
         created_attempts = ProctoredExamStudentAttempt.objects.filter(status=ProctoredExamStudentAttemptStatus.created)
         self.assertEqual(len(created_attempts), 1)
+
+    @ddt.data(
+        (render_proctored_exam, 'proctored'),
+        (render_practice_exam, 'practice'),
+        (render_onboarding_exam, 'onboarding'),
+    )
+    @ddt.unpack
+    def test_get_student_view_ready_to_resume_status(self, render_exam, exam_type):
+        """
+        Test that the ready to resume interstitial is shown to exam attempts in the ready_to_resume_state
+        and test that the time remaining is displayed.
+        """
+        if exam_type == 'proctored':
+            exam_attempt = self._create_started_exam_attempt()
+        elif exam_type == 'practice':
+            exam_attempt = self._create_started_practice_exam_attempt()
+        else:
+            exam_attempt = self._create_started_onboarding_exam_attempt()
+
+        # transition exam to error in order to save time_remaining_seconds
+        error_response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[exam_attempt.id]),
+            json.dumps({
+                'action': 'error',
+            }),
+            content_type='application/json'
+        )
+        self.assertEqual(error_response.status_code, 200)
+
+        # transition exam to ready_to_resume
+        resume_response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[exam_attempt.id]),
+            json.dumps({
+                'action': 'mark_ready_to_resume',
+            }),
+            content_type='application/json'
+        )
+        self.assertEqual(resume_response.status_code, 200)
+
+        rendered_response = render_exam(self)
+        self.assertIn(self.proctored_exam_ready_to_resume_msg, rendered_response)
+
+        time_remaining = humanized_time(int(get_exam_attempt_by_id(exam_attempt.id)['time_remaining_seconds'] / 60))
+        time_remaining_string = 'You will have {} to complete your exam.'.format(time_remaining)
+        self.assertIn(time_remaining_string, rendered_response)

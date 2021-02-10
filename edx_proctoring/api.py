@@ -1998,7 +1998,10 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
     has_due_date = exam['due_date'] is not None
     attempt_time = attempt.get('allowed_time_limit_mins', None) if attempt else None
 
-    if not attempt_time:
+    # if there is no attempt or an attempt with no time limit attribute, calculate the allowed time
+    # also, if the attempt is in the ready to resume status, calculate the allowed time to correctly
+    # display the time remaining
+    if not attempt_time or (attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_resume):
         attempt_time = _calculate_allowed_mins(exam, user_id)
 
     total_time = humanized_time(attempt_time)
@@ -2094,6 +2097,8 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'practice_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_resume:
+        student_view_template = 'proctored_exam/ready_to_resume.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -2144,6 +2149,8 @@ def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'onboarding_exam/verified.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.rejected:
         student_view_template = 'onboarding_exam/rejected.html'
+    elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_resume:
+        student_view_template = 'proctored_exam/ready_to_resume.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -2296,6 +2303,8 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             context['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
         except (NoReverseMatch, AttributeError):
             log.exception(u"Can't find onboarding exam for %s", course_id)
+    elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_resume:
+        student_view_template = 'proctored_exam/ready_to_resume.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)

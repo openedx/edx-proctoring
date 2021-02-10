@@ -352,6 +352,21 @@ class ProctoredExamTestCase(LoggedInTestCase):
             allowed_time_limit_mins=10
         )
 
+    def _create_started_onboarding_exam_attempt(self, started_at=None):
+        """
+        Creates the ProctoredExamStudentAttempt object.
+        """
+        return ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=self.onboarding_exam_id,
+            taking_as_proctored=True,
+            user_id=self.user_id,
+            external_id=self.external_id,
+            started_at=started_at if started_at else datetime.now(pytz.UTC),
+            is_sample_attempt=True,
+            status=ProctoredExamStudentAttemptStatus.started,
+            allowed_time_limit_mins=10
+        )
+
     @staticmethod
     def _normalize_whitespace(string):
         """
