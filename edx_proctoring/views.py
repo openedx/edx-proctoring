@@ -885,7 +885,8 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
                 'exam_type': (
                     _('a timed exam') if not attempt['taking_as_proctored'] else
                     (_('a proctored exam') if not attempt['is_sample_attempt'] else
-                     (_('an onboarding exam') if provider.supports_onboarding else _('a practice exam')))
+                     (_('an onboarding exam') if (provider and provider.supports_onboarding) else
+                      _('a practice exam')))
                 ),
                 'exam_display_name': exam['exam_name'],
                 'exam_url_path': exam_url_path,
