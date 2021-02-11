@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.3.0] - 2021-02-11
+~~~~~~~~~~~~~~~~~~~~
+* Add learner onboarding view to instructor dashboard.
+
 [3.2.1] - 2021-02-11
 ~~~~~~~~~~~~~~~~~~~~
 * bugfix to 500 errors from proctored exam attempt status endpoint used by the LMS to drive timer functionality
