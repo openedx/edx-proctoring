@@ -1,0 +1,33 @@
+{% load i18n %}
+<div class="sequence proctored-exam entrance" data-exam-id="{{exam_id}}">
+  <h3>
+    {% blocktrans %}
+      Your exam is ready to be resumed.
+    {% endblocktrans %}
+  </h3>
+  <p>
+    {% blocktrans %}
+        You will have {{ total_time }} to complete your exam.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+        To be eligible for credit or the program credential associated with this course, you must pass the proctoring review for this exam.
+    {% endblocktrans %}
+  </p>
+  <button class="gated-sequence start-timed-exam action-primary" data-ajax-url="{{enter_exam_endpoint}}" data-exam-id="{{exam_id}}" data-attempt-proctored=true data-start-immediately=false>
+    {% trans "Continue to my proctored exam." %}
+    <span class="icon fa fa-arrow-circle-right" aria-hidden="true"></span>
+    <p>
+      {% blocktrans %}
+        You will be guided through steps to set up online proctoring software and verify your identity.</br>
+      {% endblocktrans %}
+    </p>
+  </button>
+
+  {% if allow_proctoring_opt_out %}
+    {% include 'proctored_exam/proctoring_opt_out_button.html' %}
+  {% endif %}
+</div>
+{% include 'proctored_exam/confirm-decline.html' %}
+{% include 'proctored_exam/footer.html' %}

@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.4.0] - 2021-02-11
+~~~~~~~~~~~~~~~~~~~~
+* Add a new interstitial for exam attempts in the "ready_to_resume" state to
+  indicate to learner that their exam attempt is ready to be resumed and to 
+  prompt the learner to resume their exam.
+
 [3.3.0] - 2021-02-11
 ~~~~~~~~~~~~~~~~~~~~
 * Add learner onboarding view to instructor dashboard.
