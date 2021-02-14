@@ -5,24 +5,27 @@
 # EdX Team <info@edx.org>, 2018.
 # 
 # Translators:
-# Aika1 <katepapastavrou@gmail.com>, 2016
-# Foteini T. <ftouli@yahoo.gr>, 2016
-# EEYEM, 2016
-# STERGIOU IOANNIS <stergiou_john@yahoo.gr>, 2016
-# Katerina Ligkovanli <kaligova@gmail.com>, 2021
+# LILLITH, 2016
+# 04d576a65812d0fea671136aba4b73ba_d8a218d <ab142ce9a1bdb1fb9d86bf942d5aca84_263701>, 2016
+# Pietro Lombardo <pietrolombardo1979@gmail.com>, 2016
+# Nicola Moretto <nicolamoretto88@gmail.com>, 2016
+# danicabliznakinja <dmbliznakinje@yahoo.co.uk>, 2016
+# de446acfe3933e9efb9fb802ff0b00c1_8cdef0a, 2016
+# Tiziana Longeri <tiziana.longeri@polimi.it>, 2016
+# Stefano <furins@gmail.com>, 2020
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-02-14 18:35+0000\n"
-"PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: Katerina Ligkovanli <kaligova@gmail.com>, 2021\n"
-"Language-Team: Greek (https://www.transifex.com/open-edx/teams/6205/el/)\n"
+"PO-Revision-Date: 2016-12-20 19:55+0000\n"
+"Last-Translator: Stefano <furins@gmail.com>, 2020\n"
+"Language-Team: Italian (Italy) (https://www.transifex.com/open-edx/teams/6205/it_IT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: el\n"
+"Language: it_IT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: admin.py:109
@@ -47,7 +50,7 @@ msgstr ""
 
 #: admin.py:359
 msgid "Course Id"
-msgstr "Ταυτότητα μαθήματος"
+msgstr "ID del corso"
 
 #: admin.py:397
 msgid "Created"
@@ -63,7 +66,7 @@ msgstr ""
 
 #: admin.py:400
 msgid "Started"
-msgstr "Έναρξη"
+msgstr ""
 
 #: admin.py:401
 msgid "Ready To Submit"
@@ -79,7 +82,7 @@ msgstr ""
 
 #: admin.py:404
 msgid "Submitted"
-msgstr ""
+msgstr "Inviato"
 
 #: admin.py:405
 msgid "Second Review Required"
@@ -87,15 +90,15 @@ msgstr ""
 
 #: admin.py:406
 msgid "Verified"
-msgstr "Με πιστοποίηση ταυτότητας"
+msgstr "Verificato"
 
 #: admin.py:407
 msgid "Rejected"
-msgstr ""
+msgstr "Rifiutato"
 
 #: admin.py:408
 msgid "Error"
-msgstr ""
+msgstr "Errore"
 
 #: admin.py:409
 msgid "Ready To Resume"
@@ -178,7 +181,7 @@ msgstr ""
 
 #: api.py:1761
 msgid "Timed Exam"
-msgstr ""
+msgstr "Esame a Tempo"
 
 #: api.py:2298
 msgid "Onboarding status question"
@@ -567,7 +570,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr ""
+msgstr "Torna"
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -628,7 +631,7 @@ msgstr ""
 
 #: templates/proctored_exam/error_modal.html:7
 msgid "Close"
-msgstr "Κλείσιμο"
+msgstr "Chiudi"
 
 #: templates/proctored_exam/error_wrong_browser.html:10
 msgid ""
@@ -733,7 +736,7 @@ msgstr ""
 
 #: templates/proctored_exam/id_verification.html:32
 msgid "Retry Verification"
-msgstr ""
+msgstr "Ri-verifica"
 
 #: templates/proctored_exam/id_verification.html:37
 msgid ""
@@ -789,9 +792,6 @@ msgid ""
 "        activate your account.\n"
 "      "
 msgstr ""
-"\n"
-"Εάν δεν μπορείτε να εντοπίσετε αυτό το μήνυμα, μπορείτε να <a href=\"%(reset_link)s\" target=\"_blank\">αλλάξετε τον κωδικό σας</a> προκειμένου να\n"
-"ενεργοποιήσετε τον λογαριασμό σας."
 
 #: templates/proctored_exam/inactive_account.html:26
 msgid ""
