@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-07 18:35+0000\n"
+"POT-Creation-Date: 2021-02-14 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Stefania Trabucchi <stefania.trabucchi@abstract-technology.de>, 2021\n"
 "Language-Team: German (Germany) (https://www.transifex.com/open-edx/teams/6205/de_DE/)\n"
@@ -119,86 +119,86 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:1117
+#: api.py:1162
 msgid "your course"
 msgstr "Ihr Kurs"
 
-#: api.py:1180
+#: api.py:1225
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1189
+#: api.py:1234
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1216
+#: api.py:1261
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 
-#: api.py:1641
+#: api.py:1694
 msgid "Taking As Proctored Exam"
 msgstr "Als eine beaufsichtigten Prüfung teilnehmen"
 
-#: api.py:1646
+#: api.py:1699
 msgid "Proctored Option Available"
 msgstr "Option Beaufsichtigt verfügbar"
 
-#: api.py:1651
+#: api.py:1704
 msgid "Taking As Open Exam"
 msgstr "Als eine Freie Prüfung teilnehmen"
 
-#: api.py:1656 api.py:1661
+#: api.py:1709 api.py:1714
 msgid "Pending Session Review"
 msgstr "Laufende Begutachtung der Sitzung"
 
-#: api.py:1666
+#: api.py:1719
 msgid "Passed Proctoring"
 msgstr "Bestanden unter Beaufsichtigung"
 
-#: api.py:1671 api.py:1676
+#: api.py:1724 api.py:1729
 msgid "Failed Proctoring"
 msgstr "Nicht bestanden unter Beaufsichtigung"
 
-#: api.py:1681
+#: api.py:1734
 msgid "Proctored Option No Longer Available"
 msgstr "Die Option Beaufsichtigt steht nicht länger zur Verfügung"
 
-#: api.py:1690
+#: api.py:1743
 msgid "Ungraded Practice Exam"
 msgstr "Upgrade auf Praktische Prüfung"
 
-#: api.py:1695
+#: api.py:1748
 msgid "Practice Exam Completed"
 msgstr "Übungsprüfung bestanden"
 
-#: api.py:1700
+#: api.py:1753
 msgid "Practice Exam Failed"
 msgstr "Übungsprüfung nicht bestanden"
 
-#: api.py:1708
+#: api.py:1761
 msgid "Timed Exam"
 msgstr "Terminierte Prüfung"
 
-#: api.py:2238
+#: api.py:2298
 msgid "Onboarding status question"
 msgstr ""
 
-#: models.py:334
+#: models.py:376
 msgid "Taking as Proctored"
 msgstr "Als Beaufsichtigt teilnehmen"
 
-#: models.py:338
+#: models.py:380
 msgid "Is Sample Attempt"
 msgstr "Ist ein Probeversuch"
 
-#: models.py:520
+#: models.py:562
 msgid "Additional Time (minutes)"
 msgstr "Zusätzliche Zeit (Minuten)"
 
-#: models.py:521
+#: models.py:563
 msgid "Review Policy Exception"
 msgstr "Ausnahme bei der Begutachtungsrichtlinine"
 
@@ -597,10 +597,12 @@ msgid ""
 msgstr ""
 
 #: templates/proctored_exam/entrance.html:15
+#: templates/proctored_exam/ready_to_resume.html:19
 msgid "Continue to my proctored exam."
 msgstr ""
 
 #: templates/proctored_exam/entrance.html:18
+#: templates/proctored_exam/ready_to_resume.html:22
 msgid ""
 "\n"
 "        You will be guided through steps to set up online proctoring software and verify your identity.</br>\n"
@@ -658,7 +660,7 @@ msgstr ""
 
 #: templates/proctored_exam/error_wrong_browser.html:22
 msgid "End My Exam"
-msgstr ""
+msgstr "Beende meine Prüfung"
 
 #: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
 msgid ""
@@ -1066,6 +1068,28 @@ msgstr ""
 "            es als beendet markiert ist, können Sie das Fenster schließen, sodass die Session endet.\n"
 "Anschließend können Sie Ihre Daten zur Durchsicht hochladen.          "
 
+#: templates/proctored_exam/ready_to_resume.html:4
+msgid ""
+"\n"
+"      Your exam is ready to be resumed.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_resume.html:9
+#, python-format
+msgid ""
+"\n"
+"        You will have %(total_time)s to complete your exam.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_resume.html:14
+msgid ""
+"\n"
+"        To be eligible for credit or the program credential associated with this course, you must pass the proctoring review for this exam.\n"
+"    "
+msgstr ""
+
 #: templates/proctored_exam/ready_to_start.html:5
 msgid ""
 "\n"
@@ -1417,62 +1441,62 @@ msgstr "{num_of_minutes} Minute"
 msgid " and {num_of_minutes} minutes"
 msgstr " und {num_of_minutes} Minuten"
 
-#: views.py:109
+#: views.py:116
 msgid "could not determine the course_id"
 msgstr "Konnte course_id nicht feststellen"
 
-#: views.py:118 views.py:342
+#: views.py:125 views.py:349
 msgid "Must be a Staff User to Perform this request."
 msgstr "Muss ein Mitarbeiter sein, um diese Anfrage auszuführen."
 
-#: views.py:332
+#: views.py:339
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:357
+#: views.py:364 views.py:446
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:366
+#: views.py:373
 msgid "There is no exam accessible to this user."
 msgstr ""
 
-#: views.py:454 views.py:696
+#: views.py:661 views.py:898
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "Sie haben noch {remaining_time} übrig"
 
-#: views.py:460
+#: views.py:667
 msgid "you have less than a minute remaining"
 msgstr "Sie haben weniger als eine Minute übrig"
 
-#: views.py:685
+#: views.py:886
 msgid "a timed exam"
-msgstr ""
+msgstr "eine terminierte Prüfung"
 
-#: views.py:686
+#: views.py:887
 msgid "a proctored exam"
 msgstr ""
 
-#: views.py:687
+#: views.py:888
 msgid "an onboarding exam"
 msgstr ""
 
-#: views.py:687
+#: views.py:889
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:1191
+#: views.py:1385
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1197
+#: views.py:1391
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1216
+#: views.py:1410
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
