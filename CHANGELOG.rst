@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.4.1] - 2021-02-17
+~~~~~~~~~~~~~~~~~~~~
+* Restrict the resume option on the instructor dashboard to attempts that are
+  in an "error" state and are not for onboarding or practice exams.
+
 [3.4.0] - 2021-02-11
 ~~~~~~~~~~~~~~~~~~~~
 * Add a new interstitial for exam attempts in the "ready_to_resume" state to

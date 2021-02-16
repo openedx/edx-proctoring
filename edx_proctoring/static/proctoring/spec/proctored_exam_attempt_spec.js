@@ -13,7 +13,9 @@ describe('ProctoredExamAttemptView', function() {
         }
 
     }];
-    function getExpectedProctoredExamAttemptWithAttemptStatusJson(status) {
+    function getExpectedProctoredExamAttemptWithAttemptStatusJson(status, isPracticeExam) {
+        // eslint-disable-next-line no-param-reassign
+        isPracticeExam = typeof isPracticeExam !== 'undefined' ? isPracticeExam : false;
         return (
             [{
                 attempt_url: '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/edX/DemoX/Demo_Course',
@@ -44,7 +46,7 @@ describe('ProctoredExamAttemptView', function() {
                         external_id: null,
                         id: 17,
                         is_active: true,
-                        is_practice_exam: false,
+                        is_practice_exam: isPracticeExam,
                         is_proctored: true,
                         time_limit_mins: 1
                     },
@@ -124,7 +126,10 @@ describe('ProctoredExamAttemptView', function() {
         '<td>' +
         '<% if (proctored_exam_attempt.status){ %> ' +
         '<% if (enable_exam_resume_proctoring_improvements) { %>' +
-        '<% if (proctored_exam_attempt.status == "error") { %>' +
+        '<% if (' +
+        'proctored_exam_attempt.status == "error" &&' +
+        '!proctored_exam_attempt.proctored_exam.is_practice_exam' +
+        ') { %>' +
         '<div class="wrapper-action-more">' +
         '<button class="action action-more" type="button" id="actions-dropdown-link-<%= dashboard_index %>"' +
         'aria-haspopup="true" aria-expanded="false" aria-controls="actions-dropdown-<%= dashboard_index %>"' +
@@ -454,5 +459,33 @@ describe('ProctoredExamAttemptView', function() {
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('ready_to_resume');
         expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').hasClass('is-visible')).toEqual(false);
+    });
+
+    it('should not display actions dropdown for practice exam attempts', function() {
+        // enable the dropdown via the enable-exam-resume-proctoring-improvements data attribute
+        setFixtures('<div class="student-proctored-exam-container" data-course-id="test_course_id" ' +
+            'data-enable-exam-resume-proctoring-improvements="True"></div>');
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(getExpectedProctoredExamAttemptWithAttemptStatusJson('error', true))
+            ]
+        );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
+
+        // Process all requests so far
+        this.server.respond();
+        this.server.respond();
+
+        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items')).toContainHtml('<td> testuser1  </td>');
+        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
+        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('error');
+
+        expect(this.proctored_exam_attempt_view.$el.find('button.action').html()).toHaveLength(0);
+        expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').html()).toHaveLength(0);
     });
 });
