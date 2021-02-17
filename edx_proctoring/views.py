@@ -36,6 +36,7 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     get_exam_by_content_id,
     get_exam_by_id,
+    get_user_attempts_by_exam_id,
     is_exam_passed_due,
     mark_exam_attempt_as_ready,
     remove_allowance_for_user,
@@ -954,6 +955,94 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
 
         data = {'exam_attempt_id': exam_attempt_id}
         return Response(data)
+
+
+class StudentProctoredGroupedExamAttemptsByCourse(ProctoredAPIView):
+    """
+    Endpoint for the StudentProctoredGroupedExamAttemptsByCourse
+
+    Supports:
+        HTTP GET: return information about learners' attempts
+
+    **Expected Response**
+        HTTP GET:
+            The response will contain a dictionary with pagination info and a key `proctored_exam_attempts`
+            * proctored_exam_attempts: a list of dictionaries, where each dictionary contains all fields
+              for the most current exam attempt, and a key `all_attempts`, whose value
+              is a list of all attempts associated with a user and exam
+
+    **Exceptions**
+        HTTP GET:
+            * 403 if the requesting user is not staff or course staff for the course associated with
+            the supplied course ID
+    """
+    @method_decorator(require_course_or_global_staff)
+    def get(self, request, course_id, search_by=None):
+        """
+        HTTP GET Handler.
+        """
+        if search_by is not None:
+            exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(
+                course_id, search_by
+            )
+            attempt_url = reverse('edx_proctoring:proctored_exam.attempts.grouped.search', args=[course_id, search_by])
+        else:
+            exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(
+                course_id
+            )
+            attempt_url = reverse('edx_proctoring:proctored_exam.attempts.grouped.course', args=[course_id])
+
+        # get the most recent attempt for each unique user/exam combination
+        most_recent_attempts = list(self._get_first_exam_attempt_per_user(exam_attempts).values())
+
+        paginator = Paginator(most_recent_attempts, ATTEMPTS_PER_PAGE)
+        page = request.GET.get('page')
+        exam_attempts_page = paginator.get_page(page)
+
+        grouped_attempts = []
+
+        for attempt in exam_attempts_page.object_list:
+            # serialize data
+            serialized_attempt = ProctoredExamStudentAttemptSerializer(attempt).data
+            user_id = serialized_attempt['user']['id']
+            exam_id = serialized_attempt['proctored_exam']['id']
+            # add all attempts that aren't the most recently created
+            grouped_past_attempts = get_user_attempts_by_exam_id(user_id, exam_id)
+            serialized_attempt['all_attempts'] = grouped_past_attempts
+            grouped_attempts.append(serialized_attempt)
+
+        response_data = {
+            'proctored_exam_attempts': grouped_attempts,
+            'pagination_info': {
+                'has_previous': exam_attempts_page.has_previous(),
+                'has_next': exam_attempts_page.has_next(),
+                'current_page': exam_attempts_page.number,
+                'total_pages': exam_attempts_page.paginator.num_pages,
+            },
+            'attempt_url': attempt_url
+
+        }
+        return Response(response_data)
+
+    def _get_first_exam_attempt_per_user(self, attempts):
+        """
+        Given attempts, return, for each learner, their most recent exam attempt on each exam.
+
+        Parameters:
+        * attempts: an iterable of attempt objects, sorted by most recently created
+        """
+        exam_attempts_per_user = {}
+        for attempt in attempts:
+            # use unique combination of user id and exam id
+            user_exam_key = str(attempt.user_id) + "-" + str(attempt.proctored_exam_id)
+            existing_attempt = exam_attempts_per_user.get(user_exam_key)
+
+            # we know that the first time we encounter a unique user_exam key, it will
+            # be for the most recent attempt
+            if not existing_attempt:
+                exam_attempts_per_user[user_exam_key] = attempt
+
+        return exam_attempts_per_user
 
 
 class StudentProctoredExamAttemptsByCourse(ProctoredAPIView):
