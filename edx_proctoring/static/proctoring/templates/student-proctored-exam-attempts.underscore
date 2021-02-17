@@ -172,7 +172,10 @@
                             <td>
                                 <% if (proctored_exam_attempt.status){ %>
                                     <% if (enable_exam_resume_proctoring_improvements) { %>
-                                        <% if (proctored_exam_attempt.status == "error" ) { %>
+                                        <% if (
+                                                proctored_exam_attempt.status == "error" &&
+                                                !proctored_exam_attempt.proctored_exam.is_practice_exam
+                                            ) { %>
                                             <div class="wrapper-action-more">
                                                 <button class="action action-more" type="button" id="actions-dropdown-link-<%= dashboard_index %>" aria-haspopup="true" aria-expanded="false" aria-controls="actions-dropdown-<%= dashboard_index %>" data-dashboard-index="<%= dashboard_index %>">
                                                     <span class="fa fa-cog" aria-hidden="true"></span>
