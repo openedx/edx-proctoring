@@ -49,6 +49,17 @@ urlpatterns = [
         name='proctored_exam.attempts.search'
     ),
     url(
+        r'edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/{}$'.format(settings.COURSE_ID_PATTERN),
+        views.StudentProctoredGroupedExamAttemptsByCourse.as_view(),
+        name='proctored_exam.attempts.grouped.course'
+    ),
+    url(
+        r'edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/{}/search/(?P<search_by>.+)$'.format(
+            settings.COURSE_ID_PATTERN),
+        views.StudentProctoredGroupedExamAttemptsByCourse.as_view(),
+        name='proctored_exam.attempts.grouped.search'
+    ),
+    url(
         r'edx_proctoring/v1/proctored_exam/attempt$',
         views.StudentProctoredExamAttemptCollection.as_view(),
         name='proctored_exam.attempt.collection'

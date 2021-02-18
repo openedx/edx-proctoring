@@ -329,7 +329,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         """
         Returns attempts for a given exam and user
         """
-        return self.filter(user_id=user_id, proctored_exam_id=exam_id)
+        return self.filter(user_id=user_id, proctored_exam_id=exam_id).order_by('-created')
 
 
 class ProctoredExamStudentAttempt(TimeStampedModel):

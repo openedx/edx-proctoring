@@ -45,16 +45,21 @@ edx = edx || {};
     edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = Backbone.View.extend({
         initialize: function() {
             this.setElement($('.student-proctored-exam-container'));
-            this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptCollection();
-            this.template_url = '/static/proctoring/templates/student-proctored-exam-attempts.underscore';
-            this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel();
-            this.course_id = this.$el.data('course-id');
-            this.template = null;
-
             this.enable_exam_resume_proctoring_improvements =
                 this.$el.data('enable-exam-resume-proctoring-improvements');
             this.enable_exam_resume_proctoring_improvements = this.enable_exam_resume_proctoring_improvements &&
                 this.enable_exam_resume_proctoring_improvements.toLowerCase() === 'true';
+            this.course_id = this.$el.data('course-id');
+            this.template = null;
+            this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel();
+
+            if (!this.enable_exam_resume_proctoring_improvements) {
+                this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptCollection();
+                this.template_url = '/static/proctoring/templates/student-proctored-exam-attempts.underscore';
+            } else {
+                this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptGroupedCollection();
+                this.template_url = '/static/proctoring/templates/student-proctored-exam-attempts-grouped.underscore';
+            }
 
 
             this.initial_url = this.collection.url;
@@ -184,8 +189,7 @@ edx = edx || {};
                     inSearchMode: this.inSearchMode,
                     searchText: this.searchText,
                     start_page: startPage,
-                    end_page: endPage,
-                    enable_exam_resume_proctoring_improvements: this.enable_exam_resume_proctoring_improvements
+                    end_page: endPage
                 };
                 _.extend(data, viewHelper);
                 html = this.template(data);
@@ -193,7 +197,7 @@ edx = edx || {};
             }
         },
         onRemoveAttempt: function(event) {
-            var $target, attemptId;
+            var $target, attemptId, userId, examId;
             var self = this;
             event.preventDefault();
 
@@ -205,19 +209,40 @@ edx = edx || {};
             $('body').css('cursor', 'wait');
             $target = $(event.currentTarget);
             attemptId = $target.data('attemptId');
+            userId = $target.data('userId');
+            examId = $target.data('examId');
 
             self.model.url = this.attempt_url + attemptId;
-            self.model.fetch({
-                headers: {
-                    'X-CSRFToken': this.getCSRFToken()
-                },
-                type: 'DELETE',
-                success: function() {
-                    // fetch the attempts again.
-                    self.hydrate();
-                    $('body').css('cursor', 'auto');
-                }
-            });
+
+            if (!self.enable_exam_resume_proctoring_improvements) {
+                self.model.fetch({
+                    headers: {
+                        'X-CSRFToken': this.getCSRFToken()
+                    },
+                    type: 'DELETE',
+                    success: function() {
+                        // fetch the attempts again.
+                        self.hydrate();
+                        $('body').css('cursor', 'auto');
+                    }
+                });
+            } else {
+                // call reset endpoint that can be used to delete all attempts for a given
+                // user and exam
+                $.ajax({
+                    url: '/api/edx_proctoring/v1/proctored_exam/exam_id/' + examId +
+                        '/user_id/' + userId + '/reset_attempts',
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': this.getCSRFToken()
+                    },
+                    success: function() {
+                        // fetch the attempts again.
+                        self.hydrate();
+                        $('body').css('cursor', 'auto');
+                    }
+                });
+            }
         },
         onResumeAttempt: function(event) {
             var $target, attemptId, userId;

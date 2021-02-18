@@ -160,23 +160,76 @@
                             </td>
                             <td> <%= proctored_exam_attempt.allowed_time_limit_mins %></td>
                             <td> <%= proctored_exam_attempt.exam_attempt_type %></td>
-                            <td> <%= getDateFormat(proctored_exam_attempt.started_at) %></td>
-                            <td> <%= getDateFormat(proctored_exam_attempt.completed_at) %></td>
-                             <td>
-                             <% if (proctored_exam_attempt.status){ %>
-                                <%= getExamAttemptStatus(proctored_exam_attempt.status) %>
+                            <% if (proctored_exam_attempt.all_attempts.length <= 1){ %>
+                                <td> <%= getDateFormat(proctored_exam_attempt.started_at) %></td>
+                                <td> <%= getDateFormat(proctored_exam_attempt.completed_at) %></td>
+                                <td>
+                                <% if (proctored_exam_attempt.status){ %>
+                                    <%= getExamAttemptStatus(proctored_exam_attempt.status) %>
+                                <% } else { %>
+                                    N/A
+                                <% } %>
+                                </td>
                             <% } else { %>
-                                N/A
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             <% } %>
-                            </td>
                             <td>
                                 <% if (proctored_exam_attempt.status){ %>
-                                   <a href="#" class="remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" >[x]</a>
+                                    <% if (
+                                        proctored_exam_attempt.status == "error" &&
+                                        !proctored_exam_attempt.proctored_exam.is_practice_exam
+                                    ) { %>
+                                        <div class="wrapper-action-more">
+                                            <button class="action action-more" type="button" id="actions-dropdown-link-<%= dashboard_index %>" aria-haspopup="true" aria-expanded="false" aria-controls="actions-dropdown-<%= dashboard_index %>" data-dashboard-index="<%= dashboard_index %>">
+                                                <span class="fa fa-cog" aria-hidden="true"></span>
+                                            </button>
+                                            <div class="actions-dropdown" id="actions-dropdown-<%= dashboard_index %>" tabindex="-1">
+                                                <ul class="actions-dropdown-list" id="actions-dropdown-list-<%= dashboard_index %>" aria-label="<%- gettext("Available Actions") %>" role="menu">
+                                                    <li class="actions-item" role="menuitem">
+                                                        <a href="#" class="action resume-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" data-user-id="<%= proctored_exam_attempt.user.id %>" >
+                                                            <%- gettext("Resume") %>
+                                                        </a>
+                                                    </li>
+                                                    <li class="actions-item" role="menuitem">
+                                                        <a href="#" class="action remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" data-user-id="<%= proctored_exam_attempt.user.id %>" data-exam-id="<%= proctored_exam_attempt.proctored_exam.id %>" >
+                                                            <%- gettext("Reset") %>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    <% } else { %>
+                                        <a href="#" class="action remove-attempt" data-attempt-id="<%= proctored_exam_attempt.id %>" data-user-id="<%= proctored_exam_attempt.user.id %>" data-exam-id="<%= proctored_exam_attempt.proctored_exam.id %>" >
+                                            <%- gettext("Reset") %>
+                                        </a>
+                                    <% } %>
                                 <% } else { %>
                                     N/A
                                 <% } %>
                             </td>
                         </tr>
+                        <% if (proctored_exam_attempt.all_attempts.length > 1) { %>
+                            <% _.each(proctored_exam_attempt.all_attempts, function(proctored_exam_attempt) { %>
+                                <tr class="allowance-items">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td> <%= getDateFormat(proctored_exam_attempt.started_at) %></td>
+                                    <td> <%= getDateFormat(proctored_exam_attempt.completed_at) %></td>
+                                    <td>
+                                    <% if (proctored_exam_attempt.status) { %>
+                                       <%= getExamAttemptStatus(proctored_exam_attempt.status) %>
+                                    <% } else { %>
+                                        N/A
+                                    <% } %>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            <% }); %>
+                        <% }%>
                     <% }); %>
                 </tbody>
                 <% } %>

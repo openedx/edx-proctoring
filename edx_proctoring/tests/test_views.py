@@ -2187,7 +2187,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(attempt_id)
         self.assertEqual(attempt['status'], attempt_initial_status)
 
-    def test_get_exam_attempts(self):
+    @ddt.data('edx_proctoring:proctored_exam.attempts.course', 'edx_proctoring:proctored_exam.attempts.grouped.course')
+    def test_get_exam_attempts(self, url_name):
         """
         Test to get the exam attempts in a course.
         """
@@ -2207,7 +2208,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
-        url = reverse('edx_proctoring:proctored_exam.attempts.course', kwargs={'course_id': proctored_exam.course_id})
+        url = reverse(url_name, kwargs={'course_id': proctored_exam.course_id})
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -2225,7 +2226,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data['proctored_exam_attempts']), 1)
 
-    def test_exam_attempts_not_global_staff(self):
+    @ddt.data('edx_proctoring:proctored_exam.attempts.course', 'edx_proctoring:proctored_exam.attempts.grouped.course')
+    def test_exam_attempts_not_global_staff(self, url_name):
         """
         Test to get both timed and proctored exam attempts
         in a course as a course staff
@@ -2267,7 +2269,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             reverse('edx_proctoring:proctored_exam.attempt.collection'),
             attempt_data
         )
-        url = reverse('edx_proctoring:proctored_exam.attempts.course', kwargs={'course_id': proctored_exam.course_id})
+        url = reverse(url_name, kwargs={'course_id': proctored_exam.course_id})
 
         self.user.is_staff = False
         self.user.save()
@@ -2287,7 +2289,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             timed_exam.is_proctored
         )
 
-    def test_get_filtered_exam_attempts(self):
+    @ddt.data('edx_proctoring:proctored_exam.attempts.search', 'edx_proctoring:proctored_exam.attempts.grouped.search')
+    def test_get_filtered_exam_attempts(self, url_name):
         """
         Test to get the exam attempts in a course.
         """
@@ -2322,7 +2325,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.user)
         response = self.client.get(
             reverse(
-                'edx_proctoring:proctored_exam.attempts.search',
+                url_name,
                 kwargs={
                     'course_id': proctored_exam.course_id,
                     'search_by': 'tester'
@@ -2341,7 +2344,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt['proctored_exam']['id'], proctored_exam.id)
         self.assertEqual(attempt['user']['id'], self.user.id)
 
-    def test_get_filtered_timed_exam_attempts(self):  # pylint: disable=invalid-name
+    @ddt.data('edx_proctoring:proctored_exam.attempts.search', 'edx_proctoring:proctored_exam.attempts.grouped.search')
+    def test_get_filtered_timed_exam_attempts(self, url_name):  # pylint: disable=invalid-name
         """
         Test to get the filtered timed exam attempts in a course.
         """
@@ -2379,7 +2383,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.user)
         response = self.client.get(
             reverse(
-                'edx_proctoring:proctored_exam.attempts.search',
+                url_name,
                 kwargs={
                     'course_id': timed_exm.course_id,
                     'search_by': 'tester'
@@ -2398,7 +2402,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt['proctored_exam']['id'], timed_exm.id)
         self.assertEqual(attempt['user']['id'], self.user.id)
 
-    def test_paginated_exam_attempts(self):
+    @ddt.data('edx_proctoring:proctored_exam.attempts.course', 'edx_proctoring:proctored_exam.attempts.grouped.course')
+    def test_paginated_exam_attempts(self, url_name):
         """
         Test to get the paginated exam attempts in a course.
         """
@@ -2422,7 +2427,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.client.login_user(self.user)
         response = self.client.get(
             reverse(
-                'edx_proctoring:proctored_exam.attempts.course',
+                url_name,
                 kwargs={
                     'course_id': proctored_exam.course_id
                 }
@@ -4407,3 +4412,89 @@ class TestResetAttemptsView(LoggedInTestCase):
         )
         attempts = ProctoredExamStudentAttempt.objects.filter(user_id=self.user.id, proctored_exam_id=self.exam_id)
         assert len(attempts) == 0
+
+
+class TestStudentProctoredGroupedExamAttemptsByCourse(LoggedInTestCase):
+    """
+    Tests for endpoint that returns groups of attempts
+    """
+    def setUp(self):
+        super().setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.second_user = User(username='tester2', email='tester2@test.com')
+        self.second_user.save()
+        self.client.login_user(self.user)
+        self.course_id = 'foo/bar/baz'
+
+        set_runtime_service('credit', MockCreditService())
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+
+    def test_get_grouped_exam_attempts(self):
+        """
+        Test new functionality to ensure that if there are multiple attempts on the same exam, they are grouped
+        by user
+        """
+
+        exam_id_1 = create_exam(
+            course_id=self.course_id,
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        exam_id_2 = create_exam(
+            course_id=self.course_id,
+            content_id='content2',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+        # create two attempts each for exam 1
+        attempt_1 = create_exam_attempt(exam_id_1, self.user.id, taking_as_proctored=True)
+        update_attempt_status(attempt_1, ProctoredExamStudentAttemptStatus.error)
+        update_attempt_status(attempt_1, ProctoredExamStudentAttemptStatus.ready_to_resume)
+        attempt_2 = create_exam_attempt(exam_id_1, self.user.id, taking_as_proctored=True)
+
+        attempt_3 = create_exam_attempt(exam_id_1, self.second_user.id, taking_as_proctored=True)
+        update_attempt_status(attempt_3, ProctoredExamStudentAttemptStatus.error)
+        update_attempt_status(attempt_3, ProctoredExamStudentAttemptStatus.ready_to_resume)
+        attempt_4 = create_exam_attempt(exam_id_1, self.second_user.id, taking_as_proctored=True)
+
+        # create one attempt each for exam 2
+        attempt_5 = create_exam_attempt(exam_id_2, self.user.id, taking_as_proctored=True)
+        attempt_6 = create_exam_attempt(exam_id_2, self.second_user.id, taking_as_proctored=True)
+
+        # check that endpoint returns only four attempts, unique to user and exam
+        url = reverse('edx_proctoring:proctored_exam.attempts.grouped.course', kwargs={'course_id': self.course_id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data['proctored_exam_attempts']), 4)
+
+        # check that each attempt returned is structured as expected
+        # order of attempts should be sorted by most recently created
+        first_attempt = response_data['proctored_exam_attempts'][0]
+        self.assertEqual(first_attempt['user']['id'], self.second_user.id)
+        self.assertEqual(len(first_attempt['all_attempts']), 1)
+        self.assertEqual(first_attempt['all_attempts'][0]['id'], attempt_6)
+
+        second_attempt = response_data['proctored_exam_attempts'][1]
+        self.assertEqual(second_attempt['user']['id'], self.user.id)
+        self.assertEqual(len(second_attempt['all_attempts']), 1)
+        self.assertEqual(second_attempt['all_attempts'][0]['id'], attempt_5)
+
+        third_attempt = response_data['proctored_exam_attempts'][2]
+        self.assertEqual(third_attempt['user']['id'], self.second_user.id)
+        self.assertEqual(third_attempt['id'], attempt_4)
+        self.assertEqual(len(third_attempt['all_attempts']), 2)
+        self.assertEqual(third_attempt['all_attempts'][0]['id'], attempt_4)
+        self.assertEqual(third_attempt['all_attempts'][1]['id'], attempt_3)
+
+        fourth_attempt = response_data['proctored_exam_attempts'][3]
+        self.assertEqual(fourth_attempt['user']['id'], self.user.id)
+        self.assertEqual(fourth_attempt['id'], attempt_2)
+        self.assertEqual(len(fourth_attempt['all_attempts']), 2)
+        self.assertEqual(fourth_attempt['all_attempts'][0]['id'], attempt_2)
+        self.assertEqual(fourth_attempt['all_attempts'][1]['id'], attempt_1)
