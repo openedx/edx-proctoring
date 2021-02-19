@@ -49,7 +49,13 @@ from edx_proctoring.urls import urlpatterns
 from edx_proctoring.views import require_course_or_global_staff, require_staff
 from mock_apps.models import Profile
 
-from .test_services import MockCreditService, MockEnrollmentsService, MockGradesService, MockInstructorService
+from .test_services import (
+    MockCertificateService,
+    MockCreditService,
+    MockEnrollmentsService,
+    MockGradesService,
+    MockInstructorService
+)
 from .utils import LoggedInTestCase, create_onboarding_exam
 
 User = get_user_model()
@@ -701,7 +707,9 @@ class TestStudentOnboardingStatusByCourseView(LoggedInTestCase):
             },
         ]
         set_runtime_service('enrollments', MockEnrollmentsService(enrollments))
+        set_runtime_service('certificates', MockCertificateService())
         set_runtime_service('credit', MockCreditService())
+        set_runtime_service('grades', MockGradesService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
         self.onboarding_exam = create_onboarding_exam()
@@ -1118,6 +1126,7 @@ class TestStudentOnboardingStatusByCourseView(LoggedInTestCase):
         (ProctoredExamStudentAttemptStatus.ready_to_submit,
             InstructorDashboardOnboardingAttemptStatus.proctoring_started),
         (ProctoredExamStudentAttemptStatus.submitted, InstructorDashboardOnboardingAttemptStatus.submitted),
+        (ProctoredExamStudentAttemptStatus.rejected, InstructorDashboardOnboardingAttemptStatus.rejected),
         (ProctoredExamStudentAttemptStatus.verified, InstructorDashboardOnboardingAttemptStatus.verified),
         (ProctoredExamStudentAttemptStatus.error, InstructorDashboardOnboardingAttemptStatus.error),
     )

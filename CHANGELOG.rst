@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.5.1] - 2021-02-19
+~~~~~~~~~~~~~~~~~~~~
+* Add missing `rejected` status to list of onboarding attempt statuses.
+
 [3.5.0] - 2021-02-18
 ~~~~~~~~~~~~~~~~~~~~
 * Add new UI for instructor dashboard that groups attempts for each user and exam.

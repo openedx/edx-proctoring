@@ -259,6 +259,7 @@ class InstructorDashboardOnboardingAttemptStatus:
         ProctoredExamStudentAttemptStatus.started: proctoring_started,
         ProctoredExamStudentAttemptStatus.ready_to_submit: proctoring_started,
         ProctoredExamStudentAttemptStatus.submitted: submitted,
+        ProctoredExamStudentAttemptStatus.rejected: rejected,
         ProctoredExamStudentAttemptStatus.verified: verified,
         ProctoredExamStudentAttemptStatus.error: error,
     }
