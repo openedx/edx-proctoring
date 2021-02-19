@@ -323,12 +323,6 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             'onboarding_link': None
         }
 
-        attempt_filters = {
-            'proctored_exam__is_practice_exam': True,
-            'taking_as_proctored': True,
-            'user__username': request.user.username
-        }
-
         username = request.GET.get('username')
         course_id = request.GET.get('course_id')
 
@@ -349,17 +343,11 @@ class StudentOnboardingStatusView(ProctoredAPIView):
                         status=status.HTTP_403_FORBIDDEN,
                         data={'detail': _('Must be a Staff User to Perform this request.')}
                     )
-            attempt_filters['user__username'] = username
 
         # If there are multiple onboarding exams, use the first exam
-        onboarding_exam = ProctoredExam.objects.filter(
-            course_id=course_id,
-            is_active=True,
-            is_practice_exam=True,
-            is_proctored=True
-        ).order_by('-created').first()
-        if (not onboarding_exam
-                or not get_backend_provider(name=onboarding_exam.backend).supports_onboarding):
+        onboarding_exam = (ProctoredExam.get_practice_proctored_exams_for_course(course_id)
+                           .order_by('-created').first())
+        if not onboarding_exam or not get_backend_provider(name=onboarding_exam.backend).supports_onboarding:
             return Response(
                 status=404,
                 data={'detail': _('There is no onboarding exam related to this course id.')}
@@ -371,15 +359,12 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         if not user.has_perm('edx_proctoring.can_take_proctored_exam', serialized_onboarding_exam):
             return Response(
                 status=404,
-                data={'detail': _('There is no exam accessible to this user.')}
+                data={'detail': _('There is no onboarding exam accessible to this user.')}
             )
-
-        # Also filter attempts by the course_id
-        attempt_filters['proctored_exam__course_id'] = course_id
 
         data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
 
-        attempts = ProctoredExamStudentAttempt.objects.filter(**attempt_filters).order_by('-modified')
+        attempts = ProctoredExamStudentAttempt.objects.get_onboarding_attempts_by_course_id(course_id, [user])
         if len(attempts) == 0:
             # If there are no attempts, return the data with 'onboarding_status' set to None
             return Response(data)
@@ -464,18 +449,18 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
         # filter allowed_enrollments_users by text_search
         allowed_enrollments_users = self._filter_users_by_username_or_email(allowed_enrollments_users, text_search)
 
-        # get exam attempts for users for the exam
-        exam_attempts = ProctoredExamStudentAttempt.objects.get_exam_attempts_for_users_by_exam_id(
-            onboarding_exam.id,
+        # get onboarding attempts for users for the course
+        onboarding_attempts = ProctoredExamStudentAttempt.objects.get_onboarding_attempts_by_course_id(
+            course_id,
             allowed_enrollments_users
         ).values('user_id', 'status', 'modified')
 
-        # select the most recent exam attempt per user
-        exam_attempts_per_user = self._get_most_recent_exam_attempt_per_user(exam_attempts)
+        # select a verified, or most recent, exam attempt per user
+        onboarding_attempts_per_user = self._get_relevant_onboarding_attempt_per_user(onboarding_attempts)
 
         onboarding_data = []
         for user in allowed_enrollments_users:
-            user_attempt = exam_attempts_per_user.get(user.id, {})
+            user_attempt = onboarding_attempts_per_user.get(user.id, {})
 
             data = {}
             data['username'] = user.username
@@ -517,24 +502,27 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
             query_params['statuses'] = statuses_filter
         return query_params
 
-    def _get_most_recent_exam_attempt_per_user(self, attempts):
+    def _get_relevant_onboarding_attempt_per_user(self, attempts):
         """
-        Given attempts, return, for each learner, their most recent exam attempt.
+        Given an ordered list of attempts, return, for each learner, their most recent
+        exam attempt. If the learner has a verified attempt, always return verified.
 
         Parameters:
         * attempts: an iterable of attempt objects
         """
-        exam_attempts_per_user = {}
+        onboarding_attempts_per_user = {}
+
         for attempt in attempts:
-            existing_attempt = exam_attempts_per_user.get(attempt['user_id'])
+            existing_attempt = onboarding_attempts_per_user.get(attempt['user_id'])
 
             if existing_attempt:
-                if attempt['modified'] > existing_attempt['modified']:
-                    exam_attempts_per_user[attempt['user_id']] = attempt
+                # Always return a verified attempt if it exists.
+                if attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
+                    onboarding_attempts_per_user[attempt['user_id']] = attempt
             else:
-                exam_attempts_per_user[attempt['user_id']] = attempt
+                onboarding_attempts_per_user[attempt['user_id']] = attempt
 
-        return exam_attempts_per_user
+        return onboarding_attempts_per_user
 
     def _filter_users_by_username_or_email(self, users, text_search):
         """

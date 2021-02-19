@@ -13,8 +13,12 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
-* Add a script to generate obscure_user_ids for proctoring vendors to use.
 
+[3.6.3] - 2021-02-23
+~~~~~~~~~~~~~~~~~~~~
+* Add a script to generate obscure_user_ids for proctoring vendors to use.
+* Update the logic for the instructor dashboard onboarding view to match the learners' view,
+  so that multiple onboarding exams for the same course can be considered.
 
 [3.6.2] - 2021-02-22
 ~~~~~~~~~~~~~~~~~~~~
