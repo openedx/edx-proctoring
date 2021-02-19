@@ -437,7 +437,8 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
         'is_sample_attempt',
         'student_name',
         'review_policy_id',
-        'is_status_acknowledged'
+        'is_status_acknowledged',
+        'time_remaining_seconds'
     ]
 
     list_display = [
@@ -485,7 +486,9 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
             if change:
                 update_attempt_status(obj.id, form.cleaned_data['status'])
         except (ProctoredExamIllegalStatusTransition, StudentExamAttemptDoesNotExistsException) as ex:
-            messages.error(request, ex.message)
+            # prevent showing success message inappropriately
+            messages.set_level(request, messages.ERROR)
+            messages.error(request, str(ex))
 
     def has_add_permission(self, request):
         """Don't allow adds"""

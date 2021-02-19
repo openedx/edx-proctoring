@@ -14,6 +14,13 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.6.1] - 2021-02-19
+~~~~~~~~~~~~~~~~~~~~
+* Add time_remaining_seconds field of ProctoredExamStudentAttempt model to readonly_fields in 
+  Django admin page so it is not required when editing the model.
+* Update reference to Exception.message to use string representation of the exception, as message
+  is no longer an attribute of the Exception class.
+
 [3.6.0] - 2021-02-19
 ~~~~~~~~~~~~~~~~~~~~
 * Do not override exam view for a learner taking a practice exam when the learner does
