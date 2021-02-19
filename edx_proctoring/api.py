@@ -2069,6 +2069,9 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
     """
     user = USER_MODEL.objects.get(id=user_id)
 
+    if not user.has_perm('edx_proctoring.can_take_proctored_exam', exam):
+        return None
+
     student_view_template = None
 
     attempt = get_current_exam_attempt(exam_id, user_id)

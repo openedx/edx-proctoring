@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.6.0] - 2021-02-19
+~~~~~~~~~~~~~~~~~~~~
+* Do not override exam view for a learner taking a practice exam when the learner does
+  not have access to proctoring. This allows the learner to see the exam content and does
+  not allow the learner access to the proctoring software.
+
 [3.5.1] - 2021-02-19
 ~~~~~~~~~~~~~~~~~~~~
 * Add missing `rejected` status to list of onboarding attempt statuses.
