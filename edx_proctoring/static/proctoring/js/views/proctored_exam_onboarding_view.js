@@ -9,7 +9,7 @@ edx = edx || {};
     onboardingStatuses = [
         'not_started',
         'setup_started',
-        'proctoring_started',
+        'onboarding_started',
         'submitted',
         'verified',
         'rejected',
@@ -18,7 +18,7 @@ edx = edx || {};
     onboardingStatusReadableFormat = {
         not_started: gettext('Not Started'),
         setup_started: gettext('Setup Started'),
-        proctoring_started: gettext('Proctoring Started'),
+        onboarding_started: gettext('Onboarding Started'),
         started: gettext('Started'),
         submitted: gettext('Submitted'),
         verified: gettext('Verified'),

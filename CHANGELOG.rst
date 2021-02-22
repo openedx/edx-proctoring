@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.6.2] - 2021-02-22
+~~~~~~~~~~~~~~~~~~~~
+* Change learner onboarding status from "proctoring_started" to "onboarding_started"
+  to more clearly describe the learner's onboarding status.
+
 [3.6.1] - 2021-02-19
 ~~~~~~~~~~~~~~~~~~~~
 * Add time_remaining_seconds field of ProctoredExamStudentAttempt model to readonly_fields in 

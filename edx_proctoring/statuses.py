@@ -246,7 +246,7 @@ class InstructorDashboardOnboardingAttemptStatus:
     """
     not_started = 'not_started'
     setup_started = 'setup_started'
-    proctoring_started = 'proctoring_started'
+    onboarding_started = 'onboarding_started'
     submitted = 'submitted'
     rejected = 'rejected'
     verified = 'verified'
@@ -256,8 +256,8 @@ class InstructorDashboardOnboardingAttemptStatus:
         ProctoredExamStudentAttemptStatus.created: setup_started,
         ProctoredExamStudentAttemptStatus.download_software_clicked: setup_started,
         ProctoredExamStudentAttemptStatus.ready_to_start: setup_started,
-        ProctoredExamStudentAttemptStatus.started: proctoring_started,
-        ProctoredExamStudentAttemptStatus.ready_to_submit: proctoring_started,
+        ProctoredExamStudentAttemptStatus.started: onboarding_started,
+        ProctoredExamStudentAttemptStatus.ready_to_submit: onboarding_started,
         ProctoredExamStudentAttemptStatus.submitted: submitted,
         ProctoredExamStudentAttemptStatus.rejected: rejected,
         ProctoredExamStudentAttemptStatus.verified: verified,
