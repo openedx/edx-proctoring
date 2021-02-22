@@ -11,9 +11,6 @@
 # Common constraints for edx repos
 -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
 
-# jsonfield2 > 3.0.3 dropped support for python 3.5
-jsonfield2==3.0.3
-
 # pinning it to latest release.
 celery==5.0.4
 # celery latest version requires click<8.0.0
