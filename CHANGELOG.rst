@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.6.4] - 2021-02-24
+~~~~~~~~~~~~~~~~~~~~
+* Switched from jsonfield2 to jsonfield as the earlier one has archived and merged back in the latter one.
+
 [3.6.3] - 2021-02-23
 ~~~~~~~~~~~~~~~~~~~~
 * Add a script to generate obscure_user_ids for proctoring vendors to use.
