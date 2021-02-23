@@ -4452,6 +4452,38 @@ class TestResetAttemptsView(LoggedInTestCase):
         attempts = ProctoredExamStudentAttempt.objects.filter(user_id=self.user.id, proctored_exam_id=self.exam_id)
         assert len(attempts) == 0
 
+    def test_course_staff_can_delete(self):
+        """
+        Tests that course staff can delete attempts
+        """
+
+        attempt_data = {
+            'exam_id': self.exam_id,
+            'start_clock': True,
+        }
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        attempt_id = response_data['exam_attempt_id']
+        self.assertGreater(attempt_id, 0)
+
+        # now set the user is_staff to False
+        # and also user is a course staff
+        self.user.is_staff = False
+        self.user.save()
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+
+        response = self.client.delete(
+            reverse('edx_proctoring:proctored_exam.attempts.reset',
+                    kwargs={'exam_id': self.exam_id, 'user_id': self.user.id})
+        )
+
+        self.assertEqual(response.status_code, 200)
+
 
 class TestStudentProctoredGroupedExamAttemptsByCourse(LoggedInTestCase):
     """

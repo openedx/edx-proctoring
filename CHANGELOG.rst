@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.6.5] - 2021-02-23
+~~~~~~~~~~~~~~~~~~~~
+* Bug fix to allow course staff to reset attempts
+
 [3.6.4] - 2021-02-24
 ~~~~~~~~~~~~~~~~~~~~
 * Switched from jsonfield2 to jsonfield as the earlier one has archived and merged back in the latter one.
@@ -31,7 +35,7 @@ Unreleased
 
 [3.6.1] - 2021-02-19
 ~~~~~~~~~~~~~~~~~~~~
-* Add time_remaining_seconds field of ProctoredExamStudentAttempt model to readonly_fields in 
+* Add time_remaining_seconds field of ProctoredExamStudentAttempt model to readonly_fields in
   Django admin page so it is not required when editing the model.
 * Update reference to Exception.message to use string representation of the exception, as message
   is no longer an attribute of the Exception class.
