@@ -2708,7 +2708,7 @@ class LastVerifiedOnboardingAttemptsTests(ProctoredExamTestCase):
     def setUp(self):
         super().setUp()
         self.other_course_id = 'e/f/g'
-        self.other_course_onboarding_content_id = 'other_test_content_id_onboarding'
+        self.other_course_onboarding_content_id = 'block-v1:test+course+2+type@sequential+block@other_onboard'
         self.other_onboarding_exam_name = 'other_test_onboarding_exam_name'
         self.other_onboarding_exam_id = create_exam(
             course_id=self.other_course_id,
@@ -2874,7 +2874,7 @@ class LastVerifiedOnboardingAttemptsTests(ProctoredExamTestCase):
             )
 
         third_course_id = 'o/p/q'
-        third_course_onboarding_content_id = 'third_test_content_id_onboarding'
+        third_course_onboarding_content_id = 'block-v1:test+course+3+type@sequential+block@third_onboard'
         third_onboarding_exam_name = 'third_test_onboarding_exam_name'
         third_onboarding_exam_id = create_exam(
             course_id=third_course_id,

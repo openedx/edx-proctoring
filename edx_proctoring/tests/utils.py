@@ -19,7 +19,7 @@ from django.test import TestCase
 from django.test.client import Client
 
 from edx_proctoring.api import create_exam
-from edx_proctoring.models import ProctoredExamStudentAttempt
+from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService
@@ -116,21 +116,21 @@ class ProctoredExamTestCase(LoggedInTestCase):
         self.default_time_limit = 21
         self.course_id = 'a/b/c'
         self.content_id_for_exam_with_due_date = 'test_content_due_date_id'
-        self.content_id = 'test_content_id'
-        self.content_id_timed = 'test_content_id_timed'
-        self.content_id_practice = 'test_content_id_practice'
-        self.content_id_onboarding = 'test_content_id_onboarding'
-        self.disabled_content_id = 'test_disabled_content_id'
+        self.content_id = 'block-v1:test+course+1+type@sequential+block@exam'
+        self.content_id_timed = 'block-v1:test+course+1+type@sequential+block@timed'
+        self.content_id_practice = 'block-v1:test+course+1+type@sequential+block@practice'
+        self.content_id_onboarding = 'block-v1:test+course+1+type@sequential+block@onboard'
+        self.disabled_content_id = 'block-v1:test+course+1+type@sequential+block@disabled'
         self.exam_name = 'Test Exam'
         self.user_id = self.user.id
         self.key = 'additional_time_granted'
         self.value = '10'
         self.external_id = 'test_external_id'
-        self.proctored_exam_id = self._create_proctored_exam()
-        self.timed_exam_id = self._create_timed_exam()
-        self.practice_exam_id = self._create_practice_exam()
-        self.onboarding_exam_id = self._create_onboarding_exam()
-        self.disabled_exam_id = self._create_disabled_exam()
+        # self.proctored_exam_id = self._create_proctored_exam()
+        # self.timed_exam_id = self._create_timed_exam()
+        # self.practice_exam_id = self._create_practice_exam()
+        # self.onboarding_exam_id = self._create_onboarding_exam()
+        # self.disabled_exam_id = self._create_disabled_exam()
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
@@ -387,3 +387,32 @@ class ProctoredExamTestCase(LoggedInTestCase):
         Replaces newlines and multiple spaces with a single space.
         """
         return ' '.join(string.replace('\n', '').split())
+
+
+def create_onboarding_exam(
+    course_id='a/b/c',
+    content_id='block-v1:test+course+1+type@sequential+block@onboard',
+    exam_name='Test Exam',
+    external_id='123aXqe3'
+):
+    """
+    Create and return an onboarding exam.
+
+    Parameters:
+    * course_id: the course ID for the course in which to create the exam
+    * content_id: the content ID
+    * exam_name: the name of the exam
+    * external_id: the external ID of the exam
+    """
+    onboarding_exam = ProctoredExam.objects.create(
+        course_id=course_id,
+        content_id=content_id,
+        exam_name=exam_name,
+        external_id=external_id,
+        time_limit_mins=90,
+        is_active=True,
+        is_proctored=True,
+        is_practice_exam=True,
+        backend='test',
+    )
+    return onboarding_exam

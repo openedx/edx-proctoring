@@ -111,6 +111,10 @@
                 'margin-bottom': '15px'
             });
 
+            $el.find('.action-disabled').css({
+                background: '#b4b6bd'
+            });
+
             $el.find('.action-info-link').css({
                 border: '1px solid #0d4e6c'
             });
@@ -139,6 +143,8 @@
 
         render: function() {
             var statusText = {};
+            var releaseDate;
+            var now = new Date();
             var data = this.model.toJSON();
             if (this.template) {
                 if (data.expiration_date && this.isExpiringSoon(data.expiration_date)) {
@@ -147,12 +153,15 @@
                     this.status = data.onboarding_status;
                 }
                 statusText = this.getExamAttemptText(this.status);
+                releaseDate = new Date(data.onboarding_release_date);
                 data = {
                     onboardingStatus: statusText.status,
                     onboardingMessage: statusText.message,
                     showOnboardingReminder: !['verified', 'other_course_approved'].includes(data.onboarding_status),
+                    onboardingClosed: releaseDate > now,
                     showOnboardingExamLink: this.shouldShowExamLink(data.onboarding_status),
-                    onboardingLink: data.onboarding_link
+                    onboardingLink: data.onboarding_link,
+                    onboardingReleaseDate: releaseDate.toLocaleDateString()
                 };
 
                 $(this.el).html(this.template(data));
