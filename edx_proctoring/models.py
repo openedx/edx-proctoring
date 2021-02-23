@@ -272,16 +272,21 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         """
         return self.filter(proctored_exam_id=exam_id)
 
-    def get_exam_attempts_for_users_by_exam_id(self, exam_id, users):
+    def get_onboarding_attempts_by_course_id(self, course_id, users=None):
         """
-        Returns all the exam attempts for iterable users in an exam with the given exam ID.
+        Returns all onboarding attempts for a course, ordered by descending modified field.
 
         Parameters:
-        * exam_id: ID of the exam
-        * users: an iterable of users to filter by
+        * course_id: ID of the course
+        * users (optional): an iterable of users to filter by
         """
-        queryset = self.get_all_exam_attempts_by_exam_id(exam_id)
-        queryset = queryset.filter(user__in=users)
+        queryset = self.get_all_exam_attempts(course_id).filter(
+            proctored_exam__is_practice_exam=True,
+            proctored_exam__is_active=True,
+            taking_as_proctored=True
+        ).order_by('-modified')
+        if users:
+            queryset = queryset.filter(user__in=users)
         return queryset
 
     def get_filtered_exam_attempts(self, course_id, search_by):

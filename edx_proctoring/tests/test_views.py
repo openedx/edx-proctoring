@@ -665,9 +665,9 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertIsNone(response_data['onboarding_status'])
 
-    def test_ineligible_for_exam(self):
+    def test_ineligible_for_onboarding_exam(self):
         """
-        Test that the request returns a 404 error if the user is not eligible for proctored exams
+        Test that the request returns a 404 error if the user is not eligible for the onboarding exam
         """
         onboarding_exam = create_onboarding_exam()
         with mock_perm('edx_proctoring.can_take_proctored_exam'):
@@ -677,7 +677,7 @@ class TestStudentOnboardingStatusView(LoggedInTestCase):
             )
         self.assertEqual(response.status_code, 404)
         response_data = json.loads(response.content.decode('utf-8'))
-        message = 'There is no exam accessible to this user.'
+        message = 'There is no onboarding exam accessible to this user.'
         self.assertEqual(response_data['detail'], message)
 
 
@@ -1174,6 +1174,36 @@ class TestStudentOnboardingStatusByCourseView(LoggedInTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_data, expected_data)
+
+    @ddt.data(
+        (
+            [ProctoredExamStudentAttemptStatus.error, ProctoredExamStudentAttemptStatus.submitted],
+            InstructorDashboardOnboardingAttemptStatus.submitted
+        ),
+        (
+            [ProctoredExamStudentAttemptStatus.verified, ProctoredExamStudentAttemptStatus.rejected],
+            InstructorDashboardOnboardingAttemptStatus.verified
+        )
+    )
+    @ddt.unpack
+    def test_returns_correct_attempt(self, attempt_statuses, expected_onboarding_status):
+        """
+        Test that it always returns verified if a verified attempt exists. Else, returns the most
+        recent attempt.
+        """
+        for status in attempt_statuses:
+            onboarding_attempt_id = create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
+            update_attempt_status(onboarding_attempt_id, status)
+
+        response = self.client.get(reverse(
+                'edx_proctoring:user_onboarding.status.course',
+                kwargs={'course_id': self.onboarding_exam.course_id}
+            )
+        )
+        response_data = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_data['results'][0]['status'], expected_onboarding_status)
 
     def test_multiple_exam_attempts(self):
         attempt_id = create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
