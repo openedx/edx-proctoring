@@ -32,7 +32,7 @@ from edx_proctoring.api import (
     get_all_exams_for_course,
     get_allowances_for_course,
     get_backend_provider,
-    get_enrollments_for_course,
+    get_enrollments_can_take_proctored_exams,
     get_exam_attempt_by_external_id,
     get_exam_attempt_by_id,
     get_exam_by_content_id,
@@ -445,35 +445,25 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
                 status=404,
                 data={'detail': _('There is no onboarding exam related to this course id.')}
             )
-        serialized_onboarding_exam = ProctoredExamSerializer(onboarding_exam).data
 
         data_page = request.GET.get('page', 1)
         text_search = request.GET.get('text_search')
         statuses_filter = request.GET.get('statuses')
 
-        enrollments = get_enrollments_for_course(course_id)
-        # filter down enrollments for users that can take proctored exams
-        allowed_enrollments_users = [
-            enrollment.user
-            for enrollment
-            in enrollments
-            if enrollment.user.has_perm('edx_proctoring.can_take_proctored_exam', serialized_onboarding_exam)
-        ]
+        enrollments = get_enrollments_can_take_proctored_exams(course_id, text_search)
 
-        # filter allowed_enrollments_users by text_search
-        allowed_enrollments_users = self._filter_users_by_username_or_email(allowed_enrollments_users, text_search)
-
+        users = [enrollment.user for enrollment in enrollments]
         # get onboarding attempts for users for the course
         onboarding_attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(
             course_id,
-            allowed_enrollments_users
+            users
         ).values('user_id', 'status', 'modified')
 
         # select a verified, or most recent, exam attempt per user
         onboarding_attempts_per_user = self._get_relevant_attempt_per_user(onboarding_attempts)
 
         onboarding_data = []
-        for user in allowed_enrollments_users:
+        for user in users:
             user_attempt = onboarding_attempts_per_user.get(user.id, {})
 
             data = {}
@@ -537,24 +527,6 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
                 onboarding_attempts_per_user[attempt['user_id']] = attempt
 
         return onboarding_attempts_per_user
-
-    def _filter_users_by_username_or_email(self, users, text_search):
-        """
-        Given users, return users for whom there is insensitive partial or full match of
-        either their username or email.
-
-        Parameters:
-        * users: users against which to do the search
-        * text_search: the string aginst which to do a match
-        """
-        if text_search:
-            text_search = text_search.lower()
-            return [
-                user
-                for user in users
-                if text_search in user.username.lower() or text_search in user.email.lower()
-            ]
-        return users
 
     def _paginate_data(self, data, page_number, course_id, query_params):
         """
