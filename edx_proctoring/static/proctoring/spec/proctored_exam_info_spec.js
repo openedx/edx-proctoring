@@ -12,7 +12,18 @@ describe('ProctoredExamInfo', function() {
         return (
             {
                 onboarding_status: status,
-                onboarding_link: 'onboarding_link'
+                onboarding_link: 'onboarding_link',
+                expiration_date: null
+            }
+        );
+    }
+
+    function expectedOtherCourseApprovedJson(expirationDate) {
+        return (
+            {
+                onboarding_status: 'other_course_approved',
+                onboarding_link: 'onboarding_link',
+                expiration_date: expirationDate
             }
         );
     }
@@ -334,6 +345,61 @@ describe('ProctoredExamInfo', function() {
             .toContain('Rejected');
         expect(this.proctored_exam_info.$el.find('.onboarding-reminder').html())
             .toContain('You must complete the onboarding process');
+        expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
+            .toContain('Complete Onboarding');
+    });
+
+    it('should render proctoring info panel correctly for other course approved', function() {
+        var expirationDate = new Date();
+        // Set the expiration date 50 days in the future
+        expirationDate.setTime(expirationDate.getTime() + 3456900000);
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedOtherCourseApprovedJson(expirationDate.toString()))
+            ]
+        );
+        this.proctored_exam_info = new edx.courseware.proctored_exam.ProctoredExamInfo({
+            el: $('.proctoring-info-panel'),
+            model: new LearnerOnboardingModel()
+        });
+        this.server.respond();
+        this.server.respond();
+        expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
+            .toContain('Approved in Another Course');
+        expect(this.proctored_exam_info.$el.find('.onboarding-status-message').html())
+            .toContain('it is highly recommended that you complete this course\'s onboarding exam');
+        expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
+            .toContain('Complete Onboarding');
+    });
+
+    it('should render proctoring info panel when expiring soon', function() {
+        var expirationDate = new Date();
+        // This message will render if the expiration date is within 28 days
+        // Set the expiration date 10 days in future
+        expirationDate.setTime(expirationDate.getTime() + 864800000);
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedOtherCourseApprovedJson(expirationDate.toString()))
+            ]
+        );
+        this.proctored_exam_info = new edx.courseware.proctored_exam.ProctoredExamInfo({
+            el: $('.proctoring-info-panel'),
+            model: new LearnerOnboardingModel()
+        });
+        this.server.respond();
+        this.server.respond();
+        expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
+            .toContain('Expiring Soon');
+        expect(this.proctored_exam_info.$el.find('.onboarding-status-message').html())
+            .toContain('However, your onboarding status is expiring soon.');
         expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
             .toContain('Complete Onboarding');
     });

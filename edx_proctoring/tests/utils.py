@@ -19,7 +19,7 @@ from django.test import TestCase
 from django.test.client import Client
 
 from edx_proctoring.api import create_exam
-from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt
+from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import MockCreditService, MockInstructorService
@@ -373,32 +373,3 @@ class ProctoredExamTestCase(LoggedInTestCase):
         Replaces newlines and multiple spaces with a single space.
         """
         return ' '.join(string.replace('\n', '').split())
-
-
-def create_onboarding_exam(
-    course_id='a/b/c',
-    content_id='test_content',
-    exam_name='Test Exam',
-    external_id='123aXqe3'
-):
-    """
-    Create and return an onboarding exam.
-
-    Parameters:
-    * course_id: the course ID for the course in which to create the exam
-    * content_id: the content ID
-    * exam_name: the name of the exam
-    * external_id: the external ID of the exam
-    """
-    onboarding_exam = ProctoredExam.objects.create(
-        course_id=course_id,
-        content_id=content_id,
-        exam_name=exam_name,
-        external_id=external_id,
-        time_limit_mins=90,
-        is_active=True,
-        is_proctored=True,
-        is_practice_exam=True,
-        backend='test',
-    )
-    return onboarding_exam

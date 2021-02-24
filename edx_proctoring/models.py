@@ -6,6 +6,9 @@ Data models for the proctoring subsystem
 # pylint: disable=model-missing-unicode
 
 
+from datetime import datetime, timedelta
+
+import pytz
 from model_utils.models import TimeStampedModel
 
 from django.contrib.auth import get_user_model
@@ -272,9 +275,10 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         """
         return self.filter(proctored_exam_id=exam_id)
 
-    def get_onboarding_attempts_by_course_id(self, course_id, users=None):
+    # pylint: disable=invalid-name
+    def get_proctored_practice_attempts_by_course_id(self, course_id, users=None):
         """
-        Returns all onboarding attempts for a course, ordered by descending modified field.
+        Returns all proctored practice attempts for a course, ordered by descending modified field.
 
         Parameters:
         * course_id: ID of the course
@@ -288,6 +292,24 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         if users:
             queryset = queryset.filter(user__in=users)
         return queryset
+
+    # pylint: disable=invalid-name
+    def get_last_verified_proctored_practice_attempt(self, user_id, proctoring_backend):
+        """
+        Returns the user's last verified proctored practice attempt for a specific backend,
+        if it exists. This only considers attempts within the last two years, as attempts
+        before this point are considered expired.
+
+        Parameters:
+            * user_id: ID of the user
+            * proctoring_backend: The name of the proctoring backend
+        """
+        earliest_allowed_date = datetime.now(pytz.UTC) - timedelta(days=730)
+        return self.filter(
+            user_id=user_id, taking_as_proctored=True, proctored_exam__is_practice_exam=True,
+            proctored_exam__backend=proctoring_backend, modified__gt=earliest_allowed_date,
+            status=ProctoredExamStudentAttemptStatus.verified
+        ).order_by('-modified').first()
 
     def get_filtered_exam_attempts(self, course_id, search_by):
         """
