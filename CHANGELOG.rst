@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.6.6] - 2021-02-24
+~~~~~~~~~~~~~~~~~~~~
+* Revert jsonfield PR
+
 [3.6.5] - 2021-02-23
 ~~~~~~~~~~~~~~~~~~~~
 * Bug fix to allow course staff to reset attempts
