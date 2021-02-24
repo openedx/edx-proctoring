@@ -102,7 +102,7 @@ def require_course_or_global_staff(func):
     def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
         instructor_service = get_runtime_service('instructor')
         course_id = kwargs.get('course_id', None)
-        exam_id = request.data.get('exam_id', None)
+        exam_id = request.data.get('exam_id') or kwargs.get('exam_id', None)
         attempt_id = kwargs.get('attempt_id', None)
         if request.user.is_staff:
             return func(request, *args, **kwargs)
