@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.6.7] - 2021-02-24
+~~~~~~~~~~~~~~~~~~~~
+* Fix requirements file
+
 [3.6.6] - 2021-02-24
 ~~~~~~~~~~~~~~~~~~~~
 * Revert jsonfield PR
