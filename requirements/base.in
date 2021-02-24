@@ -6,7 +6,7 @@ Django>=2.2
 django-model-utils
 djangorestframework
 django-ipware>=1.1.0
-jsonfield
+jsonfield2
 pytz>=2018
 pycryptodomex>=3.4.7
 django-crum
