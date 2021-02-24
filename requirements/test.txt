@@ -124,6 +124,7 @@ jsonfield2==3.0.3
     # via
     #   -c requirements/constraints.txt
     #   -r requirements/base.in
+    # via celery
 lazy==1.4
     # via bok-choy
 logilab-common==1.8.1
@@ -171,7 +172,7 @@ pyjwt[crypto]==1.7.1
     # via
     #   drf-jwt
     #   edx-rest-api-client
-pymongo==3.11.3
+pymongo==3.11.2
     # via
     #   edx-opaque-keys
     #   event-tracking
@@ -239,7 +240,7 @@ six==1.15.0
     #   cryptography
     #   edx-drf-extensions
     #   edx-i18n-tools
-    #   edx-opque-keys
+    #   edx-opaque-keys
     #   event-tracking
     #   fs
     #   pyjwkest
