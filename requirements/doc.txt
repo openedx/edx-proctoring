@@ -6,7 +6,7 @@
 #
 alabaster==0.7.12
     # via sphinx
-amqp==5.0.3
+amqp==5.0.5
     # via kombu
 appdirs==1.4.4
     # via fs
@@ -14,7 +14,7 @@ babel==2.9.0
     # via sphinx
 billiard==3.6.3.0
     # via celery
-bleach==3.2.3
+bleach==3.3.0
     # via readme-renderer
 celery==5.0.4
     # via
@@ -22,7 +22,7 @@ celery==5.0.4
     #   event-tracking
 certifi==2020.12.5
     # via requests
-cffi==1.14.4
+cffi==1.14.5
     # via cryptography
 chardet==4.0.0
     # via
@@ -40,7 +40,7 @@ click==7.1.2
     #   click-didyoumean
     #   click-plugins
     #   click-repl
-cryptography==3.3.1
+cryptography==3.4.6
     # via pyjwt
 django-crum==0.7.9
     # via
@@ -59,7 +59,7 @@ django-waffle==2.1.0
     #   edx-drf-extensions
 django-webpack-loader==0.7.0
     # via -r requirements/base.in
-django==2.2.17
+django==2.2.19
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
@@ -94,18 +94,18 @@ edx-django-utils==3.13.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   edx-when
-edx-drf-extensions==6.4.0
+edx-drf-extensions==6.5.0
     # via
     #   -r requirements/base.in
     #   edx-when
-edx-opaque-keys==2.1.1
+edx-opaque-keys==2.2.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
 edx-rest-api-client==5.3.0
     # via -r requirements/base.in
-edx-sphinx-theme==1.6.1
+edx-sphinx-theme==2.0.0
     # via -r requirements/doc.in
 edx-when==2.0.0
     # via -r requirements/base.in
@@ -119,7 +119,7 @@ idna==2.10
     # via requests
 imagesize==1.2.0
     # via sphinx
-jinja2==2.11.2
+jinja2==2.11.3
     # via sphinx
 jsonfield2==3.0.3
     # via
@@ -135,7 +135,7 @@ markupsafe==1.1.1
     #   xblock
 newrelic==6.0.1.155
     # via edx-django-utils
-packaging==20.8
+packaging==20.9
     # via
     #   bleach
     #   sphinx
@@ -143,17 +143,17 @@ pbr==5.5.1
     # via stevedore
 pockets==0.9.1
     # via sphinxcontrib-napoleon
-prompt-toolkit==3.0.14
+prompt-toolkit==3.0.16
     # via click-repl
 psutil==5.8.0
     # via edx-django-utils
 pycparser==2.20
     # via cffi
-pycryptodomex==3.9.9
+pycryptodomex==3.10.1
     # via
     #   -r requirements/base.in
     #   pyjwkest
-pygments==2.7.4
+pygments==2.8.0
     # via
     #   doc8
     #   readme-renderer
@@ -164,7 +164,7 @@ pyjwt[crypto]==1.7.1
     # via
     #   drf-jwt
     #   edx-rest-api-client
-pymongo==3.11.2
+pymongo==3.11.3
     # via
     #   edx-opaque-keys
     #   event-tracking
@@ -175,7 +175,7 @@ python-dateutil==2.8.1
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   xblock
-pytz==2020.5
+pytz==2021.1
     # via
     #   -r requirements/base.in
     #   babel
@@ -186,7 +186,7 @@ pytz==2020.5
     #   xblock
 pyyaml==5.4.1
     # via xblock
-readme-renderer==28.0
+readme-renderer==29.0
     # via -r requirements/doc.in
 requests==2.25.1
     # via
@@ -207,10 +207,8 @@ six==1.15.0
     # via
     #   bleach
     #   click-repl
-    #   cryptography
     #   doc8
     #   edx-drf-extensions
-    #   edx-opaque-keys
     #   edx-sphinx-theme
     #   event-tracking
     #   fs
@@ -224,7 +222,7 @@ slumber==0.7.1
     # via edx-rest-api-client
 snowballstemmer==2.1.0
     # via sphinx
-sphinx==3.4.3
+sphinx==3.5.1
     # via
     #   -r requirements/doc.in
     #   edx-sphinx-theme
@@ -261,7 +259,7 @@ web-fragments==1.0.0
     # via xblock
 webencodings==0.5.1
     # via bleach
-webob==1.8.6
+webob==1.8.7
     # via xblock
 xblock==1.4.0
     # via edx-when
