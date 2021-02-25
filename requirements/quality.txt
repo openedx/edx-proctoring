@@ -71,7 +71,7 @@ pylint-plugin-utils==0.6
     # via
     #   pylint-celery
     #   pylint-django
-pylint==2.7.0
+pylint==2.7.1
     # via
     #   edx-lint
     #   pylint-celery
@@ -85,7 +85,7 @@ pytz==2021.1
     # via django
 pyyaml==5.4.1
     # via code-annotations
-readme-renderer==28.0
+readme-renderer==29.0
     # via twine
 requests-toolbelt==0.9.1
     # via twine

@@ -184,7 +184,7 @@ pytz==2021.1
     #   xblock
 pyyaml==5.4.1
     # via xblock
-readme-renderer==28.0
+readme-renderer==29.0
     # via -r requirements/doc.in
 requests==2.25.1
     # via
