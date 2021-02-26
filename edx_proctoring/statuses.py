@@ -252,6 +252,10 @@ class InstructorDashboardOnboardingAttemptStatus:
     verified = 'verified'
     error = 'error'
 
+    # The following status is not a true attempt status, but is used when the
+    # user's onboarding profile is approved in a different course.
+    other_course_approved = 'other_course_approved'
+
     onboarding_statuses = {
         ProctoredExamStudentAttemptStatus.created: setup_started,
         ProctoredExamStudentAttemptStatus.download_software_clicked: setup_started,
