@@ -53,7 +53,10 @@ from edx_proctoring.serializers import (
     ProctoredExamStudentAllowanceSerializer,
     ProctoredExamStudentAttemptSerializer
 )
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import (
+    ProctoredExamStudentAttemptStatus,
+    InstructorDashboardOnboardingAttemptStatus
+)
 from edx_proctoring.utils import (
     emit_event,
     get_exam_due_date,
@@ -1553,6 +1556,47 @@ def get_active_exams_for_user(user_id, course_id=None):
 
     return result
 
+
+def get_onboarding_status_per_user(users, backend, current_course_id):
+    """
+    Based on the list of users provided from caller, and the proctoring backend,
+    this function would return a dictionary of user and its corresponding onboarding exam status
+    For example:
+        '{
+            (use_id=)23432: 'verified',
+            (use_id=)56543: 'submitted',
+            (use_id=)33423: 'other_course_approved',
+            ...
+        }'
+    The return dictionary might be empty because the passed in user list would be empty
+    """
+    status_dictionary = {}
+    if not users:
+        return status_dictionary
+
+    all_onboarding_attempts = ProctoredExamAttempt.objects.get_onboarding_attempts_by_user_list(backend, users)
+    for attempt in all_onboarding_attempts:
+        existing_status = status_dictionary.get(attempt['user_id'])
+        if existing_status == InstructorDashboardOnboardingAttemptStatus.verified:
+            continue
+
+        if attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
+            if attempt['course_id'] == current_course_id:
+                status_dictionary[attempt['user_id']] = InstructorDashboardOnboardingAttemptStatus.verified
+            else:
+                status_dictionary[attempt['user_id']] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
+            
+        if not existing_status and attempt['course_id'] == current_course_id:
+            converted_status = InstructorDashboardOnboardingAttemptStatus.get_onboarding_status_from_attempt_status(
+                attempt['status']
+            )
+            status_dictionary[attempt['user_id']] = converted_status
+    
+    for user in users:
+        if not status_dictionary.get(user.id):
+            status_dictionary[user.id] = InstructorDashboardOnboardingAttemptStatus.not_started
+    
+    return status_dictionary
 
 def _get_ordered_prerequisites(prerequisites_statuses, filter_out_namespaces=None):
     """

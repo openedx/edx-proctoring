@@ -289,6 +289,20 @@ class ProctoredExamStudentAttemptManager(models.Manager):
             queryset = queryset.filter(user__in=users)
         return queryset
 
+    def get_onboarding_attempts_by_user_list(self, users, backend):
+        """
+        Returns all the onboarding attempts by the list of user, and proctoring backend
+        This function will will a django query set.
+        """
+        queryset = self.filter(
+            proctored_exam__is_practice_exam=True,
+            proctored_exam__is_active=True,
+            proctored_exam__backend=backend,
+            taking_as_proctored=True,
+            user___in=users,
+        ).order_by('-modified')
+        return query_set
+
     def get_filtered_exam_attempts(self, course_id, search_by):
         """
         Returns the Student Exam Attempts for the given course_id filtered by search_by.
