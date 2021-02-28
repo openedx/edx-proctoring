@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-21 18:35+0000\n"
+"POT-Creation-Date: 2021-02-28 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2021\n"
 "Language-Team: French (Canada) (https://www.transifex.com/open-edx/teams/6205/fr_CA/)\n"
@@ -183,19 +183,19 @@ msgstr "Examen minuté"
 msgid "Onboarding status question"
 msgstr "Question sur le statut d'intégration"
 
-#: models.py:376
+#: models.py:381
 msgid "Taking as Proctored"
 msgstr "Prendre comme examen surveillé"
 
-#: models.py:380
+#: models.py:385
 msgid "Is Sample Attempt"
 msgstr "Tentative d'échantillonnage"
 
-#: models.py:562
+#: models.py:567
 msgid "Additional Time (minutes)"
 msgstr "Temps additionnel (minutes)"
 
-#: models.py:563
+#: models.py:568
 msgid "Review Policy Exception"
 msgstr "Examen de la politique d'exception"
 
@@ -1757,59 +1757,59 @@ msgstr "ajouter {num_of_minutes} minutes"
 msgid "could not determine the course_id"
 msgstr "impossible de déterminer l'id de cours"
 
-#: views.py:126 views.py:350
+#: views.py:126 views.py:344
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 "Doit être un membre de l'équipe pédagogique pour effectuer cette requête."
 
-#: views.py:340
+#: views.py:334
 msgid "Missing required query parameter course_id"
 msgstr "Paramètre de requête obligatoire course_id manquant"
 
-#: views.py:365 views.py:447
+#: views.py:353 views.py:432
 msgid "There is no onboarding exam related to this course id."
 msgstr "Il n'y a pas d'examen d'intégration lié à cet identifiant de cours."
 
-#: views.py:374
-msgid "There is no exam accessible to this user."
-msgstr "Aucun examen n'est accessible à cet utilisateur."
+#: views.py:362
+msgid "There is no onboarding exam accessible to this user."
+msgstr ""
 
-#: views.py:662 views.py:899
+#: views.py:650 views.py:887
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "il vous reste {remaining_time}"
 
-#: views.py:668
+#: views.py:656
 msgid "you have less than a minute remaining"
 msgstr "il vous reste moins d'une minute"
 
-#: views.py:887
+#: views.py:875
 msgid "a timed exam"
 msgstr "un examen chronométré"
 
-#: views.py:888
+#: views.py:876
 msgid "a proctored exam"
 msgstr "un examen surveillé"
 
-#: views.py:889
+#: views.py:877
 msgid "an onboarding exam"
 msgstr "un examen d'intégration"
 
-#: views.py:890
+#: views.py:878
 msgid "a practice exam"
 msgstr "un examen de pratique"
 
-#: views.py:1474
+#: views.py:1462
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "Aucun examen dans le cours {course_id}."
 
-#: views.py:1480
+#: views.py:1468
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "Aucun examen surveillé dans le cours {course_id}"
 
-#: views.py:1499
+#: views.py:1487
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "Aucun tableau de bord d'instructeur pour {proctor_service}"
