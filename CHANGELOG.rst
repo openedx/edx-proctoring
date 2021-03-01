@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.2] - 2021-03-02
+~~~~~~~~~~~~~~~~~~~~
+* Refactor the proctoring API function to get all verified onboarding attempts of a group of learners.
+
 [3.7.1] - 2021-03-02
 ~~~~~~~~~~~~~~~~~~~~
 * Update table on instructors dashboard to add accordian for multiple attempts

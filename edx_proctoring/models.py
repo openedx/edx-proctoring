@@ -293,23 +293,22 @@ class ProctoredExamStudentAttemptManager(models.Manager):
             queryset = queryset.filter(user__in=users)
         return queryset
 
-    # pylint: disable=invalid-name
-    def get_last_verified_proctored_practice_attempt(self, user_id, proctoring_backend):
+    def get_last_verified_proctored_onboarding_attempts(self, users, proctoring_backend):
         """
-        Returns the user's last verified proctored practice attempt for a specific backend,
-        if it exists. This only considers attempts within the last two years, as attempts
+        Returns the last verified proctored onboarding attempt for a specific backend for passed in users list,
+        if attempts exist. This only considers attempts within the last two years, as attempts
         before this point are considered expired.
 
         Parameters:
-            * user_id: ID of the user
+            * users: A list of users object of which we are checking the attempts
             * proctoring_backend: The name of the proctoring backend
         """
         earliest_allowed_date = datetime.now(pytz.UTC) - timedelta(days=730)
         return self.filter(
-            user_id=user_id, taking_as_proctored=True, proctored_exam__is_practice_exam=True,
+            user__in=users, taking_as_proctored=True, proctored_exam__is_practice_exam=True,
             proctored_exam__backend=proctoring_backend, modified__gt=earliest_allowed_date,
             status=ProctoredExamStudentAttemptStatus.verified
-        ).order_by('-modified').first()
+        ).order_by('-modified')
 
     def get_filtered_exam_attempts(self, course_id, search_by):
         """
