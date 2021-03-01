@@ -459,18 +459,29 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
             users
         ).values('user_id', 'status', 'modified')
 
+        # get all of the last verified onboarding attempts of these users
+        last_verified_attempt_dict = get_last_verified_onboarding_attempts_per_user(
+            users,
+            onboarding_exam.backend,
+        )
+
         # select a verified, or most recent, exam attempt per user
         onboarding_attempts_per_user = self._get_relevant_attempt_per_user(onboarding_attempts)
 
         onboarding_data = []
         for user in users:
             user_attempt = onboarding_attempts_per_user.get(user.id, {})
+            other_verified_attempt = last_verified_attempt_dict.get(user.id)
 
-            data = {}
-            data['username'] = user.username
-            data['status'] = (InstructorDashboardOnboardingAttemptStatus
-                              .get_onboarding_status_from_attempt_status(user_attempt.get('status')))
-            data['modified'] = user_attempt.get('modified')
+            data = {'username': user.username}
+
+            if not user_attempt and other_verified_attempt:
+                data['status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
+                data['modified'] = other_verified_attempt.modified
+            else:
+                data['status'] = (InstructorDashboardOnboardingAttemptStatus
+                                  .get_onboarding_status_from_attempt_status(user_attempt.get('status')))
+                data['modified'] = user_attempt.get('modified')
 
             onboarding_data.append(data)
 
@@ -510,7 +521,6 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
         """
         Given an ordered list of attempts, return, for each learner, their most recent
         exam attempt. If the learner has a verified attempt, always return verified.
-
         Parameters:
         * attempts: an iterable of attempt objects
         """

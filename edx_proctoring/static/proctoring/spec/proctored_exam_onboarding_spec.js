@@ -3,7 +3,7 @@ describe('ProctoredExamOnboardingView', function() {
 
     var html = '';
     var expectedOnboardingDataJson = [{
-        count: 3,
+        count: 4,
         previous: null,
         next: null,
         num_pages: 1,
@@ -22,6 +22,11 @@ describe('ProctoredExamOnboardingView', function() {
                 username: 'testuser3',
                 status: 'submitted',
                 modified: '2021-01-28T17:46:05.316349Z'
+            },
+            {
+                username: 'testuser4',
+                status: 'other_course_approved',
+                modified: '2021-01-27T17:46:05.316349Z'
             }
         ]
     }];
@@ -176,7 +181,7 @@ describe('ProctoredExamOnboardingView', function() {
         this.server.respond();
 
         expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').length)
-            .toEqual(3);
+            .toEqual(4);
         expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').html())
             .toContain('testuser1');
         expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').html())
@@ -237,5 +242,28 @@ describe('ProctoredExamOnboardingView', function() {
         expect(this.proctored_exam_onboarding_view.collection.url).toEqual(
             '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id?page=1'
         );
+    });
+
+    it('Renders approved in another course correctly', function() {
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedOnboardingDataJson)
+            ]
+        );
+        this.proctored_exam_onboarding_view = new edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView();
+
+        this.server.respond();
+        this.server.respond();
+
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').length)
+            .toEqual(4);
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').last().html())
+            .toContain('testuser4');
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').last().html())
+            .toContain('Approved in Another Course');
     });
 });

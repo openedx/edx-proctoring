@@ -1107,6 +1107,74 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_data, expected_data)
 
+    def test_other_course_verified(self):
+        # Setup other course and its onboarding exam
+        other_course_id = 'e/f/g'
+        other_course_onboarding_content_id = 'other_test_content_id_onboarding'
+        other_onboarding_exam_name = 'other_test_onboarding_exam_name'
+        other_onboarding_exam_id = create_exam(
+            course_id=other_course_id,
+            content_id=other_course_onboarding_content_id,
+            exam_name=other_onboarding_exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+        )
+
+        # Setup Learner 1's attempts on the other course.
+        onboarding_attempt_1 = create_exam_attempt(
+            other_onboarding_exam_id,
+            self.learner_1.id,
+            True,
+        )
+        update_attempt_status(onboarding_attempt_1, ProctoredExamStudentAttemptStatus.verified)
+        # get serialized onboarding_attempt to get modified time
+        serialized_onboarding_attempt_1 = get_exam_attempt_by_id(onboarding_attempt_1)
+
+        # Setup Learner 2's attempt in current course
+        onboarding_attempt_2 = create_exam_attempt(
+            self.onboarding_exam_id,
+            self.learner_2.id,
+            True,
+        )
+        update_attempt_status(onboarding_attempt_2, ProctoredExamStudentAttemptStatus.download_software_clicked)
+        # get serialized onboarding_attempt to get modified time
+        serialized_onboarding_attempt_2 = get_exam_attempt_by_id(onboarding_attempt_2)
+
+        response = self.client.get(reverse(
+                'edx_proctoring:user_onboarding.status.course',
+                kwargs={'course_id': self.onboarding_exam.course_id}
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        expected_data = {
+            'results': [
+                {
+                    'username': self.user.username,
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                },
+                {
+                    'username': self.learner_1.username,
+                    'status': InstructorDashboardOnboardingAttemptStatus.other_course_approved,
+                    'modified': serialized_onboarding_attempt_1.get('modified'),
+                },
+                {
+                    'username': self.learner_2.username,
+                    'status': InstructorDashboardOnboardingAttemptStatus.setup_started,
+                    'modified': serialized_onboarding_attempt_2.get('modified'),
+                },
+            ],
+            'count': 3,
+            'previous': None,
+            'next': None,
+            'num_pages': 1,
+        }
+        self.assertEqual(response_data, expected_data)
+
     def test_not_staff_or_course_staff(self):
         self.user.is_staff = False
         self.user.save()
