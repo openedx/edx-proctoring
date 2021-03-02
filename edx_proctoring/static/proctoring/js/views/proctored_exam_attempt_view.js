@@ -80,7 +80,9 @@ edx = edx || {};
             'click li > a.target-link': 'getPaginatedAttempts',
             'click .search-attempts > span.search': 'searchAttempts',
             'click .search-attempts > span.clear-search': 'clearSearch',
-            'click .action-more': 'toggleExamAttemptActionDropdownMenu'
+            'click .action-more': 'toggleExamAttemptActionDropdownMenu',
+            'click .accordion-trigger': 'toggleAttemptAccordion',
+            'keypress .accordion-trigger': 'keyToggleAttemptAccordion'
         },
         toggleExamAttemptActionDropdownMenu: function(event) {
             edx.dashboard.dropdown.toggleExamAttemptActionDropdownMenu(event);
@@ -171,16 +173,22 @@ edx = edx || {};
                     endPage = dataJson.pagination_info.total_pages;
                 }
 
-                _.each(
-                    dataJson.proctored_exam_attempts,
-                    function(proctoredExamAttempt) {
-                        var isProctored = proctoredExamAttempt.proctored_exam.is_proctored;
-                        var isPractice = proctoredExamAttempt.proctored_exam.is_practice_exam;
-                        var proctoredText = isPractice ? gettext('Practice') : gettext('Proctored');
+                dataJson.proctored_exam_attempts.forEach(function(proctoredExamAttempt, i) {
+                    var isProctored = proctoredExamAttempt.proctored_exam.is_proctored;
+                    var isPractice = proctoredExamAttempt.proctored_exam.is_practice_exam;
+                    var proctoredText = isPractice ? gettext('Practice') : gettext('Proctored');
+                    // eslint-disable-next-line no-param-reassign
+                    proctoredExamAttempt.exam_attempt_type = !isProctored ? gettext('Timed') : proctoredText;
+
+                    // current CSS selectors do not allow the selection of nth-child for a class selector,
+                    // so we are determining a class used for CSS styling here
+                    // eslint-disable-next-line no-param-reassign
+                    proctoredExamAttempt.row_class = 'odd';
+                    if ((i + 1) % 2 === 0) {
                         // eslint-disable-next-line no-param-reassign
-                        proctoredExamAttempt.exam_attempt_type = !isProctored ? gettext('Timed') : proctoredText;
+                        proctoredExamAttempt.row_class = 'even';
                     }
-                );
+                });
 
                 data = {
                     proctored_exam_attempts: dataJson.proctored_exam_attempts,
@@ -275,6 +283,35 @@ edx = edx || {};
                     $('body').css('cursor', 'auto');
                 }
             });
+        },
+        toggleAttemptAccordion: function(event) {
+            // based on code from openedx/features/course_experience/static/course_experience/js/CourseOutline.js
+            // but modified to better fit this feature's needs
+            var accordionRow, isExpanded, $toggleChevron, $contentPanel;
+            accordionRow = event.currentTarget;
+            if (accordionRow.classList.contains('accordion-trigger')) {
+                isExpanded = accordionRow.getAttribute('aria-expanded') === 'true';
+                if (!isExpanded) {
+                    $toggleChevron = $(accordionRow).find('.fa-chevron-right');
+                    $contentPanel = $(document.getElementById(accordionRow.getAttribute('aria-controls')));
+                    $contentPanel.removeClass('is-hidden');
+                    $toggleChevron.addClass('fa-rotate-90');
+                    accordionRow.setAttribute('aria-expanded', 'true');
+                } else {
+                    $toggleChevron = $(accordionRow).find('.fa-chevron-right');
+                    $contentPanel = $(document.getElementById(accordionRow.getAttribute('aria-controls')));
+                    $contentPanel.addClass('is-hidden');
+                    $toggleChevron.removeClass('fa-rotate-90');
+                    accordionRow.setAttribute('aria-expanded', 'false');
+                }
+            }
+        },
+        keyToggleAttemptAccordion: function(event) {
+            var key = event.which || event.keyCode || 0;
+
+            if (key === 13) {
+                $(event.target).click();
+            }
         }
     });
     this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptView =

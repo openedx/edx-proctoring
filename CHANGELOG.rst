@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.1] - 2021-03-02
+~~~~~~~~~~~~~~~~~~~~
+* Update table on instructors dashboard to add accordian for multiple attempts
+
 [3.7.0] - 2021-03-01
 ~~~~~~~~~~~~~~~~~~~~
 * Update the learner onboarding status view to consider verified attempts from other courses.
