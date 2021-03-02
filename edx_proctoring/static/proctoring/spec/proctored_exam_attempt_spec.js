@@ -294,6 +294,7 @@ describe('ProctoredExamAttemptView', function() {
         '{attempt_url: attempt_url, count: pagination_info.current_page + 1}, true) %>' +
         '" > <span aria-hidden="true">&raquo;</span></a> </li> <% }%> </ul><div class="clearfix"></div></div>' +
         '<table class="exam-attempts-table"> <thead><tr class="exam-attempt-headings">' +
+        '<th class="more"></th>' +
         '<th class="username">Username</th>' +
         '<th class="exam-name">Exam Name</th>' +
         '<th class="attempt-allowed-time">Allowed Time (Minutes)</th>' +
@@ -303,9 +304,22 @@ describe('ProctoredExamAttemptView', function() {
         '<th class="c_action">Actions</th>' +
         '</tr></thead>' +
         '<% if (is_proctored_attempts) { %>\n' +
-        '<tbody>' +
         '<% _.each(proctored_exam_attempts, function(proctored_exam_attempt, dashboard_index){ %>' +
-        '<tr class="allowance-items">' +
+        '<tbody class="<%= proctored_exam_attempt.row_class %><% if (proctored_exam_attempt.all_attempts.length > 1)' +
+        ' { %> accordion-trigger <% } %>"' +
+        'aria-expanded="false"' +
+        'id="<%= proctored_exam_attempt.id %>"' +
+        'aria-controls="<%= proctored_exam_attempt.id %>_contents"' +
+        '<% if (proctored_exam_attempt.all_attempts.length > 1) { %>' +
+        'tabindex=0 <% } %>' +
+        '>' +
+        '<tr' +
+        'class="allowance-items"' +
+        '>' +
+        '<td>' +
+        '<% if (proctored_exam_attempt.all_attempts.length > 1) { %>' +
+        '<span class="fa fa-chevron-right" aria-hidden="true"></span>' +
+        '<% } %> </td>' +
         '<td>' +
         '<%- interpolate(gettext(\' %(username)s \'), { username: proctored_exam_attempt.user.username }, true) %>' +
         '</td>' +
@@ -371,27 +385,20 @@ describe('ProctoredExamAttemptView', function() {
         '<% } %>' +
         '</td>' +
         '</tr>' +
-        '<% _.each(proctored_exam_attempt.all_attempts, function(proctored_exam_attempt){ %>' +
+        '</tbody>' +
+        '<% if (proctored_exam_attempt.all_attempts.length > 1) { %>' +
+        '<tbody class="accordion-panel is-hidden" id="<%= proctored_exam_attempt.id %>_contents">' +
+        '<% _.each(proctored_exam_attempt.all_attempts, function(proctored_exam_attempt) { %>' +
         '<tr class="allowance-items">' +
-        '<td></td>' +
-        '<td></td>' +
-        '<td></td>' +
-        '<td></td>' +
+        '<td></td> <td></td> <td></td> <td></td> <td></td>' +
         '<td> <%= getDateFormat(proctored_exam_attempt.started_at) %></td>' +
         '<td> <%= getDateFormat(proctored_exam_attempt.completed_at) %></td>' +
         '<td>' +
-        '<% if (proctored_exam_attempt.status){ %>' +
+        '<% if (proctored_exam_attempt.status) { %>' +
         '<%= getExamAttemptStatus(proctored_exam_attempt.status) %>' +
-        '<% } else { %>' +
-        'N/A' +
-        '<% } %>' +
-        '</td>' +
-        '<td></td>' +
-        '</tr>' +
-        '<% }); %>' +
-        '<% }); %>' +
-        '</tbody>' +
-        '<% } %>' +
+        '<% } else { %> N/A <% } %> </td>' +
+        '<td></td> </tr> <% }); %>' +
+        '</tbody> <% }%> <% }); %> <% } %>' +
         '</table>' +
         '<% if (!is_proctored_attempts) { %>' +
         '<p> No exam results found. </p>' +
@@ -626,9 +633,9 @@ describe('ProctoredExamAttemptView', function() {
         this.server.respond();
         this.server.respond();
 
-        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('testuser1');
-        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
-        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('Error');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('testuser1');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('Normal Exam');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody.accordion-panel').html()).toContain('Error');
 
         expect(this.proctored_exam_attempt_view.$el.find('button.action').html()).not.toHaveLength(0);
         expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').hasClass('is-visible')).toEqual(false);
@@ -681,9 +688,9 @@ describe('ProctoredExamAttemptView', function() {
         this.server.respond();
         this.server.respond();
 
-        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('testuser1');
-        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
-        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('Ready to resume');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('testuser1');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('Normal Exam');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody.accordion-panel').html()).toContain('Ready to resume');
         expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').hasClass('is-visible')).toEqual(false);
     });
 
@@ -707,9 +714,9 @@ describe('ProctoredExamAttemptView', function() {
         this.server.respond();
         this.server.respond();
 
-        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('testuser1');
-        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
-        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('Error');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('testuser1');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('Normal Exam');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody.accordion-panel').html()).toContain('Error');
 
         expect(this.proctored_exam_attempt_view.$el.find('button.action').html()).toHaveLength(0);
         expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').html()).toHaveLength(0);
@@ -820,7 +827,37 @@ describe('ProctoredExamAttemptView', function() {
         this.server.respond();
         this.server.respond();
 
-        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).not.toContain('testuser1');
-        expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).not.toContain('Normal Exam');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).not.toContain('testuser1');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).not.toContain('Normal Exam');
+    });
+
+    it('shows and hides accordion when toggled', function() {
+        setFixtures('<div class="student-proctored-exam-container" data-course-id="test_course_id" ' +
+            'data-enable-exam-resume-proctoring-improvements="True"></div>');
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('submitted', false))
+            ]
+        );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
+
+        // Process all requests so far
+        this.server.respond();
+        this.server.respond();
+
+        // check that accordion is hidden
+        expect(this.proctored_exam_attempt_view.$el.find('.accordion-panel').hasClass('is-hidden')).toEqual(true);
+
+        // click to expand section
+        spyOnEvent('.accordion-trigger', 'click');
+        $('.accordion-trigger').trigger('click');
+
+        // check that accordion is no longer hidden
+        expect(this.proctored_exam_attempt_view.$el.find('.accordion-panel').hasClass('is-hidden')).toEqual(false);
     });
 });

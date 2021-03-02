@@ -138,6 +138,7 @@
             <table class="exam-attempts-table">
                 <thead>
                     <tr class="exam-attempt-headings">
+                        <th class="more"></th>
                         <th class="username"><%- gettext("Username") %></th>
                         <th class="exam-name"><%- gettext("Exam Name") %></th>
                         <th class="attempt-allowed-time"><%- gettext("Time Limit") %> </th>
@@ -149,9 +150,22 @@
                     </tr>
                 </thead>
                 <% if (is_proctored_attempts) { %>
-                <tbody>
                     <% _.each(proctored_exam_attempts, function(proctored_exam_attempt, dashboard_index){ %>
+                    <tbody
+                        class="<%= proctored_exam_attempt.row_class %><% if (proctored_exam_attempt.all_attempts.length > 1) { %> accordion-trigger <% } %>"
+                        aria-expanded="false"
+                        id="<%= proctored_exam_attempt.id %>"
+                        aria-controls="<%= proctored_exam_attempt.id %>_contents"
+                        <% if (proctored_exam_attempt.all_attempts.length > 1) { %>
+                            tabindex=0
+                        <% } %>
+                    >
                         <tr class="allowance-items">
+                            <td>
+                                <% if (proctored_exam_attempt.all_attempts.length > 1) { %>
+                                    <span class="fa fa-chevron-right" aria-hidden="true"></span>
+                                <% } %>
+                            </td>
                             <td>
                                 <%- interpolate(gettext(' %(username)s '), { username: proctored_exam_attempt.user.username }, true) %>
                             </td>
@@ -210,9 +224,12 @@
                                 <% } %>
                             </td>
                         </tr>
+                        </tbody>
                         <% if (proctored_exam_attempt.all_attempts.length > 1) { %>
+                            <tbody class="accordion-panel is-hidden" id="<%= proctored_exam_attempt.id %>_contents">
                             <% _.each(proctored_exam_attempt.all_attempts, function(proctored_exam_attempt) { %>
                                 <tr class="allowance-items">
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -229,9 +246,9 @@
                                     <td></td>
                                 </tr>
                             <% }); %>
+                            </tbody>
                         <% }%>
                     <% }); %>
-                </tbody>
                 <% } %>
             </table>
             <% if (!is_proctored_attempts) { %>
