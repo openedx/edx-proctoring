@@ -4,6 +4,7 @@ Proctored Exams HTTP-based API endpoints
 
 import json
 import logging
+from datetime import timedelta
 from urllib.parse import urlencode
 
 import waffle
@@ -313,6 +314,8 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         * 'onboarding_status': String specifying the learner's onboarding status.
             ** Will return NULL if there are no onboarding attempts, or the given user does not exist
         * 'onboarding_link': Link to the onboarding exam.
+        * 'onboarding_expiration_date': If the learner's onboarding profile is approved in a different
+          course, the expiration date will be included. Will return NULL otherwise.
     """
     def get(self, request):
         """
@@ -320,7 +323,8 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         """
         data = {
             'onboarding_status': None,
-            'onboarding_link': None
+            'onboarding_link': None,
+            'expiration_date': None,
         }
 
         username = request.GET.get('username')
@@ -364,17 +368,25 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
 
-        attempts = ProctoredExamStudentAttempt.objects.get_onboarding_attempts_by_course_id(course_id, [user])
-        if len(attempts) == 0:
-            # If there are no attempts, return the data with 'onboarding_status' set to None
-            return Response(data)
+        attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(course_id, [user])
 
-        # Default to the most recent attempt if there are no verified attempts
-        relevant_attempt = attempts[0]
-        for attempt in attempts:
-            if attempt.status == ProctoredExamStudentAttemptStatus.verified:
-                relevant_attempt = attempt
-        data['onboarding_status'] = relevant_attempt.status
+        if len(attempts) == 0:
+            # If there are no attempts in the current course, check for a verified attempt in another course
+            other_course_verified_attempt = (ProctoredExamStudentAttempt.objects
+                                             .get_last_verified_proctored_practice_attempt(
+                                                 user.id, onboarding_exam.backend
+                                             ))
+            if other_course_verified_attempt:
+                data['onboarding_status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
+                data['expiration_date'] = other_course_verified_attempt.modified + timedelta(days=730)
+        else:
+            # Default to the most recent attempt in the course if there are no verified attempts
+            relevant_attempt = attempts[0]
+            for attempt in attempts:
+                if attempt.status == ProctoredExamStudentAttemptStatus.verified:
+                    relevant_attempt = attempt
+                    break
+            data['onboarding_status'] = relevant_attempt.status
 
         return Response(data)
 
@@ -450,13 +462,13 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
         allowed_enrollments_users = self._filter_users_by_username_or_email(allowed_enrollments_users, text_search)
 
         # get onboarding attempts for users for the course
-        onboarding_attempts = ProctoredExamStudentAttempt.objects.get_onboarding_attempts_by_course_id(
+        onboarding_attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(
             course_id,
             allowed_enrollments_users
         ).values('user_id', 'status', 'modified')
 
         # select a verified, or most recent, exam attempt per user
-        onboarding_attempts_per_user = self._get_relevant_onboarding_attempt_per_user(onboarding_attempts)
+        onboarding_attempts_per_user = self._get_relevant_attempt_per_user(onboarding_attempts)
 
         onboarding_data = []
         for user in allowed_enrollments_users:
@@ -502,7 +514,7 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
             query_params['statuses'] = statuses_filter
         return query_params
 
-    def _get_relevant_onboarding_attempt_per_user(self, attempts):
+    def _get_relevant_attempt_per_user(self, attempts):
         """
         Given an ordered list of attempts, return, for each learner, their most recent
         exam attempt. If the learner has a verified attempt, always return verified.

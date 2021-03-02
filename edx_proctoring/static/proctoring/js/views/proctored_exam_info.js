@@ -38,6 +38,26 @@
         error: {
             status: gettext('Error'),
             message: gettext('An error has occurred during your onboarding exam. Please retry onboarding.')
+        },
+        other_course_approved: {
+            status: gettext('Approved in Another Course'),
+            message: gettext(
+                'Your onboarding profile has been approved in another course, ' +
+                'so you are eligible to take proctored exams in this course. ' +
+                'However, it is highly recommended that you complete this ' +
+                'course\'s onboarding exam in order to ensure that your device ' +
+                'still meets the requirements for proctoring.'
+            )
+        },
+        expiring_soon: {
+            status: gettext('Expiring Soon'),
+            message: gettext(
+                'Your onboarding profile has been approved in another course, ' +
+                'so you are eligible to take proctored exams in this course. ' +
+                'However, your onboarding status is expiring soon. Please ' +
+                'complete onboarding again to ensure that you will be ' +
+                'able to continue taking proctored exams.'
+            )
         }
     };
 
@@ -54,9 +74,9 @@
         updateCss: function() {
             var $el = $(this.el);
             var color = '#b20610';
-            if (this.status === 'verified') {
+            if (['verified', 'other_course_approved'].includes(this.status)) {
                 color = '#008100';
-            } else if (['submitted', 'second_review_required'].includes(this.status)) {
+            } else if (['submitted', 'second_review_required', 'expiring_soon'].includes(this.status)) {
                 color = '#0d4e6c';
             }
 
@@ -104,6 +124,13 @@
             }
         },
 
+        isExpiringSoon: function(expirationDate) {
+            var today = new Date();
+            var expirationDateObject = new Date(expirationDate);
+            // Return true if the expiration date is within 28 days
+            return today.getTime() > expirationDateObject.getTime() - 2419200000;
+        },
+
         shouldShowExamLink: function(status) {
             // show the exam link if the user should retry onboarding, or if they haven't submitted the exam
             var NO_SHOW_STATES = ['submitted', 'second_review_required', 'verified'];
@@ -114,12 +141,16 @@
             var statusText = {};
             var data = this.model.toJSON();
             if (this.template) {
-                this.status = data.onboarding_status;
-                statusText = this.getExamAttemptText(data.onboarding_status);
+                if (data.expiration_date && this.isExpiringSoon(data.expiration_date)) {
+                    this.status = 'expiring_soon';
+                } else {
+                    this.status = data.onboarding_status;
+                }
+                statusText = this.getExamAttemptText(this.status);
                 data = {
                     onboardingStatus: statusText.status,
                     onboardingMessage: statusText.message,
-                    showOnboardingReminder: data.onboarding_status !== 'verified',
+                    showOnboardingReminder: !['verified', 'other_course_approved'].includes(data.onboarding_status),
                     showOnboardingExamLink: this.shouldShowExamLink(data.onboarding_status),
                     onboardingLink: data.onboarding_link
                 };

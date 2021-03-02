@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.0] - 2021-03-01
+~~~~~~~~~~~~~~~~~~~~
+* Update the learner onboarding status view to consider verified attempts from other courses.
+
 [3.6.7] - 2021-02-24
 ~~~~~~~~~~~~~~~~~~~~
 * Fix requirements file
