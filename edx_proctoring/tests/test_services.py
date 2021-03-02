@@ -326,3 +326,7 @@ class MockEnrollmentsService:
     def get_active_enrollments_by_course(self, course_id):
         """Returns mock enrollments"""
         return self.enrollments
+
+    def get_enrollments_can_take_proctored_exams(self, course_id, text_search=None):
+        """ Return mock enrollments"""
+        return self.enrollments

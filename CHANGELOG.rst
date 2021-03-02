@@ -14,6 +14,14 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.3] - 2021-03-02
+~~~~~~~~~~~~~~~~~~~~
+* Change use of get_active_enrollments_by_course method of the LMS Enrollments service to
+  get_enrollments_can_take_proctored_exams, which is more performant. This shifts the responsibility
+  of checking learners' ability to access proctored exams to the LMS, allowing the LMS to construst a
+  bulk query for all learners in a course with active enrollments instead of needing to execute multiple
+  queries on a per learner basis.
+
 [3.7.2] - 2021-03-02
 ~~~~~~~~~~~~~~~~~~~~
 * Refactor the proctoring API function to get all verified onboarding attempts of a group of learners.

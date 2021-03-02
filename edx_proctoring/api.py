@@ -2521,12 +2521,13 @@ def get_integration_specific_email(provider):
     return getattr(provider, 'integration_specific_email', None) or constants.DEFAULT_CONTACT_EMAIL
 
 
-def get_enrollments_for_course(course_id):
+def get_enrollments_can_take_proctored_exams(course_id, text_search=None):
     """
     Return all enrollments for a course from the LMS Enrollments runtime API.
 
     Parameters:
     * course_id: course ID for the course
+    * text_search: the string against which to do a match on users' username or email; optional
     """
-    enrollments_sevice = get_runtime_service('enrollments')
-    return enrollments_sevice.get_active_enrollments_by_course(course_id)
+    enrollments_service = get_runtime_service('enrollments')
+    return enrollments_service.get_enrollments_can_take_proctored_exams(course_id, text_search)
