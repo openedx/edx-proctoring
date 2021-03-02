@@ -37,6 +37,7 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     get_exam_by_content_id,
     get_exam_by_id,
+    get_last_verified_onboarding_attempts_per_user,
     get_user_attempts_by_exam_id,
     is_exam_passed_due,
     mark_exam_attempt_as_ready,
@@ -372,13 +373,14 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         if len(attempts) == 0:
             # If there are no attempts in the current course, check for a verified attempt in another course
-            other_course_verified_attempt = (ProctoredExamStudentAttempt.objects
-                                             .get_last_verified_proctored_practice_attempt(
-                                                 user.id, onboarding_exam.backend
-                                             ))
-            if other_course_verified_attempt:
+            attempt_dict = get_last_verified_onboarding_attempts_per_user(
+                [user],
+                onboarding_exam.backend,
+            )
+            verified_attempt = attempt_dict.get(user.id)
+            if verified_attempt:
                 data['onboarding_status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
-                data['expiration_date'] = other_course_verified_attempt.modified + timedelta(days=730)
+                data['expiration_date'] = verified_attempt.modified + timedelta(days=730)
         else:
             # Default to the most recent attempt in the course if there are no verified attempts
             relevant_attempt = attempts[0]

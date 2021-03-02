@@ -1845,6 +1845,37 @@ def get_attempt_status_summary(user_id, course_id, content_id):
     return summary
 
 
+# pylint: disable=invalid-name
+def get_last_verified_onboarding_attempts_per_user(users_list, backend):
+    """
+    Returns a dictionary of last verified proctored onboarding attempt for a specific backend,
+    keyed off the user_id within the passed in users_list, if attempts exist.
+    This only considers attempts within the last two years, as attempts
+    before this point are considered expired.
+
+    Parameters:
+        * users: A list of users object of which we are checking the attempts
+        * proctoring_backend: The name of the proctoring backend
+
+    Returns:
+        A dictionary:
+        {
+            342455 (user_id): attempt_object(attempt_id=1233),
+            455454 (user_id): attempt_object(attempt_id=34303),
+        }
+    """
+    attempts = ProctoredExamStudentAttempt.objects.get_last_verified_proctored_onboarding_attempts(
+        users_list,
+        backend,
+    )
+    user_attempt_dict = {}
+    for attempt in attempts:
+        user_id = attempt.user_id
+        if not user_attempt_dict.get(user_id):
+            user_attempt_dict[user_id] = attempt
+    return user_attempt_dict
+
+
 def _does_time_remain(attempt):
     """
     Helper function returns True if time remains for an attempt and False

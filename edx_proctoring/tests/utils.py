@@ -78,6 +78,20 @@ class LoggedInTestCase(TestCase):
         self.user.save()
         self.client.login_user(self.user)
 
+    def create_batch_users(self, batch_size):
+        """
+        Help create a bunch of users for testing
+        """
+        users_list = []
+        for i in range(batch_size):
+            created_user = User(
+                username='student' + str(i),
+                email='student{}@test.com'.format(i),
+            )
+            created_user.save()
+            users_list.append(created_user)
+        return users_list
+
 
 class MockTracker(Tracker):
     """

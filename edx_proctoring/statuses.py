@@ -265,7 +265,7 @@ class InstructorDashboardOnboardingAttemptStatus:
         ProctoredExamStudentAttemptStatus.submitted: submitted,
         ProctoredExamStudentAttemptStatus.rejected: rejected,
         ProctoredExamStudentAttemptStatus.verified: verified,
-        ProctoredExamStudentAttemptStatus.error: error,
+        ProctoredExamStudentAttemptStatus.error: error
     }
 
     @classmethod

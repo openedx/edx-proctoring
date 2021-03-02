@@ -41,6 +41,7 @@ from edx_proctoring.api import (
     get_filtered_exam_attempts,
     get_integration_specific_email,
     get_last_exam_completion_date,
+    get_last_verified_onboarding_attempts_per_user,
     get_review_policy_by_exam_id,
     get_user_attempts_by_exam_id,
     is_backend_dashboard_available,
@@ -2694,3 +2695,212 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             })
         else:
             self.assertEqual(override, None)
+
+
+@ddt.ddt
+class LastVerifiedOnboardingAttemptsTests(ProctoredExamTestCase):
+    """
+    This is the test case for the API function get_last_verified_onboarding_attempts_per_user
+    """
+    def setUp(self):
+        super().setUp()
+        self.other_course_id = 'e/f/g'
+        self.other_course_onboarding_content_id = 'other_test_content_id_onboarding'
+        self.other_onboarding_exam_name = 'other_test_onboarding_exam_name'
+        self.other_onboarding_exam_id = create_exam(
+            course_id=self.other_course_id,
+            content_id=self.other_course_onboarding_content_id,
+            exam_name=self.other_onboarding_exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+        )
+
+    def _setup_onboarding_attempts(self, exam_id, users, status):
+        """
+        Setup the onboarding attempt according to the user and status passed in
+        """
+        for user in users:
+            this_course_onboarding_attempt_id = create_exam_attempt(
+                exam_id,
+                user.id,
+                taking_as_proctored=True
+            )
+            update_attempt_status(
+                this_course_onboarding_attempt_id,
+                status,
+            )
+
+    def _assert_verified_attempts(self, users, attempts_dictionary):
+        """
+        Assert to verify onboarding attempts based on users list passed in
+        """
+        for user in users:
+            attempt = attempts_dictionary.get(user.id)
+            self.assertIsNotNone(attempt)
+            self.assertEqual(attempt.status, ProctoredExamStudentAttemptStatus.verified)
+
+    @ddt.data(True, False)
+    def test_all_verified(self, setup_current_course):
+        users_list = self.create_batch_users(6)
+
+        if setup_current_course:
+            self._setup_onboarding_attempts(
+                self.onboarding_exam_id,
+                users_list,
+                ProctoredExamStudentAttemptStatus.submitted,
+            )
+
+        self._setup_onboarding_attempts(
+            self.other_onboarding_exam_id,
+            users_list,
+            ProctoredExamStudentAttemptStatus.verified,
+        )
+
+        all_onboarding_attempts_dictionary = get_last_verified_onboarding_attempts_per_user(
+            users_list,
+            'test',
+        )
+        self.assertEqual(6, len(all_onboarding_attempts_dictionary.items()))
+        self._assert_verified_attempts(users_list, all_onboarding_attempts_dictionary)
+
+    @ddt.data(True, False)
+    def test_some_verified(self, setup_current_course):
+        all_users = self.create_batch_users(8)
+        verified_users_list = all_users[0:5]
+
+        if setup_current_course:
+            self._setup_onboarding_attempts(
+                self.onboarding_exam_id,
+                all_users,
+                ProctoredExamStudentAttemptStatus.submitted,
+            )
+
+        self._setup_onboarding_attempts(
+            self.other_onboarding_exam_id,
+            verified_users_list,
+            ProctoredExamStudentAttemptStatus.verified,
+        )
+
+        all_onboarding_attempts_dictionary = get_last_verified_onboarding_attempts_per_user(
+            all_users,
+            'test',
+        )
+        self.assertEqual(5, len(all_onboarding_attempts_dictionary.items()))
+        self._assert_verified_attempts(verified_users_list, all_onboarding_attempts_dictionary)
+
+    def test_multiple_verified(self):
+        all_users = self.create_batch_users(8)
+        verified_users_list = all_users[0:5]
+        with freeze_time(datetime.now(pytz.UTC) - timedelta(days=30)):
+            self._setup_onboarding_attempts(
+                self.onboarding_exam_id,
+                all_users,
+                ProctoredExamStudentAttemptStatus.verified,
+            )
+
+        self._setup_onboarding_attempts(
+            self.other_onboarding_exam_id,
+            verified_users_list,
+            ProctoredExamStudentAttemptStatus.verified,
+        )
+
+        all_onboarding_attempts_dictionary = get_last_verified_onboarding_attempts_per_user(
+            all_users,
+            'test',
+        )
+        self.assertEqual(8, len(all_onboarding_attempts_dictionary.items()))
+        for user in verified_users_list:
+            attempt = all_onboarding_attempts_dictionary.get(user.id)
+            self.assertEqual(attempt.status, ProctoredExamStudentAttemptStatus.verified)
+            self.assertLessEqual(datetime.now(pytz.UTC) - timedelta(days=26), attempt.modified)
+
+        for user in all_users[5:]:
+            attempt = all_onboarding_attempts_dictionary.get(user.id)
+            self.assertEqual(attempt.status, ProctoredExamStudentAttemptStatus.verified)
+            self.assertGreater(datetime.now(pytz.UTC) - timedelta(days=26), attempt.modified)
+
+    @ddt.data(True, False)
+    def test_no_verified(self, setup_current_course):
+        all_users = self.create_batch_users(5)
+        if setup_current_course:
+            self._setup_onboarding_attempts(
+                self.onboarding_exam_id,
+                all_users,
+                ProctoredExamStudentAttemptStatus.started,
+            )
+        attempts_dict = get_last_verified_onboarding_attempts_per_user(
+            all_users,
+            'test',
+        )
+        self.assertEqual(0, len(attempts_dict.items()))
+
+    @ddt.data(True, False)
+    def test_expired(self, setup_current_course):
+        all_users = self.create_batch_users(5)
+
+        if setup_current_course:
+            self._setup_onboarding_attempts(
+                self.onboarding_exam_id,
+                all_users,
+                ProctoredExamStudentAttemptStatus.started,
+            )
+
+        with freeze_time(datetime.now(pytz.UTC) - timedelta(days=735)):
+            self._setup_onboarding_attempts(
+                self.other_onboarding_exam_id,
+                all_users,
+                ProctoredExamStudentAttemptStatus.verified,
+            )
+
+        attempts_dict = get_last_verified_onboarding_attempts_per_user(
+            all_users,
+            'test',
+        )
+        self.assertEqual(0, len(attempts_dict.items()))
+
+    @ddt.data(True, False)
+    def test_more_courses(self, setup_current_course):
+        all_users = self.create_batch_users(10)
+        if setup_current_course:
+            self._setup_onboarding_attempts(
+                self.onboarding_exam_id,
+                all_users,
+                ProctoredExamStudentAttemptStatus.started,
+            )
+
+        third_course_id = 'o/p/q'
+        third_course_onboarding_content_id = 'third_test_content_id_onboarding'
+        third_onboarding_exam_name = 'third_test_onboarding_exam_name'
+        third_onboarding_exam_id = create_exam(
+            course_id=third_course_id,
+            content_id=third_course_onboarding_content_id,
+            exam_name=third_onboarding_exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+        )
+
+        third_course_verified = all_users[6:]
+
+        self._setup_onboarding_attempts(
+            self.other_onboarding_exam_id,
+            all_users[0:5],
+            ProctoredExamStudentAttemptStatus.verified,
+        )
+
+        self._setup_onboarding_attempts(
+            third_onboarding_exam_id,
+            third_course_verified,
+            ProctoredExamStudentAttemptStatus.verified
+        )
+
+        attempts_dict = get_last_verified_onboarding_attempts_per_user(
+            all_users,
+            'test',
+        )
+        self.assertEqual(9, len(attempts_dict.items()))
+        self._assert_verified_attempts(all_users[0:5], attempts_dict)
+        self._assert_verified_attempts(third_course_verified, attempts_dict)
