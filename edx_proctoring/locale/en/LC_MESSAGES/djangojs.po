@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
-"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
-"POT-Creation-Date: 2017-02-15 17:16-0500\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-03 14:24+0000\n"
 "PO-Revision-Date: 2018-03-14 17:16-0500\n"
 "Last-Translator: Muhammad Ayub khan <ayubkhan@edx.org>\n"
 "Language-Team: openedx-translation <openedx-translation@googlegroups.com>\n"
@@ -17,109 +17,246 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:132
+#: static/proctoring/js/exam_action_handler.js:44
+msgid "OK"
+msgstr ""
+
+#: static/proctoring/js/exam_action_handler.js:127
+#: static/proctoring/js/exam_action_handler.js:187
+#: static/proctoring/js/exam_action_handler.js:198
+msgid "Error Ending Exam"
+msgstr ""
+
+#: static/proctoring/js/exam_action_handler.js:129
+#: static/proctoring/js/exam_action_handler.js:200
+msgid ""
+"Something has gone wrong ending your exam. Please reload the page and start "
+"again."
+msgstr ""
+
+#: static/proctoring/js/exam_action_handler.js:151
+#: static/proctoring/js/exam_action_handler.js:162
+msgid "Error Starting Exam"
+msgstr ""
+
+#: static/proctoring/js/exam_action_handler.js:153
+msgid ""
+"Something has gone wrong starting your exam. Please double-check that the "
+"application is running."
+msgstr ""
+
+#: static/proctoring/js/exam_action_handler.js:164
+msgid ""
+"Something has gone wrong starting your exam. Please reload the page and "
+"start again."
+msgstr ""
+
+#: static/proctoring/js/exam_action_handler.js:189
+msgid ""
+"Something has gone wrong ending your exam. Please double-check that the "
+"application is running."
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:130
 msgid "Required field"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:171
+#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:169
 msgid "Practice Exam"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:173
+#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:171
 msgid "Proctored Exam"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:181
+#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:179
 msgid "Timed Exam"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:200
+#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:198
 msgid "Additional Time"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:204
+#: static/proctoring/js/views/proctored_exam_add_allowance_view.js:201
 msgid "Value"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_allowance_view.js:13
-#: static/proctoring/spec/proctored_exam_add_allowance_spec.js:79
+#: static/proctoring/js/views/proctored_exam_allowance_view.js:12
+#: static/proctoring/spec/proctored_exam_add_allowance_spec.js:81
 msgid "Additional Time (minutes)"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_allowance_view.js:14
-#: static/proctoring/spec/proctored_exam_add_allowance_spec.js:80
+#: static/proctoring/js/views/proctored_exam_allowance_view.js:13
+#: static/proctoring/spec/proctored_exam_add_allowance_spec.js:82
 msgid "Review Policy Exception"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_attempt_view.js:9
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:10
 msgid "Eligible"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_attempt_view.js:10
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:11
 msgid "Created"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_attempt_view.js:11
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:12
 msgid "Download Software Clicked"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_attempt_view.js:12
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:13
 msgid "Ready to start"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_attempt_view.js:13
-msgid "Started"
-msgstr ""
-
 #: static/proctoring/js/views/proctored_exam_attempt_view.js:14
-msgid "Ready to submit"
+msgid "Ready to resume"
 msgstr ""
 
 #: static/proctoring/js/views/proctored_exam_attempt_view.js:15
-msgid "Declined"
+#: static/proctoring/js/views/proctored_exam_info.js:14
+#: static/proctoring/js/views/proctored_exam_onboarding_view.js:24
+msgid "Started"
 msgstr ""
 
 #: static/proctoring/js/views/proctored_exam_attempt_view.js:16
-msgid "Timed out"
+msgid "Ready to submit"
 msgstr ""
 
 #: static/proctoring/js/views/proctored_exam_attempt_view.js:17
-msgid "Second Review Required"
+msgid "Declined"
 msgstr ""
 
 #: static/proctoring/js/views/proctored_exam_attempt_view.js:18
-msgid "Submitted"
+msgid "Timed out"
 msgstr ""
 
 #: static/proctoring/js/views/proctored_exam_attempt_view.js:19
-msgid "Verified"
+msgid "Second Review Required"
 msgstr ""
 
 #: static/proctoring/js/views/proctored_exam_attempt_view.js:20
-msgid "Rejected"
+#: static/proctoring/js/views/proctored_exam_info.js:18
+#: static/proctoring/js/views/proctored_exam_onboarding_view.js:25
+msgid "Submitted"
 msgstr ""
 
 #: static/proctoring/js/views/proctored_exam_attempt_view.js:21
+#: static/proctoring/js/views/proctored_exam_info.js:31
+#: static/proctoring/js/views/proctored_exam_onboarding_view.js:26
+msgid "Verified"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:22
+#: static/proctoring/js/views/proctored_exam_info.js:35
+#: static/proctoring/js/views/proctored_exam_onboarding_view.js:27
+msgid "Rejected"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:23
+#: static/proctoring/js/views/proctored_exam_info.js:39
+#: static/proctoring/js/views/proctored_exam_onboarding_view.js:28
 msgid "Error"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_attempt_view.js:160
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:24
+msgid "Onboarding Missing"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:25
+msgid "Onboarding Pending"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:26
+msgid "Onboarding Failed"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:27
+msgid "Onboarding Expired"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:179
 msgid "Practice"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_attempt_view.js:162
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:179
 msgid "Proctored"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_attempt_view.js:165
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:181
 msgid "Timed"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_attempt_view.js:187
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:214
 msgid "Are you sure you want to remove this student's exam attempt?"
 msgstr ""
 
-#: static/proctoring/js/views/proctored_exam_view.js:134
+#: static/proctoring/js/views/proctored_exam_attempt_view.js:262
+msgid "Are you sure you want to resume this student's exam attempt?"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:10
+#: static/proctoring/js/views/proctored_exam_onboarding_view.js:20
+msgid "Not Started"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:11
+msgid "You have not started your onboarding exam."
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:15
+msgid "You have started your onboarding exam."
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:19
+msgid "You have submitted your onboarding exam."
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:32
+msgid "You can now take proctored exams in this course."
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:36
+msgid "Your onboarding exam has been rejected. Please retry onboarding."
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:40
+msgid ""
+"An error has occurred during your onboarding exam. Please retry onboarding."
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:43
+#: static/proctoring/js/views/proctored_exam_onboarding_view.js:23
+msgid "Approved in Another Course"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:45
+msgid ""
+"Your onboarding profile has been approved in another course, so you are "
+"eligible to take proctored exams in this course. However, it is highly "
+"recommended that you complete this course's onboarding exam in order to "
+"ensure that your device still meets the requirements for proctoring."
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:53
+msgid "Expiring Soon"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_info.js:55
+msgid ""
+"Your onboarding profile has been approved in another course, so you are "
+"eligible to take proctored exams in this course. However, your onboarding "
+"status is expiring soon. Please complete onboarding again to ensure that you "
+"will be able to continue taking proctored exams."
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_onboarding_view.js:21
+msgid "Setup Started"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_onboarding_view.js:22
+msgid "Onboarding Started"
+msgstr ""
+
+#: static/proctoring/js/views/proctored_exam_view.js:153
 msgid ""
 "Are you sure you want to leave this page? \n"
 "To pass your proctored exam you must also pass the online proctoring session "

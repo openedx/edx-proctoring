@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.4] - 2021-03-03
+~~~~~~~~~~~~~~~~~~~~
+* Show "approved in other course" status for learner who has a valid verified onboarding attempt in another course,
+  on the instructor's student onboarding status panel
+
 [3.7.3] - 2021-03-02
 ~~~~~~~~~~~~~~~~~~~~
 * Change use of get_active_enrollments_by_course method of the LMS Enrollments service to
