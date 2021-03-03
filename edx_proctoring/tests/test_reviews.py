@@ -509,8 +509,8 @@ class ReviewTests(LoggedInTestCase):
         )
 
         log_format_string = (
-            u'User %(user)s does not have the required permissions '
-            u'to submit a review for attempt_code %(attempt_code)s.'
+            'user=%(user)s does not have the required permissions '
+            'to submit a review for attempt_code=%(attempt_code)s.'
         )
 
         log_format_dictionary = {

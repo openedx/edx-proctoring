@@ -281,7 +281,10 @@ class ProctoredExamViewTests(LoggedInTestCase):
 
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response_data, {'detail': 'The exam_id does not exist.'})
+        self.assertEqual(
+            response_data['detail'],
+            'Attempted to update exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id),
+        )
 
     def test_get_exam_by_id(self):
         """
@@ -317,7 +320,10 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response_data['detail'], 'The exam_id does not exist.')
+        self.assertEqual(
+            response_data['detail'],
+            'Attempted to get exam_id=99999, but this exam does not exist.',
+        )
 
     def test_get_exam_by_content_id(self):
         """
@@ -394,7 +400,11 @@ class ProctoredExamViewTests(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content.decode('utf-8'))
-        message = 'The exam_id does not exist.'
+        message = (
+            'Cannot find proctored exam in course_id=c/d/e with content_id={content_id}'.format(
+                content_id=proctored_exam.content_id,
+            )
+        )
         self.assertEqual(response_data['detail'], message)
 
     def test_get_exam_insufficient_args(self):
@@ -1869,7 +1879,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(
             response_data['detail'],
-            'Cannot create new exam attempt for exam_id = 1 and user_id = 1 because it already exists!'
+            'Cannot create new exam attempt for exam_id=1 and user_id=1 in course_id=a/b/c '
+            'because it already exists!'
         )
 
     def test_stop_exam_attempt(self):
@@ -2433,7 +2444,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response_data['detail'], 'Attempted to access attempt_id 0 but it does not exist.')
+        self.assertEqual(response_data['detail'], 'Attempted to update attempt_id=0 but it does not exist.')
 
     def test_get_exam_attempt(self):
         """

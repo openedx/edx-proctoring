@@ -13,6 +13,11 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.7.5] - 2021-03-05
+~~~~~~~~~~~~~~~~~~~~
+* Add more useful attributes to log messages, in a key=value format that is easier to extract, and reduce
+  duplicate exception logs.
 * Update private.txt file path in developer docs
 
 [3.7.4] - 2021-03-03

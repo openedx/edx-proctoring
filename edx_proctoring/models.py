@@ -669,7 +669,11 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
         exam = ProctoredExam.get_exam_by_id(exam_id)
         if exam and not exam.is_active:
-            raise ProctoredExamNotActiveException
+            err_msg = (
+                'Attempted to add an allowance for user_id={user_id} in exam_id={exam_id}, but '
+                'this exam is not active.'.format(user_id=user_id, exam_id=exam_id)
+            )
+            raise ProctoredExamNotActiveException(err_msg)
 
         try:
             student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
