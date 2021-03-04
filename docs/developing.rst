@@ -29,7 +29,7 @@ Clone edx-proctoring into the src directory next to edx-platform folder in your 
 
 Install the proctoring package into edx-platform in the container, for both LMS and Studio:
 
-Edit or create the ``edx-platform/requirements/private.txt`` file::
+Edit or create the ``edx-platform/requirements/edx/private.txt`` file::
 
     # edx-platform/requirements/private.txt
     # This file will be used in the docker image, so use file paths that work there.
@@ -47,7 +47,7 @@ In edx-platform/lms/envs/private.py and edx-platform/cms/envs/private.py:
 .. code-block:: python
 
     from .production import FEATURES
-     
+
     FEATURES['ENABLE_SPECIAL_EXAMS'] = True
 
     PROCTORING_SETTINGS = {
@@ -131,7 +131,7 @@ Start by following the steps here: https://github.com/edx/edx-proctoring
 * Log in to Django admin
 * Add a verified course mode for your course
 * Update the verified user's mode to be "verified"
-* You will need to fake verifying the user's identification, or else enable a feature to automatically verify users for testing. 
+* You will need to fake verifying the user's identification, or else enable a feature to automatically verify users for testing.
     * To fake the verification:
         * Go to ``/admin/verify_student/manualverification/`` on your sandbox
         * Create a record for the given user, with status "approved".
@@ -248,9 +248,9 @@ Release a new version of edx-proctoring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * Update the version in ``edx_proctoring/__init__.py`` and ``package.json``
-* Create a `new release on GitHub <https://github.com/edx/edx-proctoring/releases>`_ using the version number 
+* Create a `new release on GitHub <https://github.com/edx/edx-proctoring/releases>`_ using the version number
 * Send an email to release-notifications@edx.org announcing the new version
 * Update edx-platform to use the new version
-    * In edx-platform, create a branch and update the requirements/edx/base.in file to reflect the new tagged branch. 
+    * In edx-platform, create a branch and update the requirements/edx/base.in file to reflect the new tagged branch.
 * create a PR of this branch in edx-platform onto edx-platform:master
 * Once the PR onto edx-platform has been merged, the updated edx-proctoring will be live in production when the normally scheduled release completes.

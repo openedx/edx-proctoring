@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Update private.txt file path in developer docs
 
 [3.7.4] - 2021-03-03
 ~~~~~~~~~~~~~~~~~~~~
