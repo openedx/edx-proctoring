@@ -88,11 +88,16 @@ edx = edx || {};
             edx.dashboard.dropdown.toggleExamAttemptActionDropdownMenu(event);
         },
         searchAttempts: function(event) {
+            var $searchIcon, $spinner;
             var searchText = $('#search_attempt_id').val();
             if (searchText !== '') {
                 this.inSearchMode = true;
                 this.searchText = searchText;
                 this.collection.url = this.initial_url + this.course_id + '/search/' + searchText;
+                $searchIcon = $(document.getElementById('attempt-search-indicator'));
+                $searchIcon.addClass('hidden');
+                $spinner = $(document.getElementById('attempt-loading-indicator'));
+                $spinner.removeClass('hidden');
                 this.hydrate();
                 event.stopPropagation();
                 event.preventDefault();
@@ -147,7 +152,12 @@ edx = edx || {};
             var self = this;
             self.collection.fetch({
                 success: function() {
+                    var $searchIcon, $spinner;
                     self.render();
+                    $spinner = $(document.getElementById('attempt-loading-indicator'));
+                    $spinner.addClass('hidden');
+                    $searchIcon = $(document.getElementById('attempt-search-indicator'));
+                    $searchIcon.removeClass('hidden');
                 }
             });
         },

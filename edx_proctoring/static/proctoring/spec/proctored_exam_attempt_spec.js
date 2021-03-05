@@ -178,8 +178,16 @@ describe('ProctoredExamAttemptView', function() {
         '<div class="top-header">' +
         '<div class="search-attempts">' +
         '<input type="text" id="search_attempt_id" placeholder="e.g johndoe or john.doe@gmail.com"' +
-        '<% if (inSearchMode) { %> value="<%= searchText %>" <%} %>' +
-        '/> <span class="search"><span class="icon fa fa-search" aria-hidden="true"></span></span> ' +
+        '<% if (inSearchMode) { %> value="<%= searchText %>" <%} %> /> ' +
+        '<span class="search">' +
+        '<span class="icon fa fa-search" id="attempt-search-indicator" aria-hidden="true"></span>' +
+        '<div aria-live="polite" aria-relevant="all">' +
+        '<div id="attempt-loading-indicator" class="hidden">' +
+        '<span class="icon fa fa-spinner fa-pulse" aria-hidden="true"></span>' +
+        '<span class="sr"><%- gettext("Loading") %></span>' +
+        '</div>' +
+        '</div>' +
+        '</span>' +
         '<span class="clear-search"><span class="icon fa fa-remove" aria-hidden="true"></span></span>' +
         '</div>' +
         '<ul class="pagination">' +
@@ -268,8 +276,16 @@ describe('ProctoredExamAttemptView', function() {
         '<div class="top-header">' +
         '<div class="search-attempts">' +
         '<input type="text" id="search_attempt_id" placeholder="e.g johndoe or john.doe@gmail.com"' +
-        '<% if (inSearchMode) { %> value="<%= searchText %>" <%} %>' +
-        '/> <span class="search"><span class="icon fa fa-search" aria-hidden="true"></span></span> ' +
+        '<% if (inSearchMode) { %> value="<%= searchText %>" <%} %> /> ' +
+        '<span class="search">' +
+        '<span class="icon fa fa-search" id="attempt-search-indicator" aria-hidden="true"></span>' +
+        '<div aria-live="polite" aria-relevant="all">' +
+        '<div id="attempt-loading-indicator" class="hidden">' +
+        '<span class="icon fa fa-spinner fa-pulse" aria-hidden="true"></span>' +
+        '<span class="sr"><%- gettext("Loading") %></span>' +
+        '</div>' +
+        '</div>' +
+        '</span>' +
         '<span class="clear-search"><span class="icon fa fa-remove" aria-hidden="true"></span></span>' +
         '</div>' +
         '<ul class="pagination">' +
@@ -518,6 +534,10 @@ describe('ProctoredExamAttemptView', function() {
 
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items')).toContainHtml('<td> testuser1  </td>');
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-search-indicator').hasClass('hidden'))
+            .toEqual(false);
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-loading-indicator').hasClass('hidden'))
+            .toEqual(true);
 
         $('#search_attempt_id').val(searchText);
 
@@ -538,13 +558,25 @@ describe('ProctoredExamAttemptView', function() {
         spyOnEvent('.search-attempts > span.search', 'click');
         $('.search-attempts > span.search').trigger('click');
 
+        // check that spinner is visible
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-search-indicator').hasClass('hidden'))
+            .toEqual(true);
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-loading-indicator').hasClass('hidden'))
+            .toEqual(false);
+
         // process the search attempt requests.
         this.server.respond();
 
         // search matches the existing attempts
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('testuser1');
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
+        // check that spinner is hidden again
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-search-indicator').hasClass('hidden'))
+            .toEqual(false);
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-loading-indicator').hasClass('hidden'))
+            .toEqual(true);
     });
+
     it('should clear the search for the proctored exam attempt', function() {
         var searchText = 'invalid_search_text';
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/test_course_id',
@@ -859,5 +891,65 @@ describe('ProctoredExamAttemptView', function() {
 
         // check that accordion is no longer hidden
         expect(this.proctored_exam_attempt_view.$el.find('.accordion-panel').hasClass('is-hidden')).toEqual(false);
+    });
+
+    it('searches and shows spinner for grouped attempts', function() {
+        var searchText = 'testuser1';
+        setFixtures('<div class="student-proctored-exam-container" data-course-id="test_course_id" ' +
+            'data-enable-exam-resume-proctoring-improvements="True"></div>');
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('submitted', false))
+            ]
+        );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
+
+        // Process all requests so far
+        this.server.respond();
+        this.server.respond();
+
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-search-indicator').hasClass('hidden'))
+            .toEqual(false);
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-loading-indicator').hasClass('hidden'))
+            .toEqual(true);
+
+        $('#search_attempt_id').val(searchText);
+
+        // search for the proctored exam attempt
+        this.server.respondWith(
+            'GET',
+            '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id/search/' + searchText,
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('started'))
+            ]
+        );
+
+        // trigger the search attempt event.
+        spyOnEvent('.search-attempts > span.search', 'click');
+        $('.search-attempts > span.search').trigger('click');
+
+        // check that spinner is visible
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-search-indicator').hasClass('hidden'))
+            .toEqual(true);
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-loading-indicator').hasClass('hidden'))
+            .toEqual(false);
+
+        // process the search attempt requests.
+        this.server.respond();
+
+        // check that spinner is hidden again
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-search-indicator').hasClass('hidden'))
+            .toEqual(false);
+        expect(this.proctored_exam_attempt_view.$el.find('#attempt-loading-indicator').hasClass('hidden'))
+            .toEqual(true);
     });
 });

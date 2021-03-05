@@ -67,7 +67,15 @@
                         value="<%= searchText %>"
                     <%} %>
                     />
-                    <span class="search"><span class="icon fa fa-search" aria-hidden="true"></span></span>
+                    <span class="search">
+                        <span class="icon fa fa-search" id="attempt-search-indicator" aria-hidden="true"></span>
+                        <div aria-live="polite" aria-relevant="all">
+                            <div id="attempt-loading-indicator" class="hidden">
+                              <span class="icon fa fa-spinner fa-pulse" aria-hidden="true"></span>
+                              <span class="sr"><%- gettext("Loading") %></span>
+                            </div>
+                        </div>
+                    </span>
                     <span class="clear-search"><span class="icon fa fa-remove" aria-hidden="true"></span></span>
                 </div>
                 <ul class="pagination">
