@@ -80,8 +80,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         if status not in [200, 201]:
             err_msg = (
-                u'Could not register attempt_code = {attempt_code}. '
-                u'HTTP Status code was {status_code} and response was {response}.'.format(
+                'Could not register attempt_code={attempt_code}. '
+                'HTTP Status code was {status_code} and response was {response}.'.format(
                     attempt_code=attempt_code,
                     status_code=status,
                     response=response
@@ -353,7 +353,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         message = method_string + headers_str + body_str
 
         log_msg = (
-            u'About to send payload to SoftwareSecure: examCode: {examCode}, courseID: {courseID}'.
+            'About to send payload to SoftwareSecure: examCode={examCode}, courseID={courseID}'.
             format(examCode=body_json.get('examCode'), courseID=body_json.get('orgExtra').get('courseID'))
         )
         log.info(log_msg)

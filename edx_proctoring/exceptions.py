@@ -21,9 +21,6 @@ class ProctoredExamNotFoundException(ProctoredBaseException):
     """
     Raised when a look up fails.
     """
-    def __init__(self, *args):
-        """ Init method of exception """
-        ProctoredBaseException.__init__(self, u'The exam_id does not exist.', *args)
 
 
 class ProctoredExamReviewPolicyNotFoundException(ProctoredBaseException):

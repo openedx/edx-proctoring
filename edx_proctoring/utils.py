@@ -115,7 +115,7 @@ def locate_attempt_by_attempt_code(attempt_code):
         if not attempt_obj:
             # still can't find, error out
             err_msg = (
-                u'Could not locate attempt_code: {attempt_code}'.format(attempt_code=attempt_code)
+                'Could not locate attempt_code={attempt_code}'.format(attempt_code=attempt_code)
             )
             log.error(err_msg)
             is_archived = None

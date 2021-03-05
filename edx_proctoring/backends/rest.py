@@ -184,7 +184,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         payload['status'] = 'created'
         # attempt code isn't needed in this API
         payload.pop('attempt_code', False)
-        log.debug(u'Creating exam attempt for %r at %r', exam['external_id'], url)
+        log.debug(
+            'Creating exam attempt for exam_id={exam_id} (external_id={external_id}) at {url}'.format(
+                exam_id=exam['id'], external_id=exam['external_id'], url=url
+            )
+        )
         response = self.session.post(url, json=payload)
         if response.status_code != 200:
             raise BackendProviderCannotRegisterAttempt(response.content, response.status_code)
@@ -264,7 +268,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             url = self.exam_url.format(exam_id=external_id)
         else:
             url = self.create_exam_url
-        log.info(u'Saving exam to %r', url)
+        log.info('Saving exam_id={exam_id} to {url}'.format(exam_id=exam['id'], url=url))
         response = None
         try:
             response = self.session.post(url, json=exam)
@@ -275,7 +279,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
                 content = exc.response.content if hasattr(exc, 'response') else response.content
             else:
                 content = None
-            log.exception(u'failed to save exam. %r', content)
+            log.exception(
+                'Failed to save exam_id={exam_id} to {url}. Response: {content}'.format(
+                    exam_id=exam['id'], url=url, content=content
+                )
+            )
             data = {}
         return data.get('id')
 
@@ -304,7 +312,12 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         encoded = jwt.encode(token, self.client_secret).decode('utf-8')
         url = self.instructor_url.format(client_id=self.client_id, jwt=encoded)
 
-        log.debug(u'Created instructor url for %r %r %r', course_id, exam_id, attempt_id)
+        log.debug(
+            'Created instructor url for course_id={course_id} exam_id={exam_id} '
+            'attempt_id={attempt_id}'.format(
+                course_id=course_id, exam_id=exam_id, attempt_id=attempt_id
+            )
+        )
         return url
 
     def retire_user(self, user_id):
