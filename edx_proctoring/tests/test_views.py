@@ -709,15 +709,19 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         self.learner_2 = User(username='user2', email='learner_2@test.com')
         self.learner_2.save()
 
+        self.enrollment_modes = ['verified', 'masters', 'executive-education']
         enrollments = [
             {
                 'user': self.user,
+                'mode': self.enrollment_modes[0],
             },
             {
                 'user': self.learner_1,
+                'mode': self.enrollment_modes[1],
             },
             {
                 'user': self.learner_2,
+                'mode': self.enrollment_modes[2],
             },
         ]
         set_runtime_service('enrollments', MockEnrollmentsService(enrollments))
@@ -778,16 +782,19 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
             'results': [
                 {
                     'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
                     'status': InstructorDashboardOnboardingAttemptStatus.submitted,
                     'modified': serialized_onboarding_attempt['modified'] if serialized_onboarding_attempt else None,
                 },
                 {
                     'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
                     'status': InstructorDashboardOnboardingAttemptStatus.not_started,
                     'modified': None,
                 },
                 {
                     'username': self.learner_2.username,
+                    'enrollment_mode': self.enrollment_modes[2],
                     'status': InstructorDashboardOnboardingAttemptStatus.not_started,
                     'modified': None,
                 }
@@ -891,6 +898,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
             'results': [
                 {
                     'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
                     'status': InstructorDashboardOnboardingAttemptStatus.setup_started,
                     'modified': (first_serialized_onboarding_attempt['modified']
                                  if first_serialized_onboarding_attempt else None
@@ -898,6 +906,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
                 },
                 {
                     'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
                     'status': InstructorDashboardOnboardingAttemptStatus.setup_started,
                     'modified': (second_serialized_onboarding_attempt['modified']
                                  if second_serialized_onboarding_attempt else None
@@ -940,6 +949,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
             'results': [
                 {
                     'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
                     'status': InstructorDashboardOnboardingAttemptStatus.setup_started,
                     'modified': (first_serialized_onboarding_attempt['modified']
                                  if first_serialized_onboarding_attempt else None
@@ -947,6 +957,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
                 },
                 {
                     'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
                     'status': InstructorDashboardOnboardingAttemptStatus.verified,
                     'modified': (second_serialized_onboarding_attempt['modified']
                                  if second_serialized_onboarding_attempt else None
@@ -998,16 +1009,19 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
             'results': [
                 {
                     'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
                     'status': expected_onboarding_status,
                     'modified': serialized_onboarding_attempt['modified'] if serialized_onboarding_attempt else None,
                 },
                 {
                     'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
                     'status': InstructorDashboardOnboardingAttemptStatus.not_started,
                     'modified': None,
                 },
                 {
                     'username': self.learner_2.username,
+                    'enrollment_mode': self.enrollment_modes[2],
                     'status': InstructorDashboardOnboardingAttemptStatus.not_started,
                     'modified': None,
                 },
@@ -1073,16 +1087,19 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
             'results': [
                 {
                     'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
                     'status': InstructorDashboardOnboardingAttemptStatus.setup_started,
                     'modified': serialized_onboarding_attempt['modified'] if serialized_onboarding_attempt else None,
                 },
                 {
                     'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
                     'status': InstructorDashboardOnboardingAttemptStatus.not_started,
                     'modified': None,
                 },
                 {
                     'username': self.learner_2.username,
+                    'enrollment_mode': self.enrollment_modes[2],
                     'status': InstructorDashboardOnboardingAttemptStatus.not_started,
                     'modified': None,
                 },
@@ -1164,16 +1181,19 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
             'results': [
                 {
                     'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
                     'status': InstructorDashboardOnboardingAttemptStatus.not_started,
                     'modified': None,
                 },
                 {
                     'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
                     'status': InstructorDashboardOnboardingAttemptStatus.other_course_approved,
                     'modified': serialized_onboarding_attempt_1.get('modified'),
                 },
                 {
                     'username': self.learner_2.username,
+                    'enrollment_mode': self.enrollment_modes[2],
                     'status': InstructorDashboardOnboardingAttemptStatus.setup_started,
                     'modified': serialized_onboarding_attempt_2.get('modified'),
                 },

@@ -2458,15 +2458,18 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         enrollments = [
             {
                 'user': 'user_1',
+                'mode': 'verified',
             },
             {
                 'user': 'user_2',
+                'mode': 'masters',
             },
             {
                 'user': 'user_3',
+                'mode': 'executive-education',
             },
         ]
-        expected_enrollments = [enrollment['user'] for enrollment in enrollments]
+        expected_enrollments = [(enrollment['user'], enrollment['mode']) for enrollment in enrollments]
 
         with patch(
                 'edx_proctoring.tests.test_services.MockEnrollmentsService.get_enrollments_can_take_proctored_exams',

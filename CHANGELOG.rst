@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.8] - 2021-03-08
+~~~~~~~~~~~~~~~~~~~~
+* Add enrollment mode column to onboarding status panel on instructor dashboard
+
 [3.7.7] - 2021-03-08
 ~~~~~~~~~~~~~~~~~~~~
 * Add loading spinner for searching to onboarding attempt and special attempts sections on the

@@ -417,6 +417,7 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
             * results: a list of dictionaries, where each dictionary contains the following
               information about a learner's onboarding status:
                 * username: the user's username
+                * enrollment_mode: the user's enrollment mode for the course
                 * status: the status of the user's onboarding attempt as should be displayed by
                   the Instructor Dashboard; it will be one of InstructorDashboardOnboardingAttemptStatus
                 * modified: the date and time the user last modified the onboarding exam attempt;
@@ -452,7 +453,12 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
 
         enrollments = get_enrollments_can_take_proctored_exams(course_id, text_search)
 
-        users = [enrollment.user for enrollment in enrollments]
+        users = []
+        enrollment_modes_by_user_id = {}
+        for enrollment in enrollments:
+            users.append(enrollment.user)
+            enrollment_modes_by_user_id[enrollment.user.id] = enrollment.mode
+
         # get onboarding attempts for users for the course
         onboarding_attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(
             course_id,
@@ -473,7 +479,10 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
             user_attempt = onboarding_attempts_per_user.get(user.id, {})
             other_verified_attempt = last_verified_attempt_dict.get(user.id)
 
-            data = {'username': user.username}
+            data = {
+                'username': user.username,
+                'enrollment_mode': enrollment_modes_by_user_id.get(user.id),
+            }
 
             if not user_attempt and other_verified_attempt:
                 data['status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
