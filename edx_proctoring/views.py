@@ -674,7 +674,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
 
-        course_id = attempt['proctored_exam']['id']
+        course_id = attempt['proctored_exam']['course_id']
         action = request.data.get('action')
 
         err_msg = (

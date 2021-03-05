@@ -3073,7 +3073,13 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
 
-    def test_mark_ready_to_resume_attempt_for_other_as_staff(self):
+    @ddt.data(
+        (True, True),
+        (True, False),
+        (False, True)
+    )
+    @ddt.unpack
+    def test_mark_ready_to_resume_attempt_for_other_as_staff(self, is_staff, is_course_staff):
         """
         Assert that a staff user can submit a "mark_ready_to_resume" action on
         behalf of another user when supplying the user's id in the request body.
@@ -3130,6 +3136,12 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
 
+        if not is_course_staff:
+            set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+        if not is_staff:
+            self.user.is_staff = False
+            self.user.save()
+
         # Log in the staff user.
         self.client.login_user(self.user)
 
@@ -3151,7 +3163,13 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
 
-    def test_mark_ready_to_resume_attempt_for_other_as_staff_no_user_id(self):
+    @ddt.data(
+        (True, True),
+        (True, False),
+        (False, True)
+    )
+    @ddt.unpack
+    def test_mark_ready_to_resume_attempt_for_other_as_staff_no_user_id(self, is_staff, is_course_staff):
         """
         Assert that a staff user cannot submit any action on behalf of another user without
         specifying the user's id in the request body.Assert that a ProctoredExamPermissionDenied
@@ -3208,6 +3226,12 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # Make sure the exam attempt is in the error state.
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+        if not is_course_staff:
+            set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+        if not is_staff:
+            self.user.is_staff = False
+            self.user.save()
 
         # Log in the staff user.
         self.client.login_user(self.user)
@@ -3309,6 +3333,55 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # Make sure the exam attempt is in the old state.
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+    def test_is_user_course_or_global_staff_called_correct_args(self):
+        # Log in as student taking the exam.
+        self.client.login_user(self.student_taking_exam)
+
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+        )
+
+        # POST an exam attempt.
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': False,
+        }
+
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        attempt_id = response_data['exam_attempt_id']
+
+        # Log in the staff user.
+        self.client.login_user(self.student_taking_exam)
+
+        # Transition the exam attempt into the ready_to_resume state. This is not
+        # a valid state transition, but that's okay because we're not testing that.
+        with patch('edx_proctoring.views.is_user_course_or_global_staff') as is_staff_mock:
+            response = self.client.put(
+                reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id]),
+                json.dumps({
+                    'action': 'mark_ready_to_resume',
+                    'user_id': self.student_taking_exam.id,
+                }),
+                content_type='application/json'
+            )
+            is_staff_mock.assert_called_once()
+
+            # We can't assert that is_user_course_or_global_staff is called with self.user because
+            # Django lazily loads request.user, so it's a SimpleLazyObject.
+            (_, course_id) = is_staff_mock.call_args.args
+            assert course_id == proctored_exam.course_id
 
     @ddt.data(
         'stop',

@@ -13,6 +13,10 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[3.7.6] - 2021-03-05
+~~~~~~~~~~~~~~~~~~~~
+* Fix bug with StudentProctoredExamAttempt put handler where course_id was being incorrectly determined,
+  preventing course staff from marking learners' attempts as "ready_to_resume".
 
 [3.7.5] - 2021-03-05
 ~~~~~~~~~~~~~~~~~~~~
