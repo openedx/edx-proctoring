@@ -72,12 +72,17 @@ edx = edx || {};
             'click li > a.target-link': 'getPaginatedItems'
         },
         searchItems: function(event) {
+            var $searchIcon, $spinner;
             var searchText = $('#search_onboarding_id').val();
             if (searchText !== '') {
                 this.inSearchMode = true;
                 this.searchText = searchText;
                 this.currentPage = 1;
                 this.collection.url = this.constructUrl();
+                $searchIcon = $(document.getElementById('onboarding-search-indicator'));
+                $searchIcon.addClass('hidden');
+                $spinner = $(document.getElementById('onboarding-loading-indicator'));
+                $spinner.removeClass('hidden');
                 this.hydrate();
                 event.stopPropagation();
                 event.preventDefault();
@@ -164,12 +169,22 @@ edx = edx || {};
             var self = this;
             self.collection.fetch({
                 success: function() {
+                    var $searchIcon, $spinner;
                     self.render();
+                    $spinner = $(document.getElementById('onboarding-loading-indicator'));
+                    $spinner.addClass('hidden');
+                    $searchIcon = $(document.getElementById('onboarding-search-indicator'));
+                    $searchIcon.removeClass('hidden');
                 },
                 error: function() {
                     // in the case that there is no onboarding data, we
                     // still want the view to render
+                    var $searchIcon, $spinner;
                     self.render();
+                    $spinner = $(document.getElementById('onboarding-loading-indicator'));
+                    $spinner.addClass('hidden');
+                    $searchIcon = $(document.getElementById('onboarding-search-indicator'));
+                    $searchIcon.removeClass('hidden');
                 }
             });
         },

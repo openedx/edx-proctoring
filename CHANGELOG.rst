@@ -13,6 +13,12 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.7.7] - 2021-03-08
+~~~~~~~~~~~~~~~~~~~~
+* Add loading spinner for searching to onboarding attempt and special attempts sections on the
+  instructor dashboard
+
 [3.7.6] - 2021-03-05
 ~~~~~~~~~~~~~~~~~~~~
 * Fix bug with StudentProctoredExamAttempt put handler where course_id was being incorrectly determined,

@@ -41,7 +41,15 @@
                         value="<%= searchText %>"
                     <%} %>
                     />
-                    <span class="search"><span class="icon fa fa-search" aria-hidden="true"></span></span>
+                    <span class="search">
+                        <span class="icon fa fa-search" id="onboarding-search-indicator" aria-hidden="true"></span>
+                        <div aria-live="polite" aria-relevant="all">
+                            <div id="onboarding-loading-indicator" class="hidden">
+                              <span class="icon fa fa-spinner fa-pulse" aria-hidden="true"></span>
+                              <span class="sr"><%- gettext("Loading") %></span>
+                            </div>
+                        </div>
+                    </span>
                     <span class="clear-search"><span class="icon fa fa-remove" aria-hidden="true"></span></span>
                 </div>
                 <ul class="pagination">
@@ -87,10 +95,10 @@
                 <ul class="status-checkboxes">
                     <% _.each(onboardingStatuses, function(status){ %>
                         <li>
-                            <input type="checkbox" id="<%= status %>" name="status-filters" value="<%= status %>" 
+                            <input type="checkbox" id="<%= status %>" name="status-filters" value="<%= status %>"
                             <% if (filters.includes(status)) { %>checked="true"<% } %>>
                             <label for="<%= status %>">
-                                <%- interpolate(gettext(" %(onboardingStatus)s "), 
+                                <%- interpolate(gettext(" %(onboardingStatus)s "),
                                 { onboardingStatus: getOnboardingStatus(status) }, true) %>
                             </label>
                         </li>
@@ -117,7 +125,7 @@
                                 <%- interpolate(gettext(" %(username)s "), { username: item.username }, true) %>
                             </td>
                             <td>
-                                <%- interpolate(gettext(" %(onboardingStatus)s "), 
+                                <%- interpolate(gettext(" %(onboardingStatus)s "),
                                 { onboardingStatus: getOnboardingStatus(item.status) }, true) %>
                             </td>
                             <td><%= getDateFormat(item.modified) %></td>
