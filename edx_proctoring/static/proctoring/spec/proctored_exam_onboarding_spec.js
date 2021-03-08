@@ -10,21 +10,25 @@ describe('ProctoredExamOnboardingView', function() {
         results: [
             {
                 username: 'testuser1',
+                enrollment_mode: 'verified',
                 status: 'not_started',
                 modified: null
             },
             {
                 username: 'testuser2',
+                enrollment_mode: 'verified',
                 status: 'verified',
                 modified: '2021-01-28T17:59:19.913336Z'
             },
             {
                 username: 'testuser3',
+                enrollment_mode: 'masters',
                 status: 'submitted',
                 modified: '2021-01-28T17:46:05.316349Z'
             },
             {
                 username: 'testuser4',
+                enrollment_mode: 'executive-education',
                 status: 'other_course_approved',
                 modified: '2021-01-27T17:46:05.316349Z'
             }
@@ -108,7 +112,7 @@ describe('ProctoredExamOnboardingView', function() {
         '<% if (filters.includes(status)) { %>checked="true"<% } %>>' +
         '<label for="<%= status %>">' +
         '<%- interpolate(gettext(" %(onboardingStatus)s "), ' +
-        '{ onboardingStatus: getOnboardingStatus(status) }, true) %>' +
+        '{ onboardingStatus: getReadableString(status) }, true) %>' +
         '</label>' +
         '</li>' +
         '<% }); %>' +
@@ -122,6 +126,7 @@ describe('ProctoredExamOnboardingView', function() {
         '<thead>' +
         '<tr class="onboarding-status-headings">' +
         '<th class="username-heading"><%- gettext("Username") %></th>' +
+        '<th class="enrollment-mode-heading"><%- gettext("Enrollment Mode") %></th>' +
         '<th class="onboarding-status-heading"><%- gettext("Onboarding Status") %></th>' +
         '<th class="last-updated-heading"><%- gettext("Last Modified") %> </th>' +
         '</tr>' +
@@ -134,8 +139,12 @@ describe('ProctoredExamOnboardingView', function() {
         '<%- interpolate(gettext(" %(username)s "), { username: item.username }, true) %>' +
         '</td>' +
         '<td>' +
+        '<%- interpolate(gettext(" %(enrollmentMode)s "), ' +
+        '{ enrollmentMode: getReadableString(item.enrollment_mode) }, true) %>' +
+        '</td>' +
+        '<td>' +
         '<%- interpolate(gettext(" %(onboardingStatus)s "), ' +
-        '{ onboardingStatus: getOnboardingStatus(item.status) }, true) %>' +
+        '{ onboardingStatus: getReadableString(item.status) }, true) %>' +
         '</td>' +
         '<td><%= getDateFormat(item.modified) %></td>' +
         '</tr>' +
@@ -190,12 +199,18 @@ describe('ProctoredExamOnboardingView', function() {
 
         expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').length)
             .toEqual(4);
-        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').html())
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').first().html())
             .toContain('testuser1');
-        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').html())
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').first().html())
+            .toContain('Verified');
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').first().html())
             .toContain('Not Started');
-        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').html())
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').first().html())
             .toContain('---');
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').last().html())
+            .toContain('testuser4');
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-items').last().html())
+            .toContain('Executive Education');
     });
 
     it('renders correctly with no data', function() {

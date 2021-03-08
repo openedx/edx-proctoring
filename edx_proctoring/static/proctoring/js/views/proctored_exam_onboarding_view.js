@@ -3,7 +3,7 @@ edx = edx || {};
 (function(Backbone, $, _, gettext) {
     'use strict';
 
-    var viewHelper, onboardingStatuses, onboardingStatusReadableFormat;
+    var viewHelper, onboardingStatuses, statusAndModeReadableFormat;
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
     onboardingStatuses = [
@@ -16,7 +16,8 @@ edx = edx || {};
         'rejected',
         'error'
     ];
-    onboardingStatusReadableFormat = {
+    statusAndModeReadableFormat = {
+        // Onboarding statuses
         not_started: gettext('Not Started'),
         setup_started: gettext('Setup Started'),
         onboarding_started: gettext('Onboarding Started'),
@@ -25,7 +26,15 @@ edx = edx || {};
         submitted: gettext('Submitted'),
         verified: gettext('Verified'),
         rejected: gettext('Rejected'),
-        error: gettext('Error')
+        error: gettext('Error'),
+        // Enrollment modes (Note: 'verified' is both a status and enrollment mode)
+        audit: gettext('Audit'),
+        honor: gettext('Honor'),
+        professional: gettext('Professional'),
+        'no-id-professional': gettext('No ID Professional'),
+        credit: gettext('Credit'),
+        masters: gettext('Master\'s'),
+        'executive-education': gettext('Executive Education')
     };
     viewHelper = {
         getDateFormat: function(date) {
@@ -35,12 +44,11 @@ edx = edx || {};
                 return '---';
             }
         },
-        getOnboardingStatus: function(status) {
-            if (onboardingStatuses.includes(status)) {
-                return onboardingStatusReadableFormat[status];
-            } else {
-                return status;
+        getReadableString: function(str) {
+            if (str in statusAndModeReadableFormat) {
+                return statusAndModeReadableFormat[str];
             }
+            return str;
         }
     };
     edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView = Backbone.View.extend({

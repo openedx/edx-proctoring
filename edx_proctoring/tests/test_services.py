@@ -313,15 +313,18 @@ class MockEnrollment:
     """
     Mock Enrollment
     """
-    def __init__(self, user):
+    def __init__(self, user, mode):
         self.user = user
+        self.mode = mode
 
 
 class MockEnrollmentsService:
     """Mock Enrollments service"""
     def __init__(self, enrollments):
         """Initialize mock enrollments"""
-        self.enrollments = [MockEnrollment(enrollment['user']) for enrollment in enrollments]
+        self.enrollments = (
+            [MockEnrollment(enrollment['user'], enrollment['mode']) for enrollment in enrollments]
+        )
 
     def get_active_enrollments_by_course(self, course_id):
         """Returns mock enrollments"""
