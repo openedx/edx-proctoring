@@ -371,23 +371,26 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(course_id, [user])
 
-        if len(attempts) == 0:
-            # If there are no attempts in the current course, check for a verified attempt in another course
+        # Default to the most recent attempt in the course if there are no verified attempts
+        relevant_attempt = attempts[0] if attempts else None
+        for attempt in attempts:
+            if attempt.status == ProctoredExamStudentAttemptStatus.verified:
+                relevant_attempt = attempt
+                break
+
+        # If there is no verified attempt in the current course, check for a verified attempt in another course
+        verified_attempt = None
+        if not relevant_attempt or relevant_attempt.status != ProctoredExamStudentAttemptStatus.verified:
             attempt_dict = get_last_verified_onboarding_attempts_per_user(
                 [user],
                 onboarding_exam.backend,
             )
             verified_attempt = attempt_dict.get(user.id)
-            if verified_attempt:
-                data['onboarding_status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
-                data['expiration_date'] = verified_attempt.modified + timedelta(days=730)
-        else:
-            # Default to the most recent attempt in the course if there are no verified attempts
-            relevant_attempt = attempts[0]
-            for attempt in attempts:
-                if attempt.status == ProctoredExamStudentAttemptStatus.verified:
-                    relevant_attempt = attempt
-                    break
+
+        if verified_attempt:
+            data['onboarding_status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
+            data['expiration_date'] = verified_attempt.modified + timedelta(days=730)
+        elif relevant_attempt:
             data['onboarding_status'] = relevant_attempt.status
 
         return Response(data)
@@ -484,7 +487,11 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
                 'enrollment_mode': enrollment_modes_by_user_id.get(user.id),
             }
 
-            if not user_attempt and other_verified_attempt:
+            if (
+                not user_attempt and
+                user_attempt.get('status') != ProctoredExamStudentAttemptStatus.verified and
+                other_verified_attempt
+            ):
                 data['status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
                 data['modified'] = other_verified_attempt.modified
             else:
