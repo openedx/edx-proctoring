@@ -488,9 +488,11 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
             }
 
             if (
-                not user_attempt and
-                user_attempt.get('status') != ProctoredExamStudentAttemptStatus.verified and
-                other_verified_attempt
+                other_verified_attempt and
+                (
+                    not user_attempt or
+                    (user_attempt and user_attempt.get('status') != ProctoredExamStudentAttemptStatus.verified)
+                )
             ):
                 data['status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
                 data['modified'] = other_verified_attempt.modified
