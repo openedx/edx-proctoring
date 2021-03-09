@@ -604,7 +604,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
 
     def test_verified_in_another_course(self):
         """
-        Test that, if there are no onboarding attempts in the current course, but there is at least
+        Test that, if there are no verified onboarding attempts in the current course, but there is at least
         one verified attempt in another course, the status will return `other_course_approved` and
         it will also return an `expiration_date`
         """
@@ -621,7 +621,11 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
             is_practice_exam=True,
             backend=proctoring_backend
         )
+        # Create a submitted attempt in the current course
+        attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
         # Create an attempt in the other course that has been verified
+        attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
         self._create_exam_attempt(
             other_course_onboarding_exam.id, ProctoredExamStudentAttemptStatus.verified, True
         )
@@ -637,6 +641,44 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
             args=[self.course_id, self.onboarding_exam.content_id]
         ))
         self.assertIsNotNone(response_data['expiration_date'])
+
+    def test_verified_in_multiple_courses(self):
+        """
+        Test that, if there is both a verified onboarding attempt in the current course, and there is
+        a verified attempt in another course, the status will return `verified`
+        """
+        proctoring_backend = 'test'
+        other_course_id = 'x/y/z'
+        other_course_onboarding_exam = ProctoredExam.objects.create(
+            course_id=other_course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=True,
+            is_practice_exam=True,
+            backend=proctoring_backend
+        )
+        # Create a verified attempt in the current course
+        attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.verified)
+        # Create an attempt in the other course that has been verified
+        attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
+        self._create_exam_attempt(
+            other_course_onboarding_exam.id, ProctoredExamStudentAttemptStatus.verified, True
+        )
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_status'], 'verified')
+        self.assertEqual(response_data['onboarding_link'], reverse(
+            'jump_to',
+            args=[self.course_id, self.onboarding_exam.content_id]
+        ))
 
     def test_only_onboarding_exam(self):
         """
@@ -1159,15 +1201,37 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         # get serialized onboarding_attempt to get modified time
         serialized_onboarding_attempt_1 = get_exam_attempt_by_id(onboarding_attempt_1)
 
-        # Setup Learner 2's attempt in current course
-        onboarding_attempt_2 = create_exam_attempt(
+        # Setup Learner 2's attempt in current course and verified attempt in another course
+        onboarding_attempt_2_course = create_exam_attempt(
             self.onboarding_exam_id,
             self.learner_2.id,
             True,
         )
-        update_attempt_status(onboarding_attempt_2, ProctoredExamStudentAttemptStatus.download_software_clicked)
+        onboarding_attempt_2_other_course = create_exam_attempt(
+            other_onboarding_exam_id,
+            self.learner_2.id,
+            True,
+        )
+        update_attempt_status(onboarding_attempt_2_course, ProctoredExamStudentAttemptStatus.download_software_clicked)
+        update_attempt_status(onboarding_attempt_2_other_course, ProctoredExamStudentAttemptStatus.verified)
+
+        # Setup Learner with verified attempt in both current course and another course
+        onboarding_attempt_course = create_exam_attempt(
+            self.onboarding_exam_id,
+            self.user.id,
+            True,
+        )
+        onboarding_attempt_other_course = create_exam_attempt(
+            other_onboarding_exam_id,
+            self.user.id,
+            True,
+        )
+        update_attempt_status(onboarding_attempt_course, ProctoredExamStudentAttemptStatus.verified)
+        update_attempt_status(onboarding_attempt_other_course, ProctoredExamStudentAttemptStatus.verified)
+        serialized_onboarding_attempt_course = get_exam_attempt_by_id(onboarding_attempt_course)
+
         # get serialized onboarding_attempt to get modified time
-        serialized_onboarding_attempt_2 = get_exam_attempt_by_id(onboarding_attempt_2)
+        serialized_onboarding_attempt_2 = get_exam_attempt_by_id(onboarding_attempt_2_other_course)
 
         response = self.client.get(reverse(
                 'edx_proctoring:user_onboarding.status.course',
@@ -1182,8 +1246,8 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
                 {
                     'username': self.user.username,
                     'enrollment_mode': self.enrollment_modes[0],
-                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
-                    'modified': None,
+                    'status': InstructorDashboardOnboardingAttemptStatus.verified,
+                    'modified': serialized_onboarding_attempt_course.get('modified')
                 },
                 {
                     'username': self.learner_1.username,
@@ -1194,7 +1258,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
                 {
                     'username': self.learner_2.username,
                     'enrollment_mode': self.enrollment_modes[2],
-                    'status': InstructorDashboardOnboardingAttemptStatus.setup_started,
+                    'status': InstructorDashboardOnboardingAttemptStatus.other_course_approved,
                     'modified': serialized_onboarding_attempt_2.get('modified'),
                 },
             ],
