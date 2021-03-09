@@ -1267,7 +1267,6 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
             'next': None,
             'num_pages': 1,
         }
-        self.maxDiff = None
         self.assertEqual(response_data, expected_data)
 
     def test_not_staff_or_course_staff(self):
