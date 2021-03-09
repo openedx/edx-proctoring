@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.9] - 2021-03-09
+~~~~~~~~~~~~~~~~~~~~
+* Update onboarding status logic such that 'approved in another course' will take precedence over
+  a non verified state in the requested course.
+
 [3.7.8] - 2021-03-08
 ~~~~~~~~~~~~~~~~~~~~
 * Add enrollment mode column to onboarding status panel on instructor dashboard
