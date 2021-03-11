@@ -89,7 +89,7 @@ docutils==0.16
     #   sphinx
 drf-jwt==1.17.3
     # via edx-drf-extensions
-edx-django-utils==3.13.0
+edx-django-utils==3.15.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -133,7 +133,7 @@ markupsafe==1.1.1
     # via
     #   jinja2
     #   xblock
-newrelic==6.0.1.155
+newrelic==6.2.0.156
     # via edx-django-utils
 packaging==20.9
     # via
@@ -153,7 +153,7 @@ pycryptodomex==3.10.1
     # via
     #   -r requirements/base.in
     #   pyjwkest
-pygments==2.8.0
+pygments==2.8.1
     # via
     #   doc8
     #   readme-renderer
@@ -222,7 +222,7 @@ slumber==0.7.1
     # via edx-rest-api-client
 snowballstemmer==2.1.0
     # via sphinx
-sphinx==3.5.1
+sphinx==3.5.2
     # via
     #   -r requirements/doc.in
     #   edx-sphinx-theme

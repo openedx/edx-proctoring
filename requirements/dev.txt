@@ -6,7 +6,7 @@
 #
 appdirs==1.4.4
     # via virtualenv
-astroid==2.5
+astroid==2.5.1
     # via
     #   pylint
     #   pylint-celery
@@ -34,7 +34,7 @@ colorama==0.4.4
     # via twine
 cryptography==3.4.6
     # via secretstorage
-diff-cover==4.2.1
+diff-cover==5.0.1
     # via -r requirements/dev.in
 distlib==0.3.1
     # via virtualenv
@@ -50,7 +50,7 @@ docutils==0.16
     # via readme-renderer
 edx-i18n-tools==0.5.3
     # via -r requirements/dev.in
-edx-lint==4.0.1
+edx-lint==4.1.0
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
@@ -60,7 +60,9 @@ filelock==3.0.12
     #   virtualenv
 idna==2.10
     # via requests
-inflect==5.2.0
+importlib-metadata==3.7.2
+    # via keyring
+inflect==5.3.0
     # via jinja2-pluralize
 isort==5.7.0
     # via
@@ -77,7 +79,7 @@ jinja2==2.11.3
     #   code-annotations
     #   diff-cover
     #   jinja2-pluralize
-keyring==22.0.1
+keyring==23.0.0
     # via twine
 lazy-object-proxy==1.5.2
     # via astroid
@@ -115,7 +117,7 @@ pycparser==2.20
     # via cffi
 pydocstyle==5.1.1
     # via -r requirements/quality.in
-pygments==2.8.0
+pygments==2.8.1
     # via
     #   diff-cover
     #   readme-renderer
@@ -127,7 +129,7 @@ pylint-plugin-utils==0.6
     # via
     #   pylint-celery
     #   pylint-django
-pylint==2.7.1
+pylint==2.7.2
     # via
     #   edx-lint
     #   pylint-celery
@@ -177,11 +179,11 @@ toml==0.10.2
     #   tox
 tox-battery==0.6.1
     # via -r requirements/dev.in
-tox==3.22.0
+tox==3.23.0
     # via
     #   -r requirements/dev.in
     #   tox-battery
-tqdm==4.57.0
+tqdm==4.59.0
     # via twine
 twine==3.3.0
     # via
@@ -197,6 +199,8 @@ wheel==0.36.2
     # via -r requirements/dev.in
 wrapt==1.12.1
     # via astroid
+zipp==3.4.1
+    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

@@ -35,7 +35,7 @@ click-plugins==1.1.1
     #   code-annotations
 code-annotations==1.1.0
     # via -r requirements/test.in
-coverage==5.4
+coverage==5.5
     # via pytest-cov
 cryptography==3.4.6
     # via pyjwt
@@ -80,7 +80,7 @@ django-webpack-loader==0.7.0
     #   rest-condition
 drf-jwt==1.17.3
     # via edx-drf-extensions
-edx-django-utils==3.13.0
+edx-django-utils==3.15.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -139,7 +139,7 @@ mock==4.0.3
     # via -r requirements/test.in
 mypy-extensions==0.4.3
     # via logilab-common
-newrelic==6.0.1.155
+newrelic==6.2.0.156
     # via edx-django-utils
 packaging==20.9
     # via pytest
