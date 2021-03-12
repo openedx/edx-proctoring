@@ -60,7 +60,7 @@ from .test_services import (
     MockLearningSequencesService,
     MockScheduleItemData
 )
-from .utils import LoggedInTestCase, ProctoredExamTestCase, create_onboarding_exam
+from .utils import LoggedInTestCase, ProctoredExamTestCase
 
 User = get_user_model()
 
@@ -765,11 +765,25 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         """
         If there are multiple onboarding exams we should only link to an exam accessible to the user
         """
-        accessible_onboarding_exam = create_onboarding_exam(
-            content_id='block-v1:test+course+1+type@sequential+block@onboard_visible'
+        accessible_onboarding_exam = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='block-v1:test+course+1+type@sequential+block@onboard_visible',
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+            is_active=True,
         )
-        inaccessible_onboarding_exam = create_onboarding_exam(
-            content_id='block-v1:test+course+1+type@sequential+block@onboard_hidden'
+        inaccessible_onboarding_exam = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='block-v1:test+course+1+type@sequential+block@onboard_hidden',
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+            is_active=True,
         )
         exam_schedule = MockScheduleItemData(timezone.now() - timedelta(days=1))
         course_sections = {
@@ -783,7 +797,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(accessible_onboarding_exam.course_id)
+            + '?course_id={}'.format(self.course_id)
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
