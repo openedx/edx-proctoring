@@ -61,7 +61,7 @@ describe('ProctoredExamInfo', function() {
             '<%} %>' +
             '</div>' +
             '<% if (showOnboardingExamLink) { %>' +
-            '<% if (onboardingClosed) { %>' +
+            '<% if (onboardingNotReleased) { %>' +
             '<a class="action action-onboarding action-disabled">' +
             '<%= gettext("Onboarding Opens") %> <%= onboardingReleaseDate %></a>' +
             '<%} else { %>' +

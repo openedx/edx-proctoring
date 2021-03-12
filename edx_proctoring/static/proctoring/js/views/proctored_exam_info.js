@@ -158,7 +158,7 @@
                     onboardingStatus: statusText.status,
                     onboardingMessage: statusText.message,
                     showOnboardingReminder: !['verified', 'other_course_approved'].includes(data.onboarding_status),
-                    onboardingClosed: releaseDate > now,
+                    onboardingNotReleased: releaseDate > now,
                     showOnboardingExamLink: this.shouldShowExamLink(data.onboarding_status),
                     onboardingLink: data.onboarding_link,
                     onboardingReleaseDate: releaseDate.toLocaleDateString()

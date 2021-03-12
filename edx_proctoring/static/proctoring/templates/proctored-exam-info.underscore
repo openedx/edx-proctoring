@@ -23,7 +23,7 @@
     <%} %>
     </div>
     <% if (showOnboardingExamLink) { %>
-        <% if (onboardingClosed) { %>
+        <% if (onboardingNotReleased) { %>
             <a class="action action-onboarding action-disabled"><%= gettext("Onboarding Opens") %> <%= onboardingReleaseDate %></a>
         <%} else { %>
             <a href="<%= onboardingLink %>" class="action action-onboarding"><%= gettext("Complete Onboarding") %></a>
