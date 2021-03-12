@@ -707,6 +707,7 @@ describe('ProctoredExamAttemptView', function() {
         )[0].text).toContain('Resume');
         expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown .actions-dropdown-list '
         + '.actions-item .action')[1].text).toContain('Reset');
+        expect(this.proctored_exam_attempt_view.$el.find('.accordion-panel').hasClass('is-hidden')).toEqual(true);
 
         // trigger the resume attempt event.
         spyOnEvent('.resume-attempt', 'click');
