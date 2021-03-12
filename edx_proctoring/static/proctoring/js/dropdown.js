@@ -81,6 +81,7 @@ edx = edx || {};
         $dropdown.on('keydown', function(e) {
             catchKeyPress($(this), e);
         });
+        event.stopPropagation();
     };
 
     edx.dashboard.dropdown.bindToggleButtons = function(selector) {

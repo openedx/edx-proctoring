@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Fixed accessibility bug on Special Exam Attempts panel on instructor dashboard
 
 [3.7.9] - 2021-03-09
 ~~~~~~~~~~~~~~~~~~~~

@@ -298,6 +298,7 @@ edx = edx || {};
             // based on code from openedx/features/course_experience/static/course_experience/js/CourseOutline.js
             // but modified to better fit this feature's needs
             var accordionRow, isExpanded, $toggleChevron, $contentPanel;
+            event.preventDefault();
             accordionRow = event.currentTarget;
             if (accordionRow.classList.contains('accordion-trigger')) {
                 isExpanded = accordionRow.getAttribute('aria-expanded') === 'true';
@@ -318,6 +319,7 @@ edx = edx || {};
         },
         keyToggleAttemptAccordion: function(event) {
             var key = event.which || event.keyCode || 0;
+            event.preventDefault();
 
             if (key === 13) {
                 $(event.target).click();
