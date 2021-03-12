@@ -112,6 +112,11 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         Initialize
         """
         super().setUp()
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.timed_exam_id = self._create_timed_exam()
+        self.practice_exam_id = self._create_practice_exam()
+        self.onboarding_exam_id = self._create_onboarding_exam()
+        self.disabled_exam_id = self._create_disabled_exam()
         set_runtime_service('certificates', MockCertificateService())
         set_runtime_service('instructor', MockInstructorService())
 
@@ -155,7 +160,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         self.assertEqual(update_practice_exam.time_limit_mins, 31)
         self.assertEqual(update_practice_exam.course_id, self.course_id)
-        self.assertEqual(update_practice_exam.content_id, 'test_content_id_practice')
+        self.assertEqual(update_practice_exam.content_id, 'block-v1:test+course+1+type@sequential+block@practice')
         self.assertEqual(update_practice_exam.backend, 'null')
 
     def test_update_proctored_exam(self):
@@ -177,7 +182,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(update_proctored_exam.exam_name, 'Updated Exam Name')
         self.assertEqual(update_proctored_exam.time_limit_mins, 30)
         self.assertEqual(update_proctored_exam.course_id, self.course_id)
-        self.assertEqual(update_proctored_exam.content_id, 'test_content_id')
+        self.assertEqual(update_proctored_exam.content_id, 'block-v1:test+course+1+type@sequential+block@exam')
 
     def test_update_timed_exam(self):
         """
@@ -540,7 +545,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
     )
     def test_exam_attempt_past_due_datettime(self, taking_as_proctored):
         """
-        Testing creating the exam attempt while the exam due date is in the past
+ 'test_content_id'       Testing creating the exam attempt while the exam due date is in the past
         """
         due_date = datetime.now(pytz.UTC) - timedelta(hours=1)
 
@@ -2707,6 +2712,7 @@ class LastVerifiedOnboardingAttemptsTests(ProctoredExamTestCase):
     """
     def setUp(self):
         super().setUp()
+        self.onboarding_exam_id = self._create_onboarding_exam()
         self.other_course_id = 'e/f/g'
         self.other_course_onboarding_content_id = 'block-v1:test+course+2+type@sequential+block@other_onboard'
         self.other_onboarding_exam_name = 'other_test_onboarding_exam_name'

@@ -126,11 +126,6 @@ class ProctoredExamTestCase(LoggedInTestCase):
         self.key = 'additional_time_granted'
         self.value = '10'
         self.external_id = 'test_external_id'
-        # self.proctored_exam_id = self._create_proctored_exam()
-        # self.timed_exam_id = self._create_timed_exam()
-        # self.practice_exam_id = self._create_practice_exam()
-        # self.onboarding_exam_id = self._create_onboarding_exam()
-        # self.disabled_exam_id = self._create_disabled_exam()
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
