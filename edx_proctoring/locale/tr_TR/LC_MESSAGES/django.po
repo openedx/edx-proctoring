@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-28 18:35+0000\n"
+"POT-Creation-Date: 2021-03-14 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Ali Işıngör <ali@artistanbul.io>, 2021\n"
 "Language-Team: Turkish (Turkey) (https://www.transifex.com/open-edx/teams/6205/tr_TR/)\n"
@@ -121,86 +121,86 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:1162
+#: api.py:1214
 msgid "your course"
 msgstr "dersiniz"
 
-#: api.py:1225
+#: api.py:1279
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1234
+#: api.py:1288
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1261
+#: api.py:1322
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 
-#: api.py:1694
+#: api.py:1761
 msgid "Taking As Proctored Exam"
 msgstr "Gözetmenli Sınav Olarak Alınıyor"
 
-#: api.py:1699
+#: api.py:1766
 msgid "Proctored Option Available"
 msgstr "Gözetmenli Seçenek Mevcut"
 
-#: api.py:1704
+#: api.py:1771
 msgid "Taking As Open Exam"
 msgstr "Açık Sınav Olarak Alınıyor"
 
-#: api.py:1709 api.py:1714
+#: api.py:1776 api.py:1781
 msgid "Pending Session Review"
 msgstr "Bekleyen Oturum İncelemesi"
 
-#: api.py:1719
+#: api.py:1786
 msgid "Passed Proctoring"
 msgstr "Başarılı Gözetmenli Sınav"
 
-#: api.py:1724 api.py:1729
+#: api.py:1791 api.py:1796
 msgid "Failed Proctoring"
 msgstr "Başarısız Gözetmenli Sınav"
 
-#: api.py:1734
+#: api.py:1801
 msgid "Proctored Option No Longer Available"
 msgstr "Gözetmenli Seçenek Artık Mevcut Değil"
 
-#: api.py:1743
+#: api.py:1810
 msgid "Ungraded Practice Exam"
 msgstr "Puanlanmamış Alıştırma Sınavı"
 
-#: api.py:1748
+#: api.py:1815
 msgid "Practice Exam Completed"
 msgstr "Alıştırma Sınavı Tamamlandı"
 
-#: api.py:1753
+#: api.py:1820
 msgid "Practice Exam Failed"
 msgstr "Alıştırma Sınavı Başarısız"
 
-#: api.py:1761
+#: api.py:1828
 msgid "Timed Exam"
 msgstr "Zamanlanmış Sınav"
 
-#: api.py:2301
+#: api.py:2401
 msgid "Onboarding status question"
 msgstr ""
 
-#: models.py:381
+#: models.py:402
 msgid "Taking as Proctored"
 msgstr "Gözetmenli Olarak Alınıyor"
 
-#: models.py:385
+#: models.py:406
 msgid "Is Sample Attempt"
 msgstr "Bir Örnek Denemedir"
 
-#: models.py:567
+#: models.py:588
 msgid "Additional Time (minutes)"
 msgstr "Ek Zaman (dakika)"
 
-#: models.py:568
+#: models.py:589
 msgid "Review Policy Exception"
 msgstr "İnceleme Politikası İstisnası"
 
@@ -220,6 +220,9 @@ msgid ""
 "        Hello %(username)s,\n"
 "    "
 msgstr ""
+"\n"
+"        Merhaba %(username)s,\n"
+"    "
 
 #: templates/emails/proctoring_attempt_satisfactory_email.html:12
 #, python-format
@@ -538,6 +541,10 @@ msgid ""
 "        You can retry this practice exam if you had problems setting up the online proctoring software.\n"
 "      "
 msgstr ""
+"\n"
+"        Alıştırma sınavını tamamlamanızdan önce gözetmenli oturumunuz sona erdi.\n"
+"        Çevrimiçi gözetmen yazılımının kurulumunda bir sorun yaşadıysanız bu alıştırma sınavını tekrar deneyebilirsiniz.\n"
+"      "
 
 #: templates/practice_exam/submitted.html:5
 msgid ""
@@ -545,6 +552,9 @@ msgid ""
 "        You have submitted this practice proctored exam\n"
 "      "
 msgstr ""
+"\n"
+"        Bu gözetmenli alıştırma sınavını gönderdiniz\n"
+"      "
 
 #: templates/practice_exam/submitted.html:13
 msgid ""
@@ -602,7 +612,7 @@ msgstr ""
 #: templates/proctored_exam/entrance.html:15
 #: templates/proctored_exam/ready_to_resume.html:19
 msgid "Continue to my proctored exam."
-msgstr ""
+msgstr "Gözetmenli sınavıma devam et."
 
 #: templates/proctored_exam/entrance.html:18
 #: templates/proctored_exam/ready_to_resume.html:22
@@ -889,7 +899,7 @@ msgstr "Sistem Denetimine Başla"
 
 #: templates/proctored_exam/instructions.html:36
 msgid "Start Exam"
-msgstr ""
+msgstr "Sınavı Başlat"
 
 #: templates/proctored_exam/instructions.html:40
 msgid ""
@@ -897,6 +907,9 @@ msgid ""
 "          Step 1\n"
 "        "
 msgstr ""
+"\n"
+"          Adım 1\n"
+"        "
 
 #: templates/proctored_exam/instructions.html:45
 msgid ""
@@ -904,6 +917,9 @@ msgid ""
 "          Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
 "        "
 msgstr ""
+"\n"
+"          Bu eşsiz sınav kodunu kopyalayın. Sınava başlarken bu kodu girmenizi isteyen bir uyarı göreceksiniz.\n"
+"        "
 
 #: templates/proctored_exam/instructions.html:51
 msgid "Copy Exam Code"
@@ -922,6 +938,9 @@ msgid ""
 "          Step 2\n"
 "        "
 msgstr ""
+"\n"
+"          Adım 2\n"
+"        "
 
 #: templates/proctored_exam/instructions.html:64
 msgid ""
@@ -951,6 +970,9 @@ msgid ""
 "          Step 3\n"
 "        "
 msgstr ""
+"\n"
+"          Adım 3\n"
+"        "
 
 #: templates/proctored_exam/instructions.html:86
 msgid ""
@@ -1094,6 +1116,9 @@ msgid ""
 "      Important\n"
 "    "
 msgstr ""
+"\n"
+"      Önemli\n"
+"    "
 
 #: templates/proctored_exam/ready_to_start.html:10
 #, python-format
@@ -1112,6 +1137,9 @@ msgid ""
 "      Proctored Exam Rules\n"
 "    "
 msgstr ""
+"\n"
+"      Gözetmenli Sınav Kuralları\n"
+"    "
 
 #: templates/proctored_exam/ready_to_start.html:23
 msgid ""
@@ -1129,6 +1157,9 @@ msgid ""
 "          %(platform_name)s Rules for Online Proctored Exams\n"
 "      "
 msgstr ""
+"\n"
+"          %(platform_name)s Çevrimiçi Gözetmenli Sınav Kuralları\n"
+"      "
 
 #: templates/proctored_exam/ready_to_start.html:36
 msgid ""
@@ -1136,6 +1167,9 @@ msgid ""
 "      Additional Exam Rules\n"
 "    "
 msgstr ""
+"\n"
+"      Ek Sınav Kuralları\n"
+"    "
 
 #: templates/proctored_exam/ready_to_start.html:41
 #, python-format
@@ -1149,11 +1183,11 @@ msgstr ""
 
 #: templates/proctored_exam/ready_to_start.html:49
 msgid "Start my exam"
-msgstr ""
+msgstr "Sınavımı başlat"
 
 #: templates/proctored_exam/ready_to_start.html:50
 msgid "Starting Exam"
-msgstr ""
+msgstr "Sınav Başlatılıyor"
 
 #: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
@@ -1179,11 +1213,11 @@ msgstr ""
 
 #: templates/proctored_exam/ready_to_submit.html:15
 msgid "Yes, end my proctored exam"
-msgstr ""
+msgstr "Evet, gözetmenli sınavımı sonlandır"
 
 #: templates/proctored_exam/ready_to_submit.html:16
 msgid "Ending Exam"
-msgstr ""
+msgstr "Sınav Sonlandırılıyor"
 
 #: templates/proctored_exam/ready_to_submit.html:21
 msgid ""
@@ -1440,63 +1474,63 @@ msgstr "{num_of_minutes} dakika"
 msgid " and {num_of_minutes} minutes"
 msgstr " ve {num_of_minutes} dakika"
 
-#: views.py:117
+#: views.py:119
 msgid "could not determine the course_id"
 msgstr "course_id belirlenemedi"
 
-#: views.py:126 views.py:344
+#: views.py:128 views.py:349
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 "Bu isteği karşılayabilmek için Personel Kullanıcısı olmanız gerekiyor."
 
-#: views.py:334
+#: views.py:339
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:353 views.py:432
+#: views.py:358 views.py:450
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:362
+#: views.py:367
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:650 views.py:887
+#: views.py:661 views.py:901
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "{remaining_time} dakika zamanınız kaldı"
 
-#: views.py:656
+#: views.py:667
 msgid "you have less than a minute remaining"
 msgstr "Bir dakikadan az zamanınız kaldı"
 
-#: views.py:875
+#: views.py:889
 msgid "a timed exam"
 msgstr "bir süreli sınav"
 
-#: views.py:876
+#: views.py:890
 msgid "a proctored exam"
-msgstr ""
+msgstr "bir gözetmenli sınav"
 
-#: views.py:877
+#: views.py:891
 msgid "an onboarding exam"
 msgstr ""
 
-#: views.py:878
+#: views.py:892
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:1462
+#: views.py:1485
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1468
+#: views.py:1491
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1487
+#: views.py:1510
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
