@@ -670,8 +670,8 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         other_course_id = 'x/y/z'
         other_course_onboarding_exam = ProctoredExam.objects.create(
             course_id=other_course_id,
-            content_id='test_content',
-            exam_name='block-v1:test+course+2+type@sequential+block@onboard',
+            content_id='block-v1:test+course+2+type@sequential+block@onboard',
+            exam_name='test_content',
             external_id='123aXqe3',
             time_limit_mins=90,
             is_active=True,
@@ -683,7 +683,6 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.verified)
         # Create an attempt in the other course that has been verified
-        # attempt_id = create_exam_attempt(other_course_onboarding_exam, self.user_id, True)
         self._create_exam_attempt(
             other_course_onboarding_exam.id, ProctoredExamStudentAttemptStatus.verified, True
         )

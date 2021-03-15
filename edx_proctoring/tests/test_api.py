@@ -545,7 +545,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
     )
     def test_exam_attempt_past_due_datettime(self, taking_as_proctored):
         """
- 'test_content_id'       Testing creating the exam attempt while the exam due date is in the past
+        Testing creating the exam attempt while the exam due date is in the past
         """
         due_date = datetime.now(pytz.UTC) - timedelta(hours=1)
 
