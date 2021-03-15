@@ -14,11 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-[3.7.11] - 2021-03-15
+[3.7.12] - 2021-03-15
 ~~~~~~~~~~~~~~~~~~~~~
 * Update the onboarding status to take into account sections that are not accessible to the user
-or has a release date in the future. For sections with release dates in the future,
-that date will now be shown to the learner.
+  or has a release date in the future. For sections with release dates in the future,
+  that date will now be shown to the learner.
 * Fixed accessibility bug on Special Exam Attempts panel on instructor dashboard
 
 [3.7.9] - 2021-03-09
