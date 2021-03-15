@@ -4,11 +4,14 @@ Proctored Exams HTTP-based API endpoints
 
 import json
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
+import pytz
 import waffle
 from crum import get_current_request
+from opaque_keys.edx.keys import CourseKey
+from opaque_keys.edx.locator import BlockUsageLocator
 from rest_framework import status
 from rest_framework.negotiation import BaseContentNegotiation
 from rest_framework.response import Response
@@ -349,25 +352,42 @@ class StudentOnboardingStatusView(ProctoredAPIView):
                         data={'detail': _('Must be a Staff User to Perform this request.')}
                     )
 
-        # If there are multiple onboarding exams, use the first exam
-        onboarding_exam = (ProctoredExam.get_practice_proctored_exams_for_course(course_id)
-                           .order_by('-created').first())
-        if not onboarding_exam or not get_backend_provider(name=onboarding_exam.backend).supports_onboarding:
+        # If there are multiple onboarding exams, use the first exam accessible to the user
+        onboarding_exams = list(ProctoredExam.get_practice_proctored_exams_for_course(course_id).order_by('-created'))
+        if not onboarding_exams or not get_backend_provider(name=onboarding_exams[0].backend).supports_onboarding:
             return Response(
                 status=404,
                 data={'detail': _('There is no onboarding exam related to this course id.')}
             )
 
+        learning_sequences_service = get_runtime_service('learning_sequences')
+        course_key = CourseKey.from_string(course_id)
         user = get_user_model().objects.get(username=(username or request.user.username))
-        serialized_onboarding_exam = ProctoredExamSerializer(onboarding_exam).data
+        details = learning_sequences_service.get_user_course_outline_details(
+            course_key, user, pytz.utc.localize(datetime.max)
+        )
 
-        if not user.has_perm('edx_proctoring.can_take_proctored_exam', serialized_onboarding_exam):
+        for onboarding_exam in onboarding_exams:
+            usage_key = BlockUsageLocator.from_string(onboarding_exam.content_id)
+            if usage_key not in details.outline.accessible_sequences:
+                onboarding_exams.remove(onboarding_exam)
+
+        if not onboarding_exams:
+            LOG.info(
+                'User user_id={user_id} has no accessible onboarding exams in course course_id={course_id}'.format(
+                    user_id=user.id,
+                    course_id=course_id,
+                )
+            )
             return Response(
                 status=404,
                 data={'detail': _('There is no onboarding exam accessible to this user.')}
             )
 
+        onboarding_exam = onboarding_exams[0]
+        effective_start = details.schedule.sequences.get(usage_key).effective_start
         data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
+        data['onboarding_release_date'] = effective_start.isoformat()
 
         attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(course_id, [user])
 

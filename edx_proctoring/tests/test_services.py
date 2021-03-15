@@ -333,3 +333,42 @@ class MockEnrollmentsService:
     def get_enrollments_can_take_proctored_exams(self, course_id, text_search=None):
         """ Return mock enrollments"""
         return self.enrollments
+
+
+class MockUserCourseOutlineDetailsData:
+    """Mock Outline Deatils"""
+    def __init__(self, outline, schedule):
+        self.outline = outline
+        self.schedule = schedule
+
+
+class MockUserCourseOutlineData:
+    """Mock Outline"""
+    def __init__(self, accessible_sequences):
+        self.accessible_sequences = accessible_sequences
+
+
+class MockScheduleData:
+    """Mock Outline Schedule"""
+    def __init__(self, schedule_items):
+        self.sequences = schedule_items
+
+
+class MockScheduleItemData:
+    """Mock Schedule Item"""
+    def __init__(self, effective_start):
+        self.effective_start = effective_start
+
+
+class MockLearningSequencesService:
+    """Mock Learner Sequences Service"""
+    def __init__(self, accessible_sequences, schedule_items):
+        self.accessible_sequences = accessible_sequences
+        self.schedule_items = schedule_items
+
+    def get_user_course_outline_details(self, course_key, user, at_time):
+        """ Return mock CourseOutlineDetailsData """
+        return MockUserCourseOutlineDetailsData(
+            MockUserCourseOutlineData(self.accessible_sequences),
+            MockScheduleData(self.schedule_items),
+        )

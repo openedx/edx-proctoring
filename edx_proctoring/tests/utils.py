@@ -116,21 +116,16 @@ class ProctoredExamTestCase(LoggedInTestCase):
         self.default_time_limit = 21
         self.course_id = 'a/b/c'
         self.content_id_for_exam_with_due_date = 'test_content_due_date_id'
-        self.content_id = 'test_content_id'
-        self.content_id_timed = 'test_content_id_timed'
-        self.content_id_practice = 'test_content_id_practice'
-        self.content_id_onboarding = 'test_content_id_onboarding'
-        self.disabled_content_id = 'test_disabled_content_id'
+        self.content_id = 'block-v1:test+course+1+type@sequential+block@exam'
+        self.content_id_timed = 'block-v1:test+course+1+type@sequential+block@timed'
+        self.content_id_practice = 'block-v1:test+course+1+type@sequential+block@practice'
+        self.content_id_onboarding = 'block-v1:test+course+1+type@sequential+block@onboard'
+        self.disabled_content_id = 'block-v1:test+course+1+type@sequential+block@disabled'
         self.exam_name = 'Test Exam'
         self.user_id = self.user.id
         self.key = 'additional_time_granted'
         self.value = '10'
         self.external_id = 'test_external_id'
-        self.proctored_exam_id = self._create_proctored_exam()
-        self.timed_exam_id = self._create_timed_exam()
-        self.practice_exam_id = self._create_practice_exam()
-        self.onboarding_exam_id = self._create_onboarding_exam()
-        self.disabled_exam_id = self._create_disabled_exam()
 
         set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))

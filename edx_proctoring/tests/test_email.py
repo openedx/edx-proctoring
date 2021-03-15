@@ -35,6 +35,8 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         Initialize
         """
         super().setUp()
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.timed_exam_id = self._create_timed_exam()
         set_runtime_service('grades', MockGradesService())
         set_runtime_service('certificates', MockCertificateService())
         set_runtime_service('instructor', MockInstructorService())

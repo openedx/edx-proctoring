@@ -8,11 +8,17 @@ describe('ProctoredExamInfo', function() {
         detail: 'There is no onboarding exam related to this course id.'
     };
 
-    function expectedProctoredExamInfoJson(status) {
+    function expectedProctoredExamInfoJson(status, examReleaseDate) {
+        var releaseDate = examReleaseDate;
+        if (!examReleaseDate) { // default to released a week ago
+            releaseDate = new Date();
+            releaseDate.setDate(new Date().getDate() - 7);
+        }
         return (
             {
                 onboarding_status: status,
                 onboarding_link: 'onboarding_link',
+                onboarding_release_date: releaseDate,
                 expiration_date: null
             }
         );
@@ -55,8 +61,13 @@ describe('ProctoredExamInfo', function() {
             '<%} %>' +
             '</div>' +
             '<% if (showOnboardingExamLink) { %>' +
+            '<% if (onboardingNotReleased) { %>' +
+            '<a class="action action-onboarding action-disabled">' +
+            '<%= gettext("Onboarding Opens") %> <%= onboardingReleaseDate %></a>' +
+            '<%} else { %>' +
             '<a href="<%= onboardingLink %>" class="action action-onboarding">' +
             '<%= gettext("Complete Onboarding") %></a>' +
+            '<%} %>' +
             '<%} %>' +
             '<a href="https://support.edx.org/hc/en-us/articles/207249428-How-do-proctored-exams-work" ' +
             'class="action action-info-link">' +
@@ -189,6 +200,37 @@ describe('ProctoredExamInfo', function() {
             .toContain('You must complete the onboarding process');
         expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
             .toContain('Complete Onboarding');
+    });
+
+    it('should render proctoring info panel correctly for exam that has yet to be released', function() {
+        var tomorrow = new Date();
+        tomorrow.setDate(new Date().getDate() + 1);
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedProctoredExamInfoJson('', tomorrow))
+            ]
+        );
+
+        this.proctored_exam_info = new edx.courseware.proctored_exam.ProctoredExamInfo({
+            el: $('.proctoring-info-panel'),
+            model: new LearnerOnboardingModel()
+        });
+        this.server.respond();
+        this.server.respond();
+        expect(this.proctored_exam_info.$el.find('.proctoring-info').css('border-top'))
+            .toEqual('5px solid rgb(178, 6, 16)');
+        expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
+            .toContain('Not Started');
+        expect(this.proctored_exam_info.$el.find('.onboarding-status-message').text())
+            .toHaveLength(0);
+        expect(this.proctored_exam_info.$el.find('.onboarding-reminder').html())
+            .toContain('You must complete the onboarding process');
+        expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
+            .toContain('Onboarding Opens ' + tomorrow.toLocaleDateString());
     });
 
     it('should render proctoring info panel correctly for created exam', function() {

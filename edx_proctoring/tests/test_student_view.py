@@ -52,6 +52,11 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         Build out test harnessing
         """
         super().setUp()
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.timed_exam_id = self._create_timed_exam()
+        self.practice_exam_id = self._create_practice_exam()
+        self.onboarding_exam_id = self._create_onboarding_exam()
+        self.disabled_exam_id = self._create_disabled_exam()
 
         # Messages for get_student_view
         self.start_an_exam_msg = 'This exam is proctored'

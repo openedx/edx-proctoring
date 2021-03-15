@@ -12,10 +12,12 @@ import pytz
 from freezegun import freeze_time
 from httmock import HTTMock
 from mock import Mock, patch
+from opaque_keys.edx.locator import BlockUsageLocator
 
 from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.urls import NoReverseMatch, reverse
+from django.utils import timezone
 
 from edx_proctoring.api import (
     _calculate_allowed_mins,
@@ -54,7 +56,9 @@ from .test_services import (
     MockCreditService,
     MockEnrollmentsService,
     MockGradesService,
-    MockInstructorService
+    MockInstructorService,
+    MockLearningSequencesService,
+    MockScheduleItemData
 )
 from .utils import LoggedInTestCase, ProctoredExamTestCase
 
@@ -441,7 +445,22 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
     """
     def setUp(self):
         super().setUp()
-        set_runtime_service('credit', MockCreditService())
+
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.onboarding_exam_id = self._create_onboarding_exam()
+
+        yesterday = timezone.now() - timezone.timedelta(days=1)
+        self.course_scheduled_sections = {
+            BlockUsageLocator.from_string(self.content_id_onboarding): MockScheduleItemData(yesterday),
+            BlockUsageLocator.from_string(
+                'block-v1:test+course+1+type@sequential+block@assignment'
+            ): MockScheduleItemData(yesterday),
+        }
+
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            list(self.course_scheduled_sections.keys()),
+            self.course_scheduled_sections,
+        ))
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
         self.other_user = User.objects.create(username='otheruser', password='test')
         self.onboarding_exam = ProctoredExam.objects.get(id=self.onboarding_exam_id)
@@ -612,7 +631,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         other_course_id = 'x/y/z'
         other_course_onboarding_exam = ProctoredExam.objects.create(
             course_id=other_course_id,
-            content_id='test_content',
+            content_id='block-v1:test+course+2+type@sequential+block@other_onboard',
             exam_name='Test Exam',
             external_id='123aXqe3',
             time_limit_mins=90,
@@ -651,8 +670,8 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         other_course_id = 'x/y/z'
         other_course_onboarding_exam = ProctoredExam.objects.create(
             course_id=other_course_id,
-            content_id='test_content',
-            exam_name='Test Exam',
+            content_id='block-v1:test+course+2+type@sequential+block@onboard',
+            exam_name='test_content',
             external_id='123aXqe3',
             time_limit_mins=90,
             is_active=True,
@@ -664,7 +683,6 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.verified)
         # Create an attempt in the other course that has been verified
-        attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
         self._create_exam_attempt(
             other_course_onboarding_exam.id, ProctoredExamStudentAttemptStatus.verified, True
         )
@@ -724,8 +742,14 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
 
     def test_ineligible_for_onboarding_exam(self):
         """
-        Test that the request returns a 404 error if the user is not eligible for the onboarding exam
+        Test that the request returns a 404 error if the user cannot view the onboarding exam
         """
+        course_sections = self.course_scheduled_sections
+        del course_sections[BlockUsageLocator.from_string(self.onboarding_exam.content_id)]
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            list(self.course_scheduled_sections.keys()),
+            course_sections,
+        ))
         with mock_perm('edx_proctoring.can_take_proctored_exam'):
             response = self.client.get(
                 reverse('edx_proctoring:user_onboarding.status')
@@ -736,6 +760,96 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         message = 'There is no onboarding exam accessible to this user.'
         self.assertEqual(response_data['detail'], message)
 
+    def test_multiple_hidden_onboarding_exams(self):
+        """
+        If there are multiple onboarding exams we should only link to an exam accessible to the user
+        """
+        accessible_onboarding_exam = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='block-v1:test+course+1+type@sequential+block@onboard_visible',
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+            is_active=True,
+        )
+        inaccessible_onboarding_exam = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='block-v1:test+course+1+type@sequential+block@onboard_hidden',
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+            is_active=True,
+        )
+        exam_schedule = MockScheduleItemData(timezone.now() - timedelta(days=1))
+        course_sections = {
+            BlockUsageLocator.from_string(self.onboarding_exam.content_id): exam_schedule,
+            BlockUsageLocator.from_string(accessible_onboarding_exam.content_id): exam_schedule,
+            BlockUsageLocator.from_string(inaccessible_onboarding_exam.content_id): exam_schedule,
+        }
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            [accessible_onboarding_exam],   # sections user can see
+            course_sections,                # all scheduled sections
+        ))
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_status'], None)
+        self.assertEqual(response_data['onboarding_link'], reverse(
+            'jump_to',
+            args=[accessible_onboarding_exam.course_id, accessible_onboarding_exam.content_id]
+        ))
+
+    def test_no_accessible_onboarding(self):
+        """
+        Test that the request returns 404 if onboarding exams exist but none are accessible to the user
+        """
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            [],                             # sections user can see (none)
+            self.course_scheduled_sections,
+        ))
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.course_id)
+        )
+        self.assertEqual(response.status_code, 404)
+        response_data = json.loads(response.content.decode('utf-8'))
+        message = 'There is no onboarding exam accessible to this user.'
+        self.assertEqual(response_data['detail'], message)
+
+    def test_onboarding_not_yet_released(self):
+        """
+        If the onboarding section has not been released the release date is returned
+        """
+        tomorrow = timezone.now() + timezone.timedelta(days=1)
+        self.course_scheduled_sections[
+            BlockUsageLocator.from_string(self.onboarding_exam.content_id)
+        ] = MockScheduleItemData(tomorrow)
+
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            list(self.course_scheduled_sections.keys()),
+            self.course_scheduled_sections,
+        ))
+
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.onboarding_exam.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_status'], None)
+        self.assertEqual(response_data['onboarding_link'], reverse(
+            'jump_to',
+            args=[self.onboarding_exam.course_id, self.onboarding_exam.content_id]
+        ))
+        self.assertEqual(response_data['onboarding_release_date'], tomorrow.isoformat())
+
 
 @ddt.ddt
 class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
@@ -744,6 +858,9 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         super().setUp()
         self.user.is_staff = True
         self.user.save()
+
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.onboarding_exam_id = self._create_onboarding_exam()
 
         # add some more users
         self.learner_1 = User(username='user1', email='learner_1@test.com')
@@ -768,9 +885,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         ]
         set_runtime_service('enrollments', MockEnrollmentsService(enrollments))
         set_runtime_service('certificates', MockCertificateService())
-        set_runtime_service('credit', MockCreditService())
         set_runtime_service('grades', MockGradesService())
-        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
         self.onboarding_exam = ProctoredExam.objects.get(id=self.onboarding_exam_id)
 
@@ -1179,7 +1294,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
     def test_other_course_verified(self):
         # Setup other course and its onboarding exam
         other_course_id = 'e/f/g'
-        other_course_onboarding_content_id = 'other_test_content_id_onboarding'
+        other_course_onboarding_content_id = 'block-v1:test+course+2+type@sequential+block@other_onboard'
         other_onboarding_exam_name = 'other_test_onboarding_exam_name'
         other_onboarding_exam_id = create_exam(
             course_id=other_course_id,

@@ -23,7 +23,11 @@
     <%} %>
     </div>
     <% if (showOnboardingExamLink) { %>
-        <a href="<%= onboardingLink %>" class="action action-onboarding"><%= gettext("Complete Onboarding") %></a>
+        <% if (onboardingNotReleased) { %>
+            <a class="action action-onboarding action-disabled"><%= gettext("Onboarding Opens") %> <%= onboardingReleaseDate %></a>
+        <%} else { %>
+            <a href="<%= onboardingLink %>" class="action action-onboarding"><%= gettext("Complete Onboarding") %></a>
+        <%} %>
     <%} %>
     <a href="https://support.edx.org/hc/en-us/articles/207249428-How-do-proctored-exams-work" class="action action-info-link"><%= gettext("Review instructions and system requirements for proctored exams") %></a>
 </div>
