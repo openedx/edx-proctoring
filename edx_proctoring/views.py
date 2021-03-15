@@ -373,6 +373,12 @@ class StudentOnboardingStatusView(ProctoredAPIView):
                 onboarding_exams.remove(onboarding_exam)
 
         if not onboarding_exams:
+            LOG.info(
+                'User user_id={user_id} has no accessible onboarding exams in course course_id={course_id}'.format(
+                    user_id=user.id,
+                    course_id=course_id,
+                )
+            )
             return Response(
                 status=404,
                 data={'detail': _('There is no onboarding exam accessible to this user.')}
