@@ -1332,22 +1332,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
 
     # If the course has a proctoring escalation email set, use that rather than edX Support.
     # Currently only courses using Proctortrack will have this set.
-    proctoring_escalation_email = None
-    instructor_service = get_runtime_service('instructor')
-    if instructor_service:
-        try:
-            proctoring_escalation_email = instructor_service.get_proctoring_escalation_email(course_id)
-        except (InvalidKeyError, ObjectDoesNotExist):
-            log.warning(
-                'While creating proctoring status email for user_id={user_id} in exam_id={exam_id}, '
-                'could not retrieve proctoring escalation email with course_id={course_id}. Using '
-                'default contact URL.'.format(
-                    user_id=user_id,
-                    exam_id=exam_attempt_obj.proctored_exam.id,
-                    course_id=course_id,
-                )
-            )
-
+    proctoring_escalation_email = _get_proctoring_escalation_email(course_id)
     if proctoring_escalation_email:
         contact_url = 'mailto:{}'.format(proctoring_escalation_email)
         contact_url_text = proctoring_escalation_email
@@ -1396,6 +1381,24 @@ def _get_email_template_paths(template_name, backend):
             base_template,
         ]
     return [base_template]
+
+
+def _get_proctoring_escalation_email(course_id):
+    """
+    Returns the proctoring escalation email for a course as a string, if it exists,
+    otherwise returns None.
+    """
+    proctoring_escalation_email = None
+    instructor_service = get_runtime_service('instructor')
+    if instructor_service:
+        try:
+            proctoring_escalation_email = instructor_service.get_proctoring_escalation_email(course_id)
+        except (InvalidKeyError, ObjectDoesNotExist):
+            log.warning(
+                'Could not retrieve proctoring escalation email for course_id={course_id}. '
+                'Using default support contact URL instead.'.format(course_id=course_id)
+            )
+    return proctoring_escalation_email
 
 
 def reset_practice_exam(exam_id, user_id, requesting_user):
@@ -2137,6 +2140,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         ) if attempt else '',
         'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
         'tech_support_email': settings.TECH_SUPPORT_EMAIL,
+        'proctoring_escalation_email': _get_proctoring_escalation_email(course_id),
         'exam_review_policy': _get_review_policy_by_exam_id(exam['id']),
         'backend_js_bundle': provider.get_javascript(),
         'provider_tech_support_email': provider.tech_support_email,

@@ -67,7 +67,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.timed_exam_submitted_expired = 'The time allotted for this exam has expired. Your exam has been submitted'
         self.submitted_timed_exam_msg_with_due_date = 'After the due date has passed,'
         self.exam_time_expired_msg = 'You did not complete the exam in the allotted time'
-        self.exam_time_error_msg = 'A technical error has occurred with your proctored exam'
+        self.exam_time_error_msg = 'A system error has occurred with your proctored exam'
         self.chose_proctored_exam_msg = 'Set up and start your proctored exam'
         self.proctored_exam_optout_msg = 'Take this exam without proctoring'
         self.proctored_exam_completed_msg = 'Are you sure you want to end your proctored exam'
