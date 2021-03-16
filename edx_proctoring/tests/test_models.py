@@ -3,6 +3,7 @@
 """
 All tests for the models.py
 """
+from django.contrib.auth.models import User
 
 from edx_proctoring.models import (
     ProctoredExam,
@@ -278,9 +279,10 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         )
 
         # create number of exam attempts
-        for i in range(90):
+        for i in range(1, 91):
+            user = User.objects.create(username=f'tester2_{i}')  # add user objects
             ProctoredExamStudentAttempt.create_exam_attempt(
-                proctored_exam.id, i, 'test_name{0}'.format(i),
+                proctored_exam.id, user.id, 'test_name{0}'.format(i),
                 'test_attempt_code{0}'.format(i), True, False, 'test_external_id{0}'.format(i)
             )
 
