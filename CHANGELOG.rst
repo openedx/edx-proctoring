@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.13] - 2021-03-16
+~~~~~~~~~~~~~~~~~~~~~
+* Update proctored exam error message to remove statement that the user must restart their exam
+  from scratch, and include a proctoring escalation email rather than a link to support if
+  applicable.
+
 [3.7.12] - 2021-03-15
 ~~~~~~~~~~~~~~~~~~~~~
 * Update the onboarding status to take into account sections that are not accessible to the user

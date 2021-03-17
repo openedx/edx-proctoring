@@ -6,19 +6,21 @@
     {% endblocktrans %}
   </h3>
 
-  <p>
-    {% blocktrans %}
-      A technical error has occurred with your proctored exam. Please
-      reach out to <a href="{{link_urls.contact_us}}" target="_blank">
-      edX Support</a> and your course team immediately for assistance.
-    {% endblocktrans %}
-  </p>
-  <p>
-    {% blocktrans %}
-      Once the error is resolved, you will need to restart the exam
-      and answer all questions again. If you have concerns about your
-      proctoring session results, please contact your course team.
-    {% endblocktrans %}
-  </p>
+<p>
+  {% if proctoring_escalation_email %}
+      {% blocktrans %}
+        A system error has occurred with your proctored exam. Please reach out to your course 
+        team at <a href="mailto:{{proctoring_escalation_email}}">{{proctoring_escalation_email}}</a> 
+        for assistance, and return to the exam once you receive further instructions.
+      {% endblocktrans %}
+  {% else %}
+      {% blocktrans %}
+        A system error has occurred with your proctored exam. Please reach out to 
+        <a href="{{link_urls.contact_us}}" target="_blank">{{platform_name}} Support</a> for 
+        assistance, and return to the exam once you receive further instructions.
+      {% endblocktrans %}
+  {% endif %}
+</p>
+
 </div>
 {% include 'proctored_exam/footer.html' %}
