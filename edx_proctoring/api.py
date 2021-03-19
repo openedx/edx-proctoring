@@ -2140,7 +2140,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         ) if attempt else '',
         'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
         'tech_support_email': settings.TECH_SUPPORT_EMAIL,
-        'proctoring_escalation_email': _get_proctoring_escalation_email(course_id),
+        'proctoring_escalation_email': _get_proctoring_escalation_email(exam['course_id']),
         'exam_review_policy': _get_review_policy_by_exam_id(exam['id']),
         'backend_js_bundle': provider.get_javascript(),
         'provider_tech_support_email': provider.tech_support_email,
