@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.14] - 2021-03-19
+~~~~~~~~~~~~~~~~~~~~~
+* Fix issue where a course key object was being passed in to `get_proctoring_escalation_email`,
+  rather than a string.
+
 [3.7.13] - 2021-03-16
 ~~~~~~~~~~~~~~~~~~~~~
 * Update proctored exam error message to remove statement that the user must restart their exam
