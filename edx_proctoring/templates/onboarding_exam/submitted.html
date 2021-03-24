@@ -47,6 +47,13 @@
   {% endif %}
   <p>
     {% blocktrans %}
+      If you already have an onboarding profile approved through another course,
+      the this submission will not be reviewed. You may retry this exam at any time
+      to validate the proctoring software is set up properly on your device.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
       Please contact
       <a href="mailto:{{ integration_specific_email }}">
         {{ integration_specific_email }}

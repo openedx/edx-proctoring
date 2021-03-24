@@ -41,11 +41,10 @@
         },
         other_course_approved: {
             status: gettext('Approved in Another Course'),
-            message: gettext(
-                'Your onboarding profile has been approved in another course, ' +
-                'so you are eligible to take proctored exams in this course. ' +
-                'However, it is highly recommended that you complete this ' +
-                'course\'s onboarding exam in order to ensure that your device ' +
+            message: gettext('You are eligible to take proctored exams in this course.'),
+            detail: gettext(
+                'If your device has changed, we recommended you complete this ' +
+                'course\'s onboarding exam in order to ensure that your setup ' +
                 'still meets the requirements for proctoring.'
             )
         },
@@ -93,6 +92,11 @@
             });
 
             $el.find('.onboarding-status-message').css({
+                'margin-bottom': '15px'
+            });
+
+            $el.find('.onboarding-status-detail').css({
+                'font-size': '0.8rem',
                 'margin-bottom': '15px'
             });
 
@@ -157,6 +161,7 @@
                 data = {
                     onboardingStatus: statusText.status,
                     onboardingMessage: statusText.message,
+                    onboardingDetail: statusText.detail,
                     showOnboardingReminder: !['verified', 'other_course_approved'].includes(data.onboarding_status),
                     onboardingNotReleased: releaseDate > now,
                     showOnboardingExamLink: this.shouldShowExamLink(data.onboarding_status),
