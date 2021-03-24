@@ -115,6 +115,12 @@
                 'margin-bottom': '15px'
             });
 
+            $el.find('.action-onboarding-practice').css({
+                color: '#ffffff',
+                background: '#0075b4',
+                'margin-bottom': '15px'
+            });
+
             $el.find('.action-disabled').css({
                 background: '#b4b6bd'
             });
@@ -159,7 +165,8 @@
                 statusText = this.getExamAttemptText(this.status);
                 releaseDate = new Date(data.onboarding_release_date);
                 data = {
-                    onboardingStatus: statusText.status,
+                    onboardingStatus: this.status,
+                    onboardingStatusText: statusText.status,
                     onboardingMessage: statusText.message,
                     onboardingDetail: statusText.detail,
                     showOnboardingReminder: !['verified', 'other_course_approved'].includes(data.onboarding_status),

@@ -1,8 +1,8 @@
 <div class="proctoring-info">
     <h3 class="message-title"> <%= gettext("This course contains proctored exams") %></h3>
-    <% if (onboardingStatus) { %>
+    <% if (onboardingStatusText) { %>
         <div class="onboarding-status">
-            <span class="onboarding-status"><%= gettext("Current Onboarding Status:") %> <%= onboardingStatus %></span>
+            <span class="onboarding-status"><%= gettext("Current Onboarding Status:") %> <%= onboardingStatusText %></span>
         </div>
         <div class="onboarding-status-message">
             <span class="onboarding-status-message"><%= onboardingMessage %></span>
@@ -30,6 +30,8 @@
     <% if (showOnboardingExamLink) { %>
         <% if (onboardingNotReleased) { %>
             <a class="action action-onboarding action-disabled"><%= gettext("Onboarding Opens") %> <%= onboardingReleaseDate %></a>
+        <%} else if (onboardingStatus && onboardingStatus === 'other_course_approved') { %>
+            <a href="<%= onboardingLink %>" class="action action-onboarding-practice"><%= gettext("Go To Onboarding") %></a>
         <%} else { %>
             <a href="<%= onboardingLink %>" class="action action-onboarding"><%= gettext("Complete Onboarding") %></a>
         <%} %>
