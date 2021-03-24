@@ -43,7 +43,7 @@
             status: gettext('Approved in Another Course'),
             message: gettext('You are eligible to take proctored exams in this course.'),
             detail: gettext(
-                'If your device has changed, we recommended you complete this ' +
+                'If your device has changed, we recommend that you complete this ' +
                 'course\'s onboarding exam in order to ensure that your setup ' +
                 'still meets the requirements for proctoring.'
             )
