@@ -6,7 +6,7 @@ Django>=2.2
 django-model-utils
 djangorestframework
 django-ipware>=1.1.0
-jsonfield2
+jsonfield
 pyjwt[crypto]>=2.1.0		# Used for encoding JWTs when communicating with proctoring provider backends
 pytz>=2018
 pycryptodomex>=3.4.7
