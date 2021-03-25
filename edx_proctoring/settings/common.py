@@ -19,7 +19,6 @@ def plugin_settings(settings):
             'proctoring/js/models/proctored_exam_model.js',
             'proctoring/js/models/learner_onboarding_model.js',
             'proctoring/js/collections/proctored_exam_allowance_collection.js',
-            'proctoring/js/collections/proctored_exam_attempt_collection.js',
             'proctoring/js/collections/proctored_exam_attempt_grouped_collection.js',
             'proctoring/js/collections/proctored_exam_onboarding_collection.js',
             'proctoring/js/collections/proctored_exam_collection.js',
