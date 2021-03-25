@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 import pytz
-import waffle
+import waffle  # pylint: disable=invalid-django-waffle-import
 from crum import get_current_request
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locator import BlockUsageLocator

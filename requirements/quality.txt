@@ -37,13 +37,15 @@ django==2.2.19
     #   edx-lint
 docutils==0.16
     # via readme-renderer
-edx-lint==4.1.0
+edx-lint==5.0.0
     # via -r requirements/quality.in
 idna==2.10
     # via requests
-importlib-metadata==3.7.2
-    # via keyring
-isort==5.7.0
+importlib-metadata==3.7.3
+    # via
+    #   keyring
+    #   twine
+isort==5.8.0
     # via
     #   -r requirements/quality.in
     #   pylint
@@ -55,7 +57,7 @@ jinja2==2.11.3
     # via code-annotations
 keyring==23.0.0
     # via twine
-lazy-object-proxy==1.5.2
+lazy-object-proxy==1.6.0
     # via astroid
 markupsafe==1.1.1
     # via jinja2
@@ -67,11 +69,11 @@ pbr==5.5.1
     # via stevedore
 pkginfo==1.7.0
     # via twine
-pycodestyle==2.6.0
+pycodestyle==2.7.0
     # via -r requirements/quality.in
 pycparser==2.20
     # via cffi
-pydocstyle==5.1.1
+pydocstyle==6.0.0
     # via -r requirements/quality.in
 pygments==2.8.1
     # via readme-renderer
@@ -126,9 +128,9 @@ toml==0.10.2
     # via pylint
 tqdm==4.59.0
     # via twine
-twine==3.3.0
+twine==3.4.1
     # via -r requirements/quality.in
-urllib3==1.26.3
+urllib3==1.26.4
     # via requests
 webencodings==0.5.1
     # via bleach
@@ -136,6 +138,3 @@ wrapt==1.12.1
     # via astroid
 zipp==3.4.1
     # via importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
