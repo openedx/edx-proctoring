@@ -39,7 +39,7 @@ coverage==5.5
     # via pytest-cov
 cryptography==3.4.6
     # via pyjwt
-ddt==1.4.1
+ddt==1.4.2
     # via -r requirements/test.in
 django-crum==0.7.9
     # via
@@ -78,7 +78,7 @@ django-webpack-loader==0.7.0
     #   drf-jwt
     #   edx-drf-extensions
     #   rest-condition
-drf-jwt==1.17.3
+drf-jwt==1.18.0
     # via edx-drf-extensions
 edx-django-utils==3.15.0
     # via
@@ -129,7 +129,7 @@ lazy==1.4
     # via bok-choy
 logilab-common==1.8.1
     # via -r requirements/test.in
-lxml==4.6.2
+lxml==4.6.3
     # via xblock
 markupsafe==1.1.1
     # via
@@ -221,7 +221,7 @@ requests==2.25.1
     #   pyjwkest
     #   responses
     #   slumber
-responses==0.12.1
+responses==0.13.1
     # via -r requirements/test.in
 rest-condition==1.0.3
     # via edx-drf-extensions
@@ -264,7 +264,7 @@ toml==0.10.2
     # via pytest
 typing-extensions==3.7.4.3
     # via logilab-common
-urllib3==1.26.3
+urllib3==1.26.4
     # via
     #   requests
     #   responses
