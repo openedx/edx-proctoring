@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.15] - 2021-03-24
+~~~~~~~~~~~~~~~~~~~~~
+* Improved learner messaging on onboarding panel and submitted interstitial.
+
 [3.7.14] - 2021-03-19
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix issue where a course key object was being passed in to `get_proctoring_escalation_email`,

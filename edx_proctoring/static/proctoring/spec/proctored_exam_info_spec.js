@@ -37,14 +37,19 @@ describe('ProctoredExamInfo', function() {
     beforeEach(function() {
         html = '<div class="proctoring-info">' +
             '<h3 class="message-title"> <%= gettext("This course contains proctored exams") %></h3>' +
-            '<% if (onboardingStatus) { %>' +
+            '<% if (onboardingStatusText) { %>' +
             '<div class="onboarding-status">' +
             '<span class="onboarding-status"><%= gettext("Current Onboarding Status:") %> ' +
-            '<%= onboardingStatus %></span>' +
+            '<%= onboardingStatusText %></span>' +
             '</div>' +
             '<div class="onboarding-status-message">' +
             '<span class="onboarding-status-message"><%= onboardingMessage %></span>' +
             '</div>' +
+            '<% if (onboardingDetail) { %>' +
+            '<div class="onboarding-status-detail">' +
+            '<span class="onboarding-status-detail"><%= onboardingDetail %></span>' +
+            '</div>' +
+            '<%} %>' +
             '<%} %>' +
             '<div class="onboarding-reminder">' +
             '<% if (showOnboardingReminder) { %>' +
@@ -413,7 +418,9 @@ describe('ProctoredExamInfo', function() {
         expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
             .toContain('Approved in Another Course');
         expect(this.proctored_exam_info.$el.find('.onboarding-status-message').html())
-            .toContain('it is highly recommended that you complete this course\'s onboarding exam');
+            .toContain('You are eligible to take proctored exams');
+        expect(this.proctored_exam_info.$el.find('.onboarding-status-detail').html())
+            .toContain('we recommend that you complete');
         expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
             .toContain('Complete Onboarding');
     });

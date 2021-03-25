@@ -11,9 +11,8 @@
     {% blocktrans %}
       If you do not have an onboarding profile with the system,
       Verificient will review your submission and create an onboarding
-      profile, to grant you access to proctored exams.  Onboarding
-      profile review, including identity verification, can take 2+
-      business days.
+      profile to grant you access to proctored exams. Onboarding
+      profile review can take 2+ business days.
     {% endblocktrans %}
   </p>
   <p>
@@ -24,6 +23,13 @@
         {{ learner_notification_from_email }}
       </a>,
       so make sure this email has been added to your inbox filter.
+    {% endblocktrans %}
+  </p>
+  <p>
+    {% blocktrans %}
+      If you already have an onboarding profile approved through another course,
+      this submission will not be reviewed. You may retry this exam at any time
+      to validate that your setup still meets the requirements for proctoring.
     {% endblocktrans %}
   </p>
   {% if experimental_proctoring_features %}
