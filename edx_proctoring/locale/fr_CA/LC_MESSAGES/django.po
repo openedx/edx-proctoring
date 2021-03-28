@@ -7,14 +7,15 @@
 # Translators:
 # Etienne Laurin <etienne.laurin@gmail.com>, 2016
 # Pierre Mailhot <pierre.mailhot@gmail.com>, 2021
+# David Truong <david.truong@edulib.org>, 2021
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-14 18:35+0000\n"
+"POT-Creation-Date: 2021-03-28 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2021\n"
+"Last-Translator: David Truong <david.truong@edulib.org>, 2021\n"
 "Language-Team: French (Canada) (https://www.transifex.com/open-edx/teams/6205/fr_CA/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -135,51 +136,51 @@ msgstr ""
 "Examen surveillé {exam_name} pour {course_name} pour l'utilisateur "
 "{username}"
 
-#: api.py:1761
+#: api.py:1764
 msgid "Taking As Proctored Exam"
 msgstr "Prendre comme examen surveillé"
 
-#: api.py:1766
+#: api.py:1769
 msgid "Proctored Option Available"
 msgstr "Option surveillée disponible"
 
-#: api.py:1771
+#: api.py:1774
 msgid "Taking As Open Exam"
 msgstr "Prendre comme examen ouvert"
 
-#: api.py:1776 api.py:1781
+#: api.py:1779 api.py:1784
 msgid "Pending Session Review"
 msgstr "Examen de la session en attente"
 
-#: api.py:1786
+#: api.py:1789
 msgid "Passed Proctoring"
 msgstr "A passé la surveillance"
 
-#: api.py:1791 api.py:1796
+#: api.py:1794 api.py:1799
 msgid "Failed Proctoring"
 msgstr "A échoué la surveillance"
 
-#: api.py:1801
+#: api.py:1804
 msgid "Proctored Option No Longer Available"
 msgstr "L'option surveillée n'est plus disponible"
 
-#: api.py:1810
+#: api.py:1813
 msgid "Ungraded Practice Exam"
 msgstr "Examen de pratique non noté"
 
-#: api.py:1815
+#: api.py:1818
 msgid "Practice Exam Completed"
 msgstr "Examen de pratique terminé"
 
-#: api.py:1820
+#: api.py:1823
 msgid "Practice Exam Failed"
 msgstr "Examen de pratique échoué"
 
-#: api.py:1828
+#: api.py:1831
 msgid "Timed Exam"
 msgstr "Examen minuté"
 
-#: api.py:2401
+#: api.py:2405
 msgid "Onboarding status question"
 msgstr "Question sur le statut d'intégration"
 
@@ -468,7 +469,7 @@ msgstr ""
 "      "
 
 #: templates/onboarding_exam/rejected.html:22
-#: templates/onboarding_exam/submitted.html:42
+#: templates/onboarding_exam/submitted.html:48
 #: templates/practice_exam/error.html:29
 #: templates/practice_exam/submitted.html:18
 msgid "Retry my exam"
@@ -512,20 +513,12 @@ msgid ""
 "\n"
 "      If you do not have an onboarding profile with the system,\n"
 "      Verificient will review your submission and create an onboarding\n"
-"      profile, to grant you access to proctored exams.  Onboarding\n"
-"      profile review, including identity verification, can take 2+\n"
-"      business days.\n"
+"      profile to grant you access to proctored exams. Onboarding\n"
+"      profile review can take 2+ business days.\n"
 "    "
 msgstr ""
-"\n"
-"      Si vous n'avez pas de profil d'intégration avec le système,\n"
-"      Verificient examinera votre soumission et créera un profil\n"
-"      d'intégration, vous permettant d'accéder aux examens surveillés.  L'examen\n"
-"      du profil d'intégration, incluant la vérification d'identité peu prendre plus de 2\n"
-"      jours ouvrables.\n"
-"    "
 
-#: templates/onboarding_exam/submitted.html:20
+#: templates/onboarding_exam/submitted.html:19
 #, python-format
 msgid ""
 "\n"
@@ -546,7 +539,16 @@ msgstr ""
 "      alors assurez-vous que cette adresse courriel a été ajoutée à votre filtre de boîte de réception.\n"
 "    "
 
-#: templates/onboarding_exam/submitted.html:31
+#: templates/onboarding_exam/submitted.html:29
+msgid ""
+"\n"
+"      If you already have an onboarding profile approved through another course,\n"
+"      this submission will not be reviewed. You may retry this exam at any time\n"
+"      to validate that your setup still meets the requirements for proctoring.\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/submitted.html:37
 msgid ""
 "\n"
 "        If you have made an error in this submission you may restart the onboarding process. \n"
@@ -558,11 +560,11 @@ msgstr ""
 "        Votre soumission actuelle sera supprimée et ne sera pas examinée.\n"
 "      "
 
-#: templates/onboarding_exam/submitted.html:36
+#: templates/onboarding_exam/submitted.html:42
 msgid "I understand and want to reset this onboarding exam."
 msgstr "Je comprends et je souhaite réinitialiser cet examen d'intégration."
 
-#: templates/onboarding_exam/submitted.html:49
+#: templates/onboarding_exam/submitted.html:55
 #: templates/onboarding_exam/verified.html:16
 #, python-format
 msgid ""
@@ -765,34 +767,25 @@ msgstr ""
 "\n"
 "Erreur avec l'examen surveillé"
 
-#: templates/proctored_exam/error.html:10
+#: templates/proctored_exam/error.html:11
 #, python-format
 msgid ""
 "\n"
-"      A technical error has occurred with your proctored exam. Please\n"
-"      reach out to <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">\n"
-"      edX Support</a> and your course team immediately for assistance.\n"
-"    "
+"        A system error has occurred with your proctored exam. Please reach out to your course \n"
+"        team at <a href=\"mailto:%(proctoring_escalation_email)s\">%(proctoring_escalation_email)s</a> \n"
+"        for assistance, and return to the exam once you receive further instructions.\n"
+"      "
 msgstr ""
-"\n"
-"      Une erreur technique s'est produite avec votre examen surveillé. Veuillez\n"
-"      contacter <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">\n"
-"      le support EDUlib</a> et votre équipe de cours immédiatement pour obtenir de l'aide.\n"
-"    "
 
 #: templates/proctored_exam/error.html:17
+#, python-format
 msgid ""
 "\n"
-"      Once the error is resolved, you will need to restart the exam\n"
-"      and answer all questions again. If you have concerns about your\n"
-"      proctoring session results, please contact your course team.\n"
-"    "
+"        A system error has occurred with your proctored exam. Please reach out to \n"
+"        <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">%(platform_name)s Support</a> for \n"
+"        assistance, and return to the exam once you receive further instructions.\n"
+"      "
 msgstr ""
-"\n"
-"      Une fois l'erreur résolue, vous devrez redémarrer l'examen\n"
-"      et répondez à nouveau à toutes les questions. Si vous avez des inquiétudes concernant les\n"
-"      résultats de votre session de surveillance, contactez votre équipe de cours..\n"
-"    "
 
 #: templates/proctored_exam/error_modal.html:7
 msgid "Close"
@@ -1753,63 +1746,63 @@ msgstr "{num_of_minutes} minute"
 msgid " and {num_of_minutes} minutes"
 msgstr "ajouter {num_of_minutes} minutes"
 
-#: views.py:119
+#: views.py:122
 msgid "could not determine the course_id"
 msgstr "impossible de déterminer l'id de cours"
 
-#: views.py:128 views.py:349
+#: views.py:131 views.py:352
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 "Doit être un membre de l'équipe pédagogique pour effectuer cette requête."
 
-#: views.py:339
+#: views.py:342
 msgid "Missing required query parameter course_id"
 msgstr "Paramètre de requête obligatoire course_id manquant"
 
-#: views.py:358 views.py:450
+#: views.py:360 views.py:470
 msgid "There is no onboarding exam related to this course id."
 msgstr "Il n'y a pas d'examen d'intégration lié à cet identifiant de cours."
 
-#: views.py:367
+#: views.py:384
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:661 views.py:901
+#: views.py:681 views.py:921
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "il vous reste {remaining_time}"
 
-#: views.py:667
+#: views.py:687
 msgid "you have less than a minute remaining"
 msgstr "il vous reste moins d'une minute"
 
-#: views.py:889
+#: views.py:909
 msgid "a timed exam"
 msgstr "un examen chronométré"
 
-#: views.py:890
+#: views.py:910
 msgid "a proctored exam"
 msgstr "un examen surveillé"
 
-#: views.py:891
+#: views.py:911
 msgid "an onboarding exam"
 msgstr "un examen d'intégration"
 
-#: views.py:892
+#: views.py:912
 msgid "a practice exam"
 msgstr "un examen de pratique"
 
-#: views.py:1485
+#: views.py:1505
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "Aucun examen dans le cours {course_id}."
 
-#: views.py:1491
+#: views.py:1511
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "Aucun examen surveillé dans le cours {course_id}"
 
-#: views.py:1510
+#: views.py:1530
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "Aucun tableau de bord d'instructeur pour {proctor_service}"
