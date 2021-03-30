@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.7.16] - 2021-03-30
+~~~~~~~~~~~~~~~~~~~~~
+* Reduce time for ping interval from 120 to 30 seconds.
+
 [3.7.15] - 2021-03-24
 ~~~~~~~~~~~~~~~~~~~~~
 * Improved learner messaging on onboarding panel and submitted interstitial.
