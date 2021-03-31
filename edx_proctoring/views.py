@@ -1073,51 +1073,6 @@ class StudentProctoredGroupedExamAttemptsByCourse(ProctoredAPIView):
         return exam_attempts_per_user
 
 
-class StudentProctoredExamAttemptsByCourse(ProctoredAPIView):
-    """
-    This endpoint is called by the Instructor Dashboard to get
-    paginated attempts in a course
-
-    A search parameter is optional
-    """
-    @method_decorator(require_course_or_global_staff)
-    def get(self, request, course_id, search_by=None):  # pylint: disable=unused-argument
-        """
-        HTTP GET Handler. Returns the status of the exam attempt.
-        Course and Global staff can view both timed and proctored exam attempts.
-        """
-        if search_by is not None:
-            exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(
-                course_id, search_by
-            )
-            attempt_url = reverse('edx_proctoring:proctored_exam.attempts.search', args=[course_id, search_by])
-        else:
-            exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(
-                course_id
-            )
-            attempt_url = reverse('edx_proctoring:proctored_exam.attempts.course', args=[course_id])
-
-        paginator = Paginator(exam_attempts, ATTEMPTS_PER_PAGE)
-        page = request.GET.get('page')
-        exam_attempts_page = paginator.get_page(page)
-
-        data = {
-            'proctored_exam_attempts': [
-                ProctoredExamStudentAttemptSerializer(attempt).data for
-                attempt in exam_attempts_page.object_list
-            ],
-            'pagination_info': {
-                'has_previous': exam_attempts_page.has_previous(),
-                'has_next': exam_attempts_page.has_next(),
-                'current_page': exam_attempts_page.number,
-                'total_pages': exam_attempts_page.paginator.num_pages,
-            },
-            'attempt_url': attempt_url
-
-        }
-        return Response(data)
-
-
 class ExamAllowanceView(ProctoredAPIView):
     """
     Endpoint for the Exam Allowance
