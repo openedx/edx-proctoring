@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.8.1] - 2021-04-01
+~~~~~~~~~~~~~~~~~~~~~
+* Increase ping interval from 30 to 60 seconds.
+
 [3.8.0] - 2021-03-31
 ~~~~~~~~~~~~~~~~~~~~~
 * Remove exam resume waffle flag references and fully roll out exam resume and grouped attempt features.
