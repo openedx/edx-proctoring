@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[3.8.3] - 2021-04-05
+~~~~~~~~~~~~~~~~~~~~~
+* Use exam due_date or course end date to evaluate the visibility of the onboarding status panel
 
 [3.8.2] - 2021-04-02
 ~~~~~~~~~~~~~~~~~~~~~
