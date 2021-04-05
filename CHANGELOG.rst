@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.8.5] - 2021-04-07
+~~~~~~~~~~~~~~~~~~~~~
+* Add handling of the "onboarding_reset" attempt status to the
+  StudentOnboardingStatusByCourseView view and the StudentOnboardingStatus
+  panel in the Instructor Dashboard.
+
 [3.8.4] - 2021-04-05
 ~~~~~~~~~~~~~~~~~~~~~
 * Add the request username to the proctoring info panel, allowing course staff to masquerade as
