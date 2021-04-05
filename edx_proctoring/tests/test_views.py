@@ -439,6 +439,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.assertEqual(response_data['time_limit_mins'], proctored_exam.time_limit_mins)
 
 
+@ddt.ddt
 class TestStudentOnboardingStatusView(ProctoredExamTestCase):
     """
     Tests for StudentOnboardingStatusView
@@ -823,14 +824,15 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         message = 'There is no onboarding exam accessible to this user.'
         self.assertEqual(response_data['detail'], message)
 
-    def test_onboarding_not_yet_released(self):
+    @ddt.data(None, timezone.now() + timezone.timedelta(days=3))
+    def test_onboarding_not_yet_released(self, due_date):
         """
         If the onboarding section has not been released the release date is returned
         """
         tomorrow = timezone.now() + timezone.timedelta(days=1)
         self.course_scheduled_sections[
             BlockUsageLocator.from_string(self.onboarding_exam.content_id)
-        ] = MockScheduleItemData(tomorrow)
+        ] = MockScheduleItemData(tomorrow, due_date=due_date)
 
         set_runtime_service('learning_sequences', MockLearningSequencesService(
             list(self.course_scheduled_sections.keys()),

@@ -80,6 +80,7 @@ from edx_proctoring.statuses import (
 from edx_proctoring.utils import (
     AuthenticatedAPIView,
     get_time_remaining_for_attempt,
+    get_visibility_check_date,
     humanized_time,
     locate_attempt_by_attempt_code,
     obscured_user_id
@@ -369,7 +370,12 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         for onboarding_exam in onboarding_exams:
             usage_key = BlockUsageLocator.from_string(onboarding_exam.content_id)
-            if usage_key not in details.outline.accessible_sequences:
+            visibility_check_date = get_visibility_check_date(details.schedule, usage_key)
+            user_outline = learning_sequences_service.get_user_course_outline(
+                course_key, user, visibility_check_date
+            )
+
+            if usage_key not in user_outline.accessible_sequences:
                 onboarding_exams.remove(onboarding_exam)
 
         if not onboarding_exams:

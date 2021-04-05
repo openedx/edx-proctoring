@@ -3,7 +3,7 @@ File that contains tests for the util methods.
 """
 
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 from itertools import product
 
 import ddt
@@ -11,9 +11,11 @@ import pytz
 from freezegun import freeze_time
 
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.tests.test_services import MockScheduleData, MockScheduleItemData
 from edx_proctoring.utils import (
     _emit_event,
     get_time_remaining_for_attempt,
+    get_visibility_check_date,
     humanized_time,
     is_reattempting_exam,
     obscured_user_id
@@ -155,3 +157,30 @@ class TestUtils(unittest.TestCase):
         user_id = 32432455
         expected_obscured_user_id = '9b82efd5d28f1a170b23b8f648c3093e75a0a0ca'
         self.assertEqual(expected_obscured_user_id, obscured_user_id(user_id))
+
+    @ddt.data(
+        (1, 3, 1),
+        (None, 4, 4),
+        (2, None, 2),
+        (-1, -3, -1),
+        (None, -2, -2),
+        (-3, None, -3)
+    )
+    @ddt.unpack
+    def test_get_visibility_check_date(self, mock_due_offset, mock_end_offset, expected_offset):
+        cur_time = pytz.utc.localize(datetime.now())
+        expected_datetime = cur_time + timedelta(days=expected_offset)
+        mock_due = None
+        if mock_due_offset:
+            mock_due = cur_time + timedelta(days=mock_due_offset)
+        mock_course_end = None
+        if mock_end_offset:
+            mock_course_end = cur_time + timedelta(days=mock_end_offset)
+        mock_usage_key = '32fjkle2jf3'
+        mock_sequences = {
+            mock_usage_key: MockScheduleItemData(cur_time, mock_due)
+        }
+        mock_schedule = MockScheduleData(mock_sequences, mock_course_end)
+        with freeze_time(cur_time):
+            due_date = get_visibility_check_date(mock_schedule, mock_usage_key)
+            self.assertEqual(due_date, expected_datetime)

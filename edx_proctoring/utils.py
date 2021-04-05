@@ -282,3 +282,21 @@ def is_reattempting_exam(from_status, to_status):
         ProctoredExamStudentAttemptStatus.is_in_progress_status(from_status) and
         ProctoredExamStudentAttemptStatus.is_pre_started_status(to_status)
     )
+
+
+def get_visibility_check_date(course_schedule, usage_key):
+    """
+    Utility function to return the date, of which
+    we should use to test the learner's visibility to the exam
+
+    Returns one of the following:
+        * The due date of the course structure usage_key
+        * The course end date
+        * The max datetime if no course_end date specified
+    """
+    visibility_check_date = course_schedule.course_end or pytz.utc.localize(datetime.max)
+    exam_schedule_item = course_schedule.sequences.get(usage_key)
+    if exam_schedule_item and exam_schedule_item.due:
+        visibility_check_date = exam_schedule_item.due
+
+    return visibility_check_date

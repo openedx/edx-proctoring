@@ -350,14 +350,16 @@ class MockUserCourseOutlineData:
 
 class MockScheduleData:
     """Mock Outline Schedule"""
-    def __init__(self, schedule_items):
+    def __init__(self, schedule_items, course_end=None):
         self.sequences = schedule_items
+        self.course_end = course_end
 
 
 class MockScheduleItemData:
     """Mock Schedule Item"""
-    def __init__(self, effective_start):
+    def __init__(self, effective_start, due_date=None):
         self.effective_start = effective_start
+        self.due = due_date
 
 
 class MockLearningSequencesService:
@@ -367,8 +369,12 @@ class MockLearningSequencesService:
         self.schedule_items = schedule_items
 
     def get_user_course_outline_details(self, course_key, user, at_time):
-        """ Return mock CourseOutlineDetailsData """
+        """ Return mock UserCourseOutlineDetailsData """
         return MockUserCourseOutlineDetailsData(
             MockUserCourseOutlineData(self.accessible_sequences),
             MockScheduleData(self.schedule_items),
         )
+
+    def get_user_course_outline(self, course_key, user, at_time):
+        """ Return mock UserCourseOutlineData """
+        return MockUserCourseOutlineData(self.accessible_sequences)
