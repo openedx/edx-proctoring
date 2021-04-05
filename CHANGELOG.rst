@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.8.2] - 2021-04-02
+~~~~~~~~~~~~~~~~~~~~~
+* Update `DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS` to pull from settings.
+
 [3.8.1] - 2021-04-01
 ~~~~~~~~~~~~~~~~~~~~~
 * Increase ping interval from 30 to 60 seconds.
