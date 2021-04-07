@@ -63,7 +63,11 @@
     edx.courseware.proctored_exam.ProctoredExamInfo = Backbone.View.extend({
         initialize: function() {
             this.course_id = this.$el.data('course-id');
+            this.username = this.$el.data('username');
             this.model.url = this.model.url + '?course_id=' + encodeURIComponent(this.course_id);
+            if (this.username) {
+                this.model.url = this.model.url + '&username=' + encodeURIComponent(this.username);
+            }
             this.template_url = '/static/proctoring/templates/proctored-exam-info.underscore';
             this.status = '';
 

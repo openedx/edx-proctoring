@@ -13,6 +13,12 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.8.4] - 2021-04-05
+~~~~~~~~~~~~~~~~~~~~~
+* Add the request username to the proctoring info panel, allowing course staff to masquerade as
+  a specific user.
+
 [3.8.3] - 2021-04-05
 ~~~~~~~~~~~~~~~~~~~~~
 * Use exam due_date or course end date to evaluate the visibility of the onboarding status panel
