@@ -256,6 +256,14 @@ class InstructorDashboardOnboardingAttemptStatus:
     # user's onboarding profile is approved in a different course.
     other_course_approved = 'other_course_approved'
 
+    # The following status is not a true attempt status that has a corresponding database
+    # state. This is a consequence of a bug in our software that allows a learner to end up
+    # with their only or their most recent exam attempt being in the "onboarding_reset" state.
+    # The learner should not end up in this state, but while we work on a fix, we should not
+    # display "null" in the Instructor Dashboard Student Onboarding Panel.
+    # TODO: remove as part of MST-745
+    onboarding_reset_past_due = 'onboarding_reset_past_due'
+
     onboarding_statuses = {
         ProctoredExamStudentAttemptStatus.created: setup_started,
         ProctoredExamStudentAttemptStatus.download_software_clicked: setup_started,
