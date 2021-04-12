@@ -2601,3 +2601,15 @@ def get_enrollments_can_take_proctored_exams(course_id, text_search=None):
     """
     enrollments_service = get_runtime_service('enrollments')
     return enrollments_service.get_enrollments_can_take_proctored_exams(course_id, text_search)
+
+def get_course_has_onboarding_exam(course_id):
+    """
+    Return a boolean for whether or not the course has an onboarding exam
+
+    Parameters:
+    * course_id: course ID for the course
+    """
+    onboarding_exams = ProctoredExam.get_practice_proctored_exams_for_course(course_id)
+    if len(onboarding_exams) > 0:
+        return True
+    return False
