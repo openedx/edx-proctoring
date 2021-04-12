@@ -29,6 +29,7 @@ jobs:
           - translations
           - js_tests
           - js_lint
+          - rst_validation
     steps:
     - uses: actions/checkout@v1
     - name: Setup python
@@ -40,7 +41,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-  
+
     - name: Set display to virtual frame buffer
       run: export DISPLAY=:99.0
 

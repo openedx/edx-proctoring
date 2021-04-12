@@ -79,7 +79,10 @@ quality-js: lint-js
 quality-python: ## Run python linters
 	tox -e quality
 
-quality: quality-js quality-python ## Run linters
+quality-rst: ## validate rst files
+	rstcheck -r --report warning .
+
+quality: quality-js quality-python quality-rst ## Run linters
 
 test-python: clean ## run tests in the current virtualenv
 	pip install -e .
