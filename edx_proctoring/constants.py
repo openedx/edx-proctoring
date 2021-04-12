@@ -65,3 +65,5 @@ DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS = (
 MINIMUM_TIME = datetime.datetime.fromtimestamp(0)
 
 PING_FAILURE_PASSTHROUGH_TEMPLATE = 'edx_proctoring.{}_ping_failure_passthrough'
+
+CONTENT_ID_PATERN = r'([A-z0-9]+|(?:i4x://?[^/]+/[^/]+/[^/]+/[^@]+(?:@[^/]+)?)|(?:[^/]+))'
