@@ -65,10 +65,12 @@ Using mockprock as a backend
 `Mockprock <https://github.com/edx/mockprock>`_ is a proctoring backend that runs as an HTTP server and a python module. It allows you to simulate the entire proctoring workflow.
 
 To install it::
+
     $ cd src
     $ git clone git@github.com:edx/mockprock.git
 
 Then add it to your ``private.txt``::
+
     -e /edx/src/mockprock
 
 Add it to your ``private.py``::
@@ -85,6 +87,7 @@ Add it to your ``private.py``::
 Reinstall requirements in lms and studio.
 
 Rebuild static assets to make sure mockprock ui scripts are available::
+
    make lms-static
 
 Then back in your host shell::
@@ -93,11 +96,9 @@ Then back in your host shell::
     pip install -e .[server]
     python -m mockprock.server
 
-If you use Z shell (zsh), the command ``pip install -e .[server]`` will fail with ``zsh: no matches found: .[server]``. This is because `zsh uses square brackets for globbing/pattern matching`_. You should instead run the following command.::
+If you use Z shell (zsh), the command ``pip install -e .[server]`` will fail with ``zsh: no matches found: .[server]``. This is because `zsh uses square brackets for globbing/pattern matching <https://stackoverflow.com/questions/30539798/zsh-no-matches-found-requestssecurity>`_. You should instead run the following command.::
 
    pip install -e ".[server]"
-
-.. _"zsh uses square brackets for globbing/pattern matching": https://stackoverflow.com/questions/30539798/zsh-no-matches-found-requestssecurity
 
 The command will tell you you have to supply an client_id and client_secret. It'll open your browser to the Django admin page where you should create or use an existing credential. You'll also need to add the user associated with the credential to the "mockprock_review" Django group. You can create the group at ``/admin/auth/group/``. Note the client_id and client_secret and restart the server::
 
@@ -181,6 +182,7 @@ Proctortrack
 As will be the case with all REST backends implementing `our spec`_, one
 doesn't need to configure much to get Proctortrack working on a
 sandbox, e.g.::
+
   EDXAPP_PROCTORING_BACKENDS:
     DEFAULT: 'proctortrack'
     proctortrack:

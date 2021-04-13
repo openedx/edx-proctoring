@@ -244,9 +244,9 @@ By default, ``get_instructor_url`` returns this URL:
 1. /api/v1/instructor/{client_id}/?jwt={jwt}
 
     This URL will provide information that can be used for four different dashboards.
-    
+
     1. course instructor dashboard
-        This dashboard is on the course level and may show an overview of proctored exams in a particular course. Note that the ``course_id`` will be 
+        This dashboard is on the course level and may show an overview of proctored exams in a particular course. Note that the ``course_id`` will be
         contained in the JWT.
 
     2. exam instructor dashboard
@@ -301,6 +301,7 @@ Javascript API
 Several browser-level events are exposed from the LMS to proctoring
 services via javascript. Proctoring services may optionally provide
 handlers for these events as methods on an ES2015 class, e.g.::
+
   class ProctoringServiceHandler {
     onStartExamAttempt() {
       return Promise.resolve();
@@ -318,6 +319,7 @@ successful communication with the desktop application.
 This class should be wrapped in ``@edx/edx-proctoring``'s
 ``handlerWrapper``, with the result exported as the main export of your
 ``npm`` package::
+
   import { handlerWrapper } from '@edx/edx-proctoring';
   ...
   export default handlerWrapper(ProctoringServiceHandler);

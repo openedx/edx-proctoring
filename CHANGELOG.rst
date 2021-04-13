@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add RST validator
 
 [3.8.5] - 2021-04-07
 ~~~~~~~~~~~~~~~~~~~~~
