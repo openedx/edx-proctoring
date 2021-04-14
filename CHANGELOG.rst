@@ -13,6 +13,10 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.8.6] - 2021-04-13
+~~~~~~~~~~~~~~~~~~~~
+* Fix JWT encoding bug introduced by version 2.0.1 of pyjwt[crypto] library.
 * Add RST validator
 
 [3.8.5] - 2021-04-07
