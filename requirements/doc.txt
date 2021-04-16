@@ -81,8 +81,9 @@ djangorestframework==3.12.4
     #   rest-condition
 doc8==0.8.1
     # via -r requirements/doc.in
-docutils==0.17
+docutils==0.16
     # via
+    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   doc8
     #   readme-renderer
     #   restructuredtext-lint
@@ -160,8 +161,9 @@ pygments==2.8.1
     #   sphinx
 pyjwkest==1.4.2
     # via edx-drf-extensions
-pyjwt[crypto]==2.0.1
+pyjwt[crypto]==1.7.1
     # via
+    #   -r requirements/base.in
     #   drf-jwt
     #   edx-rest-api-client
 pymongo==3.11.3
@@ -222,7 +224,7 @@ slumber==0.7.1
     # via edx-rest-api-client
 snowballstemmer==2.1.0
     # via sphinx
-sphinx==3.5.3
+sphinx==3.5.4
     # via
     #   -r requirements/doc.in
     #   edx-sphinx-theme
