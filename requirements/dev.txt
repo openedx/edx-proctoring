@@ -6,7 +6,7 @@
 #
 appdirs==1.4.4
     # via virtualenv
-astroid==2.5.2
+astroid==2.5.3
     # via
     #   pylint
     #   pylint-celery
@@ -14,8 +14,6 @@ bleach==3.3.0
     # via readme-renderer
 certifi==2020.12.5
     # via requests
-cffi==1.14.5
-    # via cryptography
 chardet==4.0.0
     # via
     #   diff-cover
@@ -32,8 +30,6 @@ code-annotations==1.1.1
     # via edx-lint
 colorama==0.4.4
     # via twine
-cryptography==3.4.7
-    # via secretstorage
 diff-cover==5.0.1
     # via -r requirements/dev.in
 distlib==0.3.1
@@ -46,8 +42,11 @@ django==2.2.20
     #   code-annotations
     #   edx-i18n-tools
     #   edx-lint
-docutils==0.17
-    # via readme-renderer
+docutils==0.16
+    # via
+    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   readme-renderer
+    #   rstcheck
 edx-i18n-tools==0.5.3
     # via -r requirements/dev.in
 edx-lint==5.0.0
@@ -60,7 +59,7 @@ filelock==3.0.12
     #   virtualenv
 idna==2.10
     # via requests
-importlib-metadata==3.10.0
+importlib-metadata==3.10.1
     # via
     #   keyring
     #   twine
@@ -70,10 +69,6 @@ isort==5.8.0
     # via
     #   -r requirements/quality.in
     #   pylint
-jeepney==0.6.0
-    # via
-    #   keyring
-    #   secretstorage
 jinja2-pluralize==0.3.0
     # via diff-cover
 jinja2==2.11.3
@@ -103,7 +98,7 @@ pbr==5.5.1
     # via stevedore
 pep517==0.10.0
     # via pip-tools
-pip-tools==6.0.1
+pip-tools==6.1.0
     # via -r requirements/dev.in
 pkginfo==1.7.0
     # via twine
@@ -117,8 +112,6 @@ py==1.10.0
     # via tox
 pycodestyle==2.7.0
     # via -r requirements/quality.in
-pycparser==2.20
-    # via cffi
 pydocstyle==6.0.0
     # via -r requirements/quality.in
 pygments==2.8.1
@@ -127,7 +120,7 @@ pygments==2.8.1
     #   readme-renderer
 pylint-celery==0.3
     # via edx-lint
-pylint-django==2.4.2
+pylint-django==2.4.3
     # via edx-lint
 pylint-plugin-utils==0.6
     # via
@@ -159,8 +152,8 @@ requests==2.25.1
     #   twine
 rfc3986==1.4.0
     # via twine
-secretstorage==3.3.1
-    # via keyring
+rstcheck==3.3.1
+    # via -r requirements/quality.in
 six==1.15.0
     # via
     #   bleach

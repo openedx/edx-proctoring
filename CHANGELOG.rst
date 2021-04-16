@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.8.7] - 2021-04-16
+~~~~~~~~~~~~~~~~~~~~
+* Add pyjwt as explicit dependency to edx-proctoring library.
+* Pin version of pyjwt to less than 2.0.0.
+
 [3.8.6] - 2021-04-13
 ~~~~~~~~~~~~~~~~~~~~
 * Fix JWT encoding bug introduced by version 2.0.1 of pyjwt[crypto] library.

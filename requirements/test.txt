@@ -168,8 +168,9 @@ pycryptodomex==3.10.1
     #   pyjwkest
 pyjwkest==1.4.2
     # via edx-drf-extensions
-pyjwt[crypto]==2.0.1
+pyjwt[crypto]==1.7.1
     # via
+    #   -r requirements/base.in
     #   drf-jwt
     #   edx-rest-api-client
 pymongo==3.11.3
@@ -180,7 +181,7 @@ pyparsing==2.4.7
     # via packaging
 pytest-cov==2.11.1
     # via -r requirements/test.in
-pytest-django==4.1.0
+pytest-django==4.2.0
     # via -r requirements/test.in
 pytest-forked==1.3.0
     # via pytest-xdist

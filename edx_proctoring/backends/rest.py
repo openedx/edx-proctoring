@@ -309,7 +309,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
                 token['config'] = True
             if attempt_id:
                 token['attempt_id'] = attempt_id
-        encoded = jwt.encode(token, self.client_secret)
+        encoded = jwt.encode(token, self.client_secret).decode('utf-8')
         url = self.instructor_url.format(client_id=self.client_id, jwt=encoded)
 
         log.debug(
