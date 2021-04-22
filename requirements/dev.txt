@@ -14,6 +14,8 @@ bleach==3.3.0
     # via readme-renderer
 certifi==2020.12.5
     # via requests
+cffi==1.14.5
+    # via cryptography
 chardet==4.0.0
     # via
     #   diff-cover
@@ -30,6 +32,8 @@ code-annotations==1.1.1
     # via edx-lint
 colorama==0.4.4
     # via twine
+cryptography==3.4.7
+    # via secretstorage
 diff-cover==5.0.1
     # via -r requirements/dev.in
 distlib==0.3.1
@@ -59,7 +63,7 @@ filelock==3.0.12
     #   virtualenv
 idna==2.10
     # via requests
-importlib-metadata==3.10.1
+importlib-metadata==4.0.1
     # via
     #   keyring
     #   twine
@@ -69,6 +73,10 @@ isort==5.8.0
     # via
     #   -r requirements/quality.in
     #   pylint
+jeepney==0.6.0
+    # via
+    #   keyring
+    #   secretstorage
 jinja2-pluralize==0.3.0
     # via diff-cover
 jinja2==2.11.3
@@ -112,6 +120,8 @@ py==1.10.0
     # via tox
 pycodestyle==2.7.0
     # via -r requirements/quality.in
+pycparser==2.20
+    # via cffi
 pydocstyle==6.0.0
     # via -r requirements/quality.in
 pygments==2.8.1
@@ -154,6 +164,8 @@ rfc3986==1.4.0
     # via twine
 rstcheck==3.3.1
     # via -r requirements/quality.in
+secretstorage==3.3.1
+    # via keyring
 six==1.15.0
     # via
     #   bleach
@@ -189,7 +201,7 @@ twine==3.4.1
     #   -r requirements/quality.in
 urllib3==1.26.4
     # via requests
-virtualenv==20.4.3
+virtualenv==20.4.4
     # via tox
 webencodings==0.5.1
     # via bleach
