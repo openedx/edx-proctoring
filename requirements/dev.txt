@@ -59,7 +59,7 @@ filelock==3.0.12
     #   virtualenv
 idna==2.10
     # via requests
-importlib-metadata==3.10.1
+importlib-metadata==4.0.1
     # via
     #   keyring
     #   twine
@@ -189,7 +189,7 @@ twine==3.4.1
     #   -r requirements/quality.in
 urllib3==1.26.4
     # via requests
-virtualenv==20.4.3
+virtualenv==20.4.4
     # via tox
 webencodings==0.5.1
     # via bleach

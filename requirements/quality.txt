@@ -40,7 +40,7 @@ edx-lint==5.0.0
     # via -r requirements/quality.in
 idna==2.10
     # via requests
-importlib-metadata==3.10.1
+importlib-metadata==4.0.1
     # via
     #   keyring
     #   twine

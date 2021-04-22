@@ -168,9 +168,9 @@ pycryptodomex==3.10.1
     #   pyjwkest
 pyjwkest==1.4.2
     # via edx-drf-extensions
-pyjwt[crypto]==1.7.1
+pyjwt[crypto]==2.0.0
     # via
-    #   -r requirements/base.in
+    #   -c requirements/constraints.txt
     #   drf-jwt
     #   edx-rest-api-client
 pymongo==3.11.3
