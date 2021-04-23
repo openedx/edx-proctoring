@@ -55,7 +55,7 @@ edx = edx || {};
     }
 
     function workerPromiseForEventNames(eventNames) {
-        return function() {
+        return function(timeout) {
             var proctoringBackendWorker = createWorker(edx.courseware.proctored_exam.configuredWorkerURL);
             return new Promise(function(resolve, reject) {
                 var responseHandler = function(e) {
@@ -64,18 +64,21 @@ edx = edx || {};
                         proctoringBackendWorker.terminate();
                         resolve();
                     } else {
-                        reject();
+                        reject(e.data.error);
                     }
                 };
                 proctoringBackendWorker.addEventListener('message', responseHandler);
-                proctoringBackendWorker.postMessage({type: eventNames.promptEventName});
+                proctoringBackendWorker.postMessage({type: eventNames.promptEventName, timeout: timeout});
             });
         };
     }
 
-    function timeoutPromise(timeoutMilliseconds) {
+    function workerTimeoutPromise(timeoutMilliseconds) {
+        var message = 'worker failed to respond after ' + timeoutMilliseconds + 'ms';
         return new Promise(function(resolve, reject) {
-            setTimeout(reject, timeoutMilliseconds);
+            setTimeout(function () {
+                reject(Error(message))
+            }, timeoutMilliseconds);
         });
     }
 
@@ -233,9 +236,11 @@ edx = edx || {};
         }
     };
     edx.courseware.proctored_exam.pingApplication = function(timeoutInSeconds) {
+        var TIMEOUT_BUFFER_SECONDS = 10;
+        var workerPingTimeout = timeoutInSeconds - TIMEOUT_BUFFER_SECONDS; // 10s buffer for worker to respond
         return Promise.race([
-            workerPromiseForEventNames(actionToMessageTypesMap.ping)(),
-            timeoutPromise(timeoutInSeconds * 1000)
+            workerPromiseForEventNames(actionToMessageTypesMap.ping)(workerPingTimeout * 1000),
+            workerTimeoutPromise(timeoutInSeconds * 1000)
         ]);
     };
     edx.courseware.proctored_exam.accessibleError = accessibleError;
