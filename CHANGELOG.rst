@@ -13,6 +13,11 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.8.8] - 2021-04-23
+~~~~~~~~~~~~~~~~~~~~
+* Add detailed logging of ping failures
+* Expose ping timeout value to external javascript worker
 * Add documentation for javascript worker development
 
 [3.8.7] - 2021-04-16

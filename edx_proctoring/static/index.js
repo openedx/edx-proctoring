@@ -28,7 +28,7 @@ export const handlerWrapper = (Handler) => {
         if (handler.onPing) {
           handler.onPing(message.data.timeout)
             .then(() => self.postMessage({ type: 'echo' }))
-            .catch(error => self.postMessage({ type: 'pingFailed!', error }));
+            .catch(error => self.postMessage({ type: 'pingFailed', error }));
         }
         break;
       }
