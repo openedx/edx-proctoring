@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add documentation for javascript worker development
 
 [3.8.7] - 2021-04-16
 ~~~~~~~~~~~~~~~~~~~~

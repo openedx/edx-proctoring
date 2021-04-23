@@ -104,6 +104,19 @@ The command will tell you you have to supply an client_id and client_secret. It'
 
     python -m mockprock.server {client_id} {client_secret}
 
+If you need to run local changes to the `mockprock Javascript worker`_ or the `worker interface`_ in this library::
+
+   make lms-shell
+   
+   (cd /edx/src/mockprock; npm link)
+   npm link @edx/mockprock
+   
+   cd /edx/src/mockprock
+   (cd /edx/src/edx-proctoring; npm link)
+   npm link @edx/edx-proctoring
+
+.. _mockprock Javascript worker: https://github.com/edx/mockprock/tree/master/static
+.. _worker interface: https://github.com/edx/edx-proctoring/blob/master/edx_proctoring/static/index.js
 
 How do I run proctoring tests?
 ------------------------------
