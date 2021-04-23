@@ -76,8 +76,8 @@ edx = edx || {};
     function workerTimeoutPromise(timeoutMilliseconds) {
         var message = 'worker failed to respond after ' + timeoutMilliseconds + 'ms';
         return new Promise(function(resolve, reject) {
-            setTimeout(function () {
-                reject(Error(message))
+            setTimeout(function() {
+                reject(Error(message));
             }, timeoutMilliseconds);
         });
     }
