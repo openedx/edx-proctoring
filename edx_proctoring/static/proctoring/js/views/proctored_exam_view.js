@@ -171,7 +171,9 @@ edx = edx || {};
                 this.model.get('attempt_status') !== 'ready_to_submit'
             ) {
                 edx.courseware.proctored_exam.pingApplication(pingInterval)
-                    .catch(self.endExamForFailureState.bind(self));
+                    .catch(function(error) {
+                        self.endExamForFailureState(error);
+                    });
             }
             if (self.timerTick % self.poll_interval === 0) {
                 url = self.model.url + '/' + self.model.get('attempt_id');
@@ -216,11 +218,12 @@ edx = edx || {};
                 edx.courseware.proctored_exam.endExam(self.model.get('exam_started_poll_url')).then(self.reloadPage);
             }
         },
-        endExamForFailureState: function() {
+        endExamForFailureState: function(error) {
             var self = this;
             return $.ajax({
                 data: {
-                    action: 'error'
+                    action: 'error',
+                    detail: String(error)
                 },
                 url: this.model.url + '/' + this.model.get('attempt_id'),
                 type: 'PUT'

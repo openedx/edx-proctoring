@@ -736,6 +736,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         course_id = attempt['proctored_exam']['course_id']
         action = request.data.get('action')
+        detail = request.data.get('detail')
 
         err_msg = (
             'user_id={user_id} attempted to update attempt_id={attempt_id} in '
@@ -804,14 +805,15 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
             else:
                 exam_attempt_id = False
             LOG.warning(
-                'Browser JS reported problem with proctoring desktop application. Did block user: '
-                '{should_block_user}. user_id={user_id}, course_id={course_id}, exam_id={exam_id}, '
-                'attempt_id={attempt_id}'.format(
+                'Browser JS reported problem with proctoring desktop application. Error detail: '
+                '{error_detail}. Did block user: {should_block_user}. user_id={user_id}, '
+                'course_id={course_id}, exam_id={exam_id}, attempt_id={attempt_id}'.format(
                     should_block_user=should_block_user,
                     user_id=user_id,
                     course_id=course_id,
                     exam_id=attempt['proctored_exam']['id'],
                     attempt_id=attempt_id,
+                    error_detail=detail
                 )
             )
         elif action == 'decline':
