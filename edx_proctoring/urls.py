@@ -6,7 +6,6 @@ from django.conf import settings
 from django.conf.urls import include, url
 
 from edx_proctoring import callbacks, instructor_dashboard_exam_urls, views
-from edx_proctoring.constants import CONTENT_ID_PATERN
 
 app_name = u'edx_proctoring'
 
@@ -22,8 +21,8 @@ urlpatterns = [
         name='proctored_exam.exam_by_id'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/exam/course_id/{}/content_id/(?P<content_id>{})$'.format(
-            settings.COURSE_ID_PATTERN, CONTENT_ID_PATERN),
+        r'edx_proctoring/v1/proctored_exam/exam/course_id/{}/content_id/(?P<content_id>[A-z0-9]+)$'.format(
+            settings.COURSE_ID_PATTERN),
         views.ProctoredExamView.as_view(),
         name='proctored_exam.exam_by_content_id'
     ),

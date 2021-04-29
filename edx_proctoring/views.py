@@ -1175,11 +1175,9 @@ class ActiveExamsForUserView(ProctoredAPIView):
         """
         Returns the get_active_exams_for_user
         """
-        user_id = request.data.get('user_id', None) or request.query_params.get('user_id', None)
-        course_id = request.data.get('course_id', None) or request.query_params.get('course_id', None)
         return Response(get_active_exams_for_user(
-            user_id=user_id,
-            course_id=course_id
+            user_id=request.data.get('user_id', None),
+            course_id=request.data.get('course_id', None)
         ))
 
 
