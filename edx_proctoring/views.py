@@ -17,7 +17,6 @@ from rest_framework.negotiation import BaseContentNegotiation
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -35,9 +34,11 @@ from edx_proctoring.api import (
     get_all_exams_for_course,
     get_allowances_for_course,
     get_backend_provider,
+    get_current_exam_attempt,
     get_enrollments_can_take_proctored_exams,
     get_exam_attempt_by_external_id,
     get_exam_attempt_by_id,
+    get_exam_attempt_data,
     get_exam_by_content_id,
     get_exam_by_id,
     get_last_verified_onboarding_attempts_per_user,
@@ -56,6 +57,7 @@ from edx_proctoring.api import (
 from edx_proctoring.constants import PING_FAILURE_PASSTHROUGH_TEMPLATE
 from edx_proctoring.exceptions import (
     ProctoredBaseException,
+    ProctoredExamNotFoundException,
     ProctoredExamPermissionDenied,
     ProctoredExamReviewAlreadyExists,
     StudentExamAttemptDoesNotExistsException
@@ -166,6 +168,62 @@ class ProctoredAPIView(AuthenticatedAPIView):
         if not resp:
             resp = super().handle_exception(exc)
         return resp
+
+
+class ProctoredExamAttemptsView(ProctoredAPIView):
+    """
+    Endpoint for the Proctored Exams
+    /edx_proctoring/v1/proctored_exam/exam_attempts/course_id/{}/content_id/(?P<content_id>{})
+
+    Supports:
+        HTTP GET: Returns an existing exam (by course_id and content id) with latest related attempt
+        and active attempt for any exam in progress
+        {
+            'exam': {
+                ...
+                attempt: { ... }
+            },
+            'active_attempt': { ... },
+        }
+    """
+
+    def get(self, request, course_id, content_id):
+        """
+        HTTP GET handler. Returns exam with attempt and active attempt
+        """
+
+        active_attempt_data = {}
+        attempt_data = {}
+
+        active_exams = get_active_exams_for_user(request.user.id)
+        if active_exams:
+            active_exam_info = active_exams[0]
+            active_exam = active_exam_info['exam']
+            active_attempt = active_exam_info['attempt']
+            active_attempt_data = get_exam_attempt_data(
+                active_exam.get('id'),
+                active_attempt.get('id'),
+                is_learning_mfe=True
+            )
+        try:
+            exam = get_exam_by_content_id(course_id, content_id)
+            attempt = get_current_exam_attempt(exam.get('id'), request.user.id)
+            if attempt:
+                attempt_data = get_exam_attempt_data(
+                    exam.get('id'),
+                    attempt.get('id'),
+                    is_learning_mfe=True
+                )
+        except ProctoredExamNotFoundException:
+            exam = {}
+
+        exam.update({'attempt': attempt_data})
+        response_dict = {
+            'exam': exam,
+            'active_attempt': active_attempt_data,
+        }
+
+        return Response(data=response_dict, status=status.HTTP_200_OK)
 
 
 class ProctoredExamView(ProctoredAPIView):
@@ -890,56 +948,7 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
 
             exam = exam_info['exam']
             attempt = exam_info['attempt']
-
-            provider = get_backend_provider(exam)
-
-            time_remaining_seconds = get_time_remaining_for_attempt(attempt)
-
-            proctoring_settings = getattr(settings, 'PROCTORING_SETTINGS', {})
-            low_threshold_pct = proctoring_settings.get('low_threshold_pct', .2)
-            critically_low_threshold_pct = proctoring_settings.get('critically_low_threshold_pct', .05)
-
-            low_threshold = int(low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60)
-            critically_low_threshold = int(
-                critically_low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60
-            )
-
-            # resolve the LMS url, note we can't assume we're running in
-            # a same process as the LMS
-            exam_url_path = reverse('jump_to', args=[exam['course_id'], exam['content_id']])
-
-            response_dict = {
-                'in_timed_exam': True,
-                'taking_as_proctored': attempt['taking_as_proctored'],
-                'exam_type': (
-                    _('a timed exam') if not attempt['taking_as_proctored'] else
-                    (_('a proctored exam') if not attempt['is_sample_attempt'] else
-                     (_('an onboarding exam') if (provider and provider.supports_onboarding) else
-                      _('a practice exam')))
-                ),
-                'exam_display_name': exam['exam_name'],
-                'exam_url_path': exam_url_path,
-                'time_remaining_seconds': time_remaining_seconds,
-                'low_threshold_sec': low_threshold,
-                'critically_low_threshold_sec': critically_low_threshold,
-                'course_id': exam['course_id'],
-                'attempt_id': attempt['id'],
-                'accessibility_time_string': _('you have {remaining_time} remaining').format(
-                    remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
-                ),
-                'attempt_status': attempt['status'],
-                'exam_started_poll_url': reverse(
-                    'edx_proctoring:proctored_exam.attempt',
-                    args=[attempt['id']]
-                ),
-
-            }
-
-            if provider:
-                response_dict['desktop_application_js_url'] = provider.get_javascript()
-                response_dict['ping_interval'] = provider.ping_interval
-            else:
-                response_dict['desktop_application_js_url'] = ''
+            response_dict = get_exam_attempt_data(exam.get('id'), attempt.get('id'))
 
         else:
             response_dict = {
