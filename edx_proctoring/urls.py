@@ -108,6 +108,7 @@ urlpatterns = [
         views.UserRetirement.as_view(),
         name='user_retirement_api'
     ),
+    url(r'edx_proctoring/v1/mfe/', include('edx_proctoring.mfe_urls', namespace='mfe_api')),
 
     # Unauthenticated callbacks from SoftwareSecure. Note we use other
     # security token measures to protect data
@@ -127,7 +128,6 @@ urlpatterns = [
         views.StudentProctoredExamResetAttempts.as_view(),
         name='proctored_exam.attempts.reset'
     ),
-    url(r'mfe/', include('edx_proctoring.mfe_urls', namespace='mfe')),
     url(r'^', include('rest_framework.urls', namespace='rest_framework')),
 ]
 

@@ -32,7 +32,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         )
 
         url = reverse(
-            'mfe:proctored_exam.exam_attempts',
+            'mfe_api:proctored_exam.exam_attempts',
             kwargs={
                 'course_id': proctored_exam.course_id,
                 'usage_id': 'block-v1:RG+RG01+2021+type@sequential+block@fa0b1fad8c8247e58da27e09c0b76205'
