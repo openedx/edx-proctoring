@@ -9,6 +9,8 @@ from edx_proctoring import callbacks, instructor_dashboard_exam_urls, views
 
 app_name = u'edx_proctoring'
 
+CONTENT_ID_PATERN = r'(?P<content_id>([A-z0-9]+|(?:i4x://?[^/]+/[^/]+/[^/]+/[^@]+(?:@[^/]+)?)|(?:[^/]+)))'
+
 urlpatterns = [
     url(
         r'edx_proctoring/v1/proctored_exam/exam$',
@@ -108,7 +110,12 @@ urlpatterns = [
         views.UserRetirement.as_view(),
         name='user_retirement_api'
     ),
-    url(r'edx_proctoring/v1/mfe/', include('edx_proctoring.mfe_urls', namespace='mfe_api')),
+    url(
+        r'proctored_exam/exam_attempts/course_id/{}/content_id/{}$'.format(
+            settings.COURSE_ID_PATTERN, CONTENT_ID_PATERN),
+        views.ProctoredExamAttemptsMFEView.as_view(),
+        name='proctored_exam_attempts'
+    ),
 
     # Unauthenticated callbacks from SoftwareSecure. Note we use other
     # security token measures to protect data
