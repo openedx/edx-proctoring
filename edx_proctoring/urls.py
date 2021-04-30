@@ -54,12 +54,6 @@ urlpatterns = [
         name='proctored_exam.attempt.collection'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/exam_attempts/course_id/{}/content_id/(?P<content_id>{})$'.format(
-            settings.COURSE_ID_PATTERN, CONTENT_ID_PATERN),
-        views.ProctoredExamAttemptsView.as_view(),
-        name='proctored_exam.exam_and_attempt.collection'
-    ),
-    url(
         r'edx_proctoring/v1/proctored_exam/attempt/(?P<attempt_id>\d+)/review_status$',
         views.ProctoredExamAttemptReviewStatus.as_view(),
         name='proctored_exam.attempt.review_status'
@@ -133,7 +127,8 @@ urlpatterns = [
         views.StudentProctoredExamResetAttempts.as_view(),
         name='proctored_exam.attempts.reset'
     ),
-    url(r'^', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'mfe/', include('edx_proctoring.mfe_urls', namespace='mfe')),
+    url(r'^', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
 urlpatterns += instructor_dashboard_exam_urls.urlpatterns

@@ -170,14 +170,14 @@ class ProctoredAPIView(AuthenticatedAPIView):
         return resp
 
 
-class ProctoredExamAttemptsView(ProctoredAPIView):
+class ProctoredExamAttemptsMFEView(ProctoredAPIView):
     """
-    Endpoint for the Proctored Exams
+    Endpoint for getting timed or proctored exam and its attempt data.
     /edx_proctoring/v1/proctored_exam/exam_attempts/course_id/{}/content_id/(?P<content_id>{})
 
     Supports:
-        HTTP GET: Returns an existing exam (by course_id and content id) with latest related attempt
-        and active attempt for any exam in progress
+        HTTP GET: Returns an existing exam (by course_id and content id) with latest related attempt.
+        and active attempt for any exam in progress (for the timer feature)
         {
             'exam': {
                 ...
@@ -191,7 +191,6 @@ class ProctoredExamAttemptsView(ProctoredAPIView):
         """
         HTTP GET handler. Returns exam with attempt and active attempt
         """
-
         active_attempt_data = {}
         attempt_data = {}
 
