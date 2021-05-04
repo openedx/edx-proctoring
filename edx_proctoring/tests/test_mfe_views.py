@@ -24,7 +24,9 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         Tests the Get Exam by course id and usage key endpoint.
         """
         COURSE_KEY = CourseLocator(org='TEST', course='TEST01', run='2021')
-        USAGE_KEY = BlockUsageLocator(course_key=COURSE_KEY, block_type='sequential+block', block_id='exam')
+        USAGE_KEY = BlockUsageLocator(
+            course_key=COURSE_KEY, block_type='sequential+block', block_id='27da21b2259e44a4a4ce8fa21daa3158'
+        )
         # Create an exam.
         proctored_exam = ProctoredExam.objects.create(
             course_id='test_course',
