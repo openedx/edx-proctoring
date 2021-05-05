@@ -555,7 +555,8 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     """
     Args:
         int: exam id
-        str: exam attempt id
+        int: exam attempt id
+        bool: indicates if exam_url_path should be built for the MFE
     Returns:
         dict: our exam attempt
     """
