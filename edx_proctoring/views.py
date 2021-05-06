@@ -193,9 +193,12 @@ class ProctoredExamAttemptsMFEView(ProctoredAPIView):
         """
         active_attempt_data = {}
         attempt_data = {}
+        active_exam = {}
 
         active_exams = get_active_exams_for_user(request.user.id)
         if active_exams:
+            # Even if there is more than one exam, we want the first one.
+            # Normally this should not be an issue as there will be list of one item.
             active_exam_info = active_exams[0]
             active_exam = active_exam_info['exam']
             active_attempt = active_exam_info['attempt']
@@ -204,19 +207,23 @@ class ProctoredExamAttemptsMFEView(ProctoredAPIView):
                 active_attempt.get('id'),
                 is_learning_mfe=True
             )
-        try:
-            exam = get_exam_by_content_id(course_id, content_id)
-            attempt = get_current_exam_attempt(exam.get('id'), request.user.id)
-            if attempt:
-                attempt_data = get_exam_attempt_data(
-                    exam.get('id'),
-                    attempt.get('id'),
-                    is_learning_mfe=True
-                )
-        except ProctoredExamNotFoundException:
-            exam = {}
+        if active_exam and active_exam['course_id'] == course_id and active_exam['content_id'] == content_id:
+            exam = active_exam
+            exam.update({'attempt': active_attempt_data})
+        else:
+            try:
+                exam = get_exam_by_content_id(course_id, content_id)
+                attempt = get_current_exam_attempt(exam.get('id'), request.user.id)
+                if attempt:
+                    attempt_data = get_exam_attempt_data(
+                        exam.get('id'),
+                        attempt.get('id'),
+                        is_learning_mfe=True
+                    )
+                exam.update({'attempt': attempt_data})
+            except ProctoredExamNotFoundException:
+                exam = {}
 
-        exam.update({'attempt': attempt_data})
         response_dict = {
             'exam': exam,
             'active_attempt': active_attempt_data,
