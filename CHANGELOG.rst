@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add the backend model field is_resumable to the ProctoredExamStudentAttempt model.
 
 [3.9.0] - 2021-05-17
 ~~~~~~~~~~~~~~~~~~~~
