@@ -421,6 +421,11 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # be saved in order to allow the learner to resume
     time_remaining_seconds = models.IntegerField(null=True)
 
+    # marks whether the attempt is able to be resumed by user
+    # Only those attempts which had an error state before, but
+    # has not yet marked submitted is resumable.
+    is_resumable = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Resumable"))
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'
@@ -509,6 +514,11 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     # They were used in client polling that no longer exists.
     last_poll_timestamp = models.DateTimeField(null=True)
     last_poll_ipaddr = models.CharField(max_length=32, null=True)
+
+    # Marks whether the attempt at this current state is able to be resumed by user
+    # Only those attempts which had an error state before, but
+    # has not yet marked submitted is resumable.
+    is_resumable = models.BooleanField(default=False)
 
     @classmethod
     def get_exam_attempt_by_code(cls, attempt_code):
