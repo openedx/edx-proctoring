@@ -445,7 +445,7 @@ describe('ProctoredExamInfo', function() {
         expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
             .toContain('Approved in Another Course');
         expect(this.proctored_exam_info.$el.find('.onboarding-status-message').html())
-            .toContain('You are eligible to take proctored exams');
+            .toContain('Your onboarding exam has been approved in another course');
         expect(this.proctored_exam_info.$el.find('.onboarding-status-detail').html())
             .toContain('we recommend that you complete');
         expect(this.proctored_exam_info.$el.find('.action-onboarding').html())

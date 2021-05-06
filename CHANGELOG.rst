@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.8.9] - 2021-05-07
+~~~~~~~~~~~~~~~~~~~~
+* Update language on proctored exam info panel if learner has
+  a verified onboarding attempt
+
 [3.8.8] - 2021-04-23
 ~~~~~~~~~~~~~~~~~~~~
 * Add detailed logging of ping failures
