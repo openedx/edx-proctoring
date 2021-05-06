@@ -587,8 +587,24 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
                 data['status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
                 data['modified'] = other_verified_attempt.modified
             else:
-                data['status'] = (InstructorDashboardOnboardingAttemptStatus
-                                  .get_onboarding_status_from_attempt_status(user_attempt.get('status')))
+                attempt_status = user_attempt.get('status')
+
+                # If the learner's most recent attempt is in the "onboarding_reset" state,
+                # return the onboarding_reset_past_due state.
+                # This is a consequence of a bug in our software that allows a learner to end up
+                # with their only or their most recent exam attempt being in the "onboarding_reset" state.
+                # The learner should not end up in this state, but while we work on a fix, we should not
+                # display "null" in the Instructor Dashboard Student Onboarding Panel.
+                # TODO: remove as part of MST-745
+                if user_attempt.get('status') == ProctoredExamStudentAttemptStatus.onboarding_reset:
+                    onboarding_status = InstructorDashboardOnboardingAttemptStatus.onboarding_reset_past_due
+                else:
+                    onboarding_status = \
+                        InstructorDashboardOnboardingAttemptStatus.get_onboarding_status_from_attempt_status(
+                            attempt_status
+                        )
+
+                data['status'] = onboarding_status
                 data['modified'] = user_attempt.get('modified')
 
             onboarding_data.append(data)
@@ -784,6 +800,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         course_id = attempt['proctored_exam']['course_id']
         action = request.data.get('action')
+        detail = request.data.get('detail')
 
         err_msg = (
             'user_id={user_id} attempted to update attempt_id={attempt_id} in '
@@ -852,14 +869,15 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
             else:
                 exam_attempt_id = False
             LOG.warning(
-                'Browser JS reported problem with proctoring desktop application. Did block user: '
-                '{should_block_user}. user_id={user_id}, course_id={course_id}, exam_id={exam_id}, '
-                'attempt_id={attempt_id}'.format(
+                'Browser JS reported problem with proctoring desktop application. Error detail: '
+                '{error_detail}. Did block user: {should_block_user}. user_id={user_id}, '
+                'course_id={course_id}, exam_id={exam_id}, attempt_id={attempt_id}'.format(
                     should_block_user=should_block_user,
                     user_id=user_id,
                     course_id=course_id,
                     exam_id=attempt['proctored_exam']['id'],
                     attempt_id=attempt_id,
+                    error_detail=detail
                 )
             )
         elif action == 'decline':

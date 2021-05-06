@@ -6,7 +6,7 @@
 #
 appdirs==1.4.4
     # via virtualenv
-astroid==2.5.1
+astroid==2.5.3
     # via
     #   pylint
     #   pylint-celery
@@ -28,17 +28,17 @@ click==7.1.2
     #   code-annotations
     #   edx-lint
     #   pip-tools
-code-annotations==1.1.0
+code-annotations==1.1.1
     # via edx-lint
 colorama==0.4.4
     # via twine
-cryptography==3.4.6
+cryptography==3.4.7
     # via secretstorage
 diff-cover==5.0.1
     # via -r requirements/dev.in
 distlib==0.3.1
     # via virtualenv
-django==2.2.19
+django==2.2.20
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/dev.in
@@ -47,7 +47,10 @@ django==2.2.19
     #   edx-i18n-tools
     #   edx-lint
 docutils==0.16
-    # via readme-renderer
+    # via
+    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   readme-renderer
+    #   rstcheck
 edx-i18n-tools==0.5.3
     # via -r requirements/dev.in
 edx-lint==5.0.0
@@ -60,7 +63,7 @@ filelock==3.0.12
     #   virtualenv
 idna==2.10
     # via requests
-importlib-metadata==3.7.3
+importlib-metadata==4.0.1
     # via
     #   keyring
     #   twine
@@ -81,7 +84,7 @@ jinja2==2.11.3
     #   code-annotations
     #   diff-cover
     #   jinja2-pluralize
-keyring==23.0.0
+keyring==23.0.1
     # via twine
 lazy-object-proxy==1.6.0
     # via astroid
@@ -103,7 +106,7 @@ pbr==5.5.1
     # via stevedore
 pep517==0.10.0
     # via pip-tools
-pip-tools==6.0.1
+pip-tools==6.1.0
     # via -r requirements/dev.in
 pkginfo==1.7.0
     # via twine
@@ -111,7 +114,7 @@ pluggy==0.13.1
     # via
     #   diff-cover
     #   tox
-polib==1.1.0
+polib==1.1.1
     # via edx-i18n-tools
 py==1.10.0
     # via tox
@@ -127,13 +130,13 @@ pygments==2.8.1
     #   readme-renderer
 pylint-celery==0.3
     # via edx-lint
-pylint-django==2.4.2
+pylint-django==2.4.3
     # via edx-lint
 pylint-plugin-utils==0.6
     # via
     #   pylint-celery
     #   pylint-django
-pylint==2.7.2
+pylint==2.7.4
     # via
     #   edx-lint
     #   pylint-celery
@@ -159,6 +162,8 @@ requests==2.25.1
     #   twine
 rfc3986==1.4.0
     # via twine
+rstcheck==3.3.1
+    # via -r requirements/quality.in
 secretstorage==3.3.1
     # via keyring
 six==1.15.0
@@ -188,7 +193,7 @@ tox==3.23.0
     # via
     #   -r requirements/dev.in
     #   tox-battery
-tqdm==4.59.0
+tqdm==4.60.0
     # via twine
 twine==3.4.1
     # via
@@ -196,7 +201,7 @@ twine==3.4.1
     #   -r requirements/quality.in
 urllib3==1.26.4
     # via requests
-virtualenv==20.4.3
+virtualenv==20.4.4
     # via tox
 webencodings==0.5.1
     # via bleach

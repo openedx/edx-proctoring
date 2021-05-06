@@ -29,7 +29,7 @@
         submitted: submittedText,
         verified: {
             status: gettext('Verified'),
-            message: gettext('You can now take proctored exams in this course.')
+            message: gettext('Your onboarding exam has been approved in this course.')
         },
         rejected: {
             status: gettext('Rejected'),
@@ -41,7 +41,7 @@
         },
         other_course_approved: {
             status: gettext('Approved in Another Course'),
-            message: gettext('You are eligible to take proctored exams in this course.'),
+            message: gettext('Your onboarding exam has been approved in another course.'),
             detail: gettext(
                 'If your device has changed, we recommend that you complete this ' +
                 'course\'s onboarding exam in order to ensure that your setup ' +
@@ -51,8 +51,7 @@
         expiring_soon: {
             status: gettext('Expiring Soon'),
             message: gettext(
-                'Your onboarding profile has been approved in another course, ' +
-                'so you are eligible to take proctored exams in this course. ' +
+                'Your onboarding profile has been approved in another course. ' +
                 'However, your onboarding status is expiring soon. Please ' +
                 'complete onboarding again to ensure that you will be ' +
                 'able to continue taking proctored exams.'
@@ -63,7 +62,11 @@
     edx.courseware.proctored_exam.ProctoredExamInfo = Backbone.View.extend({
         initialize: function() {
             this.course_id = this.$el.data('course-id');
+            this.username = this.$el.data('username');
             this.model.url = this.model.url + '?course_id=' + encodeURIComponent(this.course_id);
+            if (this.username) {
+                this.model.url = this.model.url + '&username=' + encodeURIComponent(this.username);
+            }
             this.template_url = '/static/proctoring/templates/proctored-exam-info.underscore';
             this.status = '';
 

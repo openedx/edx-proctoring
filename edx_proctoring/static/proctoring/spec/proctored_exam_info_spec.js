@@ -128,6 +128,33 @@ describe('ProctoredExamInfo', function() {
             .toHaveLength(0);
     });
 
+    it('should render if username is provided', function() {
+        setFixtures(
+            '<div class="proctoring-info-panel" data-course-id="test_course_id" ' +
+            'data-username="test_username"></div>'
+        );
+        this.server.respondWith(
+            'GET',
+            '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id&username=test_username',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedProctoredExamInfoJson('verified'))
+            ]
+        );
+
+        this.proctored_exam_info = new edx.courseware.proctored_exam.ProctoredExamInfo({
+            el: $('.proctoring-info-panel'),
+            model: new LearnerOnboardingModel()
+        });
+        this.server.respond();
+        this.server.respond();
+        expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
+            .toContain('Verified');
+    });
+
     it('should not render proctoring info panel for exam with 404 response', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
             [
@@ -418,7 +445,7 @@ describe('ProctoredExamInfo', function() {
         expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
             .toContain('Approved in Another Course');
         expect(this.proctored_exam_info.$el.find('.onboarding-status-message').html())
-            .toContain('You are eligible to take proctored exams');
+            .toContain('Your onboarding exam has been approved in another course');
         expect(this.proctored_exam_info.$el.find('.onboarding-status-detail').html())
             .toContain('we recommend that you complete');
         expect(this.proctored_exam_info.$el.find('.action-onboarding').html())

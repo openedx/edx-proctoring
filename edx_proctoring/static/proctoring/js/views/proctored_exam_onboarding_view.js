@@ -27,6 +27,8 @@ edx = edx || {};
         verified: gettext('Verified'),
         rejected: gettext('Rejected'),
         error: gettext('Error'),
+        // TODO: remove as part of MST-745
+        onboarding_reset_past_due: gettext('Onboarding Reset Failed Due to Past Due Exam'),
         // Enrollment modes (Note: 'verified' is both a status and enrollment mode)
         audit: gettext('Audit'),
         honor: gettext('Honor'),

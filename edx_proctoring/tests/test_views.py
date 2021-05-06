@@ -1386,6 +1386,69 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         }
         self.assertEqual(response_data, expected_data)
 
+    def test_onboarding_reset_failed_past_due(self):
+        # TODO: remove as part of MST-745
+        onboarding_attempt_id = create_exam_attempt(
+            self.onboarding_exam.id,
+            self.user.id,
+            True,
+        )
+
+        # Update the exam attempt to rejected to allow onboarding exam to be reset.
+        update_attempt_status(onboarding_attempt_id, ProctoredExamStudentAttemptStatus.rejected)
+
+        # Update the exam to have a due date in the past.
+        self.onboarding_exam.due_date = datetime.now(pytz.UTC) - timedelta(minutes=10)
+        self.onboarding_exam.save()
+
+        # Reset the practice exam.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[onboarding_attempt_id]),
+            json.dumps({
+                'action': 'reset_attempt',
+            }),
+            content_type='application/json'
+        )
+
+        # Get serialized onboarding_attempt to get modified time.
+        serialized_onboarding_attempt = get_exam_attempt_by_id(onboarding_attempt_id)
+
+        response = self.client.get(reverse(
+                'edx_proctoring:user_onboarding.status.course',
+                kwargs={'course_id': self.onboarding_exam.course_id}
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content.decode('utf-8'))
+        expected_data = {
+            'results': [
+                {
+                    'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
+                    'status': InstructorDashboardOnboardingAttemptStatus.onboarding_reset_past_due,
+                    'modified': serialized_onboarding_attempt.get('modified')
+                },
+                {
+                    'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                },
+                {
+                    'username': self.learner_2.username,
+                    'enrollment_mode': self.enrollment_modes[2],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                },
+            ],
+            'count': 3,
+            'previous': None,
+            'next': None,
+            'num_pages': 1,
+        }
+        self.assertEqual(response_data, expected_data)
+
     def test_not_staff_or_course_staff(self):
         self.user.is_staff = False
         self.user.save()

@@ -13,6 +13,39 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.8.9] - 2021-05-07
+~~~~~~~~~~~~~~~~~~~~
+* Update language on proctored exam info panel if learner has
+  a verified onboarding attempt
+
+[3.8.8] - 2021-04-23
+~~~~~~~~~~~~~~~~~~~~
+* Add detailed logging of ping failures
+* Expose ping timeout value to external javascript worker
+* Add documentation for javascript worker development
+
+[3.8.7] - 2021-04-16
+~~~~~~~~~~~~~~~~~~~~
+* Add pyjwt as explicit dependency to edx-proctoring library.
+* Pin version of pyjwt to less than 2.0.0.
+
+[3.8.6] - 2021-04-13
+~~~~~~~~~~~~~~~~~~~~
+* Fix JWT encoding bug introduced by version 2.0.1 of pyjwt[crypto] library.
+* Add RST validator
+
+[3.8.5] - 2021-04-07
+~~~~~~~~~~~~~~~~~~~~~
+* Add handling of the "onboarding_reset" attempt status to the
+  StudentOnboardingStatusByCourseView view and the StudentOnboardingStatus
+  panel in the Instructor Dashboard.
+
+[3.8.4] - 2021-04-05
+~~~~~~~~~~~~~~~~~~~~~
+* Add the request username to the proctoring info panel, allowing course staff to masquerade as
+  a specific user.
+
 [3.8.3] - 2021-04-05
 ~~~~~~~~~~~~~~~~~~~~~
 * Use exam due_date or course end date to evaluate the visibility of the onboarding status panel
