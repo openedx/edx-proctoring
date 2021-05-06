@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.9.0] - 2021-05-17
+~~~~~~~~~~~~~~~~~~~~
+* Add the backend model field is_resumable to the ProctoredExamStudentAttempt model.
+
 [3.8.9] - 2021-05-07
 ~~~~~~~~~~~~~~~~~~~~
 * Update language on proctored exam info panel if learner has

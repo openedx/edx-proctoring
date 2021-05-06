@@ -409,3 +409,53 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         attempts = ProctoredExamStudentAttemptHistory.objects.all()
         self.assertEqual(len(attempts), 1)
         self.assertEqual(attempts[0].review_policy_id, deleted_id)
+
+    def test_exam_attempt_is_resumable(self):
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+        # Create a user and their attempt
+        user = User.objects.create(username='testerresumable', email='testerresumable@test.com')
+        ProctoredExamStudentAttempt.create_exam_attempt(
+            proctored_exam.id, user.id, 'test_name_resumable',
+            'test_attempt_code_resumable', True, False, 'test_external_id_resumable'
+        )
+
+        filter_query = {
+            'user_id': user.id,
+            'proctored_exam_id': proctored_exam.id
+        }
+
+        attempt = ProctoredExamStudentAttempt.objects.get(**filter_query)
+        self.assertFalse(attempt.is_resumable)
+
+        # No entry in the History table on creation of the Allowance entry.
+        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(**filter_query)
+        self.assertEqual(len(attempt_history), 0)
+
+        # Saving as an error status
+        attempt.is_resumable = True
+        attempt.status = ProctoredExamStudentAttemptStatus.error
+        attempt.save()
+
+        attempt = ProctoredExamStudentAttempt.objects.get(**filter_query)
+        self.assertTrue(attempt.is_resumable)
+
+        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(**filter_query)
+        self.assertEqual(len(attempt_history), 1)
+        self.assertFalse(attempt_history.first().is_resumable)
+
+        # Saving as a Reviewed status, but not changing is_resumable
+        attempt.status = ProctoredExamStudentAttemptStatus.verified
+        attempt.save()
+        attempt = ProctoredExamStudentAttempt.objects.get(**filter_query)
+        self.assertTrue(attempt.is_resumable)
+
+        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(**filter_query)
+        self.assertEqual(len(attempt_history), 2)
+        self.assertTrue(attempt_history.last().is_resumable)
