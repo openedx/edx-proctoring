@@ -2925,7 +2925,6 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
     """
     Tests for get_exam_attempt_data.
     """
-
     def setUp(self):
         """
         Initialize
@@ -2945,13 +2944,15 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
     def test_get_exam_attempt_data(self, is_proctored_exam, is_learning_mfe):
         """ Test expected attempt data returned by get_exam_attempt_data. """
         attempt = self._create_started_exam_attempt(is_proctored=is_proctored_exam)
-        attempt_id = attempt.id
-        attempt_data = get_exam_attempt_data(self.timed_exam_id, attempt_id, is_learning_mfe)
+        exam_id = self.timed_exam_id if not is_proctored_exam else self.proctored_exam_id
+        attempt_data = get_exam_attempt_data(exam_id, attempt.id, is_learning_mfe)
+        content_id = self.content_id if is_proctored_exam else self.content_id_timed
         expected_exam_url = '{}/course/{}/{}'.format(
-            settings.LEARNING_MICROFRONTEND_URL, self.course_id, self.content_id
-        ) if is_learning_mfe else reverse('jump_to', args=[self.course_id, self.content_id])
+            settings.LEARNING_MICROFRONTEND_URL, self.course_id, content_id
+        ) if is_learning_mfe else reverse('jump_to', args=[self.course_id, content_id])
+
         assert attempt_data
         assert 'attempt_id' in attempt_data
-        assert attempt_data['attempt_id'] == attempt_id
+        assert attempt_data['attempt_id'] == attempt.id
         assert 'exam_url_path' in attempt_data
         assert attempt_data['exam_url_path'] == expected_exam_url

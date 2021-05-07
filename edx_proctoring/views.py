@@ -199,8 +199,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         attempt_data = {}
         active_exam = {}
 
-        is_learning_mfe = request.GET.get('is_learning_mfe', False)
-        is_learning_mfe = True if is_learning_mfe in ['1', 'true', 'True', True] else False
+        is_learning_mfe = True if request.GET.get('is_learning_mfe') in ['1', 'true', 'True', True] else False
 
         active_exams = get_active_exams_for_user(request.user.id)
         if active_exams:
@@ -214,7 +213,6 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 active_attempt.get('id'),
                 is_learning_mfe=is_learning_mfe
             )
-        print('real exam content_id ', active_exam.get('content_id'))
         if active_exam and active_exam.get('course_id') == course_id and active_exam.get('content_id') == content_id:
             exam = active_exam
             exam.update({'attempt': active_attempt_data})
