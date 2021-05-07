@@ -111,10 +111,10 @@ urlpatterns = [
         name='user_retirement_api'
     ),
     url(
-        r'proctored_exam/exam_attempts/course_id/{}/content_id/{}$'.format(
+        r'edx_proctoring/v1/proctored_exam/attempt/course_id/{}/content_id/{}$'.format(
             settings.COURSE_ID_PATTERN, CONTENT_ID_PATERN),
-        views.ProctoredExamAttemptsMFEView.as_view(),
-        name='proctored_exam_attempts'
+        views.ProctoredExamAttemptView.as_view(),
+        name='proctored_exam.exam_attempts'
     ),
 
     # Unauthenticated callbacks from SoftwareSecure. Note we use other

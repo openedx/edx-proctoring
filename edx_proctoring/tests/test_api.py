@@ -14,6 +14,9 @@ from freezegun import freeze_time
 from mock import MagicMock, patch
 
 from django.core import mail
+from django.conf import settings
+from django.test.utils import override_settings
+from django.urls import reverse
 
 from edx_proctoring.api import (
     _are_prerequirements_satisfied,
@@ -34,6 +37,7 @@ from edx_proctoring.api import (
     get_current_exam_attempt,
     get_enrollments_can_take_proctored_exams,
     get_exam_attempt_by_id,
+    get_exam_attempt_data,
     get_exam_by_content_id,
     get_exam_by_id,
     get_exam_configuration_dashboard_url,
@@ -2913,3 +2917,41 @@ class LastVerifiedOnboardingAttemptsTests(ProctoredExamTestCase):
         self.assertEqual(9, len(attempts_dict.items()))
         self._assert_verified_attempts(all_users[0:5], attempts_dict)
         self._assert_verified_attempts(third_course_verified, attempts_dict)
+
+
+@patch('django.urls.reverse', MagicMock)
+@ddt.ddt
+class GetExamAttemptDataTests(ProctoredExamTestCase):
+    """
+    Tests for get_exam_attempt_data.
+    """
+
+    def setUp(self):
+        """
+        Initialize
+        """
+        super().setUp()
+        self.timed_exam_id = self._create_timed_exam()
+        self.proctored_exam_id = self._create_proctored_exam()
+
+    @ddt.data(
+        (True, False),
+        (True, True),
+        (False, False),
+        (False, True),
+    )
+    @ddt.unpack
+    @override_settings(LEARNING_MICROFRONTEND_URL='http://learningmfe')
+    def test_get_exam_attempt_data(self, is_proctored_exam, is_learning_mfe):
+        """ Test expected attempt data returned by get_exam_attempt_data. """
+        attempt = self._create_started_exam_attempt(is_proctored=is_proctored_exam)
+        attempt_id = attempt.id
+        attempt_data = get_exam_attempt_data(self.timed_exam_id, attempt_id, is_learning_mfe)
+        expected_exam_url = '{}/course/{}/{}'.format(
+            settings.LEARNING_MICROFRONTEND_URL, self.course_id, self.content_id
+        ) if is_learning_mfe else reverse('jump_to', args=[self.course_id, self.content_id])
+        assert attempt_data
+        assert 'attempt_id' in attempt_data
+        assert attempt_data['attempt_id'] == attempt_id
+        assert 'exam_url_path' in attempt_data
+        assert attempt_data['exam_url_path']

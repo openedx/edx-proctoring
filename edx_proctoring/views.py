@@ -170,23 +170,27 @@ class ProctoredAPIView(AuthenticatedAPIView):
         return resp
 
 
-class ProctoredExamAttemptsMFEView(ProctoredAPIView):
+class ProctoredExamAttemptView(ProctoredAPIView):
     """
     Endpoint for getting timed or proctored exam and its attempt data.
-    /edx_proctoring/v1/proctored_exam/exam_attempts/course_id/{}/content_id/(?P<content_id>{})
+    /edx_proctoring/v1/proctored_exam/attempt/course_id/{course_id}/content_id/{content_id}
 
     Supports:
-        HTTP GET: Returns an existing exam (by course_id and content id) with latest related attempt.
-        and active attempt for any exam in progress (for the timer feature)
-        {
-            'exam': {
-                ...
-                attempt: { ... }
-            },
-            'active_attempt': { ... },
-        }
-    """
+        HTTP GET:
+            ** Scenarios **
+            ?is_learning_mfe=true
+            returns attempt data with `exam_url_path` built for the learning mfe
 
+            Returns an existing exam (by course_id and content id) with latest related attempt.
+            and active attempt for any exam in progress (for the timer feature)
+            {
+                'exam': {
+                    ...
+                    attempt: { ... }
+                },
+                'active_attempt': { ... },
+            }
+    """
     def get(self, request, course_id, content_id):
         """
         HTTP GET handler. Returns exam with attempt and active attempt
@@ -194,6 +198,11 @@ class ProctoredExamAttemptsMFEView(ProctoredAPIView):
         active_attempt_data = {}
         attempt_data = {}
         active_exam = {}
+
+        is_learning_mfe = request.GET.get('is_learning_mfe', False)
+        is_learning_mfe = True if is_learning_mfe in ['1', 'true', 'True', True] else False
+
+        print('looking for ', content_id)
 
         active_exams = get_active_exams_for_user(request.user.id)
         if active_exams:
@@ -205,9 +214,10 @@ class ProctoredExamAttemptsMFEView(ProctoredAPIView):
             active_attempt_data = get_exam_attempt_data(
                 active_exam.get('id'),
                 active_attempt.get('id'),
-                is_learning_mfe=True
+                is_learning_mfe=is_learning_mfe
             )
-        if active_exam and active_exam['course_id'] == course_id and active_exam['content_id'] == content_id:
+        print('real exam content_id ', active_exam.get('content_id'))
+        if active_exam and active_exam.get('course_id') == course_id and active_exam.get('content_id') == content_id:
             exam = active_exam
             exam.update({'attempt': active_attempt_data})
         else:
@@ -218,7 +228,7 @@ class ProctoredExamAttemptsMFEView(ProctoredAPIView):
                     attempt_data = get_exam_attempt_data(
                         exam.get('id'),
                         attempt.get('id'),
-                        is_learning_mfe=True
+                        is_learning_mfe=is_learning_mfe
                     )
                 exam.update({'attempt': attempt_data})
             except ProctoredExamNotFoundException:

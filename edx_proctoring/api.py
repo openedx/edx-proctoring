@@ -845,7 +845,6 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         external_id, force_status = _register_proctored_exam_attempt(
             user_id, exam_id, exam, attempt_code, review_policy
         )
-
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,
         user_id,
