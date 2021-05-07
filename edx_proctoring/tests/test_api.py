@@ -2919,7 +2919,6 @@ class LastVerifiedOnboardingAttemptsTests(ProctoredExamTestCase):
         self._assert_verified_attempts(third_course_verified, attempts_dict)
 
 
-@patch('django.urls.reverse', MagicMock)
 @ddt.ddt
 class GetExamAttemptDataTests(ProctoredExamTestCase):
     """

@@ -47,7 +47,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         else:
             assert not exam_data['attempt']
         self.assertEqual(exam_data['course_id'], self.course_id)
-        self.assertEqual(exam_data['content_id'], str(self.content_id if not content_id else content_id))
+        self.assertEqual(exam_data['content_id'], self.content_id if not content_id else content_id)
         self.assertEqual(exam_data['time_limit_mins'], self.default_time_limit)
 
     def test_get_started_proctored_exam_attempts_data(self):
