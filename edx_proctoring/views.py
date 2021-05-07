@@ -202,8 +202,6 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         is_learning_mfe = request.GET.get('is_learning_mfe', False)
         is_learning_mfe = True if is_learning_mfe in ['1', 'true', 'True', True] else False
 
-        print('looking for ', content_id)
-
         active_exams = get_active_exams_for_user(request.user.id)
         if active_exams:
             # Even if there is more than one exam, we want the first one.

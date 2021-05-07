@@ -2954,4 +2954,4 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
         assert 'attempt_id' in attempt_data
         assert attempt_data['attempt_id'] == attempt_id
         assert 'exam_url_path' in attempt_data
-        assert attempt_data['exam_url_path']
+        assert attempt_data['exam_url_path'] == expected_exam_url
