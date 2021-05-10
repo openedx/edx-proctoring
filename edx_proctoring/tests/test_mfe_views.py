@@ -1,8 +1,8 @@
 """
 Tests for the MFE proctored exam views.
 """
-import ddt
 import json
+import ddt
 
 from django.conf import settings
 from django.test.utils import override_settings
