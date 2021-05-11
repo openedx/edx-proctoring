@@ -58,12 +58,13 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import (
     emit_event,
     get_exam_due_date,
+    get_exam_type,
     get_time_remaining_for_attempt,
     has_due_date_passed,
     humanized_time,
     is_reattempting_exam,
     obscured_user_id,
-    verify_and_add_wait_deadline
+    verify_and_add_wait_deadline,
 )
 
 log = logging.getLogger(__name__)
@@ -571,7 +572,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     low_threshold_pct = proctoring_settings.get('low_threshold_pct', .2)
     critically_low_threshold_pct = proctoring_settings.get('critically_low_threshold_pct', .05)
 
-    allowed_time_limit_mins = attempt['allowed_time_limit_mins'] or 0
+    allowed_time_limit_mins = attempt.get('allowed_time_limit_mins', 0)
 
     low_threshold = int(low_threshold_pct * float(allowed_time_limit_mins) * 60)
     critically_low_threshold = int(
@@ -591,12 +592,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     attempt_data = {
         'in_timed_exam': True,
         'taking_as_proctored': attempt['taking_as_proctored'],
-        'exam_type': (
-            _('a timed exam') if not attempt['taking_as_proctored'] else
-            (_('a proctored exam') if not attempt['is_sample_attempt'] else
-             (_('an onboarding exam') if (provider and provider.supports_onboarding) else
-              _('a practice exam')))
-        ),
+        'exam_type': get_exam_type(provider, attempt),
         'exam_display_name': exam['exam_name'],
         'exam_url_path': exam_url_path,
         'time_remaining_seconds': time_remaining_seconds,
