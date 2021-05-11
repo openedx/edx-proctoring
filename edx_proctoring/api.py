@@ -571,9 +571,11 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     low_threshold_pct = proctoring_settings.get('low_threshold_pct', .2)
     critically_low_threshold_pct = proctoring_settings.get('critically_low_threshold_pct', .05)
 
-    low_threshold = int(low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60)
+    allowed_time_limit_mins = attempt['allowed_time_limit_mins'] or 0
+
+    low_threshold = int(low_threshold_pct * float(allowed_time_limit_mins) * 60)
     critically_low_threshold = int(
-        critically_low_threshold_pct * float(attempt['allowed_time_limit_mins']) * 60
+        critically_low_threshold_pct * float(allowed_time_limit_mins) * 60
     )
 
     # resolve the LMS url, note we can't assume we're running in
