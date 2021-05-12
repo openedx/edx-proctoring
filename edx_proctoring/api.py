@@ -896,7 +896,7 @@ def mark_exam_attempt_as_resumed(attempt_id):
     return update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.resumed)
 
 
-def is_state_transition_legal(from_status, to_status, attempt_obj):
+def is_state_transition_legal(from_status, to_status):
     """
     Determine and return as a boolean whether a proctored exam attempt state transition
     from from_status to to_status is an allowed state transition.
@@ -904,7 +904,6 @@ def is_state_transition_legal(from_status, to_status, attempt_obj):
     Arguments:
         from_status: original status of a proctored exam attempt
         to_status: future status of a proctored exam attempt
-        attempt_obj: the actual student exam attempt
     """
     in_completed_status = ProctoredExamStudentAttemptStatus.is_completed_status(from_status)
     to_incompleted_status = ProctoredExamStudentAttemptStatus.is_incomplete_status(to_status)
@@ -913,9 +912,9 @@ def is_state_transition_legal(from_status, to_status, attempt_obj):
     # if a re-attempt is desired then the current attempt must be deleted
     if in_completed_status and to_incompleted_status:
         return False
-    # only allow a state transition to the ready_to_resume state when the attempt is resumable
+    # only allow a state transition to the ready_to_resume state from an error state
     if (to_status == ProctoredExamStudentAttemptStatus.ready_to_resume and
-            not attempt_obj.is_resumable):
+            from_status != ProctoredExamStudentAttemptStatus.error):
         return False
     # only allowed state transition to the resumed state from ready_to_resume (or resumed).
     # this accounts for cases where the previous attempt was marked as resumed, but a new
@@ -967,28 +966,6 @@ def can_update_credit_grades_and_email(attempts, to_status):
     return False
 
 
-def _is_attempt_resumable(attempt_obj, to_status):
-    """
-    Based on the attempt object and the status it's transitioning to,
-    return whether the attempt should be resumable, or not
-    """
-    status_to_reset_resumability = (
-        ProctoredExamStudentAttemptStatus.submitted,
-        ProctoredExamStudentAttemptStatus.resumed,
-        ProctoredExamStudentAttemptStatus.ready_to_resume,
-    )
-    if to_status in status_to_reset_resumability:
-        # Make sure we have resumable to be false in conditions where the
-        # attempt is either in the resume process, or it's successfully submitted
-        return False
-    if to_status == ProctoredExamStudentAttemptStatus.error:
-        # Only when the transition to status is "Error", the attempt is resumable
-        return True
-
-    # Otherwise, maintain resumability on the attempt
-    return attempt_obj.is_resumable
-
-
 # pylint: disable=inconsistent-return-statements
 def update_attempt_status(attempt_id, to_status,
                           raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None,
@@ -1030,7 +1007,7 @@ def update_attempt_status(attempt_id, to_status,
     exam = get_exam_by_id(exam_id)
     backend = get_backend_provider(exam)
 
-    if not is_state_transition_legal(from_status, to_status, exam_attempt_obj):
+    if not is_state_transition_legal(from_status, to_status):
         illegal_status_transition_msg = (
             'A status transition from "{from_status}" to "{to_status}" was attempted '
             'on exam_id={exam_id} for user_id={user_id}. This is not '
@@ -1064,9 +1041,6 @@ def update_attempt_status(attempt_id, to_status,
         # likewise, when we transition to submitted mark
         # when the exam has been completed
         exam_attempt_obj.completed_at = datetime.now(pytz.UTC)
-
-    # Update the is_resumable flag of the attempt based on the status transition
-    exam_attempt_obj.is_resumable = _is_attempt_resumable(exam_attempt_obj, to_status)
 
     exam_attempt_obj.save()
 

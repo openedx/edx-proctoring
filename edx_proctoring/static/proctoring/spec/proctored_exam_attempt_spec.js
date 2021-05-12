@@ -38,7 +38,6 @@ describe('ProctoredExamAttemptView', function() {
                     modified: '2015-08-10T09:15:45Z',
                     started_at: '2015-08-10T09:15:45Z',
                     status: status,
-                    is_resumable: false,
                     taking_as_proctored: true,
                     proctored_exam: {
                         content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
@@ -92,11 +91,9 @@ describe('ProctoredExamAttemptView', function() {
         );
     }
 
-    function getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(status, isPracticeExam, isResumable) {
+    function getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(status, isPracticeExam) {
         // eslint-disable-next-line no-param-reassign
         isPracticeExam = typeof isPracticeExam !== 'undefined' ? isPracticeExam : false;
-        // eslint-disable-next-line no-param-reassign
-        isResumable = typeof isResumable !== 'undefined' ? isResumable : false;
         return (
             [{
                 attempt_url: '/api/edx_proctoring/v1/proctored_exam/attempt/course_id/edX/DemoX/Demo_Course',
@@ -119,7 +116,6 @@ describe('ProctoredExamAttemptView', function() {
                     modified: '2015-08-10T09:15:45Z',
                     started_at: '2015-08-10T09:15:45Z',
                     status: status,
-                    is_resumable: isResumable,
                     taking_as_proctored: true,
                     proctored_exam: {
                         content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
@@ -151,7 +147,6 @@ describe('ProctoredExamAttemptView', function() {
                             modified: '2015-08-10T09:15:45Z',
                             started_at: '2015-08-10T09:15:45Z',
                             status: status,
-                            is_resumable: isResumable,
                             taking_as_proctored: true,
                             proctored_exam: {
                                 content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
@@ -183,7 +178,6 @@ describe('ProctoredExamAttemptView', function() {
                             modified: '2015-08-10T09:15:45Z',
                             started_at: '2015-08-10T09:15:45Z',
                             status: 'resumed',
-                            is_resumable: false,
                             taking_as_proctored: true,
                             proctored_exam: {
                                 content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
@@ -298,7 +292,7 @@ describe('ProctoredExamAttemptView', function() {
         '<td>' +
         '<% if (proctored_exam_attempt.status){ %>' +
         '<% if (' +
-        'proctored_exam_attempt.is_resumable &&' +
+        'proctored_exam_attempt.status == "error" &&' +
         '!proctored_exam_attempt.proctored_exam.is_practice_exam' +
         ') { %>' +
         '<div class="wrapper-action-more">' +
@@ -534,7 +528,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('error', false, true))
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('error'))
             ]
         );
         this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
@@ -612,31 +606,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('error', true, true))
-            ]
-        );
-        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
-
-        // Process all requests so far
-        this.server.respond();
-        this.server.respond();
-
-        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('testuser1');
-        expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('Normal Exam');
-        expect(this.proctored_exam_attempt_view.$el.find('tbody.accordion-panel').html()).toContain('Error');
-
-        expect(this.proctored_exam_attempt_view.$el.find('button.action').html()).toHaveLength(0);
-        expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').html()).toHaveLength(0);
-    });
-
-    it('should not display actions dropdown for exam attempts not resumable', function() {
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
-            [
-                200,
-                {
-                    'Content-Type': 'application/json'
-                },
-                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('error', true, false))
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('error', true))
             ]
         );
         this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
@@ -662,7 +632,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('error', false, true))
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('error', false))
             ]
         );
         this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
@@ -694,7 +664,7 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('error', false, true))
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('error', false))
             ]
         );
         this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();

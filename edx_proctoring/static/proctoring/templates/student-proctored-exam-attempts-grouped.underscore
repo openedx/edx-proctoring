@@ -200,7 +200,7 @@
                             <td>
                                 <% if (proctored_exam_attempt.status){ %>
                                     <% if (
-                                        proctored_exam_attempt.is_resumable &&
+                                        proctored_exam_attempt.status == "error" &&
                                         !proctored_exam_attempt.proctored_exam.is_practice_exam
                                     ) { %>
                                         <div class="wrapper-action-more">

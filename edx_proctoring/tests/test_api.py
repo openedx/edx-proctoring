@@ -2018,13 +2018,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
                 ProctoredExamStudentAttemptStatus.ready_to_resume
             )
 
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.error,
-        ProctoredExamStudentAttemptStatus.verified,
-        ProctoredExamStudentAttemptStatus.second_review_required,
-        ProctoredExamStudentAttemptStatus.rejected
-    )
-    def test_update_exam_attempt_ready_to_resume(self, resumable_status):
+    def test_update_exam_attempt_ready_to_resume(self):
         """
         Assert that an attempted transition of a proctored exam attempt from an error state
         to a ready_to_resume state completes successfully and does not raise a
@@ -2035,19 +2029,13 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         attempt = get_exam_attempt_by_id(exam_attempt.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.started)
 
-        # First we have to transition to error state to make the exam attempt resumable
         update_attempt_status(
             exam_attempt.id,
             ProctoredExamStudentAttemptStatus.error
         )
 
-        update_attempt_status(
-            exam_attempt.id,
-            resumable_status
-        )
-
         attempt = get_exam_attempt_by_id(exam_attempt.id)
-        self.assertEqual(attempt['status'], resumable_status)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
 
         update_attempt_status(
             exam_attempt.id,
@@ -2100,58 +2088,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         attempt = get_exam_attempt_by_id(exam_attempt.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.resumed)
-
-    @ddt.data(
-        (
-            ProctoredExamStudentAttemptStatus.started,
-            ProctoredExamStudentAttemptStatus.error,
-            True
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.started,
-            ProctoredExamStudentAttemptStatus.ready_to_submit,
-            False
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.error,
-            ProctoredExamStudentAttemptStatus.ready_to_resume,
-            False
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.ready_to_resume,
-            ProctoredExamStudentAttemptStatus.resumed,
-            False
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.error,
-            ProctoredExamStudentAttemptStatus.verified,
-            True
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.error,
-            ProctoredExamStudentAttemptStatus.second_review_required,
-            True
-        ),
-        (
-            ProctoredExamStudentAttemptStatus.error,
-            ProctoredExamStudentAttemptStatus.rejected,
-            True
-        ),
-    )
-    @ddt.unpack
-    def test_exam_attempt_is_resumable(self, from_status, to_status, expected_is_resumable):
-        exam_attempt = self._create_exam_attempt(self.proctored_exam_id, status=from_status)
-        if from_status == ProctoredExamStudentAttemptStatus.error:
-            self.assertTrue(exam_attempt.is_resumable)
-        else:
-            self.assertFalse(exam_attempt.is_resumable)
-
-        update_attempt_status(
-            exam_attempt.id,
-            to_status,
-        )
-        attempt = get_exam_attempt_by_id(exam_attempt.id)
-        self.assertEqual(attempt['is_resumable'], expected_is_resumable)
 
     def test_requirement_status_order(self):
         """

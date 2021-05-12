@@ -307,9 +307,6 @@ class ProctoredExamTestCase(LoggedInTestCase):
         if ProctoredExamStudentAttemptStatus.is_completed_status(status):
             attempt.completed_at = datetime.now(pytz.UTC)
 
-        if status == ProctoredExamStudentAttemptStatus.error:
-            attempt.is_resumable = True
-
         attempt.save()
 
         return attempt
