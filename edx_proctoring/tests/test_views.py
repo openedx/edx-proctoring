@@ -1667,6 +1667,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # make sure the exam started
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertIsNotNone(attempt['started_at'])
+        self.assertFalse(attempt['is_resumable'])
 
     def test_start_exam_callback_when_created(self):
         """
@@ -1726,6 +1727,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response_data['proctored_exam']['id'], proctored_exam.id)
         self.assertIsNotNone(response_data['started_at'])
         self.assertIsNone(response_data['completed_at'])
+        self.assertFalse(response_data['is_resumable'])
         # make sure we have the accessible human string
         self.assertEqual(response_data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
 
@@ -1826,6 +1828,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
                 attempt.time_remaining_seconds,
                 [floor(response_data['time_remaining_seconds']), ceil(response_data['time_remaining_seconds'])]
             )
+            # Also make sure the attempt is now resumable
+            self.assertTrue(attempt.is_resumable)
 
     def test_time_due_date_between_two_days(self):
         """
@@ -2277,6 +2281,11 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(response_data['exam_attempt_id'])
 
         self.assertEqual(attempt['status'], expected_status)
+
+        is_attempt_resumable = False
+        if expected_status == ProctoredExamStudentAttemptStatus.error:
+            is_attempt_resumable = True
+        self.assertEqual(attempt['is_resumable'], is_attempt_resumable)
 
         # we should not be able to restart it
         response = self.client.put(
@@ -3390,6 +3399,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # Make sure the exam attempt is in the error state.
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+        self.assertTrue(attempt['is_resumable'])
 
         # Transition the exam attempt into the ready_to_resume state.
         response = self.client.put(
@@ -3407,6 +3417,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # Make sure the exam attempt is in the ready_to_resume state.
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
+        self.assertFalse(attempt['is_resumable'])
 
     @ddt.data(
         (True, True),
@@ -3856,6 +3867,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(
             response_data['proctored_exam_attempts'][0]['all_attempts'][1]['status'],
             ProctoredExamStudentAttemptStatus.resumed
+        )
+        # Make sure the resumed attempt is no longer resumable again
+        self.assertFalse(
+            response_data['proctored_exam_attempts'][0]['all_attempts'][1]['is_resumable']
         )
 
 

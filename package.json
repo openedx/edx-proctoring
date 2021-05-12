@@ -4,8 +4,8 @@
   "//": "Note that the version format is slightly different than that of the Python version when using prereleases.",
   "version": "3.9.0",
   "main": "edx_proctoring/static/index.js",
-  "scripts":{
-    "test":"gulp test"
+  "scripts": {
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
