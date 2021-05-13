@@ -10,7 +10,7 @@ amqp==5.0.6
     # via kombu
 appdirs==1.4.4
     # via fs
-babel==2.9.0
+babel==2.9.1
     # via sphinx
 billiard==3.6.4.0
     # via celery
@@ -57,7 +57,7 @@ django-waffle==2.1.0
     #   -r requirements/base.in
     #   edx-django-utils
     #   edx-drf-extensions
-django-webpack-loader==0.7.0
+django-webpack-loader==1.0.0
     # via -r requirements/base.in
 django==2.2.20
     # via
@@ -90,7 +90,7 @@ docutils==0.16
     #   sphinx
 drf-jwt==1.19.0
     # via edx-drf-extensions
-edx-django-utils==3.16.0
+edx-django-utils==4.0.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -133,6 +133,7 @@ lxml==4.6.3
 markupsafe==1.1.1
     # via
     #   jinja2
+    #   sphinx
     #   xblock
 newrelic==6.2.0.156
     # via edx-django-utils
@@ -140,7 +141,7 @@ packaging==20.9
     # via
     #   bleach
     #   sphinx
-pbr==5.5.1
+pbr==5.6.0
     # via stevedore
 pockets==0.9.1
     # via sphinxcontrib-napoleon
@@ -154,7 +155,7 @@ pycryptodomex==3.10.1
     # via
     #   -r requirements/base.in
     #   pyjwkest
-pygments==2.8.1
+pygments==2.9.0
     # via
     #   doc8
     #   readme-renderer
@@ -163,10 +164,11 @@ pyjwkest==1.4.2
     # via edx-drf-extensions
 pyjwt[crypto]==1.7.1
     # via
+    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-rest-api-client
-pymongo==3.11.3
+pymongo==3.11.4
     # via
     #   edx-opaque-keys
     #   event-tracking
@@ -201,11 +203,11 @@ rest-condition==1.0.3
     # via edx-drf-extensions
 restructuredtext-lint==1.3.2
     # via doc8
-rules==2.2
+rules==3.0
     # via -r requirements/base.in
 semantic-version==2.8.5
     # via edx-drf-extensions
-six==1.15.0
+six==1.16.0
     # via
     #   bleach
     #   click-repl
@@ -224,7 +226,7 @@ slumber==0.7.1
     # via edx-rest-api-client
 snowballstemmer==2.1.0
     # via sphinx
-sphinx==3.5.4
+sphinx==4.0.1
     # via
     #   -r requirements/doc.in
     #   edx-sphinx-theme
