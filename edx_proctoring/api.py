@@ -64,7 +64,7 @@ from edx_proctoring.utils import (
     humanized_time,
     is_reattempting_exam,
     obscured_user_id,
-    verify_and_add_wait_deadline,
+    verify_and_add_wait_deadline
 )
 
 log = logging.getLogger(__name__)

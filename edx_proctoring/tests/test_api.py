@@ -12,8 +12,8 @@ import pytz
 from freezegun import freeze_time
 from mock import MagicMock, patch
 
-from django.core import mail
 from django.conf import settings
+from django.core import mail
 from django.test.utils import override_settings
 from django.urls import reverse
 

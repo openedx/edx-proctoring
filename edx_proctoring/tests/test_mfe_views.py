@@ -2,6 +2,7 @@
 Tests for the MFE proctored exam views.
 """
 import json
+
 import ddt
 
 from django.conf import settings
