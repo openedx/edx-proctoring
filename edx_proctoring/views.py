@@ -228,7 +228,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                     )
                 exam.update({'attempt': attempt_data})
             except ProctoredExamNotFoundException:
-                exam = {}
+                exam = {'attempt': attempt_data}
 
         response_dict = {
             'exam': exam,

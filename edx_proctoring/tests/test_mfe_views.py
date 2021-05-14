@@ -114,3 +114,23 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         self.assertHasExamData(response_data, has_attempt=True)
         self.assertEqual(exam_data['attempt']['exam_url_path'], self.expected_exam_url)
         self.assertEqual(exam_data['attempt']['attempt_status'], ProctoredExamStudentAttemptStatus.submitted)
+
+    def test_no_exam_data_returned_for_non_exam_sequence(self):
+        """
+        Test empty exam data is returned for content_id of non-exam sequence item.
+        """
+        url = reverse(
+            'edx_proctoring:proctored_exam.exam_attempts',
+            kwargs={
+                'course_id': self.course_id,
+                'content_id': 'block-v1:test+course+1+type@sequential+block@unit'
+            }
+        ) + '?is_learning_mfe=true'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        exam_data = response_data['exam']
+        assert 'active_attempt' in response_data
+        assert not response_data['active_attempt']
+        assert 'attempt' in exam_data
+        assert not exam_data['attempt']

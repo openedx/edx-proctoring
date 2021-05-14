@@ -1578,6 +1578,43 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertNotEqual(attempt['status'], "started")
         self.assertNotEqual(attempt['status'], "ready_to_start")
 
+    def test_get_status_of_exam_attempt(self):
+        """
+        Test Case for retrieving student proctored exam attempt status.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.user.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True
+        }
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+
+        attempt = get_exam_attempt_by_id(data['exam_attempt_id'])
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.started)
+
+        response = self.client.get(
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertIn('attempt_status', data)
+        self.assertEqual(data['attempt_status'], ProctoredExamStudentAttemptStatus.started)
+
     @ddt.data(
         ('fakeexternalid', 404, ProctoredExamStudentAttemptStatus.created),
         ('testexternalid', 200, ProctoredExamStudentAttemptStatus.ready_to_start)
