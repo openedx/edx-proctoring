@@ -4,7 +4,6 @@
 """
 All tests for the api.py
 """
-import json
 from datetime import datetime, timedelta
 from itertools import product
 

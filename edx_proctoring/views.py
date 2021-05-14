@@ -199,7 +199,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         attempt_data = {}
         active_exam = {}
 
-        is_learning_mfe = True if request.GET.get('is_learning_mfe') in ['1', 'true', 'True', True] else False
+        is_learning_mfe = request.GET.get('is_learning_mfe') in ['1', 'true', 'True', True]
 
         active_exams = get_active_exams_for_user(request.user.id)
         if active_exams:
