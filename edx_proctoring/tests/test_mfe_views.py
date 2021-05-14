@@ -132,5 +132,4 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         exam_data = response_data['exam']
         assert 'active_attempt' in response_data
         assert not response_data['active_attempt']
-        assert 'attempt' in exam_data
-        assert not exam_data['attempt']
+        assert not exam_data
