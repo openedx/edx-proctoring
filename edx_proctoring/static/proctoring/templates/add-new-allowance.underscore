@@ -1,3 +1,8 @@
+<style>
+    select#proctored_exam {
+        width: 100%;
+    }
+</style>
 <div class='modal-header'><%- gettext("Add a New Allowance") %></div>
 <form>
     <h3 class='error-response'><h3>

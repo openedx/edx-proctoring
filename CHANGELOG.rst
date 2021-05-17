@@ -13,6 +13,11 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.9.3] - 2021-05-18
+~~~~~~~~~~~~~~~~~~~~
+* Fix styling on allowance dropdown to prevent overflow for long exam names.
+
 [3.9.2] - 2021-05-17
 ~~~~~~~~~~~~~~~~~~~~
 * Remove the hide condition for onboarding exam reset by student. Roll out Proctoring Improvement Waffle Flag
