@@ -19,7 +19,7 @@ Unreleased
 * Add the backend model field is_resumable to the ProctoredExamStudentAttempt model.
 * Expose the is_resumable property to the UI so users can resume exam attempts when that property is set
 
-[3.9.0] - 2021-05-07
+[3.9.0] - 2021-05-17
 ~~~~~~~~~~~~~~~~~~~~
 * Add API endpoint which provides sequence exam data with current active attempt.
   Usage case is to provide required data for the learning app MFE.
