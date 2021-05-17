@@ -32,25 +32,23 @@
       to validate that your setup still meets the requirements for proctoring.
     {% endblocktrans %}
   </p>
-  {% if experimental_proctoring_features %}
-    <p>
-      {% blocktrans %}
-        If you have made an error in this submission you may restart the onboarding process. 
-        Your current submission will be removed and will not receive a review.
-      {% endblocktrans %}
-      </br>
-      {% trans "I understand and want to reset this onboarding exam." as retry_confirm %}
-      <button type="button" class="btn btn-link exam-action-confirm" data-cta-text="{{ retry_confirm }}">
-        {{ retry_confirm }}
-      </button>
-    </p>
-    <p>
-      {% trans "Retry my exam" as retry_exam %}
-      <button type="button" class="exam-action-button proctored-reset-onboarding btn btn-pl-primary btn-base" disabled data-action="reset_attempt" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" data-cta-text="{{ retry_exam }}">
-        {{ retry_exam }}
-      </button>
-    </p>
-  {% endif %}
+  <p>
+    {% blocktrans %}
+      If you have made an error in this submission you may restart the onboarding process. 
+      Your current submission will be removed and will not receive a review.
+    {% endblocktrans %}
+    </br>
+    {% trans "I understand and want to reset this onboarding exam." as retry_confirm %}
+    <button type="button" class="btn btn-link exam-action-confirm" data-cta-text="{{ retry_confirm }}">
+      {{ retry_confirm }}
+    </button>
+  </p>
+  <p>
+    {% trans "Retry my exam" as retry_exam %}
+    <button type="button" class="exam-action-button proctored-reset-onboarding btn btn-pl-primary btn-base" disabled data-action="reset_attempt" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" data-cta-text="{{ retry_exam }}">
+      {{ retry_exam }}
+    </button>
+  </p>
   <p>
     {% blocktrans %}
       Please contact
