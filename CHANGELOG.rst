@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[3.9.2] - 2021-05-17
+~~~~~~~~~~~~~~~~~~~~
+* Remove the hide condition for onboarding exam reset by student. Roll out Proctoring Improvement Waffle Flag
 
 [3.9.1] - 2021-05-17
 ~~~~~~~~~~~~~~~~~~~~

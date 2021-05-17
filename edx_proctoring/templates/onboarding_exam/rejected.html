@@ -8,32 +8,20 @@
 {% endblock %}
 
 {% block body %}
-
-  {% if experimental_proctoring_features %}
-    <p>
-      {% blocktrans %}
-        Please contact
-        <a href="mailto:{{ integration_specific_email }}">
-          {{ integration_specific_email }}
-        </a> if you have questions. You may retake this onboarding exam by clicking "Retry my exam".
-      {% endblocktrans %}
-    </p>
-    <div>
-      {% trans "Retry my exam" as retry_exam %}
-      <button type="button" class="exam-action-button proctored-reset-onboarding btn btn-pl-primary btn-base" data-action="reset_attempt" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" data-loading-text="<span class='fa fa-circle-o-notch fa-spin'></span> {% trans 'Resetting Onboarding Exam' %}" data-cta-text="{{ retry_exam }}">
-        {{ retry_exam }}
-      </button>
-    </div>
-  {% else %}
-    <p>
-      {% blocktrans %}
-        Please contact
-        <a href="mailto:{{ integration_specific_email }}">
-          {{ integration_specific_email }}
-        </a> if you have questions, or to retry your onboarding exam.
-      {% endblocktrans %}
-    </p>
-  {% endif %}
+  <p>
+    {% blocktrans %}
+      Please contact
+      <a href="mailto:{{ integration_specific_email }}">
+        {{ integration_specific_email }}
+      </a> if you have questions. You may retake this onboarding exam by clicking "Retry my exam".
+    {% endblocktrans %}
+  </p>
+  <div>
+    {% trans "Retry my exam" as retry_exam %}
+    <button type="button" class="exam-action-button proctored-reset-onboarding btn btn-pl-primary btn-base" data-action="reset_attempt" data-exam-id="{{exam_id}}" data-change-state-url="{{change_state_url}}" data-loading-text="<span class='fa fa-circle-o-notch fa-spin'></span> {% trans 'Resetting Onboarding Exam' %}" data-cta-text="{{ retry_exam }}">
+      {{ retry_exam }}
+    </button>
+  </div>
   <script>
     $('.exam-action-button').click(
         edx.courseware.proctored_exam.updateStatusHandler
