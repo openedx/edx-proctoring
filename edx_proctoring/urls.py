@@ -9,6 +9,8 @@ from edx_proctoring import callbacks, instructor_dashboard_exam_urls, views
 
 app_name = u'edx_proctoring'
 
+CONTENT_ID_PATTERN = r'(?P<content_id>([A-z0-9]+|(?:i4x://?[^/]+/[^/]+/[^/]+/[^@]+(?:@[^/]+)?)|(?:[^/]+)))'
+
 urlpatterns = [
     url(
         r'edx_proctoring/v1/proctored_exam/exam$',
@@ -108,6 +110,12 @@ urlpatterns = [
         views.UserRetirement.as_view(),
         name='user_retirement_api'
     ),
+    url(
+        r'edx_proctoring/v1/proctored_exam/attempt/course_id/{}/content_id/{}$'.format(
+            settings.COURSE_ID_PATTERN, CONTENT_ID_PATTERN),
+        views.ProctoredExamAttemptView.as_view(),
+        name='proctored_exam.exam_attempts'
+    ),
 
     # Unauthenticated callbacks from SoftwareSecure. Note we use other
     # security token measures to protect data
@@ -127,7 +135,7 @@ urlpatterns = [
         views.StudentProctoredExamResetAttempts.as_view(),
         name='proctored_exam.attempts.reset'
     ),
-    url(r'^', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
 urlpatterns += instructor_dashboard_exam_urls.urlpatterns

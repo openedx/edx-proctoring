@@ -1578,6 +1578,43 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertNotEqual(attempt['status'], "started")
         self.assertNotEqual(attempt['status'], "ready_to_start")
 
+    def test_get_status_of_exam_attempt(self):
+        """
+        Test Case for retrieving student proctored exam attempt status.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90
+        )
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.user.id,
+            'external_id': proctored_exam.external_id,
+            'start_clock': True
+        }
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+
+        attempt = get_exam_attempt_by_id(data['exam_attempt_id'])
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.started)
+
+        response = self.client.get(
+            reverse('edx_proctoring:proctored_exam.attempt.collection')
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertIn('attempt_status', data)
+        self.assertEqual(data['attempt_status'], ProctoredExamStudentAttemptStatus.started)
+
     @ddt.data(
         ('fakeexternalid', 404, ProctoredExamStudentAttemptStatus.created),
         ('testexternalid', 200, ProctoredExamStudentAttemptStatus.ready_to_start)
@@ -2781,90 +2818,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['detail'], 'Attempted to update attempt_id=0 but it does not exist.')
 
-    def test_get_exam_attempt(self):
-        """
-        Test Case for retrieving student proctored exam attempt status.
-        """
-        # Create an exam.
-        proctored_exam = ProctoredExam.objects.create(
-            course_id='a/b/c',
-            content_id='test_content',
-            exam_name='Test Exam',
-            external_id='123aXqe3',
-            time_limit_mins=90
-        )
-        response = self.client.get(
-            reverse('edx_proctoring:proctored_exam.attempt.collection')
-        )
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content.decode('utf-8'))
-        self.assertNotIn('exam_display_name', data)
-
-        attempt_data = {
-            'exam_id': proctored_exam.id,
-            'user_id': self.user.id,
-            'external_id': proctored_exam.external_id,
-            'start_clock': True
-        }
-        response = self.client.post(
-            reverse('edx_proctoring:proctored_exam.attempt.collection'),
-            attempt_data
-        )
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.get(
-            reverse('edx_proctoring:proctored_exam.attempt.collection')
-        )
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['exam_display_name'], 'Test Exam')
-        self.assertEqual(data['low_threshold_sec'], 1080)
-        self.assertEqual(data['critically_low_threshold_sec'], 270)
-        # make sure we have the accessible human string
-        self.assertEqual(data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
-
-    def test_get_exam_attempt_with_non_staff_user(self):  # pylint: disable=invalid-name
-        """
-        Test Case for retrieving student proctored exam attempt status.
-        """
-        # Create an exam.
-        proctored_exam = ProctoredExam.objects.create(
-            course_id='a/b/c',
-            content_id='test_content',
-            exam_name='Test Exam',
-            external_id='123aXqe3',
-            time_limit_mins=90
-        )
-        response = self.client.get(
-            reverse('edx_proctoring:proctored_exam.attempt.collection')
-        )
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content.decode('utf-8'))
-        self.assertNotIn('exam_display_name', data)
-
-        attempt_data = {
-            'exam_id': proctored_exam.id,
-            'user_id': self.user.id,
-            'external_id': proctored_exam.external_id,
-            'start_clock': True
-        }
-        response = self.client.post(
-            reverse('edx_proctoring:proctored_exam.attempt.collection'),
-            attempt_data
-        )
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.get(
-            reverse('edx_proctoring:proctored_exam.attempt.collection')
-        )
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['exam_display_name'], 'Test Exam')
-        self.assertEqual(data['low_threshold_sec'], 1080)
-        self.assertEqual(data['critically_low_threshold_sec'], 270)
-        # make sure we have the accessible human string
-        self.assertEqual(data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
-
     def test_get_expired_attempt(self):
         """
         Test Case for retrieving student proctored exam attempt status after it has expired
@@ -3203,59 +3156,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, 405)
-
-    @ddt.data(
-        (True, True, 'an onboarding exam'),
-        (True, False, 'a proctored exam'),
-        (False, False, 'a timed exam')
-    )
-    @ddt.unpack
-    def test_exam_type(self, is_proctored, is_practice, expected_exam_type):
-        """
-        Testing the exam type
-        """
-        self._test_exam_type(is_proctored, is_practice, expected_exam_type)
-
-    def _test_exam_type(self, is_proctored, is_practice, expected_exam_type):
-        """
-        Testing the exam type
-        """
-        proctored_exam = ProctoredExam.objects.create(
-            course_id='a/b/c',
-            content_id='test_content',
-            exam_name='Test Exam',
-            external_id='123aXqe3',
-            time_limit_mins=90,
-            is_proctored=is_proctored,
-            is_practice_exam=is_practice
-        )
-
-        ProctoredExamStudentAttempt.objects.create(
-            proctored_exam=proctored_exam,
-            user=self.user,
-            allowed_time_limit_mins=90,
-            taking_as_proctored=is_proctored,
-            is_sample_attempt=is_practice,
-            external_id=proctored_exam.external_id,
-            status=ProctoredExamStudentAttemptStatus.started
-        )
-
-        response = self.client.get(
-            reverse('edx_proctoring:proctored_exam.attempt.collection')
-        )
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['exam_type'], expected_exam_type)
-
-    def test_practice_exam_type(self):
-        """
-        Test practice exam type with short special setup and teardown
-        """
-        test_backend = get_backend_provider(name='test')
-        previous_value = test_backend.supports_onboarding
-        test_backend.supports_onboarding = False
-        self._test_exam_type(True, True, 'a practice exam')
-        test_backend.supports_onboarding = previous_value
 
     def _create_proctored_exam_attempt_with_duedate(self, due_date=datetime.now(pytz.UTC), user=None):
         """

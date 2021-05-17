@@ -300,3 +300,13 @@ def get_visibility_check_date(course_schedule, usage_key):
         visibility_check_date = exam_schedule_item.due
 
     return visibility_check_date
+
+
+def get_exam_type(provider, attempt):
+    """ Helper that returns exam type string by backend provider and exam attempt params. """
+    return (
+        _('a timed exam') if not attempt['taking_as_proctored'] else
+        (_('a proctored exam') if not attempt['is_sample_attempt'] else
+         (_('an onboarding exam') if (provider and provider.supports_onboarding) else
+          _('a practice exam')))
+    )

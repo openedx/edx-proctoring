@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 
 import pytz
 from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey, UsageKey
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -57,6 +58,8 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import (
     emit_event,
     get_exam_due_date,
+    get_exam_type,
+    get_time_remaining_for_attempt,
     has_due_date_passed,
     humanized_time,
     is_reattempting_exam,
@@ -547,6 +550,73 @@ def get_exam_attempt_by_code(attempt_code):
     """
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
     return _get_exam_attempt(exam_attempt_obj)
+
+
+def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
+    """
+    Args:
+        int: exam id
+        int: exam attempt id
+        bool: indicates if exam_url_path should be built for the MFE
+    Returns:
+        dict: our exam attempt
+    """
+
+    exam = get_exam_by_id(exam_id)
+    attempt = get_exam_attempt_by_id(attempt_id)
+    provider = get_backend_provider(exam)
+
+    time_remaining_seconds = get_time_remaining_for_attempt(attempt)
+
+    proctoring_settings = getattr(settings, 'PROCTORING_SETTINGS', {})
+    low_threshold_pct = proctoring_settings.get('low_threshold_pct', .2)
+    critically_low_threshold_pct = proctoring_settings.get('critically_low_threshold_pct', .05)
+
+    allowed_time_limit_mins = attempt.get('allowed_time_limit_mins', 0)
+
+    low_threshold = int(low_threshold_pct * float(allowed_time_limit_mins) * 60)
+    critically_low_threshold = int(
+        critically_low_threshold_pct * float(allowed_time_limit_mins) * 60
+    )
+
+    # resolve the LMS url, note we can't assume we're running in
+    # a same process as the LMS
+    if is_learning_mfe:
+        course_key = CourseKey.from_string(exam['course_id'])
+        usage_key = UsageKey.from_string(exam['content_id'])
+        exam_url_path = '{}/course/{}/{}'.format(settings.LEARNING_MICROFRONTEND_URL, course_key, usage_key)
+
+    else:
+        exam_url_path = reverse('jump_to', args=[exam['course_id'], exam['content_id']])
+
+    attempt_data = {
+        'in_timed_exam': True,
+        'taking_as_proctored': attempt['taking_as_proctored'],
+        'exam_type': get_exam_type(provider, attempt),
+        'exam_display_name': exam['exam_name'],
+        'exam_url_path': exam_url_path,
+        'time_remaining_seconds': time_remaining_seconds,
+        'low_threshold_sec': low_threshold,
+        'critically_low_threshold_sec': critically_low_threshold,
+        'course_id': exam['course_id'],
+        'attempt_id': attempt['id'],
+        'accessibility_time_string': _('you have {remaining_time} remaining').format(
+            remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
+        ),
+        'attempt_status': attempt['status'],
+        'exam_started_poll_url': reverse(
+            'edx_proctoring:proctored_exam.attempt',
+            args=[attempt['id']]
+        ),
+    }
+
+    if provider:
+        attempt_data['desktop_application_js_url'] = provider.get_javascript()
+        attempt_data['ping_interval'] = provider.ping_interval
+    else:
+        attempt_data['desktop_application_js_url'] = ''
+
+    return attempt_data
 
 
 def update_exam_attempt(attempt_id, **kwargs):

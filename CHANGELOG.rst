@@ -14,6 +14,13 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.9.0] - 2021-05-07
+~~~~~~~~~~~~~~~~~~~~
+* Add API endpoint which provides sequence exam data with current active attempt.
+  Usage case is to provide required data for the learning app MFE.
+* Moved StudentProctoredExamAttemptCollection collecting attempt data logic
+  to a separate standalone `get_exam_attempt_data` function.
+
 [3.8.9] - 2021-05-07
 ~~~~~~~~~~~~~~~~~~~~
 * Update language on proctored exam info panel if learner has

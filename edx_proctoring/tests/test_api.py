@@ -4,7 +4,6 @@
 """
 All tests for the api.py
 """
-
 from datetime import datetime, timedelta
 from itertools import product
 
@@ -13,7 +12,10 @@ import pytz
 from freezegun import freeze_time
 from mock import MagicMock, patch
 
+from django.conf import settings
 from django.core import mail
+from django.test.utils import override_settings
+from django.urls import reverse
 
 from edx_proctoring.api import (
     _are_prerequirements_satisfied,
@@ -34,6 +36,7 @@ from edx_proctoring.api import (
     get_current_exam_attempt,
     get_enrollments_can_take_proctored_exams,
     get_exam_attempt_by_id,
+    get_exam_attempt_data,
     get_exam_by_content_id,
     get_exam_by_id,
     get_exam_configuration_dashboard_url,
@@ -2913,3 +2916,126 @@ class LastVerifiedOnboardingAttemptsTests(ProctoredExamTestCase):
         self.assertEqual(9, len(attempts_dict.items()))
         self._assert_verified_attempts(all_users[0:5], attempts_dict)
         self._assert_verified_attempts(third_course_verified, attempts_dict)
+
+
+@ddt.ddt
+class GetExamAttemptDataTests(ProctoredExamTestCase):
+    """
+    Tests for get_exam_attempt_data.
+    """
+    def setUp(self):
+        """
+        Initialize
+        """
+        super().setUp()
+        self.timed_exam_id = self._create_timed_exam()
+        self.proctored_exam_id = self._create_proctored_exam()
+
+    @ddt.data(
+        (True, False),
+        (True, True),
+        (False, False),
+        (False, True),
+    )
+    @ddt.unpack
+    @override_settings(LEARNING_MICROFRONTEND_URL='http://learningmfe')
+    def test_get_exam_attempt_data(self, is_proctored_exam, is_learning_mfe):
+        """ Test expected attempt data returned by get_exam_attempt_data. """
+        attempt = self._create_started_exam_attempt(is_proctored=is_proctored_exam)
+        exam_id = self.timed_exam_id if not is_proctored_exam else self.proctored_exam_id
+        attempt_data = get_exam_attempt_data(exam_id, attempt.id, is_learning_mfe)
+        content_id = self.content_id if is_proctored_exam else self.content_id_timed
+        expected_exam_url = '{}/course/{}/{}'.format(
+            settings.LEARNING_MICROFRONTEND_URL, self.course_id, content_id
+        ) if is_learning_mfe else reverse('jump_to', args=[self.course_id, content_id])
+
+        assert attempt_data
+        assert 'attempt_id' in attempt_data
+        assert attempt_data['attempt_id'] == attempt.id
+        assert 'exam_url_path' in attempt_data
+        assert attempt_data['exam_url_path'] == expected_exam_url
+
+    @ddt.data(
+        (True, True, 'an onboarding exam'),
+        (True, False, 'a proctored exam'),
+        (False, False, 'a timed exam')
+    )
+    @ddt.unpack
+    def test_exam_type(self, is_proctored, is_practice, expected_exam_type):
+        """
+        Testing the exam type
+        """
+        self._test_exam_type(is_proctored, is_practice, expected_exam_type)
+
+    def _test_exam_type(self, is_proctored, is_practice, expected_exam_type):
+        """
+        Testing the exam type
+        """
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=is_proctored,
+            is_practice_exam=is_practice
+        )
+
+        attempt = ProctoredExamStudentAttempt.objects.create(
+            proctored_exam=proctored_exam,
+            user=self.user,
+            allowed_time_limit_mins=90,
+            taking_as_proctored=is_proctored,
+            is_sample_attempt=is_practice,
+            external_id=proctored_exam.external_id,
+            status=ProctoredExamStudentAttemptStatus.started
+        )
+
+        data = get_exam_attempt_data(proctored_exam.id, attempt.id)
+        self.assertEqual(data['exam_type'], expected_exam_type)
+
+    def test_practice_exam_type(self):
+        """
+        Test practice exam type with short special setup and teardown
+        """
+        test_backend = get_backend_provider(name='test')
+        previous_value = test_backend.supports_onboarding
+        test_backend.supports_onboarding = False
+        self._test_exam_type(True, True, 'a practice exam')
+        test_backend.supports_onboarding = previous_value
+
+    @ddt.data(True, False)
+    def test_get_exam_attempt(self, is_proctored):
+        """
+        Test Case for retrieving student proctored exam attempt status.
+        """
+        # Create an exam.
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=is_proctored
+        )
+
+        attempt_data = {
+            'exam_id': proctored_exam.id,
+            'user_id': self.user.id,
+            'external_id': proctored_exam.external_id,
+            'attempt_proctored': is_proctored,
+            'start_clock': True
+        }
+        response = self.client.post(
+            reverse('edx_proctoring:proctored_exam.attempt.collection'),
+            attempt_data
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = response.json()
+
+        data = get_exam_attempt_data(proctored_exam.id, response_data['exam_attempt_id'])
+        self.assertEqual(data['exam_display_name'], 'Test Exam')
+        self.assertEqual(data['low_threshold_sec'], 1080)
+        self.assertEqual(data['critically_low_threshold_sec'], 270)
+        # make sure we have the accessible human string
+        self.assertEqual(data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
