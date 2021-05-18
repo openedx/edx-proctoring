@@ -316,6 +316,14 @@ If no ``user_id`` is provided, a list of attempts will be returned. This list ca
 This URL can be accessed through the ``get_onboarding_attempts`` method of the ``edx_proctoring.backends.rest.BaseRestProctoringProvider`` class. If either the URL or the method need to be changed,
 both can be overriden.
 
+The following status strings can be filtered for or returned in Verificient's implementation::
+
+    * approved-in-course
+    * approved-in-different-course
+    * rejected
+    * expired
+    * pending
+    * no-profile
 
 Python wrapper
 --------------

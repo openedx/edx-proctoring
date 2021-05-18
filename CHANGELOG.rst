@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.10.2] - 2021-05-24
+~~~~~~~~~~~~~~~~~~~~~
+* Use onboarding status API endpoint for student onboarding info panel
+
 [3.10.1] - 2021-05-21
 ~~~~~~~~~~~~~~~~~~~~~
 * Add ability to get onboarding statuses from a proctoring provider API endpoint

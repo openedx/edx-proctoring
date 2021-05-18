@@ -4,7 +4,7 @@ Proctored Exams HTTP-based API endpoints
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from urllib.parse import urlencode
 
 import pytz
@@ -42,6 +42,7 @@ from edx_proctoring.api import (
     get_exam_by_content_id,
     get_exam_by_id,
     get_last_verified_onboarding_attempts_per_user,
+    get_onboarding_attempt_data_for_learner,
     get_proctoring_settings_by_exam_id,
     get_user_attempts_by_exam_id,
     is_exam_passed_due,
@@ -55,8 +56,9 @@ from edx_proctoring.api import (
     update_exam,
     update_exam_attempt
 )
-from edx_proctoring.constants import PING_FAILURE_PASSTHROUGH_TEMPLATE
+from edx_proctoring.constants import ONBOARDING_PROFILE_API, PING_FAILURE_PASSTHROUGH_TEMPLATE
 from edx_proctoring.exceptions import (
+    BackendProviderOnboardingProfilesException,
     ProctoredBaseException,
     ProctoredExamNotFoundException,
     ProctoredExamPermissionDenied,
@@ -78,7 +80,8 @@ from edx_proctoring.statuses import (
     InstructorDashboardOnboardingAttemptStatus,
     ProctoredExamStudentAttemptStatus,
     ReviewStatus,
-    SoftwareSecureReviewStatus
+    SoftwareSecureReviewStatus,
+    VerificientOnboardingProfileStatus
 )
 from edx_proctoring.utils import (
     AuthenticatedAPIView,
@@ -420,7 +423,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         * 'onboarding_expiration_date': If the learner's onboarding profile is approved in a different
           course, the expiration date will be included. Will return NULL otherwise.
     """
-    def get(self, request):
+    def get(self, request):  # pylint: disable=too-many-statements
         """
         HTTP GET handler. Returns the learner's onboarding status.
         """
@@ -451,7 +454,6 @@ class StudentOnboardingStatusView(ProctoredAPIView):
                         data={'detail': _('Must be a Staff User to Perform this request.')}
                     )
 
-        # If there are multiple onboarding exams, use the first exam accessible to the user
         onboarding_exams = list(ProctoredExam.get_practice_proctored_exams_for_course(course_id).order_by('-created'))
         if not onboarding_exams or not get_backend_provider(name=onboarding_exams[0].backend).supports_onboarding:
             return Response(
@@ -460,6 +462,8 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             )
 
         backend = get_backend_provider(name=onboarding_exams[0].backend)
+
+        # If there are multiple onboarding exams, use the first exam accessible to the user
         learning_sequences_service = get_runtime_service('learning_sequences')
         course_key = CourseKey.from_string(course_id)
         user = get_user_model().objects.get(username=(username or request.user.username))
@@ -500,29 +504,66 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         data['onboarding_release_date'] = effective_start.isoformat()
         data['review_requirements_url'] = backend.help_center_article_url
 
-        attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(course_id, [user])
+        # get onboarding attempt info for the learner from django model
+        onboarding_attempt_data = get_onboarding_attempt_data_for_learner(course_id, user, onboarding_exam.backend)
+        data['onboarding_status'] = onboarding_attempt_data['onboarding_status']
+        data['expiration_date'] = onboarding_attempt_data['expiration_date']
 
-        # Default to the most recent attempt in the course if there are no verified attempts
-        relevant_attempt = attempts[0] if attempts else None
-        for attempt in attempts:
-            if attempt.status == ProctoredExamStudentAttemptStatus.verified:
-                relevant_attempt = attempt
-                break
+        if waffle.switch_is_active(ONBOARDING_PROFILE_API):
+            try:
+                onboarding_profile_data = backend.get_onboarding_profile_info(course_id=course_id, user_id=user.id)
+            except BackendProviderOnboardingProfilesException as exc:
+                # if backend raises exception, log message and return data from onboarding exam attempt
+                log_message = (
+                    'Failed to use backend onboarding status API endpoint for user_id={user_id}'
+                    'in course_id={course_id} because backend failed to respond. Onboarding status'
+                    'will be determined by the user\'s onboarding attempts. '
+                    'Status: {status}, Response: {response}.'.format(
+                        user_id=user.id,
+                        course_id=course_id,
+                        response=str(exc),
+                        status=exc.http_status,
+                    )
+                )
+                LOG.warning(log_message)
+                return Response(data)
 
-        # If there is no verified attempt in the current course, check for a verified attempt in another course
-        verified_attempt = None
-        if not relevant_attempt or relevant_attempt.status != ProctoredExamStudentAttemptStatus.verified:
-            attempt_dict = get_last_verified_onboarding_attempts_per_user(
-                [user],
-                onboarding_exam.backend,
+            if onboarding_profile_data is None:
+                return Response(
+                    data=_('No onboarding status API for {proctor_service}').format(
+                        proctor_service=backend.verbose_name
+                    ),
+                    status=404,
+                )
+
+            readable_status = \
+                VerificientOnboardingProfileStatus.get_edx_status_from_profile_status(
+                    onboarding_profile_data['status']
+                )
+            expiration_date = onboarding_profile_data['expiration_date']
+
+            if readable_status != data['onboarding_status']:
+                log_message = (
+                    'Backend onboarding status API endpoint info for user_id={user_id}'
+                    'in course_id={course_id} differs from system info. Endpoint onboarding attempt'
+                    'has status={endpoint_status}. System onboarding attempt has status={system_status}.'.format(
+                        user_id=user.id,
+                        course_id=course_id,
+                        endpoint_status=readable_status,
+                        system_status=data['onboarding_status']
+                    )
+                )
+                LOG.error(log_message)
+
+            data['onboarding_status'] = readable_status
+            data['expiration_date'] = expiration_date
+            LOG.info(
+                'Used backend onboarding status API endpoint to retrieve user_id={user_id}'
+                'in course_id={course_id}'.format(
+                    user_id=user.id,
+                    course_id=course_id
+                )
             )
-            verified_attempt = attempt_dict.get(user.id)
-
-        if verified_attempt:
-            data['onboarding_status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
-            data['expiration_date'] = verified_attempt.modified + timedelta(days=730)
-        elif relevant_attempt:
-            data['onboarding_status'] = relevant_attempt.status
 
         return Response(data)
 

@@ -106,9 +106,9 @@ class BackendProviderOnboardingException(ProctoredBaseException):
         self.status = exam_status
 
 
-class BackendProviderOnboardingStatusesException(ProctoredBaseException):
+class BackendProviderOnboardingProfilesException(ProctoredBaseException):
     """
-    Raised when a backend provider cannot get the requested onboarding statuses
+    Raised when a backend provider cannot get the requested onboarding profiles
     """
     def __init__(self, content, http_status):
         super().__init__(self, content)

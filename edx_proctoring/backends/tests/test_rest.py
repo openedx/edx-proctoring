@@ -17,7 +17,7 @@ from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
-    BackendProviderOnboardingStatusesException,
+    BackendProviderOnboardingProfilesException,
     BackendProviderSentNoAttemptID
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -417,7 +417,7 @@ class RESTBackendTests(TestCase):
             self.provider.retire_user(user_id)
 
     @responses.activate
-    def test_get_onboarding_status_for_user(self):
+    def test_get_onboarding_profile_for_user(self):
         user_id = 'abcdef5'
         course_id = 'course+abc'
         response_json = {'user_id': user_id, 'status': 'rejected', 'expiration_date': None}
@@ -426,11 +426,11 @@ class RESTBackendTests(TestCase):
             url=self.provider.onboarding_statuses_url.format(course_id=course_id)+'?user_id='+user_id,
             json=response_json
         )
-        result = self.provider.get_onboarding_attempts(course_id=course_id, user_id=user_id)
+        result = self.provider.get_onboarding_profile_info(course_id=course_id, user_id=user_id)
         assert result == response_json
 
     @responses.activate
-    def test_get_onboarding_statuses_for_course_with_query_params(self):
+    def test_get_onboarding_profiles_for_course_with_query_params(self):
         course_id = 'course+abc'
         response_json = {
             "count": 3,
@@ -466,13 +466,13 @@ class RESTBackendTests(TestCase):
             ) + '?status=approved-in-course&page=1&page_size=3',
             json=response_json
         )
-        result = self.provider.get_onboarding_attempts(
+        result = self.provider.get_onboarding_profile_info(
             course_id=course_id, status='approved-in-course', page=1, page_size=3
         )
         assert result == response_json
 
     @responses.activate
-    def test_get_onboarding_statuses_for_course_with_no_params(self):
+    def test_get_onboarding_profiles_for_course_with_no_params(self):
         course_id = 'course+abc'
         response_json = {
             "count": 3,
@@ -496,11 +496,11 @@ class RESTBackendTests(TestCase):
             url=self.provider.onboarding_statuses_url.format(course_id=course_id),
             json=response_json
         )
-        result = self.provider.get_onboarding_attempts(course_id=course_id)
+        result = self.provider.get_onboarding_profile_info(course_id=course_id)
         assert result == response_json
 
     @responses.activate
-    def test_get_onboarding_status_for_unkown_user_id(self):
+    def test_get_onboarding_profiles_for_unknown_user_id(self):
         user_id = 'bad_user'
         course_id = 'course+abc'
         responses.add(
@@ -509,5 +509,5 @@ class RESTBackendTests(TestCase):
             json={'error': 'something'},
             status=404
         )
-        with self.assertRaises(BackendProviderOnboardingStatusesException):
-            self.provider.get_onboarding_attempts(course_id=course_id, user_id=user_id)
+        with self.assertRaises(BackendProviderOnboardingProfilesException):
+            self.provider.get_onboarding_profile_info(course_id=course_id, user_id=user_id)

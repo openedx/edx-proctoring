@@ -130,8 +130,8 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
         return False
 
     # pylint: disable=unused-argument
-    def get_onboarding_attempts(self, course_id, **kwargs):
+    def get_onboarding_profile_info(self, course_id, **kwargs):
         """
-        Returns onboarding attempts for a given course and optional user
+        Returns onboarding profile information for a given course and optional user
         """
         return None

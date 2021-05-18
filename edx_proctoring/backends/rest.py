@@ -21,7 +21,7 @@ from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
-    BackendProviderOnboardingStatusesException,
+    BackendProviderOnboardingProfilesException,
     BackendProviderSentNoAttemptID
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
@@ -338,7 +338,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             raise BackendProviderCannotRetireUser(content) from exc
         return data
 
-    def get_onboarding_attempts(self, course_id, **kwargs):
+    def get_onboarding_profile_info(self, course_id, **kwargs):
         url = self.onboarding_statuses_url.format(course_id=course_id)
         if kwargs:
             query_string = urlencode(kwargs)
@@ -347,7 +347,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         response = self.session.get(url)
 
         if response.status_code != 200:
-            raise BackendProviderOnboardingStatusesException(response.content, response.status_code)
+            raise BackendProviderOnboardingProfilesException(response.content, response.status_code)
         data = response.json()
         return data
 
