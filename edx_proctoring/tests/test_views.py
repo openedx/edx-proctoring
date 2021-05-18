@@ -792,8 +792,8 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
             BlockUsageLocator.from_string(inaccessible_onboarding_exam.content_id): exam_schedule,
         }
         set_runtime_service('learning_sequences', MockLearningSequencesService(
-            [accessible_onboarding_exam],   # sections user can see
-            course_sections,                # all scheduled sections
+            [BlockUsageLocator.from_string(accessible_onboarding_exam.content_id)],   # sections user can see
+            course_sections,                                                          # all scheduled sections
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
