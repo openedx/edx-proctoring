@@ -106,6 +106,15 @@ class BackendProviderOnboardingException(ProctoredBaseException):
         self.status = exam_status
 
 
+class BackendProviderOnboardingStatusesException(ProctoredBaseException):
+    """
+    Raised when a backend provider cannot get the requested onboarding statuses
+    """
+    def __init__(self, content, http_status):
+        super().__init__(self, content)
+        self.http_status = http_status
+
+
 class ProctoredExamPermissionDenied(ProctoredBaseException):
     """
     Raised when the calling user does not have access to the requested object.

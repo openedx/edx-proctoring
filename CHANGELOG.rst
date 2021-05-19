@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add ability to get onboarding statuses from a proctoring provider API endpoint
 
 [3.9.3] - 2021-05-18
 ~~~~~~~~~~~~~~~~~~~~
