@@ -17,6 +17,7 @@ from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
+    BackendProviderOnboardingStatusesException,
     BackendProviderSentNoAttemptID
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -414,3 +415,99 @@ class RESTBackendTests(TestCase):
         )
         with self.assertRaises(BackendProviderCannotRetireUser):
             self.provider.retire_user(user_id)
+
+    @responses.activate
+    def test_get_onboarding_status_for_user(self):
+        user_id = 'abcdef5'
+        course_id = 'course+abc'
+        response_json = {'user_id': user_id, 'status': 'rejected', 'expiration_date': None}
+        responses.add(
+            responses.GET,
+            url=self.provider.onboarding_statuses_url.format(course_id=course_id)+'?user_id='+user_id,
+            json=response_json
+        )
+        result = self.provider.get_onboarding_attempts(course_id=course_id, user_id=user_id)
+        assert result == response_json
+
+    @responses.activate
+    def test_get_onboarding_statuses_for_course_with_query_params(self):
+        course_id = 'course+abc'
+        response_json = {
+            "count": 3,
+            "next": None,
+            "previous": None,
+            "num_pages": 1,
+            "number": 1,
+            "next_page_number": None,
+            "prev_page_number": None,
+            "items_per_page": 25,
+            "results": [
+                {
+                    "user_id": "06c3",
+                    "status": "approved-in-course",
+                    "expiration_date": "2021-05-21"
+                },
+                {
+                    "user_id": "a6cf",
+                    "status": "approved-in-course",
+                    "expiration_date": "2022-01-22"
+                },
+                {
+                    "user_id": "fea7",
+                    "status": "approved-in-course",
+                    "expiration_date": "2022-03-22"
+                }
+            ]
+        }
+        responses.add(
+            responses.GET,
+            url=self.provider.onboarding_statuses_url.format(
+                course_id=course_id
+            ) + '?status=approved-in-course&page=1&page_size=3',
+            json=response_json
+        )
+        result = self.provider.get_onboarding_attempts(
+            course_id=course_id, status='approved-in-course', page=1, page_size=3
+        )
+        assert result == response_json
+
+    @responses.activate
+    def test_get_onboarding_statuses_for_course_with_no_params(self):
+        course_id = 'course+abc'
+        response_json = {
+            "count": 3,
+            "next": None,
+            "previous": None,
+            "num_pages": 1,
+            "number": 1,
+            "next_page_number": None,
+            "prev_page_number": None,
+            "items_per_page": 25,
+            "results": [
+                {
+                    "user_id": "06c3",
+                    "status": "approved-in-course",
+                    "expiration_date": "2021-05-21"
+                }
+            ]
+        }
+        responses.add(
+            responses.GET,
+            url=self.provider.onboarding_statuses_url.format(course_id=course_id),
+            json=response_json
+        )
+        result = self.provider.get_onboarding_attempts(course_id=course_id)
+        assert result == response_json
+
+    @responses.activate
+    def test_get_onboarding_status_for_unkown_user_id(self):
+        user_id = 'bad_user'
+        course_id = 'course+abc'
+        responses.add(
+            responses.GET,
+            url=self.provider.onboarding_statuses_url.format(course_id=course_id) + '?user_id=' + user_id,
+            json={'error': 'something'},
+            status=404
+        )
+        with self.assertRaises(BackendProviderOnboardingStatusesException):
+            self.provider.get_onboarding_attempts(course_id=course_id, user_id=user_id)

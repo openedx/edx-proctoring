@@ -264,6 +264,59 @@ If you wish to modify the aforementioned logic, override the ``get_instructor_ur
 
 --------
 
+Onboarding Status API Endpoint
+------------------------------
+
+A backend can also be configured to support an onboarding status API endpoint. This endpoint should return a learner's onboarding status and expiration according to the provider.
+
+By default, this URL for this endpoint will be ``base_url + u'/api/v1/courses/{course_id}/onboarding_statuses'``, with the following optional query parameters:
+
+    * ``user_id``: a string for the id of a specific user.
+    * ``status``: a string representing the status that should be filtered for
+    * ``page``: an int for the page requested
+    * ``page_size``: an int for the page size requested
+
+If the URL is supplied with a ``user_id``, only that user's attempt info will be returned. The data for a call to
+``api/v1/courses/course-v1:edX+DemoX+Demo_Course/onboarding_statuses?user_id=abc123`` will look like::
+
+    {
+        'user_id': abc123,
+        'status': {status},
+        'expiration_date' : {expiration_date}
+    }
+
+If no ``user_id`` is provided, a list of attempts will be returned. This list can be filtered by the optional query parameters. The data returned for a call to
+``api/v1/courses/course-v1:edX+DemoX+Demo_Course/onboarding_statuses?status=approved_in_course&page=2&page_size=3`` should look like::
+
+    {
+        results: [
+            {
+                user_id: {user_id},
+                status: approved_in_course,
+                expiration_date: {expiration_date}
+            },
+            {
+                user_id: {user_id},
+                status: approved_in_course,
+                expiration_date: {expiration_date}
+            },
+            {
+                user_id: {user_id},
+                status: approved_in_course,
+                expiration_date: {expiration_date}
+            },
+
+        ],
+        count: {count},
+        num_pages: {num_pages}
+        next: 3
+        previous: 1
+    }
+
+This URL can be accessed through the ``get_onboarding_attempts`` method of the ``edx_proctoring.backends.rest.BaseRestProctoringProvider`` class. If either the URL or the method need to be changed,
+both can be overriden.
+
+
 Python wrapper
 --------------
 

@@ -127,3 +127,10 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
         Whether learner access to exam content should be blocked during the exam
         """
         return False
+
+    # pylint: disable=unused-argument
+    def get_onboarding_attempts(self, course_id, **kwargs):
+        """
+        Returns onboarding attempts for a given course and optional user
+        """
+        return None

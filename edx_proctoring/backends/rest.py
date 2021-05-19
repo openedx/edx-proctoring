@@ -7,7 +7,7 @@ import logging
 import time
 import uuid
 import warnings
-from urllib.parse import urlparse  # pylint: disable=import-error, wrong-import-order
+from urllib.parse import urlencode, urlparse  # pylint: disable=import-error, wrong-import-order
 
 import jwt
 from edx_rest_api_client.client import OAuthAPIClient
@@ -21,6 +21,7 @@ from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
+    BackendProviderOnboardingStatusesException,
     BackendProviderSentNoAttemptID
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
@@ -75,6 +76,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     def user_info_url(self):
         "Returns the user info url"
         return self.base_url + u'/api/v1/user/{user_id}/'
+
+    @property
+    def onboarding_statuses_url(self):
+        "Returns the onboarding statuses url"
+        return self.base_url + u'/api/v1/courses/{course_id}/onboarding_statuses'
 
     @property
     def proctoring_instructions(self):
@@ -330,6 +336,19 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             # pylint: disable=no-member
             content = exc.response.content if hasattr(exc, 'response') else response.content
             raise BackendProviderCannotRetireUser(content) from exc
+        return data
+
+    def get_onboarding_attempts(self, course_id, **kwargs):
+        url = self.onboarding_statuses_url.format(course_id=course_id)
+        if kwargs:
+            query_string = urlencode(kwargs)
+            url += '?' + query_string
+
+        response = self.session.get(url)
+
+        if response.status_code != 200:
+            raise BackendProviderOnboardingStatusesException(response.content, response.status_code)
+        data = response.json()
         return data
 
     def _get_language_headers(self):
