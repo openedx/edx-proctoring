@@ -31,8 +31,8 @@ SOFTWARE_SECURE_INVALID_CHARS = u'[]<>#:|!?/\'"*\\'
 
 class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     """
-    Implementation of the ProctoringBackendProvider for Software Secure's
-    RPNow product
+    Implementation of the ProctoringBackendProvider for PSI's
+    (formerly Software Secure's) RPNow product
     """
     verbose_name = u'RPNow'
     passing_statuses = SoftwareSecureReviewStatus.passing_statuses
