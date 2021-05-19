@@ -712,6 +712,20 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         onboarding_link = reverse('jump_to', args=['a/b/c', self.onboarding_exam.content_id])
         self.assertEqual(response_data['onboarding_link'], onboarding_link)
 
+    def test_requirements_url_backend_specific(self):
+        """
+        Test that proctoring backend's setting affects what support center link is put in
+        """
+        backend = get_backend_provider(name=self.onboarding_exam.backend)
+        backend.help_center_article_url = 'https://example.com'
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id=a/b/c'
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['review_requirements_url'], backend.help_center_article_url)
+
     def test_ignore_history_table(self):
         """
         Test that deleted attempts are not evaluated when requesting onboarding status
