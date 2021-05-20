@@ -19,7 +19,8 @@ describe('ProctoredExamInfo', function() {
                 onboarding_status: status,
                 onboarding_link: 'onboarding_link',
                 onboarding_release_date: releaseDate,
-                expiration_date: null
+                expiration_date: null,
+                onboarding_past_due: false
             }
         );
     }
@@ -66,7 +67,9 @@ describe('ProctoredExamInfo', function() {
             '<%} %>' +
             '</div>' +
             '<% if (showOnboardingExamLink) { %>' +
-            '<% if (onboardingNotReleased) { %>' +
+            '<% if (onboardingPastDue) { %>' +
+            '<a class="action action-onboarding action-disabled"><%= gettext("Onboarding Past Due") %></a>' +
+            '<% } else if (onboardingNotReleased) { %>' +
             '<a class="action action-onboarding action-disabled">' +
             '<%= gettext("Onboarding Opens") %> <%= onboardingReleaseDate %></a>' +
             '<%} else { %>' +
@@ -263,6 +266,43 @@ describe('ProctoredExamInfo', function() {
             .toContain('You must complete the onboarding process');
         expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
             .toContain('Onboarding Opens ' + tomorrow.toLocaleDateString());
+    });
+
+    it('should render proctoring info panel correctly for past due exam', function() {
+        var twoDaysAgo = new Date();
+        var data = {
+            onboarding_status: status,
+            onboarding_link: null,
+            onboarding_release_date: twoDaysAgo,
+            expiration_date: null,
+            onboarding_past_due: true
+        };
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(data)
+            ]
+        );
+
+        this.proctored_exam_info = new edx.courseware.proctored_exam.ProctoredExamInfo({
+            el: $('.proctoring-info-panel'),
+            model: new LearnerOnboardingModel()
+        });
+        this.server.respond();
+        this.server.respond();
+        expect(this.proctored_exam_info.$el.find('.proctoring-info').css('border-top'))
+            .toEqual('5px solid rgb(178, 6, 16)');
+        expect(this.proctored_exam_info.$el.find('.onboarding-status').html())
+            .toContain('Not Started');
+        expect(this.proctored_exam_info.$el.find('.onboarding-status-message').text())
+            .toHaveLength(0);
+        expect(this.proctored_exam_info.$el.find('.onboarding-reminder').html())
+            .toContain('You must complete the onboarding process');
+        expect(this.proctored_exam_info.$el.find('.action-onboarding').html())
+            .toContain('Onboarding Past Due');
     });
 
     it('should render proctoring info panel correctly for created exam', function() {

@@ -766,9 +766,10 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         Test that the request returns a 404 error if the user cannot view the onboarding exam
         """
         course_sections = self.course_scheduled_sections
-        del course_sections[BlockUsageLocator.from_string(self.onboarding_exam.content_id)]
+        accessible_sequences = list(self.course_scheduled_sections.keys())
+        accessible_sequences.remove(BlockUsageLocator.from_string(self.onboarding_exam.content_id))
         set_runtime_service('learning_sequences', MockLearningSequencesService(
-            list(self.course_scheduled_sections.keys()),
+            accessible_sequences,
             course_sections,
         ))
         with mock_perm('edx_proctoring.can_take_proctored_exam'):
@@ -812,8 +813,8 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
             BlockUsageLocator.from_string(inaccessible_onboarding_exam.content_id): exam_schedule,
         }
         set_runtime_service('learning_sequences', MockLearningSequencesService(
-            [BlockUsageLocator.from_string(accessible_onboarding_exam.content_id)],   # sections user can see
-            course_sections,                                                          # all scheduled sections
+            [BlockUsageLocator.from_string(accessible_onboarding_exam.content_id)],  # sections user can see
+            course_sections,                                                         # all scheduled sections
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
@@ -832,8 +833,8 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         Test that the request returns 404 if onboarding exams exist but none are accessible to the user
         """
         set_runtime_service('learning_sequences', MockLearningSequencesService(
-            [],                             # sections user can see (none)
-            self.course_scheduled_sections,
+            [],                              # sections user can see (none)
+            self.course_scheduled_sections,  # all scheduled sections
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
@@ -855,7 +856,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ] = MockScheduleItemData(tomorrow, due_date=due_date)
 
         set_runtime_service('learning_sequences', MockLearningSequencesService(
-            list(self.course_scheduled_sections.keys()),
+            [],
             self.course_scheduled_sections,
         ))
 
@@ -866,9 +867,171 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['onboarding_status'], None)
+        self.assertEqual(response_data['onboarding_link'], None)
+        self.assertEqual(response_data['onboarding_release_date'], tomorrow.isoformat())
+
+    def test_onboarding_past_due(self):
+        """
+        If the onboarding section is past due, the release date and a flag indicating that onboarding
+        is past due are returned.
+        """
+        two_days_ago = timezone.now() - timezone.timedelta(days=2)
+        yesterday = timezone.now() - timezone.timedelta(days=1)
+        self.course_scheduled_sections[
+            BlockUsageLocator.from_string(self.onboarding_exam.content_id)
+        ] = MockScheduleItemData(two_days_ago, due_date=yesterday)
+
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            [],
+            self.course_scheduled_sections,
+        ))
+
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.onboarding_exam.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_past_due'], True)
+        self.assertEqual(response_data['onboarding_status'], None)
+        self.assertEqual(response_data['onboarding_link'], None)
+        self.assertEqual(response_data['onboarding_release_date'], two_days_ago.isoformat())
+
+    def test_multiple_onboarding_exams_all_past_due(self):
+        """
+        If there are multiple past due onboarding exams, then the release date of the most
+        recently created onboarding exam and a flag indicating that onboarding is past due
+        are returned.
+        """
+        onboarding_exam_2 = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='block-v1:test+course+1+type@sequential+block@onboard_2',
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+            is_active=True,
+        )
+        three_days_ago = timezone.now() - timezone.timedelta(days=3)
+        onboarding_exam_1_schedule = MockScheduleItemData(
+            timezone.now() - timezone.timedelta(days=2),
+            timezone.now() - timezone.timedelta(days=1)
+        )
+        onboarding_exam_2_schedule = MockScheduleItemData(
+            three_days_ago,
+            timezone.now() - timezone.timedelta(days=1)
+        )
+        course_sections = {
+            BlockUsageLocator.from_string(self.onboarding_exam.content_id): onboarding_exam_1_schedule,
+            BlockUsageLocator.from_string(onboarding_exam_2.content_id): onboarding_exam_2_schedule,
+        }
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            [],               # sections user can see
+            course_sections,  # all scheduled sections
+        ))
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_past_due'], True)
+        self.assertEqual(response_data['onboarding_status'], None)
+        self.assertEqual(response_data['onboarding_link'], None)
+        self.assertEqual(response_data['onboarding_release_date'], three_days_ago.isoformat())
+
+    def test_multiple_onboarding_exams_all_to_be_released(self):
+        """
+        If there are multiple onboarding exams to be released, then the release date of the most
+        recently created onboarding exam is returned.
+        """
+        onboarding_exam_2 = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='block-v1:test+course+1+type@sequential+block@onboard_2',
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+            is_active=True,
+        )
+        three_days_in_future = timezone.now() + timezone.timedelta(days=3)
+        onboarding_exam_1_schedule = MockScheduleItemData(timezone.now() + timezone.timedelta(days=2))
+        onboarding_exam_2_schedule = MockScheduleItemData(three_days_in_future)
+        course_sections = {
+            BlockUsageLocator.from_string(self.onboarding_exam.content_id): onboarding_exam_1_schedule,
+            BlockUsageLocator.from_string(onboarding_exam_2.content_id): onboarding_exam_2_schedule,
+        }
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            [],               # sections user can see
+            course_sections,  # all scheduled sections
+        ))
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_past_due'], False)
+        self.assertEqual(response_data['onboarding_status'], None)
+        self.assertEqual(response_data['onboarding_link'], None)
+        self.assertEqual(response_data['onboarding_release_date'], three_days_in_future.isoformat())
+
+    def test_multiple_onboarding_exams_mixed_favor_currently_available(self):
+        """
+        If there are multiple onboarding exams, and some are to be released, some are past due,
+        and some are currently available, then the to be currently available exam(s) is/are favored,
+        and the release date of and link to the most recently created onboarding exam
+        is returned.
+        """
+        onboarding_exam_2 = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='block-v1:test+course+1+type@sequential+block@onboard_2',
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+            is_active=True,
+        )
+        onboarding_exam_3 = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='block-v1:test+course+1+type@sequential+block@onboard_3',
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+            is_active=True,
+        )
+        tomorrow = timezone.now() + timezone.timedelta(days=1)
+        onboarding_exam_1_schedule = MockScheduleItemData(
+            timezone.now() - timezone.timedelta(days=2),
+            timezone.now() - timezone.timedelta(days=1),
+        )
+        onboarding_exam_2_schedule = MockScheduleItemData(timezone.now() + timezone.timedelta(days=1))
+        onboarding_exam_3_schedule = MockScheduleItemData(tomorrow)
+        course_sections = {
+            BlockUsageLocator.from_string(self.onboarding_exam.content_id): onboarding_exam_1_schedule,
+            BlockUsageLocator.from_string(onboarding_exam_2.content_id): onboarding_exam_2_schedule,
+            BlockUsageLocator.from_string(onboarding_exam_3.content_id): onboarding_exam_3_schedule,
+        }
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            [BlockUsageLocator.from_string(onboarding_exam_3.content_id)],  # sections user can see
+            course_sections,                                                # all scheduled sections
+        ))
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_past_due'], False)
+        self.assertEqual(response_data['onboarding_status'], None)
         self.assertEqual(response_data['onboarding_link'], reverse(
             'jump_to',
-            args=[self.onboarding_exam.course_id, self.onboarding_exam.content_id]
+            args=[onboarding_exam_3.course_id, onboarding_exam_3.content_id]
         ))
         self.assertEqual(response_data['onboarding_release_date'], tomorrow.isoformat())
 
@@ -970,6 +1133,47 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         self.assertEqual(response_data['onboarding_status'], 'submitted')
         self.assertEqual(response_data['expiration_date'], None)
         mock_logger.assert_called()
+
+    def test_multiple_onboarding_exams_mixed_favor_to_be_released(self):
+        """
+        If there are multiple onboarding exams, and some are to be released and some are past due, the
+        to be released exam(s) is/are favored, and the release date of the most recently created onboarding exam
+        is returned.
+        """
+        onboarding_exam_2 = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='block-v1:test+course+1+type@sequential+block@onboard_2',
+            exam_name=self.exam_name,
+            time_limit_mins=self.default_time_limit,
+            is_practice_exam=True,
+            is_proctored=True,
+            backend='test',
+            is_active=True,
+        )
+        tomorrow = timezone.now() + timezone.timedelta(days=1)
+        onboarding_exam_1_schedule = MockScheduleItemData(
+            timezone.now() - timezone.timedelta(days=2),
+            timezone.now() - timezone.timedelta(days=1),
+        )
+        onboarding_exam_2_schedule = MockScheduleItemData(tomorrow)
+        course_sections = {
+            BlockUsageLocator.from_string(self.onboarding_exam.content_id): onboarding_exam_1_schedule,
+            BlockUsageLocator.from_string(onboarding_exam_2.content_id): onboarding_exam_2_schedule,
+        }
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            [],               # sections user can see
+            course_sections,  # all scheduled sections
+        ))
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_past_due'], False)
+        self.assertEqual(response_data['onboarding_status'], None)
+        self.assertEqual(response_data['onboarding_link'], None)
+        self.assertEqual(response_data['onboarding_release_date'], tomorrow.isoformat())
 
 
 @ddt.ddt
