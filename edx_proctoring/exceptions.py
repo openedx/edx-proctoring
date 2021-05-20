@@ -143,3 +143,10 @@ class BackendProviderCannotRetireUser(ProctoredBaseException):
     """
     Raised when a back-end provider cannot retire a user
     """
+
+
+class BackendProviderNotConfigured(ProctoredBaseException):
+    """
+    Raised when a back-end provider not configured.
+    """
+    http_status = status.HTTP_500_INTERNAL_SERVER_ERROR

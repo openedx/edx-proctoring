@@ -4,11 +4,13 @@ Tests for the MFE proctored exam views.
 import json
 
 import ddt
+from mock import patch
 
 from django.conf import settings
 from django.test.utils import override_settings
 from django.urls import reverse
 
+from edx_proctoring.exceptions import BackendProviderNotConfigured, ProctoredExamNotFoundException
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from .utils import ProctoredExamTestCase
@@ -133,3 +135,70 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         assert 'active_attempt' in response_data
         assert not response_data['active_attempt']
         assert not exam_data
+
+
+class ProctoredSettingsViewTests(ProctoredExamTestCase):
+    """
+    Tests for the ProctoredSettingsView.
+    """
+
+    def setUp(self):
+        """
+        Initialize.
+        """
+        super().setUp()
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.timed_exam_id = self._create_timed_exam()
+
+    def get_url(self, exam_id):
+        """
+        Returns ProctoredSettingsView url for exam_id.
+        """
+        return reverse(
+            'edx_proctoring:proctored_exam.proctoring_settings',
+            kwargs={
+                'exam_id': exam_id,
+            }
+        )
+
+    def test_get_proctoring_settings_for_proctored_exam(self):
+        """
+        Tests the get proctoring settings for proctored exam.
+        """
+        url = self.get_url(self.proctored_exam_id)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        assert 'link_urls' in response_data and response_data['link_urls']
+        assert 'exam_proctoring_backend' in response_data
+
+    def test_get_proctoring_settings_for_timed_exam(self):
+        """
+        Tests the get proctoring settings for timed exam.
+        """
+        url = self.get_url(self.timed_exam_id)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        assert 'link_urls' in response_data and response_data['link_urls']
+        assert 'exam_proctoring_backend' in response_data and not response_data['exam_proctoring_backend']
+
+    def test_get_proctoring_settings_for_non_existing_exam(self):
+        """
+        Test to get the proctoring settings for non-existing exam_id raises exception.
+        """
+        exam_id = 9999
+        url = self.get_url(exam_id)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 400)
+        self.assertRaises(ProctoredExamNotFoundException)
+
+    def test_get_proctoring_settings_for_exam_with_not_configured_backend(self):
+        """
+        Test to get the proctoring settings for the exam with not configured backend raises an exception.
+        """
+        url = self.get_url(self.proctored_exam_id)
+        with patch('edx_proctoring.api.get_backend_provider', side_effect=NotImplementedError()):
+            response = self.client.get(url)
+        self.assertEqual(response.status_code, 500)
+        self.assertRaises(BackendProviderNotConfigured)
