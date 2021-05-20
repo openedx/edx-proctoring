@@ -438,6 +438,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             course_key, user, pytz.utc.localize(datetime.max)
         )
 
+        inaccessible_onboarding_exams = []
         for onboarding_exam in onboarding_exams:
             usage_key = BlockUsageLocator.from_string(onboarding_exam.content_id)
             visibility_check_date = get_visibility_check_date(details.schedule, usage_key)
@@ -446,7 +447,10 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             )
 
             if usage_key not in user_outline.accessible_sequences:
-                onboarding_exams.remove(onboarding_exam)
+                inaccessible_onboarding_exams.append(onboarding_exam)
+
+        for inacessible_onboarding_exam in inaccessible_onboarding_exams:
+            onboarding_exams.remove(inacessible_onboarding_exam)
 
         if not onboarding_exams:
             LOG.info(
@@ -461,7 +465,8 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             )
 
         onboarding_exam = onboarding_exams[0]
-        effective_start = details.schedule.sequences.get(usage_key).effective_start
+        onboarding_exam_usage_key = BlockUsageLocator.from_string(onboarding_exam.content_id)
+        effective_start = details.schedule.sequences.get(onboarding_exam_usage_key).effective_start
         data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
         data['onboarding_release_date'] = effective_start.isoformat()
 

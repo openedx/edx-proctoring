@@ -15,6 +15,11 @@ Unreleased
 ~~~~~~~~~~
 * Add ability to get onboarding statuses from a proctoring provider API endpoint
 
+[3.9.4] - 2021-05-19
+~~~~~~~~~~~~~~~~~~~~
+* Fix a bug in processing onboarding exams in StudentOnboardingStatusView,
+  resulting in an incorrect list of accessible onboarding exams. 
+
 [3.9.3] - 2021-05-18
 ~~~~~~~~~~~~~~~~~~~~
 * Fix styling on allowance dropdown to prevent overflow for long exam names.
