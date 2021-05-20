@@ -847,42 +847,48 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         rendered_response = self.render_proctored_exam()
         self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
 
-    def test_get_studentview_submitted_status_with_duedate(self):
+    @ddt.data(
+        60,
+        20,
+    )
+    def test_get_studentview_submitted_status_with_duedate_status_acknowledged(self, reset_time_delta):
         """
         Test for get_student_view proctored exam which has been submitted
-        And due date has passed
+        And status acknowledged
+        The test sets up a proctored exam with due date.
+        The test would check, before the due date passed, if is_status_acknowledged is true on the attempt,
+        the exam interstial still shows. This means the learner cannot see exam content
+        The test also checks, after the due date passed, if is_status_acknowledged is true on the attempt,
+        the exam interstial is no longer blocking the exam content
         """
-        proctored_exam = ProctoredExam.objects.create(
-            course_id='a/b/c',
-            content_id='test_content',
-            exam_name='Test Exam',
-            external_id='123aXqe3',
-            time_limit_mins=30,
-            is_proctored=True,
-            is_active=True,
-            due_date=datetime.now(pytz.UTC) + timedelta(minutes=40)
+        due_date_delta = 40
+        due_date = datetime.now(pytz.UTC) + timedelta(minutes=due_date_delta)
+        due_date_passed = reset_time_delta > due_date_delta
+        exam_id = self._create_exam_with_due_time(
+            is_proctored=True, due_date=due_date
         )
 
         exam_attempt = ProctoredExamStudentAttempt.objects.create(
-            proctored_exam=proctored_exam,
+            proctored_exam_id=exam_id,
             user=self.user,
             allowed_time_limit_mins=30,
             taking_as_proctored=True,
-            external_id=proctored_exam.external_id,
+            external_id='fdage332',
             status=ProctoredExamStudentAttemptStatus.submitted,
         )
 
         # due date is after 10 minutes
-        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=20)
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=reset_time_delta)
         with freeze_time(reset_time):
             rendered_response = get_student_view(
                 user_id=self.user.id,
-                course_id='a/b/c',
-                content_id='test_content',
+                course_id=self.course_id,
+                content_id=self.content_id_for_exam_with_due_date,
                 context={
                     'is_proctored': True,
                     'display_name': 'Test Exam',
-                    'default_time_limit_mins': 30
+                    'default_time_limit_mins': 30,
+                    'due_date': due_date
                 }
             )
             self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
@@ -891,15 +897,72 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
 
             rendered_response = get_student_view(
                 user_id=self.user.id,
-                course_id='a/b/c',
-                content_id='test_content',
+                course_id=self.course_id,
+                content_id=self.content_id_for_exam_with_due_date,
                 context={
                     'is_proctored': True,
                     'display_name': 'Test Exam',
-                    'default_time_limit_mins': 30
+                    'default_time_limit_mins': 30,
+                    'due_date': due_date
+                }
+            )
+            if due_date_passed:
+                self.assertIsNone(rendered_response)
+            else:
+                self.assertIsNotNone(rendered_response)
+
+    @patch('edx_when.api.get_date_for_block')
+    def test_get_studentview_submitted_personalize_scheduled_duedate_status_acknowledged(self, get_date_for_block_mock):
+        """
+        Test for get_student_view proctored exam which has been submitted
+        And status acknowledged. However, this time, the due date is controlled by personalize schedule on
+        self-paced course.
+        The test sets up a proctored exam, also mocks the edx_when api to return personalized due dates.
+        The test would check, after the personalized due date passed, if is_status_acknowledged is true on the attempt,
+        the exam interstial is no longer blocking the exam content
+        """
+        due_date_delta = 40
+        due_date = datetime.now(pytz.UTC) + timedelta(minutes=due_date_delta)
+        get_date_for_block_mock.return_value = due_date
+
+        exam_attempt = ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=self.proctored_exam_id,
+            user=self.user,
+            allowed_time_limit_mins=30,
+            taking_as_proctored=True,
+            external_id='fdage332',
+            status=ProctoredExamStudentAttemptStatus.submitted,
+        )
+
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=60)
+        with freeze_time(reset_time):
+            rendered_response = get_student_view(
+                user_id=self.user.id,
+                course_id=self.course_id,
+                content_id=self.content_id,
+                context={
+                    'is_proctored': True,
+                    'display_name': self.exam_name,
+                    'default_time_limit_mins': 30,
+                    'due_date': due_date
                 }
             )
             self.assertIsNotNone(rendered_response)
+            exam_attempt.is_status_acknowledged = True
+            exam_attempt.save()
+
+            rendered_response = get_student_view(
+                user_id=self.user.id,
+                course_id=self.course_id,
+                content_id=self.content_id,
+                context={
+                    'is_proctored': True,
+                    'display_name': self.exam_name,
+                    'default_time_limit_mins': 30,
+                    'due_date': due_date
+                }
+            )
+            self.assertIsNone(rendered_response)
 
     @ddt.data(
         *itertools.product(
