@@ -20,6 +20,7 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
     has_dashboard = False
     # whether practice exams map to "onboarding" exams for this backend
     supports_onboarding = False
+    help_center_article_url = ''
 
     @abc.abstractmethod
     def register_exam_attempt(self, exam, context):

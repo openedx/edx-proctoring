@@ -176,7 +176,8 @@
                     onboardingNotReleased: releaseDate > now,
                     showOnboardingExamLink: this.shouldShowExamLink(data.onboarding_status),
                     onboardingLink: data.onboarding_link,
-                    onboardingReleaseDate: releaseDate.toLocaleDateString()
+                    onboardingReleaseDate: releaseDate.toLocaleDateString(),
+                    reviewRequirementsUrl: data.review_requirements_url
                 };
 
                 $(this.el).html(this.template(data));

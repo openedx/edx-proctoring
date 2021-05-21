@@ -459,6 +459,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
                 data={'detail': _('There is no onboarding exam related to this course id.')}
             )
 
+        backend = get_backend_provider(name=onboarding_exams[0].backend)
         learning_sequences_service = get_runtime_service('learning_sequences')
         course_key = CourseKey.from_string(course_id)
         user = get_user_model().objects.get(username=(username or request.user.username))
@@ -497,6 +498,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         effective_start = details.schedule.sequences.get(onboarding_exam_usage_key).effective_start
         data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
         data['onboarding_release_date'] = effective_start.isoformat()
+        data['review_requirements_url'] = backend.help_center_article_url
 
         attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(course_id, [user])
 

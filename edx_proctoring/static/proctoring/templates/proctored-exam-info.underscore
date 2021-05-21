@@ -36,5 +36,9 @@
             <a href="<%= onboardingLink %>" class="action action-onboarding"><%= gettext("Complete Onboarding") %></a>
         <%} %>
     <%} %>
-    <a href="https://support.edx.org/hc/en-us/articles/207249428-How-do-proctored-exams-work" class="action action-info-link"><%= gettext("Review instructions and system requirements for proctored exams") %></a>
+    <% if (reviewRequirementsUrl) { %>
+        <a href="<%= reviewRequirementsUrl %>" class="action action-info-link"><%= gettext("Review instructions and system requirements for proctored exams") %></a>
+    <%} else { %>
+        <a href="https://support.edx.org/hc/en-us/articles/207249428-How-do-proctored-exams-work" class="action action-info-link"><%= gettext("Review instructions and system requirements for proctored exams") %></a>
+    <%} %>
 </div>

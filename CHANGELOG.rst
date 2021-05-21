@@ -25,6 +25,10 @@ Unreleased
 ~~~~~~~~~~~~~~~~~~~~~
 * Add by-backend configurability of the link which shows on the onboarding panel
 
+[3.10.0] - 2021-05-19
+~~~~~~~~~~~~~~~~~~~~~
+* Add by-backend configurability of the link which shows on the onboarding panel
+
 [3.9.4] - 2021-05-19
 ~~~~~~~~~~~~~~~~~~~~
 * Fix a bug in processing onboarding exams in StudentOnboardingStatusView,
