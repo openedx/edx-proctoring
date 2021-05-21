@@ -108,6 +108,12 @@ class TestBackendProvider(ProctoringBackendProvider):
         self.last_retire_user = user_id
         return True
 
+    def get_proctoring_config(self):
+        """
+        Returns the faked metadata and configuration options for the proctoring service.
+        """
+        return {'name': self.verbose_name}
+
 
 class PassthroughBackendProvider(ProctoringBackendProvider):
     """

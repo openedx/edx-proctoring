@@ -42,6 +42,7 @@ from edx_proctoring.api import (
     get_exam_by_content_id,
     get_exam_by_id,
     get_last_verified_onboarding_attempts_per_user,
+    get_proctoring_settings_by_exam_id,
     get_user_attempts_by_exam_id,
     is_exam_passed_due,
     mark_exam_attempt_as_ready,
@@ -199,7 +200,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         attempt_data = {}
         active_exam = {}
 
-        is_learning_mfe = request.GET.get('is_learning_mfe') in ['1', 'true', 'True', True]
+        is_learning_mfe = request.GET.get('is_learning_mfe') in ['1', 'true', 'True']
 
         active_exams = get_active_exams_for_user(request.user.id)
         if active_exams:
@@ -234,6 +235,33 @@ class ProctoredExamAttemptView(ProctoredAPIView):
             'exam': exam,
             'active_attempt': active_attempt_data,
         }
+
+        return Response(data=response_dict, status=status.HTTP_200_OK)
+
+
+class ProctoredSettingsView(ProctoredAPIView):
+    """
+    Endpoint for getting settings for proctored exam.
+
+    edx_proctoring/v1/settings/exam_id/{exam_id}
+
+    Supports:
+        HTTP GET:
+            ** Scenarios **
+            Returns proctoring_settings and exam_proctoring_backend config for proctored exam
+            {
+                "contact_us": "support@example.com"
+                "platform_name": "Platform Name"
+                "link_urls": { ... },
+                "exam_proctoring_backend": { ... }
+            }
+
+    """
+    def get(self, request, exam_id):
+        """
+        HTTP GET handler. Returns proctoring_settings and exam_proctoring_backend config for proctored exam.
+        """
+        response_dict = get_proctoring_settings_by_exam_id(exam_id)
 
         return Response(data=response_dict, status=status.HTTP_200_OK)
 
