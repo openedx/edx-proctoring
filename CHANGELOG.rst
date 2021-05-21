@@ -14,12 +14,16 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-[3.9.5] - 2021-05-20
-~~~~~~~~~~~~~~~~~~~~
+[3.10.1] - 2021-05-21
+~~~~~~~~~~~~~~~~~~~~~
 * Add ability to get onboarding statuses from a proctoring provider API endpoint
 * Add API endpoint which provides proctoring generic and backend specific
   instructions for the proctoring exam. Usage case is to provide required data
   for the learning app MFE.
+
+[3.10.0] - 2021-05-19
+~~~~~~~~~~~~~~~~~~~~~
+* Add by-backend configurability of the link which shows on the onboarding panel
 
 [3.9.4] - 2021-05-19
 ~~~~~~~~~~~~~~~~~~~~
