@@ -28,7 +28,9 @@
     <%} %>
     </div>
     <% if (showOnboardingExamLink) { %>
-        <% if (onboardingNotReleased) { %>
+        <% if (onboardingPastDue) { %>
+            <a class="action action-onboarding action-disabled"><%= gettext("Onboarding Past Due") %></a>
+        <% } else if (onboardingNotReleased) { %>
             <a class="action action-onboarding action-disabled"><%= gettext("Onboarding Opens") %> <%= onboardingReleaseDate %></a>
         <%} else if (onboardingStatus && onboardingStatus === 'other_course_approved') { %>
             <a href="<%= onboardingLink %>" class="action action-onboarding-practice"><%= gettext("View Onboarding Exam") %></a>

@@ -13,6 +13,15 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[3.11.0] - 2021-05-24
+~~~~~~~~~~~~~~~~~~~~~
+* Add ability to get onboarding statuses from a proctoring provider API endpoint
+* Extend the learner onboarding status API to determine whether the only onboarding exam or all
+  onboarding exams are past due and past an "onboarding_past_due" flag in the response. modify
+  the API to not return a link to the onboarding exam if the onboarding exam should not be
+  accessible by the learner (i.e. it is to be released or is past due).
+* Modify the display behavior of the learner onboarding panel to display "Onboarding Past Due"
+  if the only onboarding or all onboarding exams are past due.
 
 [3.10.2] - 2021-05-24
 ~~~~~~~~~~~~~~~~~~~~~
@@ -24,10 +33,6 @@ Unreleased
 * Add API endpoint which provides proctoring generic and backend specific
   instructions for the proctoring exam. Usage case is to provide required data
   for the learning app MFE.
-
-[3.10.0] - 2021-05-19
-~~~~~~~~~~~~~~~~~~~~~
-* Add by-backend configurability of the link which shows on the onboarding panel
 
 [3.10.0] - 2021-05-19
 ~~~~~~~~~~~~~~~~~~~~~
