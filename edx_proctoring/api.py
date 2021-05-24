@@ -637,8 +637,12 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     }
 
     if provider:
-        attempt_data['desktop_application_js_url'] = provider.get_javascript()
-        attempt_data['ping_interval'] = provider.ping_interval
+        attempt_data.update({
+            'desktop_application_js_url': provider.get_javascript(),
+            'ping_interval': provider.ping_interval,
+            'external_id': attempt['external_id'],
+            'attempt_code': attempt['attempt_code']
+        })
     else:
         attempt_data['desktop_application_js_url'] = ''
 
