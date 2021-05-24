@@ -93,12 +93,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         client_id: provided by backend service
         client_secret: provided by backend service
         """
-        ProctoringBackendProvider.__init__(self)
+        self.default_rules = None
+        super().__init__(**kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
-        self.default_rules = None
-        for key, value in kwargs.items():
-            setattr(self, key, value)
         self.session = OAuthAPIClient(self.base_url, self.client_id, self.client_secret)
 
     def get_javascript(self):
