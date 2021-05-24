@@ -29,9 +29,11 @@ from edx_proctoring.api import (
     reset_practice_exam,
     update_attempt_status
 )
+from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
 from edx_proctoring.exceptions import (
+    BackendProviderOnboardingProfilesException,
     ProctoredExamIllegalStatusTransition,
     ProctoredExamPermissionDenied,
     StudentExamAttemptDoesNotExistsException
@@ -45,7 +47,11 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.serializers import ProctoredExamSerializer
-from edx_proctoring.statuses import InstructorDashboardOnboardingAttemptStatus, ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import (
+    InstructorDashboardOnboardingAttemptStatus,
+    ProctoredExamStudentAttemptStatus,
+    VerificientOnboardingProfileStatus
+)
 from edx_proctoring.tests import mock_perm
 from edx_proctoring.urls import urlpatterns
 from edx_proctoring.views import require_course_or_global_staff, require_staff
@@ -865,6 +871,105 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
             args=[self.onboarding_exam.course_id, self.onboarding_exam.content_id]
         ))
         self.assertEqual(response_data['onboarding_release_date'], tomorrow.isoformat())
+
+    @patch('logging.Logger.warning')
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
+    @ddt.data(
+        (VerificientOnboardingProfileStatus.no_profile, None),
+        (VerificientOnboardingProfileStatus.other_course_approved,
+         InstructorDashboardOnboardingAttemptStatus.other_course_approved),
+        (VerificientOnboardingProfileStatus.approved, ProctoredExamStudentAttemptStatus.verified),
+        (VerificientOnboardingProfileStatus.rejected, ProctoredExamStudentAttemptStatus.rejected),
+        (VerificientOnboardingProfileStatus.pending, ProctoredExamStudentAttemptStatus.submitted),
+        (VerificientOnboardingProfileStatus.expired, ProctoredExamStudentAttemptStatus.expired)
+    )
+    @ddt.unpack
+    def test_onboarding_with_api_endpoint(self, api_status, attempt_status, mocked_onboarding_api,
+                                          mocked_switch_is_active, mock_logger):
+        mocked_switch_is_active.return_value = True
+        set_runtime_service('grades', MockGradesService(rejected_exam_overrides_grade=False))
+
+        if attempt_status:
+            attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
+            update_attempt_status(attempt_id, attempt_status)
+
+        mocked_onboarding_api.return_value = {
+            'user_id': '123abc',
+            'status': api_status,
+            'expiration_date': '2051-05-21'
+        }
+
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.onboarding_exam.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_status'], attempt_status)
+        self.assertEqual(response_data['expiration_date'], '2051-05-21')
+        mock_logger.assert_not_called()
+
+    @patch('logging.Logger.error')
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
+    def test_onboarding_with_differing_data(self, mocked_onboarding_api, mocked_switch_is_active, mock_logger):
+        mocked_switch_is_active.return_value = True
+        attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
+
+        mocked_onboarding_api.return_value = {
+            'user_id': '123abc',
+            'status': VerificientOnboardingProfileStatus.approved,
+            'expiration_date': '2051-05-21'
+        }
+
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.onboarding_exam.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_status'], 'verified')
+        self.assertEqual(response_data['expiration_date'], '2051-05-21')
+        mock_logger.assert_called()
+
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
+    def test_onboarding_with_api_404(self, mocked_onboarding_api, mocked_switch_is_active):
+        mocked_switch_is_active.return_value = True
+
+        attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
+
+        mocked_onboarding_api.return_value = None
+
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.onboarding_exam.course_id)
+        )
+        self.assertEqual(response.status_code, 404)
+
+    @patch('logging.Logger.warning')
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
+    def test_onboarding_with_api_failure(self, mocked_onboarding_api, mocked_switch_is_active, mock_logger):
+        mocked_switch_is_active.return_value = True
+
+        attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
+        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
+
+        mocked_onboarding_api.side_effect = BackendProviderOnboardingProfilesException('some error', 403)
+
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.onboarding_exam.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['onboarding_status'], 'submitted')
+        self.assertEqual(response_data['expiration_date'], None)
+        mock_logger.assert_called()
 
 
 @ddt.ddt

@@ -18,6 +18,7 @@ from django.db.models.base import ObjectDoesNotExist
 from django.utils.translation import ugettext_noop
 
 from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.constants import VERIFICATION_DAYS_VALID
 from edx_proctoring.exceptions import (
     AllowanceValueNotAllowedException,
     ProctoredExamNotActiveException,
@@ -303,7 +304,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
             * users: A list of users object of which we are checking the attempts
             * proctoring_backend: The name of the proctoring backend
         """
-        earliest_allowed_date = datetime.now(pytz.UTC) - timedelta(days=730)
+        earliest_allowed_date = datetime.now(pytz.UTC) - timedelta(days=VERIFICATION_DAYS_VALID)
         return self.filter(
             user__in=users, taking_as_proctored=True, proctored_exam__is_practice_exam=True,
             proctored_exam__backend=proctoring_backend, modified__gt=earliest_allowed_date,

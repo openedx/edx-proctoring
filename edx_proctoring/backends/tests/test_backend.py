@@ -182,8 +182,8 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
     def on_exam_saved(self, exam):
         return super().on_exam_saved(exam)
 
-    def get_onboarding_attempts(self, course_id, **kwargs):
-        return super().get_onboarding_attempts(course_id, **kwargs)
+    def get_onboarding_profile_info(self, course_id, **kwargs):
+        return super().get_onboarding_profile_info(course_id, **kwargs)
 
 
 class TestBackends(TestCase):
@@ -224,7 +224,7 @@ class TestBackends(TestCase):
 
         self.assertIsNone(provider.get_exam(None))
 
-        self.assertIsNone(provider.get_onboarding_attempts(course_id='test'))
+        self.assertIsNone(provider.get_onboarding_profile_info(course_id='test'))
 
     def test_null_provider(self):
         """

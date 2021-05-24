@@ -55,7 +55,7 @@ from edx_proctoring.serializers import (
     ProctoredExamStudentAllowanceSerializer,
     ProctoredExamStudentAttemptSerializer
 )
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.statuses import InstructorDashboardOnboardingAttemptStatus, ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import (
     emit_event,
     get_exam_due_date,
@@ -2723,3 +2723,42 @@ def get_enrollments_can_take_proctored_exams(course_id, text_search=None):
     """
     enrollments_service = get_runtime_service('enrollments')
     return enrollments_service.get_enrollments_can_take_proctored_exams(course_id, text_search)
+
+
+def get_onboarding_attempt_data_for_learner(course_id, user, backend):
+    """
+    Return the onboarding status and expiration date for a learner in a specific course. If no
+    onboarding status is associated with the course, check to see if the
+    learner is approved for onboarding in another course
+
+    Parameters:
+        * course_id: course ID for the course
+        * user: User object
+        * backend: proctoring provider to filter exams on
+    """
+    data = {'onboarding_status': None, 'expiration_date': None}
+    attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(course_id, [user])
+
+    # Default to the most recent attempt in the course if there are no verified attempts
+    relevant_attempt = attempts[0] if attempts else None
+    for attempt in attempts:
+        if attempt.status == ProctoredExamStudentAttemptStatus.verified:
+            relevant_attempt = attempt
+            break
+
+    # If there is no verified attempt in the current course, check for a verified attempt in another course
+    verified_attempt = None
+    if not relevant_attempt or relevant_attempt.status != ProctoredExamStudentAttemptStatus.verified:
+        attempt_dict = get_last_verified_onboarding_attempts_per_user(
+            [user],
+            backend,
+        )
+        verified_attempt = attempt_dict.get(user.id)
+
+    if verified_attempt:
+        data['onboarding_status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
+        data['expiration_date'] = verified_attempt.modified + timedelta(days=constants.VERIFICATION_DAYS_VALID)
+    elif relevant_attempt:
+        data['onboarding_status'] = relevant_attempt.status
+
+    return data
