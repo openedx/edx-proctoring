@@ -43,8 +43,8 @@ from edx_proctoring.api import (
     get_exam_by_id,
     get_last_verified_onboarding_attempts_per_user,
     get_proctoring_settings_by_exam_id,
-    get_user_attempts_by_exam_id,
     get_review_policy_by_exam_id,
+    get_user_attempts_by_exam_id,
     is_exam_passed_due,
     mark_exam_attempt_as_ready,
     remove_allowance_for_user,
@@ -62,8 +62,8 @@ from edx_proctoring.exceptions import (
     ProctoredExamNotFoundException,
     ProctoredExamPermissionDenied,
     ProctoredExamReviewAlreadyExists,
-    StudentExamAttemptDoesNotExistsException,
-    ProctoredExamReviewPolicyNotFoundException
+    ProctoredExamReviewPolicyNotFoundException,
+    StudentExamAttemptDoesNotExistsException
 )
 from edx_proctoring.models import (
     ProctoredExam,
