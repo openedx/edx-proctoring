@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.11.2] - 2021-05-25
+~~~~~~~~~~~~~~~~~~~~~
+* Add allow-list to prevent nonexistent backend configurations from causing errors
+
 [3.11.1] - 2021-05-25
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix for onboarding status API endpoint. The endpoint requires an obscured user id.

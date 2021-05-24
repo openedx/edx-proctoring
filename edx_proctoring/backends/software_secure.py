@@ -39,12 +39,12 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
     def __init__(self, organization, exam_sponsor, exam_register_endpoint,
                  secret_key_id, secret_key, crypto_key, software_download_url,
-                 send_email=False):
+                 send_email=False, **kwargs):
         """
         Class initializer
         """
         # pylint: disable=no-member
-        super().__init__()
+        super().__init__(**kwargs)
         self.organization = organization
         self.exam_sponsor = exam_sponsor
         self.exam_register_endpoint = exam_register_endpoint

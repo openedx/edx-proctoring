@@ -74,6 +74,7 @@ software_secure_get_payload = SoftwareSecureBackendProvider._get_payload
             "exam_sponsor": "edX LMS",
             "software_download_url": "http://example.com",
             "send_email": True,
+            "help_center_url": "https://example.com"
         },
         "DEFAULT": "software_secure",
         "test": {},

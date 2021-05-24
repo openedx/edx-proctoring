@@ -22,6 +22,10 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
     supports_onboarding = False
     help_center_article_url = ''
 
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
     @abc.abstractmethod
     def register_exam_attempt(self, exam, context):
         """
