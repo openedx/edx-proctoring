@@ -54,6 +54,7 @@ from edx_proctoring.statuses import (
 )
 from edx_proctoring.tests import mock_perm
 from edx_proctoring.urls import urlpatterns
+from edx_proctoring.utils import obscured_user_id
 from edx_proctoring.views import require_course_or_global_staff, require_staff
 from mock_apps.models import Profile
 
@@ -1067,6 +1068,12 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
             reverse('edx_proctoring:user_onboarding.status')
             + '?course_id={}'.format(self.onboarding_exam.course_id)
         )
+
+        mocked_onboarding_api.assert_called_with(
+            course_id=self.onboarding_exam.course_id,
+            user_id=obscured_user_id(self.user_id, self.onboarding_exam.backend)
+        )
+
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['onboarding_status'], attempt_status)
@@ -1082,7 +1089,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
 
         mocked_onboarding_api.return_value = {
-            'user_id': '123abc',
+            'user_id': self.user_id,
             'status': VerificientOnboardingProfileStatus.approved,
             'expiration_date': '2051-05-21'
         }
@@ -1090,6 +1097,11 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
             + '?course_id={}'.format(self.onboarding_exam.course_id)
+        )
+
+        mocked_onboarding_api.assert_called_with(
+            course_id=self.onboarding_exam.course_id,
+            user_id=obscured_user_id(self.user_id, self.onboarding_exam.backend)
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
