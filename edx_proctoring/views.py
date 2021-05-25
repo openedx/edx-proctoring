@@ -525,7 +525,8 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         if waffle.switch_is_active(ONBOARDING_PROFILE_API):
             try:
-                onboarding_profile_data = backend.get_onboarding_profile_info(course_id=course_id, user_id=user.id)
+                obs_user_id = obscured_user_id(user.id, onboarding_exam.backend)
+                onboarding_profile_data = backend.get_onboarding_profile_info(course_id=course_id, user_id=obs_user_id)
             except BackendProviderOnboardingProfilesException as exc:
                 # if backend raises exception, log message and return data from onboarding exam attempt
                 log_message = (

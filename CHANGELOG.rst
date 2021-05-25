@@ -13,6 +13,11 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.11.1] - 2021-05-25
+~~~~~~~~~~~~~~~~~~~~~
+* Fix for onboarding status API endpoint. The endpoint requires an obscured user id.
+
 [3.11.0] - 2021-05-24
 ~~~~~~~~~~~~~~~~~~~~~
 * Add ability to get onboarding statuses from a proctoring provider API endpoint
