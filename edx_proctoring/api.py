@@ -1764,6 +1764,51 @@ def get_active_exams_for_user(user_id, course_id=None):
     return result
 
 
+def check_prerequisites(exam, user_id):
+    """
+    Check if prerequisites are satisfied for user to take the exam
+    """
+    credit_service = get_runtime_service('credit')
+    credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
+    credit_requirement_status = credit_state.get('credit_requirement_status', [])
+
+    prerequisite_status = _are_prerequirements_satisfied(
+        credit_requirement_status,
+        evaluate_for_requirement_name=exam['content_id'],
+        filter_out_namespaces=['grade']
+    )
+
+    # add any prerequisite information, if applicable
+    exam.update({
+        'prerequisite_status': prerequisite_status
+    })
+
+    if not prerequisite_status['are_prerequisites_satisifed']:
+        # do we have any declined prerequisites, if so, then we
+        # will auto-decline this proctored exam
+        if prerequisite_status['declined_prerequisites']:
+            # user hasn't a record of attempt, create one now
+            # so we can mark it as declined
+            _create_and_decline_attempt(exam['id'], user_id)
+            return exam
+
+        # do we have failed prerequisites? That takes priority in terms of
+        # messaging
+        if prerequisite_status['failed_prerequisites']:
+            # Let's resolve the URLs to jump to this prerequisite
+            prerequisite_status['failed_prerequisites'] = _resolve_prerequisite_links(
+                exam,
+                prerequisite_status['failed_prerequisites']
+            )
+        else:
+            # Let's resolve the URLs to jump to this prerequisite
+            prerequisite_status['pending_prerequisites'] = _resolve_prerequisite_links(
+                exam,
+                prerequisite_status['pending_prerequisites']
+            )
+    return exam
+
+
 def _get_ordered_prerequisites(prerequisites_statuses, filter_out_namespaces=None):
     """
     Apply filter and ordering of requirements status in our credit_state dictionary. This will

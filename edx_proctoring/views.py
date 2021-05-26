@@ -28,6 +28,7 @@ from django.utils.translation import ugettext as _
 from edx_proctoring import constants
 from edx_proctoring.api import (
     add_allowance_for_user,
+    check_prerequisites,
     create_exam,
     create_exam_attempt,
     get_active_exams_for_user,
@@ -229,6 +230,9 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                         attempt.get('id'),
                         is_learning_mfe=is_learning_mfe
                     )
+                # exam hasn't started yet so check if prerequisites are satisfied
+                else:
+                    exam = check_prerequisites(exam, request.user.id)
                 exam.update({'attempt': attempt_data})
             except ProctoredExamNotFoundException:
                 exam = {}
