@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.11.4] - 2021-05-27
+~~~~~~~~~~~~~~~~~~~~~
+* Use the same DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS interval to start the exam and ping the
+  proctoring desktop applicaiton
+
 [3.11.3] - 2021-05-27
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix a bug where the Learning Sequences API does not have a schedule for a sequence, which can occur
