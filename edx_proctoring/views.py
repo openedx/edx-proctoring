@@ -289,7 +289,8 @@ class ProctoredExamReviewPolicyView(ProctoredAPIView):
         """
         try:
             review_policy = get_review_policy_by_exam_id(exam_id)['review_policy']
-        except ProctoredExamReviewPolicyNotFoundException:
+        except ProctoredExamReviewPolicyNotFoundException as e:
+            LOG.warning(str(e))
             review_policy = None
         return Response(data=dict(review_policy=review_policy), status=status.HTTP_200_OK)
 

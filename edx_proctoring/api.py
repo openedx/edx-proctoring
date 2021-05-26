@@ -640,9 +640,13 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
         attempt_data.update({
             'desktop_application_js_url': provider.get_javascript(),
             'ping_interval': provider.ping_interval,
-            'external_id': attempt['external_id'],
             'attempt_code': attempt['attempt_code']
         })
+        if attempt['status'] in (ProctoredExamStudentAttemptStatus.created,
+                                 ProctoredExamStudentAttemptStatus.download_software_clicked):
+            provider_attempt = provider.get_attempt(attempt)
+            download_url = provider_attempt.get('download_url', None) or provider.get_software_download_url()
+            attempt_data['software_download_url'] = download_url
     else:
         attempt_data['desktop_application_js_url'] = ''
 
