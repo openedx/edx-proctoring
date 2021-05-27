@@ -846,6 +846,24 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         message = 'There is no onboarding exam accessible to this user.'
         self.assertEqual(response_data['detail'], message)
 
+    def test_no_accessible_onboarding_no_schedule(self):
+        """
+        Test that the request returns 404 if onboarding exams exist but none are accessible to the user by
+        virtue of there being no associated sequence schedule.
+        """
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            [],  # sections user can see (none)
+            {},  # all scheduled sections
+        ))
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}'.format(self.course_id)
+        )
+        self.assertEqual(response.status_code, 404)
+        response_data = json.loads(response.content.decode('utf-8'))
+        message = 'There is no onboarding exam accessible to this user.'
+        self.assertEqual(response_data['detail'], message)
+
     @ddt.data(None, timezone.now() + timezone.timedelta(days=3))
     def test_onboarding_not_yet_released(self, due_date):
         """

@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.11.3] - 2021-05-27
+~~~~~~~~~~~~~~~~~~~~~
+* Fix a bug where the Learning Sequences API does not have a schedule for a sequence, which can occur
+  when a sequence is unavailable to a learner, and the learner should not know of the existence of the sequence
+  (e.g. when a sequence is content gated by enrollment track and the learner is not in the requisite enrollment track).
+
 [3.11.2] - 2021-05-25
 ~~~~~~~~~~~~~~~~~~~~~
 * Add allow-list to prevent nonexistent backend configurations from causing errors

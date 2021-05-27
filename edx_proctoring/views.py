@@ -609,14 +609,21 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             usage_key = BlockUsageLocator.from_string(onboarding_exam.content_id)
 
             if usage_key not in details.outline.accessible_sequences:
-                effective_start = details.schedule.sequences.get(usage_key).effective_start
-                due_date = get_visibility_check_date(details.schedule, usage_key)
+                sequence_schedule = details.schedule.sequences.get(usage_key)
 
-                if effective_start and pytz.utc.localize(datetime.now()) < effective_start:
-                    future_exams.append(onboarding_exam)
-                elif due_date and pytz.utc.localize(datetime.now()) > due_date:
-                    past_due_exams.append(onboarding_exam)
+                if sequence_schedule:
+                    effective_start = details.schedule.sequences.get(usage_key).effective_start
+                    due_date = get_visibility_check_date(details.schedule, usage_key)
+
+                    if effective_start and pytz.utc.localize(datetime.now()) < effective_start:
+                        future_exams.append(onboarding_exam)
+                    elif due_date and pytz.utc.localize(datetime.now()) > due_date:
+                        past_due_exams.append(onboarding_exam)
+                    else:
+                        non_date_inaccessible_exams.append(onboarding_exam)
                 else:
+                    # if the sequence schedule is not available, then the sequence is not available
+                    # to the learner
                     non_date_inaccessible_exams.append(onboarding_exam)
 
         return non_date_inaccessible_exams, future_exams, past_due_exams
