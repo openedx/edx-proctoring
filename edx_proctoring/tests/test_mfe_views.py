@@ -10,9 +10,9 @@ from django.conf import settings
 from django.test.utils import override_settings
 from django.urls import reverse
 
+from edx_proctoring.api import get_review_policy_by_exam_id
 from edx_proctoring.exceptions import BackendProviderNotConfigured, ProctoredExamNotFoundException
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_proctoring.api import get_review_policy_by_exam_id
 
 from .utils import ProctoredExamTestCase
 
