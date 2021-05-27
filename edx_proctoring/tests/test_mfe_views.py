@@ -71,6 +71,9 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         exam_data = response_data['exam']
+
+        # if exam started we do not check for prerequisites
+        assert 'prerequisite_status' not in exam_data
         assert 'active_attempt' in response_data and response_data['active_attempt']
         self.assertHasExamData(response_data, has_attempt=True)
         self.assertEqual(exam_data['attempt']['exam_url_path'], self.expected_exam_url)
@@ -96,18 +99,21 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         expected_exam_url = '{}/course/{}/{}'.format(
             settings.LEARNING_MICROFRONTEND_URL, self.course_id, self.content_id_timed
         )
+        assert 'prerequisite_status' not in exam_data
         assert 'active_attempt' in response_data and response_data['active_attempt']
         self.assertHasExamData(response_data, has_attempt=True, content_id=self.content_id_timed)
         self.assertEqual(exam_data['attempt']['exam_url_path'], expected_exam_url)
 
     def test_no_attempts_data_before_exam_starts(self):
         """
-        Test we get exam data before exam is started. Ensure no attempts data returned.
+        Test we get exam data before exam is started. Ensure no attempts data returned and prerequisites are checked.
         """
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
+        exam_data = response_data['exam']
         assert 'active_attempt' in response_data and not response_data['active_attempt']
+        assert 'prerequisite_status' in exam_data
         self.assertHasExamData(response_data, has_attempt=False)
 
     def test_get_exam_attempts_data_after_exam_is_submitted(self):
@@ -121,6 +127,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         exam_data = response_data['exam']
         assert 'active_attempt' in response_data and not response_data['active_attempt']
+        assert 'prerequisite_status' not in exam_data
         self.assertHasExamData(response_data, has_attempt=True)
         self.assertEqual(exam_data['attempt']['exam_url_path'], self.expected_exam_url)
         self.assertEqual(exam_data['attempt']['attempt_status'], ProctoredExamStudentAttemptStatus.submitted)
@@ -143,6 +150,24 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         assert 'active_attempt' in response_data
         assert not response_data['active_attempt']
         assert not exam_data
+
+    def test_prerequisites_are_not_checked_if_exam_is_not_proctored(self):
+        """
+        Tests that prerequisites are not checked for non proctored exams.
+        """
+        url = reverse(
+            'edx_proctoring:proctored_exam.exam_attempts',
+            kwargs={
+                'course_id': self.course_id,
+                'content_id': self.content_id_timed
+            }
+        ) + '?is_learning_mfe=true'
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        exam_data = response_data['exam']
+        assert 'prerequisite_status' not in exam_data
 
     @ddt.data(
         ProctoredExamStudentAttemptStatus.created,
