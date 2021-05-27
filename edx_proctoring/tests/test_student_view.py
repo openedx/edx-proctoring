@@ -25,6 +25,7 @@ from edx_proctoring.api import (
     update_attempt_status,
     update_exam
 )
+from edx_proctoring.constants import DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance, ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -1479,3 +1480,33 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         time_remaining = humanized_time(int(get_exam_attempt_by_id(exam_attempt.id)['time_remaining_seconds'] / 60))
         time_remaining_string = 'You will have {} to complete your exam.'.format(time_remaining)
         self.assertIn(time_remaining_string, rendered_response)
+
+    @ddt.data(
+        (render_proctored_exam, 'proctored'),
+        (render_practice_exam, 'practice'),
+        (render_onboarding_exam, 'onboarding'),
+    )
+    @ddt.unpack
+    def test_get_student_view_ping_interval_for_view(self, render_exam, exam_type):
+        """
+        Test that the ping_interval, which is a time period between each ping
+        edX website will do with the proctoring desktop app, is rendering from the
+        server templates
+        """
+        exam_id = self.proctored_exam_id
+        if exam_type == 'practice':
+            exam_id = self.practice_exam_id
+        if exam_type == 'onboarding':
+            exam_id = self.onboarding_exam_id
+
+        self._create_exam_attempt(
+            exam_id,
+            ProctoredExamStudentAttemptStatus.ready_to_start
+        )
+
+        rendered_response = render_exam(self)
+
+        expected_javascript_string = 'edx.courseware.proctored_exam.ProctoringAppPingInterval = {}'.format(
+            DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS
+        )
+        self.assertIn(expected_javascript_string, rendered_response)

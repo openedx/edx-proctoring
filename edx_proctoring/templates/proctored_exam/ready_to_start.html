@@ -61,6 +61,7 @@
   edx.courseware = edx.courseware || {};
   edx.courseware.proctored_exam = edx.courseware.proctored_exam || {};
   edx.courseware.proctored_exam.configuredWorkerURL = "{{ backend_js_bundle }}";
+  edx.courseware.proctored_exam.ProctoringAppPingInterval = {{ ping_interval }};
 
 
   $('.proctored-enter-exam').click(

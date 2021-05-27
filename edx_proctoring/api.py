@@ -2271,7 +2271,8 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'learner_notification_from_email': provider.learner_notification_from_email,
         'integration_specific_email': get_integration_specific_email(provider),
         'exam_display_name': exam['exam_name'],
-        'reset_link': password_url
+        'reset_link': password_url,
+        'ping_interval': provider.ping_interval
     }
     if attempt:
         context['exam_code'] = attempt['attempt_code']

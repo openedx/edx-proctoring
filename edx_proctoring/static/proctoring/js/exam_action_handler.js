@@ -139,6 +139,7 @@ edx = edx || {};
         var actionUrl = $this.data('change-state-url');
         var action = $this.data('action');
         var shouldUseWorker = window.Worker && edx.courseware.proctored_exam.configuredWorkerURL;
+        var pingInterval = edx.courseware.proctored_exam.ProctoringAppPingInterval;
 
         e.preventDefault();
         e.stopPropagation();
@@ -146,7 +147,7 @@ edx = edx || {};
         setActionButtonLoadingState($this);
 
         if (shouldUseWorker) {
-            workerPromiseForEventNames(actionToMessageTypesMap[action])()
+            workerPromiseForEventNames(actionToMessageTypesMap[action])(pingInterval)
                 .then(updateExamAttemptStatusPromise(actionUrl, action))
                 .then(reloadPage)
                 .catch(errorHandlerGivenMessage(
