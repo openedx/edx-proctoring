@@ -44,14 +44,14 @@ django-model-utils==4.1.1
     # via
     #   -r requirements/base.in
     #   edx-when
-django-waffle==2.1.0
+django-waffle==2.2.0
     # via
     #   -r requirements/base.in
     #   edx-django-utils
     #   edx-drf-extensions
 django-webpack-loader==1.0.0
     # via -r requirements/base.in
-django==2.2.20
+django==2.2.23
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
@@ -72,7 +72,9 @@ djangorestframework==3.12.4
     #   edx-drf-extensions
     #   rest-condition
 drf-jwt==1.19.0
-    # via edx-drf-extensions
+    # via
+    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   edx-drf-extensions
 edx-django-utils==4.0.0
     # via
     #   edx-drf-extensions
@@ -82,7 +84,7 @@ edx-drf-extensions==6.5.0
     # via
     #   -r requirements/base.in
     #   edx-when
-edx-opaque-keys==2.2.0
+edx-opaque-keys==2.2.1
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -103,13 +105,13 @@ jsonfield2==3.0.3
     # via
     #   -c requirements/constraints.txt
     #   -r requirements/base.in
-kombu==5.0.2
+kombu==5.1.0
     # via celery
 lxml==4.6.3
     # via xblock
-markupsafe==2.0.0
+markupsafe==2.0.1
     # via xblock
-newrelic==6.2.0.156
+newrelic==6.4.0.157
     # via edx-django-utils
 pbr==5.6.0
     # via stevedore
@@ -170,7 +172,6 @@ six==1.16.0
     #   fs
     #   pyjwkest
     #   python-dateutil
-    #   xblock
 slumber==0.7.1
     # via edx-rest-api-client
 sqlparse==0.4.1
@@ -179,19 +180,20 @@ stevedore==3.3.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
-urllib3==1.26.4
+urllib3==1.26.5
     # via requests
 vine==5.0.0
     # via
     #   amqp
     #   celery
+    #   kombu
 wcwidth==0.2.5
     # via prompt-toolkit
 web-fragments==1.0.0
     # via xblock
 webob==1.8.7
     # via xblock
-xblock==1.4.0
+xblock==1.4.2
     # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
