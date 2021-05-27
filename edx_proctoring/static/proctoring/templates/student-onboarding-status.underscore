@@ -27,11 +27,12 @@
             margin-left: 10px;
         }
 
-        .no-onboarding-data {
+        .no-onboarding-data, .onboarding-error {
             margin: 20px;
             font-weight: bold;
         }
     </style>
+    <h3 class="error-response" id="error-response"></h3>
     <% var isOnboardingItems = onboardingItems.length !== 0 %>
         <div class="content onboarding-status-content">
             <div class="top-header">
@@ -45,8 +46,8 @@
                         <span class="icon fa fa-search" id="onboarding-search-indicator" aria-hidden="true"></span>
                         <div aria-live="polite" aria-relevant="all">
                             <div id="onboarding-loading-indicator" class="hidden">
-                              <span class="icon fa fa-spinner fa-pulse" aria-hidden="true"></span>
-                              <span class="sr"><%- gettext("Loading") %></span>
+                                <span class="icon fa fa-spinner fa-pulse" aria-hidden="true"></span>
+                                <span class="sr"><%- gettext("Loading") %></span>
                             </div>
                         </div>
                     </span>
@@ -78,13 +79,13 @@
                     <li class="disabled">
                     <a aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
-                      </a>
+                    </a>
                     </li>
                     <% } else { %>
                     <li>
                     <a class="target-link" href="#" aria-label="Next" data-page-number="<%= currentPage + 1 %>"
                     >
-                      <span aria-hidden="true">&raquo;</span>
+                        <span aria-hidden="true">&raquo;</span>
                     </a>
                     </li>
                     <% }%>
@@ -98,7 +99,7 @@
                             <input type="checkbox" id="<%= status %>" name="status-filters" value="<%= status %>"
                             <% if (filters.includes(status)) { %>checked="true"<% } %>>
                             <label for="<%= status %>">
-                                <%- interpolate(gettext(" %(onboardingStatus)s "), 
+                                <%- interpolate(gettext(" %(onboardingStatus)s "),
                                 { onboardingStatus: getReadableString(status) }, true) %>
                             </label>
                         </li>
@@ -126,11 +127,11 @@
                                 <%- interpolate(gettext(" %(username)s "), { username: item.username }, true) %>
                             </td>
                             <td>
-                                <%- interpolate(gettext(" %(enrollmentMode)s "), 
+                                <%- interpolate(gettext(" %(enrollmentMode)s "),
                                 { enrollmentMode: getReadableString(item.enrollment_mode) }, true) %>
                             </td>
                             <td>
-                                <%- interpolate(gettext(" %(onboardingStatus)s "), 
+                                <%- interpolate(gettext(" %(onboardingStatus)s "),
                                 { onboardingStatus: getReadableString(item.status) }, true) %>
                             </td>
                             <td><%= getDateFormat(item.modified) %></td>

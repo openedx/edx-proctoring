@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.17.0] - 2021-06-23
+~~~~~~~~~~~~~~~~~~~~~
+* Replace internal logic for determing learners' onboarding statuses for the course onboarding API
+  with provider onboarding API.
+
 [3.16.0] - 2021-06-22
 ~~~~~~~~~~~~~~~~~~~~~
 * Created a GET api endpoint which groups course allowances by users.

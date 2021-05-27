@@ -7,6 +7,7 @@ describe('ProctoredExamOnboardingView', function() {
         previous: null,
         next: null,
         num_pages: 1,
+        use_onboarding_profile_api: false,
         results: [
             {
                 username: 'testuser1',
@@ -40,11 +41,13 @@ describe('ProctoredExamOnboardingView', function() {
         previous: null,
         next: null,
         num_pages: 1,
-        results: []
+        results: [],
+        use_onboarding_profile_api: false
     }];
 
     beforeEach(function() {
         html = '<div class="wrapper-content wrapper">' +
+        '<h3 class="error-response" id="error-response"></h3>' +
         '<% var isOnboardingItems = onboardingItems.length !== 0 %>' +
         '<div class="content onboarding-status-content">' +
         '<div class="top-header">' +
@@ -248,14 +251,37 @@ describe('ProctoredExamOnboardingView', function() {
         this.server.respond();
         this.server.respond();
 
+        this.server.respondWith('GET',
+            '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id?page=1&statuses=submitted,verified',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedOnboardingDataJson)
+            ]
+        );
+
         spyOnEvent('.filter-form', 'submit');
         $('.status-checkboxes > li > input#submitted').click();
         $('.status-checkboxes > li > input#verified').click();
         $('.filter-form').submit();
 
+        this.server.respond();
+
         expect(this.proctored_exam_onboarding_view.filters).toEqual(['submitted', 'verified']);
         expect(this.proctored_exam_onboarding_view.collection.url).toEqual(
             '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id?page=1&statuses=submitted,verified'
+        );
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id?page=1',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedOnboardingDataJson)
+            ]
         );
 
         spyOnEvent('.clear-filters', 'click');
@@ -277,6 +303,7 @@ describe('ProctoredExamOnboardingView', function() {
                 JSON.stringify(expectedOnboardingDataJson)
             ]
         );
+
         this.proctored_exam_onboarding_view = new edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView();
 
         this.server.respond();
@@ -323,7 +350,7 @@ describe('ProctoredExamOnboardingView', function() {
         // search for the proctored exam attempt
         this.server.respondWith(
             'GET',
-            '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id?text_search=' + searchText,
+            '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id?page=1&text_search=' + searchText,
             [
                 200,
                 {
@@ -332,6 +359,7 @@ describe('ProctoredExamOnboardingView', function() {
                 JSON.stringify(noDataJson)
             ]
         );
+
 
         // trigger the search attempt event.
         spyOnEvent('.search-onboarding > span.search', 'click');
@@ -351,5 +379,70 @@ describe('ProctoredExamOnboardingView', function() {
             .toEqual(false);
         expect(this.proctored_exam_onboarding_view.$el.find('#onboarding-loading-indicator').hasClass('hidden'))
             .toEqual(true);
+    });
+
+    it('Renders correct filters for onboarding API', function() {
+        var onboardingData;
+
+        setFixtures(
+            '<div class="student-onboarding-status-container"' +
+            'data-course-id="test_course_id">' +
+            '</div>'
+        );
+
+        onboardingData = JSON.parse(JSON.stringify(expectedOnboardingDataJson));
+        onboardingData[0].use_onboarding_profile_api = true;
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(onboardingData)
+            ]
+        );
+
+        this.proctored_exam_onboarding_view = new edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView();
+
+        this.server.respond();
+        this.server.respond();
+
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Not Started');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Submitted');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Verified');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Approved in Another Course');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Rejected');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .not.toContain('Setup Started');
+    });
+
+    it('renders correctly with 503 response', function() {
+        var errorMessage;
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
+            [
+                503,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify({detail: 'Error message.'})
+            ]
+        );
+
+        this.proctored_exam_onboarding_view = new edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView();
+
+        this.server.respond();
+        this.server.respond();
+
+        errorMessage = this.proctored_exam_onboarding_view.$el.find('.error-response');
+        expect(errorMessage.html()).toContain('Error message.');
+        expect(errorMessage).toBeVisible();
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-status-content')).not.toBeVisible();
     });
 });

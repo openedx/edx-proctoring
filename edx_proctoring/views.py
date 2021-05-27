@@ -10,6 +10,7 @@ from urllib.parse import urlencode
 import pytz
 import waffle  # pylint: disable=invalid-django-waffle-import
 from crum import get_current_request
+from edx_django_utils.monitoring import set_custom_attribute
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locator import BlockUsageLocator
 from rest_framework import status
@@ -61,7 +62,11 @@ from edx_proctoring.api import (
     update_exam,
     update_exam_attempt
 )
-from edx_proctoring.constants import ONBOARDING_PROFILE_API, PING_FAILURE_PASSTHROUGH_TEMPLATE
+from edx_proctoring.constants import (
+    ONBOARDING_PROFILE_API,
+    ONBOARDING_PROFILE_INSTRUCTOR_DASHBOARD_API,
+    PING_FAILURE_PASSTHROUGH_TEMPLATE
+)
 from edx_proctoring.exceptions import (
     AllowanceValueNotAllowedException,
     BackendProviderOnboardingProfilesException,
@@ -597,7 +602,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         if waffle.switch_is_active(ONBOARDING_PROFILE_API):
             try:
                 obs_user_id = obscured_user_id(user.id, onboarding_exam.backend)
-                onboarding_profile_data = backend.get_onboarding_profile_info(course_id=course_id, user_id=obs_user_id)
+                onboarding_profile_data = backend.get_onboarding_profile_info(course_id, user_id=obs_user_id)
             except BackendProviderOnboardingProfilesException as exc:
                 # if backend raises exception, log message and return data from onboarding exam attempt
                 log_message = (
@@ -756,9 +761,13 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
 
         data_page = request.GET.get('page', 1)
         text_search = request.GET.get('text_search')
-        statuses_filter = request.GET.get('statuses')
+        status_filters = request.GET.get('statuses')
 
         enrollments = get_enrollments_can_take_proctored_exams(course_id, text_search)
+
+        # add custom attribute to better track performance of this endpoint against the
+        # number of proctoring eligible enrollments in the given course
+        set_custom_attribute('num_proctoring_eligible_enrollments', len(enrollments))
 
         users = []
         enrollment_modes_by_user_id = {}
@@ -766,6 +775,116 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
             users.append(enrollment.user)
             enrollment_modes_by_user_id[enrollment.user.id] = enrollment.mode
 
+        onboarding_data = []
+        use_onboarding_profile_api = waffle.switch_is_active(ONBOARDING_PROFILE_INSTRUCTOR_DASHBOARD_API)
+        if use_onboarding_profile_api:
+            backend = get_backend_provider(name=onboarding_exam.backend)
+
+            onboarding_profile_info, api_response_error = self._get_all_paginated_responses(
+                backend,
+                course_id,
+                status_filters
+            )
+
+            if api_response_error:
+                # if backend raises exception, log message and return data from onboarding exam attempt
+                log_message = (
+                    'Failed to use backend onboarding status API endpoint for course_id={course_id}'
+                    'with query parameters text_search: {text_search_filter}, status: {status_filters}'
+                    'because backend failed to respond. Onboarding status'
+                    'will be determined by the users\'s onboarding attempts. '
+                    'Status: {status}, Response: {response}.'.format(
+                        course_id=course_id,
+                        text_search_filter=text_search,
+                        status_filters=status_filters,
+                        response=str(api_response_error),
+                        status=api_response_error.http_status,
+                    )
+                )
+                LOG.warning(log_message)
+
+                return Response(
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    data={'detail': _('The onboarding service is temporarily unavailable. Please try again later.')}
+                )
+
+            obscured_user_ids_to_users = {obscured_user_id(user.id, onboarding_exam.backend): user for user in users}
+
+            for onboarding_profile in onboarding_profile_info:
+                obscured_id = onboarding_profile['user_id']
+                user = obscured_user_ids_to_users.get(obscured_id)
+                onboarding_status = onboarding_profile['status']
+                data = {
+                    'username': user.username,
+                    'enrollment_mode': enrollment_modes_by_user_id.get(user.id),
+                    'status': VerificientOnboardingProfileStatus.get_instructor_status_from_profile_status(
+                        onboarding_status
+                    ),
+                    'modified': None,
+                }
+                onboarding_data.append(data)
+                del obscured_user_ids_to_users[obscured_id]
+
+            if status_filters is None or 'not_started' in status_filters:
+                for (obscured_id, user) in obscured_user_ids_to_users.items():
+                    # remaining learners that are not represented in the API response
+                    # have not started onboarding
+                    data = {
+                        'username': user.username,
+                        'enrollment_mode': enrollment_modes_by_user_id.get(user.id),
+                        'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                        'modified': None,
+                    }
+                    onboarding_data.append(data)
+        else:
+            onboarding_data = self._get_onboarding_info_no_onboarding_api(
+                course_id,
+                onboarding_exam,
+                users,
+                enrollment_modes_by_user_id,
+            )
+            onboarding_data = self._filter_onboarding_data_by_status_filters(onboarding_data, status_filters)
+
+        query_params = self._get_query_params(text_search, status_filters)
+        paginated_data = self._paginate_data(onboarding_data, data_page, onboarding_exam.course_id, query_params)
+
+        # add modified time to each user in the paginated data, as Verificient's API does not currently return this data
+        results = paginated_data['results']
+        response_users = [get_user_model().objects.get(username=(user['username'])) for user in results]
+        response_onboarding_data = self._get_onboarding_info_no_onboarding_api(
+            course_id,
+            onboarding_exam,
+            response_users,
+            enrollment_modes_by_user_id
+        )
+
+        # Get modified date for each learner. Once the onboarding provider has included
+        # a modified date in their payload, this can be removed.
+        modified_dict = {}
+        for attempt in response_onboarding_data:
+            username = attempt['username']
+            modified_dict[username] = attempt['modified']
+
+        for user in results:
+            user['modified'] = modified_dict[user['username']]
+
+        paginated_data['results'] = results
+        paginated_data['use_onboarding_profile_api'] = use_onboarding_profile_api
+
+        return Response(paginated_data)
+
+    def _get_onboarding_info_no_onboarding_api(self, course_id, onboarding_exam, users, enrollment_modes_by_user_id):
+        """
+        Get the onboarding data for a list of users without using the proctoring provider's onboarding API.
+        This is used as fallback behavior either when the ONBOARDING_PROFILE_INSTRUCTOR_DASHBOARD_API waffle
+        flag is not enabled or when the aforementioned flag is enabled but the API call fails.
+
+        Parameters:
+        * course_id: the course ID of the course
+        * onboarding_exam: the ProctoredExam object representing the onboarding exam in the course
+        * users: a list of users for whom we should return onboarding profile data
+        * enrollment_modes_by_user_id: a mapping between users and their enrollment mode in the course
+        """
         # get onboarding attempts for users for the course
         onboarding_attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(
             course_id,
@@ -780,7 +899,6 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
 
         # select a verified, or most recent, exam attempt per user
         onboarding_attempts_per_user = self._get_relevant_attempt_per_user(onboarding_attempts)
-
         onboarding_data = []
         for user in users:
             user_attempt = onboarding_attempts_per_user.get(user.id, {})
@@ -823,36 +941,45 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
 
             onboarding_data.append(data)
 
+        return onboarding_data
+
+    def _filter_onboarding_data_by_status_filters(self, onboarding_data, status_filters):
+        """
+        Filter the list of dictionaries onboarding_data by status_filters.
+
+        Parameters:
+        * onboarding_data: a list of dictionaries representing learners's onboarding profile information
+        * status_filters: a comma separated list of statuses to filter onboarding_data by
+        """
         # filter the data by status filter
         # we filter late than the text_search because users without exam attempts
         # will have an onboarding status of "not_started", and we want to be
         # able to filter on that status
-        if statuses_filter:
-            statuses = set(statuses_filter.split(','))
-            onboarding_data = [
+        filtered_onboarding_data = onboarding_data
+        if status_filters:
+            statuses = set(status_filters.split(','))
+            filtered_onboarding_data = [
                 data for data
                 in onboarding_data
                 if data['status'] in statuses
             ]
 
-        query_params = self._get_query_params(text_search, statuses_filter)
-        paginated_data = self._paginate_data(onboarding_data, data_page, onboarding_exam.course_id, query_params)
-        return Response(paginated_data)
+        return filtered_onboarding_data
 
-    def _get_query_params(self, text_search, statuses_filter):
+    def _get_query_params(self, text_search, status_filters):
         """
         Return the query parameters as a dictionary, only including key value pairs
         for supplied keys.
 
         Parameters:
         * text_search: the text search query parameter
-        * statuses_filter: the statuses filter query parameter
+        * status_filters: the statuses filter query parameter
         """
         query_params = {}
         if text_search:
             query_params['text_search'] = text_search
-        if statuses_filter:
-            query_params['statuses'] = statuses_filter
+        if status_filters:
+            query_params['statuses'] = status_filters
         return query_params
 
     def _get_relevant_attempt_per_user(self, attempts):
@@ -914,6 +1041,38 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
                       )
         query_string = urlencode(kwargs)
         return url + '?' + query_string
+
+    def _get_all_paginated_responses(self, backend, course_id, status_filters):
+        """
+        Accumulate a list of all onboarding profile responses from the proctoring provider
+        """
+        http_error = None
+        results = []
+        onboarding_profile_kwargs = {}
+
+        if not status_filters:
+            status_filters = [None]
+        else:
+            status_filters = status_filters.split(',')
+
+        for status_filter in status_filters:
+            if status_filter is not None:
+                onboarding_profile_kwargs['status'] = VerificientOnboardingProfileStatus\
+                    .get_profile_status_from_filter(status_filter)
+            onboarding_profile_kwargs['page'] = 1
+            while onboarding_profile_kwargs['page'] is not None:
+                try:
+                    request = backend.get_onboarding_profile_info(
+                        course_id, **onboarding_profile_kwargs
+                    )
+                    results += request.get('results')
+                    onboarding_profile_kwargs['page'] = request.get('next_page_number')
+                except BackendProviderOnboardingProfilesException as exc:
+                    http_error = exc
+                    # return on the earliest error
+                    return results, http_error
+
+        return results, http_error
 
 
 class StudentProctoredExamAttempt(ProctoredAPIView):
