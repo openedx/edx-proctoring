@@ -12,6 +12,7 @@ from django.urls import reverse
 
 from edx_proctoring.exceptions import BackendProviderNotConfigured, ProctoredExamNotFoundException
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.api import get_review_policy_by_exam_id
 
 from .utils import ProctoredExamTestCase
 
@@ -202,3 +203,45 @@ class ProctoredSettingsViewTests(ProctoredExamTestCase):
             response = self.client.get(url)
         self.assertEqual(response.status_code, 500)
         self.assertRaises(BackendProviderNotConfigured)
+
+
+class ProctoredExamReviewPolicyView(ProctoredExamTestCase):
+    """
+    Tests for the ProctoredExamReviewPolicyView.
+    """
+
+    def setUp(self):
+        """
+        Initialize.
+        """
+        super().setUp()
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.review_policy_id = self._create_review_policy(self.proctored_exam_id)
+        self.url = reverse(
+            'edx_proctoring:proctored_exam.review_policy',
+            kwargs={
+                'exam_id': self.proctored_exam_id,
+            }
+        )
+
+    def test_get_exam_review_policy_for_proctored_exam(self):
+        """
+        Tests the GET exam review policy endpoint for proctored exam with existing policy.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        expected_review_policy = get_review_policy_by_exam_id(self.proctored_exam_id)
+        assert 'review_policy' in response_data
+        self.assertEqual(response_data['review_policy'], expected_review_policy['review_policy'])
+
+    def test_get_exam_review_policy_for_proctored_exam_with_no_existing_review(self):
+        """
+        Tests the GET exam review policy endpoint for proctored exam which has no review policy configured.
+        """
+        with patch('edx_proctoring.models.ProctoredExamReviewPolicy.get_review_policy_for_exam', return_value=None):
+            response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        assert 'review_policy' in response_data
+        self.assertIsNone(response_data['review_policy'])

@@ -647,8 +647,10 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
             attempt_data['verification_url'] = '{base_url}/id-verification'.format(
                 base_url=settings.ACCOUNT_MICROFRONTEND_URL
             )
-        if attempt['status'] in (ProctoredExamStudentAttemptStatus.created,
-                                 ProctoredExamStudentAttemptStatus.download_software_clicked):
+        if attempt['status'] in (
+                ProctoredExamStudentAttemptStatus.created,
+                ProctoredExamStudentAttemptStatus.download_software_clicked
+        ):
             provider_attempt = provider.get_attempt(attempt)
             download_url = provider_attempt.get('download_url', None) or provider.get_software_download_url()
             attempt_data['software_download_url'] = download_url
