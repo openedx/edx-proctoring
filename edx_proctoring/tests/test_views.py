@@ -1089,7 +1089,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         )
 
         mocked_onboarding_api.assert_called_with(
-            course_id=self.onboarding_exam.course_id,
+            self.onboarding_exam.course_id,
             user_id=obscured_user_id(self.user_id, self.onboarding_exam.backend)
         )
 
@@ -1119,7 +1119,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         )
 
         mocked_onboarding_api.assert_called_with(
-            course_id=self.onboarding_exam.course_id,
+            self.onboarding_exam.course_id,
             user_id=obscured_user_id(self.user_id, self.onboarding_exam.backend)
         )
         self.assertEqual(response.status_code, 200)
@@ -1373,17 +1373,17 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         previous_url = response_data['previous']
         next_url = response_data['next']
         text_search_string = 'text_search=test.com'
-        statuses_filter_string = 'statuses={}'.format(InstructorDashboardOnboardingAttemptStatus.setup_started)
+        status_filters_string = 'statuses={}'.format(InstructorDashboardOnboardingAttemptStatus.setup_started)
 
         self.assertIn(base_url, previous_url)
         self.assertIn('page=1', previous_url)
         self.assertIn(text_search_string, previous_url)
-        self.assertIn(statuses_filter_string, previous_url)
+        self.assertIn(status_filters_string, previous_url)
 
         self.assertIn(base_url, next_url)
         self.assertIn('page=3', next_url)
         self.assertIn(text_search_string, next_url)
-        self.assertIn(statuses_filter_string, next_url)
+        self.assertIn(status_filters_string, next_url)
 
     def test_one_status_filter(self):
         first_attempt_id = create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
@@ -1834,6 +1834,82 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
+
+    @patch('logging.Logger.error')
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
+    @ddt.data(
+        (VerificientOnboardingProfileStatus.no_profile, None),
+        (VerificientOnboardingProfileStatus.other_course_approved,
+         InstructorDashboardOnboardingAttemptStatus.other_course_approved),
+        (VerificientOnboardingProfileStatus.approved, ProctoredExamStudentAttemptStatus.verified),
+        (VerificientOnboardingProfileStatus.rejected, ProctoredExamStudentAttemptStatus.rejected),
+        (VerificientOnboardingProfileStatus.pending, ProctoredExamStudentAttemptStatus.submitted),
+        (VerificientOnboardingProfileStatus.expired, ProctoredExamStudentAttemptStatus.expired)
+    )
+    @ddt.unpack
+    def test_onboarding_with_api_endpoint(self, api_status, attempt_status, mocked_onboarding_api,
+                                          mocked_switch_is_active, mock_logger):
+        mocked_switch_is_active.return_value = True
+        set_runtime_service('grades', MockGradesService(rejected_exam_overrides_grade=False))
+
+        if attempt_status:
+            attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
+            update_attempt_status(attempt_id, attempt_status)
+
+        mocked_onboarding_api.return_value = {
+            'results': [
+                {
+                    'user_id': obscured_user_id(self.user.id, self.onboarding_exam.backend),
+                    'status': api_status,
+                    'expiration_date': '2051-05-21'
+                },
+            ]
+        }
+
+        response = self.client.get(
+            reverse(
+                'edx_proctoring:user_onboarding.status.course',
+                kwargs={'course_id': self.onboarding_exam.course_id},
+            )
+        )
+
+        mocked_onboarding_api.assert_called_with(
+            self.onboarding_exam.course_id,
+        )
+
+        expected_data = {
+            'results': [
+                {
+                    'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
+                    'status': attempt_status,
+                    'modified': None,
+                },
+                {
+                    'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                },
+                {
+                    'username': self.learner_2.username,
+                    'enrollment_mode': self.enrollment_modes[2],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                }
+            ],
+            'count': 3,
+            'previous': None,
+            'next': None,
+            'num_pages': 1,
+        }
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data, expected_data)
+        mock_logger.assert_not_called()
 
 
 @ddt.ddt
