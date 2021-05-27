@@ -17,7 +17,7 @@ from edx_proctoring.api import get_review_policy_by_exam_id
 from .utils import ProctoredExamTestCase
 
 
-@override_settings(LEARNING_MICROFRONTEND_URL='https//learningmfe')
+@override_settings(LEARNING_MICROFRONTEND_URL='https//learningmfe', ACCOUNT_MICROFRONTEND_URL='https//localhost')
 @ddt.ddt
 class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
     """
@@ -41,13 +41,20 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
             settings.LEARNING_MICROFRONTEND_URL, self.course_id, self.content_id
         )
 
-    def assertHasExamData(self, response_data, has_attempt, content_id=None):
+    def assertHasExamData(self, response_data, has_attempt,
+                          has_verification_url=False, has_download_url=False, content_id=None):
         """ Ensure expected exam data is present. """
         exam_data = response_data['exam']
         assert 'exam' in response_data
         assert 'attempt' in exam_data
         if has_attempt:
             assert exam_data['attempt']
+            if has_verification_url:
+                assert exam_data['attempt']['verification_url']
+            if has_download_url:
+                assert 'software_download_url' in exam_data['attempt']
+            else:
+                assert 'software_download_url' not in exam_data['attempt']
         else:
             assert not exam_data['attempt']
         self.assertEqual(exam_data['course_id'], self.course_id)
@@ -136,6 +143,40 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         assert 'active_attempt' in response_data
         assert not response_data['active_attempt']
         assert not exam_data
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
+        ProctoredExamStudentAttemptStatus.ready_to_start,
+        ProctoredExamStudentAttemptStatus.started,
+        ProctoredExamStudentAttemptStatus.ready_to_submit,
+        ProctoredExamStudentAttemptStatus.declined,
+        ProctoredExamStudentAttemptStatus.submitted,
+        ProctoredExamStudentAttemptStatus.rejected,
+        ProctoredExamStudentAttemptStatus.expired
+    )
+    def test_exam_data_contains_necessary_data_based_on_the_attempt_status(self, status):
+        """
+        Tests the GET exam attempts data contains software download url ONLY when attempt
+        is in created or download_software_clicked status and contains verification
+        url ONLY when attempt is inn created status
+        """
+        self._create_exam_attempt(self.proctored_exam_id, status=status)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        has_download_url = status in (
+            ProctoredExamStudentAttemptStatus.created,
+            ProctoredExamStudentAttemptStatus.download_software_clicked
+        )
+        has_verification_url = status == ProctoredExamStudentAttemptStatus.created
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertHasExamData(
+            response_data,
+            has_attempt=True,
+            has_download_url=has_download_url,
+            has_verification_url=has_verification_url,
+        )
 
 
 class ProctoredSettingsViewTests(ProctoredExamTestCase):
