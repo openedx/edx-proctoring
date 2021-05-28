@@ -43,6 +43,7 @@ from edx_proctoring.api import (
     get_exam_by_id,
     get_last_verified_onboarding_attempts_per_user,
     get_proctoring_settings_by_exam_id,
+    get_review_policy_by_exam_id,
     get_user_attempts_by_exam_id,
     is_exam_passed_due,
     mark_exam_attempt_as_ready,
@@ -61,6 +62,7 @@ from edx_proctoring.exceptions import (
     ProctoredExamNotFoundException,
     ProctoredExamPermissionDenied,
     ProctoredExamReviewAlreadyExists,
+    ProctoredExamReviewPolicyNotFoundException,
     StudentExamAttemptDoesNotExistsException
 )
 from edx_proctoring.models import (
@@ -264,6 +266,33 @@ class ProctoredSettingsView(ProctoredAPIView):
         response_dict = get_proctoring_settings_by_exam_id(exam_id)
 
         return Response(data=response_dict, status=status.HTTP_200_OK)
+
+
+class ProctoredExamReviewPolicyView(ProctoredAPIView):
+    """
+    Endpoint for getting review policy for proctored exam.
+
+    edx_proctoring/v1/proctored_exam/review_policy/exam_id/{exam_id}
+
+    Supports:
+        HTTP GET:
+            ** Scenarios **
+            Returns review policy for proctored exam
+            {
+                "review_policy": "Example review policy."
+            }
+
+    """
+    def get(self, request, exam_id):
+        """
+        HTTP GET handler. Returns review policy for proctored exam.
+        """
+        try:
+            review_policy = get_review_policy_by_exam_id(exam_id)['review_policy']
+        except ProctoredExamReviewPolicyNotFoundException as exc:
+            LOG.warning(str(exc))
+            review_policy = None
+        return Response(data=dict(review_policy=review_policy), status=status.HTTP_200_OK)
 
 
 class ProctoredExamView(ProctoredAPIView):

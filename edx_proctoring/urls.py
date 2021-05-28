@@ -121,6 +121,11 @@ urlpatterns = [
         views.ProctoredSettingsView.as_view(),
         name='proctored_exam.proctoring_settings'
     ),
+    url(
+        r'edx_proctoring/v1/proctored_exam/review_policy/exam_id/(?P<exam_id>\d+)/$',
+        views.ProctoredExamReviewPolicyView.as_view(),
+        name='proctored_exam.review_policy'
+    ),
 
     # Unauthenticated callbacks from SoftwareSecure. Note we use other
     # security token measures to protect data

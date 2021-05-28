@@ -637,8 +637,23 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     }
 
     if provider:
-        attempt_data['desktop_application_js_url'] = provider.get_javascript()
-        attempt_data['ping_interval'] = provider.ping_interval
+        attempt_data.update({
+            'desktop_application_js_url': provider.get_javascript(),
+            'ping_interval': provider.ping_interval,
+            'attempt_code': attempt['attempt_code']
+        })
+        # in case user is not verified we need to send them to verification page
+        if attempt['status'] == ProctoredExamStudentAttemptStatus.created:
+            attempt_data['verification_url'] = '{base_url}/id-verification'.format(
+                base_url=settings.ACCOUNT_MICROFRONTEND_URL
+            )
+        if attempt['status'] in (
+                ProctoredExamStudentAttemptStatus.created,
+                ProctoredExamStudentAttemptStatus.download_software_clicked
+        ):
+            provider_attempt = provider.get_attempt(attempt)
+            download_url = provider_attempt.get('download_url', None) or provider.get_software_download_url()
+            attempt_data['software_download_url'] = download_url
     else:
         attempt_data['desktop_application_js_url'] = ''
 

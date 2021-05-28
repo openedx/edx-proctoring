@@ -10,13 +10,14 @@ from django.conf import settings
 from django.test.utils import override_settings
 from django.urls import reverse
 
+from edx_proctoring.api import get_review_policy_by_exam_id
 from edx_proctoring.exceptions import BackendProviderNotConfigured, ProctoredExamNotFoundException
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from .utils import ProctoredExamTestCase
 
 
-@override_settings(LEARNING_MICROFRONTEND_URL='https//learningmfe')
+@override_settings(LEARNING_MICROFRONTEND_URL='https//learningmfe', ACCOUNT_MICROFRONTEND_URL='https//localhost')
 @ddt.ddt
 class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
     """
@@ -40,13 +41,20 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
             settings.LEARNING_MICROFRONTEND_URL, self.course_id, self.content_id
         )
 
-    def assertHasExamData(self, response_data, has_attempt, content_id=None):
+    def assertHasExamData(self, response_data, has_attempt,
+                          has_verification_url=False, has_download_url=False, content_id=None):
         """ Ensure expected exam data is present. """
         exam_data = response_data['exam']
         assert 'exam' in response_data
         assert 'attempt' in exam_data
         if has_attempt:
             assert exam_data['attempt']
+            if has_verification_url:
+                assert exam_data['attempt']['verification_url']
+            if has_download_url:
+                assert 'software_download_url' in exam_data['attempt']
+            else:
+                assert 'software_download_url' not in exam_data['attempt']
         else:
             assert not exam_data['attempt']
         self.assertEqual(exam_data['course_id'], self.course_id)
@@ -136,6 +144,40 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         assert not response_data['active_attempt']
         assert not exam_data
 
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
+        ProctoredExamStudentAttemptStatus.ready_to_start,
+        ProctoredExamStudentAttemptStatus.started,
+        ProctoredExamStudentAttemptStatus.ready_to_submit,
+        ProctoredExamStudentAttemptStatus.declined,
+        ProctoredExamStudentAttemptStatus.submitted,
+        ProctoredExamStudentAttemptStatus.rejected,
+        ProctoredExamStudentAttemptStatus.expired
+    )
+    def test_exam_data_contains_necessary_data_based_on_the_attempt_status(self, status):
+        """
+        Tests the GET exam attempts data contains software download url ONLY when attempt
+        is in created or download_software_clicked status and contains verification
+        url ONLY when attempt is inn created status
+        """
+        self._create_exam_attempt(self.proctored_exam_id, status=status)
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        has_download_url = status in (
+            ProctoredExamStudentAttemptStatus.created,
+            ProctoredExamStudentAttemptStatus.download_software_clicked
+        )
+        has_verification_url = status == ProctoredExamStudentAttemptStatus.created
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertHasExamData(
+            response_data,
+            has_attempt=True,
+            has_download_url=has_download_url,
+            has_verification_url=has_verification_url,
+        )
+
 
 class ProctoredSettingsViewTests(ProctoredExamTestCase):
     """
@@ -202,3 +244,45 @@ class ProctoredSettingsViewTests(ProctoredExamTestCase):
             response = self.client.get(url)
         self.assertEqual(response.status_code, 500)
         self.assertRaises(BackendProviderNotConfigured)
+
+
+class ProctoredExamReviewPolicyView(ProctoredExamTestCase):
+    """
+    Tests for the ProctoredExamReviewPolicyView.
+    """
+
+    def setUp(self):
+        """
+        Initialize.
+        """
+        super().setUp()
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.review_policy_id = self._create_review_policy(self.proctored_exam_id)
+        self.url = reverse(
+            'edx_proctoring:proctored_exam.review_policy',
+            kwargs={
+                'exam_id': self.proctored_exam_id,
+            }
+        )
+
+    def test_get_exam_review_policy_for_proctored_exam(self):
+        """
+        Tests the GET exam review policy endpoint for proctored exam with existing policy.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        expected_review_policy = get_review_policy_by_exam_id(self.proctored_exam_id)
+        assert 'review_policy' in response_data
+        self.assertEqual(response_data['review_policy'], expected_review_policy['review_policy'])
+
+    def test_get_exam_review_policy_for_proctored_exam_with_no_existing_review(self):
+        """
+        Tests the GET exam review policy endpoint for proctored exam which has no review policy configured.
+        """
+        with patch('edx_proctoring.models.ProctoredExamReviewPolicy.get_review_policy_for_exam', return_value=None):
+            response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        assert 'review_policy' in response_data
+        self.assertIsNone(response_data['review_policy'])
