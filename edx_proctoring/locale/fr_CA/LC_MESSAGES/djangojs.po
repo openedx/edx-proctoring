@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-23 18:34+0000\n"
+"POT-Creation-Date: 2021-05-30 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: David Truong <david.truong@edulib.org>, 2021\n"
 "Language-Team: French (Canada) (https://www.transifex.com/open-edx/teams/6205/fr_CA/)\n"
@@ -115,7 +115,7 @@ msgstr "Intégration en attente"
 msgid "Onboarding Expired"
 msgstr "L'intégration a expiré"
 
-#: api.py:629 views.py:808
+#: api.py:629 views.py:910
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "il vous reste {remaining_time}"
@@ -185,27 +185,27 @@ msgstr "Examen de pratique échoué"
 msgid "Timed Exam"
 msgstr "Examen minuté"
 
-#: api.py:2527
+#: api.py:2528
 msgid "Onboarding status question"
 msgstr "Question sur le statut d'intégration"
 
-#: models.py:402
+#: models.py:403
 msgid "Taking as Proctored"
 msgstr "Prendre comme examen surveillé"
 
-#: models.py:406
+#: models.py:407
 msgid "Is Sample Attempt"
 msgstr "Tentative d'échantillonnage"
 
-#: models.py:427
+#: models.py:428
 msgid "Is Resumable"
 msgstr ""
 
-#: models.py:598
+#: models.py:599
 msgid "Additional Time (minutes)"
 msgstr "Temps additionnel (minutes)"
 
-#: models.py:599
+#: models.py:600
 msgid "Review Policy Exception"
 msgstr "Examen de la politique d'exception"
 
@@ -1782,42 +1782,47 @@ msgstr "un examen d'intégration"
 msgid "a practice exam"
 msgstr "un examen de pratique"
 
-#: views.py:126
+#: views.py:129
 msgid "could not determine the course_id"
 msgstr "impossible de déterminer l'id de cours"
 
-#: views.py:135 views.py:451
+#: views.py:138 views.py:458
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 "Doit être un membre de l'équipe pédagogique pour effectuer cette requête."
 
-#: views.py:441
+#: views.py:448
 msgid "Missing required query parameter course_id"
 msgstr "Paramètre de requête obligatoire course_id manquant"
 
-#: views.py:459 views.py:581
+#: views.py:466 views.py:683
 msgid "There is no onboarding exam related to this course id."
 msgstr "Il n'y a pas d'examen d'intégration lié à cet identifiant de cours."
 
-#: views.py:493
+#: views.py:498
 msgid "There is no onboarding exam accessible to this user."
 msgstr "Il n'y a pas d'examen d'intégration accessible à cet utilisateur."
 
-#: views.py:814
+#: views.py:548
+#, python-brace-format
+msgid "No onboarding status API for {proctor_service}"
+msgstr ""
+
+#: views.py:916
 msgid "you have less than a minute remaining"
 msgstr "il vous reste moins d'une minute"
 
-#: views.py:1540
+#: views.py:1642
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "Aucun examen dans le cours {course_id}."
 
-#: views.py:1546
+#: views.py:1648
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "Aucun examen surveillé dans le cours {course_id}"
 
-#: views.py:1565
+#: views.py:1667
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "Aucun tableau de bord d'instructeur pour {proctor_service}"
