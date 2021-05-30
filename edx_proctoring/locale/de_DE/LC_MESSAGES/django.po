@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-23 18:34+0000\n"
+"POT-Creation-Date: 2021-05-30 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Stefania Trabucchi <stefania.trabucchi@abstract-technology.de>, 2021\n"
 "Language-Team: German (Germany) (https://www.transifex.com/open-edx/teams/6205/de_DE/)\n"
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:629 views.py:808
+#: api.py:629 views.py:910
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "Sie haben noch {remaining_time} übrig"
@@ -187,27 +187,27 @@ msgstr "Übungsprüfung nicht bestanden"
 msgid "Timed Exam"
 msgstr "Terminierte Prüfung"
 
-#: api.py:2527
+#: api.py:2528
 msgid "Onboarding status question"
 msgstr ""
 
-#: models.py:402
+#: models.py:403
 msgid "Taking as Proctored"
 msgstr "Als Beaufsichtigt teilnehmen"
 
-#: models.py:406
+#: models.py:407
 msgid "Is Sample Attempt"
 msgstr "Ist ein Probeversuch"
 
-#: models.py:427
+#: models.py:428
 msgid "Is Resumable"
 msgstr ""
 
-#: models.py:598
+#: models.py:599
 msgid "Additional Time (minutes)"
 msgstr "Zusätzliche Zeit (Minuten)"
 
-#: models.py:599
+#: models.py:600
 msgid "Review Policy Exception"
 msgstr "Ausnahme bei der Begutachtungsrichtlinine"
 
@@ -1464,41 +1464,46 @@ msgstr ""
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:126
+#: views.py:129
 msgid "could not determine the course_id"
 msgstr "Konnte course_id nicht feststellen"
 
-#: views.py:135 views.py:451
+#: views.py:138 views.py:458
 msgid "Must be a Staff User to Perform this request."
 msgstr "Muss ein Mitarbeiter sein, um diese Anfrage auszuführen."
 
-#: views.py:441
+#: views.py:448
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:459 views.py:581
+#: views.py:466 views.py:683
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:493
+#: views.py:498
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:814
+#: views.py:548
+#, python-brace-format
+msgid "No onboarding status API for {proctor_service}"
+msgstr ""
+
+#: views.py:916
 msgid "you have less than a minute remaining"
 msgstr "Sie haben weniger als eine Minute übrig"
 
-#: views.py:1540
+#: views.py:1642
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1546
+#: views.py:1648
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1565
+#: views.py:1667
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
