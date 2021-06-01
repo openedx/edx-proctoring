@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.11.5] - 2021-06-01
+~~~~~~~~~~~~~~~~~~~~~
+* Fix a bug where we are to pass to vendor javascript a value in milliseconds, instead of just seconds
+
 [3.11.4] - 2021-05-27
 ~~~~~~~~~~~~~~~~~~~~~
 * Use the same DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS interval to start the exam and ping the
