@@ -230,7 +230,8 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                         attempt.get('id'),
                         is_learning_mfe=is_learning_mfe
                     )
-                # exam hasn't started yet and is proctored so check if prerequisites are satisfied
+                # exam hasn't been started yet but it is proctored
+                # so needs to be checked if prerequisites are satisfied
                 elif exam['is_proctored']:
                     exam = check_prerequisites(exam, request.user.id)
                 exam.update({'attempt': attempt_data})

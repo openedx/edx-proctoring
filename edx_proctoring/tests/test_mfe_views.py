@@ -72,7 +72,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         exam_data = response_data['exam']
 
-        # if exam started we do not check for prerequisites
+        # if exam started the prerequisites are not checked
         assert 'prerequisite_status' not in exam_data
         assert 'active_attempt' in response_data and response_data['active_attempt']
         self.assertHasExamData(response_data, has_attempt=True)
