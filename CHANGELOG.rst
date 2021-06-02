@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Extend exam attempt API to return additional data for proctored exams.
+* Add API endpoint which provides exam review policy for specific exam.
+  Usage case is to provide required data for the learning app MFE.
 
 [3.10.1] - 2021-05-21
 ~~~~~~~~~~~~~~~~~~~~~
