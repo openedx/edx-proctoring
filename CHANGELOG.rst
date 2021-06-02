@@ -16,6 +16,8 @@ Unreleased
 * Extend exam attempt API to return additional data for proctored exams.
 * Add API endpoint which provides exam review policy for specific exam.
   Usage case is to provide required data for the learning app MFE.
+* Extend exam attempt API endpoint to check if user has satisfied prerequisites
+  before starting a proctored exam.
 
 [3.10.1] - 2021-05-21
 ~~~~~~~~~~~~~~~~~~~~~
