@@ -302,11 +302,26 @@ def get_visibility_check_date(course_schedule, usage_key):
     return visibility_check_date
 
 
-def get_exam_type(provider, attempt):
-    """ Helper that returns exam type string by backend provider and exam attempt params. """
-    return (
-        _('a timed exam') if not attempt['taking_as_proctored'] else
-        (_('a proctored exam') if not attempt['is_sample_attempt'] else
-         (_('an onboarding exam') if (provider and provider.supports_onboarding) else
-          _('a practice exam')))
-    )
+def get_exam_type(exam, provider):
+    """ Helper that returns exam type and humanized name by backend provider and exam params. """
+    is_practice_exam = exam['is_proctored'] and exam['is_practice_exam']
+    is_timed_exam = not exam['is_proctored'] and not exam['is_practice_exam']
+
+    if is_timed_exam:
+        exam_type = 'timed'
+        humanized_type = _('a timed exam')
+    elif is_practice_exam:
+        if provider and provider.supports_onboarding:
+            exam_type = 'onboarding'
+            humanized_type = _('an onboarding exam')
+        else:
+            exam_type = 'practice'
+            humanized_type = _('a practice exam')
+    else:
+        exam_type = 'proctored'
+        humanized_type = _('a proctored exam')
+
+    return {
+        'type': exam_type,
+        'humanized_type': humanized_type,
+    }

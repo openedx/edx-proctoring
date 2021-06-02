@@ -100,7 +100,14 @@ def get_proctoring_settings_by_exam_id(exam_id):
         except NotImplementedError as error:
             log.exception(str(error))
             raise BackendProviderNotConfigured(str(error)) from error
-        proctoring_settings_data['exam_proctoring_backend'] = provider.get_proctoring_config()
+        proctoring_settings_data.update({
+            'exam_proctoring_backend': provider.get_proctoring_config(),
+            'provider_tech_support_email': provider.tech_support_email,
+            'provider_tech_support_phone': provider.tech_support_phone,
+            'provider_name': provider.verbose_name,
+            'learner_notification_from_email': provider.learner_notification_from_email,
+            'integration_specific_email': get_integration_specific_email(provider),
+        })
     return proctoring_settings_data
 
 
@@ -618,7 +625,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     attempt_data = {
         'in_timed_exam': True,
         'taking_as_proctored': attempt['taking_as_proctored'],
-        'exam_type': get_exam_type(provider, attempt),
+        'exam_type': get_exam_type(exam, provider)['humanized_type'],
         'exam_display_name': exam['exam_name'],
         'exam_url_path': exam_url_path,
         'time_remaining_seconds': time_remaining_seconds,
