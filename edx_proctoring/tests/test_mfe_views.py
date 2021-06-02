@@ -30,6 +30,8 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         super().setUp()
         self.timed_exam_id = self._create_timed_exam()
         self.proctored_exam_id = self._create_proctored_exam()
+        self.practice_exam_id = self._create_practice_exam()
+        self.onboarding_exam_id = self._create_onboarding_exam()
         self.url = reverse(
             'edx_proctoring:proctored_exam.exam_attempts',
             kwargs={
@@ -151,15 +153,23 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         assert not response_data['active_attempt']
         assert not exam_data
 
-    def test_prerequisites_are_not_checked_if_exam_is_not_proctored(self):
+    @ddt.data(
+        ('content_id', True),
+        ('content_id_timed', False),
+        ('content_id_onboarding', False),
+        ('content_id_practice', False),
+    )
+    @ddt.unpack
+    def test_prerequisites_are_not_checked_if_exam_is_not_proctored(self, content_id, should_check_prerequisites):
         """
         Tests that prerequisites are not checked for non proctored exams.
         """
+        content_id = getattr(self, content_id)
         url = reverse(
             'edx_proctoring:proctored_exam.exam_attempts',
             kwargs={
                 'course_id': self.course_id,
-                'content_id': self.content_id_timed
+                'content_id': content_id
             }
         ) + '?is_learning_mfe=true'
 
@@ -167,7 +177,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         exam_data = response_data['exam']
-        assert 'prerequisite_status' not in exam_data
+        self.assertEqual('prerequisite_status' in exam_data, should_check_prerequisites)
 
     @ddt.data(
         ProctoredExamStudentAttemptStatus.created,
