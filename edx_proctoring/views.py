@@ -85,6 +85,7 @@ from edx_proctoring.statuses import (
 )
 from edx_proctoring.utils import (
     AuthenticatedAPIView,
+    get_exam_type,
     get_time_remaining_for_attempt,
     get_visibility_check_date,
     humanized_time,
@@ -238,7 +239,9 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 exam.update({'attempt': attempt_data})
             except ProctoredExamNotFoundException:
                 exam = {}
-
+        if exam:
+            provider = get_backend_provider(exam)
+            exam['type'] = get_exam_type(exam, provider)['type']
         response_dict = {
             'exam': exam,
             'active_attempt': active_attempt_data,

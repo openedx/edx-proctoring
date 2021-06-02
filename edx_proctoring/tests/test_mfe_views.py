@@ -79,6 +79,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         assert 'active_attempt' in response_data and response_data['active_attempt']
         self.assertHasExamData(response_data, has_attempt=True)
         self.assertEqual(exam_data['attempt']['exam_url_path'], self.expected_exam_url)
+        self.assertEqual(exam_data['type'], 'proctored')
 
     def test_get_started_timed_exam_attempts_data(self):
         """
@@ -117,6 +118,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         assert 'active_attempt' in response_data and not response_data['active_attempt']
         assert 'prerequisite_status' in exam_data
         self.assertHasExamData(response_data, has_attempt=False)
+        self.assertEqual(exam_data['type'], 'proctored')
 
     def test_get_exam_attempts_data_after_exam_is_submitted(self):
         """
@@ -133,6 +135,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         self.assertHasExamData(response_data, has_attempt=True)
         self.assertEqual(exam_data['attempt']['exam_url_path'], self.expected_exam_url)
         self.assertEqual(exam_data['attempt']['attempt_status'], ProctoredExamStudentAttemptStatus.submitted)
+        self.assertEqual(exam_data['type'], 'proctored')
 
     def test_no_exam_data_returned_for_non_exam_sequence(self):
         """
