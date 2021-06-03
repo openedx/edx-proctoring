@@ -18,6 +18,8 @@ Unreleased
   Usage case is to provide required data for the learning app MFE.
 * Extend exam attempt API endpoint to check if user has satisfied prerequisites
   before starting a proctored exam.
+* Update API to check prerequisites only for proctored exam, previously
+  they were also checked for practice and onboarding exams, which is not needed.
 
 [3.10.1] - 2021-05-21
 ~~~~~~~~~~~~~~~~~~~~~
