@@ -307,19 +307,15 @@ def get_exam_type(exam, provider):
     is_practice_exam = exam['is_proctored'] and exam['is_practice_exam']
     is_timed_exam = not exam['is_proctored'] and not exam['is_practice_exam']
 
+    exam_type, humanized_type = 'proctored', _('a proctored exam')
+
     if is_timed_exam:
-        exam_type = 'timed'
-        humanized_type = _('a timed exam')
+        exam_type, humanized_type = 'timed', _('a timed exam')
     elif is_practice_exam:
         if provider and provider.supports_onboarding:
-            exam_type = 'onboarding'
-            humanized_type = _('an onboarding exam')
+            exam_type, humanized_type = 'onboarding', _('an onboarding exam')
         else:
-            exam_type = 'practice'
-            humanized_type = _('a practice exam')
-    else:
-        exam_type = 'proctored'
-        humanized_type = _('a proctored exam')
+            exam_type, humanized_type = 'practice', _('a practice exam')
 
     return {
         'type': exam_type,
