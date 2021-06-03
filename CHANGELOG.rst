@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.11.6] - 2021-06-03
+~~~~~~~~~~~~~~~~~~~~~
+* Add logging for attempt status transitions caused by a time out or reattempt
+
 [3.11.5] - 2021-06-01
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix a bug where we are to pass to vendor javascript a value in milliseconds, instead of just seconds
