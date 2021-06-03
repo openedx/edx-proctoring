@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.12.0] - 2021-06-04
+~~~~~~~~~~~~~~~~~~~~~
+* If the `is_integrity_signature_enabled` waffle flag is turned on, do not render the ID verification
+  template for proctored exams.
+
 [3.11.6] - 2021-06-03
 ~~~~~~~~~~~~~~~~~~~~~
 * Add logging for attempt status transitions caused by a time out or reattempt

@@ -99,6 +99,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             },
             'verification_status': 'approved',
             'verification_url': '/reverify',
+            'is_integrity_signature_enabled': False,
         }
         if context_overrides:
             context.update(context_overrides)
@@ -201,6 +202,18 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             'verification_status': verification_status,
         })
         self.assertIn(expected_message, rendered_response)
+
+    def test_integrity_signature_enabled(self):
+        """
+        This test asserts that the ID verification message is not shown if the
+        integrity signature feature is enabled.
+        """
+        self._create_unstarted_exam_attempt()
+        rendered_response = self.render_proctored_exam({
+            'verification_status': None,
+            'is_integrity_signature_enabled': True,
+        })
+        self.assertIn(self.chose_proctored_exam_msg, rendered_response)
 
     def test_proctored_only_entrance(self):
         """
