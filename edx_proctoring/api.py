@@ -1121,6 +1121,15 @@ def update_attempt_status(attempt_id, to_status,
 
     user_trying_to_reattempt = is_reattempting_exam(from_status, to_status)
     if treat_timeout_as_submitted or user_trying_to_reattempt:
+        detail = 'the attempt was timed out' if treat_timeout_as_submitted else 'the user reattempted the exam'
+        log_msg = (
+            'Attempt status for exam_id={exam_id} for user_id={user_id} will not be updated to '
+            '"{to_status}" because {submitted_message}. Instead the attempt '
+            'status will be updated to "submitted"'.format(
+                exam_id=exam_id, user_id=user_id, to_status=to_status, submitted_message=detail
+            )
+        )
+        log.info(log_msg)
         to_status = ProctoredExamStudentAttemptStatus.submitted
 
     exam = get_exam_by_id(exam_id)
