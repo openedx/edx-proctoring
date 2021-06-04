@@ -7,6 +7,7 @@ from django.dispatch import receiver
 
 from edx_proctoring import api, constants, models
 from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 from edx_proctoring.utils import emit_event, locate_attempt_by_attempt_code
 
@@ -104,6 +105,18 @@ def on_attempt_changed(sender, instance, signal, **kwargs):  # pylint: disable=u
             # and see if the status has changed, if so, then we need
             # to archive it
             original = sender.objects.get(id=instance.id)
+
+            # if the exam was finished for the first time, we want to mark it as
+            # complete in the Completion Service.
+            # This functionality was added because regardless of submission status
+            # on individual problems, we want to mark the entire exam as complete
+            # when the exam is finished since there are no more actions a learner can take.
+            if not original.completed_at and instance.completed_at:
+                instructor_service = get_runtime_service('instructor')
+                if instructor_service:
+                    username = instance.user.username
+                    content_id = instance.proctored_exam.content_id
+                    instructor_service.complete_student_attempt(username, content_id)
 
             if original.status != instance.status:
                 instance = original

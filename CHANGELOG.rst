@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.14.0] - 2021-06-10
+~~~~~~~~~~~~~~~~~~~~~
+* When an exam attempt is finished for the first time, mark all completable children in the exam as complete
+  in the Completion Service using the Instructor Service. If the Completion Service is not enabled, nothing
+  will happen.
+
 [3.13.2] - 2021-06-09
 ~~~~~~~~~~~~~~~~~~~~~
 * Extend exam attempt API to return total time left in the attempt
