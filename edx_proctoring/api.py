@@ -2491,8 +2491,12 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
-        if context.get('verification_status') is not APPROVED_STATUS:
-            # if the user has not id verified yet, show them the page that requires them to do so
+        if not (
+            context.get('is_integrity_signature_enabled')
+            or context.get('verification_status') is APPROVED_STATUS
+        ):
+            # if the user has not id verified yet, show them the page that requires them to do so,
+            # unless the integrity signature feature is enabled
             student_view_template = 'proctored_exam/id_verification.html'
         else:
             student_view_template = 'proctored_exam/instructions.html'
