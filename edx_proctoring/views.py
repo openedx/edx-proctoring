@@ -247,6 +247,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         if exam:
             provider = get_backend_provider(exam)
             exam['type'] = get_exam_type(exam, provider)['type']
+            exam['passed_due_date'] = is_exam_passed_due(exam, user=request.user.id)
         response_dict = {
             'exam': exam,
             'active_attempt': active_attempt_data,
