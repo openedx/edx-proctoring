@@ -11,7 +11,6 @@ from datetime import datetime, timedelta
 
 import pytz
 from opaque_keys import InvalidKeyError
-from opaque_keys.edx.keys import CourseKey, UsageKey
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -65,6 +64,7 @@ from edx_proctoring.utils import (
     humanized_time,
     is_reattempting_exam,
     obscured_user_id,
+    resolve_exam_url_for_learning_mfe,
     verify_and_add_wait_deadline
 )
 
@@ -615,9 +615,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     # resolve the LMS url, note we can't assume we're running in
     # a same process as the LMS
     if is_learning_mfe:
-        course_key = CourseKey.from_string(exam['course_id'])
-        usage_key = UsageKey.from_string(exam['content_id'])
-        exam_url_path = '{}/course/{}/{}'.format(settings.LEARNING_MICROFRONTEND_URL, course_key, usage_key)
+        exam_url_path = resolve_exam_url_for_learning_mfe(exam['course_id'], exam['content_id'])
 
     else:
         exam_url_path = reverse('jump_to', args=[exam['course_id'], exam['content_id']])

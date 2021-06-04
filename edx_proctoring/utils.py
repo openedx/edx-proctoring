@@ -12,7 +12,7 @@ from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthenticat
 from edx_when import api as when_api
 from eventtracking import tracker
 from opaque_keys import InvalidKeyError
-from opaque_keys.edx.keys import CourseKey
+from opaque_keys.edx.keys import CourseKey, UsageKey
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -321,3 +321,11 @@ def get_exam_type(exam, provider):
         'type': exam_type,
         'humanized_type': humanized_type,
     }
+
+
+def resolve_exam_url_for_learning_mfe(course_id, content_id):
+    """ Helper that builds the url to the exam for the MFE app learning. """
+    course_key = CourseKey.from_string(course_id)
+    usage_key = UsageKey.from_string(content_id)
+    url = '{}/course/{}/{}'.format(settings.LEARNING_MICROFRONTEND_URL, course_key, usage_key)
+    return url
