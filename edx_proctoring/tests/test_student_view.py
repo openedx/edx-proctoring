@@ -14,6 +14,7 @@ import pytz
 from freezegun import freeze_time
 from mock import MagicMock, patch
 
+from django.test.utils import override_settings
 from django.urls import reverse
 
 from edx_proctoring.api import (
@@ -81,6 +82,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.timed_footer_msg = 'Can I request additional time to complete my exam?'
         self.wait_deadline_msg = "The result will be visible after"
         self.inactive_account_msg = "You have not activated your account"
+        self.review_exam_msg = "To view your exam questions and responses"
 
     def _render_exam(self, content_id, context_overrides=None):
         """
@@ -682,6 +684,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         else:
             self.assertNotIn(self.wait_deadline_msg, rendered_response)
 
+    @patch("edx_proctoring.api.constants.CONTENT_VIEWABLE_PAST_DUE_DATE", True)
     def test_get_studentview_acknowledged_proctored_exam_with_grace_period(self):
         """
         Verify the student view for an acknowledge proctored exam with an active
@@ -861,6 +864,58 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         rendered_response = self.render_proctored_exam()
         self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
 
+    @override_settings(PROCTORED_EXAM_VIEWABLE_PAST_DUE=False)
+    @ddt.data(
+        (ProctoredExamStudentAttemptStatus.submitted, True),
+        (ProctoredExamStudentAttemptStatus.submitted, False),
+        (ProctoredExamStudentAttemptStatus.second_review_required, True),
+        (ProctoredExamStudentAttemptStatus.second_review_required, False),
+        (ProctoredExamStudentAttemptStatus.rejected, True),
+        (ProctoredExamStudentAttemptStatus.rejected, False),
+        (ProctoredExamStudentAttemptStatus.verified, True),
+        (ProctoredExamStudentAttemptStatus.verified, False)
+    )
+    @ddt.unpack
+    def test_get_studentview_without_viewable_content(self, status, status_acknowledged):
+        """
+        Test for get_student_view proctored exam which has been submitted
+        but exam content is not viewable if the due date has passed
+        """
+        due_date = datetime.now(pytz.UTC) + timedelta(minutes=40)
+        exam_id = self._create_exam_with_due_time(
+            is_proctored=True, due_date=due_date
+        )
+
+        exam_attempt = ProctoredExamStudentAttempt.objects.create(
+            proctored_exam_id=exam_id,
+            user=self.user,
+            allowed_time_limit_mins=30,
+            taking_as_proctored=True,
+            external_id='fdage332',
+            status=status,
+        )
+
+        exam_attempt.is_status_acknowledged = status_acknowledged
+        exam_attempt.save()
+
+        # due date is after 10 minutes
+        reset_time = datetime.now(pytz.UTC) + timedelta(minutes=60)
+        with freeze_time(reset_time):
+            rendered_response = get_student_view(
+                user_id=self.user.id,
+                course_id=self.course_id,
+                content_id=self.content_id_for_exam_with_due_date,
+                context={
+                    'is_proctored': True,
+                    'display_name': 'Test Exam',
+                    'default_time_limit_mins': 30,
+                    'due_date': due_date
+                }
+            )
+            self.assertIsNotNone(rendered_response)
+            self.assertNotIn(self.review_exam_msg, rendered_response)
+
+    @patch("edx_proctoring.api.constants.CONTENT_VIEWABLE_PAST_DUE_DATE", True)
     @ddt.data(
         60,
         20,
@@ -906,6 +961,9 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 }
             )
             self.assertIn(self.proctored_exam_submitted_msg, rendered_response)
+            if due_date_passed:
+                self.assertIn(self.review_exam_msg, rendered_response)
+
             exam_attempt.is_status_acknowledged = True
             exam_attempt.save()
 
@@ -925,6 +983,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             else:
                 self.assertIsNotNone(rendered_response)
 
+    @patch("edx_proctoring.api.constants.CONTENT_VIEWABLE_PAST_DUE_DATE", True)
     @patch('edx_when.api.get_date_for_block')
     def test_get_studentview_submitted_personalize_scheduled_duedate_status_acknowledged(self, get_date_for_block_mock):
         """

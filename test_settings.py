@@ -125,6 +125,8 @@ DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 CONTACT_EMAIL = 'info@edx.org'
 TECH_SUPPORT_EMAIL = 'technical@example.com'
 
+PROCTORED_EXAM_VIEWABLE_PAST_DUE = False
+
 ########## TEMPLATE CONFIGURATION
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',

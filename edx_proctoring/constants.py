@@ -69,3 +69,5 @@ VERIFICATION_DAYS_VALID = 730
 PING_FAILURE_PASSTHROUGH_TEMPLATE = 'edx_proctoring.{}_ping_failure_passthrough'
 
 ONBOARDING_PROFILE_API = 'edx_proctoring.onboarding_profile_api'
+
+CONTENT_VIEWABLE_PAST_DUE_DATE = getattr(settings, 'PROCTORED_EXAM_VIEWABLE_PAST_DUE', False)

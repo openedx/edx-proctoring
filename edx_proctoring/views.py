@@ -17,6 +17,7 @@ from rest_framework.negotiation import BaseContentNegotiation
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -1360,6 +1361,12 @@ class ProctoredExamAttemptReviewStatus(ProctoredAPIView):
         """
         Update the is_status_acknowledged flag for the specific attempt
         """
+        if not getattr(settings, 'PROCTORED_EXAM_VIEWABLE_PAST_DUE', False):
+            return Response(
+                status=404,
+                data={'detail': _('Cannot update attempt review status')}
+            )
+
         attempt = get_exam_attempt_by_id(attempt_id)
 
         # make sure the the attempt belongs to the calling user_id
