@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-30 18:34+0000\n"
+"POT-Creation-Date: 2021-06-06 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Albeiro Gonzalez <albeiro.gonzalez@edunext.co>, 2021\n"
 "Language-Team: Spanish (Latin America) (https://www.transifex.com/open-edx/teams/6205/es_419/)\n"
@@ -123,70 +123,70 @@ msgstr ""
 msgid "you have {remaining_time} remaining"
 msgstr "usted tiene {remaining_time} para terminar"
 
-#: api.py:1336
+#: api.py:1345
 msgid "your course"
 msgstr "su curso"
 
-#: api.py:1401
+#: api.py:1410
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1410
+#: api.py:1419
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1444
+#: api.py:1453
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 
-#: api.py:1886
+#: api.py:1895
 msgid "Taking As Proctored Exam"
 msgstr "Tomando como examen supervisado"
 
-#: api.py:1891
+#: api.py:1900
 msgid "Proctored Option Available"
 msgstr "Opción supervisada disponible"
 
-#: api.py:1896
+#: api.py:1905
 msgid "Taking As Open Exam"
 msgstr "Tomando como examen abierto"
 
-#: api.py:1901 api.py:1906
+#: api.py:1910 api.py:1915
 msgid "Pending Session Review"
 msgstr "Revisión de sesión pendiente"
 
-#: api.py:1911
+#: api.py:1920
 msgid "Passed Proctoring"
 msgstr "Supervisión aprobada"
 
-#: api.py:1916 api.py:1921
+#: api.py:1925 api.py:1930
 msgid "Failed Proctoring"
 msgstr "Supervisión fallida"
 
-#: api.py:1926
+#: api.py:1935
 msgid "Proctored Option No Longer Available"
 msgstr "La opción supervisado ya no está disponible"
 
-#: api.py:1935
+#: api.py:1944
 msgid "Ungraded Practice Exam"
 msgstr "Examen de práctica no calificado"
 
-#: api.py:1940
+#: api.py:1949
 msgid "Practice Exam Completed"
 msgstr "Examen de práctica completado"
 
-#: api.py:1945
+#: api.py:1954
 msgid "Practice Exam Failed"
 msgstr "Examen de práctica no aprobado"
 
-#: api.py:1953
+#: api.py:1962
 msgid "Timed Exam"
 msgstr "Examen cronometrado"
 
-#: api.py:2528
+#: api.py:2541
 msgid "Onboarding status question"
 msgstr ""
 
