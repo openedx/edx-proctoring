@@ -1,11 +1,10 @@
 # Special Exams Test Plan
 
-This document should serve as a catalogue of features included in the proctoring/special-exams system. It can be used in part, or in full, whenever manual testing is required.
+This document should serve as a catalogue of  key features included in the proctoring/special-exams system. It may be used in part, or in full, whenever manual testing is required.
 
-## Available Test Courses
+## Available Test Courses in Stage
 - course-v1:edX+cheating101+2018T3
 - course-v1:edX+StageProctortrack+2019
-
 
 # Features
 
@@ -16,7 +15,7 @@ This document should serve as a catalogue of features included in the proctoring
 
 ### Test Cases
 
-#### A verified learner is able to start, complete, and submit a timed exam
+#### A paid track learner is able to start, complete, and submit a timed exam
 - [ ] Log in as a verified learner and navigate to the exam section
 - [ ] You should see an interstitial with the following information:
     - [ ] Statement that this is a timed exam
@@ -24,25 +23,23 @@ This document should serve as a catalogue of features included in the proctoring
     - [ ] A button or link to start the exam
 - [ ] Click the link to start the exam
 - [ ] You should see the first unit in the exam
-- [ ] Click and my exam using the timer banner
+- [ ] The exam timer is shown and functions properly (LINK)
+- [ ] Click end my exam using the timer banner
 - [ ] You should see an interstitial confirming if you want to submit
 - [ ] Submit the exam
 - [ ] You should see an interstitial confirming the exam has been submitted
 - [ ] If you navigate away and return to this section you should still see the submitted interstitial
 
-#### A learner is not able to enter an expired exam (Instuctor paced courses only)
+#### A paid track learner is not able to enter an expired exam (Instuctor paced courses only)
 
 - [ ] In studio, set the due date for the exam in the past
 - [ ] Log in as a verified learner and navigate to the timed exam section
 - [ ] An interstitial is shown stating that the due date for this exam has passed
 
-#### Additional Features
-- review exam answers after due
-
 ## Exam Timer
 
 #### The exam timer functions during a timed special exam
-- [ ] Log in as a verified learner and and beginning timed or proctored exam
+- [ ] Log in as a verified learner and begin a timed or proctored exam
 - [ ] When viewing exam content there should be a banner with the following information:
     - [ ] Notification you that you are in a timed exam
     - [ ] A button to end the exam
@@ -68,7 +65,7 @@ This document should serve as a catalogue of features included in the proctoring
 - [ ] An interstitial is shown notifying the learner their exam time has expired and answers have been automatically submitted.
 - [ ] If you modified `time allotted` please reset it to the initial value
 
-#### A learner is given limted time if stating a exam that is nearly due
+#### A learner is given limted time if starting a exam that is nearly due
 - [ ] In studio, verify `time allotted` for the exam is greater than 5 minutes
 - [ ] In studio, set the due date for the exam to 5 minutes from now
 - [ ] Log in as a verified learner and navigate to the timed exam section
@@ -86,8 +83,8 @@ This document should serve as a catalogue of features included in the proctoring
 
 ### Test Cases
 
-#### A verified learner is able to start, complete, and submit a proctored exam
-- [ ] Log in as a verified learner and navigate to the exam section
+#### A paid track learner is able to start, complete, and submit a proctored exam
+- [ ] Log in as a verified learner and navigate to the proctored exam section
 - [ ] You should see an interstitial with the following information:
     - [ ] Statement that this is a proctored exam
     - [ ] A button or link to continue
@@ -96,27 +93,17 @@ This document should serve as a catalogue of features included in the proctoring
 - [ ] Click start system check and follow set up steps according to the proctoring software
 - [ ] After set up you should be returned to edx courseware and the start exam button should be enabled
 - [ ] You should see a final interstitial stating the rules of the proctored exam and the time allotted to complete it
+    - [ ] valid link??
 - [ ] Click start my exam
 - [ ] You should see the first unit in the exam
-- [ ] There should be a banner with the following information:
-    - [ ] Notification you that you are in a timed exam
-    - [ ] A button to end the exam
-    - [ ] A timer counting down from the correct `time allotted` for this exam
-- [ ] The timer should return with the correct value when you:
-    - [ ] Refresh the page
-    - [ ] Navigate to other course content, then return to the exam
-- [ ] Click end my exam on the banner
-- [ ] You should see an interstitial confirming if you want to submit
-    - [ ] The timer should continue to count down
-- [ ] Click I want to continue working
-- [ ] You should be returned to the exam content
+- [ ] The exam timer is shown and functions properly (LINK)
 - [ ] Click end my exam on the banner
 - [ ] Click submit on the confirmation page
 - [ ] You should see an interstitial confirming the exam has been submitted and is waiting on review
 - [ ] You should receive an email stating your exam has been submitted for review
 
-- [ ] Test has been completed with a Proctortrack exam
-- [ ] Test has been completed with a RPNow exam
+- [ ] This test has been completed with a Proctortrack exam
+- [ ] This test has been completed with a RPNow exam
 
 #### Learners are removed from the exam if connectivity to the proctoring software is not maintained
 - [ ] Log in as a verified learner, navigate to the exam section, follow all instructions, and start the exam
@@ -134,6 +121,7 @@ This document should serve as a catalogue of features included in the proctoring
 - [ ] You should be able to successfully complete and submit to the exam
 - [ ] You should receive an email stating your exam has been submitted for review
 
+
 #### Additional features
 - Missing prerequisites
 - Proctored exam opt-out
@@ -141,14 +129,77 @@ This document should serve as a catalogue of features included in the proctoring
 
 ## Onboarding Exam
 
+### Test Setup
+Manually update attempt status: https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamstudentattempt/
+
+### Test Cases
+
+#### And approved onboarding profile is required to begin a proctored exam
+- [ ] Ensure you have a learner account without a verified onboarding profile
+    - [ ] If not, use the instructor dashboard to remove any prior onboarding attempts
+- [ ] Log in as a verified learner and navigate to the proctored exam section
+- [ ] Click the link on the first interstitial to start your exam
+- [ ] You should be blocked from the exam with a message stating you must complete onboarding
+- [ ] This page should include a link to the onboarding exam
+- [ ] Click "Navigate to Onboarding Exam"
+- [ ] You should be sent to the onboarding exam for this course
+
+- [ ] This behavior should be the same if the learner has a rejected onboarding profile
+- [ ] The "Navigate to Onboarding Exam" link should be omitted if the learner's onboarding profile is pending review
+
+#### A learner is able to start, complete, and submit an onboarding exam
+- [ ] Log in as a verified learner and navigate to the proctored exam section
+- [ ] You should see an interstitial with the following information:
+    - [ ] Statement that this is a onboarding exam
+    - [ ] A button or link to continue
+- [ ] Click the link to continue
+- [ ] You should see an interstitial prompting you to set up the proctoring software
+- [ ] Click start system check and follow set up steps according to the proctoring software
+- [ ] During setup you should be prompted for a face scan and id photo
+- [ ] After set up you should be returned to edx courseware and the start exam button should be enabled
+- [ ] You should see a final interstitial stating the rules of the proctored exam and the time allotted to complete it
+- [ ] After being redirected to edx course war you should be able to start and submit your exam
+- [ ] You should see an interstitial confirming the exam has been submitted and is waiting on review
+- [ ] You should receive an email stating your exam has been submitted for review
+
+#### A learner can retry an onboarding exam in the error and rejected status
+- [ ] Login is a verified learner and navigate to the proctored exam section. This will create an exam attempt.
+- [ ] As an admin, in another browser, manually update the `created` attempt status to `error`
+- [ ] Return to the learner's examine refresh the page
+- [ ] You should be presented with an error message and a button to "Retry my exam"
+- [ ] Clicking retry my exam should direct the learner back to the start system check page
+- [ ] You should be able to follow the steps to start, complete, and submit the onboarding exam.
+- [ ] As an admin, in another browser, manually update the `created` attempt status to `rejected`
+- [ ] Return to the learner's examine refresh the page
+- [ ] You should be presented with a rejected message and a button to "Retry my exam"
+- [ ] Clicking retry my exam should direct the learner back to the start system check page
+- [ ] You should be able to follow the steps to start, complete, and submit the onboarding exam.
+
+
 ## Certificates and Grades
-- certificate not released until all attempts are verified
+
+#### A rejected exam review should invalidate certificate and set grade to 0
+
+#### If a learner has multiple sessions for an exam, a certificate is not released until all reviews are verified
 
 ## Instructor Dashboard
-- exam reset
-- exam resume
-- onboarding status view
-- exam attempt view
-- allowances
+
+### Test Cases
+
+#### Individual exam attempts may be removed
+
+#### Exam attempts in the error state may be resumed
+
+#### Multiple sessions for the same exam (due to a resume) appear as a group
+
+#### Multiple sessions for the same exam are deleted in bulk
+
+#### Onboarding status view includes all paid-track learners
+
+#### Onboarding Status View is filterable
+
+#### Allowances
+- TODO: Making changes to this? Write some tests!
 
 # single path smoke test???
+# other paid tracks???
