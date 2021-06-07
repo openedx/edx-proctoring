@@ -247,10 +247,10 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 # proctored exam we need to navigate them to it with a link
                 if (exam['is_proctored'] and attempt_data and
                         attempt_data['attempt_status'] in ProctoredExamStudentAttemptStatus.onboarding_errors):
-                    onboarding_exam = ProctoredExam.objects.filter(course_id=course_id,
-                                                                   is_active=True,
-                                                                   is_practice_exam=True).first()
-                    if onboarding_exam.exists():
+                    onboarding_exam = ProctoredExam.objects.filter(
+                        course_id=course_id, is_active=True, is_practice_exam=True
+                    ).first()
+                    if onboarding_exam:
                         if is_learning_mfe:
                             onboarding_link = resolve_exam_url_for_learning_mfe(
                                 course_id,
