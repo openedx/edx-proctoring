@@ -197,7 +197,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         """
         Tests the GET exam attempts data contains software download url ONLY when attempt
         is in created or download_software_clicked status and contains verification
-        url ONLY when attempt is inn created status
+        url ONLY when attempt is in created status
         """
         self._create_exam_attempt(self.proctored_exam_id, status=status)
 

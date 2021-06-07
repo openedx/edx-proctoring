@@ -13,8 +13,8 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
-* Extend exam attempt API to return additional data about proctored exams and
-  to check if user has satisfied prerequisites before taking proctored exam.
+* Extend exam attempt API to return exam type and to check if
+  user has satisfied prerequisites before taking proctored exam.
 * Extend proctoring settings API to return additional data about proctoring
   provider.
 * Add API endpoint which provides exam review policy for specific exam.
