@@ -16,6 +16,7 @@ from opaque_keys.edx.locator import BlockUsageLocator
 
 from django.contrib.auth import get_user_model
 from django.test.client import Client
+from django.test.utils import override_settings
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 
@@ -3541,6 +3542,25 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             status=ProctoredExamStudentAttemptStatus.started
         )
 
+    def test_attempt_review_status_callback_non_reviewable(self):
+        """
+        Test the ProctoredExamAttemptReviewStatus view
+        """
+        attempt = self._create_proctored_exam_attempt_with_duedate(
+            due_date=datetime.now(pytz.UTC) + timedelta(minutes=40)
+        )
+
+        response = self.client.put(
+            reverse(
+                'edx_proctoring:proctored_exam.attempt.review_status',
+                args=[attempt.id]
+            ),
+            {},
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+    @override_settings(PROCTORED_EXAM_VIEWABLE_PAST_DUE=True)
     def test_attempt_review_status_callback(self):
         """
         Test the ProctoredExamAttemptReviewStatus view
@@ -3559,6 +3579,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(PROCTORED_EXAM_VIEWABLE_PAST_DUE=True)
     def test_attempt_review_status_callback_with_doesnotexit_exception(self):
         """
         Test the ProctoredExamAttemptReviewStatus view with does not exit exception
@@ -3578,6 +3599,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 400)
         self.assertRaises(StudentExamAttemptDoesNotExistsException)
 
+    @override_settings(PROCTORED_EXAM_VIEWABLE_PAST_DUE=True)
     def test_attempt_review_status_callback_with_permission_exception(self):
         """
         Test the ProctoredExamAttemptReviewStatus view with permission exception

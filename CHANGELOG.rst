@@ -20,6 +20,11 @@ Unreleased
 * Add API endpoint which provides exam review policy for specific exam.
   Usage case is to provide required data for the learning app MFE.
 
+[3.13.0] - 2021-06-07
+~~~~~~~~~~~~~~~~~~~~~
+* If the Django setting `PROCTORED_EXAM_VIEWABLE_PAST_DUE` is false, exam content will not be viewable past
+  an exam's due date, even if a learner has acknowledged their status.
+
 [3.12.0] - 2021-06-04
 ~~~~~~~~~~~~~~~~~~~~~
 * If the `is_integrity_signature_enabled` waffle flag is turned on, do not render the ID verification

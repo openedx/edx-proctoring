@@ -1,5 +1,5 @@
 {% load i18n %}
-{% if has_due_date_passed %}
+{% if has_due_date_passed and can_view_content_past_due %}
   <hr>
   <p>
     {% blocktrans %}

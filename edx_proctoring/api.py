@@ -2343,7 +2343,8 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'integration_specific_email': get_integration_specific_email(provider),
         'exam_display_name': exam['exam_name'],
         'reset_link': password_url,
-        'ping_interval': provider.ping_interval
+        'ping_interval': provider.ping_interval,
+        'can_view_content_past_due': constants.CONTENT_VIEWABLE_PAST_DUE_DATE,
     }
     if attempt:
         context['exam_code'] = attempt['attempt_code']
@@ -2569,32 +2570,32 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
     elif attempt_status == ProctoredExamStudentAttemptStatus.timed_out:
         raise NotImplementedError('There is no defined rendering for ProctoredExamStudentAttemptStatus.timed_out!')
     elif attempt_status == ProctoredExamStudentAttemptStatus.submitted:
-        student_view_template = None if _was_review_status_acknowledged(
+        student_view_template = None if (_was_review_status_acknowledged(
             attempt['is_status_acknowledged'],
             exam
-        ) else 'proctored_exam/submitted.html'
+        ) and constants.CONTENT_VIEWABLE_PAST_DUE_DATE) else 'proctored_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.second_review_required:
         # the student should still see a 'submitted'
         # rendering even if the review needs a 2nd review
-        student_view_template = None if _was_review_status_acknowledged(
+        student_view_template = None if (_was_review_status_acknowledged(
             attempt['is_status_acknowledged'],
             exam
-        ) else 'proctored_exam/submitted.html'
+        ) and constants.CONTENT_VIEWABLE_PAST_DUE_DATE) else 'proctored_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.verified:
-        student_view_template = None if _was_review_status_acknowledged(
+        student_view_template = None if (_was_review_status_acknowledged(
             attempt['is_status_acknowledged'],
             exam
-        ) else 'proctored_exam/verified.html'
+        ) and constants.CONTENT_VIEWABLE_PAST_DUE_DATE) else 'proctored_exam/verified.html'
         has_context_updated = verify_and_add_wait_deadline(context, exam, user_id)
         # The edge case where student has already acknowledged the result
         # but the course team changed the grace period
         if has_context_updated and not student_view_template:
             student_view_template = 'proctored_exam/verified.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.rejected:
-        student_view_template = None if _was_review_status_acknowledged(
+        student_view_template = None if (_was_review_status_acknowledged(
             attempt['is_status_acknowledged'],
             exam
-        ) else 'proctored_exam/rejected.html'
+        ) and constants.CONTENT_VIEWABLE_PAST_DUE_DATE) else 'proctored_exam/rejected.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
     elif attempt_status in ProctoredExamStudentAttemptStatus.onboarding_errors:
