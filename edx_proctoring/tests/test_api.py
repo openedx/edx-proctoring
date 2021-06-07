@@ -23,6 +23,7 @@ from edx_proctoring.api import (
     _get_ordered_prerequisites,
     _get_review_policy_by_exam_id,
     add_allowance_for_user,
+    check_prerequisites,
     create_exam,
     create_exam_attempt,
     create_exam_review_policy,
@@ -3103,3 +3104,58 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
         self.assertEqual(data['critically_low_threshold_sec'], 270)
         # make sure we have the accessible human string
         self.assertEqual(data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
+
+
+@ddt.ddt
+class CheckPrerequisitesTests(ProctoredExamTestCase):
+    """
+    Tests for check_prerequisites.
+    """
+    def setUp(self):
+        """
+        Initialize
+        """
+        super().setUp()
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.exam = {
+            'id': self.proctored_exam_id,
+            'course_id': self.course_id,
+            'content_id': self.content_id
+        }
+
+    @ddt.data(
+        ('pending', False, 1),
+        ('failed', False, 1),
+        ('satisfied', True, 2),
+        ('declined', False, 1),
+    )
+    @ddt.unpack
+    def test_check_prerequisites(self, status, are_satisfied, expected_prerequisites_len):
+        """
+        Testing that prerequisites are checked correctly
+        """
+        if status == 'declined':
+            prerequisites = self.declined_prerequisites
+        else:
+            prerequisites = [item for item in self.prerequisites if item['status'] == status]
+        with patch(
+                'edx_proctoring.tests.test_services.MockCreditService.get_credit_state',
+                return_value={'credit_requirement_status': prerequisites}
+        ):
+            result = check_prerequisites(self.exam, self.user_id)
+            self.assertEqual(result['prerequisite_status']['are_prerequisites_satisifed'], are_satisfied)
+            self.assertEqual(
+                len(result['prerequisite_status']['{}_prerequisites'.format(status)]),
+                expected_prerequisites_len
+            )
+            if status == 'declined':
+                attempt = get_current_exam_attempt(self.exam['id'], self.user_id)
+                self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.declined)
+
+    def test_check_prerequisites_with_no_credit_state(self):
+        """
+        Testing that prerequisites are not checked if we do not have credit state
+        """
+        set_runtime_service('credit', MockCreditServiceNone())
+        result = check_prerequisites(self.exam, self.user_id)
+        self.assertDictEqual(self.exam, result)

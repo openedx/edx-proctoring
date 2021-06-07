@@ -13,6 +13,12 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Extend exam attempt API to return exam type and to check if
+  user has satisfied prerequisites before taking proctored exam.
+* Extend proctoring settings API to return additional data about proctoring
+  provider.
+* Add API endpoint which provides exam review policy for specific exam.
+  Usage case is to provide required data for the learning app MFE.
 
 [3.12.0] - 2021-06-04
 ~~~~~~~~~~~~~~~~~~~~~

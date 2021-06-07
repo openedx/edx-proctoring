@@ -18,7 +18,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from django.test.client import Client
 
-from edx_proctoring.api import create_exam
+from edx_proctoring.api import create_exam, create_exam_review_policy
 from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -377,6 +377,16 @@ class ProctoredExamTestCase(LoggedInTestCase):
             is_sample_attempt=True,
             status=ProctoredExamStudentAttemptStatus.started,
             allowed_time_limit_mins=10
+        )
+
+    def _create_review_policy(self, exam_id):
+        """
+        Calls the api's create_exam_review_policy to create an exam review policy object.
+        """
+        return create_exam_review_policy(
+            exam_id,
+            self.user.id,
+            "This is a test review policy."
         )
 
     @staticmethod

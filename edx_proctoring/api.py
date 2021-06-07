@@ -100,7 +100,14 @@ def get_proctoring_settings_by_exam_id(exam_id):
         except NotImplementedError as error:
             log.exception(str(error))
             raise BackendProviderNotConfigured(str(error)) from error
-        proctoring_settings_data['exam_proctoring_backend'] = provider.get_proctoring_config()
+        proctoring_settings_data.update({
+            'exam_proctoring_backend': provider.get_proctoring_config(),
+            'provider_tech_support_email': provider.tech_support_email,
+            'provider_tech_support_phone': provider.tech_support_phone,
+            'provider_name': provider.verbose_name,
+            'learner_notification_from_email': provider.learner_notification_from_email,
+            'integration_specific_email': get_integration_specific_email(provider),
+        })
     return proctoring_settings_data
 
 
@@ -618,7 +625,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     attempt_data = {
         'in_timed_exam': True,
         'taking_as_proctored': attempt['taking_as_proctored'],
-        'exam_type': get_exam_type(provider, attempt),
+        'exam_type': get_exam_type(exam, provider)['humanized_type'],
         'exam_display_name': exam['exam_name'],
         'exam_url_path': exam_url_path,
         'time_remaining_seconds': time_remaining_seconds,
@@ -637,8 +644,23 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     }
 
     if provider:
-        attempt_data['desktop_application_js_url'] = provider.get_javascript()
-        attempt_data['ping_interval'] = provider.ping_interval
+        attempt_data.update({
+            'desktop_application_js_url': provider.get_javascript(),
+            'ping_interval': provider.ping_interval,
+            'attempt_code': attempt['attempt_code']
+        })
+        # in case user is not verified we need to send them to verification page
+        if attempt['status'] == ProctoredExamStudentAttemptStatus.created:
+            attempt_data['verification_url'] = '{base_url}/id-verification'.format(
+                base_url=settings.ACCOUNT_MICROFRONTEND_URL
+            )
+        if attempt['status'] in (
+                ProctoredExamStudentAttemptStatus.created,
+                ProctoredExamStudentAttemptStatus.download_software_clicked
+        ):
+            provider_attempt = provider.get_attempt(attempt)
+            download_url = provider_attempt.get('download_url', None) or provider.get_software_download_url()
+            attempt_data['software_download_url'] = download_url
     else:
         attempt_data['desktop_application_js_url'] = ''
 
@@ -1756,6 +1778,46 @@ def get_active_exams_for_user(user_id, course_id=None):
         })
 
     return result
+
+
+def check_prerequisites(exam, user_id):
+    """
+    Check if prerequisites are satisfied for user to take the exam
+    """
+    credit_service = get_runtime_service('credit')
+    credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
+    if not credit_state:
+        return exam
+    credit_requirement_status = credit_state.get('credit_requirement_status', [])
+
+    prerequisite_status = _are_prerequirements_satisfied(
+        credit_requirement_status,
+        evaluate_for_requirement_name=exam['content_id'],
+        filter_out_namespaces=['grade']
+    )
+
+    exam.update({
+        'prerequisite_status': prerequisite_status
+    })
+
+    if not prerequisite_status['are_prerequisites_satisifed']:
+        # do we have any declined prerequisites, if so, then we
+        # will auto-decline this proctored exam
+        if prerequisite_status['declined_prerequisites']:
+            _create_and_decline_attempt(exam['id'], user_id)
+            return exam
+
+        if prerequisite_status['failed_prerequisites']:
+            prerequisite_status['failed_prerequisites'] = _resolve_prerequisite_links(
+                exam,
+                prerequisite_status['failed_prerequisites']
+            )
+        else:
+            prerequisite_status['pending_prerequisites'] = _resolve_prerequisite_links(
+                exam,
+                prerequisite_status['pending_prerequisites']
+            )
+    return exam
 
 
 def _get_ordered_prerequisites(prerequisites_statuses, filter_out_namespaces=None):

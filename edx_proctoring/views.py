@@ -28,6 +28,7 @@ from django.utils.translation import ugettext as _
 from edx_proctoring import constants
 from edx_proctoring.api import (
     add_allowance_for_user,
+    check_prerequisites,
     create_exam,
     create_exam_attempt,
     get_active_exams_for_user,
@@ -44,6 +45,7 @@ from edx_proctoring.api import (
     get_last_verified_onboarding_attempts_per_user,
     get_onboarding_attempt_data_for_learner,
     get_proctoring_settings_by_exam_id,
+    get_review_policy_by_exam_id,
     get_user_attempts_by_exam_id,
     is_exam_passed_due,
     mark_exam_attempt_as_ready,
@@ -63,6 +65,7 @@ from edx_proctoring.exceptions import (
     ProctoredExamNotFoundException,
     ProctoredExamPermissionDenied,
     ProctoredExamReviewAlreadyExists,
+    ProctoredExamReviewPolicyNotFoundException,
     StudentExamAttemptDoesNotExistsException
 )
 from edx_proctoring.models import (
@@ -85,6 +88,7 @@ from edx_proctoring.statuses import (
 )
 from edx_proctoring.utils import (
     AuthenticatedAPIView,
+    get_exam_type,
     get_time_remaining_for_attempt,
     get_visibility_check_date,
     humanized_time,
@@ -230,10 +234,18 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                         attempt.get('id'),
                         is_learning_mfe=is_learning_mfe
                     )
+                # Exam hasn't been started yet but it is proctored so needs to be checked
+                # if prerequisites are satisfied. We only do this for proctored exam hence
+                # additional check 'not exam['is_practice_exam']', meaning we do not check
+                # prerequisites for practice or onboarding exams
+                elif exam['is_proctored'] and not exam['is_practice_exam']:
+                    exam = check_prerequisites(exam, request.user.id)
                 exam.update({'attempt': attempt_data})
             except ProctoredExamNotFoundException:
                 exam = {}
-
+        if exam:
+            provider = get_backend_provider(exam)
+            exam['type'] = get_exam_type(exam, provider)['type']
         response_dict = {
             'exam': exam,
             'active_attempt': active_attempt_data,
@@ -267,6 +279,33 @@ class ProctoredSettingsView(ProctoredAPIView):
         response_dict = get_proctoring_settings_by_exam_id(exam_id)
 
         return Response(data=response_dict, status=status.HTTP_200_OK)
+
+
+class ProctoredExamReviewPolicyView(ProctoredAPIView):
+    """
+    Endpoint for getting review policy for proctored exam.
+
+    edx_proctoring/v1/proctored_exam/review_policy/exam_id/{exam_id}
+
+    Supports:
+        HTTP GET:
+            ** Scenarios **
+            Returns review policy for proctored exam
+            {
+                "review_policy": "Example review policy."
+            }
+
+    """
+    def get(self, request, exam_id):
+        """
+        HTTP GET handler. Returns review policy for proctored exam.
+        """
+        try:
+            review_policy = get_review_policy_by_exam_id(exam_id)['review_policy']
+        except ProctoredExamReviewPolicyNotFoundException as exc:
+            LOG.warning(str(exc))
+            review_policy = None
+        return Response(data=dict(review_policy=review_policy), status=status.HTTP_200_OK)
 
 
 class ProctoredExamView(ProctoredAPIView):
