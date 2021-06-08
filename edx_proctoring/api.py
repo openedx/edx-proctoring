@@ -1404,7 +1404,11 @@ def update_attempt_status(attempt_id, to_status,
         # only proctored/practice exams have a backend
         # timed exams have no backend
         backend_method = None
-        if to_status == ProctoredExamStudentAttemptStatus.started:
+
+        # add_start_time will only have a value of true if this is the first time an
+        # attempt is transitioning to started. We only want to notify the backend
+        # for the first time an attempt is transitioned to a started status (MST-862).
+        if to_status == ProctoredExamStudentAttemptStatus.started and add_start_time:
             backend_method = backend.start_exam_attempt
         elif to_status == ProctoredExamStudentAttemptStatus.submitted:
             backend_method = backend.stop_exam_attempt
