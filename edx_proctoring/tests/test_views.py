@@ -23,7 +23,6 @@ from django.utils import timezone
 from edx_proctoring.api import (
     _calculate_allowed_mins,
     add_allowance_for_user,
-    add_bulk_allowances,
     create_exam,
     create_exam_attempt,
     get_backend_provider,
@@ -4584,7 +4583,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         self.student_taking_exam.save()
 
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
-        
+
     def test_add_bulk_time_allowances(self):
         """
         Add bulk time allowance for multiple users and exams
@@ -4665,7 +4664,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
-        
+
 class TestActiveExamsForUserView(LoggedInTestCase):
     """
     Tests for the ActiveExamsForUserView
