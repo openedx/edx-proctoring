@@ -61,4 +61,4 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         flags: unittests
-        fail_ci_if_error: false
+        fail_ci_if_error: true
