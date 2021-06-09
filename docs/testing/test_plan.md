@@ -5,8 +5,8 @@ This document should serve as a catalogue of key features included in the procto
 ## Resources
 
 #### Test Courses in Stage
-- course-v1:edX+cheating101+2018T3
-- course-v1:edX+StageProctortrack+2019
+- course-v1:edX+cheating101+2018T3 (Proctortrack)
+- course-v1:edX+StageProctortrack+2019 (Proctortrack)
 
 #### Django Admin Models
 - Exam Attempt: https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamstudentattempt/
@@ -36,7 +36,7 @@ Efficient testing path that covers core functions.
     - [ ] A button or link to start the exam
 - [ ] Click the link to start the exam
 - [ ] You should see the first unit in the exam
-- [ ] The exam timer is shown and functions properly (LINK)
+- [ ] The exam timer is shown and functions properly. [Exam Timer](#exam-timer) 
 - [ ] Click end my exam using the timer banner
 - [ ] You should see an interstitial confirming if you want to submit
 - [ ] Submit the exam
@@ -86,17 +86,13 @@ Efficient testing path that covers core functions.
 - [ ] Begin the exam, the timer should reflect the reduced time limit
 
 #### If the exam timer reaches zero and timeout is not allowed...
-- [ ] ????? there is no view template for this case, wut ?????
+- [ ] ??? there is no view template for this case ???
 
 ## Proctored Exam
 
-- [ ] A test course with proctoring enabled, and Proctortrack set as the backend provider
-    - [ ] 
-- [ ] A test course with proctoring enabled, RPnow said as the backend provider
-
 ### Test Cases
 
-#### A paid track learner is able to start, complete, and submit a proctored exam
+#### <a name="proctored-exam"></a> A paid track learner is able to start, complete, and submit a proctored exam
 - [ ] Log in as a verified learner and navigate to the proctored exam section
 - [ ] You should see an interstitial with the following information:
     - [ ] Statement that this is a proctored exam
@@ -109,7 +105,7 @@ Efficient testing path that covers core functions.
     - [ ] valid link??
 - [ ] Click start my exam
 - [ ] You should see the first unit in the exam
-- [ ] The exam timer is shown and functions properly (LINK)
+- [ ] The exam timer is shown and functions properly. [Exam Timer](#exam-timer) 
 - [ ] Click end my exam on the banner
 - [ ] Click submit on the confirmation page
 - [ ] You should see an interstitial confirming the exam has been submitted and is waiting on review
@@ -118,7 +114,7 @@ Efficient testing path that covers core functions.
 - [ ] This test has been completed with a Proctortrack exam
 - [ ] This test has been completed with a RPNow exam
 
-#### Learners are removed from the exam if connectivity to the proctoring software is not maintained
+#### <a name="error"></a> Learners are removed from the exam if connectivity to the proctoring software is not maintained
 - [ ] Log in as a verified learner, navigate to the exam section, follow all instructions, and start the exam
 - [ ] Interrupt session by either closing the proctoring in software or disconnecting your internet
 - [ ] Wait up to two minutes
@@ -126,9 +122,9 @@ Efficient testing path that covers core functions.
 - [ ] you can no longer view the exam content
 
 #### Learners are able to resume an exam upon approval from the course team
-- [ ] Follow steps to be removed from an exam due to a connection error, make note of the time remaining
-- [ ] TODO instructor steps to reset
-- [ ] Log in as a verified learner and navigate to the exam section
+- [ ] Follow steps to start and be removed from an exam due to a connection error, make note of the time remaining. [Exam With Error State](#error)
+- [ ] In another browser, use the instructor dashboard to resume the learner exam attempt. [Resume Exam](#resume-exam)
+- [ ] Return as the learner and navigate to the exam section
 - [ ] You should see an interstitial stating that the exam is ready to resume
     - [ ] The time remaining should match that noted just before being removed from the exam due to an error
 - [ ] You should be able to successfully complete and submit to the exam
@@ -136,15 +132,12 @@ Efficient testing path that covers core functions.
 
 
 #### Additional features
-- Missing prerequisites
-- Proctored exam opt-out
-- Incorrect browser during RPNow exam
+- [ ] Missing and pending prerequisites
+- [ ] Missing and pending verification
+- [ ] Proctored exam opt-out
+- [ ] Incorrect browser during RPNow exam
 
 ## Onboarding Exam
-
-### Test Setup
-Manually update attempt status: https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamstudentattempt/
-https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamsoftwaresecurereview/
 
 ### Test Cases
 
@@ -176,7 +169,7 @@ https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamsoftwar
 - [ ] You should see an interstitial confirming the exam has been submitted and is waiting on review
 - [ ] You should receive an email stating your exam has been submitted for review
 
-#### A learner can retry an onboarding exam in the error and rejected status
+#### A learner can retry an onboarding exam in the error or rejected status
 - [ ] Login is a verified learner and navigate to the proctored exam section. This will create an exam attempt.
 - [ ] As an admin, in another browser, manually update the `created` attempt status to `error` LINK
 - [ ] Return to the learner's examine refresh the page
@@ -189,30 +182,33 @@ https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamsoftwar
 - [ ] Clicking retry my exam should direct the learner back to the start system check page
 - [ ] You should be able to follow the steps to start, complete, and submit the onboarding exam.
 
+#### Additional Features
+- [ ] Onboarding status panel for missing and completed onboarding profiles
 
 ## Certificates and Grades
 
 #### A rejected exam review should invalidate certificate and set grade to 0
-- [ ] Login as a verified learner and follow steps to start, complete, and submit a proctored exam
-    - [ ] Make sure to receive a grade greater than 0
+- [ ] Login as a verified learner and complete enough content so that completing an exam will earn you a passing grade
+- [ ] Follow steps to start, complete, and submit a proctored exam. [Proctor Exam](#proctor-exam)
+    - [ ] make sure to receive a grade that will meet the threshold for passing the course
 - [ ] Get the `external_id` of the attempt from LINK
 - [ ] As an admin user use the external id to send a POST request to the exam review endpoint with a status of `suspicious`
-- [ ] Update the review from `suspicious` to `rules violation` LINK
-- [ ] Validate the exam grade has been overridden to zero using gradebook LINK
-- [ ] use the following query against reed replica to validate the certificate has been marked `unavailable`
-    - [ ] `select * from proctoring_proctoredexamstudentattempt where user_id = <id> and proctored_exam_id = <id>;`
+- [ ] Update the review from `suspicious` to `rules violation` in [Django Admin](#django-admin-models)
+- [ ] Validate the exam grade has been overridden to zero using gradebook
+- [ ] Query read replica to validate the certificate has been marked `unavailable` [Useful Queries](#useful-queries)
 
-#### If a learner has multiple sessions for an exam, a falling review of either recording should invalidate thie certificate and set the grade to 0
-- [ ] Login as a verified learner and follow steps to put your exam attempt in the `error` state LINK
+#### If a learner has multiple sessions for an exam, a falling review of either recording should invalidate the certificate and set the grade to 0
+- [ ] Login as a verified learner and complete enough content so that completing an exam will earn you a passing grade
+- [ ] Follow steps to put your exam attempt in the `error` state. [Exam With Error State](#error)
 - [ ] In another browser, use the instructor dashboard to allow this learner to resume
 - [ ] Returned to the learner's browser, refresh the page, start, complete, and submit the exam.
     - [ ] make sure to receive a grade that will meet the threshold for passing the course
-- [ ] Get the `external_id` of both the resumed and submitted attempts from LINK
+- [ ] Get the `external_id` of both the resumed and submitted attempts from [Django Admin](#django-admin-models)
 - [ ] As an admin user use the external id of the resumed attempt to send a POST request to the exam review endpoint with a status of `passed`
 - [ ] As an admin user use the external id of the submitted attempt to send a POST request to the exam review endpoint with a status of `suspicious` 
-- [ ] Update the review from `suspicious` to `rules violation` LINK
-- [ ] Validate the exam grade has been overridden to zero using gradebook LINK
-- [ ] use the following query against reed replica to validate the certificate has been marked `unavailable`
+- [ ] Update the review from `suspicious` to `rules violation` in [Django Admin](#django-admin-models)
+- [ ] Validate the exam grade has been overridden to zero using gradebook (tab in instructor dashboard)
+- [ ] Query read replica to validate the certificate has been marked `unavailable` [Useful Queries](#useful-queries)
 
 #### If a learner has multiple sessions for an exam, a certificate is not released until all reviews are verified
 - [ ] TODO -- I was under the impression this was the case but my testing of the behavior seems to indicate we do release a certificate so long as neither review is rejected.
@@ -221,9 +217,17 @@ https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamsoftwar
 
 ### Test Cases
 
-#### Individual exam attempts may be removed
+#### Individual exam attempts are shown and may be removed by the instructor
+- [ ] As a learner, enter a timed exam section and complete at least one unit in the exam
+- [ ] In another browser, navigate to the instructor dashboard and expand the "Student Special Exam Attempt" section
+- [ ] There should be an attempt by the learner in step #1 with the correct status, exam name, and date.
+- [ ] The "Actions" column should have one link to "Reset"
+- [ ] Reset the exam and click yes on the confirmation alert
+- [ ] Return to the exam as the learner
+- [ ] You should see the initial interstitial indicating that this is a timed exam
+- [ ] Enter the exam, any previously completed units should be reset
 
-#### Exam attempts in the error state may be resumed
+#### <a name="resume-exam"></a> Exam attempts in the error state may be resumed
 
 #### Multiple sessions for the same exam (due to a resume) appear as a group
 
@@ -234,6 +238,3 @@ https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamsoftwar
 #### Onboarding Status View is filterable
 
 #### Allowances...
-
-# single path smoke test???
-# other paid tracks???
