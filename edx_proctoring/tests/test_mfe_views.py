@@ -2,6 +2,7 @@
 Tests for the MFE proctored exam views.
 """
 import json
+from itertools import product
 
 import ddt
 from mock import patch
@@ -12,6 +13,7 @@ from django.urls import reverse
 
 from edx_proctoring.api import get_review_policy_by_exam_id
 from edx_proctoring.exceptions import BackendProviderNotConfigured, ProctoredExamNotFoundException
+from edx_proctoring.models import ProctoredExam
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from .utils import ProctoredExamTestCase
@@ -215,6 +217,64 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
             has_download_url=has_download_url,
             has_verification_url=has_verification_url,
         )
+
+    @ddt.data(
+        *product(
+            [True, False],
+            ProctoredExamStudentAttemptStatus.onboarding_errors
+        )
+    )
+    @ddt.unpack
+    def test_exam_data_contains_link_to_onboarding_exam_if_attempt_in_onboarding_errors(self, is_learning_mfe, status):
+        """
+        Tests the GET exam attempts data contains url to onboarding exam when user
+        tries to take proctored exam and has not yet completed required onboarding exam.
+        """
+        self._create_exam_attempt(self.proctored_exam_id, status=status)
+
+        onboarding_exam = ProctoredExam.objects.filter(
+            course_id=self.course_id, is_active=True, is_practice_exam=True
+        ).first()
+
+        if is_learning_mfe:
+            expected_exam_url = '{}/course/{}/{}'.format(
+                settings.LEARNING_MICROFRONTEND_URL, self.course_id, onboarding_exam.content_id
+            )
+        else:
+            expected_exam_url = reverse('jump_to', args=[self.course_id, onboarding_exam.content_id])
+
+        url = reverse(
+            'edx_proctoring:proctored_exam.exam_attempts',
+            kwargs={
+                'course_id': self.course_id,
+                'content_id': self.content_id
+            }
+        ) + '?is_learning_mfe={is_learning_mfe}'.format(is_learning_mfe=is_learning_mfe)
+        response = self.client.get(url)
+        response_data = json.loads(response.content.decode('utf-8'))
+        exam = response_data['exam']
+        assert 'onboarding_link' in exam
+        self.assertEqual(expected_exam_url, exam['onboarding_link'])
+
+    def test_exam_data_does_not_fail_if_onboarding_errors_and_no_onboarding_exam(self):
+        """
+        Tests the GET exam attempts data not contain link to onboarding exam if
+        when user tries to take proctored exam and has not yet completed required
+        onboarding exam and onboarding exam is not found.
+        """
+        self._create_exam_attempt(self.proctored_exam_id, status=ProctoredExamStudentAttemptStatus.onboarding_missing)
+        url = reverse(
+            'edx_proctoring:proctored_exam.exam_attempts',
+            kwargs={
+                'course_id': self.course_id,
+                'content_id': self.content_id
+            }
+        ) + '?is_learning_mfe=true'
+        with patch('edx_proctoring.models.ProctoredExam.objects.filter', return_value=ProctoredExam.objects.none()):
+            response = self.client.get(url)
+        response_data = json.loads(response.content.decode('utf-8'))
+        exam = response_data['exam']
+        assert 'onboarding_link' not in exam
 
 
 class ProctoredSettingsViewTests(ProctoredExamTestCase):

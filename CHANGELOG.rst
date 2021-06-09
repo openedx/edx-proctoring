@@ -14,6 +14,13 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.13.2] - 2021-06-09
+~~~~~~~~~~~~~~~~~~~~~
+* Extend exam attempt API to return total time left in the attempt
+  and a link to the onboarding exam in case user tries to take proctored
+  exam when they haven't passed required onboarding exam.
+  Modify API to check if exam has passed due date.
+
 [3.13.1] - 2021-06-08
 ~~~~~~~~~~~~~~~~~~~~~
 * If an attempt transitions from `ready_to_submit` back to `started`, the proctoring provider
