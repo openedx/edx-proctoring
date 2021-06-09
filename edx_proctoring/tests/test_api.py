@@ -63,6 +63,7 @@ from edx_proctoring.api import (
     update_exam_attempt,
     update_review_policy
 )
+from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 from edx_proctoring.constants import DEFAULT_CONTACT_EMAIL
 from edx_proctoring.exceptions import (
     AllowanceValueNotAllowedException,
@@ -1634,6 +1635,33 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
 
         self.assertEqual(new_attempt, exam_attempt.id)
+
+    @patch.object(TestBackendProvider, 'start_exam_attempt')
+    def test_update_attempt_multiple_starts(self, mock_backend_start):
+        """
+        Test that updating an attempt status to `started` more than once
+        will only call the backend's start_exam_attempt once
+        """
+        exam_attempt = self._create_exam_attempt(self.proctored_exam_id)
+        update_attempt_status(
+            exam_attempt.id,
+            ProctoredExamStudentAttemptStatus.started
+        )
+        mock_backend_start.assert_called_once()
+
+        # move status to ready to submit
+        update_attempt_status(
+            exam_attempt.id,
+            ProctoredExamStudentAttemptStatus.ready_to_submit
+        )
+        # move status to started
+        update_attempt_status(
+            exam_attempt.id,
+            ProctoredExamStudentAttemptStatus.started
+        )
+
+        # make sure that method was not called again
+        mock_backend_start.assert_called_once()
 
     @ddt.data(
         (
