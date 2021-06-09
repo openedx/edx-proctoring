@@ -606,17 +606,18 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     low_threshold_pct = proctoring_settings.get('low_threshold_pct', .2)
     critically_low_threshold_pct = proctoring_settings.get('critically_low_threshold_pct', .05)
 
-    time_limit_mins = attempt.get('allowed_time_limit_mins') or 0
+    allowed_time_limit_mins = attempt.get('allowed_time_limit_mins') or 0
 
-    low_threshold = int(low_threshold_pct * float(time_limit_mins) * 60)
+    low_threshold = int(low_threshold_pct * float(allowed_time_limit_mins) * 60)
     critically_low_threshold = int(
-        critically_low_threshold_pct * float(time_limit_mins) * 60
+        critically_low_threshold_pct * float(allowed_time_limit_mins) * 60
     )
 
-    if not time_limit_mins or (attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_resume):
-        time_limit_mins = _calculate_allowed_mins(exam, attempt['user']['id'])
+    if (not allowed_time_limit_mins
+            or (attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_resume)):
+        allowed_time_limit_mins = _calculate_allowed_mins(exam, attempt['user']['id'])
 
-    total_time = humanized_time(time_limit_mins)
+    total_time = humanized_time(allowed_time_limit_mins)
 
     # resolve the LMS url, note we can't assume we're running in
     # a same process as the LMS
