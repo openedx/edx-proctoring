@@ -14,12 +14,13 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-[3.14.0] - 2021-06-07
+[3.14.0] - 2021-06-09
 ~~~~~~~~~~~~~~~~~~~~~
-* Extend exam attempt API to return exam type and a link to the onboarding exam
-  in case user tries to take proctored exam when they haven't passed required
-  onboarding exam. Modify API to check if user has satisfied prerequisites
-  before taking proctored exam and if exam has passed due date.
+* Extend exam attempt API to return exam type, total time left in attempt,
+  and a link to the onboarding exam in case user tries to take proctored
+  exam when they haven't passed required onboarding exam.
+  Modify API to check if user has satisfied prerequisites before taking
+  proctored exam and if exam has passed due date.
 * Extend proctoring settings API to return additional data about proctoring
   provider.
 * Add API endpoint which provides exam review policy for specific exam.
