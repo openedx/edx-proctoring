@@ -1,17 +1,30 @@
 # Special Exams Test Plan
 
-This document should serve as a catalogue of  key features included in the proctoring/special-exams system. It may be used in part, or in full, whenever manual testing is required.
+This document should serve as a catalogue of key features included in the proctoring/special-exams system. It may be used in part, or in full, whenever manual testing is required.
 
-## Available Test Courses in Stage
+## Resources
+
+#### Test Courses in Stage
 - course-v1:edX+cheating101+2018T3
 - course-v1:edX+StageProctortrack+2019
+
+#### Django Admin Models
+- Exam Attempt: https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamstudentattempt/
+- Exam Review: https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamsoftwaresecurereview/
+
+#### Useful Queries
+- Certificate Status: `select status from certificates_generatedcertificate where name = <name> and course_id = <course_key>;`
+
+## Smoke Test
+
+Efficient testing path that covers core functions.
+
+--TODO--
+
 
 # Features
 
 ## Timed Exam
-
-### Required Setup
-- [ ] An instructor-paced test course with at least one timed exam
 
 ### Test Cases
 
@@ -125,12 +138,13 @@ This document should serve as a catalogue of  key features included in the proct
 #### Additional features
 - Missing prerequisites
 - Proctored exam opt-out
-- RPNow wrong browser
+- Incorrect browser during RPNow exam
 
 ## Onboarding Exam
 
 ### Test Setup
 Manually update attempt status: https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamstudentattempt/
+https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamsoftwaresecurereview/
 
 ### Test Cases
 
@@ -164,12 +178,12 @@ Manually update attempt status: https://courses-internal.stage.edx.org/admin/edx
 
 #### A learner can retry an onboarding exam in the error and rejected status
 - [ ] Login is a verified learner and navigate to the proctored exam section. This will create an exam attempt.
-- [ ] As an admin, in another browser, manually update the `created` attempt status to `error`
+- [ ] As an admin, in another browser, manually update the `created` attempt status to `error` LINK
 - [ ] Return to the learner's examine refresh the page
 - [ ] You should be presented with an error message and a button to "Retry my exam"
 - [ ] Clicking retry my exam should direct the learner back to the start system check page
 - [ ] You should be able to follow the steps to start, complete, and submit the onboarding exam.
-- [ ] As an admin, in another browser, manually update the `created` attempt status to `rejected`
+- [ ] As an admin, in another browser, manually update the `created` attempt status to `rejected` LINK
 - [ ] Return to the learner's examine refresh the page
 - [ ] You should be presented with a rejected message and a button to "Retry my exam"
 - [ ] Clicking retry my exam should direct the learner back to the start system check page
@@ -179,8 +193,29 @@ Manually update attempt status: https://courses-internal.stage.edx.org/admin/edx
 ## Certificates and Grades
 
 #### A rejected exam review should invalidate certificate and set grade to 0
+- [ ] Login as a verified learner and follow steps to start, complete, and submit a proctored exam
+    - [ ] Make sure to receive a grade greater than 0
+- [ ] Get the `external_id` of the attempt from LINK
+- [ ] As an admin user use the external id to send a POST request to the exam review endpoint with a status of `suspicious`
+- [ ] Update the review from `suspicious` to `rules violation` LINK
+- [ ] Validate the exam grade has been overridden to zero using gradebook LINK
+- [ ] use the following query against reed replica to validate the certificate has been marked `unavailable`
+    - [ ] `select * from proctoring_proctoredexamstudentattempt where user_id = <id> and proctored_exam_id = <id>;`
+
+#### If a learner has multiple sessions for an exam, a falling review of either recording should invalidate thie certificate and set the grade to 0
+- [ ] Login as a verified learner and follow steps to put your exam attempt in the `error` state LINK
+- [ ] In another browser, use the instructor dashboard to allow this learner to resume
+- [ ] Returned to the learner's browser, refresh the page, start, complete, and submit the exam.
+    - [ ] make sure to receive a grade that will meet the threshold for passing the course
+- [ ] Get the `external_id` of both the resumed and submitted attempts from LINK
+- [ ] As an admin user use the external id of the resumed attempt to send a POST request to the exam review endpoint with a status of `passed`
+- [ ] As an admin user use the external id of the submitted attempt to send a POST request to the exam review endpoint with a status of `suspicious` 
+- [ ] Update the review from `suspicious` to `rules violation` LINK
+- [ ] Validate the exam grade has been overridden to zero using gradebook LINK
+- [ ] use the following query against reed replica to validate the certificate has been marked `unavailable`
 
 #### If a learner has multiple sessions for an exam, a certificate is not released until all reviews are verified
+- [ ] TODO -- I was under the impression this was the case but my testing of the behavior seems to indicate we do release a certificate so long as neither review is rejected.
 
 ## Instructor Dashboard
 
@@ -198,8 +233,7 @@ Manually update attempt status: https://courses-internal.stage.edx.org/admin/edx
 
 #### Onboarding Status View is filterable
 
-#### Allowances
-- TODO: Making changes to this? Write some tests!
+#### Allowances...
 
 # single path smoke test???
 # other paid tracks???
