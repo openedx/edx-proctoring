@@ -493,6 +493,25 @@ def remove_allowance_for_user(exam_id, user_id, key):
         emit_event(exam, 'allowance.deleted', override_data=data)
 
 
+def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
+    """
+    Adds (or updates) an allowance for multiple users and exams
+    """
+    exam_ids = set(exam_ids)
+    user_ids = set(user_ids)
+    if allowance_type == 'time_multiplier':
+        for exam_id in exam_ids:
+            time_allowed = str(round(get_exam_by_id(exam_id)["time_limit_mins"] * (float(value) - 1)))
+            for user_id in user_ids:
+                add_allowance_for_user(exam_id, user_id, ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED, time_allowed)
+    else:
+        for exam_id in exam_ids:
+            for user_id in user_ids:
+                add_allowance_for_user(exam_id, user_id, ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED, value)
+
+
+
+
 def _check_for_attempt_timeout(attempt):
     """
     Helper method to see if the status of an

@@ -81,6 +81,16 @@ urlpatterns = [
         name='proctored_exam.allowance'
     ),
     url(
+        r'edx_proctoring/v1/proctored_exam/{}/bulk_allowance$'.format(settings.COURSE_ID_PATTERN),
+        views.ExamBulkAllowanceView.as_view(),
+        name='proctored_exam.bulk_allowance'
+    ),
+    url(
+        r'edx_proctoring/v1/proctored_exam/bulk_allowance$',
+        views.ExamBulkAllowanceView.as_view(),
+        name='proctored_exam.bulk_allowance'
+    ),
+    url(
         r'edx_proctoring/v1/proctored_exam/active_exams_for_user$',
         views.ActiveExamsForUserView.as_view(),
         name='proctored_exam.active_exams_for_user'

@@ -23,6 +23,7 @@ from django.utils import timezone
 from edx_proctoring.api import (
     _calculate_allowed_mins,
     add_allowance_for_user,
+    add_bulk_allowances,
     create_exam,
     create_exam_attempt,
     get_backend_provider,
@@ -4569,7 +4570,102 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+class ExamBulkAllowanceView(LoggedInTestCase):
+    """
 
+    Tests for the ExamBulkAllowanceView
+    """
+    def setUp(self):
+        super().setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login_user(self.user)
+        self.student_taking_exam = User()
+        self.student_taking_exam.save()
+
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+        
+    def test_add_bulk_time_allowances(self):
+        """
+        Add bulk time allowance for multiple users and exams
+        """
+        # Create an exam.
+        user_list = self.create_batch_users(3)
+        user_id_list = [user.email for user in user_list]
+        #pdb.set_trace()
+        exam_list = [
+            create_exam(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            time_limit_mins=90,
+            is_active=True
+            ),
+            create_exam(
+            course_id='a/b/c',
+            content_id='test_content2',
+            exam_name='Test Exam2',
+            time_limit_mins=90,
+            is_active=True
+            )]
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': 'additional_time',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+    def test_add_allowance_non_staff_user(self):  # pylint: disable=invalid-name
+        """
+        Test to add bulk allowance with not staff/global user
+        returns forbidden response.
+        """
+        self.user.is_staff = False
+        self.user.save()
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+        # Create exams.
+        user_list = self.create_batch_users(3)
+        user_id_list = [user.email for user in user_list]
+        exam1 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam2 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content2',
+            exam_name='Test Exam2',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam_list = [exam1.id, exam2.id]
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': 'additional_time',
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance', kwargs={'course_id': exam1.course_id}),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 403)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
+
+        
 class TestActiveExamsForUserView(LoggedInTestCase):
     """
     Tests for the ActiveExamsForUserView

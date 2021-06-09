@@ -29,6 +29,7 @@ from django.utils.translation import ugettext as _
 from edx_proctoring import constants
 from edx_proctoring.api import (
     add_allowance_for_user,
+    add_bulk_allowances,
     check_prerequisites,
     create_exam,
     create_exam_attempt,
@@ -1369,6 +1370,44 @@ class ExamAllowanceView(ProctoredAPIView):
             key=request.data.get('key', None)
         ))
 
+class ExamBulkAllowanceView(ProctoredAPIView):
+    """
+    Endpoint for the Exam Allowance
+    /edx_proctoring/v1/proctored_exam/bulk_allowance
+
+    Supports:
+        HTTP PUT: Creates or Updates the allowances for multiple users and multiple exams.
+
+    HTTP PUT
+    Adds or updates multiple exam and student allowances.
+    PUT data : {
+        "exam_ids": [1, 2, 3],
+        "user_ids": [1, 2],
+        "allowance_type": 'extra_time',
+        "value": '10'
+    }
+
+    **PUT data Parameters**
+        * exam_ids: The set of unique identifiers for the exams.
+        * user_ids: The set of unique identifiers for the students.
+        * allowance_type: key for the allowance entry, either 'additional_time' or 'time_multiplier'
+        * value: value for the allowance entry.
+
+    **Response Values**
+        * returns Nothing. Add or update the allowances for the users and exams.
+    """
+
+    @method_decorator(require_course_or_global_staff)
+    def put(self, request):
+        """
+        HTTP PUT handler. Adds or updates Allowances for many exams and students
+        """
+        return Response(add_bulk_allowances(
+            exam_ids=request.data.get('exam_ids', None),
+            user_ids=request.data.get('user_ids', None),
+            allowance_type=request.data.get('allowance_type', None),
+            value=request.data.get('value', None)
+        ))
 
 class ActiveExamsForUserView(ProctoredAPIView):
     """
