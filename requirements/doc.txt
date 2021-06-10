@@ -20,7 +20,7 @@ celery==5.0.4
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
-certifi==2020.12.5
+certifi==2021.5.30
     # via requests
 cffi==1.14.5
     # via cryptography
@@ -32,7 +32,7 @@ click-didyoumean==0.0.3
     # via celery
 click-plugins==1.1.1
     # via celery
-click-repl==0.1.6
+click-repl==0.2.0
     # via celery
 click==7.1.2
     # via
@@ -59,7 +59,7 @@ django-waffle==2.2.0
     #   edx-drf-extensions
 django-webpack-loader==1.0.0
     # via -r requirements/base.in
-django==2.2.23
+django==2.2.24
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
@@ -92,7 +92,7 @@ drf-jwt==1.19.0
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   edx-drf-extensions
-edx-django-utils==4.0.0
+edx-django-utils==4.1.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -136,7 +136,7 @@ markupsafe==2.0.1
     # via
     #   jinja2
     #   xblock
-newrelic==6.4.0.157
+newrelic==6.4.1.158
     # via edx-django-utils
 packaging==20.9
     # via
