@@ -10,7 +10,7 @@ astroid==2.5.6
     #   pylint-celery
 bleach==3.3.0
     # via readme-renderer
-certifi==2020.12.5
+certifi==2021.5.30
     # via requests
 cffi==1.14.5
     # via cryptography
@@ -29,7 +29,7 @@ colorama==0.4.4
     # via twine
 cryptography==3.4.7
     # via secretstorage
-django==2.2.23
+django==2.2.24
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/quality.in
@@ -43,7 +43,7 @@ edx-lint==5.0.0
     # via -r requirements/quality.in
 idna==2.10
     # via requests
-importlib-metadata==4.2.0
+importlib-metadata==4.5.0
     # via
     #   keyring
     #   twine
@@ -87,7 +87,7 @@ pylint-plugin-utils==0.6
     # via
     #   pylint-celery
     #   pylint-django
-pylint==2.8.2
+pylint==2.8.3
     # via
     #   edx-lint
     #   pylint-celery
