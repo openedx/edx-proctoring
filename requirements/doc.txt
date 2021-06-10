@@ -61,7 +61,6 @@ django-webpack-loader==1.0.0
     # via -r requirements/base.in
 django==2.2.24
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
     #   django-crum
     #   django-model-utils
@@ -83,14 +82,14 @@ doc8==0.8.1
     # via -r requirements/doc.in
 docutils==0.16
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/constraints.txt
     #   doc8
     #   readme-renderer
     #   restructuredtext-lint
     #   sphinx
 drf-jwt==1.19.0
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/constraints.txt
     #   edx-drf-extensions
 edx-django-utils==4.1.0
     # via
@@ -165,7 +164,7 @@ pyjwkest==1.4.2
     # via edx-drf-extensions
 pyjwt[crypto]==1.7.1
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/constraints.txt
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-rest-api-client
