@@ -137,6 +137,12 @@ class MockInstructorService:
             raise UserNotFoundException
         return True
 
+    def complete_student_attempt(self, user_identifier, content_id):
+        """
+        Mock implementation
+        """
+        return True
+
     def is_course_staff(self, user, course_id):
         """
         Mocked implementation of is_course_staff
