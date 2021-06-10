@@ -3159,8 +3159,14 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
         data = get_exam_attempt_data(proctored_exam.id, attempt.id)
         self.assertEqual(data['total_time'], '1 hour and 30 minutes')
 
-    @ddt.data('timed_exam_id', 'proctored_exam_id')
-    def test_get_exam_attempt_checks_if_exam_can_be_continued_if_attempt_status_is_ready_to_submit(self, exam_id):
+    @ddt.data(
+        ('timed_exam_id', False),
+        ('timed_exam_id', True),
+        ('proctored_exam_id', False),
+        ('proctored_exam_id', True),
+    )
+    @ddt.unpack
+    def test_get_exam_attempt_checks_if_exam_can_be_continued_if_ready_to_submit(self, exam_id, can_continue):
         """
         Tests that it is checked whether user can continue taking the exam
         when attempt is in ready_to_submit status.
@@ -3169,8 +3175,9 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
             getattr(self, exam_id),
             status=ProctoredExamStudentAttemptStatus.ready_to_submit,
         )
-        data = get_exam_attempt_data(self.proctored_exam_id, attempt.id)
-        assert 'can_continue' in data
+        with patch('edx_proctoring.api._does_time_remain', return_value=can_continue):
+            data = get_exam_attempt_data(self.proctored_exam_id, attempt.id)
+        self.assertEqual(data['can_continue'], can_continue)
 
 
 @ddt.ddt
