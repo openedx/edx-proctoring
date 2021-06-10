@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.13.3] - 2021-06-10
+~~~~~~~~~~~~~~~~~~~~~
+* Extend exam attempt API to check if user can continue
+  taking exam when attempt is in ready_to_submit status.
+
 [3.13.2] - 2021-06-09
 ~~~~~~~~~~~~~~~~~~~~~
 * Extend exam attempt API to return total time left in the attempt
