@@ -3159,6 +3159,19 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
         data = get_exam_attempt_data(proctored_exam.id, attempt.id)
         self.assertEqual(data['total_time'], '1 hour and 30 minutes')
 
+    @ddt.data('timed_exam_id', 'proctored_exam_id')
+    def test_get_exam_attempt_checks_if_exam_can_be_continued_if_attempt_status_is_ready_to_submit(self, exam_id):
+        """
+        Tests that it is checked whether user can continue taking the exam
+        when attempt is in ready_to_submit status.
+        """
+        attempt = self._create_exam_attempt(
+            getattr(self, exam_id),
+            status=ProctoredExamStudentAttemptStatus.ready_to_submit,
+        )
+        data = get_exam_attempt_data(self.proctored_exam_id, attempt.id)
+        assert 'can_continue' in data
+
 
 @ddt.ddt
 class CheckPrerequisitesTests(ProctoredExamTestCase):

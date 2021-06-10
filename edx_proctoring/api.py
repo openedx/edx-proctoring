@@ -623,7 +623,6 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
     # a same process as the LMS
     if is_learning_mfe:
         exam_url_path = resolve_exam_url_for_learning_mfe(exam['course_id'], exam['content_id'])
-
     else:
         exam_url_path = reverse('jump_to', args=[exam['course_id'], exam['content_id']])
 
@@ -648,6 +647,12 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
             args=[attempt['id']]
         ),
     }
+
+    if attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_submit:
+        can_continue = _does_time_remain(attempt)
+        if exam['is_proctored']:
+            can_continue = can_continue and provider and not provider.should_block_access_to_exam_material()
+        attempt_data['can_continue'] = can_continue
 
     if provider:
         attempt_data.update({
