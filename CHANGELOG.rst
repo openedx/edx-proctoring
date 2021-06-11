@@ -13,17 +13,35 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.14.0] - 2021-06-10
+~~~~~~~~~~~~~~~~~~~~~
+* When an exam attempt is finished for the first time, mark all completable children in the exam as complete
+  in the Completion Service using the Instructor Service. If the Completion Service is not enabled, nothing
+  will happen.
+
+[3.13.2] - 2021-06-09
+~~~~~~~~~~~~~~~~~~~~~
+* Extend exam attempt API to return total time left in the attempt
+  and a link to the onboarding exam in case user tries to take proctored
+  exam when they haven't passed required onboarding exam.
+  Modify API to check if exam has passed due date.
+
+[3.13.1] - 2021-06-08
+~~~~~~~~~~~~~~~~~~~~~
+* If an attempt transitions from `ready_to_submit` back to `started`, the proctoring provider
+  backend function `start_exam_attempt` will not be called.
+
+[3.13.0] - 2021-06-07
+~~~~~~~~~~~~~~~~~~~~~
+* If the Django setting `PROCTORED_EXAM_VIEWABLE_PAST_DUE` is false, exam content will not be viewable past
+  an exam's due date, even if a learner has acknowledged their status.
 * Extend exam attempt API to return exam type and to check if
   user has satisfied prerequisites before taking proctored exam.
 * Extend proctoring settings API to return additional data about proctoring
   provider.
 * Add API endpoint which provides exam review policy for specific exam.
   Usage case is to provide required data for the learning app MFE.
-
-[3.13.0] - 2021-06-07
-~~~~~~~~~~~~~~~~~~~~~
-* If the Django setting `PROCTORED_EXAM_VIEWABLE_PAST_DUE` is false, exam content will not be viewable past
-  an exam's due date, even if a learner has acknowledged their status.
 
 [3.12.0] - 2021-06-04
 ~~~~~~~~~~~~~~~~~~~~~

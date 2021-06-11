@@ -95,7 +95,8 @@ from edx_proctoring.utils import (
     get_visibility_check_date,
     humanized_time,
     locate_attempt_by_attempt_code,
-    obscured_user_id
+    obscured_user_id,
+    resolve_exam_url_for_learning_mfe
 )
 
 ATTEMPTS_PER_PAGE = 25
@@ -242,12 +243,30 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 # prerequisites for practice or onboarding exams
                 elif exam['is_proctored'] and not exam['is_practice_exam']:
                     exam = check_prerequisites(exam, request.user.id)
+
+                # if user hasn't completed required onboarding exam before taking
+                # proctored exam we need to navigate them to it with a link
+                if (exam['is_proctored'] and attempt_data and
+                        attempt_data['attempt_status'] in ProctoredExamStudentAttemptStatus.onboarding_errors):
+                    onboarding_exam = ProctoredExam.objects.filter(
+                        course_id=course_id, is_active=True, is_practice_exam=True
+                    ).first()
+                    if onboarding_exam:
+                        if is_learning_mfe:
+                            onboarding_link = resolve_exam_url_for_learning_mfe(
+                                course_id,
+                                onboarding_exam.content_id
+                            )
+                        else:
+                            onboarding_link = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
+                        exam['onboarding_link'] = onboarding_link
                 exam.update({'attempt': attempt_data})
             except ProctoredExamNotFoundException:
                 exam = {}
         if exam:
             provider = get_backend_provider(exam)
             exam['type'] = get_exam_type(exam, provider)['type']
+            exam['passed_due_date'] = is_exam_passed_due(exam, user=request.user.id)
         response_dict = {
             'exam': exam,
             'active_attempt': active_attempt_data,

@@ -1864,6 +1864,33 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         self.assertEqual(new_attempt, exam_attempt.id)
 
+    @patch.object(TestBackendProvider, 'start_exam_attempt')
+    def test_update_attempt_multiple_starts(self, mock_backend_start):
+        """
+        Test that updating an attempt status to `started` more than once
+        will only call the backend's start_exam_attempt once
+        """
+        exam_attempt = self._create_exam_attempt(self.proctored_exam_id)
+        update_attempt_status(
+            exam_attempt.id,
+            ProctoredExamStudentAttemptStatus.started
+        )
+        mock_backend_start.assert_called_once()
+
+        # move status to ready to submit
+        update_attempt_status(
+            exam_attempt.id,
+            ProctoredExamStudentAttemptStatus.ready_to_submit
+        )
+        # move status to started
+        update_attempt_status(
+            exam_attempt.id,
+            ProctoredExamStudentAttemptStatus.started
+        )
+
+        # make sure that method was not called again
+        mock_backend_start.assert_called_once()
+
     @ddt.data(
         (
             ProctoredExamStudentAttemptStatus.eligible, {
@@ -3333,6 +3360,32 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
         self.assertEqual(data['critically_low_threshold_sec'], 270)
         # make sure we have the accessible human string
         self.assertEqual(data['accessibility_time_string'], 'you have 1 hour and 30 minutes remaining')
+
+    def test_get_exam_attempt_has_total_time_if_status_is_ready_to_resume(self):
+        """
+        Test Case that exam attempt data contains total_time when exam attempt is in ready_to_resume status.
+        """
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_proctored=True,
+        )
+
+        attempt = ProctoredExamStudentAttempt.objects.create(
+            proctored_exam=proctored_exam,
+            user=self.user,
+            allowed_time_limit_mins=90,
+            taking_as_proctored=True,
+            is_sample_attempt=False,
+            external_id=proctored_exam.external_id,
+            status=ProctoredExamStudentAttemptStatus.ready_to_resume
+        )
+
+        data = get_exam_attempt_data(proctored_exam.id, attempt.id)
+        self.assertEqual(data['total_time'], '1 hour and 30 minutes')
 
 
 @ddt.ddt

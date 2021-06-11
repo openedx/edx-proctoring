@@ -56,7 +56,7 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 
 requirements: ## install development environment requirements
 	pip install -qr requirements/dev.txt --exists-action w
-	pip-sync requirements/*.txt requirements/private.*
+	pip-sync requirements/dev.txt requirements/base.txt requirements/private.*
 
 install: requirements
 	./manage.py migrate --settings=test_settings
