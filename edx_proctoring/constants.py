@@ -74,4 +74,4 @@ CONTENT_VIEWABLE_PAST_DUE_DATE = getattr(settings, 'PROCTORED_EXAM_VIEWABLE_PAST
 
 TIME_MULTIPLIER = 'time_multiplier'
 
-ADDITIONAL_TIME = 'additional_time' 
+ADDITIONAL_TIME = 'additional_time'

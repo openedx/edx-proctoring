@@ -531,7 +531,7 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
                     )
                     log.error(log_message)
                     continue
-                
+
                 exam_time = target_exam["time_limit_mins"]
                 added_time = round(exam_time * multiplier)
                 time_allowed = str(added_time)
@@ -555,8 +555,7 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
         err_msg = (
             u'allowance_value "{value}" should be non-negative integer value.'
         ).format(value=value)
-        if ProctoredExamStudentAllowance.is_allowance_value_valid(ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
-                                                                  value):
+        if value.isdigit():
             for exam_id in exam_ids:
                 try:
                     target_exam = get_exam_by_id(exam_id)
@@ -1664,7 +1663,7 @@ def reset_practice_exam(exam_id, user_id, requesting_user):
             user_id=user_id,
         )
     )
-    (log_msg)
+    log.info(log_msg)
 
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:

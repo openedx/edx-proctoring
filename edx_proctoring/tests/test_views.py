@@ -2,7 +2,6 @@
 """
 All tests for the proctored_exams.py
 """
-from edx_proctoring.constants import ADDITIONAL_TIME, TIME_MULTIPLIER
 import json
 from datetime import datetime, timedelta
 from math import ceil, floor
@@ -20,6 +19,7 @@ from django.test.utils import override_settings
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 
+from edx_proctoring.constants import ADDITIONAL_TIME, TIME_MULTIPLIER
 from edx_proctoring.api import (
     _calculate_allowed_mins,
     add_allowance_for_user,
@@ -4769,6 +4769,57 @@ class ExamBulkAllowanceView(LoggedInTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
+
+    @ddt.data(
+        (
+            ADDITIONAL_TIME,
+            '-30'
+        ),
+        (
+            TIME_MULTIPLIER,
+            '-1.5'
+        ),
+        (
+            TIME_MULTIPLIER,
+            'invalid_value'
+        )
+    )
+    @ddt.unpack
+    def test_add_bulk_allowance_invalid_allowance_value(self, allowance_type, value):  # pylint: disable=invalid-name
+        """
+        Test to add bulk allowance with invalid allowance value
+        """
+        # Create exams.
+        user_list = self.create_batch_users(3)
+        user_id_list = [user.email for user in user_list]
+        exam1 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam2 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content2',
+            exam_name='Test Exam2',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam_list = [exam1.id, exam2.id]
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': allowance_type,
+            'value': value
+        }
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
 
 
 class TestActiveExamsForUserView(LoggedInTestCase):
