@@ -7,7 +7,7 @@ API which is in the views.py file, per edX coding standards
 
 import logging
 import uuid
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 
 import pytz
 from opaque_keys import InvalidKeyError
@@ -519,8 +519,8 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
         ).format(value=value)
         try:
             multiplier = float(value) - 1
-        except ValueError:
-            raise AllowanceValueNotAllowedException(err_msg)
+        except ValueError as error:
+            raise AllowanceValueNotAllowedException(err_msg) from error
         if multiplier >= 0:
             for exam_id in exam_ids:
                 try:
