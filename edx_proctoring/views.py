@@ -1370,6 +1370,7 @@ class ExamAllowanceView(ProctoredAPIView):
             key=request.data.get('key', None)
         ))
 
+
 class ExamBulkAllowanceView(ProctoredAPIView):
     """
     Endpoint for the Exam Allowance
@@ -1390,7 +1391,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
     **PUT data Parameters**
         * exam_ids: The set of unique identifiers for the exams.
         * user_ids: The set of unique identifiers for the students.
-        * allowance_type: key for the allowance entry, either 'additional_time' or 'time_multiplier'
+        * allowance_type: key for the allowance entry, either ADDITIONAL_TIME or TIME_MULTIPLIER
         * value: value for the allowance entry.
 
     **Response Values**
@@ -1408,6 +1409,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
             allowance_type=request.data.get('allowance_type', None),
             value=request.data.get('value', None)
         ))
+
 
 class ActiveExamsForUserView(ProctoredAPIView):
     """

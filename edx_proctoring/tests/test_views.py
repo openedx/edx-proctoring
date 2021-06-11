@@ -2,7 +2,7 @@
 """
 All tests for the proctored_exams.py
 """
-
+from edx_proctoring.constants import ADDITIONAL_TIME, TIME_MULTIPLIER
 import json
 from datetime import datetime, timedelta
 from math import ceil, floor
@@ -4569,6 +4569,8 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+
+@ddt.ddt
 class ExamBulkAllowanceView(LoggedInTestCase):
     """
 
@@ -4584,35 +4586,45 @@ class ExamBulkAllowanceView(LoggedInTestCase):
 
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
-    def test_add_bulk_time_allowances(self):
+    @ddt.data(
+        (
+            ADDITIONAL_TIME,
+            '30'
+        ),
+        (
+            TIME_MULTIPLIER,
+            '1.5'
+        )
+    )
+    @ddt.unpack
+    def test_add_bulk_time_allowances(self, allowance_type, value):
         """
         Add bulk time allowance for multiple users and exams
         """
         # Create an exam.
         user_list = self.create_batch_users(3)
         user_id_list = [user.email for user in user_list]
-        #pdb.set_trace()
-        exam_list = [
-            create_exam(
+        exam1 = ProctoredExam.objects.create(
             course_id='a/b/c',
             content_id='test_content',
             exam_name='Test Exam',
             time_limit_mins=90,
             is_active=True
-            ),
-            create_exam(
+            )
+        exam2 = ProctoredExam.objects.create(
             course_id='a/b/c',
             content_id='test_content2',
             exam_name='Test Exam2',
             time_limit_mins=90,
             is_active=True
-            )]
+            )
+        exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
             'exam_ids': exam_list,
             'user_ids': user_id_list,
-            'allowance_type': 'additional_time',
-            'value': '30'
+            'allowance_type': allowance_type,
+            'value': value
         }
         response = self.client.put(
             reverse('edx_proctoring:proctored_exam.bulk_allowance'),
@@ -4621,8 +4633,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-
-    def test_add_allowance_non_staff_user(self):  # pylint: disable=invalid-name
+    def test_add_bulk_allowance_non_staff_user(self):  # pylint: disable=invalid-name
         """
         Test to add bulk allowance with not staff/global user
         returns forbidden response.
@@ -4652,7 +4663,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         allowance_data = {
             'exam_ids': exam_list,
             'user_ids': user_id_list,
-            'allowance_type': 'additional_time',
+            'allowance_type': ADDITIONAL_TIME,
             'value': '30'
         }
         response = self.client.put(
@@ -4663,6 +4674,101 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
+
+    @ddt.data(
+        (
+            ADDITIONAL_TIME,
+            '30'
+        ),
+        (
+            TIME_MULTIPLIER,
+            '1.5'
+        )
+    )
+    @ddt.unpack
+    def test_add_bulk_allowance_invalid_user(self, allowance_type, value):  # pylint: disable=invalid-name
+        """
+        Test to add bulk allowance with an invalid user in the list
+        """
+        # Create exams.
+        user_list = self.create_batch_users(3)
+        user_id_list = [user.email for user in user_list]
+        user_id_list.append('invalid_user')
+        exam1 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam2 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content2',
+            exam_name='Test Exam2',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam_list = [exam1.id, exam2.id]
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': allowance_type,
+            'value': value
+        }
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @ddt.data(
+        (
+            ADDITIONAL_TIME,
+            '30'
+        ),
+        (
+            TIME_MULTIPLIER,
+            '1.5'
+        )
+    )
+    @ddt.unpack
+    def test_add_bulk_allowance_invalid_exam(self, allowance_type, value):  # pylint: disable=invalid-name
+        """
+        Test to add bulk allowance with an invalid exam in the list
+        """
+        # Create exams.
+        user_list = self.create_batch_users(3)
+        user_id_list = [user.email for user in user_list]
+        exam1 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam2 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content2',
+            exam_name='Test Exam2',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam_list = [exam1.id, exam2.id, -99]
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': allowance_type,
+            'value': value
+        }
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 class TestActiveExamsForUserView(LoggedInTestCase):

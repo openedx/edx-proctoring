@@ -7,7 +7,7 @@ API which is in the views.py file, per edX coding standards
 
 import logging
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 import pytz
 from opaque_keys import InvalidKeyError
@@ -25,10 +25,12 @@ from django.utils.translation import ugettext_noop
 from edx_proctoring import constants
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import (
+    AllowanceValueNotAllowedException,
     BackendProviderCannotRegisterAttempt,
     BackendProviderNotConfigured,
     BackendProviderOnboardingException,
     BackendProviderSentNoAttemptID,
+    ProctoredBaseException,
     ProctoredExamAlreadyExists,
     ProctoredExamIllegalStatusTransition,
     ProctoredExamNotActiveException,
@@ -499,18 +501,86 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
     """
     exam_ids = set(exam_ids)
     user_ids = set(user_ids)
-    if allowance_type == 'time_multiplier':
-        for exam_id in exam_ids:
-            time_allowed = str(round(get_exam_by_id(exam_id)["time_limit_mins"] * (float(value) - 1)))
-            for user_id in user_ids:
-                add_allowance_for_user(exam_id, user_id, 
-                ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED, time_allowed)
+
+    log_message = (
+        'Adding allowances of type allowance_type={allowance_type} with value={value} '
+        'for exams exam_ids={exam_ids} and users user_ids={user_ids}'.format(
+            allowance_type=allowance_type,
+            value=value,
+            exam_ids=exam_ids,
+            user_ids=user_ids
+        )
+    )
+    log.info(log_message)
+    if allowance_type == constants.TIME_MULTIPLIER:
+        err_msg = (
+            u'allowance_value "{value}" should be a float value greater than 1.'
+        ).format(value=value)
+        try:
+            multiplier = float(value) - 1
+        except ValueError:
+            raise AllowanceValueNotAllowedException(err_msg)
+        if multiplier >= 0:
+            for exam_id in exam_ids:
+                try:
+                    target_exam = get_exam_by_id(exam_id)
+                except ProctoredExamNotFoundException:
+                    log_message = (
+                        'Attempted to get exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id)
+                    )
+                    log.error(log_message)
+                    continue
+                
+                exam_time = target_exam["time_limit_mins"]
+                added_time = round(exam_time * multiplier)
+                time_allowed = str(added_time)
+                for user_id in user_ids:
+                    try:
+                        add_allowance_for_user(exam_id, user_id,
+                                               ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+                                               time_allowed)
+                    except ProctoredBaseException:
+                        log_message = (
+                            'Failed to add allowance for user_id={user_id} '
+                            'for exam_id={exam_id}'.format(
+                                user_id=user_id,
+                                exam_id=exam_id
+                            )
+                        )
+                        log.error(log_message)
+        else:
+            raise AllowanceValueNotAllowedException(err_msg)
     else:
-        for exam_id in exam_ids:
-            for user_id in user_ids:
-                add_allowance_for_user(exam_id, user_id, ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED, value)
-
-
+        err_msg = (
+            u'allowance_value "{value}" should be non-negative integer value.'
+        ).format(value=value)
+        if ProctoredExamStudentAllowance.is_allowance_value_valid(ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+                                                                  value):
+            for exam_id in exam_ids:
+                try:
+                    target_exam = get_exam_by_id(exam_id)
+                except ProctoredExamNotFoundException:
+                    log_message = (
+                        'Attempted to get exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id)
+                    )
+                    log.error(log_message)
+                    continue
+                for user_id in user_ids:
+                    try:
+                        add_allowance_for_user(exam_id, user_id,
+                                               ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+                                               value)
+                    except ProctoredBaseException:
+                        log_message = (
+                            'Failed to add allowance for user_id={user_id} '
+                            'for exam_id={exam_id}'.format(
+                                user_id=user_id,
+                                exam_id=exam_id
+                            )
+                        )
+                        log.error(log_message)
+        else:
+            raise AllowanceValueNotAllowedException(err_msg)
 
 
 def _check_for_attempt_timeout(attempt):
@@ -1584,7 +1654,7 @@ def reset_practice_exam(exam_id, user_id, requesting_user):
             user_id=user_id,
         )
     )
-    log.info(log_msg)
+    (log_msg)
 
     exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(exam_id, user_id)
     if exam_attempt_obj is None:

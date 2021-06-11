@@ -73,7 +73,7 @@ class UserNotFoundException(ProctoredBaseException):
 
 class AllowanceValueNotAllowedException(ProctoredBaseException):
     """
-    Raised when the allowance value is not an non-negative integer
+    Raised when the allowance value is not an non-negative integer or float
     """
 
 
