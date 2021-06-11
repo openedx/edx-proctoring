@@ -3,7 +3,7 @@ edx = edx || {};
 (function(Backbone, $, _, gettext) {
     'use strict';
 
-    var viewHelper, onboardingStatuses, statusAndModeReadableFormat;
+    var viewHelper, onboardingStatuses, onboardingProfileAPIStatuses, statusAndModeReadableFormat;
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
     onboardingStatuses = [
@@ -16,6 +16,14 @@ edx = edx || {};
         'rejected',
         'error'
     ];
+    onboardingProfileAPIStatuses = [
+        'not_started',
+        'other_course_approved',
+        'submitted',
+        'verified',
+        'rejected',
+        'expired'
+    ];
     statusAndModeReadableFormat = {
         // Onboarding statuses
         not_started: gettext('Not Started'),
@@ -27,6 +35,7 @@ edx = edx || {};
         verified: gettext('Verified'),
         rejected: gettext('Rejected'),
         error: gettext('Error'),
+        expired: gettext('Expired'),
         // TODO: remove as part of MST-745
         onboarding_reset_past_due: gettext('Onboarding Reset Failed Due to Past Due Exam'),
         // Enrollment modes (Note: 'verified' is both a status and enrollment mode)
@@ -59,6 +68,7 @@ edx = edx || {};
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamOnboardingCollection();
             this.templateUrl = '/static/proctoring/templates/student-onboarding-status.underscore';
             this.courseId = this.$el.data('course-id');
+            this.enableProctoringApi = this.$el.data('use-onboarding-api');
             this.template = null;
 
             this.initialUrl = this.collection.url;
@@ -202,14 +212,15 @@ edx = edx || {};
             this.hydrate();
         },
         render: function() {
-            var data, dataJson, html, startPage, endPage;
+            var data, dataJson, html, startPage, endPage, statuses;
+            statuses = this.enableProctoringApi ? onboardingProfileAPIStatuses : onboardingStatuses;
             if (this.template !== null) {
                 data = {
                     previousPage: null,
                     nextPage: null,
                     currentPage: 1,
                     onboardingItems: [],
-                    onboardingStatuses: onboardingStatuses,
+                    onboardingStatuses: statuses,
                     inSearchMode: this.inSearchMode,
                     searchText: this.searchText,
                     filters: this.filters,
@@ -239,7 +250,7 @@ edx = edx || {};
                         nextPage: dataJson.next,
                         currentPage: this.currentPage,
                         onboardingItems: dataJson.results,
-                        onboardingStatuses: onboardingStatuses,
+                        onboardingStatuses: statuses,
                         inSearchMode: this.inSearchMode,
                         searchText: this.searchText,
                         filters: this.filters,

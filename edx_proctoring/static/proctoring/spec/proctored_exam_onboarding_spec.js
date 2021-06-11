@@ -352,4 +352,38 @@ describe('ProctoredExamOnboardingView', function() {
         expect(this.proctored_exam_onboarding_view.$el.find('#onboarding-loading-indicator').hasClass('hidden'))
             .toEqual(true);
     });
+
+    it('Renders correct filters for onboarding API', function() {
+        setFixtures(
+            '<div class="student-onboarding-status-container" ' +
+            'data-course-id="test_course_id" data-use-onboarding-api="True">' +
+            '</div>'
+        );
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedOnboardingDataJson)
+            ]
+        );
+        this.proctored_exam_onboarding_view = new edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView();
+
+        this.server.respond();
+        this.server.respond();
+
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Not Started');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Submitted');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Verified');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Approved in Another Course');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .toContain('Rejected');
+        expect(this.proctored_exam_onboarding_view.$el.find('.status-checkboxes').html())
+            .not.toContain('Setup Started');
+    });
 });

@@ -62,6 +62,7 @@ from mock_apps.models import Profile
 from .test_services import (
     MockCertificateService,
     MockCreditService,
+    MockEnrollment,
     MockEnrollmentsService,
     MockGradesService,
     MockInstructorService,
@@ -1839,7 +1840,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
     @patch('edx_proctoring.views.waffle.switch_is_active')
     @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
     @ddt.data(
-        (VerificientOnboardingProfileStatus.no_profile, None),
+        (VerificientOnboardingProfileStatus.no_profile, InstructorDashboardOnboardingAttemptStatus.not_started),
         (VerificientOnboardingProfileStatus.other_course_approved,
          InstructorDashboardOnboardingAttemptStatus.other_course_approved),
         (VerificientOnboardingProfileStatus.approved, ProctoredExamStudentAttemptStatus.verified),
@@ -1848,14 +1849,9 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         (VerificientOnboardingProfileStatus.expired, ProctoredExamStudentAttemptStatus.expired)
     )
     @ddt.unpack
-    def test_onboarding_with_api_endpoint(self, api_status, attempt_status, mocked_onboarding_api,
-                                          mocked_switch_is_active, mock_logger):
+    def test_instructor_onboarding_with_api_endpoint(self, api_status, attempt_status, mocked_onboarding_api,
+                                                     mocked_switch_is_active, mock_logger):
         mocked_switch_is_active.return_value = True
-        set_runtime_service('grades', MockGradesService(rejected_exam_overrides_grade=False))
-
-        if attempt_status:
-            attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
-            update_attempt_status(attempt_id, attempt_status)
 
         mocked_onboarding_api.return_value = {
             'results': [
@@ -1874,9 +1870,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
             )
         )
 
-        mocked_onboarding_api.assert_called_with(
-            self.onboarding_exam.course_id,
-        )
+        mocked_onboarding_api.assert_called()
 
         expected_data = {
             'results': [
@@ -1906,10 +1900,258 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         }
 
         self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data, expected_data)
+        mock_logger.assert_not_called()
+
+    @patch('logging.Logger.error')
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
+    def test_instructor_onboarding_with_403_api_response(self, mocked_onboarding_api,
+                                                         mocked_switch_is_active, mock_logger):
+        """
+        Test that internal logic is used if proctoring backend api endpoint returns non 200 response
+        """
+        mocked_switch_is_active.return_value = True
+
+        mocked_onboarding_api.side_effect = BackendProviderOnboardingProfilesException('some error', 403)
+
+        response = self.client.get(
+            reverse(
+                'edx_proctoring:user_onboarding.status.course',
+                kwargs={'course_id': self.onboarding_exam.course_id},
+            )
+        )
+
+        mocked_onboarding_api.assert_called()
+
+        expected_data = {
+            'results': [
+                {
+                    'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                },
+                {
+                    'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                },
+                {
+                    'username': self.learner_2.username,
+                    'enrollment_mode': self.enrollment_modes[2],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                }
+            ],
+            'count': 3,
+            'previous': None,
+            'next': None,
+            'num_pages': 1,
+        }
+
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data, expected_data)
         mock_logger.assert_not_called()
+
+    @patch('logging.Logger.error')
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
+    def test_instructor_onboarding_filter_by_user(self, mocked_onboarding_api, mocked_switch_is_active, mock_logger):
+        mocked_switch_is_active.return_value = True
+
+        mocked_onboarding_api.return_value = {
+            'results': [
+                {
+                    'user_id': obscured_user_id(self.user.id, self.onboarding_exam.backend),
+                    'status': VerificientOnboardingProfileStatus.approved,
+                    'expiration_date': '2051-05-21'
+                },
+            ]
+        }
+
+        mock_enrollments = [MockEnrollment(self.user, self.enrollment_modes[0])]
+
+        # create onboarding attempt to check that modified time is accurate
+        onboarding_attempt_id = create_exam_attempt(
+            self.onboarding_exam.id,
+            self.user.id,
+            True,
+        )
+        update_attempt_status(onboarding_attempt_id, ProctoredExamStudentAttemptStatus.verified)
+        serialized_onboarding_attempt = get_exam_attempt_by_id(onboarding_attempt_id)
+
+        with patch(
+                'edx_proctoring.tests.test_services.MockEnrollmentsService.get_enrollments_can_take_proctored_exams',
+                return_value=mock_enrollments
+        ):
+            response = self.client.get(
+                reverse(
+                    'edx_proctoring:user_onboarding.status.course',
+                    kwargs={'course_id': self.onboarding_exam.course_id},
+                ),
+                {'text_search': self.user.username}
+            )
+
+        mocked_onboarding_api.assert_called()
+
+        expected_data = {
+            'results': [
+                {
+                    'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
+                    'status': ProctoredExamStudentAttemptStatus.verified,
+                    'modified': serialized_onboarding_attempt['modified'],
+                },
+            ],
+            'count': 1,
+            'previous': None,
+            'next': None,
+            'num_pages': 1,
+        }
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data, expected_data)
+        mock_logger.assert_not_called()
+
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
+    def test_instructor_onboarding_filter_by_status(self, mocked_onboarding_api, mocked_switch_is_active):
+        mocked_switch_is_active.return_value = True
+
+        def side_effect_func(_, **kwargs):
+            if kwargs['status'] == VerificientOnboardingProfileStatus.approved:
+                api_response = {
+                    'results': [
+                        {
+                            'user_id': obscured_user_id(self.user.id, self.onboarding_exam.backend),
+                            'status': VerificientOnboardingProfileStatus.approved,
+                            'expiration_date': '2051-05-21'
+                        },
+                    ]
+                }
+            else:
+                api_response = {
+                    'results': [
+                        {
+                            'user_id': obscured_user_id(self.learner_1.id, self.onboarding_exam.backend),
+                            'status': VerificientOnboardingProfileStatus.pending,
+                            'expiration_date': '2051-05-21'
+                        },
+                    ]
+                }
+            return api_response
+
+        mocked_onboarding_api.side_effect = side_effect_func
+
+        response = self.client.get(
+            reverse(
+                'edx_proctoring:user_onboarding.status.course',
+                kwargs={'course_id': self.onboarding_exam.course_id},
+            ),
+            {'statuses': 'verified,submitted'}
+        )
+
+        expected_data = {
+            'results': [
+                {
+                    'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
+                    'status': ProctoredExamStudentAttemptStatus.verified,
+                    'modified': None,
+                },
+                {
+                    'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
+                    'status': ProctoredExamStudentAttemptStatus.submitted,
+                    'modified': None,
+                },
+            ],
+            'count': 2,
+            'previous': None,
+            'next': None,
+            'num_pages': 1,
+        }
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data, expected_data)
+
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
+    def test_instructor_onboarding_filter_by_status_no_profile(self, mocked_onboarding_api, mocked_switch_is_active):
+        mocked_switch_is_active.return_value = True
+
+        def side_effect_func(_, **kwargs):
+            if kwargs.get('page') == 1:
+                api_response = {
+                    'results': [
+                        {
+                            'user_id': obscured_user_id(self.user.id, self.onboarding_exam.backend),
+                            'status': VerificientOnboardingProfileStatus.no_profile,
+                            'expiration_date': '2051-05-21'
+                        },
+                    ],
+                    'next_page_number': 2,
+                }
+            else:
+                api_response = {
+                    'results': [
+                        {
+                            'user_id': obscured_user_id(self.learner_1.id, self.onboarding_exam.backend),
+                            'status': VerificientOnboardingProfileStatus.no_profile,
+                            'expiration_date': '2051-05-21'
+                        },
+                    ],
+                    'next_page_number': None,
+                }
+            return api_response
+
+        mocked_onboarding_api.side_effect = side_effect_func
+
+        response = self.client.get(
+            reverse(
+                'edx_proctoring:user_onboarding.status.course',
+                kwargs={'course_id': self.onboarding_exam.course_id},
+            ),
+            {'statuses': 'not_started'}
+        )
+
+        expected_data = {
+            'results': [
+                {
+                    'username': self.user.username,
+                    'enrollment_mode': self.enrollment_modes[0],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                },
+                {
+                    'username': self.learner_1.username,
+                    'enrollment_mode': self.enrollment_modes[1],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                },
+                {
+                    'username': self.learner_2.username,
+                    'enrollment_mode': self.enrollment_modes[2],
+                    'status': InstructorDashboardOnboardingAttemptStatus.not_started,
+                    'modified': None,
+                },
+            ],
+            'count': 3,
+            'previous': None,
+            'next': None,
+            'num_pages': 1,
+        }
+
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        print(response_data)
+        self.assertEqual(response_data, expected_data)
 
 
 @ddt.ddt
