@@ -64,6 +64,7 @@ from edx_proctoring.api import (
     update_exam_attempt,
     update_review_policy
 )
+from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 from edx_proctoring.constants import ADDITIONAL_TIME, DEFAULT_CONTACT_EMAIL, TIME_MULTIPLIER
 from edx_proctoring.exceptions import (
     AllowanceValueNotAllowedException,
