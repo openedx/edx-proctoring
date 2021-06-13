@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-07 13:54+0000\n"
+"POT-Creation-Date: 2021-06-13 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Hodaya Zada <hodayaz@mse.gov.il>, 2021\n"
 "Language-Team: Hebrew (https://www.transifex.com/open-edx/teams/6205/he/)\n"
@@ -119,75 +119,75 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:636 views.py:949
+#: api.py:642 views.py:969
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "נותרה לך {remaining_time}"
 
-#: api.py:1367
+#: api.py:1373
 msgid "your course"
 msgstr "הקורס שלך"
 
-#: api.py:1432
+#: api.py:1442
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1441
+#: api.py:1451
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1475
+#: api.py:1485
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 
-#: api.py:1957
+#: api.py:1967
 msgid "Taking As Proctored Exam"
 msgstr "בחירה כמבחן תחת פיקוח"
 
-#: api.py:1962
+#: api.py:1972
 msgid "Proctored Option Available"
 msgstr "אפשרות תחת פיקוח זמינה"
 
-#: api.py:1967
+#: api.py:1977
 msgid "Taking As Open Exam"
 msgstr " בחירה במבחן פתוח"
 
-#: api.py:1972 api.py:1977
+#: api.py:1982 api.py:1987
 msgid "Pending Session Review"
 msgstr "סקירת מפגש בהמתנה"
 
-#: api.py:1982
+#: api.py:1992
 msgid "Passed Proctoring"
 msgstr "פיקוח שעבר"
 
-#: api.py:1987 api.py:1992
+#: api.py:1997 api.py:2002
 msgid "Failed Proctoring"
 msgstr "פיקוח שנכשל"
 
-#: api.py:1997
+#: api.py:2007
 msgid "Proctored Option No Longer Available"
 msgstr "האופציה תחת פיקוח אינה זמינה עוד."
 
-#: api.py:2006
+#: api.py:2016
 msgid "Ungraded Practice Exam"
 msgstr "מבחן תחת פיקוח ללא ציון"
 
-#: api.py:2011
+#: api.py:2021
 msgid "Practice Exam Completed"
 msgstr "הושלם מבחן תרגול"
 
-#: api.py:2016
+#: api.py:2026
 msgid "Practice Exam Failed"
 msgstr "מבחן תרגול שנכשל"
 
-#: api.py:2024
+#: api.py:2034
 msgid "Timed Exam"
 msgstr "מבחן מתוזמן"
 
-#: api.py:2603
+#: api.py:2614
 msgid "Onboarding status question"
 msgstr ""
 
@@ -1440,46 +1440,50 @@ msgstr ""
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:133
+#: views.py:135
 msgid "could not determine the course_id"
 msgstr "לא ניתן להגדיר את מזהה הקורס"
 
-#: views.py:142 views.py:497
+#: views.py:144 views.py:517
 msgid "Must be a Staff User to Perform this request."
 msgstr "חייב להיות משתמש צוות על מנת לבצע בקשה זו."
 
-#: views.py:487
+#: views.py:507
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:505 views.py:722
+#: views.py:525 views.py:742
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:537
+#: views.py:557
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:587
+#: views.py:607
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr ""
 
-#: views.py:955
+#: views.py:975
 msgid "you have less than a minute remaining"
 msgstr "נותרה לך פחות מדקה"
 
-#: views.py:1681
+#: views.py:1425
+msgid "Cannot update attempt review status"
+msgstr ""
+
+#: views.py:1707
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1687
+#: views.py:1713
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1706
+#: views.py:1732
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
