@@ -15,13 +15,6 @@ This document should serve as a catalogue of key features included in the procto
 #### Useful Queries
 - Certificate Status: `select status from certificates_generatedcertificate where name = <name> and course_id = <course_key>;`
 
-## Smoke Test
-
-Efficient testing path that covers core functions.
-
---TODO--
-
-
 # Features
 
 ## Timed Exam
@@ -85,9 +78,6 @@ Efficient testing path that covers core functions.
 - [ ] You should see an interstitial that you have 5 minutes to complete the exam
 - [ ] Begin the exam, the timer should reflect the reduced time limit
 
-#### If the exam timer reaches zero and timeout is not allowed...
-- [ ] ??? there is no view template for this case ???
-
 ## Proctored Exam
 
 ### Test Cases
@@ -121,7 +111,7 @@ Efficient testing path that covers core functions.
 - [ ] You should see an interstitial stating that an error has occurred
 - [ ] you can no longer view the exam content
 
-#### Learners are able to resume an exam upon approval from the course team
+#### <a name="learner-resume"></a>Learners are able to resume an exam upon approval from the course team
 - [ ] Follow steps to start and be removed from an exam due to a connection error, make note of the time remaining. [Exam With Error State](#error)
 - [ ] In another browser, use the instructor dashboard to resume the learner exam attempt. [Resume Exam](#resume-exam)
 - [ ] Return as the learner and navigate to the exam section
@@ -184,6 +174,7 @@ Efficient testing path that covers core functions.
 
 #### Additional Features
 - [ ] Onboarding status panel for missing and completed onboarding profiles
+- [ ] Onboarding status panel for expired or exams that have not yet been released
 
 ## Certificates and Grades
 
@@ -210,9 +201,6 @@ Efficient testing path that covers core functions.
 - [ ] Validate the exam grade has been overridden to zero using gradebook (tab in instructor dashboard)
 - [ ] Query read replica to validate the certificate has been marked `unavailable` [Useful Queries](#useful-queries)
 
-#### If a learner has multiple sessions for an exam, a certificate is not released until all reviews are verified
-- [ ] TODO -- I was under the impression this was the case but my testing of the behavior seems to indicate we do release a certificate so long as neither review is rejected.
-
 ## Instructor Dashboard
 
 ### Test Cases
@@ -228,13 +216,38 @@ Efficient testing path that covers core functions.
 - [ ] Enter the exam, any previously completed units should be reset
 
 #### <a name="resume-exam"></a> Exam attempts in the error state may be resumed
+- [ ] Follow steps to start and be removed from an exam due to a connection error, make note of the time remaining. [Exam With Error State](#error)
+- [ ] In another browser, navigate to the instructor dashboard and expand the "Student Special Exam Attempt" section
+- [ ] Find the attempt for learner in step #1. There should be a gear icon in the "Actions" column that unveils two options: "reset" and "resume"
+- [ ] Click resume and accept the confirmation message
+- [ ] Return to the learner's browser. [Learners should be able to resume and complete the exam](#learner-resume)
 
-#### Multiple sessions for the same exam (due to a resume) appear as a group
+#### Multiple sessions for the same exam (due to a resume) appear as a group and can be removed in bulk
+- [ ] Follow the steps to put an exam in the error state and submit a resumed attempt as the learner [Resume Exam](#resume-exam)
+- [ ] Navigate to the instructor dashboard and expand the "Students Special Exam Attempt" section
+- [ ] Find the attempt for the learner and step #1.
+- [ ] This row should expand to display two distinct attempts with the appropriate dates and status
+- [ ] Click the reset button. Both attempts should be removed.
+- [ ] Return to the learner's browser and return to the exam section.
+- [ ] The learner should be able to start and complete a new attempt.
 
-#### Multiple sessions for the same exam are deleted in bulk
+#### Onboarding status view includes all paid-track learners and is filterable
+- [ ] And sure you have a at least one learner in your course that:
+    - [ ] Has not started onboarding
+    - [ ] Has completed onboarding
+- [ ] Download the course roster using the "Data Download" tab on the instructor dashboard
+    - [ ] A CSV learners can be downloaded by clicking the "Donald profile information as a CSV" button
+- [ ] Filter the audit learners out of the report
+- [ ] View the special exams tab and open the "Student Onboarding Status" dropdown
+- [ ] Ensure all learners in the CSV have a row in the drop down
+- [ ] Filtering by "Not Started" it includes the learner(s) who has not started onboarding
+- [ ] Filtering by multiple statuses functions as expected
 
-#### Onboarding status view includes all paid-track learners
+#### Proctortrack review dashboard is rendered for the correct course
+This is only applicable to Proctortrack courses
+- [ ] Navigate to the special exams tab within the instructor dashboard
+- [ ] Expand the "Review Dashboard" dropdown
+- [ ] The Proctortrack UI is rendered for the correct course
 
-#### Onboarding Status View is filterable
-
-#### Allowances...
+#### Additional Features
+- Allowances
