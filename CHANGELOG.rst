@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add `test_plan` document to describe key features and test cases
 
 [3.9.1] - 2021-05-17
 ~~~~~~~~~~~~~~~~~~~~
