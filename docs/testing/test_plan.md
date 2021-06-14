@@ -7,6 +7,7 @@ This document should serve as a catalogue of key features included in the procto
 #### Test Courses in Stage
 - [course-v1:edX+cheating101+2018T3](https://learning.stage.edx.org/course/course-v1:edX+cheating101+2018T3/home) (Proctortrack)
 - [course-v1:edX+StageProctortrack+2019](https://learning.stage.edx.org/course/course-v1:edX+StageProctortrack+2019/home) (Proctortrack)
+- [course-v1:Proctoring2+Proctoring2+Proctoring2](https://learning.stage.edx.org/course/course-v1:Proctoring2+Proctoring2+Proctoring2/home) (RPNow)
 
 #### Django Admin Models
 - Exam Attempt: https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamstudentattempt/
