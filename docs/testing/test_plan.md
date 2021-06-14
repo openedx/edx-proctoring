@@ -5,15 +5,15 @@ This document should serve as a catalogue of key features included in the procto
 ## Resources
 
 #### Test Courses in Stage
-- course-v1:edX+cheating101+2018T3 (Proctortrack)
-- course-v1:edX+StageProctortrack+2019 (Proctortrack)
+- [course-v1:edX+cheating101+2018T3](https://learning.stage.edx.org/course/course-v1:edX+cheating101+2018T3/home) (Proctortrack)
+- [course-v1:edX+StageProctortrack+2019](https://learning.stage.edx.org/course/course-v1:edX+StageProctortrack+2019/home) (Proctortrack)
 
 #### Django Admin Models
 - Exam Attempt: https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamstudentattempt/
 - Exam Review: https://courses-internal.stage.edx.org/admin/edx_proctoring/proctoredexamsoftwaresecurereview/
 
 #### Useful Queries
-- Certificate Status: `select status from certificates_generatedcertificate where name = <name> and course_id = <course_key>;`
+- Certificate Status: `select status from certificates_generatedcertificate where name = <username> and course_id = <course_key>;`
 
 # Features
 
@@ -50,7 +50,7 @@ This document should serve as a catalogue of key features included in the procto
     - [ ] Notification you that you are in a timed exam
     - [ ] A button to end the exam
     - [ ] A timer counting down from the correct `time allotted` for this exam
-- [ ] The timer should return with the correct value when you:
+- [ ] The timer should return with the correct value (meaning it continues to count down on the backend) when you:
     - [ ] Refresh the page
     - [ ] Navigate to other course content, then return to the exam
 - [ ] Click end my exam on the banner
@@ -62,7 +62,7 @@ This document should serve as a catalogue of key features included in the procto
 - [ ] Click submit on the confirmation page
 - [ ] You should see an interstitial confirming the exam has been submitted
 
-#### If the exam timer reaches zero the exam is automatically submitted if timeouts are allowed
+#### If the exam timer reaches zero the exam is automatically submitted
 - [ ] (optional) In studio, set `time allotted` on the timed exam to 2-3 minutes to ease testing
 - [ ] Log in as a verified learner and begin the timed exam
 - [ ] Observe the timer as it approaches zero
@@ -89,10 +89,10 @@ This document should serve as a catalogue of key features included in the procto
     - [ ] A button or link to continue
 - [ ] Click the link to continue
 - [ ] You should see an interstitial prompting you to set up the proctoring software
-- [ ] Click start system check and follow set up steps according to the proctoring software
+- [ ] Click start system check or copy/paste the exam code to follow steps according to the proctoring software
 - [ ] After set up you should be returned to edx courseware and the start exam button should be enabled
 - [ ] You should see a final interstitial stating the rules of the proctored exam and the time allotted to complete it
-    - [ ] valid link??
+    - [ ] There should be a functioning link to the support docs four proctored exam rules
 - [ ] Click start my exam
 - [ ] You should see the first unit in the exam
 - [ ] The exam timer is shown and functions properly. [Exam Timer](#exam-timer) 
@@ -107,7 +107,7 @@ This document should serve as a catalogue of key features included in the procto
 #### <a name="error"></a> Learners are removed from the exam if connectivity to the proctoring software is not maintained
 - [ ] Log in as a verified learner, navigate to the exam section, follow all instructions, and start the exam
 - [ ] Interrupt session by either closing the proctoring in software or disconnecting your internet
-- [ ] Wait up to two minutes
+- [ ] Wait up to 1-2 minutes, but no more than five.
 - [ ] You should see an interstitial stating that an error has occurred
 - [ ] you can no longer view the exam content
 
@@ -124,7 +124,7 @@ This document should serve as a catalogue of key features included in the procto
 #### Additional features
 - [ ] Missing and pending prerequisites
 - [ ] Missing and pending verification
-- [ ] Proctored exam opt-out
+- [ ] Proctored exam opt-out and its impact on other proctored exams in the course
 - [ ] Incorrect browser during RPNow exam
 
 ## Onboarding Exam
@@ -184,6 +184,7 @@ This document should serve as a catalogue of key features included in the procto
     - [ ] make sure to receive a grade that will meet the threshold for passing the course
 - [ ] Get the `external_id` of the attempt from LINK
 - [ ] As an admin user use the external id to send a POST request to the exam review endpoint with a status of `suspicious`
+    - [ ] An alternative is to wait for this review to come back organically (may take 24hrs)
 - [ ] Update the review from `suspicious` to `rules violation` in [Django Admin](#django-admin-models)
 - [ ] Validate the exam grade has been overridden to zero using gradebook
 - [ ] Query read replica to validate the certificate has been marked `unavailable` [Useful Queries](#useful-queries)
@@ -196,6 +197,7 @@ This document should serve as a catalogue of key features included in the procto
     - [ ] make sure to receive a grade that will meet the threshold for passing the course
 - [ ] Get the `external_id` of both the resumed and submitted attempts from [Django Admin](#django-admin-models)
 - [ ] As an admin user use the external id of the resumed attempt to send a POST request to the exam review endpoint with a status of `passed`
+    - [ ] An alternative is to wait for this review to come back organically (may take 24hrs)
 - [ ] As an admin user use the external id of the submitted attempt to send a POST request to the exam review endpoint with a status of `suspicious` 
 - [ ] Update the review from `suspicious` to `rules violation` in [Django Admin](#django-admin-models)
 - [ ] Validate the exam grade has been overridden to zero using gradebook (tab in instructor dashboard)
@@ -250,4 +252,4 @@ This is only applicable to Proctortrack courses
 - [ ] The Proctortrack UI is rendered for the correct course
 
 #### Additional Features
-- Allowances
+- [ ] Allowances
