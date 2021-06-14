@@ -513,6 +513,8 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
         )
     )
     log.info(log_message)
+
+    multiplier = 0
     if allowance_type == constants.TIME_MULTIPLIER:
         err_msg = (
             u'allowance_value "{value}" should be a float value greater than 1.'
@@ -521,66 +523,118 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
             multiplier = float(value) - 1
         except ValueError as error:
             raise AllowanceValueNotAllowedException(err_msg) from error
-        if multiplier >= 0:
-            for exam_id in exam_ids:
-                try:
-                    target_exam = get_exam_by_id(exam_id)
-                except ProctoredExamNotFoundException:
-                    log_message = (
-                        'Attempted to get exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id)
-                    )
-                    log.error(log_message)
-                    continue
+        if multiplier < 0:
+            raise AllowanceValueNotAllowedException(err_msg)
 
-                exam_time = target_exam["time_limit_mins"]
-                added_time = round(exam_time * multiplier)
-                time_allowed = str(added_time)
-                for user_id in user_ids:
-                    try:
-                        add_allowance_for_user(exam_id, user_id,
-                                               ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
-                                               time_allowed)
-                    except ProctoredBaseException:
-                        log_message = (
-                            'Failed to add allowance for user_id={user_id} '
-                            'for exam_id={exam_id}'.format(
-                                user_id=user_id,
-                                exam_id=exam_id
-                            )
-                        )
-                        log.error(log_message)
-        else:
-            raise AllowanceValueNotAllowedException(err_msg)
-    else:
+    if allowance_type == constants.ADDITIONAL_TIME:
         err_msg = (
-            u'allowance_value "{value}" should be non-negative integer value.'
+            u'allowance_value "{value}" should be a non-negative integer value'
         ).format(value=value)
-        if value.isdigit():
-            for exam_id in exam_ids:
+        if not value.isdigit():
+            raise AllowanceValueNotAllowedException(err_msg)
+
+    successes = 0
+    failures = 0
+    data = []
+    if allowance_type == constants.TIME_MULTIPLIER:
+        for exam_id in exam_ids:
+            try:
+                target_exam = get_exam_by_id(exam_id)
+            except ProctoredExamNotFoundException:
+                log_message = (
+                    'Attempted to get exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id)
+                )
+                log.error(log_message)
+                for user_id in user_ids:
+                    failures += 1
+                    data.append({
+
+                            'exam_id': exam_id,
+                            'user_id': user_id,
+                            'status': 400
+                    })
+                continue
+
+            exam_time = target_exam["time_limit_mins"]
+            added_time = round(exam_time * multiplier)
+            time_allowed = str(added_time)
+            for user_id in user_ids:
                 try:
-                    target_exam = get_exam_by_id(exam_id)
-                except ProctoredExamNotFoundException:
+                    add_allowance_for_user(exam_id, user_id,
+                                           ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+                                           time_allowed)
+                    successes += 1
+                    data.append({
+
+                            'exam_id': exam_id,
+                            'user_id': user_id,
+                            'status': 200
+                    })
+
+                except ProctoredBaseException:
                     log_message = (
-                        'Attempted to get exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id)
+                        'Failed to add allowance for user_id={user_id} '
+                        'for exam_id={exam_id}'.format(
+                            user_id=user_id,
+                            exam_id=exam_id
+                        )
                     )
                     log.error(log_message)
-                    continue
+                    failures += 1
+                    data.append({
+
+                            'exam_id': exam_id,
+                            'user_id': user_id,
+                            'status': 400
+                    })
+    else:
+        for exam_id in exam_ids:
+            try:
+                target_exam = get_exam_by_id(exam_id)
+            except ProctoredExamNotFoundException:
+                log_message = (
+                    'Attempted to get exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id)
+                )
+                log.error(log_message)
                 for user_id in user_ids:
-                    try:
-                        add_allowance_for_user(exam_id, user_id,
-                                               ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
-                                               value)
-                    except ProctoredBaseException:
-                        log_message = (
-                            'Failed to add allowance for user_id={user_id} '
-                            'for exam_id={exam_id}'.format(
-                                user_id=user_id,
-                                exam_id=exam_id
-                            )
+                    failures += 1
+                    data.append({
+
+                            'exam_id': exam_id,
+                            'user_id': user_id,
+                            'status': 400
+                    })
+                continue
+
+            for user_id in user_ids:
+                try:
+                    add_allowance_for_user(exam_id, user_id,
+                                           ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+                                           value)
+                    successes += 1
+                    data.append({
+
+                            'exam_id': exam_id,
+                            'user_id': user_id,
+                            'status': 200
+                    })
+                except ProctoredBaseException:
+                    log_message = (
+                        'Failed to add allowance for user_id={user_id} '
+                        'for exam_id={exam_id}'.format(
+                            user_id=user_id,
+                            exam_id=exam_id
                         )
-                        log.error(log_message)
-        else:
-            raise AllowanceValueNotAllowedException(err_msg)
+                    )
+                    log.error(log_message)
+                    failures += 1
+                    data.append({
+
+                            'exam_id': exam_id,
+                            'user_id': user_id,
+                            'status': 400
+                    })
+    return data, successes, failures
 
 
 def _check_for_attempt_timeout(attempt):

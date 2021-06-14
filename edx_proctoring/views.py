@@ -62,6 +62,7 @@ from edx_proctoring.api import (
 )
 from edx_proctoring.constants import ONBOARDING_PROFILE_API, PING_FAILURE_PASSTHROUGH_TEMPLATE
 from edx_proctoring.exceptions import (
+    AllowanceValueNotAllowedException,
     BackendProviderOnboardingProfilesException,
     ProctoredBaseException,
     ProctoredExamNotFoundException,
@@ -1422,12 +1423,31 @@ class ExamBulkAllowanceView(ProctoredAPIView):
         """
         HTTP PUT handler. Adds or updates Allowances for many exams and students
         """
-        return Response(add_bulk_allowances(
-            exam_ids=request.data.get('exam_ids', None),
-            user_ids=request.data.get('user_ids', None),
-            allowance_type=request.data.get('allowance_type', None),
-            value=request.data.get('value', None)
-        ))
+        try:
+            data, succesess, failures = add_bulk_allowances(
+                exam_ids=request.data.get('exam_ids', None),
+                user_ids=request.data.get('user_ids', None),
+                allowance_type=request.data.get('allowance_type', None),
+                value=request.data.get('value', None)
+            )
+            if succesess == 0:
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST,
+                    data=data
+                )
+            if failures > 0:
+                return Response(
+                    status=status.HTTP_207_MULTI_STATUS,
+                    data=data
+                )
+            return Response(
+                    status=status.HTTP_200_OK
+            )
+        except AllowanceValueNotAllowedException:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": _("Must be a Staff User to Perform this request.")}
+                )
 
 
 class ActiveExamsForUserView(ProctoredAPIView):

@@ -4721,7 +4721,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
             json.dumps(allowance_data),
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 207)
 
     @ddt.data(
         (
@@ -4768,7 +4768,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
             json.dumps(allowance_data),
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 207)
 
     @ddt.data(
         (
@@ -4813,6 +4813,84 @@ class ExamBulkAllowanceView(LoggedInTestCase):
             'user_ids': user_id_list,
             'allowance_type': allowance_type,
             'value': value
+        }
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_add_bulk_allowance_all_invalid_data(self):  # pylint: disable=invalid-name
+        """
+        Test to add bulk allowance with invalid exams and users
+        """
+        # Create exams.
+        user_id_list = ['invalid', 'invalid2', 'invalid3']
+        exam_list = [-99, -98]
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': ADDITIONAL_TIME,
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_add_bulk_allowance_no_users(self):  # pylint: disable=invalid-name
+        """
+        Test to add bulk allowance with no users
+        """
+        # Create exams.
+        user_id_list = []
+        exam1 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam2 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content2',
+            exam_name='Test Exam2',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam_list = [exam1.id, exam2.id]
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': ADDITIONAL_TIME,
+            'value': '30'
+        }
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_add_bulk_allowance_no_exams(self):  # pylint: disable=invalid-name
+        """
+        Test to add bulk allowance with no exams
+        """
+        # Create exams.
+        user_list = self.create_batch_users(3)
+        user_id_list = [user.email for user in user_list]
+        exam_list = []
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': ADDITIONAL_TIME,
+            'value': '30'
         }
         response = self.client.put(
             reverse('edx_proctoring:proctored_exam.bulk_allowance'),

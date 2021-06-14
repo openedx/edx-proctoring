@@ -539,7 +539,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
                     is_proctored=True
             ))
         )
-        add_bulk_allowances(exam_list, user_list, allowance_type, value)
+        _, successes, failures = add_bulk_allowances(exam_list, user_list, allowance_type, value)
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
             exam_list[0], user_list[1], self.key
         )
@@ -551,6 +551,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertIsNotNone(student_allowance)
         self.assertEqual(student_allowance.value, exam1_allowance)
         self.assertEqual(student_allowance_exam2.value, exam2_allowance)
+        self.assertEqual(successes, 6)
+        self.assertEqual(failures, 0)
 
     def test_add_same_user_bulk_allowance(self):
         """
@@ -577,7 +579,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
                         is_proctored=True
             ))
         )
-        add_bulk_allowances(exam_list, user_list, TIME_MULTIPLIER, '1.5')
+        _, successes, failures = add_bulk_allowances(exam_list, user_list, TIME_MULTIPLIER, '1.5')
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
             exam_list[0], user_list[1], self.key
         )
@@ -585,6 +587,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(len(all_course_allowances), 6)
         self.assertIsNotNone(student_allowance)
         self.assertEqual(len(user_list), 4)
+        self.assertEqual(successes, 6)
+        self.assertEqual(failures, 0)
 
     def test_add_same_exam_bulk_allowance(self):
         """
@@ -612,7 +616,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             ))
         )
         exam_list.append(exam_list[0])
-        add_bulk_allowances(exam_list, user_list, TIME_MULTIPLIER, '1.5')
+        _, successes, failures = add_bulk_allowances(exam_list, user_list, TIME_MULTIPLIER, '1.5')
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
             exam_list[0], user_list[1], self.key
         )
@@ -620,6 +624,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(len(all_course_allowances), 6)
         self.assertIsNotNone(student_allowance)
         self.assertEqual(len(exam_list), 3)
+        self.assertEqual(successes, 6)
+        self.assertEqual(failures, 0)
 
     @ddt.data(
         (
@@ -661,7 +667,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
                     is_proctored=True
             ))
         )
-        add_bulk_allowances(exam_list, user_list, allowance_type, value)
+        _, successes, failures = add_bulk_allowances(exam_list, user_list, allowance_type, value)
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
             exam_list[0], user_list[1], self.key
         )
@@ -673,6 +679,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertIsNotNone(student_allowance)
         self.assertEqual(student_allowance.value, exam1_allowance)
         self.assertEqual(student_allowance_exam2.value, exam2_allowance)
+        self.assertEqual(failures, 2)
+        self.assertEqual(successes, 6)
 
     @ddt.data(
         (
@@ -714,7 +722,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             ),
              -99)
         )
-        add_bulk_allowances(exam_list, user_list, allowance_type, value)
+        _, successes, failures = add_bulk_allowances(exam_list, user_list, allowance_type, value)
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
             exam_list[0], user_list[1], self.key
         )
@@ -726,6 +734,121 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertIsNotNone(student_allowance)
         self.assertEqual(student_allowance.value, exam1_allowance)
         self.assertEqual(student_allowance_exam2.value, exam2_allowance)
+        self.assertEqual(failures, 3)
+        self.assertEqual(successes, 6)
+
+    @ddt.data(
+        (
+            ADDITIONAL_TIME,
+            '3.0'
+        ),
+        (
+            ADDITIONAL_TIME,
+            'invalid'
+        ),
+        (
+            ADDITIONAL_TIME,
+            '-30'
+        ),
+        (
+            ADDITIONAL_TIME,
+            'd30'
+        ),
+        (
+            TIME_MULTIPLIER,
+            '-10'
+        ),
+        (
+            TIME_MULTIPLIER,
+            'd30'
+        ),
+        (
+            TIME_MULTIPLIER,
+            'invalid'
+        ),
+        (
+            TIME_MULTIPLIER,
+            '.5'
+        ),
+    )
+    @ddt.unpack
+    def test_add_bulk_allowance_invalid_value(self, allowance_type, value):
+        """
+        Add bulk allowance with an invalid allowance value
+        """
+        user_list = self.create_batch_users(3)
+        user_list.append('invalid_user')
+        exam_list = []
+        exam_list.extend(
+            (create_exam(
+                        course_id=self.course_id,
+                        content_id="1st exam",
+                        exam_name="1st exam",
+                        time_limit_mins=self.default_time_limit,
+                        is_practice_exam=False,
+                        is_proctored=True
+            ),
+             create_exam(
+                    course_id=self.course_id,
+                    content_id="2nd exam",
+                    exam_name="2nd exam",
+                    time_limit_mins=90,
+                    is_practice_exam=False,
+                    is_proctored=True
+            ))
+        )
+        with self.assertRaises(AllowanceValueNotAllowedException):
+            add_bulk_allowances(exam_list, user_list, allowance_type, value)
+
+    def test_add_no_exams_bulk_allowance(self):
+        """
+        Test to add bulk allowances with no exams.
+        """
+        user_list = self.create_batch_users(3)
+        exam_list = []
+        _, successes, failures = add_bulk_allowances(exam_list, user_list, TIME_MULTIPLIER, '1.5')
+        self.assertEqual(successes, 0)
+        self.assertEqual(failures, 0)
+
+    def test_add_no_users_bulk_allowance(self):
+        """
+        Test to add bulk allowances with no users.
+        """
+
+        exam_list = []
+        exam_list.extend(
+            (create_exam(
+                        course_id=self.course_id,
+                        content_id="1st exam",
+                        exam_name="1st exam",
+                        time_limit_mins=self.default_time_limit,
+                        is_practice_exam=False,
+                        is_proctored=True
+            ),
+             create_exam(
+                    course_id=self.course_id,
+                    content_id="2nd exam",
+                    exam_name="2nd exam",
+                    time_limit_mins=90,
+                    is_practice_exam=False,
+                    is_proctored=True
+            ))
+        )
+        user_list = []
+        _, successes, failures = add_bulk_allowances(exam_list, user_list, TIME_MULTIPLIER, '1.5')
+        self.assertEqual(successes, 0)
+        self.assertEqual(failures, 0)
+
+    def test_add_all_invalid_bulk_allowance(self):
+        """
+        Test to add bulk allowances with all invalid data.
+        """
+
+        exam_list = [-99, -98]
+        user_list = ['invalid1', 'invalid2']
+        _, successes, failures = add_bulk_allowances(exam_list, user_list, TIME_MULTIPLIER, '1.5')
+        self.assertEqual(successes, 0)
+        self.assertEqual(failures, 4)
 
     def test_exam_attempt_with_due_datetime(self):
         """
