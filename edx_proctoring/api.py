@@ -503,6 +503,7 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
     exam_ids = set(exam_ids)
     user_ids = set(user_ids)
 
+    # Input validation logic to verify input is acceptable
     log_message = (
         'Adding allowances of type allowance_type={allowance_type} with value={value} '
         'for exams exam_ids={exam_ids} and users user_ids={user_ids}'.format(
@@ -533,28 +534,27 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
         if not value.isdigit():
             raise AllowanceValueNotAllowedException(err_msg)
 
+    # Data processing logic to add allowances to the database
     successes = 0
     failures = 0
     data = []
-    if allowance_type == constants.TIME_MULTIPLIER:
-        for exam_id in exam_ids:
-            try:
-                target_exam = get_exam_by_id(exam_id)
-            except ProctoredExamNotFoundException:
-                log_message = (
-                    'Attempted to get exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id)
-                )
-                log.error(log_message)
-                for user_id in user_ids:
-                    failures += 1
-                    data.append({
+    for exam_id in exam_ids:
+        try:
+            target_exam = get_exam_by_id(exam_id)
+        except ProctoredExamNotFoundException:
+            log_message = (
+                'Attempted to get exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id)
+            )
+            log.error(log_message)
+            for user_id in user_ids:
+                failures += 1
+                data.append({
 
-                            'exam_id': exam_id,
-                            'user_id': user_id,
-                            'status': 400
-                    })
-                continue
-
+                        'exam_id': exam_id,
+                        'user_id': user_id,
+                })
+            continue
+        if allowance_type == constants.TIME_MULTIPLIER:
             exam_time = target_exam["time_limit_mins"]
             added_time = round(exam_time * multiplier)
             time_allowed = str(added_time)
@@ -568,7 +568,6 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
 
                             'exam_id': exam_id,
                             'user_id': user_id,
-                            'status': 200
                     })
 
                 except ProctoredBaseException:
@@ -585,27 +584,8 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
 
                             'exam_id': exam_id,
                             'user_id': user_id,
-                            'status': 400
                     })
-    else:
-        for exam_id in exam_ids:
-            try:
-                target_exam = get_exam_by_id(exam_id)
-            except ProctoredExamNotFoundException:
-                log_message = (
-                    'Attempted to get exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id)
-                )
-                log.error(log_message)
-                for user_id in user_ids:
-                    failures += 1
-                    data.append({
-
-                            'exam_id': exam_id,
-                            'user_id': user_id,
-                            'status': 400
-                    })
-                continue
-
+        else:
             for user_id in user_ids:
                 try:
                     add_allowance_for_user(exam_id, user_id,
@@ -616,7 +596,6 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
 
                             'exam_id': exam_id,
                             'user_id': user_id,
-                            'status': 200
                     })
                 except ProctoredBaseException:
                     log_message = (
@@ -632,7 +611,6 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
 
                             'exam_id': exam_id,
                             'user_id': user_id,
-                            'status': 400
                     })
     return data, successes, failures
 
