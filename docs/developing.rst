@@ -271,7 +271,7 @@ Release a new version of edx-proctoring
 * Once the PR onto edx-platform has been merged, the updated edx-proctoring will be live in production when the normally scheduled release completes.
 
 How do I validate my changes in stage or production?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * See `test plan`_ for manual tests and data setup
 
