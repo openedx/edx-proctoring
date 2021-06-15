@@ -101,7 +101,6 @@ This document should serve as a catalogue of key features included in the procto
 - [ ] Click submit on the confirmation page
 - [ ] You should see an interstitial confirming the exam has been submitted and is waiting on review
 - [ ] You should receive an email stating your exam has been submitted for review
-
 - [ ] This test has been completed with a Proctortrack exam
 - [ ] This test has been completed with a RPNow exam
 
@@ -141,7 +140,6 @@ This document should serve as a catalogue of key features included in the procto
 - [ ] This page should include a link to the onboarding exam
 - [ ] Click "Navigate to Onboarding Exam"
 - [ ] You should be sent to the onboarding exam for this course
-
 - [ ] This behavior should be the same if the learner has a rejected onboarding profile
 - [ ] The "Navigate to Onboarding Exam" link should be omitted if the learner's onboarding profile is pending review
 
