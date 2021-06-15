@@ -269,3 +269,10 @@ Release a new version of edx-proctoring
     * In edx-platform, create a branch and update the requirements/edx/base.in file to reflect the new tagged branch.
 * create a PR of this branch in edx-platform onto edx-platform:master
 * Once the PR onto edx-platform has been merged, the updated edx-proctoring will be live in production when the normally scheduled release completes.
+
+How do I validate my changes in stage or production?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* See `test plan`_ for manual tests and data setup
+
+.. _test plan: ./testing/test_plan.md
