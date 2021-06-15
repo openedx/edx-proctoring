@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.15.0] - 2021-06-15
+~~~~~~~~~~~~~~~~~~~~~
+* Created a POST api endpoint to add allowances for multiple students and multiple exams at the same time.
+
 [3.14.0] - 2021-06-10
 ~~~~~~~~~~~~~~~~~~~~~
 * When an exam attempt is finished for the first time, mark all completable children in the exam as complete
