@@ -19,7 +19,6 @@ from django.test.utils import override_settings
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 
-from edx_proctoring.constants import ADDITIONAL_TIME, TIME_MULTIPLIER
 from edx_proctoring.api import (
     _calculate_allowed_mins,
     add_allowance_for_user,
@@ -33,6 +32,7 @@ from edx_proctoring.api import (
 from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
+from edx_proctoring.constants import ADDITIONAL_TIME, TIME_MULTIPLIER
 from edx_proctoring.exceptions import (
     BackendProviderOnboardingProfilesException,
     ProctoredExamIllegalStatusTransition,
