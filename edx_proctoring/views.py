@@ -1424,13 +1424,13 @@ class ExamBulkAllowanceView(ProctoredAPIView):
         HTTP PUT handler. Adds or updates Allowances for many exams and students
         """
         try:
-            data, succesess, failures = add_bulk_allowances(
+            data, successes, failures = add_bulk_allowances(
                 exam_ids=request.data.get('exam_ids', None),
                 user_ids=request.data.get('user_ids', None),
                 allowance_type=request.data.get('allowance_type', None),
                 value=request.data.get('value', None)
             )
-            if succesess == 0:
+            if successes == 0:
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
                     data=data
