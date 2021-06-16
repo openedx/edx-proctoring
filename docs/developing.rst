@@ -59,11 +59,11 @@ How do I setup `mfe-special-exam-lib` for local development?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 `MFE special exam lib <https://github.com/edx/frontend-lib-special-exams/>`_ is a react library to support
-special exams in the MFE application learning.
+special exams in the Learning MFE.
 
 Make sure that `frontend-app-learning` is setup and running on your devstack.
 
-The special exam lib is installed as a dependency of MFE application learning.
+The special exam lib is installed as a dependency of Learning MFE.
 And for the local development module export flow should be overridden, the following steps are required:
 
 * Create new directory `packages` in the `frontend-app-learning` repository and clone special exam library::
