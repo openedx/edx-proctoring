@@ -54,6 +54,42 @@ In edx-platform/lms/envs/private.py and edx-platform/cms/envs/private.py:
         'MUST_BE_VERIFIED_TRACK': False
     }
 
+
+How do I setup `mfe-special-exam-lib` for local development?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`MFE special exam lib <https://github.com/edx/frontend-lib-special-exams/>`_ is a react library to support
+special exams in the MFE application learning.
+
+Make sure that `frontend-app-learning` is setup and running on your devstack.
+
+The special exam lib is installed as a dependency of MFE application learning.
+And for the local development module export flow should be overridden, the following steps are required:
+
+* Create new directory `packages` in the `frontend-app-learning` repository and clone special exam library::
+
+    $ cd frontend-app-learning
+    $ mkdir packages
+    $ cd packages
+    $ git clone https://github.com/edx/frontend-lib-special-exams.git
+
+* override module export flow, create `module.config.js` file in the `frontend-app-learning`:
+
+.. code-block::
+
+  // module.config.js
+  module.exports = {
+    localModules: [
+      { moduleName: '@edx/frontend-lib-special-exams', dir: './packages/frontend-lib-special-exams', dist: 'src' },
+    ],
+  };
+
+* restart devstack::
+
+    $ make stop
+    $ make dev.up.lms+frontend-app-learning
+
+
 How does the proctoring system work?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -107,10 +143,10 @@ The command will tell you you have to supply an client_id and client_secret. It'
 If you need to run local changes to the `mockprock Javascript worker`_ or the `worker interface`_ in this library::
 
    make lms-shell
-   
+
    (cd /edx/src/mockprock; npm link)
    npm link @edx/mockprock
-   
+
    cd /edx/src/mockprock
    (cd /edx/src/edx-proctoring; npm link)
    npm link @edx/edx-proctoring

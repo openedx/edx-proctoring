@@ -14,6 +14,7 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 * Add `test_plan` document to describe key features and test cases
+* Update `developing` document with the instructions for frontend-lib-special-exam local development setup
 
 [3.15.0] - 2021-06-15
 ~~~~~~~~~~~~~~~~~~~~~
