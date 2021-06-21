@@ -4900,6 +4900,131 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         self.assertEqual(response.status_code, 400)
 
 
+class GroupedExamAllowancesByStudent(LoggedInTestCase):
+    """
+    Tests for the GroupedExamAllowancesByStudent
+    """
+    def setUp(self):
+        super().setUp()
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login_user(self.user)
+        self.student_taking_exam = User()
+        self.student_taking_exam.save()
+
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
+
+    def test_get_grouped_allowances(self):
+        """
+        Test to get the exam allowances of a course
+        """
+        # Create an exam.
+        user_list = self.create_batch_users(3)
+        user_id_list = [user.email for user in user_list]
+        exam1 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam2 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content2',
+            exam_name='Test Exam2',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam_list = [exam1.id, exam2.id]
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': ADDITIONAL_TIME,
+            'value': '30'
+        }
+        self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        url = reverse(
+            'edx_proctoring:proctored_exam.allowance.grouped.course',
+            kwargs={'course_id': exam1.course_id}
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data), 1)
+        grouped_allowances = response_data['grouped_allowances']
+        self.assertEqual(len(grouped_allowances), 3)
+        # Check that all users allowances are inputted correctly
+        first_user = str(user_list[0].id)
+        self.assertEqual(len(grouped_allowances[first_user]), 2)
+        self.assertNotEqual(grouped_allowances[first_user][0], grouped_allowances[first_user][1])
+
+    def test_get_grouped_allowances_non_staff(self):
+        """
+        Test to get the exam allowances of a course when not a staff member
+        """
+        # Create an exam.
+        user_list = self.create_batch_users(3)
+        user_id_list = [user.email for user in user_list]
+        exam1 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content',
+            exam_name='Test Exam',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam2 = ProctoredExam.objects.create(
+            course_id='a/b/c',
+            content_id='test_content2',
+            exam_name='Test Exam2',
+            time_limit_mins=90,
+            is_active=True
+            )
+        exam_list = [exam1.id, exam2.id]
+
+        allowance_data = {
+            'exam_ids': exam_list,
+            'user_ids': user_id_list,
+            'allowance_type': ADDITIONAL_TIME,
+            'value': '30'
+        }
+        self.client.put(
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
+            json.dumps(allowance_data),
+            content_type='application/json'
+        )
+        self.user.is_staff = False
+        self.user.save()
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+        url = reverse(
+            'edx_proctoring:proctored_exam.allowance.grouped.course',
+            kwargs={'course_id': exam1.course_id}
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
+
+    def test_get_grouped_allowances_course_no_allowances(self):
+        """
+        Test to get the exam allowances of a course with no allowances
+        """
+        url = reverse(
+            'edx_proctoring:proctored_exam.allowance.grouped.course',
+            kwargs={'course_id': 'a/c/d'}
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(response_data), 1)
+        grouped_allowances = response_data['grouped_allowances']
+        self.assertEqual(len(grouped_allowances), 0)
+
+
 class TestActiveExamsForUserView(LoggedInTestCase):
     """
     Tests for the ActiveExamsForUserView

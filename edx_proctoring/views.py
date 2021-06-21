@@ -81,7 +81,11 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptHistory
 )
 from edx_proctoring.runtime import get_runtime_service
-from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
+from edx_proctoring.serializers import (
+    ProctoredExamSerializer,
+    ProctoredExamStudentAllowanceSerializer,
+    ProctoredExamStudentAttemptSerializer
+)
 from edx_proctoring.statuses import (
     InstructorDashboardOnboardingAttemptStatus,
     ProctoredExamStudentAttemptStatus,
@@ -1448,6 +1452,47 @@ class ExamBulkAllowanceView(ProctoredAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": _("Must be a Staff User to Perform this request.")}
                 )
+
+
+class GroupedExamAllowancesByStudent(ProctoredAPIView):
+    """
+    Endpoint for the StudentProctoredGroupedExamAttemptsByCourse
+
+    Supports:
+        HTTP GET: return information about learners' allowances
+
+    **Expected Response**
+        HTTP GET:
+            The response will contain a dictionary with the allowances of a course grouped by student.
+
+    **Exceptions**
+        HTTP GET:
+            * 403 if the requesting user is not staff or course staff for the course associated with
+            the supplied course ID
+    """
+    @method_decorator(require_course_or_global_staff)
+    def get(self, request, course_id):
+        """
+        HTTP GET Handler.
+        """
+
+        # Get all allowances from the course
+        all_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(course_id)
+
+        grouped_allowances = {}
+
+        # Process allowances so they are grouped by user id
+        for allowance in all_allowances:
+            serialied_allowance = ProctoredExamStudentAllowanceSerializer(allowance).data
+            user_id = serialied_allowance['user']['id']
+            if user_id in grouped_allowances:
+                grouped_allowances[user_id].append(serialied_allowance)
+            else:
+                grouped_allowances[user_id] = [serialied_allowance]
+
+        response_data = {'grouped_allowances': grouped_allowances}
+
+        return Response(response_data)
 
 
 class ActiveExamsForUserView(ProctoredAPIView):
