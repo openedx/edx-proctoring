@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.16.0] - 2021-06-22
+~~~~~~~~~~~~~~~~~~~~~
+* Created a GET api endpoint which groups course allowances by users.
+
 [3.15.1] - 2021-06-16
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix a bug in exam attempt API where total time allowed for the exam would not include allowance time.

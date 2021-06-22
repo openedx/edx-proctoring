@@ -82,7 +82,11 @@ from edx_proctoring.models import (
     ProctoredExamStudentAttemptHistory
 )
 from edx_proctoring.runtime import get_runtime_service
-from edx_proctoring.serializers import ProctoredExamSerializer, ProctoredExamStudentAttemptSerializer
+from edx_proctoring.serializers import (
+    ProctoredExamSerializer,
+    ProctoredExamStudentAllowanceSerializer,
+    ProctoredExamStudentAttemptSerializer
+)
 from edx_proctoring.statuses import (
     InstructorDashboardOnboardingAttemptStatus,
     ProctoredExamStudentAttemptStatus,
@@ -1454,6 +1458,56 @@ class ExamBulkAllowanceView(ProctoredAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": _("Must be a Staff User to Perform this request.")}
                 )
+
+
+class GroupedExamAllowancesByStudent(ProctoredAPIView):
+    """
+    Endpoint for the StudentProctoredGroupedExamAttemptsByCourse
+
+    Supports:
+        HTTP GET: return information about learners' allowances
+
+    **Expected Response**
+        HTTP GET:
+            The response will contain a dictionary with the allowances of a course grouped by student.
+            For example:
+            {'grouped_allowances':{'4':
+                                  [{'id': 4, 'created': '2021-06-21T14:47:17.847221Z',
+                                    'modified': '2021-06-21T14:47:17.847221Z',
+                                    'user': {'id': 4, 'username': 'student1',
+                                    'email': 'student1@test.com'},
+                                    'key': 'additional_time_granted', 'value': '30',
+                                    'proctored_exam': {'id': 2, 'course_id': 'a/b/c', 'content_id': 'test_content2',
+                                    'external_id': None, 'exam_name': 'Test Exam2', 'time_limit_mins': 90,
+                                    'is_proctored': False, 'is_practice_exam': False,
+                                    'is_active': True, 'due_date': None,
+                                    'hide_after_due': False, 'backend': None}}}
+
+    **Exceptions**
+        HTTP GET:
+            * 403 if the requesting user is not staff or course staff for the course associated with
+            the supplied course ID
+    """
+    @method_decorator(require_course_or_global_staff)
+    def get(self, request, course_id):
+        """
+        HTTP GET Handler.
+        """
+
+        # Get all allowances from the course
+        all_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(course_id)
+
+        grouped_allowances = {}
+
+        # Process allowances so they are grouped by user id
+        for allowance in all_allowances:
+            serialied_allowance = ProctoredExamStudentAllowanceSerializer(allowance).data
+            user_id = serialied_allowance['user']['id']
+            grouped_allowances.setdefault(user_id, []).append(serialied_allowance)
+
+        response_data = {'grouped_allowances': grouped_allowances}
+
+        return Response(response_data)
 
 
 class ActiveExamsForUserView(ProctoredAPIView):
