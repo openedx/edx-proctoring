@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.16.0] - 2021-06-22
+~~~~~~~~~~~~~~~~~~~~~
+* Created a GET api endpoint which groups course allowances by users.
+
 [3.15.0] - 2021-06-15
 ~~~~~~~~~~~~~~~~~~~~~
 * Created a POST api endpoint to add allowances for multiple students and multiple exams at the same time.
