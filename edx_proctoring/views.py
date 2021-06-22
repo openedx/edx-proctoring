@@ -48,6 +48,7 @@ from edx_proctoring.api import (
     get_onboarding_attempt_data_for_learner,
     get_proctoring_settings_by_exam_id,
     get_review_policy_by_exam_id,
+    get_total_allowed_time_for_exam,
     get_user_attempts_by_exam_id,
     is_exam_passed_due,
     mark_exam_attempt_as_ready,
@@ -242,12 +243,17 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                         attempt.get('id'),
                         is_learning_mfe=is_learning_mfe
                     )
-                # Exam hasn't been started yet but it is proctored so needs to be checked
-                # if prerequisites are satisfied. We only do this for proctored exam hence
-                # additional check 'not exam['is_practice_exam']', meaning we do not check
-                # prerequisites for practice or onboarding exams
-                elif exam['is_proctored'] and not exam['is_practice_exam']:
-                    exam = check_prerequisites(exam, request.user.id)
+                else:
+                    # calculate total allowed time for the exam including
+                    # allowance time to show on the MFE entrance pages
+                    exam['total_time'] = get_total_allowed_time_for_exam(exam, request.user.id)
+
+                    # Exam hasn't been started yet but it is proctored so needs to be checked
+                    # if prerequisites are satisfied. We only do this for proctored exam hence
+                    # additional check 'not exam['is_practice_exam']', meaning we do not check
+                    # prerequisites for practice or onboarding exams
+                    if exam['is_proctored'] and not exam['is_practice_exam']:
+                        exam = check_prerequisites(exam, request.user.id)
 
                 # if user hasn't completed required onboarding exam before taking
                 # proctored exam we need to navigate them to it with a link

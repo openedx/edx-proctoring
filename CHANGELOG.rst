@@ -18,6 +18,11 @@ Unreleased
 ~~~~~~~~~~~~~~~~~~~~~
 * Created a GET api endpoint which groups course allowances by users.
 
+[3.15.1] - 2021-06-16
+~~~~~~~~~~~~~~~~~~~~~
+* Fix a bug in exam attempt API where total time allowed for the exam would not include allowance time.
+* Add `test_plan` document to describe key features and test cases
+
 [3.15.0] - 2021-06-15
 ~~~~~~~~~~~~~~~~~~~~~
 * Created a POST api endpoint to add allowances for multiple students and multiple exams at the same time.

@@ -11,10 +11,11 @@ from django.conf import settings
 from django.test.utils import override_settings
 from django.urls import reverse
 
-from edx_proctoring.api import get_review_policy_by_exam_id
+from edx_proctoring.api import get_exam_by_id, get_review_policy_by_exam_id
 from edx_proctoring.exceptions import BackendProviderNotConfigured, ProctoredExamNotFoundException
-from edx_proctoring.models import ProctoredExam
+from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
+from edx_proctoring.utils import humanized_time
 
 from .utils import ProctoredExamTestCase
 
@@ -64,6 +65,25 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         self.assertEqual(exam_data['course_id'], self.course_id)
         self.assertEqual(exam_data['content_id'], self.content_id if not content_id else content_id)
         self.assertEqual(exam_data['time_limit_mins'], self.default_time_limit)
+
+    def test_exam_total_time_with_allowance_time_before_exam_starts(self):
+        """
+        Tests that exam has correct total time when user has additional
+        time allowance and exam has not started yet.
+        """
+        allowed_extra_time = 10
+        ProctoredExamStudentAllowance.objects.create(
+            proctored_exam_id=self.proctored_exam_id,
+            user_id=self.user_id,
+            key=self.key,
+            value=str(allowed_extra_time)
+        )
+        response = self.client.get(self.url)
+        exam = get_exam_by_id(self.proctored_exam_id)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        expected_total_time = humanized_time(exam['time_limit_mins'] + allowed_extra_time)
+        self.assertEqual(response_data['exam']['total_time'], expected_total_time)
 
     def test_get_started_proctored_exam_attempts_data(self):
         """
