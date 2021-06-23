@@ -22,6 +22,7 @@ Unreleased
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix a bug in exam attempt API where total time allowed for the exam would not include allowance time.
 * Add `test_plan` document to describe key features and test cases
+* Update `developing` document with the instructions for frontend-lib-special-exam local development setup
 
 [3.15.0] - 2021-06-15
 ~~~~~~~~~~~~~~~~~~~~~

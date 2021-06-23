@@ -7,9 +7,17 @@ where to find the source code in our platform.
 .. contents::
 
 System Components
-------------------
+-----------------
+
+Legacy Components Schema
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. image:: images/components.png
+
+New Components Schema with Learning MFE and special exam lib
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: images/components_with_mfe.png
 
 Proctored Exam Views
 ^^^^^^^^^^^^^^^^^^^^
@@ -28,6 +36,8 @@ Notable Code:
 - `LMS render student_view() <https://github.com/edx/edx-platform/blob/a7dff8c21ee794e90bdc0f22876334a7843a032d/common/lib/xmodule/xmodule/seq_module.py#L274>`_
 - `edx-proctoring template logic <https://github.com/edx/edx-proctoring/blob/78976d93ab6ca5206f259dc420d2f45818fe636c/edx_proctoring/api.py#L1912>`_
 - `edx-proctoring interstitial templates <https://github.com/edx/edx-proctoring/tree/323ea43acbd6f12d5131546e8648dedff719bf9e/edx_proctoring/templates>`_
+- `Learning MFE <https://github.com/edx/frontend-app-learning>`_
+- `React lib for special exams <https://github.com/edx/frontend-lib-special-exams/>`_
 
 edx-proctoring
 ^^^^^^^^^^^^^^
@@ -92,9 +102,18 @@ This figure does not include error states or display of unmet prerequite require
 Example Action Sequence
 -------------------------
 
-The diagram below describes the happy-path of interactions between components to
-sucessfully begin a proctored exam. This example matches Proctortrack's backend
+The diagrams below describes the happy-path of interactions between components to
+sucessfully begin a proctored exam. These examples matches Proctortrack's backend
 implementation and includes any JavaScript events handled by the proctoring app.
+
+Old Sequence
+^^^^^^^^^^^^
 
 
 .. image:: images/sequence.png
+
+New Sequence with Learning MFE and special exam lib
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. image:: images/sequence_mfe.png
