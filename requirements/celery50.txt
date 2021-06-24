@@ -1,9 +1,9 @@
 amqp==5.0.6
 billiard==3.6.4.0
 celery==5.0.4
+click==7.1.2
 click-didyoumean==0.0.3
 click-repl==0.2.0
-click==7.1.2
 kombu==5.1.0
-prompt-toolkit==3.0.18
+prompt-toolkit==3.0.19
 vine==5.0.0
