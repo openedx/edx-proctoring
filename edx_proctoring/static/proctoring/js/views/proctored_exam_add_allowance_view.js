@@ -140,9 +140,9 @@ edx = edx || {};
                     },
                     type: 'PUT',
                     data: {
-                        exam_id: values.proctored_exam,
-                        user_info: values.user_info,
-                        key: values.allowance_type,
+                        exam_ids: values.proctored_exam,
+                        user_ids: ["verified"],
+                        allowance_type: "additional_time",
                         value: values.allowance_value
                     },
                     success: function() {
