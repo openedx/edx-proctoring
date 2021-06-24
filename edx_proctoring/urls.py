@@ -9,8 +9,6 @@ from edx_proctoring import callbacks, instructor_dashboard_exam_urls, views
 
 app_name = u'edx_proctoring'
 
-CONTENT_ID_PATTERN = r'(?P<content_id>([A-z0-9]+|(?:i4x://?[^/]+/[^/]+/[^/]+/[^@]+(?:@[^/]+)?)|(?:[^/]+)))'
-
 urlpatterns = [
     url(
         r'edx_proctoring/v1/proctored_exam/exam$',
@@ -126,8 +124,8 @@ urlpatterns = [
         name='user_retirement_api'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/attempt/course_id/{}/content_id/{}$'.format(
-            settings.COURSE_ID_PATTERN, CONTENT_ID_PATTERN),
+        r'edx_proctoring/v1/proctored_exam/attempt/course_id/{}$'.format(
+            settings.COURSE_ID_PATTERN),
         views.ProctoredExamAttemptView.as_view(),
         name='proctored_exam.exam_attempts'
     ),
