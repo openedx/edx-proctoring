@@ -106,6 +106,31 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         self.assertEqual(exam_data['attempt']['exam_url_path'], self.expected_exam_url)
         self.assertEqual(exam_data['type'], 'proctored')
 
+    def test_get_exam_attempts_data_by_course_id(self):
+        """
+        Tests the get exam attempts data by course id.
+        """
+        self._create_started_exam_attempt(is_proctored=True)
+
+        url = reverse(
+            'edx_proctoring:proctored_exam.exam_attempts',
+            kwargs={
+                'course_id': self.course_id,
+            }
+        ) + '?' + urlencode({
+            'is_learning_mfe': True,
+        })
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        exam_data = response_data['exam']
+
+        # if exam started the prerequisites are not checked
+        assert 'prerequisite_status' not in exam_data
+        assert not exam_data
+        assert 'active_attempt' in response_data and response_data['active_attempt']
+
     def test_get_started_timed_exam_attempts_data(self):
         """
         Tests the get timed exam attempts data by course id and usage key endpoint for started exam.
