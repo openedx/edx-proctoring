@@ -445,4 +445,28 @@ describe('ProctoredExamOnboardingView', function() {
         expect(errorMessage).toBeVisible();
         expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-status-content')).not.toBeVisible();
     });
+
+    it('renders correctly with non-JSON parseable error message response', function() {
+        var errorMessage;
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
+            [
+                500,
+                {
+                    'Content-Type': 'application/json'
+                },
+                ''
+            ]
+        );
+
+        this.proctored_exam_onboarding_view = new edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView();
+
+        this.server.respond();
+        this.server.respond();
+
+        errorMessage = this.proctored_exam_onboarding_view.$el.find('.error-response');
+        expect(errorMessage.html()).toContain('An unexpected error occured. Please try again later.');
+        expect(errorMessage).toBeVisible();
+        expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-status-content')).not.toBeVisible();
+    });
 });

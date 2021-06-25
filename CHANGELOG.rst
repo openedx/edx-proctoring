@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.17.1] - 2021-06-25
+~~~~~~~~~~~~~~~~~~~~~
+* Fix JSON parse failure when error response from course onboarding status endpoint does not
+  return valid JSON.
+
 [3.17.0] - 2021-06-23
 ~~~~~~~~~~~~~~~~~~~~~
 * Replace internal logic for determing learners' onboarding statuses for the course onboarding API

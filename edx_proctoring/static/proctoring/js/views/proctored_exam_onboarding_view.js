@@ -202,7 +202,14 @@ edx = edx || {};
                     // still want the view to render
                     self.render();
 
-                    data = $.parseJSON(response.responseText);
+                    try {
+                        data = $.parseJSON(response.responseText);
+                    } catch (error) {
+                        data = {
+                            detail: 'An unexpected error occured. Please try again later.'
+                        };
+                    }
+
                     if (data.detail) {
                         $errorResponse = $('#error-response');
                         $errorResponse.html(data.detail);
