@@ -14,6 +14,16 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.17.1] - 2021-06-25
+~~~~~~~~~~~~~~~~~~~~~
+* Fix JSON parse failure when error response from course onboarding status endpoint does not
+  return valid JSON.
+
+[3.17.0] - 2021-06-23
+~~~~~~~~~~~~~~~~~~~~~
+* Replace internal logic for determing learners' onboarding statuses for the course onboarding API
+  with provider onboarding API.
+
 [3.16.0] - 2021-06-22
 ~~~~~~~~~~~~~~~~~~~~~
 * Created a GET api endpoint which groups course allowances by users.
@@ -22,6 +32,7 @@ Unreleased
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix a bug in exam attempt API where total time allowed for the exam would not include allowance time.
 * Add `test_plan` document to describe key features and test cases
+* Update `developing` document with the instructions for frontend-lib-special-exam local development setup
 
 [3.15.0] - 2021-06-15
 ~~~~~~~~~~~~~~~~~~~~~

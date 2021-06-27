@@ -3,7 +3,7 @@ edx = edx || {};
 (function(Backbone, $, _, gettext) {
     'use strict';
 
-    var viewHelper, onboardingStatuses, statusAndModeReadableFormat;
+    var viewHelper, onboardingStatuses, onboardingProfileAPIStatuses, statusAndModeReadableFormat;
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
     onboardingStatuses = [
@@ -16,6 +16,14 @@ edx = edx || {};
         'rejected',
         'error'
     ];
+    onboardingProfileAPIStatuses = [
+        'not_started',
+        'other_course_approved',
+        'submitted',
+        'verified',
+        'rejected',
+        'expired'
+    ];
     statusAndModeReadableFormat = {
         // Onboarding statuses
         not_started: gettext('Not Started'),
@@ -27,6 +35,7 @@ edx = edx || {};
         verified: gettext('Verified'),
         rejected: gettext('Rejected'),
         error: gettext('Error'),
+        expired: gettext('Expired'),
         // TODO: remove as part of MST-745
         onboarding_reset_past_due: gettext('Onboarding Reset Failed Due to Past Due Exam'),
         // Enrollment modes (Note: 'verified' is both a status and enrollment mode)
@@ -186,11 +195,28 @@ edx = edx || {};
                     $searchIcon = $(document.getElementById('onboarding-search-indicator'));
                     $searchIcon.removeClass('hidden');
                 },
-                error: function() {
+                error: function(unused, response) {
+                    var data, $searchIcon, $spinner, $errorResponse, $onboardingPanel;
+
                     // in the case that there is no onboarding data, we
                     // still want the view to render
-                    var $searchIcon, $spinner;
                     self.render();
+
+                    try {
+                        data = $.parseJSON(response.responseText);
+                    } catch (error) {
+                        data = {
+                            detail: 'An unexpected error occured. Please try again later.'
+                        };
+                    }
+
+                    if (data.detail) {
+                        $errorResponse = $('#error-response');
+                        $errorResponse.html(data.detail);
+                        $onboardingPanel = $('.onboarding-status-content');
+                        $onboardingPanel.hide();
+                    }
+
                     $spinner = $(document.getElementById('onboarding-loading-indicator'));
                     $spinner.addClass('hidden');
                     $searchIcon = $(document.getElementById('onboarding-search-indicator'));
@@ -202,7 +228,8 @@ edx = edx || {};
             this.hydrate();
         },
         render: function() {
-            var data, dataJson, html, startPage, endPage;
+            var data, dataJson, html, startPage, endPage, statuses;
+
             if (this.template !== null) {
                 data = {
                     previousPage: null,
@@ -234,12 +261,13 @@ edx = edx || {};
                         endPage = dataJson.num_pages;
                     }
 
+                    statuses = dataJson.use_onboarding_profile_api ? onboardingProfileAPIStatuses : onboardingStatuses;
                     data = {
                         previousPage: dataJson.previous,
                         nextPage: dataJson.next,
                         currentPage: this.currentPage,
                         onboardingItems: dataJson.results,
-                        onboardingStatuses: onboardingStatuses,
+                        onboardingStatuses: statuses,
                         inSearchMode: this.inSearchMode,
                         searchText: this.searchText,
                         filters: this.filters,

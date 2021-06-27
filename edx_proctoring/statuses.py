@@ -251,6 +251,7 @@ class InstructorDashboardOnboardingAttemptStatus:
     rejected = 'rejected'
     verified = 'verified'
     error = 'error'
+    expired = 'expired'
 
     # The following status is not a true attempt status, but is used when the
     # user's onboarding profile is approved in a different course.
@@ -273,7 +274,8 @@ class InstructorDashboardOnboardingAttemptStatus:
         ProctoredExamStudentAttemptStatus.submitted: submitted,
         ProctoredExamStudentAttemptStatus.rejected: rejected,
         ProctoredExamStudentAttemptStatus.verified: verified,
-        ProctoredExamStudentAttemptStatus.error: error
+        ProctoredExamStudentAttemptStatus.error: error,
+        ProctoredExamStudentAttemptStatus.expired: expired
     }
 
     @classmethod
@@ -304,11 +306,20 @@ class VerificientOnboardingProfileStatus:
 
     profile_status_mapping = {
         no_profile: None,
-        approved: ProctoredExamStudentAttemptStatus.verified,
+        approved: InstructorDashboardOnboardingAttemptStatus.verified,
         other_course_approved: InstructorDashboardOnboardingAttemptStatus.other_course_approved,
-        rejected: ProctoredExamStudentAttemptStatus.rejected,
-        expired: ProctoredExamStudentAttemptStatus.expired,
-        pending: ProctoredExamStudentAttemptStatus.submitted
+        rejected: InstructorDashboardOnboardingAttemptStatus.rejected,
+        expired: InstructorDashboardOnboardingAttemptStatus.expired,
+        pending: InstructorDashboardOnboardingAttemptStatus.submitted
+    }
+
+    filter_status_mapping = {
+        InstructorDashboardOnboardingAttemptStatus.not_started: no_profile,
+        InstructorDashboardOnboardingAttemptStatus.submitted: pending,
+        InstructorDashboardOnboardingAttemptStatus.other_course_approved: other_course_approved,
+        InstructorDashboardOnboardingAttemptStatus.verified: approved,
+        InstructorDashboardOnboardingAttemptStatus: rejected,
+        InstructorDashboardOnboardingAttemptStatus.expired: expired
     }
 
     @classmethod
@@ -317,6 +328,28 @@ class VerificientOnboardingProfileStatus:
         Get the internal attempt status given a status from the onboarding api
 
         Parameters:
-            * status (str):
+            * status (str): status from Verficient's onboarding API endpoint
         """
         return cls.profile_status_mapping.get(api_status)
+
+    @classmethod
+    def get_profile_status_from_filter(cls, filter_status):
+        """
+        Get the verificient profile status given an edx status for filtering
+
+        Parameters:
+            * status (str): edX onboarding status
+        """
+        return cls.filter_status_mapping.get(filter_status)
+
+    @classmethod
+    def get_instructor_status_from_profile_status(cls, api_status):
+        """
+        Get the instructor onboarding status given a status from the onboarding api
+
+        Parameters:
+            * status (str): status from Verficient's onboarding API endpoint
+        """
+        if api_status == cls.no_profile:
+            return InstructorDashboardOnboardingAttemptStatus.not_started
+        return cls.get_edx_status_from_profile_status(api_status)
