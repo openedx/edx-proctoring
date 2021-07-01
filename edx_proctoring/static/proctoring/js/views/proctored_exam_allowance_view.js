@@ -10,7 +10,8 @@ edx = edx || {};
         initialize: function() {
             this.allowance_types = [
                 ['additional_time_granted', gettext('Additional Time (minutes)')],
-                ['review_policy_exception', gettext('Review Policy Exception')]
+                ['review_policy_exception', gettext('Review Policy Exception')],
+                ['time_multiplier', gettext('Time Multiplier')]
             ];
 
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection();

@@ -14,7 +14,7 @@
             <td>
                 <select id='proctored_exam'>
                     <% _.each(proctored_exams, function(proctored_exam){ %>
-                    <option value="<%= proctored_exam.id %>">
+                    <option value="<%= proctored_exam.id  %>">
                     <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam.exam_name }, true) %>
                     </option>
                     <% }); %>
@@ -60,7 +60,7 @@
         </tr>
         <tr>
             <td>
-                <label><%- gettext("Username or Email") %></label>
+                <label><%- gettext("Usernames or Emails") %></label>
             </td>
             <td>
                 <input type="text" id="user_info" />

@@ -15,6 +15,7 @@ edx = edx || {};
             this.proctored_exam_allowance_view = options.proctored_exam_allowance_view;
             this.course_id = options.course_id;
             this.allowance_types = options.allowance_types;
+            this.selectedExams = ''
             this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel();
             _.bindAll(this, 'render');
             this.loadTemplateData();
@@ -33,7 +34,6 @@ edx = edx || {};
                     self.render();
                     self.showModal();
                     self.updateCss();
-                    self.selectExamAtIndex(0);
                 });
         },
         updateCss: function() {
@@ -89,7 +89,7 @@ edx = edx || {};
         },
         getCurrentFormValues: function() {
             return {
-                proctored_exam: $('select#proctored_exam').val(),
+                proctored_exam: this.selectedExams,
                 allowance_type: $('select#allowance_type').val(),
                 allowance_value: $('#allowance_value').val(),
                 user_info: $('#user_info').val()
@@ -141,8 +141,8 @@ edx = edx || {};
                     type: 'PUT',
                     data: {
                         exam_ids: values.proctored_exam,
-                        user_ids: ["verified"],
-                        allowance_type: "additional_time",
+                        user_ids: values.user_info,
+                        allowance_type: values.allowance_type,
                         value: values.allowance_value
                     },
                     success: function() {
@@ -162,7 +162,8 @@ edx = edx || {};
         },
         selectExamAtIndex: function(index) {
             var selectedExam = this.proctored_exams[index];
-
+            console.log("in selected function")
+            this.selectedExams += String(selectedExam.id) + ","
             if (selectedExam.is_proctored) {
                 // Selected Exam is a Proctored or Practice-Proctored exam.
                 if (selectedExam.is_practice_exam) {

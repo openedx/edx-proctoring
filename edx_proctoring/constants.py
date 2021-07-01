@@ -75,5 +75,3 @@ ONBOARDING_PROFILE_INSTRUCTOR_DASHBOARD_API = 'edx_proctoring.onboarding_profile
 CONTENT_VIEWABLE_PAST_DUE_DATE = getattr(settings, 'PROCTORED_EXAM_VIEWABLE_PAST_DUE', False)
 
 TIME_MULTIPLIER = 'time_multiplier'
-
-ADDITIONAL_TIME = 'additional_time'
