@@ -126,10 +126,17 @@ urlpatterns = [
         name='user_retirement_api'
     ),
     url(
+        r'edx_proctoring/v1/proctored_exam/attempt/course_id/{}$'.format(
+            settings.COURSE_ID_PATTERN),
+        views.ProctoredExamAttemptView.as_view(),
+        name='proctored_exam.exam_attempts'
+    ),
+    # TODO: remove url after updating frontend-lib-special-exams
+    url(
         r'edx_proctoring/v1/proctored_exam/attempt/course_id/{}/content_id/{}$'.format(
             settings.COURSE_ID_PATTERN, CONTENT_ID_PATTERN),
         views.ProctoredExamAttemptView.as_view(),
-        name='proctored_exam.exam_attempts'
+        name='proctored_exam.exam_attempts_old'
     ),
     url(
         r'edx_proctoring/v1/proctored_exam/settings/exam_id/(?P<exam_id>\d+)/$',

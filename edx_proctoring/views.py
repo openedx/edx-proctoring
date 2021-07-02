@@ -195,11 +195,13 @@ class ProctoredAPIView(AuthenticatedAPIView):
 class ProctoredExamAttemptView(ProctoredAPIView):
     """
     Endpoint for getting timed or proctored exam and its attempt data.
-    /edx_proctoring/v1/proctored_exam/attempt/course_id/{course_id}/content_id/{content_id}
+    /edx_proctoring/v1/proctored_exam/attempt/course_id/{course_id}
 
     Supports:
         HTTP GET:
             ** Scenarios **
+            ?content_id=123
+            returns an existing exam
             ?is_learning_mfe=true
             returns attempt data with `exam_url_path` built for the learning mfe
 
@@ -213,7 +215,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 'active_attempt': { ... },
             }
     """
-    def get(self, request, course_id, content_id):
+    def get(self, request, course_id, content_id=None):
         """
         HTTP GET handler. Returns exam with attempt and active attempt
         """
@@ -222,6 +224,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         active_exam = {}
 
         is_learning_mfe = request.GET.get('is_learning_mfe') in ['1', 'true', 'True']
+        content_id = request.GET.get('content_id', content_id)
 
         active_exams = get_active_exams_for_user(request.user.id)
         if active_exams:
@@ -235,6 +238,14 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 active_attempt.get('id'),
                 is_learning_mfe=is_learning_mfe
             )
+
+        if not content_id:
+            response_dict = {
+                'exam': {},
+                'active_attempt': active_attempt_data,
+            }
+            return Response(data=response_dict, status=status.HTTP_200_OK)
+
         if active_exam and active_exam.get('course_id') == course_id and active_exam.get('content_id') == content_id:
             exam = active_exam
             exam.update({'attempt': active_attempt_data})
