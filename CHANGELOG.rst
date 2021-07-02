@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.17.1] - 2021-07-2
+~~~~~~~~~~~~~~~~~~~~~
+* Updated ProctoredExamAttempt view to use the content id from the query.
+
 [3.17.1] - 2021-06-25
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix JSON parse failure when error response from course onboarding status endpoint does not
