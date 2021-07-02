@@ -210,7 +210,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 'active_attempt': { ... },
             }
     """
-    def get(self, request, course_id):
+    def get(self, request, course_id, content_id=None):
         """
         HTTP GET handler. Returns exam with attempt and active attempt
         """
@@ -219,7 +219,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         active_exam = {}
 
         is_learning_mfe = request.GET.get('is_learning_mfe') in ['1', 'true', 'True']
-        content_id = request.GET.get('content_id')
+        content_id = request.GET.get('content_id', content_id)
 
         active_exams = get_active_exams_for_user(request.user.id)
         if active_exams:
