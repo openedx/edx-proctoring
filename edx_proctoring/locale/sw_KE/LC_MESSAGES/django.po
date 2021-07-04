@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-27 18:34+0000\n"
+"POT-Creation-Date: 2021-07-04 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: swaleh amin <mkupuofirstnameswaleh@yahoo.com>, 2021\n"
 "Language-Team: Swahili (Kenya) (https://www.transifex.com/open-edx/teams/6205/sw_KE/)\n"
@@ -118,7 +118,7 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:770 views.py:1140
+#: api.py:770 views.py:1151
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "umebakiwa na {remaining_time}"
@@ -1468,51 +1468,51 @@ msgstr ""
 msgid "could not determine the course_id"
 msgstr "haikuweza kutambua utambulisho wa kozi"
 
-#: views.py:156 views.py:534 views.py:1618
+#: views.py:156 views.py:545 views.py:1629
 msgid "Must be a Staff User to Perform this request."
 msgstr "Lazima uwe Mtumiaji  Mfanyakazi ili uweze Kujibu ombi hili."
 
-#: views.py:524
+#: views.py:535
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:542 views.py:759
+#: views.py:553 views.py:770
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:574
+#: views.py:585
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:624
+#: views.py:635
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr ""
 
-#: views.py:808
+#: views.py:819
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 
-#: views.py:1146
+#: views.py:1157
 msgid "you have less than a minute remaining"
 msgstr "umebakiwa na chini ya dakika moja"
 
-#: views.py:1705
+#: views.py:1716
 msgid "Cannot update attempt review status"
 msgstr ""
 
-#: views.py:1987
+#: views.py:1998
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1993
+#: views.py:2004
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:2012
+#: views.py:2023
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
