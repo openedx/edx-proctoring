@@ -15,7 +15,7 @@ edx = edx || {};
             this.proctored_exam_allowance_view = options.proctored_exam_allowance_view;
             this.course_id = options.course_id;
             this.allowance_types = options.allowance_types;
-            this.selectedExams = ''
+            this.selectedExams = new Set()
             this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel();
             _.bindAll(this, 'render');
             this.loadTemplateData();
@@ -116,13 +116,14 @@ edx = edx || {};
             this.updateCss();
         },
         addAllowance: function(event) {
-            var $errorResponse, values, formHasErrors;
+            var $errorResponse, values, formHasErrors, exams;
             var self = this;
             event.preventDefault();
             $errorResponse = $('.error-response');
             $errorResponse.html();
             values = this.getCurrentFormValues();
             formHasErrors = false;
+            exams = this.setToString(values.proctored_exam, ',')
 
             $.each(values, function(key, value) {
                 if (value === '') {
@@ -140,7 +141,7 @@ edx = edx || {};
                     },
                     type: 'PUT',
                     data: {
-                        exam_ids: values.proctored_exam,
+                        exam_ids: exams,
                         user_ids: values.user_info,
                         allowance_type: values.allowance_type,
                         value: values.allowance_value
@@ -161,9 +162,13 @@ edx = edx || {};
             }
         },
         selectExamAtIndex: function(index) {
-            var selectedExam = this.proctored_exams[index];
-            console.log("in selected function")
-            this.selectedExams += String(selectedExam.id) + ","
+            var selectedExam = this.proctored_exams[index - 1];
+            console.log("added exam", selectedExam);
+            this.selectedExams.add(selectedExam.id);
+            var createdTag = this.createTag(selectedExam.exam_name)
+            console.log(createdTag)
+            $('#selected_exams').append(createdTag);
+            console.log($('#selected_exam'));
             if (selectedExam.is_proctored) {
                 // Selected Exam is a Proctored or Practice-Proctored exam.
                 if (selectedExam.is_practice_exam) {
@@ -201,6 +206,26 @@ edx = edx || {};
                 $('#minutes_label').hide();
                 $('#allowance_value_label').text(gettext('Value'));
             }
+        },
+        setToString(set, delim){
+            let str = '';
+            set.forEach(function(elem){
+              str += elem + delim
+            });
+            return str.slice(0, -1)
+        },
+        createTag(examName) {
+            const div = document.createElement('div');
+            div.setAttribute('class', 'tag');
+            const span = document.createElement('span');
+            span.innerHTML = examName;
+            const closeIcon = document.createElement('i');
+            closeIcon.innerHTML = 'close';
+            closeIcon.setAttribute('class', 'material-icons');
+            closeIcon.setAttribute('data-item', examName);
+            div.appendChild(span);
+            div.appendChild(closeIcon);
+            return div;
         },
 
         render: function() {
