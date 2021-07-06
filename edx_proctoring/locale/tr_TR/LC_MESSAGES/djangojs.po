@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-20 18:34+0000\n"
+"POT-Creation-Date: 2021-07-04 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Ali Işıngör <ali@artistanbul.io>, 2021\n"
 "Language-Team: Turkish (Turkey) (https://www.transifex.com/open-edx/teams/6205/tr_TR/)\n"
@@ -103,25 +103,25 @@ msgstr "Hata"
 
 #: admin.py:409
 msgid "Ready To Resume"
-msgstr ""
+msgstr "Devam Etmeye Hazır"
 
 #: admin.py:413
 msgid "Onboarding Missing"
-msgstr ""
+msgstr "Oryantasyon Eksik"
 
 #: admin.py:414
 msgid "Onboarding Failed"
-msgstr ""
+msgstr "Oryantasyon Başarısız"
 
 #: admin.py:415
 msgid "Onboarding Pending"
-msgstr ""
+msgstr "Oryantasyon Beklemede"
 
 #: admin.py:416
 msgid "Onboarding Expired"
-msgstr ""
+msgstr "Oryantasyon Süresi Doldu"
 
-#: api.py:770 views.py:977
+#: api.py:770 views.py:1151
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "{remaining_time} dakika zamanınız kaldı"
@@ -133,17 +133,18 @@ msgstr "dersiniz"
 #: api.py:1570
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
-msgstr ""
+msgstr "{course_name} dersi {exam_name} sınavı için Gözetmen Sonuçları"
 
 #: api.py:1579
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
+"{course_name} dersi {exam_name} sınavı için Gözetim İncelemesi devam ediyor"
 
 #: api.py:1613
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
-msgstr ""
+msgstr "{username} için {course_name} dersi {exam_name} gözetmenli sınavı"
 
 #: api.py:2095
 msgid "Taking As Proctored Exam"
@@ -191,7 +192,7 @@ msgstr "Zamanlanmış Sınav"
 
 #: api.py:2742
 msgid "Onboarding status question"
-msgstr ""
+msgstr "Oryantasyon durumu sorusu"
 
 #: models.py:403
 msgid "Taking as Proctored"
@@ -203,7 +204,7 @@ msgstr "Bir Örnek Denemedir"
 
 #: models.py:428
 msgid "Is Resumable"
-msgstr ""
+msgstr "Devam Edilebilir"
 
 #: models.py:599
 msgid "Additional Time (minutes)"
@@ -357,7 +358,7 @@ msgstr ""
 
 #: templates/onboarding_exam/entrance.html:58
 msgid "Continue to onboarding"
-msgstr ""
+msgstr "Oryantasyona devam et"
 
 #: templates/onboarding_exam/entrance.html:62
 msgid ""
@@ -1497,51 +1498,56 @@ msgstr ""
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:138
+#: views.py:147
 msgid "could not determine the course_id"
 msgstr "course_id belirlenemedi"
 
-#: views.py:147 views.py:525 views.py:1455
+#: views.py:156 views.py:545 views.py:1629
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 "Bu isteği karşılayabilmek için Personel Kullanıcısı olmanız gerekiyor."
 
-#: views.py:515
+#: views.py:535
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:533 views.py:750
+#: views.py:553 views.py:770
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:565
+#: views.py:585
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:615
+#: views.py:635
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr ""
 
-#: views.py:983
+#: views.py:819
+msgid ""
+"The onboarding service is temporarily unavailable. Please try again later."
+msgstr ""
+
+#: views.py:1157
 msgid "you have less than a minute remaining"
 msgstr "Bir dakikadan az zamanınız kaldı"
 
-#: views.py:1492
+#: views.py:1716
 msgid "Cannot update attempt review status"
 msgstr ""
 
-#: views.py:1774
+#: views.py:1998
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1780
+#: views.py:2004
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1799
+#: views.py:2023
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""

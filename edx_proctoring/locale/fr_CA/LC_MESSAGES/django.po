@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-20 18:34+0000\n"
+"POT-Creation-Date: 2021-07-04 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2021\n"
 "Language-Team: French (Canada) (https://www.transifex.com/open-edx/teams/6205/fr_CA/)\n"
@@ -115,7 +115,7 @@ msgstr "Intégration en attente"
 msgid "Onboarding Expired"
 msgstr "L'intégration a expiré"
 
-#: api.py:770 views.py:977
+#: api.py:770 views.py:1151
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "il vous reste {remaining_time}"
@@ -1791,51 +1791,56 @@ msgstr "un examen d'intégration"
 msgid "a practice exam"
 msgstr "un examen de pratique"
 
-#: views.py:138
+#: views.py:147
 msgid "could not determine the course_id"
 msgstr "impossible de déterminer l'id de cours"
 
-#: views.py:147 views.py:525 views.py:1455
+#: views.py:156 views.py:545 views.py:1629
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 "Doit être un membre de l'équipe pédagogique pour effectuer cette requête."
 
-#: views.py:515
+#: views.py:535
 msgid "Missing required query parameter course_id"
 msgstr "Paramètre de requête obligatoire course_id manquant"
 
-#: views.py:533 views.py:750
+#: views.py:553 views.py:770
 msgid "There is no onboarding exam related to this course id."
 msgstr "Il n'y a pas d'examen d'intégration lié à cet identifiant de cours."
 
-#: views.py:565
+#: views.py:585
 msgid "There is no onboarding exam accessible to this user."
 msgstr "Il n'y a pas d'examen d'intégration accessible à cet utilisateur."
 
-#: views.py:615
+#: views.py:635
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr "Aucune API de statut d'intégration pour {proctor_service}"
 
-#: views.py:983
+#: views.py:819
+msgid ""
+"The onboarding service is temporarily unavailable. Please try again later."
+msgstr ""
+
+#: views.py:1157
 msgid "you have less than a minute remaining"
 msgstr "il vous reste moins d'une minute"
 
-#: views.py:1492
+#: views.py:1716
 msgid "Cannot update attempt review status"
 msgstr ""
 
-#: views.py:1774
+#: views.py:1998
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "Aucun examen dans le cours {course_id}."
 
-#: views.py:1780
+#: views.py:2004
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "Aucun examen surveillé dans le cours {course_id}"
 
-#: views.py:1799
+#: views.py:2023
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "Aucun tableau de bord d'instructeur pour {proctor_service}"
