@@ -11,11 +11,12 @@ edx = edx || {};
         template: null,
         template_url: '/static/proctoring/templates/add-new-allowance.underscore',
         initialize: function(options) {
-            this.proctored_exams = options.proctored_exams;
+            this.all_exams = options.proctored_exams;
+            this.proctored_exams = [];
+            this.timed_exams = [];
             this.proctored_exam_allowance_view = options.proctored_exam_allowance_view;
             this.course_id = options.course_id;
             this.allowance_types = options.allowance_types;
-            this.selectedExams = new Set()
             this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel();
             _.bindAll(this, 'render');
             this.loadTemplateData();
@@ -24,7 +25,8 @@ edx = edx || {};
         events: {
             'submit form': 'addAllowance',
             'change #proctored_exam': 'selectExam',
-            'change #allowance_type': 'selectAllowance'
+            'change #allowance_type': 'selectAllowance',
+            'change #exam_type': 'selectExamType'
         },
         loadTemplateData: function() {
             var self = this;
@@ -32,6 +34,7 @@ edx = edx || {};
                 .done(function(templateData) {
                     self.template = _.template(templateData);
                     self.render();
+                    console.log(this.all_exams);
                     self.showModal();
                     self.updateCss();
                 });
@@ -123,7 +126,7 @@ edx = edx || {};
             $errorResponse.html();
             values = this.getCurrentFormValues();
             formHasErrors = false;
-            exams = this.setToString(values.proctored_exam, ',')
+            exams = ''
 
             $.each(values, function(key, value) {
                 if (value === '') {
@@ -133,6 +136,10 @@ edx = edx || {};
                     self.hideError(self, key);
                 }
             });
+
+            $('.close').each(function() {
+                exams += $(this).attr('data-item') + ','
+            })
 
             if (!formHasErrors) {
                 self.model.fetch({
@@ -162,35 +169,14 @@ edx = edx || {};
             }
         },
         selectExamAtIndex: function(index) {
-            var selectedExam = this.proctored_exams[index - 1];
+            var selectedExam = this.all_exams[index - 1];
             console.log("added exam", selectedExam);
-            this.selectedExams.add(selectedExam.id);
-            var createdTag = this.createTag(selectedExam.exam_name)
+            document.getElementById('proctored_exam').value = 'default'
+            var createdTag = this.createTag(selectedExam.exam_name, selectedExam.id, this.selectedExams)
             console.log(createdTag)
             $('#selected_exams').append(createdTag);
             console.log($('#selected_exam'));
-            if (selectedExam.is_proctored) {
-                // Selected Exam is a Proctored or Practice-Proctored exam.
-                if (selectedExam.is_practice_exam) {
-                    $('#exam_type_label').text(gettext('Practice Exam'));
-                } else {
-                    $('#exam_type_label').text(gettext('Proctored Exam'));
-                }
-
-                // In case of Proctored Exams, we hide the Additional Time label and show the Allowance Types Select
-                $('#additional_time_label').hide();
-                $('select#allowance_type').val('additional_time_granted').show();
-            } else {
-                // Selected Exam is a Timed Exam.
-                $('#exam_type_label').text(gettext('Timed Exam'));
-
-                // In case of Timed Exams, we show the "Additional Time" label and hide the Allowance Types Select
-                $('#additional_time_label').show();
-                // Even though we have the Select element hidden, the backend will still be using
-                // the Select's value for the allowance type (key).
-                $('select#allowance_type').val('additional_time_granted').hide();
-            }
-            this.updateAllowanceLabels('additional_time_granted');
+            document.getElementById('proctored_exam').value = 'default'
         },
         selectExam: function() {
             this.selectExamAtIndex($('#proctored_exam')[0].selectedIndex);
@@ -207,30 +193,62 @@ edx = edx || {};
                 $('#allowance_value_label').text(gettext('Value'));
             }
         },
-        setToString(set, delim){
-            let str = '';
-            set.forEach(function(elem){
-              str += elem + delim
+        sortExams: function() {
+            this.all_exams.forEach(exam => {
+                if (exam.is_proctored) {
+                    this.proctored_exams.push(exam)
+                } else {
+                    this.timed_exams.push(exam)
+                }
+                // if (selectedExam.is_proctored) {
+                //     // Selected Exam is a Proctored or Practice-Proctored exam.
+                //     if (selectedExam.is_practice_exam) {
+                //         $('#exam_type_label').text(gettext('Practice Exam'));
+                //     } else {
+                //         $('#exam_type_label').text(gettext('Proctored Exam'));
+                //     }
+    
+                //     // In case of Proctored Exams, we hide the Additional Time label and show the Allowance Types Select
+                //     $('#additional_time_label').hide();
+                //     $('select#allowance_type').val('additional_time_granted').show();
+                // } else {
+                //     // Selected Exam is a Timed Exam.
+                //     $('#exam_type_label').text(gettext('Timed Exam'));
+    
+                //     // In case of Timed Exams, we show the "Additional Time" label and hide the Allowance Types Select
+                //     $('#additional_time_label').show();
+                //     // Even though we have the Select element hidden, the backend will still be using
+                //     // the Select's value for the allowance type (key).
+                //     $('select#allowance_type').val('additional_time_granted').hide();
+                // }
             });
-            return str.slice(0, -1)
+            console.log(this.timed_exams);
+            console.log(this.proctored_exams);
         },
-        createTag(examName) {
+        createTag(examName, examID) {
             const div = document.createElement('div');
             div.setAttribute('class', 'tag');
             const span = document.createElement('span');
             span.innerHTML = examName;
-            const closeIcon = document.createElement('i');
-            closeIcon.innerHTML = 'close';
-            closeIcon.setAttribute('class', 'material-icons');
-            closeIcon.setAttribute('data-item', examName);
+            const closeIcon = document.createElement('button');
+            closeIcon.innerHTML = 'x';
+            closeIcon.setAttribute('class', 'close');
+            closeIcon.setAttribute('data-item', examID);
+            closeIcon.onclick = this.deleteTag;
             div.appendChild(span);
             div.appendChild(closeIcon);
             return div;
         },
+        deleteTag() {
+            console.log($(this));
+            var examID = $(this).data('item');
+            $(this).closest("div").remove();
+            
+        },
 
         render: function() {
             $(this.el).html(this.template({
-                proctored_exams: this.proctored_exams,
+                proctored_exams: this.all_exams,
                 allowance_types: this.allowance_types
             }));
 

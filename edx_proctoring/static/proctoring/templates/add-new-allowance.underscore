@@ -2,43 +2,6 @@
     select#proctored_exam {
         width: 100%;
     }
-        .tag-container {
-    border: 2px solid #ccc;
-    border-radius: 3px;
-    background: #fff;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    padding: 6px;
-    overflow-x: scroll;
-    }
-    .tag-container .tag {
-    height: 30px;
-    margin: 5px;
-    padding: 5px 6px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    background: #eee;
-    display: flex;
-    align-items: center;
-    color: #333;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 1px 1px #fff;
-    cursor: default;
-    }
-    .tag i {
-    font-size: 16px;
-    color: #666;
-    margin-left: 5px;
-    }
-    .tag-container input {
-    padding: 5px;
-    font-size: 16px;
-    border: 0;
-    outline: none;
-    font-family: 'Rubik';
-    color: #333;
-    flex: 1;
-    }
 </style>
 <div class='modal-header'><%- gettext("Add a New Allowance") %></div>
 <form>
@@ -50,8 +13,8 @@
             </td>
             <td>
                 <select id='proctored_exam'>
-                    <option hidden selected> <%- gettext("Choose Exams Below") %> </option>
-                    <% _.each(proctored_exams, function(proctored_exam){ %>
+                    <option hidden selected value=default> <%- gettext("Choose Exams Below") %> </option>
+                    <% _.each(all_exams, function(proctored_exam){ %>
                     <option value="<%= proctored_exam.id  %>">
                     <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam.exam_name }, true) %>
                     </option>
