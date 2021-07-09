@@ -629,7 +629,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
     @ddt.data(
         (
-            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             '30',
             '30',
             '30'
@@ -684,7 +684,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
     @ddt.data(
         (
-            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             '30',
             '30',
             '30'
@@ -739,19 +739,19 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
     @ddt.data(
         (
-            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             '3.0'
         ),
         (
-            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             'invalid'
         ),
         (
-            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             '-30'
         ),
         (
-            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             'd30'
         ),
         (
