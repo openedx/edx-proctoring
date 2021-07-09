@@ -2,6 +2,9 @@
     select#proctored_exam {
         width: 100%;
     }
+    select#timed_exam {
+        width: 100%;
+    }
 </style>
 <div class='modal-header'><%- gettext("Add a New Allowance") %></div>
 <form>
@@ -9,22 +12,49 @@
     <table class='compact'>
         <tr>
             <td>
+                <label><%- gettext("Exam Type") %></label>
+            </td>
+            <td>
+                <select id="exam_type">
+                    <option value="proctored_exam">
+                        <%- gettext("Proctored Exam") %>
+                    </option>
+                    <option value="timed_exam">
+                        <%- gettext("Timed Exam") %>
+                    </option>
+                </select>
+
+                <label id='additional_time_label'>
+                    <%- gettext("Additional Time (minutes)") %>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <label><%- gettext("Special Exams") %></label>
             </td>
             <td>
-                <select id='proctored_exam'>
+                <select multiple id='proctored_exam' class="exam_dropdown">
                     <option hidden selected value=default> <%- gettext("Choose Exams Below") %> </option>
-                    <% _.each(all_exams, function(proctored_exam){ %>
+                    <% _.each(proctored_exams, function(proctored_exam){ %>
                     <option value="<%= proctored_exam.id  %>">
                     <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam.exam_name }, true) %>
+                    </option>
+                    <% }); %>
+                </select>
+                <select multiple id='timed_exam' class="exam_dropdown" style="display:none;">
+                    <option hidden selected value=default> <%- gettext("Choose Exams Below") %> </option>
+                    <% _.each(timed_exams, function(timed_exam){ %>
+                    <option value="<%= timed_exam.id  %>">
+                    <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: timed_exam.exam_name }, true) %>
                     </option>
                     <% }); %>
                 </select>
             </td>
         </tr>
         <tr>
-            <td>
-                <div id="selected_exams"></div>
+            <td colspan="3">
+                <div id="selected_exams" ></div>
             </td>
         </tr>
         <tr>

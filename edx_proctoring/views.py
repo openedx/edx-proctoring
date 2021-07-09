@@ -1620,7 +1620,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
             if successes == 0:
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
-                    data=data
+                    data={"detail": _("Enter a valid username or email")}
                 )
             if failures > 0:
                 return Response(
@@ -1633,7 +1633,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
         except AllowanceValueNotAllowedException:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": _("Must be a Staff User to Perform this request.")}
+                data={"detail": _("Enter a valid value number")}
                 )
 
 

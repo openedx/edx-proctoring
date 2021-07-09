@@ -25,6 +25,7 @@ edx = edx || {};
         events: {
             'submit form': 'addAllowance',
             'change #proctored_exam': 'selectExam',
+            'change #timed_exam': 'selectExam',
             'change #allowance_type': 'selectAllowance',
             'change #exam_type': 'selectExamType'
         },
@@ -32,9 +33,9 @@ edx = edx || {};
             var self = this;
             $.ajax({url: self.template_url, dataType: 'html'})
                 .done(function(templateData) {
+                    self.sortExams();
                     self.template = _.template(templateData);
                     self.render();
-                    console.log(this.all_exams);
                     self.showModal();
                     self.updateCss();
                 });
@@ -89,6 +90,34 @@ edx = edx || {};
                 padding: '2px 0px 2px 2px',
                 'font-size': '16px'
             });
+            $el.find('#selected_exams').css({
+                'border-radius': '3px',
+                'background': '#fff',
+                display: 'flex',
+                'flex-wrap': 'wrap',
+                'align-content': 'flex-start',
+                padding: '6px',
+                'overflow-x': 'scroll'
+            });
+            $el.find('.tag').css({
+                'font-size': '14px',
+                height: '15px',
+                'margin': '5px',
+                padding: '5px 6px',
+                'border': '1px solid #ccc',
+                'border-radius': '3px',
+                'background': '#eee',
+                display: 'flex',
+                'align-items': 'center',
+                color: '#333',
+                'box-shadow': '0 0 4px rgba(0, 0, 0, 0.2), inset 0 1px 1px #fff',
+                'cursor': 'default'
+            });
+            $el.find('.close').css({
+                'font-size': '16px',
+                'margin': '5px'
+            });
+
         },
         getCurrentFormValues: function() {
             return {
@@ -126,20 +155,28 @@ edx = edx || {};
             $errorResponse.html();
             values = this.getCurrentFormValues();
             formHasErrors = false;
-            exams = ''
+            exams = '';
+
+            $('.close').each(function() {
+                exams += $(this).attr('data-item') + ',';
+            });
 
             $.each(values, function(key, value) {
                 if (value === '') {
                     formHasErrors = true;
+                    console.log(key);
                     self.showError(self, key, gettext('Required field'));
                 } else {
                     self.hideError(self, key);
                 }
             });
 
-            $('.close').each(function() {
-                exams += $(this).attr('data-item') + ','
-            })
+            if (exams === '') {
+                formHasErrors = true;
+                self.showError(self, 'proctored_exam', gettext('Required field'));
+            } else {
+                self.hideError(self, 'proctored_exam');
+            }
 
             if (!formHasErrors) {
                 self.model.fetch({
@@ -168,21 +205,36 @@ edx = edx || {};
                 });
             }
         },
-        selectExamAtIndex: function(index) {
-            var selectedExam = this.all_exams[index - 1];
-            console.log("added exam", selectedExam);
-            document.getElementById('proctored_exam').value = 'default'
-            var createdTag = this.createTag(selectedExam.exam_name, selectedExam.id, this.selectedExams)
-            console.log(createdTag)
+        selectExamAtIndex: function(examID, examName) {
+            console.log(examID);
+            console.log(examName);
+            $('.exam_dropdown:visible').val("default");
+            $('.exam_dropdown:visible option[value=' + examID + ']').remove();
+            var createdTag = this.createTag(examName, examID);
+            console.log(createdTag);
             $('#selected_exams').append(createdTag);
-            console.log($('#selected_exam'));
-            document.getElementById('proctored_exam').value = 'default'
+            this.updateCss();
         },
         selectExam: function() {
-            this.selectExamAtIndex($('#proctored_exam')[0].selectedIndex);
+            this.selectExamAtIndex($('.exam_dropdown:visible').val(), $('.exam_dropdown:visible :selected').text());
         },
         selectAllowance: function() {
             this.updateAllowanceLabels($('#allowance_type').val());
+        },
+        selectExamType: function () {
+            $('.close').each(function() {
+                $(this).trigger('click');
+            });
+            if($('#proctored_exam').is(":visible")){
+                $('#proctored_exam').hide();
+                $('#timed_exam').show();
+                $('#allowance_type option[value="review_policy_exception"]').remove();
+            } else {
+                $('#proctored_exam').show();
+                $('#timed_exam').hide();
+                $('#allowance_type').append(new Option(gettext('Review Policy Exception'), 'review_policy_exception'));              
+            }
+
         },
         updateAllowanceLabels: function(selectedAllowanceType) {
             if (selectedAllowanceType === 'additional_time_granted') {
@@ -196,44 +248,22 @@ edx = edx || {};
         sortExams: function() {
             this.all_exams.forEach(exam => {
                 if (exam.is_proctored) {
-                    this.proctored_exams.push(exam)
+                    this.proctored_exams.push(exam);
                 } else {
-                    this.timed_exams.push(exam)
+                    this.timed_exams.push(exam);
                 }
-                // if (selectedExam.is_proctored) {
-                //     // Selected Exam is a Proctored or Practice-Proctored exam.
-                //     if (selectedExam.is_practice_exam) {
-                //         $('#exam_type_label').text(gettext('Practice Exam'));
-                //     } else {
-                //         $('#exam_type_label').text(gettext('Proctored Exam'));
-                //     }
-    
-                //     // In case of Proctored Exams, we hide the Additional Time label and show the Allowance Types Select
-                //     $('#additional_time_label').hide();
-                //     $('select#allowance_type').val('additional_time_granted').show();
-                // } else {
-                //     // Selected Exam is a Timed Exam.
-                //     $('#exam_type_label').text(gettext('Timed Exam'));
-    
-                //     // In case of Timed Exams, we show the "Additional Time" label and hide the Allowance Types Select
-                //     $('#additional_time_label').show();
-                //     // Even though we have the Select element hidden, the backend will still be using
-                //     // the Select's value for the allowance type (key).
-                //     $('select#allowance_type').val('additional_time_granted').hide();
-                // }
             });
-            console.log(this.timed_exams);
-            console.log(this.proctored_exams);
         },
         createTag(examName, examID) {
             const div = document.createElement('div');
             div.setAttribute('class', 'tag');
             const span = document.createElement('span');
             span.innerHTML = examName;
-            const closeIcon = document.createElement('button');
+            const closeIcon = document.createElement('span');
             closeIcon.innerHTML = 'x';
             closeIcon.setAttribute('class', 'close');
             closeIcon.setAttribute('data-item', examID);
+            closeIcon.setAttribute('data-name', examName);
             closeIcon.onclick = this.deleteTag;
             div.appendChild(span);
             div.appendChild(closeIcon);
@@ -242,18 +272,21 @@ edx = edx || {};
         deleteTag() {
             console.log($(this));
             var examID = $(this).data('item');
+            var examName = $(this).data('name');
             $(this).closest("div").remove();
-            
+            $('.exam_dropdown:visible').append(new Option(examName, examID));
         },
 
         render: function() {
             $(this.el).html(this.template({
-                proctored_exams: this.all_exams,
+                proctored_exams: this.proctored_exams,
+                timed_exams: this.timed_exams,
                 allowance_types: this.allowance_types
             }));
 
             this.$form = {
                 proctored_exam: this.$('select#proctored_exam'),
+                timed_exam: this.$('select#timed_exam'),
                 allowance_type: this.$('select#allowance_type'),
                 allowance_value: this.$('#allowance_value'),
                 user_info: this.$('#user_info')

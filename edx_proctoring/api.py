@@ -537,7 +537,7 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
         if multiplier < 0:
             raise AllowanceValueNotAllowedException(err_msg)
 
-    if allowance_type == ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED:
+    if allowance_type == ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0]:
         err_msg = (
             u'allowance_value "{value}" should be a non-negative integer value'
         ).format(value=value)
