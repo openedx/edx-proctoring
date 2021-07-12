@@ -1,6 +1,6 @@
 {
     "name": "@edx/edx-proctoring",
-    "version": "3.9.1",
+    "version": "3.17.2",
     "lockfileVersion": 1,
     "requires": true,
     "dependencies": {
@@ -880,6 +880,12 @@
                 "osenv": "0.0.3"
             },
             "dependencies": {
+                "graceful-fs": {
+                    "version": "2.0.3",
+                    "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-2.0.3.tgz",
+                    "integrity": "sha1-fNLNsiiko/Nule+mzBQt59GhNtA=",
+                    "dev": true
+                },
                 "osenv": {
                     "version": "0.0.3",
                     "resolved": "https://registry.npmjs.org/osenv/-/osenv-0.0.3.tgz",
@@ -1051,6 +1057,15 @@
                                 "sigmund": "~1.0.0"
                             }
                         }
+                    }
+                },
+                "graceful-fs": {
+                    "version": "3.0.12",
+                    "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-3.0.12.tgz",
+                    "integrity": "sha512-J55gaCS4iTTJfTXIxSVw3EMQckcqkpdRv3IR7gu6sq0+tbC363Zx6KH/SEwXASK9JRbhyZmVjJEVJIOxYsB3Qg==",
+                    "dev": true,
+                    "requires": {
+                        "natives": "^1.1.3"
                     }
                 },
                 "handlebars": {
@@ -1232,6 +1247,14 @@
                 "deep-extend": "~0.2.5",
                 "graceful-fs": "~2.0.0",
                 "intersect": "~0.0.3"
+            },
+            "dependencies": {
+                "graceful-fs": {
+                    "version": "2.0.3",
+                    "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-2.0.3.tgz",
+                    "integrity": "sha1-fNLNsiiko/Nule+mzBQt59GhNtA=",
+                    "dev": true
+                }
             }
         },
         "bower-logger": {
@@ -1256,6 +1279,12 @@
                 "rimraf": "~2.2.0"
             },
             "dependencies": {
+                "graceful-fs": {
+                    "version": "2.0.3",
+                    "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-2.0.3.tgz",
+                    "integrity": "sha1-fNLNsiiko/Nule+mzBQt59GhNtA=",
+                    "dev": true
+                },
                 "lru-cache": {
                     "version": "2.3.1",
                     "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-2.3.1.tgz",
@@ -1768,6 +1797,15 @@
                 "xdg-basedir": "^1.0.0"
             },
             "dependencies": {
+                "graceful-fs": {
+                    "version": "3.0.12",
+                    "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-3.0.12.tgz",
+                    "integrity": "sha512-J55gaCS4iTTJfTXIxSVw3EMQckcqkpdRv3IR7gu6sq0+tbC363Zx6KH/SEwXASK9JRbhyZmVjJEVJIOxYsB3Qg==",
+                    "dev": true,
+                    "requires": {
+                        "natives": "^1.1.3"
+                    }
+                },
                 "object-assign": {
                     "version": "2.1.1",
                     "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-2.1.1.tgz",
@@ -1976,6 +2014,15 @@
                 "touch": "0.0.2"
             },
             "dependencies": {
+                "graceful-fs": {
+                    "version": "3.0.12",
+                    "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-3.0.12.tgz",
+                    "integrity": "sha512-J55gaCS4iTTJfTXIxSVw3EMQckcqkpdRv3IR7gu6sq0+tbC363Zx6KH/SEwXASK9JRbhyZmVjJEVJIOxYsB3Qg==",
+                    "dev": true,
+                    "requires": {
+                        "natives": "^1.1.3"
+                    }
+                },
                 "isarray": {
                     "version": "0.0.1",
                     "resolved": "https://registry.npmjs.org/isarray/-/isarray-0.0.1.tgz",
@@ -4474,6 +4521,12 @@
                         "minimatch": "~0.2.11"
                     }
                 },
+                "graceful-fs": {
+                    "version": "1.2.3",
+                    "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-1.2.3.tgz",
+                    "integrity": "sha1-FaSAaldUfLLS2/J/QuiajDRRs2Q=",
+                    "dev": true
+                },
                 "inherits": {
                     "version": "1.0.2",
                     "resolved": "https://registry.npmjs.org/inherits/-/inherits-1.0.2.tgz",
@@ -4655,6 +4708,12 @@
                             }
                         }
                     }
+                },
+                "graceful-fs": {
+                    "version": "2.0.3",
+                    "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-2.0.3.tgz",
+                    "integrity": "sha1-fNLNsiiko/Nule+mzBQt59GhNtA=",
+                    "dev": true
                 },
                 "gulp-util": {
                     "version": "1.2.0",
@@ -7172,6 +7231,12 @@
             "version": "0.8.1",
             "resolved": "https://registry.npmjs.org/native-promise-only/-/native-promise-only-0.8.1.tgz",
             "integrity": "sha1-IKMYwwy0X3H+et+/eyHJnBRy7xE=",
+            "dev": true
+        },
+        "natives": {
+            "version": "1.1.6",
+            "resolved": "https://registry.npmjs.org/natives/-/natives-1.1.6.tgz",
+            "integrity": "sha512-6+TDFewD4yxY14ptjKaS63GVdtKiES1pTPyxn9Jb0rBqPMZ7VcCiooEhPNsr+mqHtMGxa/5c/HhcC4uPEUw/nA==",
             "dev": true
         },
         "natural-compare": {
@@ -10164,6 +10229,15 @@
                     "resolved": "https://registry.npmjs.org/clone/-/clone-0.2.0.tgz",
                     "integrity": "sha1-xhJqkK1Pctv1rNskPMN3JP6T/B8=",
                     "dev": true
+                },
+                "graceful-fs": {
+                    "version": "3.0.12",
+                    "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-3.0.12.tgz",
+                    "integrity": "sha512-J55gaCS4iTTJfTXIxSVw3EMQckcqkpdRv3IR7gu6sq0+tbC363Zx6KH/SEwXASK9JRbhyZmVjJEVJIOxYsB3Qg==",
+                    "dev": true,
+                    "requires": {
+                        "natives": "^1.1.3"
+                    }
                 },
                 "isarray": {
                     "version": "0.0.1",

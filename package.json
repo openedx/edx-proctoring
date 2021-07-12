@@ -1,6 +1,5 @@
 {
   "name": "@edx/edx-proctoring",
-  "//": "Be sure to update the version number in edx_proctoring/__init__.py",
   "//": "Note that the version format is slightly different than that of the Python version when using prereleases.",
   "version": "3.17.2",
   "main": "edx_proctoring/static/index.js",

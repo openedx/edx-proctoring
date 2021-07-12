@@ -33,7 +33,7 @@ edx = edx || {};
             var self = this;
             $.ajax({url: self.template_url, dataType: 'html'})
                 .done(function(templateData) {
-                    self.sortExams();
+                    self.sortExamsByExamType();
                     self.template = _.template(templateData);
                     self.render();
                     self.showModal();
@@ -69,7 +69,8 @@ edx = edx || {};
             $el.find('form input[type="text"]').css({
                 height: '26px',
                 padding: '1px 8px 2px',
-                'font-size': '14px'
+                'font-size': '14px',
+                width: '100%'
             });
             $el.find('form input[type="submit"]').css({
                 'margin-top': '10px',
@@ -88,11 +89,12 @@ edx = edx || {};
             });
             $el.find('form select').css({
                 padding: '2px 0px 2px 2px',
-                'font-size': '16px'
+                'font-size': '16px',
+                width: '100%'
             });
             $el.find('#selected_exams').css({
                 'border-radius': '3px',
-                'background': '#fff',
+                background: '#fff',
                 display: 'flex',
                 'flex-wrap': 'wrap',
                 'align-content': 'flex-start',
@@ -102,22 +104,24 @@ edx = edx || {};
             $el.find('.tag').css({
                 'font-size': '14px',
                 height: '15px',
-                'margin': '5px',
+                margin: '5px',
                 padding: '5px 6px',
-                'border': '1px solid #ccc',
+                border: '1px solid #ccc',
                 'border-radius': '3px',
-                'background': '#eee',
+                background: '#eee',
                 display: 'flex',
                 'align-items': 'center',
                 color: '#333',
                 'box-shadow': '0 0 4px rgba(0, 0, 0, 0.2), inset 0 1px 1px #fff',
-                'cursor': 'default'
+                cursor: 'default'
             });
             $el.find('.close').css({
                 'font-size': '16px',
-                'margin': '5px'
+                margin: '5px'
             });
-
+            $el.find('.exam_dropdown').css({
+                height: '60px'
+            });
         },
         getCurrentFormValues: function() {
             return {
@@ -164,7 +168,6 @@ edx = edx || {};
             $.each(values, function(key, value) {
                 if (value === '') {
                     formHasErrors = true;
-                    console.log(key);
                     self.showError(self, key, gettext('Required field'));
                 } else {
                     self.hideError(self, key);
@@ -206,12 +209,9 @@ edx = edx || {};
             }
         },
         selectExamAtIndex: function(examID, examName) {
-            console.log(examID);
-            console.log(examName);
-            $('.exam_dropdown:visible').val("default");
-            $('.exam_dropdown:visible option[value=' + examID + ']').remove();
             var createdTag = this.createTag(examName, examID);
-            console.log(createdTag);
+            $('.exam_dropdown:visible').val('default');
+            $('.exam_dropdown:visible option[value=' + examID + ']').remove();
             $('#selected_exams').append(createdTag);
             this.updateCss();
         },
@@ -221,45 +221,45 @@ edx = edx || {};
         selectAllowance: function() {
             this.updateAllowanceLabels($('#allowance_type').val());
         },
-        selectExamType: function () {
+        selectExamType: function() {
             $('.close').each(function() {
                 $(this).trigger('click');
             });
-            if($('#proctored_exam').is(":visible")){
+            if ($('#proctored_exam').is(':visible')) {
                 $('#proctored_exam').hide();
                 $('#timed_exam').show();
                 $('#allowance_type option[value="review_policy_exception"]').remove();
             } else {
                 $('#proctored_exam').show();
                 $('#timed_exam').hide();
-                $('#allowance_type').append(new Option(gettext('Review Policy Exception'), 'review_policy_exception'));              
+                $('#allowance_type').append(new Option(gettext('Review Policy Exception'), 'review_policy_exception'));
             }
-
         },
         updateAllowanceLabels: function(selectedAllowanceType) {
             if (selectedAllowanceType === 'additional_time_granted') {
-                $('#minutes_label').show();
-                $('#allowance_value_label').text(gettext('Additional Time'));
+                $('#allowance_value_label').text(gettext('Input Additional Minutes as a Number'));
+            } else if (selectedAllowanceType === 'time_multiplier') {
+                $('#allowance_value_label').text(gettext('Input Multiplier as a Number'));
             } else {
-                $('#minutes_label').hide();
-                $('#allowance_value_label').text(gettext('Value'));
+                $('#allowance_value_label').text(gettext('Add Policy Exception'));
             }
         },
-        sortExams: function() {
-            this.all_exams.forEach(exam => {
+        sortExamsByExamType: function() {
+            var self = this;
+            self.all_exams.forEach(function(exam) {
                 if (exam.is_proctored) {
-                    this.proctored_exams.push(exam);
+                    self.proctored_exams.push(exam);
                 } else {
-                    this.timed_exams.push(exam);
+                    self.timed_exams.push(exam);
                 }
             });
         },
-        createTag(examName, examID) {
-            const div = document.createElement('div');
+        createTag: function(examName, examID) {
+            var div = document.createElement('div');
+            var span = document.createElement('span');
+            var closeIcon = document.createElement('span');
             div.setAttribute('class', 'tag');
-            const span = document.createElement('span');
             span.innerHTML = examName;
-            const closeIcon = document.createElement('span');
             closeIcon.innerHTML = 'x';
             closeIcon.setAttribute('class', 'close');
             closeIcon.setAttribute('data-item', examID);
@@ -269,11 +269,10 @@ edx = edx || {};
             div.appendChild(closeIcon);
             return div;
         },
-        deleteTag() {
-            console.log($(this));
+        deleteTag: function() {
             var examID = $(this).data('item');
             var examName = $(this).data('name');
-            $(this).closest("div").remove();
+            $(this).closest('div').remove();
             $('.exam_dropdown:visible').append(new Option(examName, examID));
         },
 

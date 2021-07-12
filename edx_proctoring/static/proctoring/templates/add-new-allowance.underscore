@@ -5,6 +5,9 @@
     select#timed_exam {
         width: 100%;
     }
+    table, td {
+        width: 100%;
+    }
 </style>
 <div class='modal-header'><%- gettext("Add a New Allowance") %></div>
 <form>
@@ -12,8 +15,20 @@
     <table class='compact'>
         <tr>
             <td>
-                <label><%- gettext("Exam Type") %></label>
+                <label><%- gettext("Add Usernames or Emails seperated by commas") %></label>
             </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" id="user_info" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><%- gettext("Select Exam Type") %></label>
+            </td>
+        </tr>
+        <tr>
             <td>
                 <select id="exam_type">
                     <option value="proctored_exam">
@@ -23,16 +38,14 @@
                         <%- gettext("Timed Exam") %>
                     </option>
                 </select>
-
-                <label id='additional_time_label'>
-                    <%- gettext("Additional Time (minutes)") %>
-                </label>
             </td>
         </tr>
         <tr>
             <td>
-                <label><%- gettext("Special Exams") %></label>
+                <label><%- gettext("Select Exams") %></label>
             </td>
+        </tr>
+        <tr>
             <td>
                 <select multiple id='proctored_exam' class="exam_dropdown">
                     <option hidden selected value=default> <%- gettext("Choose Exams Below") %> </option>
@@ -59,18 +72,10 @@
         </tr>
         <tr>
             <td>
-                <label><%- gettext("Exam Type") %></label>
-            </td>
-            <td>
-                <label id='exam_type_label'>
-                    <%- gettext("Timed Exam") %>
-                </label>
+                <label><%- gettext("Allowance Type") %></label>
             </td>
         </tr>
         <tr>
-            <td>
-                <label><%- gettext("Allowance Type") %></label>
-            </td>
             <td>
                 <select id="allowance_type">
                     <% _.each(allowance_types, function(allowance_type){ %>
@@ -79,33 +84,21 @@
                     </option>
                     <% }); %>
                 </select>
-
-                <label id='additional_time_label'>
-                    <%- gettext("Additional Time (minutes)") %>
-                </label>
             </td>
         </tr>
         <tr>
             <td>
-                <label id='allowance_value_label'><%- gettext("Value") %></label>
+                <label id='allowance_value_label'><%- gettext("Input Additional Minutes as a Number") %></label>
             </td>
+        </tr>
+        <tr>
             <td>
                 <input type="text" id="allowance_value" />
-                <label id='minutes_label'><%- gettext("minutes") %></label>
             </td>
         </tr>
         <tr>
             <td>
-                <label><%- gettext("Usernames or Emails") %></label>
-            </td>
-            <td>
-                <input type="text" id="user_info" />
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input id='addNewAllowance' type='submit' value='Save' />
+                <input id='addNewAllowance' type='submit' value='Create Allowance' />
             </td>
         </tr>
     </table>
