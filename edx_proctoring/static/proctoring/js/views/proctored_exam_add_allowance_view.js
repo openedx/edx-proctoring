@@ -74,7 +74,7 @@ edx = edx || {};
             });
             $el.find('form input[type="submit"]').css({
                 'margin-top': '10px',
-                padding: '2px 32px'
+                float: 'right'
             });
             $el.find('.error-message').css({
                 color: '#ff0000',
