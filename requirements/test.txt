@@ -17,7 +17,7 @@ bok-choy==1.1.1
     #   event-tracking
 certifi==2021.5.30
     # via requests
-cffi==1.14.5
+cffi==1.14.6
     # via cryptography
 chardet==4.0.0
     # via requests
