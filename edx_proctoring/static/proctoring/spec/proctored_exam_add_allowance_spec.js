@@ -188,7 +188,6 @@ describe('ProctoredExamAddAllowanceView', function() {
         this.server.respond();
 
         expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Midterm Exam');
-        expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Final Exam');
         expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Test Exam');
         $('#proctored_exam').val('5');
     });
@@ -218,7 +217,6 @@ describe('ProctoredExamAddAllowanceView', function() {
         this.server.respond();
 
         expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Midterm Exam');
-        expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Final Exam');
         expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Test Exam');
         $('#proctored_exam').val('6');
     });
