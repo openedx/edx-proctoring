@@ -1633,7 +1633,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
         except AllowanceValueNotAllowedException:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": _("Enter a valid value number")}
+                data={"detail": _("Enter a valid positive value number")}
                 )
 
 
