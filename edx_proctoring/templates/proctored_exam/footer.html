@@ -10,13 +10,18 @@
 </div>
 
 <script type="text/javascript">
+  // Course waffle flag for verified name
+  var main = document.getElementById('main');
+  var isVerifiedNameEnabled = main.dataset.isVerifiedNameEnabled.toLowerCase() === 'true';
+
   var startProctoredExam = function(selector, exam_id, action_url, start_immediately, attempt_proctored) {
     $.post(
       action_url,
       {
         "exam_id": exam_id,
         "attempt_proctored": attempt_proctored,
-        "start_clock": start_immediately
+        "start_clock": start_immediately,
+        "is_verified_name_enabled": isVerifiedNameEnabled
       },
       function(data) {
         // reload the page, because we've unlocked it
