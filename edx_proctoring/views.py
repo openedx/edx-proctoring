@@ -496,12 +496,13 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         HTTP GET: returns the learner's onboarding status relative to the given course_id
 
     HTTP GET
-        /edx_proctoring/v1/user_onboarding/status?course_id={course_id}&username={username}
+        /edx_proctoring/v1/user_onboarding/status?course_id={course_id}&username={username}&is_learning_mfe={}
 
     **Query Parameters**
         * 'course_id': The unique identifier for the course.
         * 'username': Optional. If not given, the endpoint will return the user's own status.
             ** In order to view other users' statuses, the user must be course or global staff.
+        * 'is_learning_mfe': Optional. If set to True, onboarding link will point to the learning mfe application page.
 
     **Response Values**
         * 'onboarding_status': String specifying the learner's onboarding status.
@@ -526,6 +527,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         username = request.GET.get('username')
         course_id = request.GET.get('course_id')
+        is_learning_mfe = request.GET.get('is_learning_mfe') in ['1', 'true', 'True']
 
         if not course_id:
             # This parameter is currently required, as the onboarding experience is tied
@@ -593,7 +595,13 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         if currently_available_exams:
             onboarding_exam = currently_available_exams[0]
-            data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
+            if is_learning_mfe:
+                data['onboarding_link'] = resolve_exam_url_for_learning_mfe(
+                    course_id,
+                    onboarding_exam.content_id
+                )
+            else:
+                data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
         elif future_exams:
             onboarding_exam = future_exams[0]
         else:
