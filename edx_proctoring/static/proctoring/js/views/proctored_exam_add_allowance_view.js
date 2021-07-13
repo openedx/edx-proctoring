@@ -93,18 +93,16 @@ edx = edx || {};
                 width: '100%'
             });
             $el.find('#selected_exams').css({
-                'border-radius': '3px',
                 background: '#fff',
                 display: 'flex',
                 'flex-wrap': 'wrap',
                 'align-content': 'flex-start',
-                padding: '6px',
                 'overflow-x': 'scroll'
             });
             $el.find('.tag').css({
                 'font-size': '14px',
                 height: '15px',
-                margin: '5px',
+                'margin-right': '5px',
                 padding: '5px 6px',
                 border: '1px solid #ccc',
                 'border-radius': '3px',
@@ -234,6 +232,7 @@ edx = edx || {};
                 $('#timed_exam').hide();
                 $('#allowance_type').append(new Option(gettext('Review Policy Exception'), 'review_policy_exception'));
             }
+            this.updateAllowanceLabels($('#allowance_type').val());
         },
         updateAllowanceLabels: function(selectedAllowanceType) {
             if (selectedAllowanceType === 'additional_time_granted') {
