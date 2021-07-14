@@ -7,7 +7,7 @@ edx = edx || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
 
     edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel = Backbone.Model.extend({
-        url: '/api/edx_proctoring/v1/proctored_exam/bulk_allowance'
+        url: '/api/edx_proctoring/v1/proctored_exam/allowance'
 
     });
     this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel =

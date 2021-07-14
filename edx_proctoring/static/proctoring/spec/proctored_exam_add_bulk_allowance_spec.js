@@ -79,7 +79,8 @@ describe('ProctoredExamAddAllowanceView', function() {
 
     var allowanceTypes = [
         ['additional_time_granted', gettext('Additional Time (minutes)')],
-        ['review_policy_exception', gettext('Review Policy Exception')]
+        ['review_policy_exception', gettext('Review Policy Exception')],
+        ['time_multiplier', gettext('Time Multiplier')]
     ];
 
     beforeEach(function() {
@@ -87,7 +88,7 @@ describe('ProctoredExamAddAllowanceView', function() {
         // from http://www.howtocreate.co.uk/tutorials/jsexamples/syntax/prepareInline.html
 
         // eslint-disable-next-line max-len
-        html = '<div class=\'modal-header\'><%- gettext("Add a New Allowance") %></div>\n<form>\n    <h3 class=\'error-response\'><h3>\n    <table class=\'compact\'>\n        <tr>\n            <td>\n                <label><%- gettext("Special Exam") %></label>\n            </td>\n            <td>\n                <select id=\'proctored_exam\'>\n                    <% _.each(proctored_exams, function(proctored_exam){ %>\n                    <option value="<%= proctored_exam.id %>">\n                    <%- interpolate(gettext(\' %(exam_display_name)s \'), { exam_display_name: proctored_exam.exam_name }, true) %>\n                    </option>\n                    <% }); %>\n                </select>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <label><%- gettext("Exam Type") %></label>\n            </td>\n            <td>\n                <label id=\'exam_type_label\'>\n                    <%- gettext("Timed Exam") %>\n                </label>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <label><%- gettext("Allowance Type") %></label>\n            </td>\n            <td>\n                <select id="allowance_type">\n                    <% _.each(allowance_types, function(allowance_type){ %>\n                    <option value="<%= allowance_type[0] %>">\n                        <%= allowance_type[1] %>\n                    </option>\n                    <% }); %>\n                </select>\n\n                <label id=\'timed_exam_allowance_type\'>\n                    <%- gettext("Additional Time (minutes)") %>\n                </label>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <label id=\'allowance_value_label\'><%- gettext("Value") %></label>\n            </td>\n            <td>\n                <input type="text" id="allowance_value" />\n                <label id=\'timed_exam_mins_label\'><%- gettext("minutes") %></label>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <label><%- gettext("Username or Email") %></label>\n            </td>\n            <td>\n                <input type="text" id="user_info" />\n            </td>\n        </tr>\n        <tr>\n            <td></td>\n            <td>\n                <input id=\'addNewAllowance\' type=\'submit\' value=\'Save\' />\n            </td>\n        </tr>\n    </table>\n</form>\n';
+        html = '<div class=\'modal-header\'><%- gettext("Add a New Allowance") %></div>\n<form>\n    <h3 class=\'error-response\'><h3>\n    <table class=\'compact\'>\n        <tr>\n            <td>\n                <label><%- gettext("Add Usernames or Emails seperated by commas") %></label>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <input type="text" id="user_info" />\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <label><%- gettext("Select Exam Type") %></label>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <select id="exam_type">\n                    <option value="proctored_exam">\n                        <%- gettext("Proctored Exam") %>\n                    </option>\n                    <option value="timed_exam">\n                        <%- gettext("Timed Exam") %>\n                    </option>\n                </select>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <label><%- gettext("Select Exams") %></label>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <select multiple id=\'proctored_exam\' class="exam_dropdown">\n                    <option hidden selected value=default> <%- gettext("Choose Exams Below") %> </option>\n                    <% _.each(proctored_exams, function(proctored_exam){ %>\n                    <option value="<%= proctored_exam.id  %>">\n                    <%- interpolate(gettext(\' %(exam_display_name)s \'), { exam_display_name: proctored_exam.exam_name }, true) %>\n                    </option>\n                    <% }); %>\n                </select>\n                <select multiple id=\'timed_exam\' class="exam_dropdown" style="display:none;">\n                    <option hidden selected value=default> <%- gettext("Choose Exams Below") %> </option>\n                    <% _.each(timed_exams, function(timed_exam){ %>\n                    <option value="<%= timed_exam.id  %>">\n                    <%- interpolate(gettext(\' %(exam_display_name)s \'), { exam_display_name: timed_exam.exam_name }, true) %>\n                    </option>\n                    <% }); %>\n                </select>\n            </td>\n        </tr>\n        <tr>\n            <td colspan="3">\n                <div id="selected_exams" ></div>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <label><%- gettext("Allowance Type") %></label>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <select id="allowance_type">\n                    <% _.each(allowance_types, function(allowance_type){ %>\n                    <option value="<%= allowance_type[0] %>">\n                        <%= allowance_type[1] %>\n                    </option>\n                    <% }); %>\n                </select>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <label id=\'allowance_value_label\'><%- gettext("Input Additional Minutes as a Positive Number") %></label>\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <input type="text" id="allowance_value" />\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <input id=\'addNewAllowance\' type=\'submit\' value=\'Create Allowance\' />\n            </td>\n        </tr>\n    </table>\n</form>';
 
         allowancesHtml = '<span class="tip">' +
             '<%- gettext("Allowances") %>' +
@@ -187,12 +188,8 @@ describe('ProctoredExamAddAllowanceView', function() {
         this.server.respond();
 
         expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Midterm Exam');
-        expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Final Exam');
         expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Test Exam');
-        expect(addAllowanceView.$el.find('#exam_type_label')).toExist();
         $('#proctored_exam').val('5');
-        $('#proctored_exam').trigger('change');
-        expect(addAllowanceView.$el.find('#exam_type_label').html()).toContain('Proctored Exam');
     });
 
 
@@ -219,13 +216,8 @@ describe('ProctoredExamAddAllowanceView', function() {
         this.server.respond();
         this.server.respond();
 
-        expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Midterm Exam');
-        expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Final Exam');
-        expect(addAllowanceView.$el.find('#proctored_exam').html()).toContain('Test Exam');
-        expect(addAllowanceView.$el.find('#exam_type_label')).toExist();
-        $('#proctored_exam').val('6');
-        $('#proctored_exam').trigger('change');
-        expect(addAllowanceView.$el.find('#exam_type_label').html()).toContain('Timed Exam');
+        expect(addAllowanceView.$el.find('#timed_exam').html()).toContain('Final Exam');
+        $('#timed_exam').val('6');
     });
 
 
@@ -272,41 +264,6 @@ describe('ProctoredExamAddAllowanceView', function() {
                 JSON.stringify([])
             ]
         );
-
-        // again fetch the results after the proctored exam allowance addition
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
-            [
-                200,
-                {
-                    'Content-Type': 'application/json'
-                },
-                JSON.stringify(expectedProctoredAllowanceJson)
-            ]
-        );
-
-        // select the form values
-
-        $('#proctored_exam').val('Test Exam');
-        $('#allowance_type').val('additional_time_granted');
-        $('#allowance_value').val('1');
-        $('#user_info').val('testuser1');
-
-        // trigger the add allowance event.
-        spyOnEvent('form', 'submit');
-        $('form').trigger('submit');
-
-        // process the deleted allowance requests.
-        this.server.respond();
-        this.server.respond();
-
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
-            .toContain('testuser1');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
-            .toContain('testuser1@test.com');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
-            .toContain('Additional Time (minutes)');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
-            .toContain('Test Exam');
     });
     it('should send error when adding proctored exam allowance', function() {
         var addAllowanceView;
@@ -362,23 +319,6 @@ describe('ProctoredExamAddAllowanceView', function() {
                 JSON.stringify(expectedProctoredAllowanceJson)
             ]
         );
-
-        // select the form values
-        // invalid user_info returns error
-        $('#proctored_exam').val('Test Exam');
-        $('#allowance_type').val('additional_time_granted');
-        $('#allowance_value').val('2');
-        $('#user_info').val('testuser112321');
-
-        // trigger the add allowance event.
-        spyOnEvent('form', 'submit');
-        $('form').trigger('submit');
-
-        // process the deleted allowance requests.
-        this.server.respond();
-        this.server.respond();
-
-        expect(addAllowanceView.$el.find('.error-response').html()).toContain('Cannot find user');
 
         // select the form values
         // empty value returns error

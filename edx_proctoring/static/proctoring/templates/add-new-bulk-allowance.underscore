@@ -1,0 +1,105 @@
+<style>
+    select#proctored_exam {
+        width: 100%;
+    }
+    select#timed_exam {
+        width: 100%;
+    }
+    table, td {
+        width: 100%;
+    }
+</style>
+<div class='modal-header'><%- gettext("Add a New Allowance") %></div>
+<form>
+    <h3 class='error-response'><h3>
+    <table class='compact'>
+        <tr>
+            <td>
+                <label><%- gettext("Add Usernames or Emails seperated by commas") %></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" id="user_info" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><%- gettext("Select Exam Type") %></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select id="exam_type">
+                    <option value="proctored_exam">
+                        <%- gettext("Proctored Exam") %>
+                    </option>
+                    <option value="timed_exam">
+                        <%- gettext("Timed Exam") %>
+                    </option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><%- gettext("Select Exams") %></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select multiple id='proctored_exam' class="exam_dropdown">
+                    <option hidden selected value=default> <%- gettext("Choose Exams Below") %> </option>
+                    <% _.each(proctored_exams, function(proctored_exam){ %>
+                    <option value="<%= proctored_exam.id  %>">
+                    <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: proctored_exam.exam_name }, true) %>
+                    </option>
+                    <% }); %>
+                </select>
+                <select multiple id='timed_exam' class="exam_dropdown" style="display:none;">
+                    <option hidden selected value=default> <%- gettext("Choose Exams Below") %> </option>
+                    <% _.each(timed_exams, function(timed_exam){ %>
+                    <option value="<%= timed_exam.id  %>">
+                    <%- interpolate(gettext(' %(exam_display_name)s '), { exam_display_name: timed_exam.exam_name }, true) %>
+                    </option>
+                    <% }); %>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <div id="selected_exams" ></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><%- gettext("Allowance Type") %></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select id="allowance_type">
+                    <% _.each(allowance_types, function(allowance_type){ %>
+                    <option value="<%= allowance_type[0] %>">
+                        <%= allowance_type[1] %>
+                    </option>
+                    <% }); %>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label id='allowance_value_label'><%- gettext("Input Additional Minutes as a Positive Number") %></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" id="allowance_value" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input id='addNewAllowance' type='submit' value='Create Allowance' />
+            </td>
+        </tr>
+    </table>
+</form>
