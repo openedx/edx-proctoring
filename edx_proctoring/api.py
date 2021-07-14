@@ -105,20 +105,14 @@ def get_onboarding_exam_link(course_id, user, is_learning_mfe):
             course_key, user, pytz.utc.localize(datetime.now())
         )
         categorized_exams = categorize_inaccessible_exams_by_date(onboarding_exams, details)
-        (non_date_inaccessible_exams, future_exams, past_due_exams) = categorized_exams
+        non_date_inaccessible_exams = categorized_exams[0]
 
         # remove onboarding exams not accessible to learners
         for onboarding_exam in non_date_inaccessible_exams:
             onboarding_exams.remove(onboarding_exam)
 
-        currently_available_exams = [
-            onboarding_exam
-            for onboarding_exam in onboarding_exams
-            if onboarding_exam not in future_exams and onboarding_exam not in past_due_exams
-        ]
-
-        if currently_available_exams:
-            onboarding_exam = currently_available_exams[0]
+        if onboarding_exams:
+            onboarding_exam = onboarding_exams[0]
             if is_learning_mfe:
                 onboarding_link = resolve_exam_url_for_learning_mfe(
                     course_id, onboarding_exam.content_id
