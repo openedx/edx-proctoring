@@ -390,3 +390,15 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         req = get_current_request()
         # pylint: disable=illegal-waffle-usage
         return not req.get_signed_cookie('exam', default=False)
+
+    def get_proctoring_config(self):
+        """
+        Returns the metadata and configuration options for the proctoring service
+        """
+        proctoring_config = {
+            'download_url': self.get_software_download_url(),
+            'name': self.verbose_name,
+            'rules': {},
+            'instructions': []
+        }
+        return proctoring_config

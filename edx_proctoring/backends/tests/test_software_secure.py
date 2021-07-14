@@ -125,6 +125,17 @@ class SoftwareSecureTests(TestCase):
         provider = get_backend_provider()
         self.assertEqual(provider.get_software_download_url(), 'http://example.com')
 
+    def test_get_proctoring_config(self):
+        """
+        Makes sure proctoring config is returned
+        """
+
+        provider = get_backend_provider()
+        config = provider.get_proctoring_config()
+        self.assertIsNotNone(config)
+        self.assertEqual(config['name'], provider.verbose_name)
+        self.assertEqual(config['download_url'], 'http://example.com')
+
     def test_register_attempt(self):
         """
         Makes sure we can register an attempt
