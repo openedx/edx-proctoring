@@ -151,7 +151,7 @@ edx = edx || {};
             self.proctoredExamCollection.fetch({
                 success: function() {
 
-                    if (enableBulkAllowanceModal) {
+                    if (!enableBulkAllowanceModal) {
                         // eslint-disable-next-line no-new
                         new edx.instructor_dashboard.proctoring.AddAllowanceView({
                             course_id: self.course_id,
