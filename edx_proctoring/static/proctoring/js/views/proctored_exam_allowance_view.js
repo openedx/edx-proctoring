@@ -144,14 +144,15 @@ edx = edx || {};
         },
         showAddModal: function(event) {
             var self = this;
-            var enable_bulk_allowance = 
-                self.$el.data('enable-exam-resume-proctoring-improvements');
-            enable_bulk_allowance = this.enable_exam_resume_proctoring_improvements &&
-                this.enable_exam_resume_proctoring_improvements.toLowerCase() === 'true';
+            var enableBulkAllowanceModal =
+                self.$el.data('enable-bulk-allowance-modal');
+            enableBulkAllowanceModal = enableBulkAllowanceModal &&
+                enableBulkAllowanceModal.toLowerCase() === 'true';
             self.proctoredExamCollection.fetch({
                 success: function() {
-                    // eslint-disable-next-line no-new
-                    if (!this.enable_exam_resume_proctoring_improvements) {
+
+                    if (enableBulkAllowanceModal) {
+                        // eslint-disable-next-line no-new
                         new edx.instructor_dashboard.proctoring.AddAllowanceView({
                             course_id: self.course_id,
                             proctored_exams: self.proctoredExamCollection.toJSON(),
@@ -159,6 +160,7 @@ edx = edx || {};
                             allowance_types: self.allowance_types
                         });
                     } else {
+                        // eslint-disable-next-line no-new
                         new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
                             course_id: self.course_id,
                             proctored_exams: self.proctoredExamCollection.toJSON(),
