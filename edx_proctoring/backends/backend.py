@@ -139,3 +139,9 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
         Returns onboarding profile information for a given course and optional user
         """
         return None
+
+    def get_proctoring_config(self):
+        """
+        Returns the metadata and configuration options for the proctoring service
+        """
+        return None

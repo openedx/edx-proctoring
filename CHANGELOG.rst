@@ -14,7 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-[3.17.1] - 2021-07-2
+[3.17.3] - 2021-07-14
+~~~~~~~~~~~~~~~~~~~~~
+* Add missing get_proctoring_config method to base backend provider class.
+
+[3.17.2] - 2021-07-2
 ~~~~~~~~~~~~~~~~~~~~~
 * Updated ProctoredExamAttempt view to use the content id from the query.
 
