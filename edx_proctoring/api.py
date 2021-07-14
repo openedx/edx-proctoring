@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 
 import pytz
 from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -58,6 +59,7 @@ from edx_proctoring.serializers import (
 )
 from edx_proctoring.statuses import InstructorDashboardOnboardingAttemptStatus, ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import (
+    categorize_inaccessible_exams_by_date,
     emit_event,
     get_exam_due_date,
     get_exam_type,
@@ -79,6 +81,53 @@ APPROVED_STATUS = 'approved'
 REJECTED_GRADE_OVERRIDE_EARNED = 0.0
 
 USER_MODEL = get_user_model()
+
+
+def get_onboarding_exam_link(course_id, user, is_learning_mfe):
+    """
+    Get link to the onboarding exam available to the user for given course.
+
+    Parameters:
+    * course_id: id of a course where search for the onboarding exam is performed
+    * user: user for whom the link is built
+    * is_learning_mfe: Boolean, indicates if the url should be built for the learning mfe application.
+
+    Returns: url pointing to the available exam, if there is no onboarding exam available
+    to the user returns empty string.
+    """
+    onboarding_exams = list(ProctoredExam.get_practice_proctored_exams_for_course(course_id).order_by('-created'))
+    if not onboarding_exams or not get_backend_provider(name=onboarding_exams[0].backend).supports_onboarding:
+        onboarding_link = ''
+    else:
+        learning_sequences_service = get_runtime_service('learning_sequences')
+        course_key = CourseKey.from_string(course_id)
+        details = learning_sequences_service.get_user_course_outline_details(
+            course_key, user, pytz.utc.localize(datetime.now())
+        )
+        categorized_exams = categorize_inaccessible_exams_by_date(onboarding_exams, details)
+        (non_date_inaccessible_exams, future_exams, past_due_exams) = categorized_exams
+
+        # remove onboarding exams not accessible to learners
+        for onboarding_exam in non_date_inaccessible_exams:
+            onboarding_exams.remove(onboarding_exam)
+
+        currently_available_exams = [
+            onboarding_exam
+            for onboarding_exam in onboarding_exams
+            if onboarding_exam not in future_exams and onboarding_exam not in past_due_exams
+        ]
+
+        if currently_available_exams:
+            onboarding_exam = currently_available_exams[0]
+            if is_learning_mfe:
+                onboarding_link = resolve_exam_url_for_learning_mfe(
+                    course_id, onboarding_exam.content_id
+                )
+            else:
+                onboarding_link = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
+        else:
+            onboarding_link = ''
+    return onboarding_link
 
 
 def get_total_allowed_time_for_exam(exam, user_id):
