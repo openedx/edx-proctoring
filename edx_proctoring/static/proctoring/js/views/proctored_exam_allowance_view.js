@@ -150,7 +150,6 @@ edx = edx || {};
                 enableBulkAllowance.toLowerCase() === 'true';
             self.proctoredExamCollection.fetch({
                 success: function() {
-
                     if (!enableBulkAllowance) {
                         // eslint-disable-next-line no-new
                         new edx.instructor_dashboard.proctoring.AddAllowanceView({

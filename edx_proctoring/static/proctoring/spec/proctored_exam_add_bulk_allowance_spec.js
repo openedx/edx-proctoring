@@ -143,9 +143,10 @@ describe('ProctoredExamAAllowanceView', function() {
         this.server = sinon.fakeServer.create();
         this.server.autoRespond = true;
 
-        setFixtures('<div class="special-allowance-container" data-course-id="test_course_id" data-enable-bulk-allowance="True"></div>');
+        setFixtures('<div class="special-allowance-container" data-course-id="test_course_id"' +
+        'data-enable-bulk-allowance="True"></div>');
         // load the underscore template response before calling the proctored exam allowance view.
-        this.server.respondWith('GET', '/static/proctoring/templates/add-new-allowance.underscore',
+        this.server.respondWith('GET', '/static/proctoring/templates/add-new-bulk-allowance.underscore',
             [
                 200,
                 {'Content-Type': 'text/html'},
@@ -255,7 +256,7 @@ describe('ProctoredExamAAllowanceView', function() {
             .not.toContain('Test Exam');
 
         // add the proctored exam allowance
-        this.server.respondWith('PUT', '/api/edx_proctoring/v1/proctored_exam/allowance',
+        this.server.respondWith('PUT', '/api/edx_proctoring/v1/proctored_exam/bulk_allowance',
             [
                 200,
                 {
@@ -299,7 +300,7 @@ describe('ProctoredExamAAllowanceView', function() {
             .not.toContain('Test Exam');
 
         // add the proctored exam allowance
-        this.server.respondWith('PUT', '/api/edx_proctoring/v1/proctored_exam/allowance',
+        this.server.respondWith('PUT', '/api/edx_proctoring/v1/proctored_exam/bulk_allowance',
             [
                 400,
                 {
