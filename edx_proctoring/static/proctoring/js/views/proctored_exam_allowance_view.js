@@ -144,14 +144,14 @@ edx = edx || {};
         },
         showAddModal: function(event) {
             var self = this;
-            var enableBulkAllowanceModal =
-                self.$el.data('enable-bulk-allowance-modal');
-            enableBulkAllowanceModal = enableBulkAllowanceModal &&
-                enableBulkAllowanceModal.toLowerCase() === 'true';
+            var enableBulkAllowance =
+                self.$el.data('enable-bulk-allowance');
+            enableBulkAllowance = enableBulkAllowance &&
+                enableBulkAllowance.toLowerCase() === 'true';
             self.proctoredExamCollection.fetch({
                 success: function() {
 
-                    if (!enableBulkAllowanceModal) {
+                    if (!enableBulkAllowance) {
                         // eslint-disable-next-line no-new
                         new edx.instructor_dashboard.proctoring.AddAllowanceView({
                             course_id: self.course_id,

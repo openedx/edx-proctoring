@@ -1,4 +1,4 @@
-describe('ProctoredExamAddAllowanceView', function() {
+describe('ProctoredExamAAllowanceView', function() {
     'use strict';
 
     var html = '';
@@ -143,7 +143,7 @@ describe('ProctoredExamAddAllowanceView', function() {
         this.server = sinon.fakeServer.create();
         this.server.autoRespond = true;
 
-        setFixtures('<div class="special-allowance-container" data-course-id="test_course_id"></div>');
+        setFixtures('<div class="special-allowance-container" data-course-id="test_course_id" data-enable-bulk-allowance="True"></div>');
         // load the underscore template response before calling the proctored exam allowance view.
         this.server.respondWith('GET', '/static/proctoring/templates/add-new-allowance.underscore',
             [
@@ -177,7 +177,7 @@ describe('ProctoredExamAddAllowanceView', function() {
         );
 
         this.proctored_exam_allowance = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView();
-        addAllowanceView = new edx.instructor_dashboard.proctoring.AddAllowanceView({
+        addAllowanceView = new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
             course_id: 'test_course_id',
             proctored_exams: proctoredExamJson,
             proctored_exam_allowance_view: this.proctored_exam_allowance,
@@ -206,7 +206,7 @@ describe('ProctoredExamAddAllowanceView', function() {
         );
 
         this.proctored_exam_allowance = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView();
-        addAllowanceView = new edx.instructor_dashboard.proctoring.AddAllowanceView({
+        addAllowanceView = new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
             course_id: 'test_course_id',
             proctored_exams: proctoredExamJson,
             proctored_exam_allowance_view: this.proctored_exam_allowance,
@@ -234,7 +234,7 @@ describe('ProctoredExamAddAllowanceView', function() {
 
         this.proctored_exam_allowance = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView();
         // eslint-disable-next-line no-new
-        new edx.instructor_dashboard.proctoring.AddAllowanceView({
+        new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
             course_id: 'test_course_id',
             proctored_exams: proctoredExamJson,
             proctored_exam_allowance_view: this.proctored_exam_allowance,
@@ -278,7 +278,7 @@ describe('ProctoredExamAddAllowanceView', function() {
         );
 
         this.proctored_exam_allowance = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView();
-        addAllowanceView = new edx.instructor_dashboard.proctoring.AddAllowanceView({
+        addAllowanceView = new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
             course_id: 'test_course_id',
             proctored_exams: proctoredExamJson,
             proctored_exam_allowance_view: this.proctored_exam_allowance,

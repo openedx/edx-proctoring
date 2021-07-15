@@ -6,7 +6,7 @@ edx = edx || {};
     edx.instructor_dashboard = edx.instructor_dashboard || {};
     edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
 
-    edx.instructor_dashboard.proctoring.AddAllowanceView = Backbone.ModalView.extend({
+    edx.instructor_dashboard.proctoring.AddBulkAllowanceView = Backbone.ModalView.extend({
         name: 'AddBulkAllowanceView',
         template: null,
         template_url: '/static/proctoring/templates/add-new-bulk-allowance.underscore',
