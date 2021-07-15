@@ -55,7 +55,7 @@ from edx_proctoring.statuses import (
 )
 from edx_proctoring.tests import mock_perm
 from edx_proctoring.urls import urlpatterns
-from edx_proctoring.utils import obscured_user_id
+from edx_proctoring.utils import obscured_user_id, resolve_exam_url_for_learning_mfe
 from edx_proctoring.views import require_course_or_global_staff, require_staff
 from mock_apps.models import Profile
 
@@ -550,6 +550,22 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         message = 'There is no onboarding exam related to this course id.'
         self.assertEqual(response_data['detail'], message)
+
+    @override_settings(LEARNING_MICROFRONTEND_URL='https://learningmfe')
+    def test_onboarding_mfe_link(self):
+        """
+        Test that the request returns correct link to onboarding exam for learning mfe application.
+        """
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + '?course_id={}&is_learning_mfe=True'.format(self.course_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(
+            response_data['onboarding_link'],
+            resolve_exam_url_for_learning_mfe(self.course_id, self.onboarding_exam.content_id)
+        )
 
     def test_no_exam_attempts(self):
         """

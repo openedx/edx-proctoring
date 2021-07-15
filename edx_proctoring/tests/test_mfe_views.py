@@ -7,17 +7,21 @@ from urllib.parse import urlencode
 
 import ddt
 from mock import patch
+from opaque_keys.edx.locator import BlockUsageLocator
 
 from django.conf import settings
 from django.test.utils import override_settings
 from django.urls import reverse
+from django.utils import timezone
 
 from edx_proctoring.api import get_exam_by_id, get_review_policy_by_exam_id
 from edx_proctoring.exceptions import BackendProviderNotConfigured, ProctoredExamNotFoundException
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance
+from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import humanized_time
 
+from .test_services import MockLearningSequencesService, MockScheduleItemData
 from .utils import ProctoredExamTestCase
 
 
@@ -48,6 +52,18 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         self.expected_exam_url = '{}/course/{}/{}'.format(
             settings.LEARNING_MICROFRONTEND_URL, self.course_id, self.content_id
         )
+        yesterday = timezone.now() - timezone.timedelta(days=1)
+        self.course_scheduled_sections = {
+            BlockUsageLocator.from_string(self.content_id_onboarding): MockScheduleItemData(yesterday),
+            BlockUsageLocator.from_string(
+                'block-v1:test+course+1+type@sequential+block@assignment'
+            ): MockScheduleItemData(yesterday),
+        }
+
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            list(self.course_scheduled_sections.keys()),
+            self.course_scheduled_sections,
+        ))
 
     def assertHasExamData(self, response_data, has_attempt,
                           has_verification_url=False, has_download_url=False, content_id=None):
@@ -286,9 +302,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         """
         self._create_exam_attempt(self.proctored_exam_id, status=status)
 
-        onboarding_exam = ProctoredExam.objects.filter(
-            course_id=self.course_id, is_active=True, is_practice_exam=True
-        ).first()
+        onboarding_exam = ProctoredExam.objects.get(id=self.onboarding_exam_id)
 
         if is_learning_mfe:
             expected_exam_url = '{}/course/{}/{}'.format(
@@ -332,7 +346,35 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
             response = self.client.get(url)
         response_data = json.loads(response.content.decode('utf-8'))
         exam = response_data['exam']
-        assert 'onboarding_link' not in exam
+        assert 'onboarding_link' in exam
+        self.assertEqual(exam['onboarding_link'], '')
+
+    def test_onboarding_errors_and_onboarding_exam_not_available(self):
+        """
+        Tests the GET exam attempts data not contain link to onboarding exam if
+        when user tries to take proctored exam and has not yet completed required
+        onboarding exam and onboarding exams are not available for the user.
+        """
+        self._create_exam_attempt(self.proctored_exam_id, status=ProctoredExamStudentAttemptStatus.onboarding_missing)
+        set_runtime_service('learning_sequences', MockLearningSequencesService(
+            [],                              # sections user can see (none)
+            self.course_scheduled_sections,  # all scheduled sections
+        ))
+        url = reverse(
+            'edx_proctoring:proctored_exam.exam_attempts',
+            kwargs={
+                'course_id': self.course_id,
+            }
+        ) + '?' + urlencode({
+            'content_id': self.content_id,
+            'is_learning_mfe': True,
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+        exam = response_data['exam']
+        assert 'onboarding_link' in exam
+        self.assertEqual(exam['onboarding_link'], '')
 
 
 class ProctoredSettingsViewTests(ProctoredExamTestCase):

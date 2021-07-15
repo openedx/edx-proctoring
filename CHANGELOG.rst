@@ -14,6 +14,14 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.18.0] - 2021-07-15
+~~~~~~~~~~~~~~~~~~~~~
+* Remove old proctored exam attempt url.
+* Fix onboarding link generation in proctored exam attempt view when exam attempt is in
+  onboarding errors status, don't return the link to exams that are not accessible to user.
+* Update onboarding link url in student onboarding status view to link
+  to the learning mfe page instead of LMS.
+
 [3.17.3] - 2021-07-14
 ~~~~~~~~~~~~~~~~~~~~~
 * Add missing get_proctoring_config method to base backend provider class.
