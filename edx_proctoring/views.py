@@ -4,14 +4,11 @@ Proctored Exams HTTP-based API endpoints
 
 import json
 import logging
-from datetime import datetime
 from urllib.parse import urlencode
 
-import pytz
 import waffle  # pylint: disable=invalid-django-waffle-import
 from crum import get_current_request
 from edx_django_utils.monitoring import set_custom_attribute
-from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locator import BlockUsageLocator
 from rest_framework import status
 from rest_framework.negotiation import BaseContentNegotiation
@@ -104,11 +101,12 @@ from edx_proctoring.utils import (
     AuthenticatedAPIView,
     categorize_inaccessible_exams_by_date,
     get_exam_type,
+    get_exam_url,
     get_time_remaining_for_attempt,
+    get_user_course_outline_details,
     humanized_time,
     locate_attempt_by_attempt_code,
-    obscured_user_id,
-    resolve_exam_url_for_learning_mfe
+    obscured_user_id
 )
 
 ATTEMPTS_PER_PAGE = 25
@@ -545,15 +543,11 @@ class StudentOnboardingStatusView(ProctoredAPIView):
                 data={'detail': _('There is no onboarding exam related to this course id.')}
             )
 
+        # If there are multiple onboarding exams, use the first exam accessible to the user
         backend = get_backend_provider(name=onboarding_exams[0].backend)
 
-        # If there are multiple onboarding exams, use the first exam accessible to the user
-        learning_sequences_service = get_runtime_service('learning_sequences')
-        course_key = CourseKey.from_string(course_id)
         user = get_user_model().objects.get(username=(username or request.user.username))
-        details = learning_sequences_service.get_user_course_outline_details(
-            course_key, user, pytz.utc.localize(datetime.now())
-        )
+        details = get_user_course_outline_details(user, course_id)
 
         # in order to gather information about future or past due exams, we must determine which exams
         # are inaccessible for other reasons (e.g. visibility settings, content gating, etc.), so that
@@ -585,13 +579,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         if currently_available_exams:
             onboarding_exam = currently_available_exams[0]
-            if is_learning_mfe:
-                data['onboarding_link'] = resolve_exam_url_for_learning_mfe(
-                    course_id,
-                    onboarding_exam.content_id
-                )
-            else:
-                data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
+            data['onboarding_link'] = get_exam_url(course_id, onboarding_exam.content_id, is_learning_mfe)
         elif future_exams:
             onboarding_exam = future_exams[0]
         else:

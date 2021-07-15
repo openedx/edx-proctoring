@@ -19,9 +19,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from django.conf import settings
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from edx_proctoring.models import ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory
+from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 log = logging.getLogger(__name__)
@@ -330,6 +332,23 @@ def resolve_exam_url_for_learning_mfe(course_id, content_id):
     usage_key = UsageKey.from_string(content_id)
     url = '{}/course/{}/{}'.format(settings.LEARNING_MICROFRONTEND_URL, course_key, usage_key)
     return url
+
+
+def get_exam_url(course_id, content_id, is_learning_mfe):
+    """ Helper to build exam url depending if it is requested for the learning MFE app or not. """
+    if is_learning_mfe:
+        return resolve_exam_url_for_learning_mfe(course_id, content_id)
+    return reverse('jump_to', args=[course_id, content_id])
+
+
+def get_user_course_outline_details(user, course_id):
+    """ Helper to get user's course outline details """
+    learning_sequences_service = get_runtime_service('learning_sequences')
+    course_key = CourseKey.from_string(course_id)
+    details = learning_sequences_service.get_user_course_outline_details(
+        course_key, user, pytz.utc.localize(datetime.now())
+    )
+    return details
 
 
 def categorize_inaccessible_exams_by_date(onboarding_exams, details):

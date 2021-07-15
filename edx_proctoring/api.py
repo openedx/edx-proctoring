@@ -11,7 +11,6 @@ from datetime import datetime, timedelta
 
 import pytz
 from opaque_keys import InvalidKeyError
-from opaque_keys.edx.keys import CourseKey
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -63,12 +62,13 @@ from edx_proctoring.utils import (
     emit_event,
     get_exam_due_date,
     get_exam_type,
+    get_exam_url,
     get_time_remaining_for_attempt,
+    get_user_course_outline_details,
     has_due_date_passed,
     humanized_time,
     is_reattempting_exam,
     obscured_user_id,
-    resolve_exam_url_for_learning_mfe,
     verify_and_add_wait_deadline
 )
 
@@ -99,11 +99,7 @@ def get_onboarding_exam_link(course_id, user, is_learning_mfe):
     if not onboarding_exams or not get_backend_provider(name=onboarding_exams[0].backend).supports_onboarding:
         onboarding_link = ''
     else:
-        learning_sequences_service = get_runtime_service('learning_sequences')
-        course_key = CourseKey.from_string(course_id)
-        details = learning_sequences_service.get_user_course_outline_details(
-            course_key, user, pytz.utc.localize(datetime.now())
-        )
+        details = get_user_course_outline_details(user, course_id)
         categorized_exams = categorize_inaccessible_exams_by_date(onboarding_exams, details)
         non_date_inaccessible_exams = categorized_exams[0]
 
@@ -113,12 +109,7 @@ def get_onboarding_exam_link(course_id, user, is_learning_mfe):
 
         if onboarding_exams:
             onboarding_exam = onboarding_exams[0]
-            if is_learning_mfe:
-                onboarding_link = resolve_exam_url_for_learning_mfe(
-                    course_id, onboarding_exam.content_id
-                )
-            else:
-                onboarding_link = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
+            onboarding_link = get_exam_url(course_id, onboarding_exam.content_id, is_learning_mfe)
         else:
             onboarding_link = ''
     return onboarding_link
@@ -793,10 +784,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
 
     # resolve the LMS url, note we can't assume we're running in
     # a same process as the LMS
-    if is_learning_mfe:
-        exam_url_path = resolve_exam_url_for_learning_mfe(exam['course_id'], exam['content_id'])
-    else:
-        exam_url_path = reverse('jump_to', args=[exam['course_id'], exam['content_id']])
+    exam_url_path = get_exam_url(exam['course_id'], exam['content_id'], is_learning_mfe)
 
     attempt_data = {
         'in_timed_exam': True,
