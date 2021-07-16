@@ -13,14 +13,17 @@ from edx_when import api as when_api
 from eventtracking import tracker
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey, UsageKey
+from opaque_keys.edx.locator import BlockUsageLocator
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from django.conf import settings
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from edx_proctoring.models import ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory
+from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 log = logging.getLogger(__name__)
@@ -329,3 +332,66 @@ def resolve_exam_url_for_learning_mfe(course_id, content_id):
     usage_key = UsageKey.from_string(content_id)
     url = '{}/course/{}/{}'.format(settings.LEARNING_MICROFRONTEND_URL, course_key, usage_key)
     return url
+
+
+def get_exam_url(course_id, content_id, is_learning_mfe):
+    """ Helper to build exam url depending if it is requested for the learning MFE app or not. """
+    if is_learning_mfe:
+        return resolve_exam_url_for_learning_mfe(course_id, content_id)
+    return reverse('jump_to', args=[course_id, content_id])
+
+
+def get_user_course_outline_details(user, course_id):
+    """ Helper to get user's course outline details """
+    learning_sequences_service = get_runtime_service('learning_sequences')
+    course_key = CourseKey.from_string(course_id)
+    details = learning_sequences_service.get_user_course_outline_details(
+        course_key, user, pytz.utc.localize(datetime.now())
+    )
+    return details
+
+
+def categorize_inaccessible_exams_by_date(onboarding_exams, details):
+    """
+    Categorize a list of inaccessible onboarding exams based on whether they are
+    inaccessible because they are in the future, because they are in the past, or because
+    they are inaccessible for reason unrelated to the exam schedule (e.g. visibility settings,
+    content gating, etc.)
+
+    Parameters:
+    * onboarding_exams: a list of onboarding exams
+    * details: a UserCourseOutlineData returned by the learning sequences API
+
+    Returns: a tuple containing three lists
+    * non_date_inaccessible_exams: a list of onboarding exams not accessible to the learner for
+      reasons other than the exam schedule
+    * future_exams: a list of onboarding exams not accessible to the learner because the exams are released
+      in the future
+    * past_due_exams: a list of onboarding exams not accessible to the learner because the exams are past their
+      due date
+    """
+    non_date_inaccessible_exams = []
+    future_exams = []
+    past_due_exams = []
+
+    for onboarding_exam in onboarding_exams:
+        usage_key = BlockUsageLocator.from_string(onboarding_exam.content_id)
+        if usage_key not in details.outline.accessible_sequences:
+            sequence_schedule = details.schedule.sequences.get(usage_key)
+
+            if sequence_schedule:
+                effective_start = details.schedule.sequences.get(usage_key).effective_start
+                due_date = get_visibility_check_date(details.schedule, usage_key)
+
+                if effective_start and pytz.utc.localize(datetime.now()) < effective_start:
+                    future_exams.append(onboarding_exam)
+                elif due_date and pytz.utc.localize(datetime.now()) > due_date:
+                    past_due_exams.append(onboarding_exam)
+                else:
+                    non_date_inaccessible_exams.append(onboarding_exam)
+            else:
+                # if the sequence schedule is not available, then the sequence is not available
+                # to the learner
+                non_date_inaccessible_exams.append(onboarding_exam)
+
+    return non_date_inaccessible_exams, future_exams, past_due_exams

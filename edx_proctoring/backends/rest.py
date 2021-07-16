@@ -104,7 +104,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the url of the javascript bundle into which the provider's JS will be loaded
         """
         # use the defined npm_module name, or else the python package name
-        package = getattr(self, 'npm_module', self.__class__.__module__.split('.')[0])
+        package = getattr(self, 'npm_module', self.__class__.__module__.split('.', maxsplit=1)[0])
         js_url = ''
         try:
             bundle_chunks = get_files(package, config="WORKERS")

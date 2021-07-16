@@ -226,6 +226,8 @@ class TestBackends(TestCase):
 
         self.assertIsNone(provider.get_onboarding_profile_info(course_id='test'))
 
+        self.assertIsNone(provider.get_proctoring_config())
+
     def test_null_provider(self):
         """
         Assert that the Null provider does nothing

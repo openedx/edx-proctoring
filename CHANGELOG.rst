@@ -14,12 +14,24 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-[3.18.0] - 2021-07-16
+[3.19.0] - 2021-07-16
 ~~~~~~~~~~~~~~~~~~~~~
 * Updated allowance modal to allow bulk allowances to be added.
 * Added waffle flag to enable/disable bulk allowances feature.
 
-[3.17.1] - 2021-07-2
+[3.18.0] - 2021-07-15
+~~~~~~~~~~~~~~~~~~~~~
+* Remove old proctored exam attempt url.
+* Fix onboarding link generation in proctored exam attempt view when exam attempt is in
+  onboarding errors status, don't return the link to exams that are not accessible to user.
+* Update onboarding link url in student onboarding status view to link
+  to the learning mfe page instead of LMS.
+
+[3.17.3] - 2021-07-14
+~~~~~~~~~~~~~~~~~~~~~
+* Add missing get_proctoring_config method to base backend provider class.
+
+[3.17.2] - 2021-07-2
 ~~~~~~~~~~~~~~~~~~~~~
 * Updated ProctoredExamAttempt view to use the content id from the query.
 

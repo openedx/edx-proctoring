@@ -308,12 +308,12 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         """ Allow deletes """
         return True
 
-    def save_model(self, request, review, form, change):  # pylint: disable=arguments-differ
+    def save_model(self, request, obj, form, change):
         """
         Override callback so that we can inject the user_id that made the change
         """
-        review.reviewed_by = request.user
-        review.save()
+        obj.reviewed_by = request.user
+        obj.save()
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         """ Returns software secure review form """
@@ -322,11 +322,11 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
             del form.base_fields['video_url']
         return form
 
-    def lookup_allowed(self, key, value):  # pylint: disable=arguments-differ
+    def lookup_allowed(self, lookup, value):
         """ Checks if lookup allowed or not """
-        if key == 'exam__course_id':
+        if lookup == 'exam__course_id':
             return True
-        return super().lookup_allowed(key, value)
+        return super().lookup_allowed(lookup, value)
 
 
 class ProctoredExamSoftwareSecureReviewHistoryAdmin(ProctoredExamSoftwareSecureReviewAdmin):
@@ -344,7 +344,7 @@ class ProctoredExamSoftwareSecureReviewHistoryAdmin(ProctoredExamSoftwareSecureR
         'modified',
     ]
 
-    def save_model(self, request, review, form, change):
+    def save_model(self, request, obj, form, change):  # pylint: disable=unused-argument
         """
         History can't be updated
         """

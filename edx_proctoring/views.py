@@ -4,14 +4,11 @@ Proctored Exams HTTP-based API endpoints
 
 import json
 import logging
-from datetime import datetime
 from urllib.parse import urlencode
 
-import pytz
 import waffle  # pylint: disable=invalid-django-waffle-import
 from crum import get_current_request
 from edx_django_utils.monitoring import set_custom_attribute
-from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locator import BlockUsageLocator
 from rest_framework import status
 from rest_framework.negotiation import BaseContentNegotiation
@@ -47,6 +44,7 @@ from edx_proctoring.api import (
     get_exam_by_id,
     get_last_verified_onboarding_attempts_per_user,
     get_onboarding_attempt_data_for_learner,
+    get_onboarding_exam_link,
     get_proctoring_settings_by_exam_id,
     get_review_policy_by_exam_id,
     get_total_allowed_time_for_exam,
@@ -101,13 +99,14 @@ from edx_proctoring.statuses import (
 )
 from edx_proctoring.utils import (
     AuthenticatedAPIView,
+    categorize_inaccessible_exams_by_date,
     get_exam_type,
+    get_exam_url,
     get_time_remaining_for_attempt,
-    get_visibility_check_date,
+    get_user_course_outline_details,
     humanized_time,
     locate_attempt_by_attempt_code,
-    obscured_user_id,
-    resolve_exam_url_for_learning_mfe
+    obscured_user_id
 )
 
 ATTEMPTS_PER_PAGE = 25
@@ -275,18 +274,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 # proctored exam we need to navigate them to it with a link
                 if (exam['is_proctored'] and attempt_data and
                         attempt_data['attempt_status'] in ProctoredExamStudentAttemptStatus.onboarding_errors):
-                    onboarding_exam = ProctoredExam.objects.filter(
-                        course_id=course_id, is_active=True, is_practice_exam=True
-                    ).first()
-                    if onboarding_exam:
-                        if is_learning_mfe:
-                            onboarding_link = resolve_exam_url_for_learning_mfe(
-                                course_id,
-                                onboarding_exam.content_id
-                            )
-                        else:
-                            onboarding_link = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
-                        exam['onboarding_link'] = onboarding_link
+                    exam['onboarding_link'] = get_onboarding_exam_link(course_id, request.user, is_learning_mfe)
                 exam.update({'attempt': attempt_data})
             except ProctoredExamNotFoundException:
                 exam = {}
@@ -496,12 +484,13 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         HTTP GET: returns the learner's onboarding status relative to the given course_id
 
     HTTP GET
-        /edx_proctoring/v1/user_onboarding/status?course_id={course_id}&username={username}
+        /edx_proctoring/v1/user_onboarding/status?course_id={course_id}&username={username}&is_learning_mfe={}
 
     **Query Parameters**
         * 'course_id': The unique identifier for the course.
         * 'username': Optional. If not given, the endpoint will return the user's own status.
             ** In order to view other users' statuses, the user must be course or global staff.
+        * 'is_learning_mfe': Optional. If set to True, onboarding link will point to the learning mfe application page.
 
     **Response Values**
         * 'onboarding_status': String specifying the learner's onboarding status.
@@ -526,6 +515,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         username = request.GET.get('username')
         course_id = request.GET.get('course_id')
+        is_learning_mfe = request.GET.get('is_learning_mfe') in ['1', 'true', 'True']
 
         if not course_id:
             # This parameter is currently required, as the onboarding experience is tied
@@ -553,20 +543,16 @@ class StudentOnboardingStatusView(ProctoredAPIView):
                 data={'detail': _('There is no onboarding exam related to this course id.')}
             )
 
+        # If there are multiple onboarding exams, use the first exam accessible to the user
         backend = get_backend_provider(name=onboarding_exams[0].backend)
 
-        # If there are multiple onboarding exams, use the first exam accessible to the user
-        learning_sequences_service = get_runtime_service('learning_sequences')
-        course_key = CourseKey.from_string(course_id)
         user = get_user_model().objects.get(username=(username or request.user.username))
-        details = learning_sequences_service.get_user_course_outline_details(
-            course_key, user, pytz.utc.localize(datetime.now())
-        )
+        details = get_user_course_outline_details(user, course_id)
 
         # in order to gather information about future or past due exams, we must determine which exams
         # are inaccessible for other reasons (e.g. visibility settings, content gating, etc.), so that
         # we can correctly filter them out of the onboarding exams in the course
-        categorized_exams = self._categorize_inaccessible_exams_by_date(onboarding_exams, details)
+        categorized_exams = categorize_inaccessible_exams_by_date(onboarding_exams, details)
         (non_date_inaccessible_exams, future_exams, past_due_exams) = categorized_exams
 
         # remove onboarding exams not accessible to learners
@@ -593,7 +579,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         if currently_available_exams:
             onboarding_exam = currently_available_exams[0]
-            data['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
+            data['onboarding_link'] = get_exam_url(course_id, onboarding_exam.content_id, is_learning_mfe)
         elif future_exams:
             onboarding_exam = future_exams[0]
         else:
@@ -668,52 +654,6 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             )
 
         return Response(data)
-
-    def _categorize_inaccessible_exams_by_date(self, onboarding_exams, details):
-        """
-        Categorize a list of inaccessible onboarding exams based on whether they are
-        inaccessible because they are in the future, because they are in the past, or because
-        they are inaccessible for reason unrelated to the exam schedule (e.g. visibility settings,
-        content gating, etc.)
-
-        Parameters:
-        * onboarding_exams: a list of onboarding exams
-        * details: a UserCourseOutlineData returned by the learning sequences API
-
-        Returns: a tuple containing three lists
-        * non_date_inaccessible_exams: a list of onboarding exams not accesible to the learner for
-          reasons other than the exam schedule
-        * future_exams: a list of onboarding exams not accessible to the learner because the exams are released
-          in the future
-        * past_due_exams: a list of onboarding exams not accessible to the learner because the exams are past their
-          due date
-        """
-        non_date_inaccessible_exams = []
-        future_exams = []
-        past_due_exams = []
-
-        for onboarding_exam in onboarding_exams:
-            usage_key = BlockUsageLocator.from_string(onboarding_exam.content_id)
-
-            if usage_key not in details.outline.accessible_sequences:
-                sequence_schedule = details.schedule.sequences.get(usage_key)
-
-                if sequence_schedule:
-                    effective_start = details.schedule.sequences.get(usage_key).effective_start
-                    due_date = get_visibility_check_date(details.schedule, usage_key)
-
-                    if effective_start and pytz.utc.localize(datetime.now()) < effective_start:
-                        future_exams.append(onboarding_exam)
-                    elif due_date and pytz.utc.localize(datetime.now()) > due_date:
-                        past_due_exams.append(onboarding_exam)
-                    else:
-                        non_date_inaccessible_exams.append(onboarding_exam)
-                else:
-                    # if the sequence schedule is not available, then the sequence is not available
-                    # to the learner
-                    non_date_inaccessible_exams.append(onboarding_exam)
-
-        return non_date_inaccessible_exams, future_exams, past_due_exams
 
 
 class StudentOnboardingStatusByCourseView(ProctoredAPIView):
