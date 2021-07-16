@@ -542,6 +542,8 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
     """
     Adds (or updates) an allowance for multiple users and exams
     """
+
+    # Input pasrsing
     exam_ids = set(exam_ids)
     user_ids = set(user_ids)
 
@@ -569,7 +571,7 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
         if multiplier < 0:
             raise AllowanceValueNotAllowedException(err_msg)
 
-    if allowance_type == constants.ADDITIONAL_TIME:
+    if allowance_type in ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED:
         err_msg = (
             u'allowance_value "{value}" should be a non-negative integer value'
         ).format(value=value)
@@ -631,7 +633,7 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
             for user_id in user_ids:
                 try:
                     add_allowance_for_user(exam_id, user_id,
-                                           ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
+                                           allowance_type,
                                            value)
                     successes += 1
                     data.append({

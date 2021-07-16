@@ -32,7 +32,7 @@ from edx_proctoring.api import (
 from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.backends.tests.test_software_secure import mock_response_content
-from edx_proctoring.constants import ADDITIONAL_TIME, TIME_MULTIPLIER
+from edx_proctoring.constants import TIME_MULTIPLIER
 from edx_proctoring.exceptions import (
     BackendProviderOnboardingProfilesException,
     ProctoredExamIllegalStatusTransition,
@@ -4910,12 +4910,20 @@ class ExamBulkAllowanceView(LoggedInTestCase):
 
     @ddt.data(
         (
-            ADDITIONAL_TIME,
+            'additional_time_granted',
             '30'
         ),
         (
             TIME_MULTIPLIER,
             '1.5'
+        ),
+        (
+            'review_policy_exception',
+            'notes'
+        ),
+        (
+            'review_policy_exception',
+            25
         )
     )
     @ddt.unpack
@@ -4943,8 +4951,8 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
+            'exam_ids': ','.join(str(exam) for exam in exam_list),
+            'user_ids': ','.join(str(user) for user in user_id_list),
             'allowance_type': allowance_type,
             'value': value
         }
@@ -4983,9 +4991,9 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
-            'allowance_type': ADDITIONAL_TIME,
+            'exam_ids': ','.join(str(exam) for exam in exam_list),
+            'user_ids': ','.join(str(user) for user in user_id_list),
+            'allowance_type': 'additional_time_granted',
             'value': '30'
         }
         response = self.client.put(
@@ -4999,12 +5007,20 @@ class ExamBulkAllowanceView(LoggedInTestCase):
 
     @ddt.data(
         (
-            ADDITIONAL_TIME,
+            'additional_time_granted',
             '30'
         ),
         (
             TIME_MULTIPLIER,
             '1.5'
+        ),
+        (
+            'review_policy_exception',
+            'notes'
+        ),
+        (
+            'review_policy_exception',
+            25
         )
     )
     @ddt.unpack
@@ -5033,8 +5049,9 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
+            'exam_ids': ','.join(str(exam) for exam in exam_list),
+            # Add additonal whitesapce for invalid users
+            'user_ids': ','.join(str(user) for user in user_id_list) + ',,   ,  ,w',
             'allowance_type': allowance_type,
             'value': value
         }
@@ -5047,12 +5064,20 @@ class ExamBulkAllowanceView(LoggedInTestCase):
 
     @ddt.data(
         (
-            ADDITIONAL_TIME,
+            'additional_time_granted',
             '30'
         ),
         (
             TIME_MULTIPLIER,
             '1.5'
+        ),
+        (
+            'review_policy_exception',
+            'notes'
+        ),
+        (
+            'review_policy_exception',
+            25
         )
     )
     @ddt.unpack
@@ -5080,8 +5105,9 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id, -99]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
+            # Test added whitesapce in the exam id input
+            'exam_ids': ','.join(str(exam) for exam in exam_list) + ',2  3, 22,',
+            'user_ids': ','.join(str(user) for user in user_id_list),
             'allowance_type': allowance_type,
             'value': value
         }
@@ -5094,7 +5120,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
 
     @ddt.data(
         (
-            ADDITIONAL_TIME,
+            'additional_time_granted',
             '-30'
         ),
         (
@@ -5131,8 +5157,8 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
+            'exam_ids': ','.join(str(exam) for exam in exam_list),
+            'user_ids': ','.join(str(user) for user in user_id_list),
             'allowance_type': allowance_type,
             'value': value
         }
@@ -5152,9 +5178,9 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [-99, -98]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
-            'allowance_type': ADDITIONAL_TIME,
+            'exam_ids': ','.join(str(exam) for exam in exam_list),
+            'user_ids': ','.join(str(user) for user in user_id_list),
+            'allowance_type': 'additional_time_granted',
             'value': '30'
         }
         response = self.client.put(
@@ -5169,7 +5195,6 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         Test to add bulk allowance with no users
         """
         # Create exams.
-        user_id_list = []
         exam1 = ProctoredExam.objects.create(
             course_id='a/b/c',
             content_id='test_content',
@@ -5187,9 +5212,9 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
-            'allowance_type': ADDITIONAL_TIME,
+            'exam_ids': ','.join(str(exam) for exam in exam_list),
+            'user_ids': ' ',
+            'allowance_type': 'additional_time_granted',
             'value': '30'
         }
         response = self.client.put(
@@ -5206,12 +5231,11 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         # Create exams.
         user_list = self.create_batch_users(3)
         user_id_list = [user.email for user in user_list]
-        exam_list = []
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
-            'allowance_type': ADDITIONAL_TIME,
+            'exam_ids': ' ',
+            'user_ids': ','.join(str(user) for user in user_id_list),
+            'allowance_type': 'additional_time_granted',
             'value': '30'
         }
         response = self.client.put(
@@ -5253,9 +5277,9 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         exam_list = [exam1.id]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
-            'allowance_type': ADDITIONAL_TIME,
+            'exam_ids': ','.join(str(exam) for exam in exam_list),
+            'user_ids': ','.join(str(user) for user in user_id_list),
+            'allowance_type': 'additional_time_granted',
             'value': '30'
         }
         self.client.put(
@@ -5315,9 +5339,9 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
-            'allowance_type': ADDITIONAL_TIME,
+            'exam_ids': ','.join(str(exam) for exam in exam_list),
+            'user_ids': ','.join(str(user) for user in user_id_list),
+            'allowance_type': 'additional_time_granted',
             'value': '30'
         }
         self.client.put(
@@ -5377,9 +5401,9 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
-            'exam_ids': exam_list,
-            'user_ids': user_id_list,
-            'allowance_type': ADDITIONAL_TIME,
+            'exam_ids': ','.join(str(exam) for exam in exam_list),
+            'user_ids': ','.join(str(user) for user in user_id_list),
+            'allowance_type': 'additional_time_granted',
             'value': '30'
         }
         self.client.put(

@@ -65,7 +65,7 @@ from edx_proctoring.api import (
     update_review_policy
 )
 from edx_proctoring.backends.tests.test_backend import TestBackendProvider
-from edx_proctoring.constants import ADDITIONAL_TIME, DEFAULT_CONTACT_EMAIL, TIME_MULTIPLIER
+from edx_proctoring.constants import DEFAULT_CONTACT_EMAIL, TIME_MULTIPLIER
 from edx_proctoring.exceptions import (
     AllowanceValueNotAllowedException,
     BackendProviderSentNoAttemptID,
@@ -502,7 +502,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
     @ddt.data(
         (
-            ADDITIONAL_TIME,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED,
             '30',
             '30',
             '30'
@@ -629,7 +629,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
     @ddt.data(
         (
-            ADDITIONAL_TIME,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             '30',
             '30',
             '30'
@@ -684,7 +684,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
     @ddt.data(
         (
-            ADDITIONAL_TIME,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             '30',
             '30',
             '30'
@@ -739,19 +739,19 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
     @ddt.data(
         (
-            ADDITIONAL_TIME,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             '3.0'
         ),
         (
-            ADDITIONAL_TIME,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             'invalid'
         ),
         (
-            ADDITIONAL_TIME,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             '-30'
         ),
         (
-            ADDITIONAL_TIME,
+            ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED[0],
             'd30'
         ),
         (

@@ -10,7 +10,8 @@ edx = edx || {};
         initialize: function() {
             this.allowance_types = [
                 ['additional_time_granted', gettext('Additional Time (minutes)')],
-                ['review_policy_exception', gettext('Review Policy Exception')]
+                ['review_policy_exception', gettext('Review Policy Exception')],
+                ['time_multiplier', gettext('Time Multiplier')]
             ];
 
             this.collection = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection();
@@ -143,15 +144,29 @@ edx = edx || {};
         },
         showAddModal: function(event) {
             var self = this;
+            var enableBulkAllowance =
+                self.$el.data('enable-bulk-allowance');
+            enableBulkAllowance = enableBulkAllowance &&
+                enableBulkAllowance.toLowerCase() === 'true';
             self.proctoredExamCollection.fetch({
                 success: function() {
-                    // eslint-disable-next-line no-new
-                    new edx.instructor_dashboard.proctoring.AddAllowanceView({
-                        course_id: self.course_id,
-                        proctored_exams: self.proctoredExamCollection.toJSON(),
-                        proctored_exam_allowance_view: self,
-                        allowance_types: self.allowance_types
-                    });
+                    if (!enableBulkAllowance) {
+                        // eslint-disable-next-line no-new
+                        new edx.instructor_dashboard.proctoring.AddAllowanceView({
+                            course_id: self.course_id,
+                            proctored_exams: self.proctoredExamCollection.toJSON(),
+                            proctored_exam_allowance_view: self,
+                            allowance_types: self.allowance_types
+                        });
+                    } else {
+                        // eslint-disable-next-line no-new
+                        new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
+                            course_id: self.course_id,
+                            proctored_exams: self.proctoredExamCollection.toJSON(),
+                            proctored_exam_allowance_view: self,
+                            allowance_types: self.allowance_types
+                        });
+                    }
                 }
             });
             event.stopPropagation();

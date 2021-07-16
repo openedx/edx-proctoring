@@ -1544,16 +1544,23 @@ class ExamBulkAllowanceView(ProctoredAPIView):
         HTTP PUT handler. Adds or updates Allowances for many exams and students
         """
         try:
+            exams = request.data.get('exam_ids', '')
+            users = request.data.get('user_ids', '')
+
+            # We need to remove whitespace from the exam ids as they are ints
+            filtered_ids = ''.join(exams.split())
+            filtered_users = ''.join(users.split())
             data, successes, failures = add_bulk_allowances(
-                exam_ids=request.data.get('exam_ids', None),
-                user_ids=request.data.get('user_ids', None),
+                # We only want to pass ints that are not empty
+                exam_ids=[each_exam for each_exam in filtered_ids.split(',') if each_exam],
+                user_ids=[each_user.strip() for each_user in filtered_users.split(',') if each_user],
                 allowance_type=request.data.get('allowance_type', None),
                 value=request.data.get('value', None)
             )
             if successes == 0:
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
-                    data=data
+                    data={"detail": _("Enter a valid username or email")}
                 )
             if failures > 0:
                 return Response(
@@ -1566,7 +1573,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
         except AllowanceValueNotAllowedException:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": _("Must be a Staff User to Perform this request.")}
+                data={"detail": _("Enter a valid positive value number")}
                 )
 
 

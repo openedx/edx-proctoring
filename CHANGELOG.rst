@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.19.0] - 2021-07-16
+~~~~~~~~~~~~~~~~~~~~~
+* Updated allowance modal to allow bulk allowances to be added.
+* Added waffle flag to enable/disable bulk allowances feature.
+
 [3.18.0] - 2021-07-15
 ~~~~~~~~~~~~~~~~~~~~~
 * Remove old proctored exam attempt url.
