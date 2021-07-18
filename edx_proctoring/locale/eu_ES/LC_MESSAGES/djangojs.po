@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-04 18:34+0000\n"
+"POT-Creation-Date: 2021-07-18 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Abel Camacho <abelcama@gmail.com>, 2021\n"
 "Language-Team: Basque (Spain) (https://www.transifex.com/open-edx/teams/6205/eu_ES/)\n"
@@ -114,75 +114,75 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:770 views.py:1151
+#: api.py:803 views.py:1091
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr ""
 
-#: api.py:1501
+#: api.py:1534
 msgid "your course"
 msgstr "zure ikastaroa"
 
-#: api.py:1570
+#: api.py:1603
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1579
+#: api.py:1612
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1613
+#: api.py:1646
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 
-#: api.py:2095
+#: api.py:2128
 msgid "Taking As Proctored Exam"
 msgstr ""
 
-#: api.py:2100
+#: api.py:2133
 msgid "Proctored Option Available"
 msgstr ""
 
-#: api.py:2105
+#: api.py:2138
 msgid "Taking As Open Exam"
 msgstr ""
 
-#: api.py:2110 api.py:2115
+#: api.py:2143 api.py:2148
 msgid "Pending Session Review"
 msgstr ""
 
-#: api.py:2120
+#: api.py:2153
 msgid "Passed Proctoring"
 msgstr ""
 
-#: api.py:2125 api.py:2130
+#: api.py:2158 api.py:2163
 msgid "Failed Proctoring"
 msgstr ""
 
-#: api.py:2135
+#: api.py:2168
 msgid "Proctored Option No Longer Available"
 msgstr ""
 
-#: api.py:2144
+#: api.py:2177
 msgid "Ungraded Practice Exam"
 msgstr ""
 
-#: api.py:2149
+#: api.py:2182
 msgid "Practice Exam Completed"
 msgstr ""
 
-#: api.py:2154
+#: api.py:2187
 msgid "Practice Exam Failed"
 msgstr ""
 
-#: api.py:2162
+#: api.py:2195
 msgid "Timed Exam"
 msgstr ""
 
-#: api.py:2742
+#: api.py:2775
 msgid "Onboarding status question"
 msgstr ""
 
@@ -1314,101 +1314,109 @@ msgid ""
 "            "
 msgstr ""
 
-#: utils.py:76
+#: utils.py:79
 #, python-brace-format
 msgid "{num_of_hours} hour"
 msgstr "{num_of_hours} ordu"
 
-#: utils.py:79
+#: utils.py:82
 #, python-brace-format
 msgid "{num_of_hours} hours"
 msgstr "{num_of_hours} ordu"
 
-#: utils.py:87 utils.py:97
+#: utils.py:90 utils.py:100
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
 msgstr "{num_of_minutes} minutu"
 
-#: utils.py:90
+#: utils.py:93
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
 msgstr "eta {num_of_minutes} minutu"
 
-#: utils.py:92
+#: utils.py:95
 #, python-brace-format
 msgid "{num_of_minutes} minute"
 msgstr "{num_of_minutes} minutu"
 
-#: utils.py:95
+#: utils.py:98
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
 msgstr " eta {num_of_minutes} minutu"
 
-#: utils.py:310
+#: utils.py:313
 msgid "a proctored exam"
 msgstr ""
 
-#: utils.py:313
+#: utils.py:316
 msgid "a timed exam"
 msgstr ""
 
-#: utils.py:316
+#: utils.py:319
 msgid "an onboarding exam"
 msgstr ""
 
-#: utils.py:318
+#: utils.py:321
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:147
+#: views.py:146
 msgid "could not determine the course_id"
 msgstr ""
 
-#: views.py:156 views.py:545 views.py:1629
+#: views.py:155 views.py:535
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 
-#: views.py:535
+#: views.py:525
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:553 views.py:770
+#: views.py:543 views.py:710
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:585
+#: views.py:571
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:635
+#: views.py:621
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr ""
 
-#: views.py:819
+#: views.py:759
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 
-#: views.py:1157
+#: views.py:1097
 msgid "you have less than a minute remaining"
 msgstr ""
 
-#: views.py:1716
+#: views.py:1563
+msgid "Enter a valid username or email"
+msgstr ""
+
+#: views.py:1576
+msgid "Enter a valid positive value number"
+msgstr ""
+
+#: views.py:1663
 msgid "Cannot update attempt review status"
 msgstr ""
 
-#: views.py:1998
+#: views.py:1945
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:2004
+#: views.py:1951
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:2023
+#: views.py:1970
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
