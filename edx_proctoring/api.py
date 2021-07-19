@@ -850,8 +850,6 @@ def update_exam_attempt(attempt_id, **kwargs):
         # only allow a limit set of fields to update
         # namely because status transitions can trigger workflow
         if key not in [
-                'last_poll_timestamp',
-                'last_poll_ipaddr',
                 'is_status_acknowledged',
                 'time_remaining_seconds',
         ]:

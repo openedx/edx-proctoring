@@ -2353,24 +2353,17 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         with self.assertRaises(ProctoredExamPermissionDenied):
             update_exam_attempt(
                 exam_attempt.id,
-                last_poll_timestamp=datetime.utcnow(),
-                last_poll_ipaddr='1.1.1.1',
                 time_remaining_seconds=600,
                 status='foo'
             )
 
-        now = datetime.now(pytz.UTC)
         update_exam_attempt(
             exam_attempt.id,
-            last_poll_timestamp=now,
-            last_poll_ipaddr='1.1.1.1',
             time_remaining_seconds=600,
         )
 
         attempt = get_exam_attempt_by_id(exam_attempt.id)
 
-        self.assertEqual(attempt['last_poll_timestamp'], now)
-        self.assertEqual(attempt['last_poll_ipaddr'], '1.1.1.1')
         self.assertEqual(attempt['time_remaining_seconds'], 600)
 
     @ddt.data(

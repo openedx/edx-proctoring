@@ -428,8 +428,6 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
         'proctored_exam',
         'started_at',
         'completed_at',
-        'last_poll_timestamp',
-        'last_poll_ipaddr',
         'attempt_code',
         'external_id',
         'allowed_time_limit_mins',

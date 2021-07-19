@@ -5776,7 +5776,6 @@ class TestUserRetirement(LoggedInTestCase):
             proctored_exam=proctored_exam,
             user=self.user_to_retire,
             student_name='me',
-            last_poll_ipaddr='127.0.0.1'
         )
 
         # Run the retirement command
@@ -5786,7 +5785,6 @@ class TestUserRetirement(LoggedInTestCase):
 
         retired_attempt = ProctoredExamStudentAttempt.objects.filter(user_id=self.user_to_retire.id).first()
         assert retired_attempt.student_name == ''
-        assert retired_attempt.last_poll_ipaddr is None
 
     def test_retire_user_exam_attempt_history(self):
         """ Retiring a user should obfuscate PII for exam attempt history and return a 204 status """
@@ -5796,7 +5794,6 @@ class TestUserRetirement(LoggedInTestCase):
             proctored_exam=proctored_exam,
             user=self.user_to_retire,
             student_name='me',
-            last_poll_ipaddr='127.0.0.1'
         )
 
         # Run the retirement command
@@ -5806,7 +5803,6 @@ class TestUserRetirement(LoggedInTestCase):
         retired_attempt_history = ProctoredExamStudentAttemptHistory \
             .objects.filter(user_id=self.user_to_retire.id).first()
         assert retired_attempt_history.student_name == ''
-        assert retired_attempt_history.last_poll_ipaddr is None
 
     def test_retire_user_allowances(self):
         """ Retiring a user should delete their allowances and return a 204 """

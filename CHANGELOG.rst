@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.20.1] - 2021-07-20
+~~~~~~~~~~~~~~~~~~~~~
+* Removed use of IP fields in proctored exam attempt.
+
 [3.20.0] - 2021-07-19
 ~~~~~~~~~~~~~~~~~~~~~
 * Added Django 3.0, 3.1 & 3.2 Support
