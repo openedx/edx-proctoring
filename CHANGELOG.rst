@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.20.0] - 2021-07-19
+~~~~~~~~~~~~~~~~~~~~~
+* Added Django 3.0, 3.1 & 3.2 Support
+
 [3.19.0] - 2021-07-16
 ~~~~~~~~~~~~~~~~~~~~~
 * Updated allowance modal to allow bulk allowances to be added.
