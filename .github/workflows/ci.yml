@@ -23,6 +23,9 @@ jobs:
         toxenv:
           - django22-drf310
           - django22-drflatest
+          - django30-drflatest
+          - django31-drflatest
+          - django32-drflatest
           - quality
           - pii_check
           - version_check
