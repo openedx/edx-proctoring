@@ -402,7 +402,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     is_sample_attempt = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Sample Attempt"))
 
     # Note - this is currently unset
-    student_name = models.CharField(max_length=255)
+    student_name = models.CharField(max_length=255, null=True)
 
     # what review policy was this exam submitted under
     # Note that this is not a foreign key because
@@ -499,7 +499,7 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     is_sample_attempt = models.BooleanField(default=False)
 
     # Note - this is currently unset
-    student_name = models.CharField(max_length=255)
+    student_name = models.CharField(max_length=255, null=True)
 
     # what review policy was this exam submitted under
     # Note that this is not a foreign key because
