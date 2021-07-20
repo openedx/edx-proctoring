@@ -364,8 +364,8 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     Information about the Student Attempt on a
     Proctored Exam.
 
-    .. pii: new attempts log the student's name and IP
-    .. pii_types: name, ip
+    .. pii: new attempts log the student's name
+    .. pii_types: name
     .. pii_retirement: local_api
     """
     objects = ProctoredExamStudentAttemptManager()
@@ -379,11 +379,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     # completed_at means when the attempt was 'submitted'
     completed_at = models.DateTimeField(null=True)
-
-    # These two fields have been deprecated.
-    # They were used in client polling that no longer exists.
-    last_poll_timestamp = models.DateTimeField(null=True)
-    last_poll_ipaddr = models.CharField(max_length=32, null=True)
 
     # this will be a unique string ID that the user
     # will have to use when starting the proctored exam
@@ -466,8 +461,8 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     This should be the same schema as ProctoredExamStudentAttempt
     but will record (for audit history) all entries that have been updated.
 
-    .. pii: new attempts log the student's name and IP
-    .. pii_types: name, ip
+    .. pii: new attempts log the student's name
+    .. pii_types: name
     .. pii_retirement: local_api
     """
 
@@ -510,11 +505,6 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     # Note that this is not a foreign key because
     # this ID might point to a record that is in the History table
     review_policy_id = models.IntegerField(null=True)
-
-    # These two fields have been deprecated.
-    # They were used in client polling that no longer exists.
-    last_poll_timestamp = models.DateTimeField(null=True)
-    last_poll_ipaddr = models.CharField(max_length=32, null=True)
 
     # Marks whether the attempt at this current state is able to be resumed by user
     # Only those attempts which had an error state before, but

@@ -84,7 +84,6 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
     # of returning raw `datetime` objects instead of unicode.
     started_at = DateTimeField(format=None)
     completed_at = DateTimeField(format=None)
-    last_poll_timestamp = DateTimeField(format=None)
 
     class Meta:
         """
@@ -95,8 +94,8 @@ class ProctoredExamStudentAttemptSerializer(serializers.ModelSerializer):
         fields = (
             "id", "created", "modified", "user", "started_at", "completed_at",
             "external_id", "status", "proctored_exam", "allowed_time_limit_mins",
-            "attempt_code", "is_sample_attempt", "taking_as_proctored", "last_poll_timestamp",
-            "last_poll_ipaddr", "review_policy_id", "student_name", "is_status_acknowledged",
+            "attempt_code", "is_sample_attempt", "taking_as_proctored",
+            "review_policy_id", "student_name", "is_status_acknowledged",
             "time_remaining_seconds", "is_resumable"
         )
 
