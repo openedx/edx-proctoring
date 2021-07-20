@@ -299,10 +299,10 @@ Release a new version of edx-proctoring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * Update the version in ``edx_proctoring/__init__.py`` and ``package.json``
+* Describe your changes in `CHANGELOG.rst`
 * Create a `new release on GitHub <https://github.com/edx/edx-proctoring/releases>`_ using the version number
-* Send an email to release-notifications@edx.org announcing the new version
 * Update edx-platform to use the new version
-    * In edx-platform, create a branch and update the requirements/edx/base.in file to reflect the new tagged branch.
+    * In edx-platform, create a branch and update the requirements/edx/base.txt, development.txt, and testing.txt files to reflect the new tagged branch.
 * create a PR of this branch in edx-platform onto edx-platform:master
 * Once the PR onto edx-platform has been merged, the updated edx-proctoring will be live in production when the normally scheduled release completes.
 
