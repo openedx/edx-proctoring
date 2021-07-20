@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.20.3] - 2021-07-21
+~~~~~~~~~~~~~~~~~~~~~
+* Removed use of name field in proctored exam attempt.
+
 [3.20.2] - 2021-07-21
 ~~~~~~~~~~~~~~~~~~~~~
 * Removed IP fields in proctored exam attempt from the DB

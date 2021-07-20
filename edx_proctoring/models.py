@@ -364,9 +364,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     Information about the Student Attempt on a
     Proctored Exam.
 
-    .. pii: new attempts log the student's name
-    .. pii_types: name
-    .. pii_retirement: local_api
+    .. no_pii:
     """
     objects = ProctoredExamStudentAttemptManager()
 
@@ -401,9 +399,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # the proctoring software
     is_sample_attempt = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Sample Attempt"))
 
-    # Note - this is currently unset
-    student_name = models.CharField(max_length=255, null=True)
-
     # what review policy was this exam submitted under
     # Note that this is not a foreign key because
     # this ID might point to a record that is in the History table
@@ -428,7 +423,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         verbose_name = 'proctored exam attempt'
 
     @classmethod
-    def create_exam_attempt(cls, exam_id, user_id, student_name, attempt_code,
+    def create_exam_attempt(cls, exam_id, user_id, attempt_code,
                             taking_as_proctored, is_sample_attempt, external_id,
                             review_policy_id=None, status=None, time_remaining_seconds=None):
         """
@@ -439,7 +434,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         return cls.objects.create(
             proctored_exam_id=exam_id,
             user_id=user_id,
-            student_name=student_name,
             attempt_code=attempt_code,
             taking_as_proctored=taking_as_proctored,
             is_sample_attempt=is_sample_attempt,
@@ -461,9 +455,7 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     This should be the same schema as ProctoredExamStudentAttempt
     but will record (for audit history) all entries that have been updated.
 
-    .. pii: new attempts log the student's name
-    .. pii_types: name
-    .. pii_retirement: local_api
+    .. no_pii:
     """
 
     user = models.ForeignKey(USER_MODEL, db_index=True, on_delete=models.CASCADE)
@@ -497,9 +489,6 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     # Whether this attampt is considered a sample attempt, e.g. to try out
     # the proctoring software
     is_sample_attempt = models.BooleanField(default=False)
-
-    # Note - this is currently unset
-    student_name = models.CharField(max_length=255, null=True)
 
     # what review policy was this exam submitted under
     # Note that this is not a foreign key because

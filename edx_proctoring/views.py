@@ -81,8 +81,7 @@ from edx_proctoring.models import (
     ProctoredExamSoftwareSecureReview,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAllowanceHistory,
-    ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptHistory
+    ProctoredExamStudentAttempt
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import (
@@ -2025,19 +2024,6 @@ class UserRetirement(AuthenticatedAPIView):
     """
     Retire user personally-identifiable information (PII) for a user
     """
-    def _retire_exam_attempts_user_info(self, user_id):
-        """ Remove PII for exam attempts and exam history """
-        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id)
-        if attempts:
-            for attempt in attempts:
-                attempt.student_name = ''
-                attempt.save()
-
-        attempts_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=user_id)
-        if attempts_history:
-            for attempt_history in attempts_history:
-                attempt_history.student_name = ''
-                attempt_history.save()
 
     def _retire_user_allowances(self, user_id):
         """ Clear user allowance values """
@@ -2057,7 +2043,6 @@ class UserRetirement(AuthenticatedAPIView):
             return Response(status=403)
         code = 204
 
-        self._retire_exam_attempts_user_info(user_id)
         self._retire_user_allowances(user_id)
 
         return Response(status=code)
