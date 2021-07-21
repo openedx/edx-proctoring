@@ -5293,23 +5293,23 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         )
 
         # Create expected dictionary by getting each users allowance seperately
-        first_user = user_list[0].id
+        first_user = user_list[0].username
         first_user_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(exam1.id, first_user,
                                                                                     'additional_time_granted')
         first_serialized_allowance = ProctoredExamStudentAllowanceSerializer(first_user_allowance).data
-        second_user = user_list[1].id
+        second_user = user_list[1].username
         second_user_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(exam1.id, second_user,
                                                                                      'additional_time_granted')
         second_serialized_allowance = ProctoredExamStudentAllowanceSerializer(second_user_allowance).data
-        third_user = user_list[2].id
+        third_user = user_list[2].username
         third_user_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(exam1.id, third_user,
                                                                                     'additional_time_granted')
         third_serialized_allowance = ProctoredExamStudentAllowanceSerializer(third_user_allowance).data
-        expected_response = {
-            'grouped_allowances': {str(first_user): [first_serialized_allowance],
-                                   str(second_user): [second_serialized_allowance],
-                                   str(third_user): [third_serialized_allowance]}
-        }
+        expected_response = {{
+                                str(first_user): [first_serialized_allowance],
+                                str(second_user): [second_serialized_allowance],
+                                str(third_user): [third_serialized_allowance]}
+                             }
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -5372,9 +5372,7 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(response_data), 1)
-        grouped_allowances = response_data['grouped_allowances']
-        self.assertEqual(len(grouped_allowances), 0)
+        self.assertEqual(len(response_data), 0)
 
     def test_get_grouped_allowances_non_global_staff(self):
         """
@@ -5419,9 +5417,7 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(response_data), 1)
-        grouped_allowances = response_data['grouped_allowances']
-        self.assertEqual(len(grouped_allowances), 3)
+        self.assertEqual(len(response_data), 3)
 
 
 class TestActiveExamsForUserView(LoggedInTestCase):
