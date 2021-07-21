@@ -5293,22 +5293,22 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         )
 
         # Create expected dictionary by getting each users allowance seperately
-        first_user = user_list[0].username
+        first_user = user_list[0].id
         first_user_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(exam1.id, first_user,
                                                                                     'additional_time_granted')
         first_serialized_allowance = ProctoredExamStudentAllowanceSerializer(first_user_allowance).data
-        second_user = user_list[1].username
+        second_user = user_list[1].id
         second_user_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(exam1.id, second_user,
                                                                                      'additional_time_granted')
         second_serialized_allowance = ProctoredExamStudentAllowanceSerializer(second_user_allowance).data
-        third_user = user_list[2].username
+        third_user = user_list[2].id
         third_user_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(exam1.id, third_user,
                                                                                     'additional_time_granted')
         third_serialized_allowance = ProctoredExamStudentAllowanceSerializer(third_user_allowance).data
         expected_response = {{
-                                str(first_user): [first_serialized_allowance],
-                                str(second_user): [second_serialized_allowance],
-                                str(third_user): [third_serialized_allowance]}
+                                str(user_list[0].username): [first_serialized_allowance],
+                                str(user_list[1].username): [second_serialized_allowance],
+                                str(user_list[2].username): [third_serialized_allowance]}
                              }
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
