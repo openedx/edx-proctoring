@@ -5305,11 +5305,10 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         third_user_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(exam1.id, third_user,
                                                                                     'additional_time_granted')
         third_serialized_allowance = ProctoredExamStudentAllowanceSerializer(third_user_allowance).data
-        expected_response = {{
-                                str(user_list[0].username): [first_serialized_allowance],
-                                str(user_list[1].username): [second_serialized_allowance],
-                                str(user_list[2].username): [third_serialized_allowance]}
-                             }
+        expected_response = {
+                                user_list[0].username: [first_serialized_allowance],
+                                user_list[1].username: [second_serialized_allowance],
+                                user_list[2].username: [third_serialized_allowance]}
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
