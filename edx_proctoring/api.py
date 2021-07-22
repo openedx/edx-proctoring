@@ -1060,7 +1060,6 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,
         user_id,
-        '',  # student name is TBD
         attempt_code,
         taking_as_proctored,
         exam['is_practice_exam'],

@@ -220,12 +220,11 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         attempt = ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=proctored_exam.id,
             user_id=1,
-            student_name="John. D",
             allowed_time_limit_mins=10,
             attempt_code="123456",
             taking_as_proctored=True,
             is_sample_attempt=True,
-            external_id=1
+            external_id="external"
         )
 
         # No entry in the History table on creation of the Allowance entry.
@@ -239,18 +238,17 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
 
         # make sure we can ready it back with helper class method
         deleted_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
-        self.assertEqual(deleted_item.student_name, "John. D")
+        self.assertEqual(deleted_item.external_id, "external")
 
-        # re-create and delete again using same attempt_cde
+        # re-create and delete again using same attempt_code
         attempt = ProctoredExamStudentAttempt.objects.create(
             proctored_exam_id=proctored_exam.id,
             user_id=1,
-            student_name="John. D Updated",
             allowed_time_limit_mins=10,
             attempt_code="123456",
             taking_as_proctored=True,
             is_sample_attempt=True,
-            external_id=1
+            external_id="updated"
         )
 
         attempt.delete_exam_attempt()
@@ -259,7 +257,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         self.assertEqual(len(attempt_history), 2)
 
         deleted_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
-        self.assertEqual(deleted_item.student_name, "John. D Updated")
+        self.assertEqual(deleted_item.external_id, "updated")
 
     def test_update_proctored_exam_attempt(self):
         """
@@ -276,7 +274,6 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
             proctored_exam_id=proctored_exam.id,
             user_id=1,
             status=ProctoredExamStudentAttemptStatus.created,
-            student_name="John. D",
             allowed_time_limit_mins=10,
             attempt_code="123456",
             taking_as_proctored=True,
@@ -289,7 +286,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         self.assertEqual(len(attempt_history), 0)
 
         # re-saving, but not changing status should not make an archive copy
-        attempt.student_name = 'John. D Updated'
+        attempt.external_id = "changed"
         attempt.save()
 
         attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
@@ -304,7 +301,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
 
         # make sure we can ready it back with helper class method
         updated_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
-        self.assertEqual(updated_item.student_name, "John. D Updated")
+        self.assertEqual(updated_item.external_id, "changed")
         self.assertEqual(updated_item.status, ProctoredExamStudentAttemptStatus.created)
 
     def test_get_exam_attempts(self):
@@ -324,7 +321,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         for i in range(90):
             user = User.objects.create(username='tester{0}'.format(i), email='tester{0}@test.com'.format(i))
             ProctoredExamStudentAttempt.create_exam_attempt(
-                proctored_exam.id, user.id, 'test_name{0}'.format(i),
+                proctored_exam.id, user.id,
                 'test_attempt_code{0}'.format(i), True, False, 'test_external_id{0}'.format(i)
             )
 
@@ -355,7 +352,6 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         attempt = ProctoredExamStudentAttempt.create_exam_attempt(
             proctored_exam.id,
             self.user.id,
-            'test_name{0}'.format(self.user.id),
             'test_attempt_code{0}'.format(self.user.id),
             True,
             False,
@@ -422,7 +418,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         # Create a user and their attempt
         user = User.objects.create(username='testerresumable', email='testerresumable@test.com')
         ProctoredExamStudentAttempt.create_exam_attempt(
-            proctored_exam.id, user.id, 'test_name_resumable',
+            proctored_exam.id, user.id,
             'test_attempt_code_resumable', True, False, 'test_external_id_resumable'
         )
 
