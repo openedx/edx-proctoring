@@ -433,7 +433,6 @@ class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
         'allowed_time_limit_mins',
         'taking_as_proctored',
         'is_sample_attempt',
-        'student_name',
         'review_policy_id',
         'is_status_acknowledged',
         'time_remaining_seconds'
