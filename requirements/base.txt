@@ -16,9 +16,9 @@ celery==5.0.4
     #   event-tracking
 certifi==2021.5.30
     # via requests
-cffi==1.14.5
+cffi==1.14.6
     # via cryptography
-chardet==4.0.0
+charset-normalizer==2.0.3
     # via requests
 click==7.1.2
     # via
@@ -59,7 +59,7 @@ django-model-utils==4.1.1
     # via
     #   -r requirements/base.in
     #   edx-when
-django-waffle==2.2.0
+django-waffle==2.2.1
     # via
     #   -r requirements/base.in
     #   edx-django-utils
@@ -78,12 +78,12 @@ drf-jwt==1.19.0
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   edx-drf-extensions
-edx-django-utils==4.1.0
+edx-django-utils==4.2.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   edx-when
-edx-drf-extensions==6.5.0
+edx-drf-extensions==6.6.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -92,7 +92,7 @@ edx-opaque-keys==2.2.2
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
-edx-rest-api-client==5.3.0
+edx-rest-api-client==5.4.0
     # via -r requirements/base.in
 edx-when==2.0.0
     # via -r requirements/base.in
@@ -102,7 +102,7 @@ fs==2.4.13
     # via xblock
 future==0.18.2
     # via pyjwkest
-idna==2.10
+idna==3.2
     # via requests
 jsonfield2==3.0.3
     # via
@@ -136,11 +136,11 @@ pyjwt[crypto]==1.7.1
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-rest-api-client
-pymongo==3.11.4
+pymongo==3.12.0
     # via
     #   edx-opaque-keys
     #   event-tracking
-python-dateutil==2.8.1
+python-dateutil==2.8.2
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -155,7 +155,7 @@ pytz==2021.1
     #   xblock
 pyyaml==5.4.1
     # via xblock
-requests==2.25.1
+requests==2.26.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -192,7 +192,7 @@ vine==5.0.0
     #   kombu
 wcwidth==0.2.5
     # via prompt-toolkit
-web-fragments==1.0.0
+web-fragments==1.1.0
     # via xblock
 webob==1.8.7
     # via xblock
