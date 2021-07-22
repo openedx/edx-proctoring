@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.20.6] - 2021-07-22
+~~~~~~~~~~~~~~~~~~~~~
+* Removed use of name field in proctored exam attempt admin.
+
 [3.20.5] - 2021-07-21
 ~~~~~~~~~~~~~~~~~~~~~
 * No changes, gets tag and internal version in sync
