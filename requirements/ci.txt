@@ -4,11 +4,11 @@
 #
 #    make upgrade
 #
-appdirs==1.4.4
+backports.entry-points-selectable==1.1.0
     # via virtualenv
 certifi==2021.5.30
     # via requests
-chardet==4.0.0
+charset-normalizer==2.0.3
     # via requests
 codecov==2.1.11
     # via -r requirements/ci.in
@@ -20,17 +20,19 @@ filelock==3.0.12
     # via
     #   tox
     #   virtualenv
-idna==2.10
+idna==3.2
     # via requests
 packaging==21.0
     # via tox
+platformdirs==2.0.2
+    # via virtualenv
 pluggy==0.13.1
     # via tox
 py==1.10.0
     # via tox
 pyparsing==2.4.7
     # via packaging
-requests==2.25.1
+requests==2.26.0
     # via codecov
 six==1.16.0
     # via
@@ -38,7 +40,7 @@ six==1.16.0
     #   virtualenv
 toml==0.10.2
     # via tox
-tox==3.23.1
+tox==3.24.0
     # via
     #   -r requirements/ci.in
     #   tox-battery
@@ -46,5 +48,5 @@ tox-battery==0.6.1
     # via -r requirements/ci.in
 urllib3==1.26.6
     # via requests
-virtualenv==20.4.7
+virtualenv==20.6.0
     # via tox
