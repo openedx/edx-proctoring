@@ -2,8 +2,8 @@ describe('ProctoredExamAllowanceView', function() {
     'use strict';
 
     var html = '';
-    var expectedProctoredAllowanceJson = [
-        {
+    var expectedProctoredAllowanceJson = [{
+        student: [{
             created: '2015-08-10T09:15:45Z',
             id: 1,
             modified: '2015-08-10T09:15:45Z',
@@ -24,7 +24,7 @@ describe('ProctoredExamAllowanceView', function() {
                 username: 'testuser1',
                 email: 'testuser1@test.com'
             }
-        }
+        }]}
     ];
 
     beforeEach(function() {
@@ -96,44 +96,5 @@ describe('ProctoredExamAllowanceView', function() {
             .toContain('Additional time (minutes)');
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
             .toContain('Test Exam');
-
-        // delete the proctored exam allowance one by one
-        this.server.respondWith('DELETE', '/api/edx_proctoring/v1/proctored_exam/grouped/allowance',
-            [
-                200,
-                {
-                    'Content-Type': 'application/json'
-                },
-                JSON.stringify([])
-            ]
-        );
-
-        // again fetch the results after the proctored exam allowance deletion
-        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/grouped/allowance',
-            [
-                200,
-                {
-                    'Content-Type': 'application/json'
-                },
-                JSON.stringify([])
-            ]
-        );
-
-        // trigger the remove allowance event.
-        spyOnEvent('.remove_allowance', 'click');
-        $('.remove_allowance').trigger('click');
-
-        // process the deleted allowance requests.
-        this.server.respond();
-        this.server.respond();
-
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
-            .not.toContain('testuser1');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
-            .not.toContain('testuser1@test.com');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
-            .not.toContain('Additional time (minutes)');
-        expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
-            .not.toContain('Test Exam');
     });
 });
