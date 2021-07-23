@@ -850,8 +850,6 @@ def update_exam_attempt(attempt_id, **kwargs):
         # only allow a limit set of fields to update
         # namely because status transitions can trigger workflow
         if key not in [
-                'last_poll_timestamp',
-                'last_poll_ipaddr',
                 'is_status_acknowledged',
                 'time_remaining_seconds',
         ]:
@@ -1062,7 +1060,6 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
         exam_id,
         user_id,
-        '',  # student name is TBD
         attempt_code,
         taking_as_proctored,
         exam['is_practice_exam'],

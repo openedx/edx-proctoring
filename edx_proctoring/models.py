@@ -364,9 +364,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     Information about the Student Attempt on a
     Proctored Exam.
 
-    .. pii: new attempts log the student's name and IP
-    .. pii_types: name, ip
-    .. pii_retirement: local_api
+    .. no_pii:
     """
     objects = ProctoredExamStudentAttemptManager()
 
@@ -379,11 +377,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     # completed_at means when the attempt was 'submitted'
     completed_at = models.DateTimeField(null=True)
-
-    # These two fields have been deprecated.
-    # They were used in client polling that no longer exists.
-    last_poll_timestamp = models.DateTimeField(null=True)
-    last_poll_ipaddr = models.CharField(max_length=32, null=True)
 
     # this will be a unique string ID that the user
     # will have to use when starting the proctored exam
@@ -405,9 +398,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # Whether this attempt is considered a sample attempt, e.g. to try out
     # the proctoring software
     is_sample_attempt = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Sample Attempt"))
-
-    # Note - this is currently unset
-    student_name = models.CharField(max_length=255)
 
     # what review policy was this exam submitted under
     # Note that this is not a foreign key because
@@ -433,7 +423,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         verbose_name = 'proctored exam attempt'
 
     @classmethod
-    def create_exam_attempt(cls, exam_id, user_id, student_name, attempt_code,
+    def create_exam_attempt(cls, exam_id, user_id, attempt_code,
                             taking_as_proctored, is_sample_attempt, external_id,
                             review_policy_id=None, status=None, time_remaining_seconds=None):
         """
@@ -444,7 +434,6 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         return cls.objects.create(
             proctored_exam_id=exam_id,
             user_id=user_id,
-            student_name=student_name,
             attempt_code=attempt_code,
             taking_as_proctored=taking_as_proctored,
             is_sample_attempt=is_sample_attempt,
@@ -466,9 +455,7 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     This should be the same schema as ProctoredExamStudentAttempt
     but will record (for audit history) all entries that have been updated.
 
-    .. pii: new attempts log the student's name and IP
-    .. pii_types: name, ip
-    .. pii_retirement: local_api
+    .. no_pii:
     """
 
     user = models.ForeignKey(USER_MODEL, db_index=True, on_delete=models.CASCADE)
@@ -503,18 +490,10 @@ class ProctoredExamStudentAttemptHistory(TimeStampedModel):
     # the proctoring software
     is_sample_attempt = models.BooleanField(default=False)
 
-    # Note - this is currently unset
-    student_name = models.CharField(max_length=255)
-
     # what review policy was this exam submitted under
     # Note that this is not a foreign key because
     # this ID might point to a record that is in the History table
     review_policy_id = models.IntegerField(null=True)
-
-    # These two fields have been deprecated.
-    # They were used in client polling that no longer exists.
-    last_poll_timestamp = models.DateTimeField(null=True)
-    last_poll_ipaddr = models.CharField(max_length=32, null=True)
 
     # Marks whether the attempt at this current state is able to be resumed by user
     # Only those attempts which had an error state before, but

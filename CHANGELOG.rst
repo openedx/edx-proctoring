@@ -14,6 +14,31 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.20.6] - 2021-07-22
+~~~~~~~~~~~~~~~~~~~~~
+* Removed use of name field in proctored exam attempt admin.
+
+[3.20.5] - 2021-07-21
+~~~~~~~~~~~~~~~~~~~~~
+* No changes, gets tag and internal version in sync
+
+[3.20.4] - 2021-07-21
+~~~~~~~~~~~~~~~~~~~~~
+* Removed use of name field in proctored exam attempt.
+
+[3.20.2] - 2021-07-21
+~~~~~~~~~~~~~~~~~~~~~
+* Removed IP fields in proctored exam attempt from the DB
+* Made name field in proctored exam attempt nullable
+
+[3.20.1] - 2021-07-20
+~~~~~~~~~~~~~~~~~~~~~
+* Removed use of IP fields in proctored exam attempt.
+
+[3.20.0] - 2021-07-19
+~~~~~~~~~~~~~~~~~~~~~
+* Added Django 3.0, 3.1 & 3.2 Support
+
 [3.19.0] - 2021-07-16
 ~~~~~~~~~~~~~~~~~~~~~
 * Updated allowance modal to allow bulk allowances to be added.
