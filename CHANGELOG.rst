@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.21.1] - 2021-07-26
+~~~~~~~~~~~~~~~~~~~~~
+* Removed name field in proctored exam attempt from the DB.
+
 [3.21.0] - 2021-07-23
 ~~~~~~~~~~~~~~~~~~~~~
 * Added feature behind the bulk allowance waffle flag that groups allowances by users.
