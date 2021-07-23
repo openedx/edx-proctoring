@@ -64,6 +64,8 @@ django-model-utils==4.1.1
     # via
     #   -r requirements/base.in
     #   edx-when
+django-simple-history==3.0.0
+    # via -r requirements/base.in
 django-waffle==2.2.1
     # via
     #   -r requirements/base.in
