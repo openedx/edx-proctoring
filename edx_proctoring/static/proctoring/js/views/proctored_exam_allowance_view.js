@@ -19,9 +19,17 @@ edx = edx || {};
             /* unfortunately we have to make some assumptions about what is being set up in HTML */
             this.setElement($('.special-allowance-container'));
             this.course_id = this.$el.data('course-id');
-
+            /* we need to check if the bulk allowance waffle flag is enabled */
+            this.enableBulkAllowance =
+                this.$el.data('enable-bulk-allowance');
+            this.enableBulkAllowance = this.enableBulkAllowance &&
+                this.enableBulkAllowance.toLowerCase() === 'true';
             /* this should be moved to a 'data' attribute in HTML */
-            this.template_url = '/static/proctoring/templates/course_allowances.underscore';
+            if (this.enableBulkAllowance) {
+                this.template_url = '/static/proctoring/templates/course_grouped_allowances.underscore';
+            } else {
+                this.template_url = '/static/proctoring/templates/course_allowances.underscore';
+            }
             this.template = null;
             this.initial_url = this.collection.url;
             this.allowance_url = this.initial_url + 'allowance';
@@ -32,11 +40,11 @@ edx = edx || {};
             this.loadTemplateData();
 
             this.proctoredExamCollection.url = this.proctoredExamCollection.url + this.course_id;
-            this.collection.url = this.initial_url + this.course_id + '/allowance';
         },
         events: {
             'click #add-allowance': 'showAddModal',
-            'click .remove_allowance': 'removeAllowance'
+            'click .remove_allowance': 'removeAllowance',
+            'click .accordion-trigger': 'toggleAllowanceAccordion'
         },
         getCSRFToken: function() {
             var cookieValue = null;
@@ -75,7 +83,6 @@ edx = edx || {};
                     },
                     success: function() {
                         // fetch the allowances again.
-                        self.collection.url = self.initial_url + self.course_id + '/allowance';
                         self.hydrate();
                     }
                 }
@@ -113,6 +120,11 @@ edx = edx || {};
             /* we might - at some point - add a visual element to the */
             /* loading, like a spinner */
             var self = this;
+            if (self.enableBulkAllowance) {
+                self.collection.url = self.initial_url + self.course_id + '/grouped/allowance';
+            } else {
+                self.collection.url = self.initial_url + self.course_id + '/allowance';
+            }
             self.collection.fetch({
                 success: function() {
                     self.render();
@@ -126,31 +138,32 @@ edx = edx || {};
             var self = this;
             var key, i, html;
             if (this.template !== null) {
-                this.collection.each(function(item) {
-                    key = item.get('key');
-                    for (i = 0; i < self.allowance_types.length; i += 1) {
-                        if (key === self.allowance_types[i][0]) {
-                            item.set('key_display_name', self.allowance_types[i][1]);
-                            break;
+                if (!this.enableBulkAllowance) {
+                    this.collection.each(function(item) {
+                        key = item.get('key');
+                        for (i = 0; i < self.allowance_types.length; i += 1) {
+                            if (key === self.allowance_types[i][0]) {
+                                item.set('key_display_name', self.allowance_types[i][1]);
+                                break;
+                            }
                         }
-                    }
-                    if (!item.has('key_display_name')) {
-                        item.set('key_display_name', key);
-                    }
-                });
-                html = this.template({proctored_exam_allowances: this.collection.toJSON()});
+                        if (!item.has('key_display_name')) {
+                            item.set('key_display_name', key);
+                        }
+                    });
+                    html = this.template({proctored_exam_allowances: this.collection.toJSON()});
+                } else {
+                    html = this.template({proctored_exam_allowances: this.collection.toJSON()[0],
+                        allowance_types: self.allowance_types});
+                }
                 this.$el.html(html);
             }
         },
         showAddModal: function(event) {
             var self = this;
-            var enableBulkAllowance =
-                self.$el.data('enable-bulk-allowance');
-            enableBulkAllowance = enableBulkAllowance &&
-                enableBulkAllowance.toLowerCase() === 'true';
             self.proctoredExamCollection.fetch({
                 success: function() {
-                    if (!enableBulkAllowance) {
+                    if (!self.enableBulkAllowance) {
                         // eslint-disable-next-line no-new
                         new edx.instructor_dashboard.proctoring.AddAllowanceView({
                             course_id: self.course_id,
@@ -171,6 +184,28 @@ edx = edx || {};
             });
             event.stopPropagation();
             event.preventDefault();
+        },
+        toggleAllowanceAccordion: function(event) {
+            // based on code from openedx/features/course_experience/static/course_experience/js/CourseOutline.js
+            // but modified to better fit this feature's needs
+            var accordionRow, isExpanded, $toggleChevron, $contentPanel;
+            accordionRow = event.currentTarget;
+            if (accordionRow.classList.contains('accordion-trigger')) {
+                isExpanded = accordionRow.getAttribute('aria-expanded') === 'true';
+                if (!isExpanded) {
+                    $toggleChevron = $(accordionRow).find('.fa-chevron-right');
+                    $contentPanel = $('#' + accordionRow.innerText.trim());
+                    $contentPanel.show();
+                    $toggleChevron.addClass('fa-rotate-90');
+                    accordionRow.setAttribute('aria-expanded', 'true');
+                } else {
+                    $toggleChevron = $(accordionRow).find('.fa-chevron-right');
+                    $contentPanel = $('#' + accordionRow.innerText.trim());
+                    $contentPanel.hide();
+                    $toggleChevron.removeClass('fa-rotate-90');
+                    accordionRow.setAttribute('aria-expanded', 'false');
+                }
+            }
         }
     });
     this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView =

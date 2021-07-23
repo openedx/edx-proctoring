@@ -5305,10 +5305,9 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
                                                                                     'additional_time_granted')
         third_serialized_allowance = ProctoredExamStudentAllowanceSerializer(third_user_allowance).data
         expected_response = {
-            'grouped_allowances': {str(first_user): [first_serialized_allowance],
-                                   str(second_user): [second_serialized_allowance],
-                                   str(third_user): [third_serialized_allowance]}
-        }
+                                user_list[0].username: [first_serialized_allowance],
+                                user_list[1].username: [second_serialized_allowance],
+                                user_list[2].username: [third_serialized_allowance]}
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -5371,9 +5370,7 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(response_data), 1)
-        grouped_allowances = response_data['grouped_allowances']
-        self.assertEqual(len(grouped_allowances), 0)
+        self.assertEqual(len(response_data), 0)
 
     def test_get_grouped_allowances_non_global_staff(self):
         """
@@ -5418,9 +5415,7 @@ class GroupedExamAllowancesByStudent(LoggedInTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(response_data), 1)
-        grouped_allowances = response_data['grouped_allowances']
-        self.assertEqual(len(grouped_allowances), 3)
+        self.assertEqual(len(response_data), 3)
 
 
 class TestActiveExamsForUserView(LoggedInTestCase):
