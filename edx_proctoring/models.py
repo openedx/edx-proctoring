@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 
 import pytz
 from model_utils.models import TimeStampedModel
+from simple_history.models import HistoricalRecords
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -416,6 +417,8 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # Only those attempts which had an error state before, but
     # has not yet marked submitted is resumable.
     is_resumable = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Resumable"))
+
+    history = HistoricalRecords(table_name='proctoring_proctoredexamstudentattempt_history')
 
     class Meta:
         """ Meta class for this Django model """
