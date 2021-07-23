@@ -375,8 +375,15 @@ class ReviewTests(LoggedInTestCase):
         attempt = get_exam_attempt_by_id(self.attempt_id)
         self.assertEqual(attempt['status'], 'verified')
 
+        attempt, is_archived = locate_attempt_by_attempt_code(self.attempt['attempt_code'])
+        self.assertFalse(is_archived)
+        self.assertEqual(attempt.status, 'verified')
+
         # now delete the attempt, which puts it into the archive table
         remove_exam_attempt(self.attempt_id, requesting_user=self.user)
+        attempt, is_archived = locate_attempt_by_attempt_code(self.attempt['attempt_code'])
+        self.assertTrue(is_archived)
+        self.assertEqual(attempt.status, 'verified')
 
         review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=self.attempt['attempt_code'])
 

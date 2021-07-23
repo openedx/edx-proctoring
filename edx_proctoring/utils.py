@@ -22,7 +22,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
-from edx_proctoring.models import ProctoredExamStudentAttempt, ProctoredExamStudentAttemptHistory
+from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
@@ -110,23 +110,21 @@ def locate_attempt_by_attempt_code(attempt_code):
     we will return a tuple of (attempt, is_archived_attempt)
     """
     attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_code(attempt_code)
+    if attempt_obj:
+        return attempt_obj, False
 
-    if not attempt_obj:
-        # try archive table
-        attempt_obj = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
+    # retrieve attempt from history
+    attempt_obj = ProctoredExamStudentAttempt.get_historic_attempt_by_code(attempt_code)
 
-        if not attempt_obj:
-            # still can't find, error out
-            err_msg = (
-                'Could not locate attempt_code={attempt_code}'.format(attempt_code=attempt_code)
-            )
-            log.error(err_msg)
-            is_archived = None
-        else:
-            is_archived = True
-    else:
-        is_archived = False
-    return attempt_obj, is_archived
+    if attempt_obj:
+        return attempt_obj, True
+
+    # still can't find, error out
+    err_msg = (
+        'Could not locate attempt_code={attempt_code}'.format(attempt_code=attempt_code)
+    )
+    log.error(err_msg)
+    return None, None
 
 
 def emit_event(exam, event_short_name, attempt=None, override_data=None):

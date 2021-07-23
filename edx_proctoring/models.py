@@ -446,6 +446,21 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             time_remaining_seconds=time_remaining_seconds
         )  # pylint: disable=no-member
 
+    @classmethod
+    def get_historic_attempt_by_code(cls, attempt_code):
+        """
+        Make an object from the most recent history
+
+        This code bridges the improved history using django simple history
+        and the older history tables
+        """
+        attempt_history = cls.history.filter(attempt_code=attempt_code)
+        if attempt_history:
+            return attempt_history.latest("modified").instance
+
+        # fall back to old history table until that is removed
+        return ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
+
     def delete_exam_attempt(self):
         """
         Deletes the exam attempt object and archives it to the ProctoredExamStudentAttemptHistory table.
