@@ -32,7 +32,6 @@
 {% include 'proctored_exam/footer.html' %}
 
 <script type="text/javascript">
-
   var inProcess = false;
 
   var disableClickEvent = function () {
@@ -55,6 +54,10 @@
         var attempt_proctored = $(this).data('attempt-proctored');
         var start_immediately = $(this).data('start-immediately');
 
+        // Course waffle flag for verified name
+        var main = document.getElementById('main');
+        var isVerifiedNameEnabled = main.dataset.isVerifiedNameEnabled.toLowerCase() === 'true';
+
         if (typeof action_url === "undefined") {
           enableClickEvent();
           return false;
@@ -65,7 +68,8 @@
           {
             "exam_id": exam_id,
             "attempt_proctored": attempt_proctored,
-            "start_clock": start_immediately
+            "start_clock": start_immediately,
+            "is_verified_name_enabled": isVerifiedNameEnabled
           },
           function (data) {
             // reload the page, because we've unlocked it

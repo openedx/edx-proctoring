@@ -891,7 +891,9 @@ def _create_and_decline_attempt(exam_id, user_id):
     )
 
 
-def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, review_policy):
+def _register_proctored_exam_attempt(
+    user_id, exam_id, exam, attempt_code, review_policy, verified_name=None,
+):
     """
     Call the proctoring backend to register the exam attempt. If there are exceptions
     the external_id returned might be None. If the backend have onboarding status errors,
@@ -905,16 +907,19 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
     review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
 
     # get the name of the user, if the service is available
-    full_name = ''
     email = None
     external_id = None
     force_status = None
+    full_name = verified_name or ''
+    profile_name = ''
 
     credit_service = get_runtime_service('credit')
     if credit_service:
         credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
         if credit_state:
-            full_name = credit_state['profile_fullname']
+            profile_name = credit_state['profile_fullname']
+            if not verified_name:
+                full_name = profile_name
             email = credit_state['student_email']
 
     context = {
@@ -993,10 +998,62 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
         )
         log.error(log_msg)
 
-    return external_id, force_status
+    return external_id, force_status, full_name, profile_name
 
 
-def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
+def _get_verified_name(user_id, name_affirmation_service):
+    """
+    Get the user's verified name if it exists.
+
+    Returns a verified name object (or None), as well as a boolean describing whether a
+    new verified name should be created along with the proctored exam attempt.
+    """
+    verified_name = None
+    should_create_verified_name = False
+
+    user = USER_MODEL.objects.get(id=user_id)
+    verified_name_obj = name_affirmation_service.get_verified_name(user)
+
+    if not verified_name_obj or not verified_name_obj.is_verified:
+        # If the user's verified name is still pending ID verification, we still want to
+        # use it. However, there is no guarantee that it will be verified later, so create
+        # a new entry to be verified by this exam attempt.
+        should_create_verified_name = True
+
+    if verified_name_obj:
+        verified_name = verified_name_obj.verified_name
+
+    return verified_name, should_create_verified_name
+
+
+def _create_verified_name(user_id, full_name, profile_name, attempt_id, name_affirmation_service):
+    """
+    Create a verified name with the proctored exam attempt ID.
+    """
+    if not full_name or not profile_name:
+        # Log a warning instead of raising an exception if verified name creation fails
+        # due an empty string.
+        log_msg = (
+            'Attempted to create a verified name for user_id={user_id} linked to '
+            'proctored_exam_attempt_id={proctored_exam_attempt_id}, but an empty '
+            'string was supplied for the name. Skipping verified name creation.'.format(
+                user_id=user_id, proctored_exam_attempt_id=attempt_id,
+            )
+        )
+        log.warning(log_msg)
+    else:
+        user = USER_MODEL.objects.get(id=user_id)
+        name_affirmation_service.create_verified_name(
+            user,
+            verified_name=full_name,
+            profile_name=profile_name,
+            proctored_exam_attempt_id=attempt_id,
+        )
+
+
+def create_exam_attempt(
+    exam_id, user_id, taking_as_proctored=False, is_verified_name_enabled=False,
+):
     """
     Creates an exam attempt for user_id against exam_id. There should only
     be one exam_attempt per user per exam, with one exception described below.
@@ -1052,9 +1109,15 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         )
         raise StudentExamAttemptOnPastDueProctoredExam(err_msg)
 
+    name_affirmation_service = get_runtime_service('name_affirmation')
+    should_create_verified_name = False
+
     if taking_as_proctored:
-        external_id, force_status = _register_proctored_exam_attempt(
-            user_id, exam_id, exam, attempt_code, review_policy
+        verified_name = None
+        if name_affirmation_service and is_verified_name_enabled:
+            verified_name, should_create_verified_name = _get_verified_name(user_id, name_affirmation_service)
+        external_id, force_status, full_name, profile_name = _register_proctored_exam_attempt(
+            user_id, exam_id, exam, attempt_code, review_policy, verified_name,
         )
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
@@ -1068,6 +1131,10 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         status=force_status,
         time_remaining_seconds=time_remaining_seconds,
     )
+
+    # Only create a verified name after the attempt is created, as we need the attempt ID
+    if should_create_verified_name:
+        _create_verified_name(user_id, full_name, profile_name, attempt.id, name_affirmation_service)
 
     # Emit event when exam attempt created
     emit_event(exam, attempt.status, attempt=_get_exam_attempt(attempt))
@@ -1583,6 +1650,22 @@ def update_attempt_status(attempt_id, to_status,
     # we use the 'status' field as the name of the event 'verb'
     emit_event(exam, attempt['status'], attempt=attempt)
 
+    name_affirmation_service = get_runtime_service('name_affirmation')
+    if (
+        name_affirmation_service
+        and to_status == ProctoredExamStudentAttemptStatus.verified
+        and exam['is_proctored']
+    ):
+        # If the user has a verified name entry linked to this exam attempt, approve it
+        user = USER_MODEL.objects.get(id=user_id)
+        try:
+            name_affirmation_service.update_is_verified_status(
+                user, True, proctored_exam_attempt_id=attempt_id
+            )
+        except Exception:  # pylint: disable=broad-except
+            # An exception will be raised if no verified name exists, so just pass in this case
+            pass
+
     return attempt['id']
 
 
@@ -1722,7 +1805,7 @@ def _get_proctoring_escalation_email(course_id):
     return proctoring_escalation_email
 
 
-def reset_practice_exam(exam_id, user_id, requesting_user):
+def reset_practice_exam(exam_id, user_id, requesting_user, is_verified_name_enabled=False):
     """
     Resets a completed practice exam attempt back to the created state.
     """
@@ -1775,7 +1858,12 @@ def reset_practice_exam(exam_id, user_id, requesting_user):
 
     emit_event(exam, 'reset_practice_exam', attempt=_get_exam_attempt(exam_attempt_obj))
 
-    return create_exam_attempt(exam_id, user_id, taking_as_proctored=exam_attempt_obj.taking_as_proctored)
+    return create_exam_attempt(
+        exam_id,
+        user_id,
+        taking_as_proctored=exam_attempt_obj.taking_as_proctored,
+        is_verified_name_enabled=is_verified_name_enabled,
+    )
 
 
 def remove_exam_attempt(attempt_id, requesting_user):

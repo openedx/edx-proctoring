@@ -1124,6 +1124,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
         course_id = attempt['proctored_exam']['course_id']
         action = request.data.get('action')
         detail = request.data.get('detail')
+        is_verified_name_enabled = request.data.get('is_verified_name_enabled', False)
 
         err_msg = (
             'user_id={user_id} attempted to update attempt_id={attempt_id} in '
@@ -1173,6 +1174,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 attempt['proctored_exam']['id'],
                 user_id,
                 requesting_user=request.user,
+                is_verified_name_enabled=is_verified_name_enabled
             )
         elif action == 'error':
             backend = attempt['proctored_exam']['backend']
@@ -1312,6 +1314,7 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
         start_immediately = request.data.get('start_clock', 'false').lower() == 'true'
         exam_id = request.data.get('exam_id', None)
         attempt_proctored = request.data.get('attempt_proctored', 'false').lower() == 'true'
+        is_verified_name_enabled = request.data.get('is_verified_name_enabled', False)
         user_id = request.user.id
         exam = get_exam_by_id(exam_id)
 
@@ -1330,7 +1333,8 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
         exam_attempt_id = create_exam_attempt(
             exam_id=exam_id,
             user_id=user_id,
-            taking_as_proctored=attempt_proctored
+            taking_as_proctored=attempt_proctored,
+            is_verified_name_enabled=is_verified_name_enabled,
         )
 
         # if use elected not to take as proctored exam, then

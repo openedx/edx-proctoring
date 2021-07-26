@@ -83,13 +83,14 @@ edx = edx || {};
     }
 
     // Update the state of the attempt
-    function updateExamAttemptStatusPromise(actionUrl, action) {
+    function updateExamAttemptStatusPromise(actionUrl, action, isVerifiedNameEnabled) {
         return function() {
             return Promise.resolve($.ajax({
                 url: actionUrl,
                 type: 'PUT',
                 data: {
-                    action: action
+                    action: action,
+                    is_verified_name_enabled: isVerifiedNameEnabled
                 }
             }));
         };
@@ -123,7 +124,12 @@ edx = edx || {};
         var $this = $(this);
         var actionUrl = $this.data('change-state-url');
         var action = $this.data('action');
-        updateExamAttemptStatusPromise(actionUrl, action)()
+
+        // Course waffle flag for verified name
+        var main = document.getElementById('main');
+        var isVerifiedNameEnabled = main.dataset.isVerifiedNameEnabled.toLowerCase() === 'true';
+
+        updateExamAttemptStatusPromise(actionUrl, action, isVerifiedNameEnabled)()
             .then(reloadPage)
             .catch(errorHandlerGivenMessage(
                 $this,
