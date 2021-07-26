@@ -50,7 +50,7 @@ docutils==0.17.1
     # via
     #   readme-renderer
     #   rstcheck
-edx-i18n-tools==0.5.3
+edx-i18n-tools==0.7.0
     # via -r requirements/dev.in
 edx-lint==5.0.0
     # via
@@ -95,12 +95,12 @@ packaging==21.0
     # via
     #   bleach
     #   tox
-path==16.0.0
-    # via path.py
-path.py==12.5.0
+path==16.1.0
     # via
-    #   -r requirements/dev.in
     #   edx-i18n-tools
+    #   path.py
+path.py==12.5.0
+    # via -r requirements/dev.in
 pbr==5.6.0
     # via stevedore
 pep517==0.11.0
@@ -109,7 +109,7 @@ pip-tools==6.2.0
     # via -r requirements/dev.in
 pkginfo==1.7.1
     # via twine
-platformdirs==2.0.2
+platformdirs==2.1.0
     # via virtualenv
 pluggy==0.13.1
     # via
@@ -187,7 +187,7 @@ toml==0.10.2
     # via
     #   pylint
     #   tox
-tomli==1.0.4
+tomli==1.1.0
     # via pep517
 tox==3.24.0
     # via

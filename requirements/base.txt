@@ -94,7 +94,7 @@ edx-opaque-keys==2.2.2
     #   edx-when
 edx-rest-api-client==5.4.0
     # via -r requirements/base.in
-edx-when==2.0.0
+edx-when==2.1.0
     # via -r requirements/base.in
 event-tracking==1.0.4
     # via -r requirements/base.in
