@@ -52,69 +52,12 @@ For a full list of Make targets:
 
     make help
 
-Configuration
+Developing
 -------------
 
-In order to use edx-proctoring, you must obtain an account (and secret
-configuration - see below) with SoftwareSecure, which provides the proctoring
-review services that edx-proctoring integrates with.
+See the `developer guide`_ for configuration, devstack and sandbox setup, and other developer concerns.
 
-You will need to turn on the ENABLE_SPECIAL_EXAMS in lms.env.json and
-cms.env.json FEATURES dictionary::
-
-    "FEATURES": {
-        :
-        "ENABLE_SPECIAL_EXAMS": true,
-        :
-    }
-
-Also in your lms.env.json and cms.env.json file please add the following::
-
-
-    "PROCTORING_SETTINGS": {
-        "LINK_URLS": {
-            "contact_us": "{add link here}",
-            "faq": "{add link here}",
-            "online_proctoring_rules": "{add link here}",
-            "tech_requirements": "{add link here}"
-        }
-    },
-
-In your lms.auth.json file, please add the following *secure* information::
-
-    "PROCTORING_BACKENDS": {
-        "software_secure": {
-            "crypto_key": "{add SoftwareSecure crypto key here}",
-            "exam_register_endpoint": "{add endpoint to SoftwareSecure}",
-            "exam_sponsor": "{add SoftwareSecure sponsor}",
-            "organization": "{add SoftwareSecure organization}",
-            "secret_key": "{add SoftwareSecure secret key}",
-            "secret_key_id": "{add SoftwareSecure secret key id}",
-            "software_download_url": "{add SoftwareSecure download url}"
-        },
-        'DEFAULT': 'software_secure'
-    },
-
-You will need to restart services after these configuration changes for them to
-take effect.
-
-Email Templates
----------------
-
-edx-proctoring provides generic base email templates that are rendered and sent to learners based
-on changes to the status of a proctored exam attempt. They have been designed such that you may leverage Django template
-inheritance to customize their content to the proctoring backend. Because proctoring backend plugins are installed in edx-platform,
-you must create an overriding template in the edx-platform repository. The template path should be ``emails/proctoring/{backend}/{template_name}``.
-Note that your template can either completely override the base template in edx-proctoring, or it can extend the base template in order to leverage
-the existing content of the blocks within the base template, particularly if you only need to change a portion of the template.
-
-Debugging
-------------
-
-To debug with PDB, run ``pytest`` with the ``-n0`` flag. This restricts the number
-of processes in a way that is compatible with ``pytest``
-
-    pytest -n0 [file-path]
+.. _developer guide: ./docs/developing.rst
 
 License
 -------

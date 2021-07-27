@@ -95,6 +95,26 @@ How does the proctoring system work?
 
 See `system overview`_ for a description of the proctoring system and it's components.
 
+
+Email Templates
+---------------
+
+edx-proctoring provides generic base email templates that are rendered and sent to learners based
+on changes to the status of a proctored exam attempt. They have been designed such that you may leverage Django template
+inheritance to customize their content to the proctoring backend. Because proctoring backend plugins are installed in edx-platform,
+you must create an overriding template in the edx-platform repository. The template path should be ``emails/proctoring/{backend}/{template_name}``.
+Note that your template can either completely override the base template in edx-proctoring, or it can extend the base template in order to leverage
+the existing content of the blocks within the base template, particularly if you only need to change a portion of the template.
+
+Debugging
+------------
+
+To debug with PDB, run ``pytest`` with the ``-n0`` flag. This restricts the number
+of processes in a way that is compatible with ``pytest``
+
+    pytest -n0 [file-path]
+
+
 Using mockprock as a backend
 ----------------------------
 
@@ -214,7 +234,7 @@ plays, you can add the following to a sandbox's
     ...
 
 Placing these configurations here (rather than the more generic
-locations mentioned in `the README`_) will allow us to leverage the
+locations mentioned in this document) will allow us to leverage the
 power of the ansible plays used to construct and administer
 sandboxes, e.g. those run via the ``/edx/bin/update`` script.
 `More on that here.`_
@@ -252,7 +272,6 @@ a user which PT can authenticate as.
 
 .. _our spec: ./backends.rst
 .. _system overview: ./system-overview.rst
-.. _the README: https://github.com/edx/edx-proctoring
 .. _generate a public JWK keypair: https://mkjwk.org/
 .. _More on that here.: https://openedx.atlassian.net/wiki/spaces/EdxOps/pages/13960183/Sandboxes#Sandboxes-Updatingcode
 
