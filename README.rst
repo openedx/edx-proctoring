@@ -59,24 +59,6 @@ See the `developer guide`_ for configuration, devstack and sandbox setup, and ot
 
 .. _developer guide: ./docs/developing.rst
 
-Email Templates
----------------
-
-edx-proctoring provides generic base email templates that are rendered and sent to learners based
-on changes to the status of a proctored exam attempt. They have been designed such that you may leverage Django template
-inheritance to customize their content to the proctoring backend. Because proctoring backend plugins are installed in edx-platform,
-you must create an overriding template in the edx-platform repository. The template path should be ``emails/proctoring/{backend}/{template_name}``.
-Note that your template can either completely override the base template in edx-proctoring, or it can extend the base template in order to leverage
-the existing content of the blocks within the base template, particularly if you only need to change a portion of the template.
-
-Debugging
-------------
-
-To debug with PDB, run ``pytest`` with the ``-n0`` flag. This restricts the number
-of processes in a way that is compatible with ``pytest``
-
-    pytest -n0 [file-path]
-
 License
 -------
 
