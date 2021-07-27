@@ -52,51 +52,12 @@ For a full list of Make targets:
 
     make help
 
-Configuration
+Developing
 -------------
 
-In order to use edx-proctoring, you must obtain an account (and secret
-configuration - see below) with SoftwareSecure, which provides the proctoring
-review services that edx-proctoring integrates with.
+See the `developer guide`_ for configuration, devstack and sandbox setup, and other developer concerns.
 
-You will need to turn on the ENABLE_SPECIAL_EXAMS in lms.env.json and
-cms.env.json FEATURES dictionary::
-
-    "FEATURES": {
-        :
-        "ENABLE_SPECIAL_EXAMS": true,
-        :
-    }
-
-Also in your lms.env.json and cms.env.json file please add the following::
-
-
-    "PROCTORING_SETTINGS": {
-        "LINK_URLS": {
-            "contact_us": "{add link here}",
-            "faq": "{add link here}",
-            "online_proctoring_rules": "{add link here}",
-            "tech_requirements": "{add link here}"
-        }
-    },
-
-In your lms.auth.json file, please add the following *secure* information::
-
-    "PROCTORING_BACKENDS": {
-        "software_secure": {
-            "crypto_key": "{add SoftwareSecure crypto key here}",
-            "exam_register_endpoint": "{add endpoint to SoftwareSecure}",
-            "exam_sponsor": "{add SoftwareSecure sponsor}",
-            "organization": "{add SoftwareSecure organization}",
-            "secret_key": "{add SoftwareSecure secret key}",
-            "secret_key_id": "{add SoftwareSecure secret key id}",
-            "software_download_url": "{add SoftwareSecure download url}"
-        },
-        'DEFAULT': 'software_secure'
-    },
-
-You will need to restart services after these configuration changes for them to
-take effect.
+.. _developer guide: ./docs/developing.rst
 
 Email Templates
 ---------------
