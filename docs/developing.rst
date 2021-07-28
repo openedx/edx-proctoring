@@ -86,7 +86,7 @@ And for the local development module export flow should be overridden, the follo
 
 * restart devstack::
 
-    $ make stop
+    $ make dev.stop
     $ make dev.up.lms+frontend-app-learning
 
 
