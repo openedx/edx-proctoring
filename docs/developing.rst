@@ -142,9 +142,9 @@ Add it to your ``private.py``::
 
 Reinstall requirements in lms and studio.
 
-Rebuild static assets to make sure mockprock ui scripts are available::
+Rebuild static assets to make sure mockprock ui scripts are available. In devstack::
 
-   make lms-static
+   make dev.static.lms
 
 Then back in your host shell::
 
