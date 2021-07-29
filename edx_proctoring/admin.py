@@ -7,6 +7,7 @@ Django Admin pages
 from datetime import datetime, timedelta
 
 import pytz
+from simple_history.admin import SimpleHistoryAdmin
 
 from django import forms
 from django.conf import settings
@@ -418,7 +419,7 @@ class ProctoredExamAttemptForm(forms.ModelForm):
     status = forms.ChoiceField(choices=STATUS_CHOICES)
 
 
-class ProctoredExamStudentAttemptAdmin(admin.ModelAdmin):
+class ProctoredExamStudentAttemptAdmin(SimpleHistoryAdmin):
     """
     Admin panel for Proctored Exam Attempts
     """
