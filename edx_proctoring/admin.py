@@ -450,6 +450,10 @@ class ProctoredExamStudentAttemptAdmin(SimpleHistoryAdmin):
         'modified'
     ]
 
+    history_list_display = [
+        'status'
+    ]
+
     search_fields = [
         'user__username',
         'attempt_code'
