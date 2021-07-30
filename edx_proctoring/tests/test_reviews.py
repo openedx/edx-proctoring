@@ -21,8 +21,7 @@ from edx_proctoring.exceptions import ProctoredExamBadReviewStatus, ProctoredExa
 from edx_proctoring.models import (
     ProctoredExamSoftwareSecureComment,
     ProctoredExamSoftwareSecureReview,
-    ProctoredExamSoftwareSecureReviewHistory,
-    ProctoredExamStudentAttemptHistory
+    ProctoredExamSoftwareSecureReviewHistory
 )
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, ReviewStatus, SoftwareSecureReviewStatus
@@ -386,14 +385,6 @@ class ReviewTests(LoggedInTestCase):
         self.assertEqual(attempt.status, 'verified')
 
         review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=self.attempt['attempt_code'])
-
-        # look at the attempt again, since it moved into Archived state
-        # then it should still remain unchanged
-        archived_attempt = ProctoredExamStudentAttemptHistory.objects.filter(
-            attempt_code=self.attempt['attempt_code']
-        ).latest('created')
-
-        self.assertEqual(archived_attempt.status, attempt['status'])
         self.assertEqual(review.review_status, SoftwareSecureReviewStatus.clean)
 
         # now we'll make another review for the archived attempt. It should NOT update the status
