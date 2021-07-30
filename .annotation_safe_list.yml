@@ -22,3 +22,7 @@ sessions.Session:
     ".. pii": "The session can be used to store user information"
     ".. pii_types": "other"
     ".. pii_retirement": "consumer_api"
+
+# Automatically generated models that cannot be annotated
+edx_proctoring.HistoricalProctoredExamStudentAttempt:
+    ".. no_pii": "This model has no PII"
