@@ -44,7 +44,8 @@ edx = edx || {};
         events: {
             'click #add-allowance': 'showAddModal',
             'click .remove_allowance': 'removeAllowance',
-            'click .accordion-trigger': 'toggleAllowanceAccordion'
+            'click .accordion-trigger': 'toggleAllowanceAccordion',
+            'click .edit_allowance': 'editAllowance'
         },
         getCSRFToken: function() {
             var cookieValue = null;
@@ -185,6 +186,29 @@ edx = edx || {};
             event.stopPropagation();
             event.preventDefault();
         },
+        editAllowance: function(event) {
+            var $element = $(event.currentTarget);
+            var userName = $element.data('user-name');
+            var examID = $element.data('exam-id');
+            var examName = $element.data('exam-name');
+            var key = $element.data('key-name');
+            var keyName = $element.data('key-value');
+            var self = this;
+            self.proctoredExamCollection.fetch({
+                success: function() {
+                    // eslint-disable-next-line no-new
+                    new edx.instructor_dashboard.proctoring.EditAllowanceView({
+                        course_id: self.course_id,
+                        selected_exam_ID: examID,
+                        selected_exam_name: examName,
+                        proctored_exam_allowance_view: self,
+                        selected_user: userName,
+                        allowance_type: key,
+                        allowance_type_name: keyName
+                    });
+                }
+            });
+        },
         toggleAllowanceAccordion: function(event) {
             // based on code from openedx/features/course_experience/static/course_experience/js/CourseOutline.js
             // but modified to better fit this feature's needs
@@ -193,16 +217,16 @@ edx = edx || {};
             if (accordionRow.classList.contains('accordion-trigger')) {
                 isExpanded = accordionRow.getAttribute('aria-expanded') === 'true';
                 if (!isExpanded) {
-                    $toggleChevron = $(accordionRow).find('.fa-chevron-right');
+                    $toggleChevron = $(accordionRow).find('.fa-chevron-down');
                     $contentPanel = $('#' + accordionRow.innerText.trim());
                     $contentPanel.show();
-                    $toggleChevron.addClass('fa-rotate-90');
+                    $toggleChevron.addClass('fa-rotate-180');
                     accordionRow.setAttribute('aria-expanded', 'true');
                 } else {
-                    $toggleChevron = $(accordionRow).find('.fa-chevron-right');
+                    $toggleChevron = $(accordionRow).find('.fa-chevron-down');
                     $contentPanel = $('#' + accordionRow.innerText.trim());
                     $contentPanel.hide();
-                    $toggleChevron.removeClass('fa-rotate-90');
+                    $toggleChevron.removeClass('fa-rotate-180');
                     accordionRow.setAttribute('aria-expanded', 'false');
                 }
             }

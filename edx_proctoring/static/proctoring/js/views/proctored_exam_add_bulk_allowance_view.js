@@ -236,9 +236,9 @@ edx = edx || {};
         },
         updateAllowanceLabels: function(selectedAllowanceType) {
             if (selectedAllowanceType === 'additional_time_granted') {
-                $('#allowance_value_label').text(gettext('Input Additional Minutes as a Positive Number'));
+                $('#allowance_value_label').text(gettext('Add Time(Minutes)'));
             } else if (selectedAllowanceType === 'time_multiplier') {
-                $('#allowance_value_label').text(gettext('Input Multiplier as a Number Greater Than 1'));
+                $('#allowance_value_label').text(gettext('Add Multiplier as a Number Greater Than 1'));
             } else {
                 $('#allowance_value_label').text(gettext('Add Policy Exception'));
             }

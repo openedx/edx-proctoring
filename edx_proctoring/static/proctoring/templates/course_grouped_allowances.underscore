@@ -10,7 +10,7 @@
    <section class="content exam-allowances-content">
             <% _.each(proctored_exam_allowances, function(student){ %>
                 <div class="accordion-trigger" aria-expanded="false" style="font-size:20px;">
-                    <span class="fa fa-chevron-right" aria-hidden="true"></span>
+                    <span class="fa fa-chevron-down" aria-hidden="true"></span>
                     <%=student[0].user.username %>
                 </div>
                 <table class="allowance-table" id="<%=student[0].user.username %>" style="display:none;">
@@ -51,8 +51,14 @@
                         <td>
                         <a data-exam-id="<%= proctored_exam_allowance.proctored_exam.id %>"
                             data-key-name="<%= proctored_exam_allowance.key %>"
+                            data-key-value="<%= proctored_exam_allowance.key_display_name %>"
+                            data-user-name="<%= proctored_exam_allowance.user.username %>"
+                            data-exam-name="<%= proctored_exam_allowance.proctored_exam.exam_name %>"
+                        class="edit_allowance" href="#">Edit</a>
+                        <a data-exam-id="<%= proctored_exam_allowance.proctored_exam.id %>"
+                            data-key-name="<%= proctored_exam_allowance.key %>"
                             data-user-id="<%= proctored_exam_allowance.user.id %>"
-                        class="remove_allowance" href="#">[x]</a>
+                        class="remove_allowance" href="#">Delete</a>
                         </td>
                         </tr>
                     <% }); %>

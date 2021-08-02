@@ -1,0 +1,52 @@
+<div class='modal-header'><%- gettext("Edit Allowance") %></div>
+<form>
+    <h3 class='error-response'><h3>
+    <table class='compact'>
+        <tr>
+            <td>
+                <label><%- gettext("Username") %></label>
+            </td>
+            <td>
+                <label> <%= selected_user %> </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><%- gettext("Special Exam") %></label>
+            </td>
+            <td>
+                <label>
+                    <%= selected_exam_name %>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><%- gettext("Allowance Type") %></label>
+            </td>
+            <td>
+                <label>
+                    <%= allowance_type_name %>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <% if (allowance_type == 'additional_time_granted') { %>
+                    <label id='allowance_value_label'><%- gettext("Add Time(Minutes)") %></label>
+                <% }else{ %>
+                    <label id='allowance_value_label'><%- gettext("Add Policy Exception") %></label>
+                <% } %>
+            </td>
+            <td>
+                <input type="text" id="allowance_value" />
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input id='editAllowance' type='submit' value='Save' />
+            </td>
+        </tr>
+    </table>
+</form>
