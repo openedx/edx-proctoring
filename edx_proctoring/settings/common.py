@@ -28,6 +28,7 @@ def plugin_settings(settings):
             'proctoring/js/views/proctored_exam_add_bulk_allowance_view.js',
             'proctoring/js/views/proctored_exam_allowance_view.js',
             'proctoring/js/views/proctored_exam_attempt_view.js',
+            'proctoring/js/views/proctored_exam_edit_allowance_view.js',
             'proctoring/js/views/proctored_exam_onboarding_view.js',
             'proctoring/js/views/proctored_exam_view.js',
             'proctoring/js/views/proctored_exam_info.js',

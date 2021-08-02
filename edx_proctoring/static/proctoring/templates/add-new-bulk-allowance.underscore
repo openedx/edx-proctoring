@@ -88,7 +88,7 @@
         </tr>
         <tr>
             <td>
-                <label id='allowance_value_label'><%- gettext("Input Additional Minutes as a Positive Number") %></label>
+                <label id='allowance_value_label'><%- gettext("Add Time(Minutes)") %></label>
             </td>
         </tr>
         <tr>
