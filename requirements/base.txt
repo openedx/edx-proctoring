@@ -18,7 +18,7 @@ certifi==2021.5.30
     # via requests
 cffi==1.14.6
     # via cryptography
-charset-normalizer==2.0.3
+charset-normalizer==2.0.4
     # via requests
 click==7.1.2
     # via
@@ -53,7 +53,7 @@ django-crum==0.7.9
     # via
     #   -r requirements/base.in
     #   edx-django-utils
-django-ipware==3.0.2
+django-ipware==3.0.7
     # via -r requirements/base.in
 django-model-utils==4.1.1
     # via
@@ -98,7 +98,7 @@ edx-rest-api-client==5.4.0
     # via -r requirements/base.in
 edx-when==2.1.0
     # via -r requirements/base.in
-event-tracking==1.0.4
+event-tracking==1.1.0
     # via -r requirements/base.in
 fs==2.4.13
     # via xblock
@@ -116,7 +116,7 @@ lxml==4.6.3
     # via xblock
 markupsafe==2.0.1
     # via xblock
-newrelic==6.4.4.161
+newrelic==6.6.0.162
     # via edx-django-utils
 pbr==5.6.0
     # via stevedore
@@ -198,7 +198,7 @@ web-fragments==1.1.0
     # via xblock
 webob==1.8.7
     # via xblock
-xblock==1.4.2
+xblock==1.5.0
     # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:

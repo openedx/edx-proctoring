@@ -14,9 +14,11 @@ bleach==3.3.1
     # via readme-renderer
 certifi==2021.5.30
     # via requests
+cffi==1.14.6
+    # via cryptography
 chardet==4.0.0
     # via diff-cover
-charset-normalizer==2.0.3
+charset-normalizer==2.0.4
     # via requests
 click==7.1.2
     # via
@@ -27,11 +29,13 @@ click==7.1.2
     #   pip-tools
 click-log==0.3.2
     # via edx-lint
-code-annotations==1.1.2
+code-annotations==1.2.0
     # via edx-lint
 colorama==0.4.4
     # via twine
-diff-cover==6.2.0
+cryptography==3.4.7
+    # via secretstorage
+diff-cover==6.2.1
     # via -r requirements/dev.in
 distlib==0.3.2
     # via virtualenv
@@ -58,16 +62,20 @@ filelock==3.0.12
     #   virtualenv
 idna==3.2
     # via requests
-importlib-metadata==4.6.1
+importlib-metadata==4.6.3
     # via
     #   keyring
     #   twine
 inflect==5.3.0
     # via jinja2-pluralize
-isort==5.9.2
+isort==5.9.3
     # via
     #   -r requirements/quality.in
     #   pylint
+jeepney==0.7.1
+    # via
+    #   keyring
+    #   secretstorage
 jinja2==3.0.1
     # via
     #   code-annotations
@@ -87,7 +95,7 @@ packaging==21.0
     # via
     #   bleach
     #   tox
-path==16.0.0
+path==16.2.0
     # via
     #   edx-i18n-tools
     #   path.py
@@ -101,7 +109,7 @@ pip-tools==6.2.0
     # via -r requirements/dev.in
 pkginfo==1.7.1
     # via twine
-platformdirs==2.0.2
+platformdirs==2.2.0
     # via virtualenv
 pluggy==0.13.1
     # via
@@ -113,13 +121,15 @@ py==1.10.0
     # via tox
 pycodestyle==2.7.0
     # via -r requirements/quality.in
+pycparser==2.20
+    # via cffi
 pydocstyle==6.1.1
     # via -r requirements/quality.in
 pygments==2.9.0
     # via
     #   diff-cover
     #   readme-renderer
-pylint==2.9.5
+pylint==2.9.6
     # via
     #   edx-lint
     #   pylint-celery
@@ -155,6 +165,8 @@ rfc3986==1.5.0
     # via twine
 rstcheck==3.3.1
     # via -r requirements/quality.in
+secretstorage==3.3.1
+    # via keyring
 six==1.16.0
     # via
     #   bleach
@@ -175,15 +187,15 @@ toml==0.10.2
     # via
     #   pylint
     #   tox
-tomli==1.1.0
+tomli==1.2.0
     # via pep517
-tox==3.24.0
+tox==3.24.1
     # via
     #   -r requirements/dev.in
     #   tox-battery
 tox-battery==0.6.1
     # via -r requirements/dev.in
-tqdm==4.61.2
+tqdm==4.62.0
     # via twine
 twine==3.4.2
     # via
@@ -191,7 +203,7 @@ twine==3.4.2
     #   -r requirements/quality.in
 urllib3==1.26.6
     # via requests
-virtualenv==20.6.0
+virtualenv==20.7.0
     # via tox
 webencodings==0.5.1
     # via bleach

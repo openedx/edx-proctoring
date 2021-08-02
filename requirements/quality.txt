@@ -12,7 +12,9 @@ bleach==3.3.1
     # via readme-renderer
 certifi==2021.5.30
     # via requests
-charset-normalizer==2.0.3
+cffi==1.14.6
+    # via cryptography
+charset-normalizer==2.0.4
     # via requests
 click==7.1.2
     # via
@@ -22,10 +24,12 @@ click==7.1.2
     #   edx-lint
 click-log==0.3.2
     # via edx-lint
-code-annotations==1.1.2
+code-annotations==1.2.0
     # via edx-lint
 colorama==0.4.4
     # via twine
+cryptography==3.4.7
+    # via secretstorage
 django==2.2.24
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
@@ -39,14 +43,18 @@ edx-lint==5.0.0
     # via -r requirements/quality.in
 idna==3.2
     # via requests
-importlib-metadata==4.6.1
+importlib-metadata==4.6.3
     # via
     #   keyring
     #   twine
-isort==5.9.2
+isort==5.9.3
     # via
     #   -r requirements/quality.in
     #   pylint
+jeepney==0.7.1
+    # via
+    #   keyring
+    #   secretstorage
 jinja2==3.0.1
     # via code-annotations
 keyring==23.0.1
@@ -65,11 +73,13 @@ pkginfo==1.7.1
     # via twine
 pycodestyle==2.7.0
     # via -r requirements/quality.in
+pycparser==2.20
+    # via cffi
 pydocstyle==6.1.1
     # via -r requirements/quality.in
 pygments==2.9.0
     # via readme-renderer
-pylint==2.9.5
+pylint==2.9.6
     # via
     #   edx-lint
     #   pylint-celery
@@ -103,6 +113,8 @@ rfc3986==1.5.0
     # via twine
 rstcheck==3.3.1
     # via -r requirements/quality.in
+secretstorage==3.3.1
+    # via keyring
 six==1.16.0
     # via
     #   bleach
@@ -118,7 +130,7 @@ text-unidecode==1.3
     # via python-slugify
 toml==0.10.2
     # via pylint
-tqdm==4.61.2
+tqdm==4.62.0
     # via twine
 twine==3.4.2
     # via -r requirements/quality.in
