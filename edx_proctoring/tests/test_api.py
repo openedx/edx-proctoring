@@ -2920,17 +2920,25 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         test_backend.attempt_error = ProctoredExamStudentAttemptStatus.onboarding_missing
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
         test_backend.attempt_error = None
-        assert get_exam_attempt_by_id(attempt_id)['status'] == ProctoredExamStudentAttemptStatus.onboarding_missing
+        self.assertEqual(get_exam_attempt_by_id(attempt_id)['status'],
+                         ProctoredExamStudentAttemptStatus.onboarding_missing)
 
         # now create the practice attempt
         onboarding_attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id)
         # and move the status to verified
         update_attempt_status(onboarding_attempt_id, ProctoredExamStudentAttemptStatus.verified)
         # now the original attempt will be deleted
-        assert get_exam_attempt_by_id(attempt_id) is None
-        # ensure that the attempt is still in the history table
+        self.assertIsNone(get_exam_attempt_by_id(attempt_id))
+
+        # ensure that the attempt is still in the old history table
         hist_attempt = ProctoredExamStudentAttemptHistory.objects.get(attempt_id=attempt_id)
-        assert hist_attempt.status == ProctoredExamStudentAttemptStatus.onboarding_missing
+        self.assertEqual(hist_attempt.status, ProctoredExamStudentAttemptStatus.onboarding_missing)
+
+        # simple history has the creation and the deletion
+        # pylint: disable=no-member
+        attempts = ProctoredExamStudentAttempt.history.filter(id=attempt_id)
+        self.assertEqual(2, len(attempts))
+        self.assertEqual(ProctoredExamStudentAttemptStatus.onboarding_missing, attempts[0].status)
 
     def test_get_integration_specific_email(self):
         """Test that the correct integration_specific_email is returned for a provider."""

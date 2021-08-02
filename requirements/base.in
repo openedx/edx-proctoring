@@ -12,6 +12,7 @@ pytz>=2018
 pycryptodomex>=3.4.7
 django-crum
 python-dateutil>=2.1
+django-simple-history
 django-webpack-loader>=0.6.0
 django-waffle
 rules

@@ -8,6 +8,7 @@ How do I use proctoring on devstack?
 ------------------------------------
 * Create a test course
     * Follow the steps here: `Including Proctored Exams in Your Course <https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/proctored_exams/proctored_enabling.html>`_
+        * Note that the UI may be different on devstack with Enable Proctored Exams in Advanced Settings
 * Read the `learner guide for using proctoring <http://edx.readthedocs.io/projects/edx-guide-for-students/en/latest/completing_assignments/SFD_proctored_exams.html>`_
 * Start out by trying a practice proctored exam to understand the process
 * The Instructor Dashboard has a "Special Exams" tab for administering proctoring
@@ -86,7 +87,7 @@ And for the local development module export flow should be overridden, the follo
 
 * restart devstack::
 
-    $ make stop
+    $ make dev.stop
     $ make dev.up.lms+frontend-app-learning
 
 
@@ -142,9 +143,9 @@ Add it to your ``private.py``::
 
 Reinstall requirements in lms and studio.
 
-Rebuild static assets to make sure mockprock ui scripts are available::
+Rebuild static assets to make sure mockprock ui scripts are available. In devstack::
 
-   make lms-static
+   make dev.static.lms
 
 Then back in your host shell::
 

@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add simple history to proctored exam attempt, writing both old and new model for now. Includes admin view.
 
 [3.22.0] - 2021-07-26
 ~~~~~~~~~~~~~~~~~~~~~

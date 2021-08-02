@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 
 import pytz
 from model_utils.models import TimeStampedModel
+from simple_history.models import HistoricalRecords
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -417,6 +418,8 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # has not yet marked submitted is resumable.
     is_resumable = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Resumable"))
 
+    history = HistoricalRecords(table_name='proctoring_proctoredexamstudentattempt_history')
+
     class Meta:
         """ Meta class for this Django model """
         db_table = 'proctoring_proctoredexamstudentattempt'
@@ -442,6 +445,21 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             review_policy_id=review_policy_id,
             time_remaining_seconds=time_remaining_seconds
         )  # pylint: disable=no-member
+
+    @classmethod
+    def get_historic_attempt_by_code(cls, attempt_code):
+        """
+        Make an object from the most recent history
+
+        This code bridges the improved history using django simple history
+        and the older history tables
+        """
+        attempt_history = cls.history.filter(attempt_code=attempt_code)
+        if attempt_history:
+            return attempt_history.latest("modified").instance
+
+        # fall back to old history table until that is removed
+        return ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
 
     def delete_exam_attempt(self):
         """
