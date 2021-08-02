@@ -15,6 +15,9 @@ Unreleased
 ~~~~~~~~~~
 * Add simple history to proctored exam attempt, writing both old and new model for now. Includes admin view.
 
+[3.22.1] - 2021-08-02
+* Add edit button to grouped allowances, which allows instructors to edit the value of a single allowance.
+
 [3.22.0] - 2021-07-26
 ~~~~~~~~~~~~~~~~~~~~~
 * If verified name functionality is enabled through the "name_affirmation" runtime service,
