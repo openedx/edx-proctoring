@@ -14,6 +14,7 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 * Add simple history to proctored exam attempt, writing both old and new model for now. Includes admin view.
+* Update documentation and makefile targets for a clear path from clone to running tests.
 
 [3.22.1] - 2021-08-02
 ~~~~~~~~~~~~~~~~~~~~~
