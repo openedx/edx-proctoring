@@ -1,5 +1,5 @@
 .PHONY: help upgrade requirements clean quality requirements docs \
-	test test-all coverage pii_check \
+	requirements-test coverage pii_check \
 	compile_translations dummy_translations extract_translations \
 	fake_translations pull_translations push_translations test test-python \
 	test-js quality-python quality-js
@@ -58,6 +58,10 @@ requirements: ## install development environment requirements
 	pip install -qr requirements/dev.txt --exists-action w
 	pip-sync requirements/dev.txt requirements/base.txt requirements/private.*
 
+requirements-test: ## install requirements for running tests
+	npm install -g gulp-cli
+	pip install -qr requirements/test.txt --exists-action w
+
 install: requirements
 	./manage.py migrate --settings=test_settings
 	npm install
@@ -94,10 +98,6 @@ test-js:
 lint-js:
 	./node_modules/.bin/eslint --ignore-pattern 'edx_proctoring/static/index.js' --ext .js --ext .jsx .
 	./node_modules/.bin/eslint --config .eslintrc.worker.json 'edx_proctoring/static/index.js'
-
-test-all: ## run tests on every supported Python/Django combination
-	tox -e quality
-	tox
 
 diff_cover: test
 	diff-cover coverage.xml
