@@ -1,4 +1,4 @@
-.PHONY: help upgrade requirements clean quality requirements docs \
+.PHONY: help upgrade requirements clean quality requirements \
 	requirements-test coverage pii_check \
 	compile_translations dummy_translations extract_translations \
 	fake_translations pull_translations push_translations test test-python \
@@ -33,7 +33,6 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 	pip-compile --rebuild --upgrade -o requirements/base.txt requirements/base.in
 	pip-compile --rebuild --upgrade -o requirements/ci.txt requirements/ci.in
 	pip-compile --rebuild --upgrade -o requirements/dev.txt requirements/dev.in
-	pip-compile --rebuild --upgrade -o requirements/doc.txt requirements/doc.in
 	pip-compile --rebuild --upgrade -o requirements/pip.txt requirements/pip.in
 	pip-compile --rebuild --upgrade -o requirements/quality.txt requirements/quality.in
 	pip-compile --rebuild --upgrade -o requirements/test.txt requirements/test.in
@@ -73,10 +72,6 @@ coverage: clean ## generate and view HTML coverage report
 pii_check: ## check for PII annotations on all Django models
 	DJANGO_SETTINGS_MODULE=test_settings \
 	code_annotations django_find_annotations --config_file .pii_annotations.yml --lint --report --coverage
-
-docs: ## generate Sphinx HTML documentation, including API docs
-	tox -e docs
-	$(BROWSER) docs/_build/html/index.html
 
 quality-js: lint-js
 
