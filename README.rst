@@ -42,11 +42,28 @@ Installation
 To install edx-proctoring:
 
     mkvirtualenv edx-proctoring
+
     make install
 
-To run the tests:
+If you want to run tests, first setup requirements. Note that JS tests
+require Node 10, nvm install v10 if you are on a different version so
+that gulp is installed for v10:
 
-    make test-all
+    nvm install v10
+
+    make requirements-test
+
+Run tests:
+
+    make test
+
+Run just python tests:
+
+    make test-python
+
+Run just JS tests:
+
+    make test-js
 
 For a full list of Make targets:
 
