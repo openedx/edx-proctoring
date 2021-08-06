@@ -14,6 +14,9 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.23.1] - 2021-08-06
+~~~~~~~~~~~~~~~~~~~~~
+* Update errors on the bulk allowance modal so they show under the associated field.
 
 [3.23.0] - 2021-08-04
 ~~~~~~~~~~~~~~~~~~~~~
