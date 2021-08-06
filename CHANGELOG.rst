@@ -14,9 +14,15 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.23.2] - 2021-08-06
+~~~~~~~~~~~~~~~~~~~~~
+* Change errors on the bulk allowance modal so they appear on their associated field.
+
 [3.23.1] - 2021-08-06
 ~~~~~~~~~~~~~~~~~~~~~
-* Update errors on the bulk allowance modal so they show under the associated field.
+* Fixes bug that occurs when a proctoring vendor returns onboarding information that includes user IDs that represent
+  learners that are not returned by the edX API as being enrolled in the course in a proctoring eligible mode.
+* Adds logging statement to enable further investigation.
 
 [3.23.0] - 2021-08-04
 ~~~~~~~~~~~~~~~~~~~~~
