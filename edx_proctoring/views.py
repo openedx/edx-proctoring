@@ -760,9 +760,15 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
 
             obscured_user_ids_to_users = {obscured_user_id(user.id, onboarding_exam.backend): user for user in users}
 
+            missing_user_ids = []
             for onboarding_profile in onboarding_profile_info:
                 obscured_id = onboarding_profile['user_id']
                 user = obscured_user_ids_to_users.get(obscured_id)
+
+                if not user:
+                    missing_user_ids.append(onboarding_profile['user_id'])
+                    continue
+
                 onboarding_status = onboarding_profile['status']
                 data = {
                     'username': user.username,
@@ -774,6 +780,17 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
                 }
                 onboarding_data.append(data)
                 del obscured_user_ids_to_users[obscured_id]
+
+            log_message = (
+                'Users are present in response whose obscured user IDs do not exist in list of learners '
+                'enrolled in course {course_id} with proctoring eligible enrollments. There are a total '
+                'of {num_missing_ids} of these. A sample of these IDs is {obs_id_sample}.'
+            ).format(
+                course_id=course_id,
+                num_missing_ids=len(missing_user_ids),
+                obs_id_sample=missing_user_ids[0:5],
+            )
+            LOG.warning(log_message)
 
             if status_filters is None or 'not_started' in status_filters:
                 for (obscured_id, user) in obscured_user_ids_to_users.items():
