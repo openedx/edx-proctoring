@@ -5167,6 +5167,9 @@ class ExamBulkAllowanceView(LoggedInTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response_data['detail'], 'Enter a valid positive value number')
+        self.assertEqual(response_data['field'], 'allowance_value')
 
     def test_add_bulk_allowance_all_invalid_data(self):  # pylint: disable=invalid-name
         """

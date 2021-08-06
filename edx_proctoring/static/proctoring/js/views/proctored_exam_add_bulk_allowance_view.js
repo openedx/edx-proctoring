@@ -201,7 +201,8 @@ edx = edx || {};
                     },
                     error: function(unused, response) {
                         var data = $.parseJSON(response.responseText);
-                        $errorResponse.html(gettext(data.detail));
+                        var errorField = data.field;
+                        self.showError(self, data.field, data.detail);
                     }
                 });
             }

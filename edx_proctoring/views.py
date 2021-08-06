@@ -1563,7 +1563,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
             if successes == 0:
                 return Response(
                     status=status.HTTP_400_BAD_REQUEST,
-                    data={"detail": _("Enter a valid username or email")}
+                    data={"detail": _("Enter a valid username or email"), "field": _("user_info")}
                 )
             if failures > 0:
                 return Response(
@@ -1576,7 +1576,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
         except AllowanceValueNotAllowedException:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": _("Enter a valid positive value number")}
+                data={"detail": _("Enter a valid positive value number"), "field": _("allowance_value")}
                 )
 
 
