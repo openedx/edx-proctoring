@@ -143,7 +143,7 @@ mock==4.0.3
     # via -r requirements/test.in
 mypy-extensions==0.4.3
     # via logilab-common
-newrelic==6.6.0.162
+newrelic==6.8.0.163
     # via edx-django-utils
 packaging==21.0
     # via pytest
