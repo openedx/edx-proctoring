@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.23.2] - 2021-08-06
+~~~~~~~~~~~~~~~~~~~~~
+* Change errors on the bulk allowance modal so they appear on their associated field.
+
 [3.23.1] - 2021-08-06
 ~~~~~~~~~~~~~~~~~~~~~
 * Fixes bug that occurs when a proctoring vendor returns onboarding information that includes user IDs that represent
