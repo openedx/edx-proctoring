@@ -29,7 +29,7 @@ distlib==0.3.2
     # via virtualenv
 django==2.2.24
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
     #   -r requirements/quality.in
     #   edx-i18n-tools
