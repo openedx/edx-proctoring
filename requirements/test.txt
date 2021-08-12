@@ -91,6 +91,7 @@ edx-django-utils==4.2.0
     #   edx-when
 edx-drf-extensions==6.6.0
     # via
+    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
     #   edx-when
 edx-i18n-tools==0.7.0
@@ -143,7 +144,7 @@ mock==4.0.3
     # via -r requirements/test.in
 mypy-extensions==0.4.3
     # via logilab-common
-newrelic==6.6.0.162
+newrelic==6.8.0.163
     # via edx-django-utils
 packaging==21.0
     # via pytest
@@ -225,7 +226,7 @@ requests==2.26.0
     #   pyjwkest
     #   responses
     #   slumber
-responses==0.13.3
+responses==0.13.4
     # via -r requirements/test.in
 rest-condition==1.0.3
     # via edx-drf-extensions
