@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.23.3] - 2021-08-16
+~~~~~~~~~~~~~~~~~~~~~
+* Remove the old allowance code entirely, so only the bulk allowance modal is used.
+
 [3.23.2] - 2021-08-06
 ~~~~~~~~~~~~~~~~~~~~~
 * Change errors on the bulk allowance modal so they appear on their associated field.
