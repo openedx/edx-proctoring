@@ -13,6 +13,14 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.24.0] - 2021-08-25
+~~~~~~~~~~~~~~~~~~~~~
+* Re-added code for using a verified name for a proctored exam attempt that had been reverted.
+  Replaced with signal emitters, which will allow name affirmation to contain the logic for deciding
+  when a verified name should be created or updated. Also restructured signal files to differentiate
+  between signal senders and signal receivers.
+
 [3.23.8] - 2021-08-25
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix the template on bulk exam allowance view where username is used for DOM id
@@ -57,6 +65,14 @@ Unreleased
 [3.22.1] - 2021-08-02
 ~~~~~~~~~~~~~~~~~~~~~
 * Add edit button to grouped allowances, which allows instructors to edit the value of a single allowance.
+
+[3.22.0] - 2021-07-26
+~~~~~~~~~~~~~~~~~~~~~
+* If verified name functionality is enabled through the "name_affirmation" runtime service,
+  use it in proctored exam attempt creation. (see https://github.com/edx/edx-name-affirmation)
+* When updating a proctored exam attempt to "verified" status, update the user's verified
+  name status, if verified name functionality is enabled and they have one linked to that
+  exam attempt.
 
 [3.21.1] - 2021-07-26
 ~~~~~~~~~~~~~~~~~~~~~

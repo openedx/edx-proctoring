@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines, invalid-name
+# pylint: disable=too-many-lines, invalid-name, cyclic-import
 
 """
 All tests for the api.py
@@ -101,7 +101,8 @@ from .test_services import (
     MockCreditServiceWithCourseEndDate,
     MockEnrollmentsService,
     MockGradesService,
-    MockInstructorService
+    MockInstructorService,
+    MockNameAffirmationService
 )
 from .utils import ProctoredExamTestCase
 
@@ -125,6 +126,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.disabled_exam_id = self._create_disabled_exam()
         set_runtime_service('certificates', MockCertificateService())
         set_runtime_service('instructor', MockInstructorService())
+        set_runtime_service('name_affirmation', MockNameAffirmationService())
 
     def tearDown(self):
         """
@@ -133,6 +135,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         super().tearDown()
         set_runtime_service('certificates', None)
         set_runtime_service('instructor', None)
+        set_runtime_service('name_affirmation', None)
 
     def _add_allowance_for_user(self):
         """
@@ -2478,6 +2481,67 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.resumed)
 
     @ddt.data(
+        True,
+        False
+    )
+    @patch('edx_proctoring.api.exam_attempt_status_signal.send')
+    def test_create_and_update_exam_attempt_signal_verified_name(self, use_verified_name, mock_signal):
+        """
+        Test that creating and updating a proctored exam attempt status will trigger
+        a signal emission with correct data
+        """
+        credit_service = get_runtime_service('credit')
+        credit_status = credit_service.get_credit_state(self.user.id, self.course_id)
+        profile_name = credit_status['profile_fullname']
+        full_name = profile_name
+
+        if use_verified_name:
+            name_affirmation_service = get_runtime_service('name_affirmation')
+            name_affirmation_service.create_verified_name(
+                self.user, verified_name='John Doe', profile_name='Old Name', status='created',
+            )
+            full_name = 'John Doe'
+
+        # Check that signal is sent with verified name when attempt is created
+        attempt_id = create_exam_attempt(
+            exam_id=self.proctored_exam_id,
+            user_id=self.user_id,
+            taking_as_proctored=True,
+            is_verified_name_enabled=True
+        )
+        self.assertTrue(mock_signal.called)
+        mock_signal.assert_called_with(
+            sender='edx_proctoring',
+            attempt_id=attempt_id,
+            user_id=self.user_id,
+            status=ProctoredExamStudentAttemptStatus.created,
+            full_name=full_name,
+            profile_name=profile_name,
+            is_practice_exam=False,
+            is_proctored=True,
+            backend_supports_onboarding=True,
+        )
+        mock_signal.reset_mock()
+
+        # Update attempt status and check that signal is sent with no verified name
+        update_attempt_status(
+            attempt_id,
+            ProctoredExamStudentAttemptStatus.started
+        )
+        self.assertTrue(mock_signal.called)
+        mock_signal.assert_called_with(
+            sender='edx_proctoring',
+            attempt_id=attempt_id,
+            user_id=self.user_id,
+            status=ProctoredExamStudentAttemptStatus.started,
+            full_name=None,
+            profile_name=None,
+            is_practice_exam=False,
+            is_proctored=True,
+            backend_supports_onboarding=True,
+        )
+
+    @ddt.data(
         (
             ProctoredExamStudentAttemptStatus.started,
             ProctoredExamStudentAttemptStatus.error,
@@ -3151,6 +3215,27 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             })
         else:
             self.assertEqual(override, None)
+
+    def test_create_exam_attempt_empty_string(self):
+        """
+        Assert that exam attempt creation does not fail if the user's profile name is an
+        empty string.
+        """
+        with patch(
+                'edx_proctoring.tests.test_services.MockCreditService.get_credit_state',
+                return_value={'profile_fullname': '', 'student_email': 'foo@bar'}
+        ):
+            attempt_id = create_exam_attempt(
+                exam_id=self.proctored_exam_id,
+                user_id=self.user_id,
+                taking_as_proctored=True,
+                is_verified_name_enabled=True
+            )
+
+            self.assertEqual(
+                get_exam_attempt_by_id(attempt_id)['status'],
+                ProctoredExamStudentAttemptStatus.created
+            )
 
 
 @ddt.ddt

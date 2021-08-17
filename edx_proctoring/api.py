@@ -56,6 +56,7 @@ from edx_proctoring.serializers import (
     ProctoredExamStudentAllowanceSerializer,
     ProctoredExamStudentAttemptSerializer
 )
+from edx_proctoring.signals import exam_attempt_status_signal
 from edx_proctoring.statuses import InstructorDashboardOnboardingAttemptStatus, ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import (
     categorize_inaccessible_exams_by_date,
@@ -891,7 +892,7 @@ def _create_and_decline_attempt(exam_id, user_id):
     )
 
 
-def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, review_policy):
+def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, review_policy, verified_name=None):
     """
     Call the proctoring backend to register the exam attempt. If there are exceptions
     the external_id returned might be None. If the backend have onboarding status errors,
@@ -905,17 +906,19 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
     review_policy_exception = ProctoredExamStudentAllowance.get_review_policy_exception(exam_id, user_id)
 
     # get the name of the user, if the service is available
-    full_name = ''
     email = None
     external_id = None
     force_status = None
+    full_name = verified_name or ''
+    profile_name = ''
 
     credit_service = get_runtime_service('credit')
     if credit_service:
         credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
         if credit_state:
-            full_name = credit_state['profile_fullname']
-            email = credit_state['student_email']
+            profile_name = credit_state['profile_fullname']
+            if not verified_name:
+                full_name = profile_name
 
     context = {
         'lms_host': lms_host,
@@ -993,10 +996,27 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
         )
         log.error(log_msg)
 
-    return external_id, force_status
+    return external_id, force_status, full_name, profile_name
 
 
-def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
+def _get_verified_name(user_id, name_affirmation_service):
+    """
+    Get the user's verified name if it exists.
+
+    Returns a verified name object (or None)
+    """
+    verified_name = None
+
+    user = USER_MODEL.objects.get(id=user_id)
+    verified_name_obj = name_affirmation_service.get_verified_name(user)
+
+    if verified_name_obj:
+        verified_name = verified_name_obj.verified_name
+
+    return verified_name
+
+
+def create_exam_attempt(exam_id, user_id, taking_as_proctored=False, is_verified_name_enabled=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only
     be one exam_attempt per user per exam, with one exception described below.
@@ -1052,9 +1072,16 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         )
         raise StudentExamAttemptOnPastDueProctoredExam(err_msg)
 
+    name_affirmation_service = get_runtime_service('name_affirmation')
+    full_name = ''
+    profile_name = ''
+
     if taking_as_proctored:
-        external_id, force_status = _register_proctored_exam_attempt(
-            user_id, exam_id, exam, attempt_code, review_policy
+        verified_name = None
+        if name_affirmation_service and is_verified_name_enabled:
+            verified_name = _get_verified_name(user_id, name_affirmation_service)
+        external_id, force_status, full_name, profile_name = _register_proctored_exam_attempt(
+            user_id, exam_id, exam, attempt_code, review_policy, verified_name,
         )
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
@@ -1067,6 +1094,23 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         review_policy_id=review_policy.id if review_policy else None,
         status=force_status,
         time_remaining_seconds=time_remaining_seconds,
+    )
+
+    exam = get_exam_by_id(exam_id)
+    backend = get_backend_provider(exam)
+    supports_onboarding = backend.supports_onboarding if backend else None
+
+    # Emit signal for attempt creation
+    exam_attempt_status_signal.send(
+        sender='edx_proctoring',
+        attempt_id=attempt.id,
+        user_id=user_id,
+        status=attempt.status,
+        full_name=full_name,
+        profile_name=profile_name,
+        is_practice_exam=exam['is_practice_exam'],
+        is_proctored=taking_as_proctored,
+        backend_supports_onboarding=supports_onboarding
     )
 
     # Emit event when exam attempt created
@@ -1582,6 +1626,18 @@ def update_attempt_status(attempt_id, to_status,
             backend_method(exam['external_id'], attempt['external_id'])
     # we use the 'status' field as the name of the event 'verb'
     emit_event(exam, attempt['status'], attempt=attempt)
+
+    exam_attempt_status_signal.send(
+        sender='edx_proctoring',
+        attempt_id=attempt['id'],
+        user_id=user_id,
+        status=attempt['status'],
+        full_name=None,
+        profile_name=None,
+        is_practice_exam=exam['is_practice_exam'],
+        is_proctored=attempt['taking_as_proctored'],
+        backend_supports_onboarding=backend.supports_onboarding if backend else False
+    )
 
     return attempt['id']
 
