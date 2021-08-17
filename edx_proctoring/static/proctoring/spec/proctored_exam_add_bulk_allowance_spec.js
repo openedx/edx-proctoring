@@ -143,8 +143,7 @@ describe('ProctoredExamAAllowanceView', function() {
         this.server = sinon.fakeServer.create();
         this.server.autoRespond = true;
 
-        setFixtures('<div class="special-allowance-container" data-course-id="test_course_id"' +
-        'data-enable-bulk-allowance="True"></div>');
+        setFixtures('<div class="special-allowance-container" data-course-id="test_course_id"');
         // load the underscore template response before calling the proctored exam allowance view.
         this.server.respondWith('GET', '/static/proctoring/templates/add-new-bulk-allowance.underscore',
             [
