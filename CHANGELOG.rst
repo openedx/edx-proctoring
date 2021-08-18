@@ -14,7 +14,7 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-[3.23.4] - 2021-08-06
+[3.23.4] - 2021-08-18
 ~~~~~~~~~~~~~~~~~~~~~
 * Change instructor onboarding API to fetch all onboarding profiles from the proctoring provider
   instead of making mulitple calls to the proctoring provider to assembke the full data set.
