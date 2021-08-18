@@ -2023,31 +2023,20 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
     @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
     def test_instructor_onboarding_filter_by_status(self, mocked_onboarding_api, mocked_switch_is_active):
         mocked_switch_is_active.return_value = True
-
-        def side_effect_func(_, **kwargs):
-            if kwargs['status'] == VerificientOnboardingProfileStatus.approved:
-                api_response = {
-                    'results': [
-                        {
-                            'user_id': obscured_user_id(self.user.id, self.onboarding_exam.backend),
-                            'status': VerificientOnboardingProfileStatus.approved,
-                            'expiration_date': '2051-05-21'
-                        },
-                    ]
-                }
-            else:
-                api_response = {
-                    'results': [
-                        {
-                            'user_id': obscured_user_id(self.learner_1.id, self.onboarding_exam.backend),
-                            'status': VerificientOnboardingProfileStatus.pending,
-                            'expiration_date': '2051-05-21'
-                        },
-                    ]
-                }
-            return api_response
-
-        mocked_onboarding_api.side_effect = side_effect_func
+        mocked_onboarding_api.return_value = {
+            'results': [
+                {
+                    'user_id': obscured_user_id(self.user.id, self.onboarding_exam.backend),
+                    'status': VerificientOnboardingProfileStatus.approved,
+                    'expiration_date': '2051-05-21'
+                },
+                {
+                    'user_id': obscured_user_id(self.learner_1.id, self.onboarding_exam.backend),
+                    'status': VerificientOnboardingProfileStatus.pending,
+                    'expiration_date': '2051-05-21'
+                },
+            ]
+        }
 
         response = self.client.get(
             reverse(
@@ -2086,34 +2075,17 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
     @patch('edx_proctoring.views.waffle.switch_is_active')
     @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
     def test_instructor_onboarding_filter_by_status_no_profile(self, mocked_onboarding_api, mocked_switch_is_active):
+
         mocked_switch_is_active.return_value = True
-
-        def side_effect_func(_, **kwargs):
-            if kwargs.get('page') == 1:
-                api_response = {
-                    'results': [
-                        {
-                            'user_id': obscured_user_id(self.user.id, self.onboarding_exam.backend),
-                            'status': VerificientOnboardingProfileStatus.no_profile,
-                            'expiration_date': '2051-05-21'
-                        },
-                    ],
-                    'next_page_number': 2,
-                }
-            else:
-                api_response = {
-                    'results': [
-                        {
-                            'user_id': obscured_user_id(self.learner_1.id, self.onboarding_exam.backend),
-                            'status': VerificientOnboardingProfileStatus.no_profile,
-                            'expiration_date': '2051-05-21'
-                        },
-                    ],
-                    'next_page_number': None,
-                }
-            return api_response
-
-        mocked_onboarding_api.side_effect = side_effect_func
+        mocked_onboarding_api.return_value = {
+            'results': [
+                {
+                    'user_id': obscured_user_id(self.user.id, self.onboarding_exam.backend),
+                    'status': VerificientOnboardingProfileStatus.no_profile,
+                    'expiration_date': '2051-05-21'
+                },
+            ],
+        }
 
         response = self.client.get(
             reverse(
@@ -2153,7 +2125,6 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
 
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
-        print(response_data)
         self.assertEqual(response_data, expected_data)
 
 
