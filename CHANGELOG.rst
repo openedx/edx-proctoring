@@ -14,6 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.23.4] - 2021-08-06
+~~~~~~~~~~~~~~~~~~~~~
+* Change instructor onboarding API to fetch all onboarding profiles from the proctoring provider
+  instead of making mulitple calls to the proctoring provider to assembke the full data set.
+* Add logging statements to better evaluate performance of the endpoint.
+
 [3.23.3] - 2021-08-16
 ~~~~~~~~~~~~~~~~~~~~~
 * Remove the old allowance code entirely, so only the bulk allowance modal is used.
