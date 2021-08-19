@@ -161,7 +161,7 @@ edx = edx || {};
                 examIdCollection += $(this).attr('data-item') + ',';
             });
 
-            formHasErrors = checkFormErrors(formValues, examIdCollection);
+            formHasErrors = this.checkFormErrors(formValues, examIdCollection);
 
             if (!formHasErrors) {
                 self.model.fetch({
@@ -260,6 +260,7 @@ edx = edx || {};
         },
         checkFormErrors: function(formValues, examIdCollection) {
             var formHasErrors;
+            var self = this;
             $.each(formValues, function(key, value) {
                 if (value === '') {
                     formHasErrors = true;
@@ -276,7 +277,7 @@ edx = edx || {};
                 self.hideError(self, 'proctored_exam');
             }
             return formHasErrors;
-        }
+        },
 
         render: function() {
             $(this.el).html(this.template({
