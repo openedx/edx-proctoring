@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.23.5] - 2021-08-19
+~~~~~~~~~~~~~~~~~~~~~
+* Fix a 500 error which would occur on stage when submitting an allowance.
+
 [3.23.4] - 2021-08-18
 ~~~~~~~~~~~~~~~~~~~~~
 * Change instructor onboarding API to fetch all onboarding profiles from the proctoring provider
