@@ -113,7 +113,7 @@ edx = edx || {};
                 'box-shadow': '0 0 4px rgba(0, 0, 0, 0.2), inset 0 1px 1px #fff',
                 cursor: 'default'
             });
-            $el.find('.close').css({
+            $el.find('.close-selected-exam').css({
                 'font-size': '16px',
                 margin: '5px'
             });
@@ -123,7 +123,6 @@ edx = edx || {};
         },
         getCurrentFormValues: function() {
             return {
-                proctored_exam: this.selectedExams,
                 allowance_type: $('select#allowance_type').val(),
                 allowance_value: $('#allowance_value').val(),
                 user_info: $('#user_info').val()
@@ -150,34 +149,19 @@ edx = edx || {};
             this.updateCss();
         },
         addAllowance: function(event) {
-            var $errorResponse, values, formHasErrors, exams;
+            var $errorResponse, formValues, formHasErrors, examIdCollection;
             var self = this;
             event.preventDefault();
             $errorResponse = $('.error-response');
             $errorResponse.html();
-            values = this.getCurrentFormValues();
-            formHasErrors = false;
-            exams = '';
+            formValues = this.getCurrentFormValues();
+            examIdCollection = '';
 
-            $('.close').each(function() {
-                exams += $(this).attr('data-item') + ',';
+            $('.close-selected-exam').each(function() {
+                examIdCollection += $(this).attr('data-item') + ',';
             });
 
-            $.each(values, function(key, value) {
-                if (value === '') {
-                    formHasErrors = true;
-                    self.showError(self, key, gettext('Required field'));
-                } else {
-                    self.hideError(self, key);
-                }
-            });
-
-            if (exams === '') {
-                formHasErrors = true;
-                self.showError(self, 'proctored_exam', gettext('Required field'));
-            } else {
-                self.hideError(self, 'proctored_exam');
-            }
+            formHasErrors = checkFormErrors(formValues, examIdCollection);
 
             if (!formHasErrors) {
                 self.model.fetch({
@@ -186,10 +170,10 @@ edx = edx || {};
                     },
                     type: 'PUT',
                     data: {
-                        exam_ids: exams,
-                        user_ids: values.user_info,
-                        allowance_type: values.allowance_type,
-                        value: values.allowance_value
+                        exam_ids: examIdCollection,
+                        user_ids: formValues.user_info,
+                        allowance_type: formValues.allowance_type,
+                        value: formValues.allowance_value
                     },
                     success: function() {
                         // fetch the allowances again.
@@ -220,7 +204,7 @@ edx = edx || {};
             this.updateAllowanceLabels($('#allowance_type').val());
         },
         selectExamType: function() {
-            $('.close').each(function() {
+            $('.close-selected-exam').each(function() {
                 $(this).trigger('click');
             });
             if ($('#proctored_exam').is(':visible')) {
@@ -260,7 +244,7 @@ edx = edx || {};
             div.setAttribute('class', 'tag');
             span.innerHTML = examName;
             closeIcon.innerHTML = 'x';
-            closeIcon.setAttribute('class', 'close');
+            closeIcon.setAttribute('class', 'close-selected-exam');
             closeIcon.setAttribute('data-item', examID);
             closeIcon.setAttribute('data-name', examName);
             closeIcon.onclick = this.deleteTag;
@@ -274,6 +258,25 @@ edx = edx || {};
             $(this).closest('div').remove();
             $('.exam_dropdown:visible').append(new Option(examName, examID));
         },
+        checkFormErrors: function(formValues, examIdCollection) {
+            var formHasErrors;
+            $.each(formValues, function(key, value) {
+                if (value === '') {
+                    formHasErrors = true;
+                    self.showError(self, key, gettext('Required field'));
+                } else {
+                    self.hideError(self, key);
+                }
+            });
+
+            if (examIdCollection === '') {
+                formHasErrors = true;
+                self.showError(self, 'proctored_exam', gettext('Required field'));
+            } else {
+                self.hideError(self, 'proctored_exam');
+            }
+            return formHasErrors;
+        }
 
         render: function() {
             $(this.el).html(this.template({
