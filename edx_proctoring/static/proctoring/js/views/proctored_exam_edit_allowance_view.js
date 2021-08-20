@@ -127,6 +127,7 @@ edx = edx || {};
                     },
                     type: 'PUT',
                     data: {
+                        course_id: self.course_id,
                         exam_ids: this.selected_exam_ID,
                         user_ids: this.selected_user,
                         allowance_type: this.allowance_type,
