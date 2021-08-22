@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-15 18:35+0000\n"
+"POT-Creation-Date: 2021-08-22 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Abel Camacho <abelcama@gmail.com>, 2021\n"
 "Language-Team: Basque (Spain) (https://www.transifex.com/open-edx/teams/6205/eu_ES/)\n"
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:803 views.py:1107
+#: api.py:803 views.py:1124
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr ""
@@ -1372,7 +1372,7 @@ msgstr ""
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:542 views.py:709
+#: views.py:542 views.py:711
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
@@ -1385,46 +1385,46 @@ msgstr ""
 msgid "No onboarding status API for {proctor_service}"
 msgstr ""
 
-#: views.py:758
+#: views.py:761
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 
-#: views.py:1113
+#: views.py:1130
 msgid "you have less than a minute remaining"
 msgstr ""
 
-#: views.py:1583
+#: views.py:1600
 msgid "Enter a valid username or email"
 msgstr ""
 
-#: views.py:1583
+#: views.py:1600
 msgid "user_info"
 msgstr ""
 
-#: views.py:1596
+#: views.py:1613
 msgid "Enter a valid positive value number"
 msgstr ""
 
-#: views.py:1596
+#: views.py:1613
 msgid "allowance_value"
 msgstr ""
 
-#: views.py:1683
+#: views.py:1700
 msgid "Cannot update attempt review status"
 msgstr ""
 
-#: views.py:1965
+#: views.py:1982
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1971
+#: views.py:1988
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1990
+#: views.py:2007
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
