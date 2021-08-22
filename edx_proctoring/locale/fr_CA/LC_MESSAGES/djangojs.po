@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-15 18:35+0000\n"
+"POT-Creation-Date: 2021-08-22 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2021\n"
 "Language-Team: French (Canada) (https://www.transifex.com/open-edx/teams/6205/fr_CA/)\n"
@@ -115,7 +115,7 @@ msgstr "Intégration en attente"
 msgid "Onboarding Expired"
 msgstr "L'intégration a expiré"
 
-#: api.py:803 views.py:1107
+#: api.py:803 views.py:1124
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "il vous reste {remaining_time}"
@@ -1805,7 +1805,7 @@ msgstr ""
 msgid "Missing required query parameter course_id"
 msgstr "Paramètre de requête obligatoire course_id manquant"
 
-#: views.py:542 views.py:709
+#: views.py:542 views.py:711
 msgid "There is no onboarding exam related to this course id."
 msgstr "Il n'y a pas d'examen d'intégration lié à cet identifiant de cours."
 
@@ -1818,48 +1818,48 @@ msgstr "Il n'y a pas d'examen d'intégration accessible à cet utilisateur."
 msgid "No onboarding status API for {proctor_service}"
 msgstr "Aucune API de statut d'intégration pour {proctor_service}"
 
-#: views.py:758
+#: views.py:761
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 "Le service d'intégration est momentanément indisponible. Veuillez réessayer "
 "plus tard."
 
-#: views.py:1113
+#: views.py:1130
 msgid "you have less than a minute remaining"
 msgstr "il vous reste moins d'une minute"
 
-#: views.py:1583
+#: views.py:1600
 msgid "Enter a valid username or email"
 msgstr "Entrez un nom d'utilisateur ou un courriel valide"
 
-#: views.py:1583
+#: views.py:1600
 msgid "user_info"
-msgstr ""
+msgstr "user_info"
 
-#: views.py:1596
+#: views.py:1613
 msgid "Enter a valid positive value number"
 msgstr "Entrez un nombre de valeur positive valide"
 
-#: views.py:1596
+#: views.py:1613
 msgid "allowance_value"
-msgstr ""
+msgstr "allowance_value"
 
-#: views.py:1683
+#: views.py:1700
 msgid "Cannot update attempt review status"
 msgstr "Impossible de mettre à jour l'état d'examen de la tentative"
 
-#: views.py:1965
+#: views.py:1982
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "Aucun examen dans le cours {course_id}."
 
-#: views.py:1971
+#: views.py:1988
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "Aucun examen surveillé dans le cours {course_id}"
 
-#: views.py:1990
+#: views.py:2007
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "Aucun tableau de bord d'instructeur pour {proctor_service}"
