@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.23.6] - 2021-08-23
+~~~~~~~~~~~~~~~~~~~~~
+* Fix error where course staff were unable to add allowances.
+
 [3.23.5] - 2021-08-19
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix a 500 error which would occur on stage when submitting an allowance.

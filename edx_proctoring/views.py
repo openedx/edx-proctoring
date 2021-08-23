@@ -129,7 +129,7 @@ def require_course_or_global_staff(func):
     """View decorator that requires that the user have staff permissions. """
     def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
         instructor_service = get_runtime_service('instructor')
-        course_id = kwargs.get('course_id', None)
+        course_id = request.data.get('course_id') or kwargs.get('course_id', None)
         exam_id = request.data.get('exam_id') or kwargs.get('exam_id', None)
         attempt_id = kwargs.get('attempt_id', None)
         if request.user.is_staff:
@@ -1559,6 +1559,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
     HTTP PUT
     Adds or updates multiple exam and student allowances.
     PUT data : {
+        "course_id": "a/b/c",
         "exam_ids": [1, 2, 3],
         "user_ids": [1, 2],
         "allowance_type": 'extra_time',
@@ -1566,6 +1567,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
     }
 
     **PUT data Parameters**
+        * course_id: ID of the course, used to determine if the requesting user is course staff.
         * exam_ids: The set of unique identifiers for the exams.
         * user_ids: The set of unique identifiers for the students.
         * allowance_type: key for the allowance entry, either ADDITIONAL_TIME or TIME_MULTIPLIER
@@ -1576,7 +1578,7 @@ class ExamBulkAllowanceView(ProctoredAPIView):
     """
 
     @method_decorator(require_course_or_global_staff)
-    def put(self, request):
+    def put(self, request, course_id=None):  # pylint: disable=unused-argument
         """
         HTTP PUT handler. Adds or updates Allowances for many exams and students
         """

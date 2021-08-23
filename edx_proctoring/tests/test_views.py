@@ -4873,6 +4873,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         self.user.is_staff = True
         self.user.save()
         self.client.login_user(self.user)
+        self.course_id = 'a/b/c'
         self.student_taking_exam = User()
         self.student_taking_exam.save()
 
@@ -4905,14 +4906,14 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         user_list = self.create_batch_users(3)
         user_id_list = [user.email for user in user_list]
         exam1 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             time_limit_mins=90,
             is_active=True
             )
         exam2 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content2',
             exam_name='Test Exam2',
             time_limit_mins=90,
@@ -4921,6 +4922,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
+            'course_id': self.course_id,
             'exam_ids': ','.join(str(exam) for exam in exam_list),
             'user_ids': ','.join(str(user) for user in user_id_list),
             'allowance_type': allowance_type,
@@ -4933,26 +4935,30 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_add_bulk_allowance_non_staff_user(self):  # pylint: disable=invalid-name
+    @ddt.data((True, 200), (False, 403))
+    @ddt.unpack
+    def test_add_bulk_allowance_non_global_staff_user(  # pylint: disable=invalid-name
+        self, is_user_course_staff, expected_status_code,
+    ):
         """
-        Test to add bulk allowance with not staff/global user
-        returns forbidden response.
+        Test to add bulk allowance with a non global staff user. Course staff should be able
+        to add allowances, while non staff will receive a forbidden response.
         """
         self.user.is_staff = False
         self.user.save()
-        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=False))
+        set_runtime_service('instructor', MockInstructorService(is_user_course_staff=is_user_course_staff))
         # Create exams.
         user_list = self.create_batch_users(3)
         user_id_list = [user.email for user in user_list]
         exam1 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             time_limit_mins=90,
             is_active=True
             )
         exam2 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content2',
             exam_name='Test Exam2',
             time_limit_mins=90,
@@ -4961,19 +4967,21 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
+            'course_id': self.course_id,
             'exam_ids': ','.join(str(exam) for exam in exam_list),
             'user_ids': ','.join(str(user) for user in user_id_list),
             'allowance_type': 'additional_time_granted',
             'value': '30'
         }
         response = self.client.put(
-            reverse('edx_proctoring:proctored_exam.bulk_allowance', kwargs={'course_id': exam1.course_id}),
+            reverse('edx_proctoring:proctored_exam.bulk_allowance'),
             json.dumps(allowance_data),
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, 403)
-        response_data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
+        self.assertEqual(response.status_code, expected_status_code)
+        if not is_user_course_staff:
+            response_data = json.loads(response.content.decode('utf-8'))
+            self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
     @ddt.data(
         (
@@ -5003,14 +5011,14 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         user_id_list = [user.email for user in user_list]
         user_id_list.append('invalid_user')
         exam1 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             time_limit_mins=90,
             is_active=True
             )
         exam2 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content2',
             exam_name='Test Exam2',
             time_limit_mins=90,
@@ -5019,6 +5027,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
+            'course_id': self.course_id,
             'exam_ids': ','.join(str(exam) for exam in exam_list),
             # Add additonal whitesapce for invalid users
             'user_ids': ','.join(str(user) for user in user_id_list) + ',,   ,  ,w',
@@ -5059,14 +5068,14 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         user_list = self.create_batch_users(3)
         user_id_list = [user.email for user in user_list]
         exam1 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             time_limit_mins=90,
             is_active=True
             )
         exam2 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content2',
             exam_name='Test Exam2',
             time_limit_mins=90,
@@ -5075,6 +5084,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id, -99]
 
         allowance_data = {
+            'course_id': self.course_id,
             # Test added whitesapce in the exam id input
             'exam_ids': ','.join(str(exam) for exam in exam_list) + ',2  3, 22,',
             'user_ids': ','.join(str(user) for user in user_id_list),
@@ -5111,14 +5121,14 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         user_list = self.create_batch_users(3)
         user_id_list = [user.email for user in user_list]
         exam1 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             time_limit_mins=90,
             is_active=True
             )
         exam2 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content2',
             exam_name='Test Exam2',
             time_limit_mins=90,
@@ -5127,6 +5137,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
+            'course_id': self.course_id,
             'exam_ids': ','.join(str(exam) for exam in exam_list),
             'user_ids': ','.join(str(user) for user in user_id_list),
             'allowance_type': allowance_type,
@@ -5151,6 +5162,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [-99, -98]
 
         allowance_data = {
+            'course_id': self.course_id,
             'exam_ids': ','.join(str(exam) for exam in exam_list),
             'user_ids': ','.join(str(user) for user in user_id_list),
             'allowance_type': 'additional_time_granted',
@@ -5169,14 +5181,14 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         """
         # Create exams.
         exam1 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content',
             exam_name='Test Exam',
             time_limit_mins=90,
             is_active=True
             )
         exam2 = ProctoredExam.objects.create(
-            course_id='a/b/c',
+            course_id=self.course_id,
             content_id='test_content2',
             exam_name='Test Exam2',
             time_limit_mins=90,
@@ -5185,6 +5197,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         exam_list = [exam1.id, exam2.id]
 
         allowance_data = {
+            'course_id': self.course_id,
             'exam_ids': ','.join(str(exam) for exam in exam_list),
             'user_ids': ' ',
             'allowance_type': 'additional_time_granted',
@@ -5206,6 +5219,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         user_id_list = [user.email for user in user_list]
 
         allowance_data = {
+            'course_id': self.course_id,
             'exam_ids': ' ',
             'user_ids': ','.join(str(user) for user in user_id_list),
             'allowance_type': 'additional_time_granted',
