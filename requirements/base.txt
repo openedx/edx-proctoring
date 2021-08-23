@@ -53,7 +53,7 @@ django-crum==0.7.9
     # via
     #   -r requirements/base.in
     #   edx-django-utils
-django-ipware==3.0.7
+django-ipware==4.0.0
     # via -r requirements/base.in
 django-model-utils==4.1.1
     # via
@@ -87,6 +87,7 @@ edx-django-utils==4.2.0
     #   edx-when
 edx-drf-extensions==6.6.0
     # via
+    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
     #   edx-when
 edx-opaque-keys==2.2.2
@@ -116,11 +117,11 @@ lxml==4.6.3
     # via xblock
 markupsafe==2.0.1
     # via xblock
-newrelic==6.6.0.162
+newrelic==6.8.0.163
     # via edx-django-utils
 pbr==5.6.0
     # via stevedore
-prompt-toolkit==3.0.19
+prompt-toolkit==3.0.20
     # via click-repl
 psutil==5.8.0
     # via edx-django-utils
@@ -181,7 +182,7 @@ slumber==0.7.1
     # via edx-rest-api-client
 sqlparse==0.4.1
     # via django
-stevedore==3.3.0
+stevedore==3.4.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
