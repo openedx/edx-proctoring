@@ -216,12 +216,7 @@ class SoftwareSecureReviewStatus:
         ReviewStatus.not_reviewed: not_reviewed,
     }
 
-    to_standard_status = {
-        clean: ReviewStatus.passed,
-        violation: ReviewStatus.violation,
-        suspicious: ReviewStatus.suspicious,
-        not_reviewed: ReviewStatus.not_reviewed,
-    }
+    to_standard_status = {v: k for k, v in from_standard_status.items()}
 
     @classmethod
     def validate(cls, status):
