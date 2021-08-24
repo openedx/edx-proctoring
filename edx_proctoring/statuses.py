@@ -216,12 +216,7 @@ class SoftwareSecureReviewStatus:
         ReviewStatus.not_reviewed: not_reviewed,
     }
 
-    to_standard_status = {
-        clean: ReviewStatus.passed,
-        violation: ReviewStatus.violation,
-        suspicious: ReviewStatus.suspicious,
-        not_reviewed: ReviewStatus.not_reviewed,
-    }
+    to_standard_status = {v: k for k, v in from_standard_status.items()}
 
     @classmethod
     def validate(cls, status):
@@ -313,14 +308,9 @@ class VerificientOnboardingProfileStatus:
         pending: InstructorDashboardOnboardingAttemptStatus.submitted
     }
 
-    filter_status_mapping = {
-        InstructorDashboardOnboardingAttemptStatus.not_started: no_profile,
-        InstructorDashboardOnboardingAttemptStatus.submitted: pending,
-        InstructorDashboardOnboardingAttemptStatus.other_course_approved: other_course_approved,
-        InstructorDashboardOnboardingAttemptStatus.verified: approved,
-        InstructorDashboardOnboardingAttemptStatus: rejected,
-        InstructorDashboardOnboardingAttemptStatus.expired: expired
-    }
+    # reverse map: leave out the none and replace with not_started for filter use
+    filter_status_mapping = {v: k for k, v in profile_status_mapping.items() if v}
+    filter_status_mapping[InstructorDashboardOnboardingAttemptStatus.not_started] = no_profile
 
     @classmethod
     def get_edx_status_from_profile_status(cls, api_status):

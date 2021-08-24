@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.23.7] - 2021-08-24
+~~~~~~~~~~~~~~~~~~~~~
+* Fix error in onboarding status panel rejected filter
+
 [3.23.6] - 2021-08-23
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix error where course staff were unable to add allowances.
