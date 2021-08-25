@@ -68,4 +68,23 @@ describe('ProctoredExamAllowanceView', function() {
         expect(this.proctored_exam_allowance.$el.find('tr.allowance-items').html())
             .toContain('Test Exam');
     });
+
+    it('should toggle the dropdown correctly', function() {
+        expectedProctoredAllowanceJson[0].testuser1[0].user.username = 'testuser1@test.com';
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/test_course_id/grouped/allowance',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(expectedProctoredAllowanceJson)
+            ]
+        );
+
+        this.proctored_exam_allowance = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView();
+        this.server.respond();
+        this.server.respond();
+        $('.accordion-trigger').trigger('click');
+        expect($('.accordion-trigger').attr('aria-expanded')).toBe('true');
+    });
 });
