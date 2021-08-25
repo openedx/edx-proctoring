@@ -126,8 +126,11 @@ edx = edx || {};
             var self = this;
             var html;
             if (this.template !== null) {
-                html = this.template({proctored_exam_allowances: this.collection.toJSON()[0],
-                    allowance_types: self.allowance_types});
+                html = this.template({
+                    proctored_exam_allowances: this.collection.toJSON()[0],
+                    allowance_types: self.allowance_types,
+                    generateDomId: self.generateDomId
+                });
                 this.$el.html(html);
             }
         },
@@ -179,18 +182,21 @@ edx = edx || {};
                 isExpanded = accordionRow.getAttribute('aria-expanded') === 'true';
                 if (!isExpanded) {
                     $toggleChevron = $(accordionRow).find('.fa-chevron-down');
-                    $contentPanel = $('#' + accordionRow.innerText.trim());
+                    $contentPanel = $('#' + accordionRow.getAttribute('data-key-id').trim());
                     $contentPanel.show();
                     $toggleChevron.addClass('fa-rotate-180');
                     accordionRow.setAttribute('aria-expanded', 'true');
                 } else {
                     $toggleChevron = $(accordionRow).find('.fa-chevron-down');
-                    $contentPanel = $('#' + accordionRow.innerText.trim());
+                    $contentPanel = $('#' + accordionRow.getAttribute('data-key-id').trim());
                     $contentPanel.hide();
                     $toggleChevron.removeClass('fa-rotate-180');
                     accordionRow.setAttribute('aria-expanded', 'false');
                 }
             }
+        },
+        generateDomId: function(username) {
+            return 'ui-id-' + username.replace(/\W/g, '');
         }
     });
     this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView =

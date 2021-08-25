@@ -9,11 +9,11 @@
 <div class="wrapper-content wrapper">
    <section class="content exam-allowances-content">
             <% _.each(proctored_exam_allowances, function(student){ %>
-                <div class="accordion-trigger" aria-expanded="false" style="font-size:20px;">
+                <div class="accordion-trigger" aria-expanded="false" style="font-size:20px;" data-key-id="<%=generateDomId(student[0].user.username)%>">
                     <span class="fa fa-chevron-down" aria-hidden="true"></span>
                     <%=student[0].user.username %>
                 </div>
-                <table class="allowance-table" id="<%=student[0].user.username %>" style="display:none;">
+                <table class="allowance-table" id="<%=generateDomId(student[0].user.username) %>" style="display:none;">
                     <tbody>
                         <tr class="allowance-headings">
                             <th class="exam-name"><%- gettext("Exam Name") %></th>

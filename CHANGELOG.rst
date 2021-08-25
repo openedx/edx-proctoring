@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[3.23.8] - 2021-08-25
+~~~~~~~~~~~~~~~~~~~~~
+* Fix the template on bulk exam allowance view where username is used for DOM id
 
 [3.23.7] - 2021-08-24
 ~~~~~~~~~~~~~~~~~~~~~
