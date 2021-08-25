@@ -58,14 +58,6 @@ Unreleased
 ~~~~~~~~~~~~~~~~~~~~~
 * Add edit button to grouped allowances, which allows instructors to edit the value of a single allowance.
 
-[3.22.0] - 2021-07-26
-~~~~~~~~~~~~~~~~~~~~~
-* If verified name functionality is enabled through the "name_affirmation" runtime service,
-  use it in proctored exam attempt creation. (see https://github.com/edx/edx-name-affirmation)
-* When updating a proctored exam attempt to "verified" status, update the user's verified
-  name status, if verified name functionality is enabled and they have one linked to that
-  exam attempt.
-
 [3.21.1] - 2021-07-26
 ~~~~~~~~~~~~~~~~~~~~~
 * Removed name field in proctored exam attempt from the DB.

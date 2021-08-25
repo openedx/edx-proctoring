@@ -101,8 +101,7 @@ from .test_services import (
     MockCreditServiceWithCourseEndDate,
     MockEnrollmentsService,
     MockGradesService,
-    MockInstructorService,
-    MockNameAffirmationService
+    MockInstructorService
 )
 from .utils import ProctoredExamTestCase
 
@@ -126,7 +125,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.disabled_exam_id = self._create_disabled_exam()
         set_runtime_service('certificates', MockCertificateService())
         set_runtime_service('instructor', MockInstructorService())
-        set_runtime_service('name_affirmation', MockNameAffirmationService())
 
     def tearDown(self):
         """
@@ -135,7 +133,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         super().tearDown()
         set_runtime_service('certificates', None)
         set_runtime_service('instructor', None)
-        set_runtime_service('name_affirmation', None)
 
     def _add_allowance_for_user(self):
         """
@@ -1275,26 +1272,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         with self.assertRaises(ProctoredExamIllegalStatusTransition):
             reset_practice_exam(self.practice_exam_id, self.user_id, self.user)
-
-    @patch('edx_proctoring.api.create_exam_attempt')
-    def test_reset_exam_verified_name_enabled(self, create_exam_attempt_mock):
-        """
-        If verified name feature is enabled, account for that when creating a new
-        exam attempt as a result of resetting an exam.
-        """
-        self._create_exam_attempt(
-            self.practice_exam_id,
-            status=ProctoredExamStudentAttemptStatus.rejected,
-            is_practice_exam=True,
-        )
-        reset_practice_exam(self.practice_exam_id, self.user_id, self.user, True)
-
-        create_exam_attempt_mock.assert_called_once_with(
-            self.practice_exam_id,
-            self.user.id,
-            taking_as_proctored=True,
-            is_verified_name_enabled=True,
-        )
 
     def test_stop_a_non_started_exam(self):
         """
@@ -2500,29 +2477,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         attempt = get_exam_attempt_by_id(exam_attempt.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.resumed)
 
-    def test_update_exam_attempt_verified_name(self):
-        """
-        Test that updating a proctored exam attempt to a "verified" status will trigger an
-        update to the linked verified name entry, if one exists.
-        """
-        attempt_id = create_exam_attempt(
-            exam_id=self.proctored_exam_id,
-            user_id=self.user_id,
-            taking_as_proctored=True,
-            is_verified_name_enabled=True
-        )
-
-        # Check that a verified name was created with is_verified = False
-        name_affirmation_service = get_runtime_service('name_affirmation')
-        verified_name_obj = name_affirmation_service.get_verified_name(self.user)
-        self.assertFalse(verified_name_obj.is_verified)
-
-        update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.verified)
-
-        # User's verified name has been updated to is_verified = True
-        verified_name_obj = name_affirmation_service.get_verified_name(self.user)
-        self.assertTrue(verified_name_obj.is_verified)
-
     @ddt.data(
         (
             ProctoredExamStudentAttemptStatus.started,
@@ -3197,99 +3151,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             })
         else:
             self.assertEqual(override, None)
-
-    def test_use_verified_name_in_attempt_creation(self):
-        """
-        If verified name feature is enabled, and the user has an existing verified
-        name, don't create a new one.
-        """
-        name_affirmation_service = get_runtime_service('name_affirmation')
-        name_affirmation_service.create_verified_name(
-            self.user,
-            verified_name='Jonathan Doe',
-            profile_name='Jon Doe',
-            verification_attempt_id=123,
-            is_verified=True
-        )
-
-        create_exam_attempt(
-            exam_id=self.proctored_exam_id,
-            user_id=self.user_id,
-            taking_as_proctored=True,
-            is_verified_name_enabled=True
-        )
-
-        # Assert that a new verified name was not created with the exam attempt ID
-        verified_name_obj = name_affirmation_service.get_verified_name(self.user)
-        self.assertIsNone(verified_name_obj.proctored_exam_attempt_id)
-
-    def test_create_verified_name_with_exam_attempt(self):
-        """
-        If verified name feature is enabled, create a verified name for a user during
-        proctored exam attempt creation if they don't already have one.
-        """
-        attempt_id = create_exam_attempt(
-            exam_id=self.proctored_exam_id,
-            user_id=self.user_id,
-            taking_as_proctored=True,
-            is_verified_name_enabled=True
-        )
-
-        credit_service = get_runtime_service('credit')
-        credit_status = credit_service.get_credit_state(self.user.id, self.course_id)
-        full_name = credit_status['profile_fullname']
-
-        name_affirmation_service = get_runtime_service('name_affirmation')
-        verified_name_obj = name_affirmation_service.get_verified_name(self.user)
-        self.assertEqual(verified_name_obj.verified_name, full_name)
-        self.assertEqual(verified_name_obj.profile_name, full_name)
-        self.assertEqual(verified_name_obj.proctored_exam_attempt_id, attempt_id)
-
-    def test_create_verified_name_with_exam_attempt_when_pending(self):
-        """
-        If verified name feature is enabled, create a verified name for a user during
-        proctored exam attempt creation if they have a pending verified name.
-        """
-        name_affirmation_service = get_runtime_service('name_affirmation')
-        name_affirmation_service.create_verified_name(
-            self.user, verified_name='John Doe', profile_name='Old Name', is_verified=False,
-        )
-
-        attempt_id = create_exam_attempt(
-            exam_id=self.proctored_exam_id,
-            user_id=self.user_id,
-            taking_as_proctored=True,
-            is_verified_name_enabled=True
-        )
-
-        credit_service = get_runtime_service('credit')
-        credit_status = credit_service.get_credit_state(self.user.id, self.course_id)
-        profile_name = credit_status['profile_fullname']
-
-        verified_name_obj = name_affirmation_service.get_verified_name(self.user)
-        self.assertEqual(attempt_id, verified_name_obj.proctored_exam_attempt_id)
-        self.assertEqual(profile_name, verified_name_obj.profile_name)
-
-    def test_create_exam_attempt_empty_string(self):
-        """
-        Assert that exam attempt creation does not fail if the user's profile name is an
-        empty string.
-        """
-        with patch(
-                'edx_proctoring.tests.test_services.MockCreditService.get_credit_state',
-                return_value={'profile_fullname': '', 'student_email': 'foo@bar'}
-        ):
-            attempt_id = create_exam_attempt(
-                exam_id=self.proctored_exam_id,
-                user_id=self.user_id,
-                taking_as_proctored=True,
-                is_verified_name_enabled=True
-            )
-
-            self.assertEqual(
-                get_exam_attempt_by_id(attempt_id)['status'],
-                ProctoredExamStudentAttemptStatus.created
-            )
 
 
 @ddt.ddt
