@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.23.7] - 2021-08-25
+~~~~~~~~~~~~~~~~~~~~~
+* Switched from jsonfield2 to jsonfield as the earlier one has archived and merged back in the latter one.
+
 [3.23.6] - 2021-08-23
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix error where course staff were unable to add allowances.
