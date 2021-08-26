@@ -1,5 +1,5 @@
 """
-Tests for signals.py
+Tests for handlers.py
 """
 from unittest.mock import patch
 
@@ -9,8 +9,8 @@ from httmock import HTTMock
 from django.db.models.signals import pre_delete, pre_save
 
 from edx_proctoring.api import update_attempt_status
+from edx_proctoring.handlers import on_attempt_changed
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt
-from edx_proctoring.signals import on_attempt_changed
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import MockInstructorService
 
@@ -20,7 +20,7 @@ from .utils import ProctoredExamTestCase
 @ddt.ddt
 class SignalTests(ProctoredExamTestCase):
     """
-    Tests for signals.py
+    Tests for handlers.py
     """
     def setUp(self):
         super().setUp()
@@ -52,7 +52,7 @@ class SignalTests(ProctoredExamTestCase):
             logger_mock.assert_any_call(log_format_string, 1, self.backend_name)
 
     @ddt.data(None, MockInstructorService())
-    @patch('edx_proctoring.signals.get_runtime_service')
+    @patch('edx_proctoring.handlers.get_runtime_service')
     @patch('edx_proctoring.tests.test_services.MockInstructorService.complete_student_attempt')
     def test_pre_save_complete_student_attempt(
             self, runtime_return, mock_complete_student_attempt, mock_get_runtime_service
