@@ -101,8 +101,7 @@ from .test_services import (
     MockCreditServiceWithCourseEndDate,
     MockEnrollmentsService,
     MockGradesService,
-    MockInstructorService,
-    MockNameAffirmationService
+    MockInstructorService
 )
 from .utils import ProctoredExamTestCase
 
@@ -126,7 +125,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.disabled_exam_id = self._create_disabled_exam()
         set_runtime_service('certificates', MockCertificateService())
         set_runtime_service('instructor', MockInstructorService())
-        set_runtime_service('name_affirmation', MockNameAffirmationService())
 
     def tearDown(self):
         """
@@ -135,7 +133,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         super().tearDown()
         set_runtime_service('certificates', None)
         set_runtime_service('instructor', None)
-        set_runtime_service('name_affirmation', None)
 
     def _add_allowance_for_user(self):
         """
@@ -2480,12 +2477,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         attempt = get_exam_attempt_by_id(exam_attempt.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.resumed)
 
-    @ddt.data(
-        True,
-        False
-    )
     @patch('edx_proctoring.api.exam_attempt_status_signal.send')
-    def test_create_and_update_exam_attempt_signal_verified_name(self, use_verified_name, mock_signal):
+    def test_create_and_update_exam_attempt_signal_verified_name(self, mock_signal):
         """
         Test that creating and updating a proctored exam attempt status will trigger
         a signal emission with correct data
@@ -2495,19 +2488,11 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         profile_name = credit_status['profile_fullname']
         full_name = profile_name
 
-        if use_verified_name:
-            name_affirmation_service = get_runtime_service('name_affirmation')
-            name_affirmation_service.create_verified_name(
-                self.user, verified_name='John Doe', profile_name='Old Name', status='created',
-            )
-            full_name = 'John Doe'
-
-        # Check that signal is sent with verified name when attempt is created
+        # Check that signal is sent with name when attempt is created
         attempt_id = create_exam_attempt(
             exam_id=self.proctored_exam_id,
             user_id=self.user_id,
-            taking_as_proctored=True,
-            is_verified_name_enabled=True
+            taking_as_proctored=True
         )
         self.assertTrue(mock_signal.called)
         mock_signal.assert_called_with(
@@ -2523,7 +2508,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         mock_signal.reset_mock()
 
-        # Update attempt status and check that signal is sent with no verified name
+        # Update attempt status and check that signal is sent with no name
         update_attempt_status(
             attempt_id,
             ProctoredExamStudentAttemptStatus.started
@@ -3228,8 +3213,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             attempt_id = create_exam_attempt(
                 exam_id=self.proctored_exam_id,
                 user_id=self.user_id,
-                taking_as_proctored=True,
-                is_verified_name_enabled=True
+                taking_as_proctored=True
             )
 
             self.assertEqual(

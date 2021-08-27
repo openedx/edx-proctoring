@@ -892,7 +892,7 @@ def _create_and_decline_attempt(exam_id, user_id):
     )
 
 
-def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, review_policy, verified_name=None):
+def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, review_policy):
     """
     Call the proctoring backend to register the exam attempt. If there are exceptions
     the external_id returned might be None. If the backend have onboarding status errors,
@@ -909,7 +909,7 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
     email = None
     external_id = None
     force_status = None
-    full_name = verified_name or ''
+    full_name = ''
     profile_name = ''
 
     credit_service = get_runtime_service('credit')
@@ -917,8 +917,7 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
         credit_state = credit_service.get_credit_state(user_id, exam['course_id'])
         if credit_state:
             profile_name = credit_state['profile_fullname']
-            if not verified_name:
-                full_name = profile_name
+            full_name = profile_name
 
     context = {
         'lms_host': lms_host,
@@ -999,24 +998,7 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
     return external_id, force_status, full_name, profile_name
 
 
-def _get_verified_name(user_id, name_affirmation_service):
-    """
-    Get the user's verified name if it exists.
-
-    Returns a verified name object (or None)
-    """
-    verified_name = None
-
-    user = USER_MODEL.objects.get(id=user_id)
-    verified_name_obj = name_affirmation_service.get_verified_name(user)
-
-    if verified_name_obj:
-        verified_name = verified_name_obj.verified_name
-
-    return verified_name
-
-
-def create_exam_attempt(exam_id, user_id, taking_as_proctored=False, is_verified_name_enabled=False):
+def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only
     be one exam_attempt per user per exam, with one exception described below.
@@ -1072,16 +1054,12 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False, is_verified
         )
         raise StudentExamAttemptOnPastDueProctoredExam(err_msg)
 
-    name_affirmation_service = get_runtime_service('name_affirmation')
     full_name = ''
     profile_name = ''
 
     if taking_as_proctored:
-        verified_name = None
-        if name_affirmation_service and is_verified_name_enabled:
-            verified_name = _get_verified_name(user_id, name_affirmation_service)
         external_id, force_status, full_name, profile_name = _register_proctored_exam_attempt(
-            user_id, exam_id, exam, attempt_code, review_policy, verified_name,
+            user_id, exam_id, exam, attempt_code, review_policy
         )
 
     attempt = ProctoredExamStudentAttempt.create_exam_attempt(
