@@ -919,6 +919,7 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
             profile_name = credit_state['profile_fullname']
             if not verified_name:
                 full_name = profile_name
+            email = credit_state['student_email']
 
     context = {
         'lms_host': lms_host,
