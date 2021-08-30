@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.24.1] - 2021-08-30
+~~~~~~~~~~~~~~~~~~~~~
+* Bug fix for exam registration
+
 [3.24.0] - 2021-08-25
 ~~~~~~~~~~~~~~~~~~~~~
 * Re-added code for using a verified name for a proctored exam attempt that had been reverted.
