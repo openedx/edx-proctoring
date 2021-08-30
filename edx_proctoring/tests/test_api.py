@@ -2481,11 +2481,15 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.resumed)
 
     @ddt.data(
-        True,
-        False
+        (True, True),
+        (False, True),
+        (True, False),
+        (False, False)
     )
+    @ddt.unpack
     @patch('edx_proctoring.api.exam_attempt_status_signal.send')
-    def test_create_and_update_exam_attempt_signal_verified_name(self, use_verified_name, mock_signal):
+    def test_create_and_update_exam_attempt_signal_verified_name(
+            self, has_verified_name, verified_name_enabled, mock_signal):
         """
         Test that creating and updating a proctored exam attempt status will trigger
         a signal emission with correct data
@@ -2495,19 +2499,21 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         profile_name = credit_status['profile_fullname']
         full_name = profile_name
 
-        if use_verified_name:
-            name_affirmation_service = get_runtime_service('name_affirmation')
+        name_affirmation_service = get_runtime_service('name_affirmation')
+        if has_verified_name:
             name_affirmation_service.create_verified_name(
                 self.user, verified_name='John Doe', profile_name='Old Name', status='created',
             )
+        if verified_name_enabled:
+            name_affirmation_service.enabled = True
+        if has_verified_name and verified_name_enabled:
             full_name = 'John Doe'
 
         # Check that signal is sent with verified name when attempt is created
         attempt_id = create_exam_attempt(
             exam_id=self.proctored_exam_id,
             user_id=self.user_id,
-            taking_as_proctored=True,
-            is_verified_name_enabled=True
+            taking_as_proctored=True
         )
         self.assertTrue(mock_signal.called)
         mock_signal.assert_called_with(
@@ -3228,8 +3234,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             attempt_id = create_exam_attempt(
                 exam_id=self.proctored_exam_id,
                 user_id=self.user_id,
-                taking_as_proctored=True,
-                is_verified_name_enabled=True
+                taking_as_proctored=True
             )
 
             self.assertEqual(

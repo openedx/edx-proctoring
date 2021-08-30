@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.24.3] - 2021-09-02
+~~~~~~~~~~~~~~~~~~~~~
+* Get verified name enabled from name affirmation service.
+
 [3.24.2] - 2021-09-01
 ~~~~~~~~~~~~~~~~~~~~~
 * Add exception handler and logging to proctored exam attempt emails. This prevents user errors
