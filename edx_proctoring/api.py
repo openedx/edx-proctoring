@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 import pytz
 from opaque_keys import InvalidKeyError
 
+import waffle  # pylint: disable=invalid-django-waffle-import
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
@@ -1591,7 +1592,7 @@ def update_attempt_status(attempt_id, to_status,
             course_name,
             exam['course_id']
         )
-        if email:
+        if email and waffle.switch_is_active(constants.SEND_ATTEMPT_STATUS_CHANGE_EMAILS):
             email.send()
 
     # emit an anlytics event based on the state transition

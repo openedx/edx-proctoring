@@ -72,6 +72,8 @@ ONBOARDING_PROFILE_API = 'edx_proctoring.onboarding_profile_api'
 
 ONBOARDING_PROFILE_INSTRUCTOR_DASHBOARD_API = 'edx_proctoring.onboarding_profile_instructor_dashboard_api'
 
+SEND_ATTEMPT_STATUS_CHANGE_EMAILS = 'edx_proctoring.send_attempt_status_change_emails'
+
 CONTENT_VIEWABLE_PAST_DUE_DATE = getattr(settings, 'PROCTORED_EXAM_VIEWABLE_PAST_DUE', False)
 
 TIME_MULTIPLIER = 'time_multiplier'
