@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.24.2] - 2021-09-01
+~~~~~~~~~~~~~~~~~~~~~
+* Add exception handler and logging to proctored exam attempt emails. This prevents user errors
+  if the email is not able to be sent.
+
 [3.24.1] - 2021-08-30
 ~~~~~~~~~~~~~~~~~~~~~
 * Bug fix for exam registration
