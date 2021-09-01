@@ -1594,7 +1594,7 @@ def update_attempt_status(attempt_id, to_status,
         if email:
             try:
                 email.send()
-            except Exception as err:
+            except Exception as err:  # pylint: disable=broad-except
                 log.exception(
                     'Exception occurred while trying to send proctoring attempt '
                     'status email for user_id={user_id} in course_id={course_id} -- {err}'.format(
