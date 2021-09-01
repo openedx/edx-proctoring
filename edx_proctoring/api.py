@@ -1592,7 +1592,17 @@ def update_attempt_status(attempt_id, to_status,
             exam['course_id']
         )
         if email:
-            email.send()
+            try:
+                email.send()
+            except Exception as err:  # pylint: disable=broad-except
+                log.exception(
+                    'Exception occurred while trying to send proctoring attempt '
+                    'status email for user_id={user_id} in course_id={course_id} -- {err}'.format(
+                        user_id=exam_attempt_obj.user_id,
+                        course_id=exam_attempt_obj.proctored_exam.course_id,
+                        err=err,
+                    )
+                )
 
     # emit an anlytics event based on the state transition
     # we re-read this from the database in case fields got updated
