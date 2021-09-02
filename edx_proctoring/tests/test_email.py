@@ -13,6 +13,7 @@ from opaque_keys import InvalidKeyError
 from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail.message import EmailMessage
 
 from edx_proctoring.api import update_attempt_status
 from edx_proctoring.constants import SITE_NAME
@@ -91,6 +92,32 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         self.assertIn('Your proctored exam "Test Exam"', actual_body)
         self.assertIn(credit_state['course_name'], actual_body)
         self.assertIn(expected_message_string, actual_body)
+
+    @patch('logging.Logger.exception')
+    def test_send_email_failure(self, logger_mock):
+        """
+        If an email fails to send and error is logged and the attempt is updated
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        credit_state = get_runtime_service('credit').get_credit_state(self.user_id, self.course_id)
+
+        with patch.object(EmailMessage, 'send', side_effect=Exception('foo')):
+            update_attempt_status(
+                exam_attempt.id,
+                'submitted',
+            )
+
+        exam_attempt.refresh_from_db()
+        self.assertEqual(exam_attempt.status, 'submitted')
+        log_format_string = (
+            'Exception occurred while trying to send proctoring attempt '
+            'status email for user_id={user_id} in course_id={course_id} -- {err}'.format(
+                user_id=self.user_id,
+                course_id=self.course_id,
+                err='foo',
+            )
+        )
+        logger_mock.assert_any_call(log_format_string)
 
     @ddt.data(
         ProctoredExamStudentAttemptStatus.verified,

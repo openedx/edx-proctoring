@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add testing for exam attempt email failure and related logging
 
 [3.24.3] - 2021-09-02
 ~~~~~~~~~~~~~~~~~~~~~
