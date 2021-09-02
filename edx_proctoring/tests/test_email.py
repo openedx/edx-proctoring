@@ -96,11 +96,9 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
     @patch('logging.Logger.exception')
     def test_send_email_failure(self, logger_mock):
         """
-        If an email fails to send and error is logged and the attempt is updated
+        If an email fails to send an error is logged and the attempt is updated
         """
         exam_attempt = self._create_started_exam_attempt()
-        credit_state = get_runtime_service('credit').get_credit_state(self.user_id, self.course_id)
-
         with patch.object(EmailMessage, 'send', side_effect=Exception('foo')):
             update_attempt_status(
                 exam_attempt.id,
