@@ -1002,10 +1002,14 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
 
 def _get_verified_name(user_id, name_affirmation_service):
     """
-    Get the user's verified name if it exists.
+    Get the user's verified name if name affirmation is enabled
+    and one exists.
 
     Returns a verified name object (or None)
     """
+    if not name_affirmation_service.is_verified_name_enabled():
+        return None
+
     verified_name = None
 
     user = USER_MODEL.objects.get(id=user_id)
@@ -1017,7 +1021,7 @@ def _get_verified_name(user_id, name_affirmation_service):
     return verified_name
 
 
-def create_exam_attempt(exam_id, user_id, taking_as_proctored=False, is_verified_name_enabled=False):
+def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     """
     Creates an exam attempt for user_id against exam_id. There should only
     be one exam_attempt per user per exam, with one exception described below.
@@ -1079,7 +1083,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False, is_verified
 
     if taking_as_proctored:
         verified_name = None
-        if name_affirmation_service and is_verified_name_enabled:
+        if name_affirmation_service:
             verified_name = _get_verified_name(user_id, name_affirmation_service)
         external_id, force_status, full_name, profile_name = _register_proctored_exam_attempt(
             user_id, exam_id, exam, attempt_code, review_policy, verified_name,
