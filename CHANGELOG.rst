@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.24.5] - 2021-09-02
+~~~~~~~~~~~~~~~~~~~~~
+* Add management command for updating an attempt status based on its associated review
+
 [3.24.4] - 2021-09-02
 ~~~~~~~~~~~~~~~~~~~~~
 * Add testing for exam attempt email failure and related logging
