@@ -13,7 +13,11 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.24.4] - 2021-09-02
+~~~~~~~~~~~~~~~~~~~~~
 * Add testing for exam attempt email failure and related logging
+* Fix signal handler connection
 
 [3.24.3] - 2021-09-02
 ~~~~~~~~~~~~~~~~~~~~~
