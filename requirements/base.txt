@@ -33,7 +33,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.2.0
     # via celery
-cryptography==3.4.7
+cryptography==3.4.8
     # via pyjwt
 django==2.2.24
     # via
@@ -53,7 +53,7 @@ django-crum==0.7.9
     # via
     #   -r requirements/base.in
     #   edx-django-utils
-django-ipware==3.0.7
+django-ipware==4.0.0
     # via -r requirements/base.in
 django-model-utils==4.1.1
     # via
@@ -80,13 +80,14 @@ drf-jwt==1.19.0
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   edx-drf-extensions
-edx-django-utils==4.2.0
+edx-django-utils==4.4.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   edx-when
 edx-drf-extensions==6.6.0
     # via
+    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
     #   edx-when
 edx-opaque-keys==2.2.2
@@ -96,7 +97,7 @@ edx-opaque-keys==2.2.2
     #   edx-when
 edx-rest-api-client==5.4.0
     # via -r requirements/base.in
-edx-when==2.1.0
+edx-when==2.2.0
     # via -r requirements/base.in
 event-tracking==1.1.0
     # via -r requirements/base.in
@@ -116,11 +117,11 @@ lxml==4.6.3
     # via xblock
 markupsafe==2.0.1
     # via xblock
-newrelic==6.6.0.162
+newrelic==6.8.1.164
     # via edx-django-utils
 pbr==5.6.0
     # via stevedore
-prompt-toolkit==3.0.19
+prompt-toolkit==3.0.20
     # via click-repl
 psutil==5.8.0
     # via edx-django-utils
@@ -181,7 +182,7 @@ slumber==0.7.1
     # via edx-rest-api-client
 sqlparse==0.4.1
     # via django
-stevedore==3.3.0
+stevedore==3.4.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
@@ -198,7 +199,7 @@ web-fragments==1.1.0
     # via xblock
 webob==1.8.7
     # via xblock
-xblock==1.5.0
+xblock==1.5.1
     # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
