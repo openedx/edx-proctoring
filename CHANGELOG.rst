@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Handler test refactor
 
 [3.24.4] - 2021-09-02
 ~~~~~~~~~~~~~~~~~~~~~
