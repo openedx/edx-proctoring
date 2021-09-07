@@ -9,7 +9,6 @@ from httmock import HTTMock
 from django.db.models.signals import pre_delete, pre_save
 
 from edx_proctoring.api import update_attempt_status
-from edx_proctoring.handlers import on_attempt_changed
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import MockInstructorService
@@ -34,9 +33,6 @@ class SignalTests(ProctoredExamTestCase):
             proctored_exam=self.proctored_exam, user=self.user, attempt_code='12345',
             external_id='abcde'
         )
-
-        pre_delete.connect(on_attempt_changed, sender=ProctoredExamStudentAttempt)
-        pre_save.connect(on_attempt_changed, sender=ProctoredExamStudentAttempt)
 
     def tearDown(self):
         super().tearDown()
