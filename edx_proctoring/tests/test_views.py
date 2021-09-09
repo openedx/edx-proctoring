@@ -4508,7 +4508,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data), 1)
-        self.assertEqual(response_data['detail'], u"Cannot find user against invalid_user")
+        self.assertEqual(response_data['detail'], "Cannot find user against invalid_user")
 
     def test_add_invalid_allowance_value(self):
         """
@@ -4539,7 +4539,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         self.assertEqual(len(response_data), 1)
         self.assertEqual(
             response_data['detail'],
-            u'allowance_value "invalid_value" should be non-negative integer value.'
+            'allowance_value "invalid_value" should be non-negative integer value.'
         )
 
     def test_add_allowance_for_inactive_exam(self):
@@ -5643,7 +5643,7 @@ class TestInstructorDashboard(LoggedInTestCase):
         if not exam_1_is_proctored and not exam_2_is_proctored:
             self.assertEqual(response.status_code, 404)
             self.assertEqual(
-                u'No proctored exams in course {}'.format(self.course_id),
+                'No proctored exams in course {}'.format(self.course_id),
                 response.data
             )
         else:

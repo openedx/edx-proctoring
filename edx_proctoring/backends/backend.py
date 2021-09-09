@@ -11,7 +11,7 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
     """
     The base abstract class for all proctoring service providers
     """
-    verbose_name = u'Unknown'
+    verbose_name = 'Unknown'
     ping_interval = constants.DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS
     tech_support_email = ''
     learner_notification_from_email = ''

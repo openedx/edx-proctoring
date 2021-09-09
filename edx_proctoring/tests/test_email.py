@@ -210,7 +210,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         Assert that email can be sent with a unicode course name.
         """
 
-        course_name = u'अआईउऊऋऌ अआईउऊऋऌ'
+        course_name = 'अआईउऊऋऌ अआईउऊऋऌ'
         set_runtime_service('credit', MockCreditService(course_name=course_name))
 
         exam_attempt = self._create_started_exam_attempt()
@@ -322,6 +322,6 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
 
             # Verify the edX support URL
             actual_body = self._normalize_whitespace(mail.outbox[0].body)
-            self.assertIn(u'<a href="{contact_url}"> '
-                          u'{contact_url} </a>'.format(contact_url=contact_url),
+            self.assertIn('<a href="{contact_url}"> '
+                          '{contact_url} </a>'.format(contact_url=contact_url),
                           actual_body)

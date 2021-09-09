@@ -175,10 +175,10 @@ class ReviewStatus:
     """
     Standard review statuses
     """
-    passed = u'passed'
-    violation = u'violation'
-    suspicious = u'suspicious'
-    not_reviewed = u'not_reviewed'
+    passed = 'passed'
+    violation = 'violation'
+    suspicious = 'suspicious'
+    not_reviewed = 'not_reviewed'
 
     @classmethod
     def validate(cls, status):
@@ -196,10 +196,10 @@ class SoftwareSecureReviewStatus:
     SoftwareSecure
     """
 
-    clean = u'Clean'
-    violation = u'Rules Violation'
-    suspicious = u'Suspicious'
-    not_reviewed = u'Not Reviewed'
+    clean = 'Clean'
+    violation = 'Rules Violation'
+    suspicious = 'Suspicious'
+    not_reviewed = 'Not Reviewed'
 
     passing_statuses = [
         clean,
@@ -225,8 +225,8 @@ class SoftwareSecureReviewStatus:
         """
         if status not in cls.passing_statuses + cls.failing_statuses:
             err_msg = (
-                u'Received unexpected reviewStatus field value from payload. '
-                u'Was {review_status}.'.format(review_status=status)
+                'Received unexpected reviewStatus field value from payload. '
+                'Was {review_status}.'.format(review_status=status)
             )
             raise ProctoredExamBadReviewStatus(err_msg)
         return True

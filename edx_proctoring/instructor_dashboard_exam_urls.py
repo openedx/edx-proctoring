@@ -7,7 +7,7 @@ from django.conf.urls import url
 
 from edx_proctoring import views
 
-app_name = u'instructor'
+app_name = 'instructor'
 
 
 urlpatterns = [

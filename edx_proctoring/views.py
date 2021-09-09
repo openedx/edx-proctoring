@@ -1967,7 +1967,7 @@ class InstructorDashboard(AuthenticatedAPIView):
                     # In this case, what are we supposed to do?!
                     # It should not be possible to get in this state, because
                     # course teams will be prevented from updating the backend after the course start date
-                    error_message = u"Multiple backends for course %r %r != %r" % (
+                    error_message = "Multiple backends for course %r %r != %r" % (
                         course_id,
                         existing_backend_name,
                         exam_backend_name

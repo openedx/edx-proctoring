@@ -26,7 +26,7 @@ from edx_proctoring.statuses import SoftwareSecureReviewStatus
 log = logging.getLogger(__name__)
 
 
-SOFTWARE_SECURE_INVALID_CHARS = u'[]<>#:|!?/\'"*\\'
+SOFTWARE_SECURE_INVALID_CHARS = '[]<>#:|!?/\'"*\\'
 
 
 class SoftwareSecureBackendProvider(ProctoringBackendProvider):
@@ -34,7 +34,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     Implementation of the ProctoringBackendProvider for PSI's
     (formerly Software Secure's) RPNow product
     """
-    verbose_name = u'RPNow'
+    verbose_name = 'RPNow'
     passing_statuses = SoftwareSecureReviewStatus.passing_statuses
 
     def __init__(self, organization, exam_sponsor, exam_register_endpoint,
@@ -141,9 +141,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         )
         if not match:
             err_msg = (
-                u'Found attempt_code {attempt_code}, but the recorded external_id did not '
-                u'match the ssiRecordLocator that had been recorded previously. Has {existing} '
-                u'but received {received}!'.format(
+                'Found attempt_code {attempt_code}, but the recorded external_id did not '
+                'match the ssiRecordLocator that had been recorded previously. Has {existing} '
+                'but received {received}!'.format(
                     attempt_code=attempt['attempt_code'],
                     existing=attempt['external_id'],
                     received=received_id
@@ -156,7 +156,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             del payload['videoReviewLink']
 
         log_msg = (
-            u'Received callback from SoftwareSecure with review data: {payload}'.format(
+            'Received callback from SoftwareSecure with review data: {payload}'.format(
                 payload=payload
             )
         )
@@ -242,7 +242,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # combined with any exceptions granted to the particular student
         reviewer_notes = review_policy
         if review_policy_exception:
-            reviewer_notes = u'{notes}; {exception}'.format(
+            reviewer_notes = '{notes}; {exception}'.format(
                 notes=reviewer_notes,
                 exception=review_policy_exception
             )
@@ -263,7 +263,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         # into something ascii-like, then we have use a default otherwise
         # SoftwareSecure will fail on the exam registration API call
         if not exam_name:
-            exam_name = u'Proctored Exam'
+            exam_name = 'Proctored Exam'
 
         org_extra = {
             "examStartDate": start_time_str,

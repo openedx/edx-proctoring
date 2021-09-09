@@ -251,7 +251,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper',
+            review_policy='allow use of paper',
         )
 
         # now get the exam review policy for the proctored exam
@@ -259,11 +259,11 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         self.assertEqual(exam_review_policy['proctored_exam']['id'], proctored_exam['id'])
         self.assertEqual(exam_review_policy['set_by_user']['id'], self.user_id)
-        self.assertEqual(exam_review_policy['review_policy'], u'allow use of paper')
+        self.assertEqual(exam_review_policy['review_policy'], 'allow use of paper')
 
         # this tests that the backend received the callback when the review policy changed
         backend = get_backend_provider(proctored_exam)
-        self.assertEqual(backend.last_exam['rule_summary'], u'allow use of paper')
+        self.assertEqual(backend.last_exam['rule_summary'], 'allow use of paper')
 
     def test_get_exam_review_policy(self):
         """
@@ -274,13 +274,13 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper',
+            review_policy='allow use of paper',
         )
 
         # now get the exam review policy for the proctored exam
         exam_review_policy_string = _get_review_policy_by_exam_id(proctored_exam['id'])
 
-        self.assertEqual(exam_review_policy_string, u'allow use of paper')
+        self.assertEqual(exam_review_policy_string, 'allow use of paper')
 
     def test_update_exam_review_policy_updates_review_policy(self):
         """
@@ -292,14 +292,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper',
+            review_policy='allow use of paper',
         )
 
         # now update the exam review policy's review policy for the proctored exam
         update_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of calculator',
+            review_policy='allow use of calculator',
         )
 
         # now get the updated exam review policy for the proctored exam
@@ -307,7 +307,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         self.assertEqual(exam_review_policy['proctored_exam']['id'], proctored_exam['id'])
         self.assertEqual(exam_review_policy['set_by_user']['id'], self.user_id)
-        self.assertEqual(exam_review_policy['review_policy'], u'allow use of calculator')
+        self.assertEqual(exam_review_policy['review_policy'], 'allow use of calculator')
 
     def test_update_review_policy_with_empty_review_policy_removes_review_policy(self):
         """
@@ -318,7 +318,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper',
+            review_policy='allow use of paper',
         )
         # now update the exam review policy for the proctored exam
         # with review_policy value to "" and rules value to "".
@@ -327,7 +327,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         update_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'',
+            review_policy='',
         )
         with self.assertRaises(ProctoredExamReviewPolicyNotFoundException):
             get_review_policy_by_exam_id(proctored_exam['id'])
@@ -341,7 +341,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper',
+            review_policy='allow use of paper',
         )
 
         # now remove the exam review policy for the proctored exam
@@ -380,7 +380,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             update_review_policy(
                 exam_id=self.practice_exam_id,
                 set_by_user_id=10,
-                review_policy=u'allow use of calculator',
+                review_policy='allow use of calculator',
             )
 
     def test_create_exam_review_policy_with_same_exam_id(self):
@@ -391,7 +391,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         create_exam_review_policy(
             exam_id=proctored_exam['id'],
             set_by_user_id=self.user_id,
-            review_policy=u'allow use of paper',
+            review_policy='allow use of paper',
         )
 
         # create the same review policy again will raise exception
@@ -399,7 +399,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             create_exam_review_policy(
                 exam_id=proctored_exam['id'],
                 set_by_user_id=self.user_id,
-                review_policy=u'allow use of paper',
+                review_policy='allow use of paper',
             )
 
     def test_get_non_existing_review_policy_raises_exception(self):
@@ -526,20 +526,20 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_list = []
         exam_list.extend(
             (create_exam(
-                        course_id=self.course_id,
-                        content_id="1st exam",
-                        exam_name="1st exam",
-                        time_limit_mins=self.default_time_limit,
-                        is_practice_exam=False,
-                        is_proctored=True
+                course_id=self.course_id,
+                content_id="1st exam",
+                exam_name="1st exam",
+                time_limit_mins=self.default_time_limit,
+                is_practice_exam=False,
+                is_proctored=True
             ),
-             create_exam(
-                    course_id=self.course_id,
-                    content_id="2nd exam",
-                    exam_name="2nd exam",
-                    time_limit_mins=90,
-                    is_practice_exam=False,
-                    is_proctored=True
+                create_exam(
+                course_id=self.course_id,
+                content_id="2nd exam",
+                exam_name="2nd exam",
+                time_limit_mins=90,
+                is_practice_exam=False,
+                is_proctored=True
             ))
         )
         _, successes, failures = add_bulk_allowances(exam_list, user_list, allowance_type, value)
@@ -566,20 +566,20 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_list = []
         exam_list.extend(
             (create_exam(
-                        course_id=self.course_id,
-                        content_id="1st exam",
-                        exam_name="1st exam",
-                        time_limit_mins=self.default_time_limit,
-                        is_practice_exam=False,
-                        is_proctored=True
+                course_id=self.course_id,
+                content_id="1st exam",
+                exam_name="1st exam",
+                time_limit_mins=self.default_time_limit,
+                is_practice_exam=False,
+                is_proctored=True
             ),
-                        create_exam(
-                        course_id=self.course_id,
-                        content_id="2nd exam",
-                        exam_name="2nd exam",
-                        time_limit_mins=90,
-                        is_practice_exam=False,
-                        is_proctored=True
+                create_exam(
+                course_id=self.course_id,
+                content_id="2nd exam",
+                exam_name="2nd exam",
+                time_limit_mins=90,
+                is_practice_exam=False,
+                is_proctored=True
             ))
         )
         _, successes, failures = add_bulk_allowances(exam_list, user_list, TIME_MULTIPLIER, '1.5')
@@ -602,20 +602,20 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_list = []
         exam_list.extend(
             (create_exam(
-                        course_id=self.course_id,
-                        content_id="1st exam",
-                        exam_name="1st exam",
-                        time_limit_mins=self.default_time_limit,
-                        is_practice_exam=False,
-                        is_proctored=True
-                        ),
-             create_exam(
-                        course_id=self.course_id,
-                        content_id="2nd exam",
-                        exam_name="2nd exam",
-                        time_limit_mins=90,
-                        is_practice_exam=False,
-                        is_proctored=True
+                course_id=self.course_id,
+                content_id="1st exam",
+                exam_name="1st exam",
+                time_limit_mins=self.default_time_limit,
+                is_practice_exam=False,
+                is_proctored=True
+            ),
+                create_exam(
+                course_id=self.course_id,
+                content_id="2nd exam",
+                exam_name="2nd exam",
+                time_limit_mins=90,
+                is_practice_exam=False,
+                is_proctored=True
             ))
         )
         exam_list.append(exam_list[0])
@@ -654,20 +654,20 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_list = []
         exam_list.extend(
             (create_exam(
-                        course_id=self.course_id,
-                        content_id="1st exam",
-                        exam_name="1st exam",
-                        time_limit_mins=self.default_time_limit,
-                        is_practice_exam=False,
-                        is_proctored=True
+                course_id=self.course_id,
+                content_id="1st exam",
+                exam_name="1st exam",
+                time_limit_mins=self.default_time_limit,
+                is_practice_exam=False,
+                is_proctored=True
             ),
-             create_exam(
-                    course_id=self.course_id,
-                    content_id="2nd exam",
-                    exam_name="2nd exam",
-                    time_limit_mins=90,
-                    is_practice_exam=False,
-                    is_proctored=True
+                create_exam(
+                course_id=self.course_id,
+                content_id="2nd exam",
+                exam_name="2nd exam",
+                time_limit_mins=90,
+                is_practice_exam=False,
+                is_proctored=True
             ))
         )
         _, successes, failures = add_bulk_allowances(exam_list, user_list, allowance_type, value)
@@ -708,22 +708,22 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_list = []
         exam_list.extend(
             (create_exam(
-                        course_id=self.course_id,
-                        content_id="1st exam",
-                        exam_name="1st exam",
-                        time_limit_mins=self.default_time_limit,
-                        is_practice_exam=False,
-                        is_proctored=True
+                course_id=self.course_id,
+                content_id="1st exam",
+                exam_name="1st exam",
+                time_limit_mins=self.default_time_limit,
+                is_practice_exam=False,
+                is_proctored=True
             ),
-             create_exam(
-                    course_id=self.course_id,
-                    content_id="2nd exam",
-                    exam_name="2nd exam",
-                    time_limit_mins=90,
-                    is_practice_exam=False,
-                    is_proctored=True
+                create_exam(
+                course_id=self.course_id,
+                content_id="2nd exam",
+                exam_name="2nd exam",
+                time_limit_mins=90,
+                is_practice_exam=False,
+                is_proctored=True
             ),
-             -99)
+                -99)
         )
         _, successes, failures = add_bulk_allowances(exam_list, user_list, allowance_type, value)
         student_allowance = ProctoredExamStudentAllowance.get_allowance_for_user(
@@ -784,20 +784,20 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_list = []
         exam_list.extend(
             (create_exam(
-                        course_id=self.course_id,
-                        content_id="1st exam",
-                        exam_name="1st exam",
-                        time_limit_mins=self.default_time_limit,
-                        is_practice_exam=False,
-                        is_proctored=True
+                course_id=self.course_id,
+                content_id="1st exam",
+                exam_name="1st exam",
+                time_limit_mins=self.default_time_limit,
+                is_practice_exam=False,
+                is_proctored=True
             ),
-             create_exam(
-                    course_id=self.course_id,
-                    content_id="2nd exam",
-                    exam_name="2nd exam",
-                    time_limit_mins=90,
-                    is_practice_exam=False,
-                    is_proctored=True
+                create_exam(
+                course_id=self.course_id,
+                content_id="2nd exam",
+                exam_name="2nd exam",
+                time_limit_mins=90,
+                is_practice_exam=False,
+                is_proctored=True
             ))
         )
         with self.assertRaises(AllowanceValueNotAllowedException):
@@ -821,20 +821,20 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         exam_list = []
         exam_list.extend(
             (create_exam(
-                        course_id=self.course_id,
-                        content_id="1st exam",
-                        exam_name="1st exam",
-                        time_limit_mins=self.default_time_limit,
-                        is_practice_exam=False,
-                        is_proctored=True
+                course_id=self.course_id,
+                content_id="1st exam",
+                exam_name="1st exam",
+                time_limit_mins=self.default_time_limit,
+                is_practice_exam=False,
+                is_proctored=True
             ),
-             create_exam(
-                    course_id=self.course_id,
-                    content_id="2nd exam",
-                    exam_name="2nd exam",
-                    time_limit_mins=90,
-                    is_practice_exam=False,
-                    is_proctored=True
+                create_exam(
+                course_id=self.course_id,
+                content_id="2nd exam",
+                exam_name="2nd exam",
+                time_limit_mins=90,
+                is_practice_exam=False,
+                is_proctored=True
             ))
         )
         user_list = []
@@ -3248,6 +3248,7 @@ class LastVerifiedOnboardingAttemptsTests(ProctoredExamTestCase):
     """
     This is the test case for the API function get_last_verified_onboarding_attempts_per_user
     """
+
     def setUp(self):
         super().setUp()
         self.onboarding_exam_id = self._create_onboarding_exam()
@@ -3458,6 +3459,7 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
     """
     Tests for get_exam_attempt_data.
     """
+
     def setUp(self):
         """
         Initialize
@@ -3607,6 +3609,7 @@ class CheckPrerequisitesTests(ProctoredExamTestCase):
     """
     Tests for check_prerequisites.
     """
+
     def setUp(self):
         """
         Initialize

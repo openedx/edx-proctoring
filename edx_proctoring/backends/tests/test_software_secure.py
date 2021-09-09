@@ -269,7 +269,7 @@ class SoftwareSecureTests(TestCase):
             # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
             expected = context['review_policy']
             if review_policy_exception:
-                expected = u'{base}; {exception}'.format(
+                expected = '{base}; {exception}'.format(
                     base=expected,
                     exception=review_policy_exception
                 )
@@ -331,8 +331,8 @@ class SoftwareSecureTests(TestCase):
         for illegal_char in SOFTWARE_SECURE_INVALID_CHARS:
             exam_id = create_exam(
                 course_id='foo/bar/baz',
-                content_id=u'content with {}'.format(illegal_char),
-                exam_name=u'Sample Exam with {} character'.format(illegal_char),
+                content_id='content with {}'.format(illegal_char),
+                exam_name='Sample Exam with {} character'.format(illegal_char),
                 time_limit_mins=10,
                 is_proctored=True,
                 backend='software_secure',
@@ -393,7 +393,7 @@ class SoftwareSecureTests(TestCase):
             exam_id = create_exam(
                 course_id='foo/bar/baz',
                 content_id='content with unicode characters',
-                exam_name=u'Klüft skräms inför på fédéral électoral große',
+                exam_name='Klüft skräms inför på fédéral électoral große',
                 time_limit_mins=10,
                 is_proctored=True,
                 backend='software_secure',
@@ -415,7 +415,7 @@ class SoftwareSecureTests(TestCase):
             exam_id = create_exam(
                 course_id='foo/bar/baz',
                 content_id='content with chinese characters',
-                exam_name=u'到处群魔乱舞',
+                exam_name='到处群魔乱舞',
                 time_limit_mins=10,
                 is_proctored=True,
                 backend='software_secure',
@@ -478,7 +478,7 @@ class SoftwareSecureTests(TestCase):
         Tests to make sure we can handle an attempt when a user's fullname has unicode characters in it
         """
 
-        set_runtime_service('credit', MockCreditService(profile_fullname=u'अआईउऊऋऌ अआईउऊऋऌ'))
+        set_runtime_service('credit', MockCreditService(profile_fullname='अआईउऊऋऌ अआईउऊऋऌ'))
 
         exam_id = create_exam(
             course_id='foo/bar/baz',
@@ -497,7 +497,7 @@ class SoftwareSecureTests(TestCase):
         exam_id = create_exam(
             course_id='foo/bar/baz',
             content_id='content_unicode_name',
-            exam_name=u'अआईउऊऋऌ अआईउऊऋऌ',
+            exam_name='अआईउऊऋऌ अआईउऊऋऌ',
             time_limit_mins=10,
             is_proctored=True,
             backend='software_secure',
@@ -612,6 +612,6 @@ class SoftwareSecureTests(TestCase):
         self.assertEqual(first_name, 'Baron')
         self.assertEqual(last_name, 'von Munchausen')
 
-        (first_name, last_name) = provider._split_fullname(u'अआईउऊऋऌ अआईउऊऋऌ')
-        self.assertEqual(first_name, u'अआईउऊऋऌ')
-        self.assertEqual(last_name, u'अआईउऊऋऌ')
+        (first_name, last_name) = provider._split_fullname('अआईउऊऋऌ अआईउऊऋऌ')
+        self.assertEqual(first_name, 'अआईउऊऋऌ')
+        self.assertEqual(last_name, 'अआईउऊऋऌ')

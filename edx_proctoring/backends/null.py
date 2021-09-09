@@ -9,7 +9,7 @@ class NullBackendProvider(ProctoringBackendProvider):
     """
     Implementation of the ProctoringBackendProvider that does nothing
     """
-    verbose_name = u'Null Backend'
+    verbose_name = 'Null Backend'
 
     def register_exam_attempt(self, exam, context):
         """

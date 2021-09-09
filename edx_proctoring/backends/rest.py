@@ -45,42 +45,42 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     @property
     def exam_attempt_url(self):
         "Returns exam attempt url"
-        return self.base_url + u'/api/v1/exam/{exam_id}/attempt/{attempt_id}/'
+        return self.base_url + '/api/v1/exam/{exam_id}/attempt/{attempt_id}/'
 
     @property
     def create_exam_attempt_url(self):
         "Returns the create exam url"
-        return self.base_url + u'/api/v1/exam/{exam_id}/attempt/'
+        return self.base_url + '/api/v1/exam/{exam_id}/attempt/'
 
     @property
     def create_exam_url(self):
         "Returns create exam url"
-        return self.base_url + u'/api/v1/exam/'
+        return self.base_url + '/api/v1/exam/'
 
     @property
     def exam_url(self):
         "Returns exam url"
-        return self.base_url + u'/api/v1/exam/{exam_id}/'
+        return self.base_url + '/api/v1/exam/{exam_id}/'
 
     @property
     def config_url(self):
         "Returns proctor config url"
-        return self.base_url + u'/api/v1/config/'
+        return self.base_url + '/api/v1/config/'
 
     @property
     def instructor_url(self):
         "Returns the instructor dashboard url"
-        return self.base_url + u'/api/v1/instructor/{client_id}/?jwt={jwt}'
+        return self.base_url + '/api/v1/instructor/{client_id}/?jwt={jwt}'
 
     @property
     def user_info_url(self):
         "Returns the user info url"
-        return self.base_url + u'/api/v1/user/{user_id}/'
+        return self.base_url + '/api/v1/user/{user_id}/'
 
     @property
     def onboarding_statuses_url(self):
         "Returns the onboarding statuses url"
-        return self.base_url + u'/api/v1/courses/{course_id}/onboarding_statuses'
+        return self.base_url + '/api/v1/courses/{course_id}/onboarding_statuses'
 
     @property
     def proctoring_instructions(self):
@@ -115,20 +115,20 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
         except WebpackBundleLookupError:
             warnings.warn(
-                u'Could not find webpack bundle for proctoring backend {package}.'
-                u' Check whether webpack is configured to build such a bundle'.format(
+                'Could not find webpack bundle for proctoring backend {package}.'
+                ' Check whether webpack is configured to build such a bundle'.format(
                     package=package
                 )
             )
         except BaseWebpackLoaderException:
             warnings.warn(
-                u'Could not find webpack bundle for proctoring backend {package}.'.format(
+                'Could not find webpack bundle for proctoring backend {package}.'.format(
                     package=package
                 )
             )
         except IOError as err:
             warnings.warn(
-                u'Webpack stats file corresponding to WebWorkers not found: {}'
+                'Webpack stats file corresponding to WebWorkers not found: {}'
                 .format(str(err))
             )
 
@@ -152,7 +152,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the metadata and configuration options for the proctoring service
         """
         url = self.config_url
-        log.debug(u'Requesting config from %r', url)
+        log.debug('Requesting config from %r', url)
         response = self.session.get(url, headers=self._get_language_headers()).json()
         return response
 
@@ -161,7 +161,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the exam metadata stored by the proctoring service
         """
         url = self.exam_url.format(exam_id=exam['id'])
-        log.debug(u'Requesting exam from %r', url)
+        log.debug('Requesting exam from %r', url)
         response = self.session.get(url).json()
         return response
 
@@ -379,11 +379,11 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         headers = {}
         if method == 'GET':
             headers.update(self._get_language_headers())
-        log.debug(u'Making %r attempt request at %r', method, url)
+        log.debug('Making %r attempt request at %r', method, url)
         response = self.session.request(method, url, json=payload, headers=headers)
         try:
             data = response.json()
         except ValueError:
-            log.exception(u"Decoding attempt %r -> %r", attempt, response.content)
+            log.exception("Decoding attempt %r -> %r", attempt, response.content)
             data = {}
         return data

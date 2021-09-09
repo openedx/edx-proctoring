@@ -78,7 +78,7 @@ class ProctoredExam(TimeStampedModel):
     def __str__(self):
         """ String representation """
         # pragma: no cover
-        return u"{course_id}: {exam_name} ({active})".format(
+        return "{course_id}: {exam_name} ({active})".format(
             course_id=self.course_id,
             exam_name=self.exam_name,
             active='active' if self.is_active else 'inactive',
@@ -152,12 +152,12 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
     proctored_exam = models.ForeignKey(ProctoredExam, db_index=True, on_delete=models.CASCADE)
 
     # policy that will be passed to reviewers
-    review_policy = models.TextField(default=u'')
+    review_policy = models.TextField(default='')
 
     def __str__(self):
         """ String representation """
         # pragma: no cover
-        return u"ProctoredExamReviewPolicy: {set_by_user} ({proctored_exam})".format(
+        return "ProctoredExamReviewPolicy: {set_by_user} ({proctored_exam})".format(
             set_by_user=self.set_by_user,
             proctored_exam=self.proctored_exam,
         )
@@ -655,7 +655,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
         if not cls.is_allowance_value_valid(key, value):
             err_msg = (
-                u'allowance_value "{value}" should be non-negative integer value.'
+                'allowance_value "{value}" should be non-negative integer value.'
             ).format(value=value)
             raise AllowanceValueNotAllowedException(err_msg)
         # were we passed a PK?
@@ -669,7 +669,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
             if not users.exists():
                 err_msg = (
-                    u'Cannot find user against {user_info}'
+                    'Cannot find user against {user_info}'
                 ).format(user_info=user_info)
                 raise UserNotFoundException(err_msg)
 
