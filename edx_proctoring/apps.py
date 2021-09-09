@@ -53,7 +53,7 @@ def make_worker_config(backends, out='/tmp/workers.json'):
         try:
             package = backend.npm_module
             package_file = os.path.join(settings.NODE_MODULES_ROOT, package, 'package.json')
-            with open(package_file, 'r') as package_fp:
+            with open(package_file, 'r', encoding='utf-8') as package_fp:
                 package_json = json.load(package_fp)
             main_file = package_json['main']
             config[package] = ['babel-polyfill', os.path.join(settings.NODE_MODULES_ROOT, package, main_file)]
