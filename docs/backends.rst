@@ -226,7 +226,7 @@ It is possible to add support for an instructor dashboard for reviewing proctore
 
 The ``get_instructor_url`` method of the backend will return a URL on the PS end that will redirect to the instructor dashboard.
 
-By default, this URL will be ``base_url + u'/api/v1/instructor/{client_id}/?jwt={jwt}'``. This URL template is specified by the ``instructor_url`` property.
+By default, this URL will be ``base_url +'/api/v1/instructor/{client_id}/?jwt={jwt}'``. This URL template is specified by the ``instructor_url`` property.
 You may override this property to modify the URL template.
 
 The JWT_ will be signed with the client_secret configured for the backend, and the decoded token contains the following data::
@@ -269,7 +269,7 @@ Onboarding Status API Endpoint
 
 A backend can also be configured to support an onboarding status API endpoint. This endpoint should return a learner's onboarding status and expiration according to the provider.
 
-By default, this URL for this endpoint will be ``base_url + u'/api/v1/courses/{course_id}/onboarding_statuses'``, with the following optional query parameters:
+By default, this URL for this endpoint will be ``base_url +'/api/v1/courses/{course_id}/onboarding_statuses'``, with the following optional query parameters:
 
     * ``user_id``: a string for the id of a specific user.
     * ``status``: a string representing the status that should be filtered for
