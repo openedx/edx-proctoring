@@ -299,6 +299,7 @@ class BackendChooserTests(TestCase):
     """
     Tests for backend configuration
     """
+
     def test_default_backend(self):
         """
         Test the default backend choice
@@ -323,10 +324,10 @@ class BackendChooserTests(TestCase):
         choices = list(apps.get_app_config('edx_proctoring').get_backend_choices())
         choices.sort()
         expected = [
-            ('mock', u'Mock Backend'),
-            ('null', u'Null Backend'),
-            ('software_secure', u'RPNow'),
-            ('test', u'Unknown'),
+            ('mock', 'Mock Backend'),
+            ('null', 'Null Backend'),
+            ('software_secure', 'RPNow'),
+            ('test', 'Unknown'),
         ]
         self.assertEqual(choices, expected)
 

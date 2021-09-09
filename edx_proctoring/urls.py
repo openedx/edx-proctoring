@@ -7,7 +7,7 @@ from django.conf.urls import include, url
 
 from edx_proctoring import callbacks, instructor_dashboard_exam_urls, views
 
-app_name = u'edx_proctoring'
+app_name = 'edx_proctoring'
 
 CONTENT_ID_PATTERN = r'(?P<content_id>([A-z0-9]+|(?:i4x://?[^/]+/[^/]+/[^/]+/[^@]+(?:@[^/]+)?)|(?:[^/]+)))'
 

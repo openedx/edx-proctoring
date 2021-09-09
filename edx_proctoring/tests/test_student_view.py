@@ -63,7 +63,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         # Messages for get_student_view
         self.start_an_exam_msg = 'This exam is proctored'
         self.exam_expired_msg = 'The due date for this exam has passed'
-        self.timed_exam_msg = u'{exam_name} is a Timed Exam'
+        self.timed_exam_msg = '{exam_name} is a Timed Exam'
         self.timed_exam_submitted = 'You have submitted your timed exam.'
         self.timed_exam_expired = 'The time allotted for this exam has expired.'
         self.timed_exam_submitted_expired = 'The time allotted for this exam has expired. Your exam has been submitted'

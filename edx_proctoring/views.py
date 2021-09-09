@@ -527,8 +527,10 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         if username:
             # Check that the user is staff if trying to view another user's status
             if username != request.user.username:
-                if ((course_id and not is_user_course_or_global_staff(request.user, course_id)) or
-                        (not course_id and not request.user.is_staff)):
+                if (
+                    (course_id and not is_user_course_or_global_staff(request.user, course_id)) or
+                    (not course_id and not request.user.is_staff)
+                ):
                     return Response(
                         status=status.HTTP_403_FORBIDDEN,
                         data={'detail': _('Must be a Staff User to Perform this request.')}
@@ -1967,7 +1969,7 @@ class InstructorDashboard(AuthenticatedAPIView):
                     # In this case, what are we supposed to do?!
                     # It should not be possible to get in this state, because
                     # course teams will be prevented from updating the backend after the course start date
-                    error_message = u"Multiple backends for course %r %r != %r" % (
+                    error_message = "Multiple backends for course %r %r != %r" % (
                         course_id,
                         existing_backend_name,
                         exam_backend_name

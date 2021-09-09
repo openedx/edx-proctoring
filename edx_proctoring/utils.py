@@ -76,10 +76,10 @@ def humanized_time(time_in_minutes):
         hours_present = False
         template = ""
     elif hours == 1:
-        template = _(u"{num_of_hours} hour")
+        template = _("{num_of_hours} hour")
         hours_present = True
     elif hours >= 2:
-        template = _(u"{num_of_hours} hours")
+        template = _("{num_of_hours} hours")
         hours_present = True
     else:
         template = "error"
@@ -87,17 +87,17 @@ def humanized_time(time_in_minutes):
     if template != "error":
         if minutes == 0:
             if not hours_present:
-                template = _(u"{num_of_minutes} minutes")
+                template = _("{num_of_minutes} minutes")
         elif minutes == 1:
             if hours_present:
-                template += _(u" and {num_of_minutes} minute")
+                template += _(" and {num_of_minutes} minute")
             else:
-                template += _(u"{num_of_minutes} minute")
+                template += _("{num_of_minutes} minute")
         else:
             if hours_present:
-                template += _(u" and {num_of_minutes} minutes")
+                template += _(" and {num_of_minutes} minutes")
             else:
-                template += _(u"{num_of_minutes} minutes")
+                template += _("{num_of_minutes} minutes")
 
     human_time = template.format(num_of_hours=hours, num_of_minutes=minutes)
     return human_time
@@ -213,8 +213,8 @@ def _emit_event(name, context, data):
         # This happens when a default tracker has not been registered by the host application
         # aka LMS. This is normal when running unit tests in isolation.
         log.warning(
-            u'Analytics tracker not properly configured. '
-            u'If this message appears in a production environment, please investigate'
+            'Analytics tracker not properly configured. '
+            'If this message appears in a production environment, please investigate'
         )
 
 

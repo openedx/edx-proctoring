@@ -13,7 +13,7 @@ class MockProctoringBackendProvider(ProctoringBackendProvider):
     """
     Implementation of the ProctoringBackendProvider that bypasses proctoring setup.
     """
-    verbose_name = u'Mock Backend'
+    verbose_name = 'Mock Backend'
 
     def __init__(self, *args, **kwargs):
         ProctoringBackendProvider.__init__(self)

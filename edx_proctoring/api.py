@@ -563,7 +563,7 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
     multiplier = 0
     if allowance_type == constants.TIME_MULTIPLIER:
         err_msg = (
-            u'allowance_value "{value}" should be a float value greater than 1.'
+            'allowance_value "{value}" should be a float value greater than 1.'
         ).format(value=value)
         try:
             multiplier = float(value) - 1
@@ -574,7 +574,7 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
 
     if allowance_type in ProctoredExamStudentAllowance.ADDITIONAL_TIME_GRANTED:
         err_msg = (
-            u'allowance_value "{value}" should be a non-negative integer value'
+            'allowance_value "{value}" should be a non-negative integer value'
         ).format(value=value)
         if not value.isdigit():
             raise AllowanceValueNotAllowedException(err_msg)
@@ -595,8 +595,8 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
                 failures += 1
                 data.append({
 
-                        'exam_id': exam_id,
-                        'user_id': user_id,
+                    'exam_id': exam_id,
+                    'user_id': user_id,
                 })
             continue
         if allowance_type == constants.TIME_MULTIPLIER:
@@ -611,8 +611,8 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
                     successes += 1
                     data.append({
 
-                            'exam_id': exam_id,
-                            'user_id': user_id,
+                        'exam_id': exam_id,
+                        'user_id': user_id,
                     })
 
                 except ProctoredBaseException:
@@ -627,8 +627,8 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
                     failures += 1
                     data.append({
 
-                            'exam_id': exam_id,
-                            'user_id': user_id,
+                        'exam_id': exam_id,
+                        'user_id': user_id,
                     })
         else:
             for user_id in user_ids:
@@ -639,8 +639,8 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
                     successes += 1
                     data.append({
 
-                            'exam_id': exam_id,
-                            'user_id': user_id,
+                        'exam_id': exam_id,
+                        'user_id': user_id,
                     })
                 except ProctoredBaseException:
                     log_message = (
@@ -654,8 +654,8 @@ def add_bulk_allowances(exam_ids, user_ids, allowance_type, value):
                     failures += 1
                     data.append({
 
-                            'exam_id': exam_id,
-                            'user_id': user_id,
+                        'exam_id': exam_id,
+                        'user_id': user_id,
                     })
     return data, successes, failures
 
@@ -1522,7 +1522,7 @@ def update_attempt_status(attempt_id, to_status,
                     earned_all=REJECTED_GRADE_OVERRIDE_EARNED,
                     earned_graded=REJECTED_GRADE_OVERRIDE_EARNED,
                     overrider=update_attributable_to,
-                    comment=(u'Failed {backend} proctoring'.format(backend=backend.verbose_name)
+                    comment=('Failed {backend} proctoring'.format(backend=backend.verbose_name)
                              if backend
                              else 'Failed Proctoring')
                 )
@@ -1668,7 +1668,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     user = USER_MODEL.objects.get(id=user_id)
     course_info_url = ''
     email_subject = (
-        _(u'Proctoring Results For {course_name} {exam_name}').format(
+        _('Proctoring Results For {course_name} {exam_name}').format(
             course_name=course_name,
             exam_name=exam_attempt_obj.proctored_exam.exam_name
         )
@@ -1677,7 +1677,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     if status == ProctoredExamStudentAttemptStatus.submitted:
         template_name = 'proctoring_attempt_submitted_email.html'
         email_subject = (
-            _(u'Proctoring Review In Progress For {course_name} {exam_name}').format(
+            _('Proctoring Review In Progress For {course_name} {exam_name}').format(
                 course_name=course_name,
                 exam_name=exam_attempt_obj.proctored_exam.exam_name
             )
@@ -1711,7 +1711,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         course_info_url=course_info_url
     )
     exam_name = exam_attempt_obj.proctored_exam.exam_name
-    support_email_subject = _(u'Proctored exam {exam_name} in {course_name} for user {username}').format(
+    support_email_subject = _('Proctored exam {exam_name} in {course_name} for user {username}').format(
         exam_name=exam_name,
         course_name=course_name,
         username=user.username,
@@ -1894,7 +1894,7 @@ def remove_exam_attempt(attempt_id, requesting_user):
         credit_service.remove_credit_requirement_status(
             user_id=user_id,
             course_key_or_id=course_id,
-            req_namespace=u'proctored_exam',
+            req_namespace='proctored_exam',
             req_name=content_id
         )
 
@@ -2083,7 +2083,7 @@ def _are_prerequirements_satisfied(
         evaluate_for_requirement_name=None,
         filter_out_namespaces=None
 ):
-    u"""
+    """
     Returns a dict about the fulfillment of any pre-requisites in order to this exam
     as proctored. The pre-requisites are taken from the credit requirements table. So if ordering
     of requirements are - say - ICRV1, Proctoring1, ICRV2, and Proctoring2, then the user cannot take
@@ -2528,7 +2528,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
             password_assistance_url=password_assistance_url
         )
     except NoReverseMatch:
-        log.exception(u"Can't find password reset link")
+        log.exception("Can't find password reset link")
 
     has_due_date = exam['due_date'] is not None
     attempt_time = attempt.get('allowed_time_limit_mins', None) if attempt else None
@@ -2961,7 +2961,7 @@ def get_exam_violation_report(course_id, include_practice_exams=False):
             attempts_by_code[attempt_code]['review_status'] = review.review_status
 
             for comment in review.proctoredexamsoftwaresecurecomment_set.all():
-                comments_key = u'{status} Comments'.format(status=comment.status)
+                comments_key = '{status} Comments'.format(status=comment.status)
 
                 if comments_key not in attempts_by_code[attempt_code]:
                     attempts_by_code[attempt_code][comments_key] = []
