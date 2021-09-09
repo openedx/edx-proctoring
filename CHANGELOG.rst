@@ -13,6 +13,10 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[3.24.6] - 2021-09-03
+* Upgrade edx-lint for linting
+* Update code style
 * Handler test refactor
 
 [3.24.5] - 2021-09-02
