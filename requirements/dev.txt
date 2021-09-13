@@ -130,7 +130,7 @@ six==1.16.0
     #   virtualenv
 snowballstemmer==2.1.0
     # via pydocstyle
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 stevedore==3.4.0
     # via code-annotations

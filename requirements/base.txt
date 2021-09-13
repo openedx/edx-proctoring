@@ -180,7 +180,7 @@ six==1.16.0
     #   python-dateutil
 slumber==0.7.1
     # via edx-rest-api-client
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 stevedore==3.4.0
     # via

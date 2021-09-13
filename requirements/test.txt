@@ -226,7 +226,7 @@ requests==2.26.0
     #   pyjwkest
     #   responses
     #   slumber
-responses==0.13.4
+responses==0.14.0
     # via -r requirements/test.in
 rest-condition==1.0.3
     # via edx-drf-extensions
@@ -251,7 +251,7 @@ six==1.16.0
     #   responses
 slumber==0.7.1
     # via edx-rest-api-client
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 stevedore==3.4.0
     # via
