@@ -14,7 +14,7 @@ chardet==4.0.0
     # via diff-cover
 click==7.1.2
     # via
-    #   -c requirements/constraints.txt
+    #   -c constraints.txt
     #   click-log
     #   code-annotations
     #   edx-lint
@@ -24,23 +24,23 @@ click-log==0.3.2
 code-annotations==1.2.0
     # via edx-lint
 diff-cover==6.3.5
-    # via -r requirements/dev.in
+    # via -r dev.in
 distlib==0.3.2
     # via virtualenv
 django==2.2.24
     # via
-    #   -c requirements/common_constraints.txt
-    #   -r requirements/dev.in
-    #   -r requirements/quality.in
+    #   -c common_constraints.txt
+    #   -r dev.in
+    #   -r quality.in
     #   edx-i18n-tools
 docutils==0.17.1
     # via rstcheck
 edx-i18n-tools==0.7.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 edx-lint==5.1.0
     # via
-    #   -r requirements/dev.in
-    #   -r requirements/quality.in
+    #   -r dev.in
+    #   -r quality.in
 filelock==3.0.12
     # via
     #   tox
@@ -49,7 +49,7 @@ inflect==5.3.0
     # via jinja2-pluralize
 isort==5.9.3
     # via
-    #   -r requirements/quality.in
+    #   -r quality.in
     #   pylint
 jinja2==3.0.1
     # via
@@ -71,13 +71,13 @@ path==16.2.0
     #   edx-i18n-tools
     #   path.py
 path.py==12.5.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 pbr==5.6.0
     # via stevedore
 pep517==0.11.0
     # via pip-tools
 pip-tools==6.2.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 platformdirs==2.3.0
     # via
     #   pylint
@@ -91,9 +91,9 @@ polib==1.1.1
 py==1.10.0
     # via tox
 pycodestyle==2.7.0
-    # via -r requirements/quality.in
+    # via -r quality.in
 pydocstyle==6.1.1
-    # via -r requirements/quality.in
+    # via -r quality.in
 pygments==2.10.0
     # via diff-cover
 pylint==2.10.2
@@ -121,7 +121,7 @@ pyyaml==5.4.1
     #   code-annotations
     #   edx-i18n-tools
 rstcheck==3.3.1
-    # via -r requirements/quality.in
+    # via -r quality.in
 six==1.16.0
     # via
     #   edx-i18n-tools
@@ -130,7 +130,7 @@ six==1.16.0
     #   virtualenv
 snowballstemmer==2.1.0
     # via pydocstyle
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 stevedore==3.4.0
     # via code-annotations
@@ -144,15 +144,15 @@ tomli==1.2.1
     # via pep517
 tox==3.24.3
     # via
-    #   -r requirements/dev.in
+    #   -r dev.in
     #   tox-battery
 tox-battery==0.6.1
-    # via -r requirements/dev.in
+    # via -r dev.in
 virtualenv==20.7.2
     # via tox
 wheel==0.37.0
     # via
-    #   -r requirements/dev.in
+    #   -r dev.in
     #   pip-tools
 wrapt==1.12.1
     # via astroid

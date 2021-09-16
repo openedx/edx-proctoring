@@ -10,7 +10,7 @@ astroid==2.7.3
     #   pylint-celery
 click==7.1.2
     # via
-    #   -c requirements/constraints.txt
+    #   -c constraints.txt
     #   click-log
     #   code-annotations
     #   edx-lint
@@ -20,15 +20,15 @@ code-annotations==1.2.0
     # via edx-lint
 django==2.2.24
     # via
-    #   -c requirements/common_constraints.txt
-    #   -r requirements/quality.in
+    #   -c common_constraints.txt
+    #   -r quality.in
 docutils==0.17.1
     # via rstcheck
 edx-lint==5.1.0
-    # via -r requirements/quality.in
+    # via -r quality.in
 isort==5.9.3
     # via
-    #   -r requirements/quality.in
+    #   -r quality.in
     #   pylint
 jinja2==3.0.1
     # via code-annotations
@@ -43,9 +43,9 @@ pbr==5.6.0
 platformdirs==2.3.0
     # via pylint
 pycodestyle==2.7.0
-    # via -r requirements/quality.in
+    # via -r quality.in
 pydocstyle==6.1.1
-    # via -r requirements/quality.in
+    # via -r quality.in
 pylint==2.10.2
     # via
     #   edx-lint
@@ -67,12 +67,12 @@ pytz==2021.1
 pyyaml==5.4.1
     # via code-annotations
 rstcheck==3.3.1
-    # via -r requirements/quality.in
+    # via -r quality.in
 six==1.16.0
     # via edx-lint
 snowballstemmer==2.1.0
     # via pydocstyle
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 stevedore==3.4.0
     # via code-annotations
