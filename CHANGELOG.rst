@@ -14,7 +14,14 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.0.0] - 2021-08-25
+~~~~~~~~~~~~~~~~~~~~~
+**BREAKING CHANGES:**
+
+* BREAKING CHANGE: Upgraded dependency pyjwt[crypto] to 2.1.0, which introduces its own breaking changes that may affect consumers of this library. Pay careful attention to the 2.0.0 breaking changes documented in https://pyjwt.readthedocs.io/en/stable/changelog.html#v2-0-0.
+
 [3.24.6] - 2021-09-03
+~~~~~~~~~~~~~~~~~~~~~
 * Upgrade edx-lint for linting
 * Update code style
 * Handler test refactor

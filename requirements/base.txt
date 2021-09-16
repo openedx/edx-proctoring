@@ -37,7 +37,7 @@ cryptography==3.4.8
     # via pyjwt
 django==2.2.24
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
     #   django-crum
     #   django-model-utils
@@ -78,14 +78,14 @@ djangorestframework==3.12.4
     #   rest-condition
 drf-jwt==1.19.0
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/common_constraints.txt
     #   edx-drf-extensions
 edx-django-utils==4.4.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   edx-when
-edx-drf-extensions==6.6.0
+edx-drf-extensions==7.0.1
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
@@ -133,11 +133,11 @@ pycryptodomex==3.10.1
     #   pyjwkest
 pyjwkest==1.4.2
     # via edx-drf-extensions
-pyjwt[crypto]==1.7.1
+pyjwt[crypto]==2.1.0
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
     #   drf-jwt
+    #   edx-drf-extensions
     #   edx-rest-api-client
 pymongo==3.12.0
     # via

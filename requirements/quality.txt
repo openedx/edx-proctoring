@@ -20,7 +20,7 @@ code-annotations==1.2.0
     # via edx-lint
 django==2.2.24
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/common_constraints.txt
     #   -r requirements/quality.in
 docutils==0.17.1
     # via rstcheck
