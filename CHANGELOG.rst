@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.0.1] - 2021-09-21
+~~~~~~~~~~~~~~~~~~~~~
+* Bug fix for student onboarding statuses by course. If learner has multiple attempts, return non-reset attempt status if possible.
+
 [4.0.0] - 2021-08-25
 ~~~~~~~~~~~~~~~~~~~~~
 **BREAKING CHANGES:**
