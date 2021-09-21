@@ -870,7 +870,7 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
         onboarding_attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(
             course_id,
             users
-        ).values('user_id', 'status', 'modified')
+        ).values('user_id', 'status', 'modified', 'id')
 
         # get all of the last verified onboarding attempts of these users
         last_verified_attempt_dict = get_last_verified_onboarding_attempts_per_user(
@@ -967,6 +967,7 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
         """
         Given an ordered list of attempts, return, for each learner, their most recent
         exam attempt. If the learner has a verified attempt, always return verified.
+        If possible, do not return a reset attempt.
         Parameters:
         * attempts: an iterable of attempt objects
         """
@@ -978,6 +979,12 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
             if existing_attempt:
                 # Always return a verified attempt if it exists.
                 if attempt['status'] == ProctoredExamStudentAttemptStatus.verified:
+                    onboarding_attempts_per_user[attempt['user_id']] = attempt
+                # Always return a non reset attempt if its ID is greater
+                if (
+                    existing_attempt['status'] == ProctoredExamStudentAttemptStatus.onboarding_reset
+                    and existing_attempt['id'] < attempt['id']
+                ):
                     onboarding_attempts_per_user[attempt['user_id']] = attempt
             else:
                 onboarding_attempts_per_user[attempt['user_id']] = attempt

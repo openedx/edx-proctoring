@@ -1598,7 +1598,8 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_data['results'][0]['status'], expected_onboarding_status)
 
-    def test_multiple_exam_attempts(self):
+    @ddt.data(True, False)
+    def test_multiple_exam_attempts(self, should_reset_attempt_be_most_recent_modified):
         attempt_id = create_exam_attempt(self.onboarding_exam.id, self.user.id, True)
 
         # create a second exam attempt by resetting the onboarding attempt
@@ -1608,6 +1609,12 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
 
         # get serialized onboarding_attempt to get modified time
         serialized_onboarding_attempt = get_exam_attempt_by_id(second_exam_attempt_id)
+
+        if should_reset_attempt_be_most_recent_modified:
+            # if we want the reset attempt to have the most recent modified date, we should resave the attempt
+            # a reset attempt having a more recent modified date is an edge case
+            attempt = ProctoredExamStudentAttempt.objects.get(id=attempt_id)
+            attempt.save()
 
         response = self.client.get(reverse(
                 'edx_proctoring:user_onboarding.status.course',
