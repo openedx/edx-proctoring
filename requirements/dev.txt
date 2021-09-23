@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-astroid==2.7.3
+astroid==2.8.0
     # via
     #   pylint
     #   pylint-celery
@@ -23,9 +23,9 @@ click-log==0.3.2
     # via edx-lint
 code-annotations==1.2.0
     # via edx-lint
-diff-cover==6.3.5
+diff-cover==6.4.0
     # via -r requirements/dev.in
-distlib==0.3.2
+distlib==0.3.3
     # via virtualenv
 django==2.2.24
     # via
@@ -76,13 +76,13 @@ pbr==5.6.0
     # via stevedore
 pep517==0.11.0
     # via pip-tools
-pip-tools==6.2.0
+pip-tools==6.3.0
     # via -r requirements/dev.in
 platformdirs==2.3.0
     # via
     #   pylint
     #   virtualenv
-pluggy==0.13.1
+pluggy==1.0.0
     # via
     #   diff-cover
     #   tox
@@ -96,7 +96,7 @@ pydocstyle==6.1.1
     # via -r requirements/quality.in
 pygments==2.10.0
     # via diff-cover
-pylint==2.10.2
+pylint==2.11.1
     # via
     #   edx-lint
     #   pylint-celery
@@ -130,7 +130,7 @@ six==1.16.0
     #   virtualenv
 snowballstemmer==2.1.0
     # via pydocstyle
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 stevedore==3.4.0
     # via code-annotations
@@ -142,13 +142,17 @@ toml==0.10.2
     #   tox
 tomli==1.2.1
     # via pep517
-tox==3.24.3
+tox==3.24.4
     # via
     #   -r requirements/dev.in
     #   tox-battery
 tox-battery==0.6.1
     # via -r requirements/dev.in
-virtualenv==20.7.2
+typing-extensions==3.10.0.2
+    # via
+    #   astroid
+    #   pylint
+virtualenv==20.8.0
     # via tox
 wheel==0.37.0
     # via
