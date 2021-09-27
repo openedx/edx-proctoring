@@ -2932,7 +2932,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         self.assertEqual(
             get_exam_configuration_dashboard_url(self.course_id, 'test_content_2'),
-            '/edx_proctoring/v1/instructor/a/b/c/{}?config=true'.format(exam_id)
+            f'/edx_proctoring/v1/instructor/a/b/c/{exam_id}?config=true'
         )
 
     def test_clear_onboarding_errors(self):
@@ -3482,9 +3482,9 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
         exam_id = self.timed_exam_id if not is_proctored_exam else self.proctored_exam_id
         attempt_data = get_exam_attempt_data(exam_id, attempt.id, is_learning_mfe)
         content_id = self.content_id if is_proctored_exam else self.content_id_timed
-        expected_exam_url = '{}/course/{}/{}'.format(
-            settings.LEARNING_MICROFRONTEND_URL, self.course_id, content_id
-        ) if is_learning_mfe else reverse('jump_to', args=[self.course_id, content_id])
+        expected_exam_url = (f'{settings.LEARNING_MICROFRONTEND_URL}/course/{self.course_id}/{content_id}'
+                             if is_learning_mfe
+                             else reverse('jump_to', args=[self.course_id, content_id]))
 
         assert attempt_data
         assert 'attempt_id' in attempt_data
@@ -3644,7 +3644,7 @@ class CheckPrerequisitesTests(ProctoredExamTestCase):
             result = check_prerequisites(self.exam, self.user_id)
             self.assertEqual(result['prerequisite_status']['are_prerequisites_satisifed'], are_satisfied)
             self.assertEqual(
-                len(result['prerequisite_status']['{}_prerequisites'.format(status)]),
+                len(result['prerequisite_status'][f'{status}_prerequisites']),
                 expected_prerequisites_len
             )
             if status == 'declined':

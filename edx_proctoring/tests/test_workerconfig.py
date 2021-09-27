@@ -19,7 +19,7 @@ class TestWorkerConfig(unittest.TestCase):
 
     def setUp(self):  # pylint: disable=super-method-not-called
         super().setUp()
-        self.outfile = tempfile.mktemp(prefix='test-%d' % os.getpid())
+        self.outfile = tempfile.mktemp(prefix=f'test-{os.getpid()}')
         self.to_del = [self.outfile]
 
     def tearDown(self):  # pylint: disable=super-method-not-called

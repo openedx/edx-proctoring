@@ -397,10 +397,10 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
 
         # create number of exam attempts
         for i in range(90):
-            user = User.objects.create(username='tester{0}'.format(i), email='tester{0}@test.com'.format(i))
+            user = User.objects.create(username=f'tester{i}', email=f'tester{i}@test.com')
             ProctoredExamStudentAttempt.create_exam_attempt(
                 proctored_exam.id, user.id,
-                'test_attempt_code{0}'.format(i), True, False, 'test_external_id{0}'.format(i)
+                f'test_attempt_code{i}', True, False, f'test_external_id{i}'
             )
 
         with self.assertNumQueries(1):
@@ -430,10 +430,10 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         attempt = ProctoredExamStudentAttempt.create_exam_attempt(
             proctored_exam.id,
             self.user.id,
-            'test_attempt_code{0}'.format(self.user.id),
+            f'test_attempt_code{self.user.id}',
             True,
             False,
-            'test_external_id{0}'.format(self.user.id)
+            f'test_external_id{self.user.id}'
         )
         attempt.review_policy_id = policy.id
         attempt.save()

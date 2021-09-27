@@ -108,12 +108,8 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         exam_attempt.refresh_from_db()
         self.assertEqual(exam_attempt.status, 'submitted')
         log_format_string = (
-            'Exception occurred while trying to send proctoring attempt '
-            'status email for user_id={user_id} in course_id={course_id} -- {err}'.format(
-                user_id=self.user_id,
-                course_id=self.course_id,
-                err='foo',
-            )
+            f'Exception occurred while trying to send proctoring attempt '
+            f'status email for user_id={self.user_id} in course_id={self.course_id} -- foo'
         )
         logger_mock.assert_any_call(log_format_string)
 
@@ -199,9 +195,8 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         )
 
         expected_args = [
-            'emails/proctoring/{backend}/{template_name}'.format(
-                backend=exam_attempt.proctored_exam.backend, template_name=template_name),
-            'emails/{template_name}'.format(template_name=template_name)
+            f'emails/proctoring/{exam_attempt.proctored_exam.backend}/{template_name}',
+            f'emails/{template_name}',
         ]
         select_template_mock.assert_called_once_with(expected_args)
 
@@ -301,7 +296,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         Test that the correct edX support URL is used in emails. The email should use either the backend specific
         contact URL, if one is specified, or fall back to the edX contact us support page.
         """
-        contact_url = 'http://{site_name}/support/contact_us'.format(site_name=SITE_NAME)
+        contact_url = f'http://{SITE_NAME}/support/contact_us'
         backend_settings = settings.PROCTORING_BACKENDS
 
         if override_email:
@@ -322,6 +317,6 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
 
             # Verify the edX support URL
             actual_body = self._normalize_whitespace(mail.outbox[0].body)
-            self.assertIn('<a href="{contact_url}"> '
-                          '{contact_url} </a>'.format(contact_url=contact_url),
+            self.assertIn(f'<a href="{contact_url}"> '
+                          f'{contact_url} </a>',
                           actual_body)

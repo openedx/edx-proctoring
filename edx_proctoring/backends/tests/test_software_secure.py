@@ -269,10 +269,7 @@ class SoftwareSecureTests(TestCase):
             # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
             expected = context['review_policy']
             if review_policy_exception:
-                expected = '{base}; {exception}'.format(
-                    base=expected,
-                    exception=review_policy_exception
-                )
+                expected = f'{expected}; {review_policy_exception}'
 
             test_self.assertEqual(result['reviewerNotes'], expected)
             return result
@@ -331,8 +328,8 @@ class SoftwareSecureTests(TestCase):
         for illegal_char in SOFTWARE_SECURE_INVALID_CHARS:
             exam_id = create_exam(
                 course_id='foo/bar/baz',
-                content_id='content with {}'.format(illegal_char),
-                exam_name='Sample Exam with {} character'.format(illegal_char),
+                content_id=f'content with {illegal_char}',
+                exam_name=f'Sample Exam with {illegal_char} character',
                 time_limit_mins=10,
                 is_proctored=True,
                 backend='software_secure',

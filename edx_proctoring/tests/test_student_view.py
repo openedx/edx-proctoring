@@ -162,10 +162,10 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         """
         rendered_response = self.render_proctored_exam()
         self.assertIn(
-            'data-exam-id="{proctored_exam_id}"'.format(proctored_exam_id=self.proctored_exam_id),
+            f'data-exam-id="{self.proctored_exam_id}"',
             rendered_response
         )
-        self.assertIn(self.start_an_exam_msg.format(exam_name=self.exam_name), rendered_response)
+        self.assertIn(self.start_an_exam_msg, rendered_response)
 
         # try practice exam variant
         rendered_response = self.render_practice_exam()
@@ -1301,12 +1301,12 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             }
         )
         self.assertNotIn(
-            'data-exam-id="{proctored_exam_id}"'.format(proctored_exam_id=self.proctored_exam_id),
+            f'data-exam-id="{self.proctored_exam_id}"',
             rendered_response
         )
         self.assertIn(self.timed_exam_msg.format(exam_name=self.exam_name), rendered_response)
         self.assertIn('1 hour and 30 minutes', rendered_response)
-        self.assertNotIn(self.start_an_exam_msg.format(exam_name=self.exam_name), rendered_response)
+        self.assertNotIn(self.start_an_exam_msg, rendered_response)
 
     def test_get_studentview_unstarted_timed_exam_with_allowance(self):
         """
@@ -1329,12 +1329,12 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             context={}
         )
         self.assertNotIn(
-            'data-exam-id="{proctored_exam_id}"'.format(proctored_exam_id=self.proctored_exam_id),
+            f'data-exam-id="{self.proctored_exam_id}"',
             rendered_response
         )
         self.assertIn(self.timed_exam_msg.format(exam_name=self.exam_name), rendered_response)
         self.assertIn('31 minutes', rendered_response)
-        self.assertNotIn(self.start_an_exam_msg.format(exam_name=self.exam_name), rendered_response)
+        self.assertNotIn(self.start_an_exam_msg, rendered_response)
 
     @ddt.data(
         (ProctoredExamStudentAttemptStatus.ready_to_submit, 'Are you sure that you want to submit your timed exam?'),
@@ -1550,7 +1550,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         self.assertIn(self.proctored_exam_ready_to_resume_msg, rendered_response)
 
         time_remaining = humanized_time(int(get_exam_attempt_by_id(exam_attempt.id)['time_remaining_seconds'] / 60))
-        time_remaining_string = 'You will have {} to complete your exam.'.format(time_remaining)
+        time_remaining_string = f'You will have {time_remaining} to complete your exam.'
         self.assertIn(time_remaining_string, rendered_response)
 
     @ddt.data(
@@ -1578,7 +1578,8 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
 
         rendered_response = render_exam(self)
 
-        expected_javascript_string = 'edx.courseware.proctored_exam.ProctoringAppPingInterval = {}'.format(
-            DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS
+        expected_javascript_string = (
+            'edx.courseware.proctored_exam.ProctoringAppPingInterval = '
+            f'{DEFAULT_DESKTOP_APPLICATION_PING_INTERVAL_SECONDS}'
         )
         self.assertIn(expected_javascript_string, rendered_response)
