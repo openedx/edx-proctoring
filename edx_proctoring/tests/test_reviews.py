@@ -224,7 +224,7 @@ class ReviewTests(LoggedInTestCase):
         )
         assert response.status_code == 200
         # user in the review group
-        group_name = '%s_review' % (self.attempt['proctored_exam']['backend'])
+        group_name = f"{self.attempt['proctored_exam']['backend']}_review"
         self.user.groups.get_or_create(name=group_name)
         self.user.is_staff = False
         self.user.save()

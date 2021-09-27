@@ -86,7 +86,7 @@ class LoggedInTestCase(TestCase):
         for i in range(batch_size):
             created_user = User(
                 username='student' + str(i),
-                email='student{}@test.com'.format(i),
+                email=f'student{i}@test.com',
             )
             created_user.save()
             users_list.append(created_user)

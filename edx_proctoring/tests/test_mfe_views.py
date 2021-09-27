@@ -49,9 +49,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
             'content_id': self.content_id,
             'is_learning_mfe': True,
         })
-        self.expected_exam_url = '{}/course/{}/{}'.format(
-            settings.LEARNING_MICROFRONTEND_URL, self.course_id, self.content_id
-        )
+        self.expected_exam_url = f'{settings.LEARNING_MICROFRONTEND_URL}/course/{self.course_id}/{self.content_id}'
         yesterday = timezone.now() - timezone.timedelta(days=1)
         self.course_scheduled_sections = {
             BlockUsageLocator.from_string(self.content_id_onboarding): MockScheduleItemData(yesterday),
@@ -167,9 +165,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         exam_data = response_data['exam']
-        expected_exam_url = '{}/course/{}/{}'.format(
-            settings.LEARNING_MICROFRONTEND_URL, self.course_id, self.content_id_timed
-        )
+        expected_exam_url = f'{settings.LEARNING_MICROFRONTEND_URL}/course/{self.course_id}/{self.content_id_timed}'
         assert 'prerequisite_status' not in exam_data
         assert 'active_attempt' in response_data and response_data['active_attempt']
         self.assertHasExamData(response_data, has_attempt=True, content_id=self.content_id_timed)
@@ -305,8 +301,9 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         onboarding_exam = ProctoredExam.objects.get(id=self.onboarding_exam_id)
 
         if is_learning_mfe:
-            expected_exam_url = '{}/course/{}/{}'.format(
-                settings.LEARNING_MICROFRONTEND_URL, self.course_id, onboarding_exam.content_id
+            expected_exam_url = (
+                f'{settings.LEARNING_MICROFRONTEND_URL}/course/'
+                f'{self.course_id}/{onboarding_exam.content_id}'
             )
         else:
             expected_exam_url = reverse('jump_to', args=[self.course_id, onboarding_exam.content_id])

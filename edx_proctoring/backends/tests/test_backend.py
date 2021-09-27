@@ -91,11 +91,11 @@ class TestBackendProvider(ProctoringBackendProvider):
     # pylint: disable=unused-argument
     def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None, show_configuration_dashboard=False):
         "Return a fake instructor url"
-        url = '/instructor/%s/' % course_id
+        url = f'/instructor/{course_id}/'
         if exam_id:
-            url += '?exam=%s' % exam_id
+            url += f'?exam={exam_id}'
             if attempt_id:
-                url += '&attempt=%s' % attempt_id
+                url += f'&attempt={attempt_id}'
 
         if show_configuration_dashboard:
             url += '&config=true'

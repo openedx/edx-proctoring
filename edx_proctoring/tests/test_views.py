@@ -93,7 +93,7 @@ class ProctoredExamsApiTests(LoggedInTestCase):
         self.client = Client()  # use AnonymousUser on the API calls
         for urlpattern in urlpatterns:
             if hasattr(urlpattern, 'name') and 'anonymous.' not in urlpattern.name:
-                name = 'edx_proctoring:%s' % urlpattern.name
+                name = f'edx_proctoring:{urlpattern.name}'
                 try:
                     response = self.client.get(reverse(name))
                 except NoReverseMatch:
@@ -295,7 +295,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(
             response_data['detail'],
-            'Attempted to update exam_id={exam_id}, but this exam does not exist.'.format(exam_id=exam_id),
+            f'Attempted to update exam_id={exam_id}, but this exam does not exist.',
         )
 
     def test_get_exam_by_id(self):
@@ -413,9 +413,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content.decode('utf-8'))
         message = (
-            'Cannot find proctored exam in course_id=c/d/e with content_id={content_id}'.format(
-                content_id=proctored_exam.content_id,
-            )
+            f'Cannot find proctored exam in course_id=c/d/e with content_id={proctored_exam.content_id}'
         )
         self.assertEqual(response_data['detail'], message)
 
@@ -497,7 +495,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         # Assert that the onboarding status returned is 'submitted'
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.onboarding_exam.course_id)
+            + f'?course_id={self.onboarding_exam.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -509,7 +507,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         """
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?username={}&course_id={}'.format(self.other_user.username, self.course_id)
+            + f'?username={self.other_user.username}&course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -524,7 +522,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         self.user.save()
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?username={}&course_id={}'.format(self.other_user.username, self.course_id)
+            + f'?username={self.other_user.username}&course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         # Should also work for course staff
@@ -533,7 +531,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         self.user.save()
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?username={}&course_id={}'.format(self.other_user.username, self.course_id)
+            + f'?username={self.other_user.username}&course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -557,7 +555,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         """
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}&is_learning_mfe=True'.format(self.course_id)
+            + f'?course_id={self.course_id}&is_learning_mfe=True'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -572,7 +570,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         """
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -591,7 +589,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -604,7 +602,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -623,7 +621,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.verified)
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -636,7 +634,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -675,7 +673,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         )
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -713,7 +711,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         )
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -761,7 +759,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.verified)
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -773,7 +771,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         # Assert that the status has been cleared and is no longer verified
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -793,7 +791,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         with mock_perm('edx_proctoring.can_take_proctored_exam'):
             response = self.client.get(
                 reverse('edx_proctoring:user_onboarding.status')
-                + '?course_id={}'.format(self.course_id)
+                + f'?course_id={self.course_id}'
             )
         self.assertEqual(response.status_code, 404)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -836,7 +834,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -856,7 +854,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 404)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -874,7 +872,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 404)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -898,7 +896,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
 
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.onboarding_exam.course_id)
+            + f'?course_id={self.onboarding_exam.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -924,7 +922,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
 
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.onboarding_exam.course_id)
+            + f'?course_id={self.onboarding_exam.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -968,7 +966,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -1005,7 +1003,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -1059,7 +1057,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -1101,7 +1099,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
 
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.onboarding_exam.course_id)
+            + f'?course_id={self.onboarding_exam.course_id}'
         )
 
         mocked_onboarding_api.assert_called_with(
@@ -1131,7 +1129,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
 
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.onboarding_exam.course_id)
+            + f'?course_id={self.onboarding_exam.course_id}'
         )
 
         mocked_onboarding_api.assert_called_with(
@@ -1156,7 +1154,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
 
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.onboarding_exam.course_id)
+            + f'?course_id={self.onboarding_exam.course_id}'
         )
         self.assertEqual(response.status_code, 404)
 
@@ -1173,7 +1171,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
 
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.onboarding_exam.course_id)
+            + f'?course_id={self.onboarding_exam.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -1213,7 +1211,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ))
         response = self.client.get(
             reverse('edx_proctoring:user_onboarding.status')
-            + '?course_id={}'.format(self.course_id)
+            + f'?course_id={self.course_id}'
         )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
@@ -1359,8 +1357,8 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
                            )
 
         self.assertEqual(response_data['count'], 3)
-        self.assertEqual(response_data['previous'], base_url + '?page={}'.format(1))
-        self.assertEqual(response_data['next'], base_url + '?page={}'.format(3))
+        self.assertEqual(response_data['previous'], base_url + '?page=1')
+        self.assertEqual(response_data['next'], base_url + '?page=3')
         self.assertEqual(response_data['num_pages'], 3)
 
     @patch('edx_proctoring.views.ATTEMPTS_PER_PAGE', 1)
@@ -1390,7 +1388,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         previous_url = response_data['previous']
         next_url = response_data['next']
         text_search_string = 'text_search=test.com'
-        status_filters_string = 'statuses={}'.format(InstructorDashboardOnboardingAttemptStatus.setup_started)
+        status_filters_string = f'statuses={InstructorDashboardOnboardingAttemptStatus.setup_started}'
 
         self.assertIn(base_url, previous_url)
         self.assertIn('page=1', previous_url)
@@ -3139,7 +3137,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt['proctored_exam']['id'], proctored_exam.id)
         self.assertEqual(attempt['user']['id'], self.user.id)
 
-        url = '{url}?page={invalid_page_no}'.format(url=url, invalid_page_no=9999)
+        url = f'{url}?page=9999'
         # url with the invalid page # still gives us the first page result.
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -3337,10 +3335,10 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # create number of exam attempts
         for i in range(90):
-            user = User.objects.create(username='student{0}'.format(i), email='student{0}@test.com'.format(i))
+            user = User.objects.create(username=f'student{i}', email=f'student{i}@test.com')
             ProctoredExamStudentAttempt.create_exam_attempt(
                 proctored_exam.id, user.id,
-                'test_attempt_code{0}'.format(i), True, False, 'test_external_id{0}'.format(i)
+                f'test_attempt_code{i}', True, False, f'test_external_id{i}'
             )
 
         self.client.login_user(self.user)
@@ -5494,7 +5492,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             is_proctored=True,
         )
 
-        expected_url = '/instructor/%s/' % self.course_id
+        expected_url = f'/instructor/{self.course_id}/'
         response = self.client.get(
             reverse('edx_proctoring:instructor_dashboard_course',
                     kwargs={'course_id': self.course_id})
@@ -5513,15 +5511,15 @@ class TestInstructorDashboard(LoggedInTestCase):
         )
         exam_id = proctored_exam.id
 
-        expected_url = '/instructor/%s/?exam=%s' % (self.course_id, proctored_exam.external_id)
+        expected_url = f'/instructor/{self.course_id}/?exam={proctored_exam.external_id}'
         dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
                                 kwargs={'course_id': self.course_id, 'exam_id': exam_id})
         response = self.client.get(dashboard_url)
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
         # try with an attempt
         attempt_frag = 'attempt=abcde'
-        expected_url += '&%s' % attempt_frag
-        dashboard_url += '?%s' % attempt_frag
+        expected_url += f'&{attempt_frag}'
+        dashboard_url += f'?{attempt_frag}'
         response = self.client.get(dashboard_url)
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
 
@@ -5607,7 +5605,7 @@ class TestInstructorDashboard(LoggedInTestCase):
         )
         exam_id = proctored_exam.id
 
-        expected_url = '/instructor/%s/?exam=%s&config=true' % (self.course_id, proctored_exam.external_id)
+        expected_url = f'/instructor/{self.course_id}/?exam={proctored_exam.external_id}&config=true'
         dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
                                 kwargs={'course_id': self.course_id, 'exam_id': exam_id})
         response = self.client.get(dashboard_url, {'config': 'true'})
@@ -5642,7 +5640,7 @@ class TestInstructorDashboard(LoggedInTestCase):
             backend='test',
         )
 
-        expected_url = '/instructor/%s/' % self.course_id
+        expected_url = f'/instructor/{self.course_id}/'
         response = self.client.get(
             reverse('edx_proctoring:instructor_dashboard_course',
                     kwargs={'course_id': self.course_id})
@@ -5650,7 +5648,7 @@ class TestInstructorDashboard(LoggedInTestCase):
         if not exam_1_is_proctored and not exam_2_is_proctored:
             self.assertEqual(response.status_code, 404)
             self.assertEqual(
-                'No proctored exams in course {}'.format(self.course_id),
+                f'No proctored exams in course {self.course_id}',
                 response.data
             )
         else:
@@ -5681,7 +5679,7 @@ class TestBackendUserDeletion(LoggedInTestCase):
         for i, backend in enumerate(('test', 'null', 'test', None)):
             proctored_exam = ProctoredExam.objects.create(
                 course_id='a/b/c',
-                content_id='test_content%s' % i,
+                content_id=f'test_content{i}',
                 exam_name='Test Exam',
                 external_id='123aXqe3',
                 is_proctored=True,
