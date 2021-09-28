@@ -115,21 +115,16 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
         except WebpackBundleLookupError:
             warnings.warn(
-                'Could not find webpack bundle for proctoring backend {package}.'
-                ' Check whether webpack is configured to build such a bundle'.format(
-                    package=package
-                )
+                f'Could not find webpack bundle for proctoring backend {package}.'
+                ' Check whether webpack is configured to build such a bundle'
             )
         except BaseWebpackLoaderException:
             warnings.warn(
-                'Could not find webpack bundle for proctoring backend {package}.'.format(
-                    package=package
-                )
+                f'Could not find webpack bundle for proctoring backend {package}.'
             )
         except IOError as err:
             warnings.warn(
-                'Webpack stats file corresponding to WebWorkers not found: {}'
-                .format(str(err))
+                f'Webpack stats file corresponding to WebWorkers not found: {str(err)}'
             )
 
         # if the Javascript URL is not an absolute URL (i.e. doesn't have a scheme), prepend
@@ -189,9 +184,8 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         # attempt code isn't needed in this API
         payload.pop('attempt_code', False)
         log.debug(
-            'Creating exam attempt for exam_id={exam_id} (external_id={external_id}) at {url}'.format(
-                exam_id=exam['id'], external_id=exam['external_id'], url=url
-            )
+            'Creating exam attempt for exam_id=%(exam_id)i (external_id=%(external_id)s) at %(url)s',
+            {'exam_id': exam['id'], 'external_id': exam['external_id'], 'url': url}
         )
         response = self.session.post(url, json=payload)
         if response.status_code != 200:
@@ -272,7 +266,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             url = self.exam_url.format(exam_id=external_id)
         else:
             url = self.create_exam_url
-        log.info('Saving exam_id={exam_id} to {url}'.format(exam_id=exam['id'], url=url))
+        log.info(
+            'Saving exam_id=%(exam_id)i to %(url)s',
+            {'exam_id': exam['id'], 'url': url}
+        )
         response = None
         try:
             response = self.session.post(url, json=exam)
@@ -284,9 +281,8 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             else:
                 content = None
             log.exception(
-                'Failed to save exam_id={exam_id} to {url}. Response: {content}'.format(
-                    exam_id=exam['id'], url=url, content=content
-                )
+                'Failed to save exam_id=%(exam_id)i to %(url)s. Response: %(content)s',
+                {'exam_id': exam['id'], 'url': url, 'content': content}
             )
             data = {}
         return data.get('id')
@@ -317,10 +313,9 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         url = self.instructor_url.format(client_id=self.client_id, jwt=encoded)
 
         log.debug(
-            'Created instructor url for course_id={course_id} exam_id={exam_id} '
-            'attempt_id={attempt_id}'.format(
-                course_id=course_id, exam_id=exam_id, attempt_id=attempt_id
-            )
+            ('Created instructor url for course_id=%(course_id)s exam_id=%(exam_id)i '
+             'attempt_id=%(attempt_id)s'),
+            {'course_id': course_id, 'exam_id': exam_id, 'attempt_id': attempt_id}
         )
         return url
 
@@ -362,7 +357,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         default_lang = settings.LANGUAGE_CODE
         lang_header = default_lang
         if current_lang and current_lang != default_lang:
-            lang_header = '{};{}'.format(current_lang, default_lang)
+            lang_header = f'{current_lang};{default_lang}'
         return {'Accept-Language': lang_header}
 
     def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):

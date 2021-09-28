@@ -562,10 +562,11 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         if not onboarding_exams:
             LOG.info(
-                'User user_id={user_id} has no accessible onboarding exams in course course_id={course_id}'.format(
-                    user_id=user.id,
-                    course_id=course_id,
-                )
+                'User user_id=%(user_id)s has no accessible onboarding exams in course course_id=%(course_id)s',
+                {
+                    'user_id': user.id,
+                    'course_id': course_id,
+                }
             )
             return Response(
                 status=404,
@@ -603,18 +604,18 @@ class StudentOnboardingStatusView(ProctoredAPIView):
                 onboarding_profile_data = backend.get_onboarding_profile_info(course_id, user_id=obs_user_id)
             except BackendProviderOnboardingProfilesException as exc:
                 # if backend raises exception, log message and return data from onboarding exam attempt
-                log_message = (
-                    'Failed to use backend onboarding status API endpoint for user_id={user_id}'
-                    'in course_id={course_id} because backend failed to respond. Onboarding status'
+                LOG.warning(
+                    'Failed to use backend onboarding status API endpoint for user_id=%(user_id)s'
+                    'in course_id=%(course_id)s because backend failed to respond. Onboarding status'
                     'will be determined by the user\'s onboarding attempts. '
-                    'Status: {status}, Response: {response}.'.format(
-                        user_id=user.id,
-                        course_id=course_id,
-                        response=str(exc),
-                        status=exc.http_status,
-                    )
+                    'Status: %(status)s, Response: %(response)s.',
+                    {
+                        'user_id': user.id,
+                        'course_id': course_id,
+                        'response': str(exc),
+                        'status': exc.http_status,
+                    }
                 )
-                LOG.warning(log_message)
                 return Response(data)
 
             if onboarding_profile_data is None:
@@ -632,26 +633,27 @@ class StudentOnboardingStatusView(ProctoredAPIView):
             expiration_date = onboarding_profile_data['expiration_date']
 
             if readable_status != data['onboarding_status']:
-                log_message = (
-                    'Backend onboarding status API endpoint info for user_id={user_id}'
-                    'in course_id={course_id} differs from system info. Endpoint onboarding attempt'
-                    'has status={endpoint_status}. System onboarding attempt has status={system_status}.'.format(
-                        user_id=user.id,
-                        course_id=course_id,
-                        endpoint_status=readable_status,
-                        system_status=data['onboarding_status']
-                    )
+                LOG.error(
+                    'Backend onboarding status API endpoint info for user_id=%(user_id)s'
+                    'in course_id=%(course_id)s differs from system info. Endpoint onboarding attempt'
+                    'has status=%(endpoint_status)s. System onboarding attempt has status=%(system_status)s.',
+                    {
+                        'user_id': user.id,
+                        'course_id': course_id,
+                        'endpoint_status': readable_status,
+                        'system_status': data['onboarding_status'],
+                    }
                 )
-                LOG.error(log_message)
 
             data['onboarding_status'] = readable_status
             data['expiration_date'] = expiration_date
             LOG.info(
-                'Used backend onboarding status API endpoint to retrieve user_id={user_id}'
-                'in course_id={course_id}'.format(
-                    user_id=user.id,
-                    course_id=course_id
-                )
+                'Used backend onboarding status API endpoint to retrieve user_id=%(user_id)s'
+                'in course_id=%(course_id)s',
+                {
+                    'user_id': user.id,
+                    'course_id': course_id,
+                }
             )
 
         return Response(data)
@@ -743,20 +745,20 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
 
             if api_response_error:
                 # if backend raises exception, log message and return data from onboarding exam attempt
-                log_message = (
-                    'Failed to use backend onboarding status API endpoint for course_id={course_id}'
-                    'with query parameters text_search: {text_search_filter}, status: {status_filters}'
+                LOG.warning(
+                    'Failed to use backend onboarding status API endpoint for course_id=%(course_id)s'
+                    'with query parameters text_search: %(text_search_filter)s, status: %(status_filters)s'
                     'because backend failed to respond. Onboarding status'
                     'will be determined by the users\'s onboarding attempts. '
-                    'Status: {status}, Response: {response}.'.format(
-                        course_id=course_id,
-                        text_search_filter=text_search,
-                        status_filters=status_filters,
-                        response=str(api_response_error),
-                        status=api_response_error.http_status,
-                    )
+                    'Status: %(status)s, Response: %(response)s.',
+                    {
+                        'course_id': course_id,
+                        'text_search_filter': text_search,
+                        'status_filters': status_filters,
+                        'response': str(api_response_error),
+                        'status': api_response_error.http_status,
+                    }
                 )
-                LOG.warning(log_message)
 
                 return Response(
                     status=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -764,11 +766,12 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
                 )
 
             LOG.info(
-                'Backend onboarding API returned {num_profiles} from the proctoring provider '
-                'for course {course_id}.'.format(
-                    num_profiles=len(onboarding_profile_info),
-                    course_id=course_id,
-                )
+                'Backend onboarding API returned %(num_profiles)s from the proctoring provider '
+                'for course %(course_id)s.',
+                {
+                    'num_profiles': len(onboarding_profile_info),
+                    'course_id': course_id,
+                }
             )
 
             obscured_user_ids_to_users = {obscured_user_id(user.id, onboarding_exam.backend): user for user in users}
@@ -795,16 +798,16 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
                 del obscured_user_ids_to_users[obscured_id]
 
             if missing_user_ids:
-                log_message = (
+                LOG.warning(
                     'Users are present in response whose obscured user IDs do not exist in list of learners '
-                    'enrolled in course {course_id} with proctoring eligible enrollments. There are a total '
-                    'of {num_missing_ids} of these. A sample of these IDs is {obs_id_sample}.'
-                ).format(
-                    course_id=course_id,
-                    num_missing_ids=len(missing_user_ids),
-                    obs_id_sample=missing_user_ids[0:5],
+                    'enrolled in course %(course_id)s with proctoring eligible enrollments. There are a total '
+                    'of %(num_missing_ids)s of these. A sample of these IDs is %(obs_id_sample)s.',
+                    {
+                        'course_id': course_id,
+                        'num_missing_ids': len(missing_user_ids),
+                        'obs_id_sample': missing_user_ids[0:5],
+                    }
                 )
-                LOG.warning(log_message)
 
             if status_filters is None or 'not_started' in status_filters:
                 for (obscured_id, user) in obscured_user_ids_to_users.items():
@@ -1052,10 +1055,11 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
         onboarding_profile_kwargs['status'] = onboarding_status_filter_string
 
         LOG.info(
-            'Onboarding profile kwargs for course {course_id} are {onboarding_kwargs}.'.format(
-                course_id=course_id,
-                onboarding_kwargs=onboarding_profile_kwargs,
-            )
+            'Onboarding profile kwargs for course %(course_id)s are %(onboarding_kwargs)s.',
+            {
+                'course_id': course_id,
+                'onboarding_kwargs': onboarding_profile_kwargs,
+            }
         )
         try:
             request = backend.get_onboarding_profile_info(
@@ -1113,15 +1117,15 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         if not attempt:
             err_msg = (
-                'Attempted to get attempt_id={attempt_id} but this attempt does not '
-                'exist.'.format(attempt_id=attempt_id)
+                f'Attempted to get attempt_id={attempt_id} but this attempt does not '
+                'exist.'
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
         # make sure the the attempt belongs to the calling user_id
         if attempt['user']['id'] != user_id:
             err_msg = (
-                'user_id={user_id} attempted to get attempt_id={attempt_id} but '
-                'does not have authorization.'.format(user_id=user_id, attempt_id=attempt_id)
+                f'user_id={user_id} attempted to get attempt_id={attempt_id} but '
+                'does not have authorization.'
             )
             raise ProctoredExamPermissionDenied(err_msg)
 
@@ -1158,9 +1162,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         if not attempt:
             err_msg = (
-                'Attempted to update attempt_id={attempt_id} but it does not exist.'.format(
-                    attempt_id=attempt_id
-                )
+                f'Attempted to update attempt_id={attempt_id} but it does not exist.'
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
 
@@ -1169,13 +1171,8 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
         detail = request.data.get('detail')
 
         err_msg = (
-            'user_id={user_id} attempted to update attempt_id={attempt_id} in '
-            'course_id={course_id} but does not have access to it. (action={action})'.format(
-                user_id=user_id,
-                attempt_id=attempt_id,
-                course_id={course_id},
-                action={action},
-            )
+            f'user_id={user_id} attempted to update attempt_id={attempt_id} in '
+            f'course_id={course_id} but does not have access to it. (action={action})'
         )
 
         # only allow a staff user to change another user's exam attempt status via the 'mark_ready_to_resume' action
@@ -1236,15 +1233,16 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 exam_attempt_id = False
             LOG.warning(
                 'Browser JS reported problem with proctoring desktop application. Error detail: '
-                '{error_detail}. Did block user: {should_block_user}. user_id={user_id}, '
-                'course_id={course_id}, exam_id={exam_id}, attempt_id={attempt_id}'.format(
-                    should_block_user=should_block_user,
-                    user_id=user_id,
-                    course_id=course_id,
-                    exam_id=attempt['proctored_exam']['id'],
-                    attempt_id=attempt_id,
-                    error_detail=detail
-                )
+                '%(error_detail)s. Did block user: %(should_block_user)s. user_id=%(user_id)s, '
+                'course_id=%(course_id)s, exam_id=%(exam_id)s, attempt_id=%(attempt_id)s',
+                {
+                    'should_block_user': should_block_user,
+                    'user_id': user_id,
+                    'course_id': course_id,
+                    'exam_id': attempt['proctored_exam']['id'],
+                    'attempt_id': attempt_id,
+                    'error_detail': detail,
+                }
             )
         elif action == 'decline':
             exam_attempt_id = update_attempt_status(
@@ -1269,8 +1267,8 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
 
         if not attempt:
             err_msg = (
-                'Attempted to delete attempt_id={attempt_id} but this attempt does not '
-                'exist.'.format(attempt_id=attempt_id)
+                f'Attempted to delete attempt_id={attempt_id} but this attempt does not '
+                'exist.'
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
 
@@ -1362,12 +1360,8 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
         # because student can attempt the practice after the due date
         if not exam.get("is_practice_exam") and is_exam_passed_due(exam, request.user):
             raise ProctoredExamPermissionDenied(
-                'user_id={user_id} attempted to create an attempt for expired exam '
-                'with exam_id={exam_id} in course_id={course_id}'.format(
-                    user_id=user_id,
-                    exam_id=exam_id,
-                    course_id=exam['course_id'],
-                )
+                f'user_id={user_id} attempted to create an attempt for expired exam '
+                f"with exam_id={exam_id} in course_id={exam['course_id']}"
             )
 
         exam_attempt_id = create_exam_attempt(
@@ -1712,13 +1706,9 @@ class ProctoredExamAttemptReviewStatus(ProctoredAPIView):
         # make sure the the attempt belongs to the calling user_id
         if attempt and attempt['user']['id'] != request.user.id:
             err_msg = (
-                'user_id={user_id} attempted to update attempt_id={attempt_id} '
-                'review status to acknowledged in exam_id={exam_id}, but does not '
-                'have authorization.'.format(
-                    user_id=request.user.id,
-                    attempt_id=attempt_id,
-                    exam_id=attempt['proctored_exam']['id'],
-                )
+                f'user_id={request.user.id} attempted to update attempt_id={attempt_id} '
+                f"review status to acknowledged in exam_id={attempt['proctored_exam']['id']}, but does not "
+                'have authorization.'
             )
             raise ProctoredExamPermissionDenied(err_msg)
 
@@ -1739,7 +1729,8 @@ class ExamReadyCallback(ProctoredAPIView):
         attempt = get_exam_attempt_by_external_id(external_id)
         if not attempt:
             LOG.warning(
-                'Attempt cannot be found by external_id={external_id}'.format(external_id=external_id)
+                'Attempt cannot be found by external_id=%(external_id)s',
+                {'external_id': external_id}
             )
             return Response(data='You have entered an exam code that is not valid.', status=404)
         if attempt['status'] in [ProctoredExamStudentAttemptStatus.created,
@@ -1770,22 +1761,18 @@ class BaseReviewCallback:
         if review:
             if not constants.ALLOW_REVIEW_UPDATES:
                 err_msg = (
-                    'We already have a review submitted regarding attempt_code={attempt_code}. '
-                    'We do not allow for updates! (backend={backend})'.format(
-                        attempt_code=attempt_code, backend=backend
-                    )
+                    f'We already have a review submitted regarding attempt_code={attempt_code}. '
+                    f'We do not allow for updates! (backend={backend})'
                 )
                 raise ProctoredExamReviewAlreadyExists(err_msg)
 
             # we allow updates
-            warn_msg = (
-                'We already have a review submitted from our proctoring provider regarding '
-                'attempt_code={attempt_code}. We have been configured to allow for '
-                'updates and will continue... (backend={backend})'.format(
-                    attempt_code=attempt_code, backend=backend
-                )
+            LOG.warning(
+                ('We already have a review submitted from our proctoring provider regarding '
+                 'attempt_code=%(attempt_code)s. We have been configured to allow for '
+                 'updates and will continue... (backend=%(backend)s)'),
+                {'attempt_code': attempt_code, 'backend': backend}
             )
-            LOG.warning(warn_msg)
         else:
             # this is first time we've received this attempt_code, so
             # make a new record in the review table
@@ -1839,10 +1826,9 @@ class BaseReviewCallback:
                 course_id = attempt['proctored_exam']['course_id']
                 exam_id = attempt['proctored_exam']['id']
                 review_url = request.build_absolute_uri(
-                    '{}?attempt={}'.format(
-                        reverse('edx_proctoring:instructor_dashboard_exam', args=[course_id, exam_id]),
-                        attempt['external_id']
-                    ))
+                    f"{reverse('edx_proctoring:instructor_dashboard_exam', args=[course_id, exam_id])}"
+                    f"?attempt={attempt['external_id']}"
+                )
                 instructor_service.send_support_notification(
                     course_id=attempt['proctored_exam']['course_id'],
                     exam_name=attempt['proctored_exam']['exam_name'],
@@ -1864,8 +1850,8 @@ class ProctoredExamReviewCallback(ProctoredAPIView, BaseReviewCallback):
         attempt = get_exam_attempt_by_external_id(external_id)
         if attempt is None:
             err_msg = (
-                'Attempted to access exam attempt with external_id={external_id} '
-                'but it does not exist.'.format(external_id=external_id)
+                f'Attempted to access exam attempt with external_id={external_id} '
+                'but it does not exist.'
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
         if request.user.has_perm('edx_proctoring.can_review_attempt', attempt):
@@ -1926,9 +1912,7 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
         attempt_obj, is_archived = locate_attempt_by_attempt_code(attempt_code)
         if not attempt_obj:
             # still can't find, error out
-            err_msg = (
-                'Could not locate attempt_code={attempt_code}'.format(attempt_code=attempt_code)
-            )
+            err_msg = f'Could not locate attempt_code={attempt_code}'
             raise StudentExamAttemptDoesNotExistsException(err_msg)
         serialized = ProctoredExamStudentAttemptSerializer(attempt_obj).data
         serialized['is_archived'] = is_archived
@@ -1976,10 +1960,9 @@ class InstructorDashboard(AuthenticatedAPIView):
                     # In this case, what are we supposed to do?!
                     # It should not be possible to get in this state, because
                     # course teams will be prevented from updating the backend after the course start date
-                    error_message = "Multiple backends for course %r %r != %r" % (
-                        course_id,
-                        existing_backend_name,
-                        exam_backend_name
+                    error_message = (
+                        f'Multiple backends for course {course_id} '
+                        f'{existing_backend_name} != {exam_backend_name}'
                     )
                     return Response(data=error_message, status=400)
                 existing_backend_name = exam_backend_name
@@ -2043,18 +2026,20 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
                     continue
                 backend_user_id = obscured_user_id(user_id, backend_name)
                 LOG.info(
-                    'Retiring user_id={user_id} from backend={backend}'.format(
-                        user_id=user_id, backend=backend_name
-                    )
+                    'Retiring user_id=%(user_id)s from backend=%(backend)s',
+                    {'user_id': user_id, 'backend': backend_name}
                 )
                 try:
                     result = get_backend_provider(name=backend_name).retire_user(backend_user_id)
                 except ProctoredBaseException:
                     LOG.exception(
-                        'Failed to delete user_id={user_id} (backend_user_id={backend_user_id}) from '
-                        'backend={backend}'.format(
-                            user_id=user_id, backend_user_id=backend_user_id, backend=backend_name
-                        )
+                        'Failed to delete user_id=%(user_id)s (backend_user_id=%(backend_user_id)s) from '
+                        'backend=%(backend)s',
+                        {
+                            'user_id': user_id,
+                            'backend_user_id': backend_user_id,
+                            'backend': backend_name
+                        }
                     )
                     result = False
                 if result is not None:

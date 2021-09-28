@@ -80,12 +80,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         if status not in [200, 201]:
             err_msg = (
-                'Could not register attempt_code={attempt_code}. '
-                'HTTP Status code was {status_code} and response was {response}.'.format(
-                    attempt_code=attempt_code,
-                    status_code=status,
-                    response=response
-                )
+                f'Could not register attempt_code={attempt_code}. '
+                f'HTTP Status code was {status} and response was {response}.'
             )
             log.error(err_msg)
             raise BackendProviderCannotRegisterAttempt(err_msg, status)
@@ -141,13 +137,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         )
         if not match:
             err_msg = (
-                'Found attempt_code {attempt_code}, but the recorded external_id did not '
-                'match the ssiRecordLocator that had been recorded previously. Has {existing} '
-                'but received {received}!'.format(
-                    attempt_code=attempt['attempt_code'],
-                    existing=attempt['external_id'],
-                    received=received_id
-                )
+                f"Found attempt_code {attempt['attempt_code']}, but the recorded external_id did not "
+                f"match the ssiRecordLocator that had been recorded previously. Has {attempt['external_id']} "
+                f'but received {received_id}!'
             )
             raise ProctoredExamSuspiciousLookup(err_msg)
 
@@ -156,9 +148,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             del payload['videoReviewLink']
 
         log_msg = (
-            'Received callback from SoftwareSecure with review data: {payload}'.format(
-                payload=payload
-            )
+            f'Received callback from SoftwareSecure with review data: {payload}'
         )
         log.info(log_msg)
         SoftwareSecureReviewStatus.validate(payload['reviewStatus'])
@@ -228,24 +218,18 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         review_policy = context.get('review_policy', constants.DEFAULT_SOFTWARE_SECURE_REVIEW_POLICY)
         review_policy_exception = context.get('review_policy_exception')
         scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
-        callback_url = '{scheme}://{hostname}{path}'.format(
-            scheme=scheme,
-            hostname=settings.SITE_NAME,
-            path=reverse(
-                'edx_proctoring:anonymous.proctoring_launch_callback.start_exam',
-                args=[attempt_code]
-            )
+        path = reverse(
+            'edx_proctoring:anonymous.proctoring_launch_callback.start_exam',
+            args=[attempt_code]
         )
+        callback_url = f'{scheme}://{settings.SITE_NAME}{path}'
 
         # compile the notes to the reviewer
         # this is a combination of the Exam Policy which is for all students
         # combined with any exceptions granted to the particular student
         reviewer_notes = review_policy
         if review_policy_exception:
-            reviewer_notes = '{notes}; {exception}'.format(
-                notes=reviewer_notes,
-                exception=review_policy_exception
-            )
+            reviewer_notes = f'{reviewer_notes}; {review_policy_exception}'
 
         (first_name, last_name) = self._split_fullname(full_name)
 
@@ -353,8 +337,8 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         message = method_string + headers_str + body_str
 
         log_msg = (
-            'About to send payload to SoftwareSecure: examCode={examCode}, courseID={courseID}'.
-            format(examCode=body_json.get('examCode'), courseID=body_json.get('orgExtra').get('courseID'))
+            f"About to send payload to SoftwareSecure: examCode={body_json.get('examCode')}, "
+            f"courseID={body_json.get('orgExtra').get('courseID')}"
         )
         log.info(log_msg)
 

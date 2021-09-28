@@ -40,15 +40,12 @@ class Command(BaseCommand):
 
         msg = (
             'Running management command to update '
-            'attempt {attempt_id} status to {to_status}'.format(
-                attempt_id=attempt_id,
-                to_status=to_status
-            )
+            f'attempt {attempt_id} status to {to_status}'
         )
         self.stdout.write(msg)
 
         if not ProctoredExamStudentAttemptStatus.is_valid_status(to_status):
-            raise CommandError('{to_status} is not a valid attempt status!'.format(to_status=to_status))
+            raise CommandError(f'{to_status} is not a valid attempt status!')
 
         update_attempt_status(attempt_id, to_status)
 
