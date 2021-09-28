@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Add GH action for migrations tests.
 
 [4.0.1] - 2021-09-21
 ~~~~~~~~~~~~~~~~~~~~~
