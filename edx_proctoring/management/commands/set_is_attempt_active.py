@@ -60,7 +60,7 @@ class Command(BaseCommand):
             self.check_and_update(archived_review, batch_size, sleep_time, only_update_archives=True)
 
         if self.update_attempt_codes:
-            log.info('Updating {} reviews'.format(len(self.update_attempt_codes)))
+            log.info('Updating %i reviews', len(self.update_attempt_codes))
             self.bulk_update(self.update_attempt_codes, False)
 
     def check_and_update(self, review_object, size, sleep_time, only_update_archives=False):
@@ -72,10 +72,10 @@ class Command(BaseCommand):
                 self.distinct_attempt_codes.add(review_object.attempt_code)
                 self.update_attempt_codes.append(review_object.attempt_code)
                 self.update_field_count += 1
-                log.info('Adding review {} to be updated'.format(review_object.id))
+                log.info('Adding review %i to be updated', review_object.id)
 
             if self.update_field_count == size:
-                log.info('Updating {} reviews'.format(size))
+                log.info('Updating %i reviews', size)
                 self.bulk_update(self.update_attempt_codes, only_update_archives)
                 self.update_field_count = 0
                 self.update_attempt_codes = []

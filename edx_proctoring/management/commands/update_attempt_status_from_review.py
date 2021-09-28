@@ -68,10 +68,11 @@ class Command(BaseCommand):
         for review in reviews_in_date_range:
             review_id = review.id
             attempt_code = review.attempt_code
-            log.info('Saving review_id={review_id} for corresponding attempt_code={attempt_code}'.format(
-                review_id=review_id,
-                attempt_code=attempt_code
-            ))
+            log.info(
+                'Saving review_id=%i for corresponding attempt_code=%s',
+                review_id,
+                attempt_code
+            )
             review.save()
             review_count += 1
 

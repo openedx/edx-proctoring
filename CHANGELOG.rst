@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.0.2] - 2021-09-28
+~~~~~~~~~~~~~~~~~~~~~
+* Batch of refactorings to use format strings/lazy string formatting for logging calls
+
 [4.0.1] - 2021-09-21
 ~~~~~~~~~~~~~~~~~~~~~
 * Bug fix for student onboarding statuses by course. If learner has multiple attempts, return non-reset attempt status if possible.
