@@ -120,10 +120,12 @@ def locate_attempt_by_attempt_code(attempt_code):
         return attempt_obj, True
 
     # still can't find, error out
-    err_msg = (
-        'Could not locate attempt_code={attempt_code}'.format(attempt_code=attempt_code)
+    log.error(
+        'Could not locate attempt_code=%(attempt_code)s',
+        {
+            'attempt_code': attempt_code,
+        }
     )
-    log.error(err_msg)
     return None, None
 
 
@@ -328,7 +330,7 @@ def resolve_exam_url_for_learning_mfe(course_id, content_id):
     """ Helper that builds the url to the exam for the MFE app learning. """
     course_key = CourseKey.from_string(course_id)
     usage_key = UsageKey.from_string(content_id)
-    url = '{}/course/{}/{}'.format(settings.LEARNING_MICROFRONTEND_URL, course_key, usage_key)
+    url = f'{settings.LEARNING_MICROFRONTEND_URL}/course/{course_key}/{usage_key}'
     return url
 
 

@@ -226,7 +226,7 @@ class SoftwareSecureReviewStatus:
         if status not in cls.passing_statuses + cls.failing_statuses:
             err_msg = (
                 'Received unexpected reviewStatus field value from payload. '
-                'Was {review_status}.'.format(review_status=status)
+                f'Was {status}.'
             )
             raise ProctoredExamBadReviewStatus(err_msg)
         return True

@@ -26,7 +26,12 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     """
     attempt = get_exam_attempt_by_code(attempt_code)
     if not attempt:
-        log.warning('attempt_code={attempt_code} cannot be found.'.format(attempt_code=attempt_code))
+        log.warning(
+            'attempt_code=%(attempt_code)s cannot be found.',
+            {
+                'attempt_code': attempt_code,
+            }
+        )
         return HttpResponse(
             content='You have entered an exam code that is not valid.',
             status=404
@@ -40,11 +45,13 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
     if ProctoredExamStudentAttemptStatus.is_in_progress_status(attempt_status):
         update_attempt_status(attempt['id'], ProctoredExamStudentAttemptStatus.submitted)
     else:
-        log.warning('Attempted to enter proctored exam attempt_id={attempt_id} when status={attempt_status}'
-                    .format(
-                        attempt_id=attempt['id'],
-                        attempt_status=attempt_status,
-                    ))
+        log.warning(
+            'Attempted to enter proctored exam attempt_id=%(attempt_id)s when status=%(attempt_status)s',
+            {
+                'attempt_id': attempt['id'],
+                'attempt_status': attempt_status,
+            }
+        )
 
     course_id = attempt['proctored_exam']['course_id']
     content_id = attempt['proctored_exam']['content_id']

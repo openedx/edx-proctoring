@@ -99,7 +99,8 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         If an email fails to send an error is logged and the attempt is updated
         """
         exam_attempt = self._create_started_exam_attempt()
-        with patch.object(EmailMessage, 'send', side_effect=Exception('foo')):
+        exc_obj = Exception('foo')
+        with patch.object(EmailMessage, 'send', side_effect=exc_obj):
             update_attempt_status(
                 exam_attempt.id,
                 'submitted',
@@ -107,11 +108,15 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
 
         exam_attempt.refresh_from_db()
         self.assertEqual(exam_attempt.status, 'submitted')
-        log_format_string = (
-            f'Exception occurred while trying to send proctoring attempt '
-            f'status email for user_id={self.user_id} in course_id={self.course_id} -- foo'
+        logger_mock.assert_any_call(
+            ('Exception occurred while trying to send proctoring attempt '
+             'status email for user_id=%(user_id)s in course_id=%(course_id)s -- %(err)s'),
+            {
+                'user_id': self.user_id,
+                'course_id': self.course_id,
+                'err': exc_obj,
+            }
         )
-        logger_mock.assert_any_call(log_format_string)
 
     @ddt.data(
         ProctoredExamStudentAttemptStatus.verified,
