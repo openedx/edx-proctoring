@@ -1,0 +1,37 @@
+name: Migrations Check
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  run_tests:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04 ]
+        python-version: [ 3.8 ]
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Python dependencies
+      run: |
+        pip install -r requirements/pip.txt
+        pip install -r requirements/dev.txt
+        pip install -r requirements/test.txt
+
+    - name: Run Tests
+      run: |
+        echo "Running migrations."
+        ./manage.py migrate --settings=test_settings
