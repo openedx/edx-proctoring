@@ -2,6 +2,7 @@
 Review callback tests
 """
 
+import codecs
 import json
 
 import ddt
@@ -16,6 +17,7 @@ from django.urls import reverse
 from edx_proctoring import constants
 from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attempt_by_id, remove_exam_attempt
 from edx_proctoring.backends import get_backend_provider
+from edx_proctoring.backends.software_secure import SoftwareSecureBackendProvider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
 from edx_proctoring.exceptions import ProctoredExamBadReviewStatus, ProctoredExamReviewAlreadyExists
 from edx_proctoring.models import (
@@ -31,7 +33,7 @@ from edx_proctoring.tests.test_services import (
     MockGradesService,
     MockInstructorService
 )
-from edx_proctoring.utils import locate_attempt_by_attempt_code
+from edx_proctoring.utils import decode_and_decrypt, locate_attempt_by_attempt_code
 from edx_proctoring.views import ProctoredExamReviewCallback, is_user_course_or_global_staff
 
 from .utils import LoggedInTestCase
@@ -140,6 +142,7 @@ class ReviewTests(LoggedInTestCase):
             self.assertIsNotNone(review)
             self.assertEqual(review.review_status, review_status)
             self.assertFalse(review.video_url)
+            self.assertTrue(review.encrypted_video_url)
 
             self.assertIsNotNone(review.raw_data)
             self.assertIsNone(review.reviewed_by)
@@ -174,6 +177,49 @@ class ReviewTests(LoggedInTestCase):
                                    review_url)])
             else:
                 self.assertEqual(len(notifications), 0)
+
+    def test_psi_video_url(self):
+        """
+        Test that review callback from PSI produces encrypted video link
+        """
+
+        test_payload = json.loads(create_test_review_payload(
+            attempt_code=self.attempt['attempt_code'],
+            external_id=self.attempt['external_id'],
+            review_status='Clean'
+        ))
+
+        video_url = test_payload['videoReviewLink']
+
+        self.attempt['proctored_exam']['backend'] = 'software_secure'
+
+        ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
+        aes_key_str = get_backend_provider(name='software_secure').get_video_review_aes_key()
+        aes_key = codecs.decode(aes_key_str, "hex")
+        decoded_video_url = decode_and_decrypt(review.encrypted_video_url, aes_key)
+
+        self.assertEqual(decoded_video_url.decode("utf-8"), video_url)
+
+    def test_psi_video_url_no_key(self):
+        """
+        Test that review callback from PSI does not produce encrypted video url if now encryption key is provided
+        """
+
+        with patch.object(SoftwareSecureBackendProvider, 'get_video_review_aes_key') as key_mock:
+            key_mock.return_value = None
+
+            test_payload = json.loads(create_test_review_payload(
+                attempt_code=self.attempt['attempt_code'],
+                external_id=self.attempt['external_id'],
+                review_status='Clean'
+            ))
+
+            self.attempt['proctored_exam']['backend'] = 'software_secure'
+
+            ProctoredExamReviewCallback().make_review(self.attempt, test_payload)
+            review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(self.attempt['attempt_code'])
+            self.assertFalse(review.encrypted_video_url)
 
     def test_bad_review_status(self):
         """

@@ -185,6 +185,9 @@ class PassthroughBackendProvider(ProctoringBackendProvider):
     def get_onboarding_profile_info(self, course_id, **kwargs):
         return super().get_onboarding_profile_info(course_id, **kwargs)
 
+    def get_video_review_aes_key(self):
+        return super().get_video_review_aes_key()
+
 
 class TestBackends(TestCase):
     """
@@ -227,6 +230,8 @@ class TestBackends(TestCase):
         self.assertIsNone(provider.get_onboarding_profile_info(course_id='test'))
 
         self.assertIsNone(provider.get_proctoring_config())
+
+        self.assertIsNone(provider.get_video_review_aes_key())
 
     def test_null_provider(self):
         """

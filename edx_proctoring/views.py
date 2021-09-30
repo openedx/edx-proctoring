@@ -2,6 +2,7 @@
 Proctored Exams HTTP-based API endpoints
 """
 
+import codecs
 import json
 import logging
 from urllib.parse import urlencode
@@ -99,6 +100,7 @@ from edx_proctoring.statuses import (
 from edx_proctoring.utils import (
     AuthenticatedAPIView,
     categorize_inaccessible_exams_by_date,
+    encrypt_and_encode,
     get_exam_type,
     get_exam_url,
     get_time_remaining_for_attempt,
@@ -1804,6 +1806,13 @@ class BaseReviewCallback:
                 'a review for attempt_code=%(attempt_code)s.',
                 {'user': review.reviewed_by, 'attempt_code': attempt_code}
             )
+
+        video_review_link = backend_review.get('payload', {}).get('videoReviewLink')
+        if video_review_link:
+            aes_key_str = backend.get_video_review_aes_key()
+            if aes_key_str:
+                aes_key = codecs.decode(aes_key_str, "hex")
+                review.encrypted_video_url = encrypt_and_encode(video_review_link.encode("utf-8"), aes_key)
 
         review.save()
 

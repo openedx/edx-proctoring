@@ -13,8 +13,12 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[4.1.0] - 2021-09-28
+~~~~~~~~~~~~~~~~~~~~
 * Add GH action for migrations tests.
 * Add test for `_register_proctored_exam_attempt`.
+* Capture video review url in software secure review and encrypt before saving
 
 [4.0.4] - 2021-10-05
 ~~~~~~~~~~~~~~~~~~~~~

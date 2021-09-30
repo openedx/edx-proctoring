@@ -2,6 +2,7 @@
 File that contains tests for the util methods.
 """
 
+import binascii
 import unittest
 from datetime import datetime, timedelta
 from itertools import product
@@ -14,6 +15,8 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import MockScheduleData, MockScheduleItemData
 from edx_proctoring.utils import (
     _emit_event,
+    decode_and_decrypt,
+    encrypt_and_encode,
     get_time_remaining_for_attempt,
     get_visibility_check_date,
     humanized_time,
@@ -184,3 +187,21 @@ class TestUtils(unittest.TestCase):
         with freeze_time(cur_time):
             due_date = get_visibility_check_date(mock_schedule, mock_usage_key)
             self.assertEqual(due_date, expected_datetime)
+
+    @ddt.data(
+        b"Hello World!",
+        b"1234567890123456",
+        b"12345678901234561234567890123456123456789012345601",
+        b"\xe9\xe1a\x13\x1bT5\xc8",
+        b"",
+        'Hello World'
+    )
+    def test_encryption(self, data):
+        aes_key = binascii.unhexlify(b'32fe72aaf2abb44de9e161131b5435c8d37cbdb6f5df242ae860b283115f2dae')
+        decoded = decode_and_decrypt(encrypt_and_encode(data, aes_key), aes_key)
+
+        # in the case that we are testing a string, ensure that we convert the decoded data to a string
+        if isinstance(data, str):
+            decoded = decoded.decode("utf-8")
+
+        self.assertEqual(decoded, data)

@@ -74,7 +74,8 @@ software_secure_get_payload = SoftwareSecureBackendProvider._get_payload
             "exam_sponsor": "edX LMS",
             "software_download_url": "http://example.com",
             "send_email": True,
-            "help_center_url": "https://example.com"
+            "help_center_url": "https://example.com",
+            "video_review_aes_key": "B886E02F19C77EC734B1B132BEECD91E"
         },
         "DEFAULT": "software_secure",
         "test": {},
@@ -135,6 +136,14 @@ class SoftwareSecureTests(TestCase):
         self.assertIsNotNone(config)
         self.assertEqual(config['name'], provider.verbose_name)
         self.assertEqual(config['download_url'], 'http://example.com')
+
+    def test_get_video_review_aes_key(self):
+        """
+        Make sure we get expected aes key
+        """
+
+        provider = get_backend_provider()
+        self.assertEqual(provider.get_video_review_aes_key(), 'B886E02F19C77EC734B1B132BEECD91E')
 
     def test_register_attempt(self):
         """
