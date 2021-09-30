@@ -23,14 +23,13 @@ urlpatterns = [
         name='proctored_exam.exam_by_id'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/exam/course_id/{}/content_id/(?P<content_id>[A-z0-9]+)$'.format(
-            settings.COURSE_ID_PATTERN),
+        (fr'edx_proctoring/v1/proctored_exam/exam/course_id/{settings.COURSE_ID_PATTERN}'
+         '/content_id/(?P<content_id>[A-z0-9]+)$'),
         views.ProctoredExamView.as_view(),
         name='proctored_exam.exam_by_content_id'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/exam/course_id/{}$'.format(
-            settings.COURSE_ID_PATTERN),
+        fr'edx_proctoring/v1/proctored_exam/exam/course_id/{settings.COURSE_ID_PATTERN}$',
         views.ProctoredExamView.as_view(),
         name='proctored_exam.exams_by_course_id'
     ),
@@ -40,13 +39,13 @@ urlpatterns = [
         name='proctored_exam.attempt'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/{}$'.format(settings.COURSE_ID_PATTERN),
+        fr'edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/{settings.COURSE_ID_PATTERN}$',
         views.StudentProctoredGroupedExamAttemptsByCourse.as_view(),
         name='proctored_exam.attempts.grouped.course'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/{}/search/(?P<search_by>.+)$'.format(
-            settings.COURSE_ID_PATTERN),
+        'edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/'
+        fr'{settings.COURSE_ID_PATTERN}/search/(?P<search_by>.+)$',
         views.StudentProctoredGroupedExamAttemptsByCourse.as_view(),
         name='proctored_exam.attempts.grouped.search'
     ),
@@ -71,7 +70,7 @@ urlpatterns = [
         name='proctored_exam.attempt.callback'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/{}/allowance$'.format(settings.COURSE_ID_PATTERN),
+        fr'edx_proctoring/v1/proctored_exam/{settings.COURSE_ID_PATTERN}/allowance$',
         views.ExamAllowanceView.as_view(),
         name='proctored_exam.allowance'
     ),
@@ -81,7 +80,7 @@ urlpatterns = [
         name='proctored_exam.allowance'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/{}/bulk_allowance$'.format(settings.COURSE_ID_PATTERN),
+        fr'edx_proctoring/v1/proctored_exam/{settings.COURSE_ID_PATTERN}/bulk_allowance$',
         views.ExamBulkAllowanceView.as_view(),
         name='proctored_exam.bulk_allowance'
     ),
@@ -91,7 +90,7 @@ urlpatterns = [
         name='proctored_exam.bulk_allowance'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/{}/grouped/allowance$'.format(settings.COURSE_ID_PATTERN),
+        fr'edx_proctoring/v1/proctored_exam/{settings.COURSE_ID_PATTERN}/grouped/allowance$',
         views.GroupedExamAllowancesByStudent.as_view(),
         name='proctored_exam.allowance.grouped.course'
     ),
@@ -106,12 +105,12 @@ urlpatterns = [
         name='user_onboarding.status'
     ),
     url(
-        r'edx_proctoring/v1/user_onboarding/status/course_id/{}$'.format(settings.COURSE_ID_PATTERN),
+        fr'edx_proctoring/v1/user_onboarding/status/course_id/{settings.COURSE_ID_PATTERN}$',
         views.StudentOnboardingStatusByCourseView.as_view(),
         name='user_onboarding.status.course'
     ),
     url(
-        r'edx_proctoring/v1/instructor/{}$'.format(settings.COURSE_ID_PATTERN),
+        fr'edx_proctoring/v1/instructor/{settings.COURSE_ID_PATTERN}$',
         views.InstructorDashboard.as_view(),
         name='instructor_dashboard_course'
     ),
@@ -126,8 +125,7 @@ urlpatterns = [
         name='user_retirement_api'
     ),
     url(
-        r'edx_proctoring/v1/proctored_exam/attempt/course_id/{}$'.format(
-            settings.COURSE_ID_PATTERN),
+        fr'edx_proctoring/v1/proctored_exam/attempt/course_id/{settings.COURSE_ID_PATTERN}$',
         views.ProctoredExamAttemptView.as_view(),
         name='proctored_exam.exam_attempts'
     ),

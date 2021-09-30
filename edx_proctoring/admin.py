@@ -172,10 +172,7 @@ class ProctoredExamListFilter(admin.SimpleListFilter):
             # prepend the exam_name with a parsed out course_id
             lookups += ((
                 exam.id,
-                '{course_id}: {exam_name}'.format(
-                    course_id=prettify_course_id(course_id),
-                    exam_name=exam.exam_name
-                )
+                f'{prettify_course_id(course_id)}: {exam.exam_name}'
             ),)
 
         return lookups

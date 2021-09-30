@@ -8,7 +8,7 @@ def is_in_reviewer_group(user, attempt):
     """
     Returns whether user is in a group allowed to review this attempt
     """
-    backend_group = '%s_review' % attempt['proctored_exam']['backend']
+    backend_group = f"{attempt['proctored_exam']['backend']}_review"
     return user.groups.filter(name=backend_group).exists()
 
 
