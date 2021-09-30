@@ -78,11 +78,8 @@ class ProctoredExam(TimeStampedModel):
     def __str__(self):
         """ String representation """
         # pragma: no cover
-        return "{course_id}: {exam_name} ({active})".format(
-            course_id=self.course_id,
-            exam_name=self.exam_name,
-            active='active' if self.is_active else 'inactive',
-        )
+        active = 'active' if self.is_active else 'inactive'
+        return f'{self.course_id}: {self.exam_name} ({active})'
 
     @classmethod
     def get_exam_by_content_id(cls, course_id, content_id):
@@ -157,10 +154,7 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
     def __str__(self):
         """ String representation """
         # pragma: no cover
-        return "ProctoredExamReviewPolicy: {set_by_user} ({proctored_exam})".format(
-            set_by_user=self.set_by_user,
-            proctored_exam=self.proctored_exam,
-        )
+        return f'ProctoredExamReviewPolicy: {self.set_by_user} ({self.proctored_exam})'
 
     class Meta:
         """ Meta class for this Django model """
@@ -655,8 +649,8 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
         if not cls.is_allowance_value_valid(key, value):
             err_msg = (
-                'allowance_value "{value}" should be non-negative integer value.'
-            ).format(value=value)
+                f'allowance_value "{value}" should be non-negative integer value.'
+            )
             raise AllowanceValueNotAllowedException(err_msg)
         # were we passed a PK?
         if isinstance(user_info, int):
@@ -669,8 +663,8 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
             if not users.exists():
                 err_msg = (
-                    'Cannot find user against {user_info}'
-                ).format(user_info=user_info)
+                    f'Cannot find user against {user_info}'
+                )
                 raise UserNotFoundException(err_msg)
 
             user_id = users[0].id
@@ -678,8 +672,8 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         exam = ProctoredExam.get_exam_by_id(exam_id)
         if exam and not exam.is_active:
             err_msg = (
-                'Attempted to add an allowance for user_id={user_id} in exam_id={exam_id}, but '
-                'this exam is not active.'.format(user_id=user_id, exam_id=exam_id)
+                f'Attempted to add an allowance for user_id={user_id} in exam_id={exam_id}, but '
+                'this exam is not active.'
             )
             raise ProctoredExamNotActiveException(err_msg)
 

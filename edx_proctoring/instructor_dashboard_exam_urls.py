@@ -12,7 +12,7 @@ app_name = 'instructor'
 
 urlpatterns = [
     url(
-        r'edx_proctoring/v1/instructor/{}/(?P<exam_id>\d+)$'.format(settings.COURSE_ID_PATTERN),
+        fr'edx_proctoring/v1/instructor/{settings.COURSE_ID_PATTERN}/(?P<exam_id>\d+)$',
         views.InstructorDashboard.as_view(),
         name='instructor_dashboard_exam'
     ),

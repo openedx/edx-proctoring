@@ -61,16 +61,16 @@ def make_worker_config(backends, out='/tmp/workers.json'):
             # no npm module defined
             continue
         except IOError:
-            warnings.warn('Proctoring backend %s defined an npm module,'
-                          'but it is not installed at %r' % (backend.__class__, package_file))
+            warnings.warn(f'Proctoring backend {backend.__class__} defined an npm module,'
+                          f'but it is not installed at {package_file!r}')
         except KeyError:
-            warnings.warn('%r does not contain a `main` entry' % package_file)
+            warnings.warn(f'{package_file!r} does not contain a `main` entry')
     if config:
         try:
             with open(out, 'wb+') as outfp:
                 outfp.write(json.dumps(config).encode('utf-8'))
         except IOError:
-            warnings.warn("Could not write worker config to %s" % out)
+            warnings.warn(f"Could not write worker config to {out}")
         else:
             # make sure that this file is group writable, because it may be written by different users
             os.chmod(out, 0o664)
@@ -134,8 +134,8 @@ class EdxProctoringConfig(AppConfig):
         try:
             return self.backends[name]
         except KeyError as error:
-            raise NotImplementedError("No proctoring backend configured for '{}'.  "
-                                      "Available: {}".format(name, list(self.backends))) from error
+            raise NotImplementedError(f"No proctoring backend configured for '{name}'.  "
+                                      f"Available: {list(self.backends)}") from error
 
     def ready(self):
         """
