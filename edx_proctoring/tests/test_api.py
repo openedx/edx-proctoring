@@ -93,6 +93,7 @@ from edx_proctoring.models import (
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests import mock_perm
+from edx_proctoring.utils import obscured_user_id
 
 from .test_services import (
     MockCertificateService,
@@ -933,6 +934,62 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
         self.assertGreater(attempt_id, 0)
+
+    @ddt.data(
+        (False, False),
+        (True, False),
+        (False, True),
+        (True, True)
+    )
+    @ddt.unpack
+    def test_register_exam_attempt_context(self, verified_name_enabled, has_verified_name):
+        """
+        Test that the backend provider is called with the correct context when
+        creating an exam attempt.
+        """
+        with patch('uuid.uuid4', return_value='mock-uuid') as mock_uuid:
+            verified_name = None
+            name_affirmation_service = get_runtime_service('name_affirmation')
+
+            if has_verified_name:
+                name_affirmation_service.create_verified_name(
+                    self.user, verified_name='Verified Name', profile_name='Profile Name', status='approved',
+                )
+
+            if verified_name_enabled:
+                # Verified name should only be used if the feature is enabled
+                name_affirmation_service.enabled = True
+                verified_name_obj = name_affirmation_service.get_verified_name(self.user)
+                if verified_name_obj:
+                    verified_name = verified_name_obj.verified_name
+
+            proctored_exam = get_exam_by_id(self.proctored_exam_id)
+
+            test_backend = get_backend_provider(name=proctored_exam['backend'])
+            test_backend.register_exam_attempt = MagicMock(side_effect=test_backend.register_exam_attempt)
+
+            create_exam_attempt(self.proctored_exam_id, self.user_id, True)
+
+            scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
+            lms_host = f'{scheme}://{settings.SITE_NAME}'
+
+            credit_service = get_runtime_service('credit')
+            credit_status = credit_service.get_credit_state(self.user.id, self.course_id)
+
+            expected_context = {
+                'lms_host': lms_host,
+                'time_limit_mins': self.default_time_limit,
+                'attempt_code': mock_uuid().upper(),
+                'is_sample_attempt': proctored_exam['is_practice_exam'],
+                'user_id': obscured_user_id(self.user_id, proctored_exam['backend']),
+                'full_name': verified_name or credit_status['profile_fullname'],
+                'email': credit_status['student_email']
+            }
+
+            test_backend.register_exam_attempt.assert_called_once_with(
+                proctored_exam,
+                context=expected_context
+            )
 
     def test_attempt_with_review_policy(self):
         """

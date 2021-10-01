@@ -14,6 +14,7 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 * Add GH action for migrations tests.
+* Add test for `_register_proctored_exam_attempt`.
 
 [4.0.2] - 2021-09-28
 ~~~~~~~~~~~~~~~~~~~~~
