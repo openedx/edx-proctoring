@@ -27,7 +27,7 @@ click==7.1.2
     #   click-didyoumean
     #   click-plugins
     #   click-repl
-click-didyoumean==0.0.3
+click-didyoumean==0.3.0
     # via celery
 click-plugins==1.1.1
     # via celery
@@ -96,7 +96,7 @@ edx-opaque-keys==2.2.2
     #   edx-when
 edx-rest-api-client==5.4.0
     # via -r requirements/base.in
-edx-when==2.2.0
+edx-when==2.2.1
     # via -r requirements/base.in
 event-tracking==1.1.1
     # via -r requirements/base.in
@@ -126,7 +126,7 @@ psutil==5.8.0
     # via edx-django-utils
 pycparser==2.20
     # via cffi
-pycryptodomex==3.10.1
+pycryptodomex==3.10.4
     # via
     #   -r requirements/base.in
     #   pyjwkest
@@ -147,7 +147,7 @@ python-dateutil==2.8.2
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   xblock
-pytz==2021.1
+pytz==2021.3
     # via
     #   -r requirements/base.in
     #   celery
