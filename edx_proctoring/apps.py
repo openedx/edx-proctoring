@@ -39,6 +39,7 @@ BACKEND_CONFIGURATION_ALLOW_LIST = [
     'tech_support_phone',
     'token_expiration_time',
     'verbose_name',
+    'video_review_aes_key',
 ]
 
 

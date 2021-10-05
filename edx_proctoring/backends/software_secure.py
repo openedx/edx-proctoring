@@ -39,7 +39,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
     def __init__(self, organization, exam_sponsor, exam_register_endpoint,
                  secret_key_id, secret_key, crypto_key, software_download_url,
-                 send_email=False, **kwargs):
+                 video_review_aes_key=None, send_email=False, **kwargs):
         """
         Class initializer
         """
@@ -56,6 +56,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         self.timeout = 10
         self.software_download_url = software_download_url
         self.send_email = send_email
+        self.video_review_aes_key = video_review_aes_key
 
     def register_exam_attempt(self, exam, context):
         """
@@ -143,16 +144,13 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             )
             raise ProctoredExamSuspiciousLookup(err_msg)
 
-        # redact the videoReviewLink from the payload
-        if 'videoReviewLink' in payload:
-            del payload['videoReviewLink']
-
-        log_msg = (
-            f'Received callback from SoftwareSecure with review data: {payload}'
-        )
-        log.info(log_msg)
         SoftwareSecureReviewStatus.validate(payload['reviewStatus'])
         review_status = SoftwareSecureReviewStatus.to_standard_status.get(payload['reviewStatus'], None)
+
+        log_msg = (
+            f"Received callback from SoftwareSecure for attempt_id={attempt['id']} with status={review_status}"
+        )
+        log.info(log_msg)
 
         comments = []
         for comment in payload.get('webCamComments', []) + payload.get('desktopComments', []):
@@ -386,3 +384,9 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             'instructions': []
         }
         return proctoring_config
+
+    def get_video_review_aes_key(self):
+        """
+        Returns the aes key used to encrypt the video review url
+        """
+        return self.video_review_aes_key

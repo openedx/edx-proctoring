@@ -145,3 +145,9 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
         Returns the metadata and configuration options for the proctoring service
         """
         return None
+
+    def get_video_review_aes_key(self):
+        """
+        Returns the aes key used for video review url encryption
+        """
+        return None

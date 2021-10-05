@@ -100,7 +100,8 @@ PROCTORING_BACKENDS = {
         "organization": "edx",
         "exam_sponsor": "edX LMS",
         "software_download_url": "http://example.com",
-        "send_email": True
+        "send_email": True,
+        "video_review_aes_key": "B886E02F19C77EC734B1B132BEECD91E"
     },
 }
 

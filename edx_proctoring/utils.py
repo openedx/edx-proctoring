@@ -2,12 +2,18 @@
 Helpers for the HTTP APIs
 """
 
+import base64
 import hashlib
 import hmac
 import logging
 from datetime import datetime, timedelta
 
 import pytz
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.ciphers.algorithms import AES
+from cryptography.hazmat.primitives.ciphers.modes import CBC
+from cryptography.hazmat.primitives.padding import PKCS7
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from edx_when import api as when_api
 from eventtracking import tracker
@@ -27,6 +33,8 @@ from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 log = logging.getLogger(__name__)
+
+AES_BLOCK_SIZE_BYTES = int(AES.block_size / 8)
 
 
 class AuthenticatedAPIView(APIView):
@@ -395,3 +403,58 @@ def categorize_inaccessible_exams_by_date(onboarding_exams, details):
                 non_date_inaccessible_exams.append(onboarding_exam)
 
     return non_date_inaccessible_exams, future_exams, past_due_exams
+
+
+def encrypt_and_encode(data, key):
+    """ Encrypts and encodes data using a key """
+    return base64.urlsafe_b64encode(aes_encrypt(data, key))
+
+
+def decode_and_decrypt(encoded_data, key):
+    """ Decrypts and decodes data using a key """
+    return aes_decrypt(base64.urlsafe_b64decode(encoded_data), key)
+
+
+def aes_encrypt(data, key):
+    """
+    Return a version of the data that has been encrypted
+    """
+    cipher = Cipher(AES(key), CBC(generate_aes_iv(key)), backend=default_backend())
+    padded_data = pad(data)
+    encryptor = cipher.encryptor()
+    return encryptor.update(padded_data) + encryptor.finalize()
+
+
+def aes_decrypt(encrypted_data, key):
+    """
+    Decrypt encrypted_data using the provided key
+    """
+    cipher = Cipher(AES(key), CBC(generate_aes_iv(key)), backend=default_backend())
+    decryptor = cipher.decryptor()
+    padded_data = decryptor.update(encrypted_data) + decryptor.finalize()
+    return unpad(padded_data)
+
+
+def generate_aes_iv(key):
+    """
+    Return the initialization vector for a given AES key
+    """
+    return (
+        hashlib.md5(key + hashlib.md5(key).hexdigest().encode('utf-8'))
+        .hexdigest()[:AES_BLOCK_SIZE_BYTES].encode('utf-8')
+    )
+
+
+def pad(data):
+    """ Pad the given data such that it fits into the proper AES block size """
+    if not isinstance(data, (bytes, bytearray)):
+        data = data.encode()
+
+    padder = PKCS7(AES.block_size).padder()
+    return padder.update(data) + padder.finalize()
+
+
+def unpad(padded_data):
+    """  remove all padding from the given padded_data """
+    unpadder = PKCS7(AES.block_size).unpadder()
+    return unpadder.update(padded_data) + unpadder.finalize()
