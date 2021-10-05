@@ -145,6 +145,7 @@ class ReviewTests(LoggedInTestCase):
             self.assertTrue(review.encrypted_video_url)
 
             self.assertIsNotNone(review.raw_data)
+            self.assertIsNone(json.loads(review.raw_data).get('videoReviewLink'))
             self.assertIsNone(review.reviewed_by)
 
             # now check the comments that were stored
