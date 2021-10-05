@@ -52,7 +52,7 @@ ddt==1.4.2
     #   edx-i18n-tools
     #   edx-when
     #   event-tracking
-    #   jsonfield2
+    #   jsonfield
     #   rest-condition
 django-crum==0.7.9
     # via
@@ -124,10 +124,8 @@ iniconfig==1.1.1
     # via pytest
 jinja2==3.0.1
     # via code-annotations
-jsonfield2==3.0.3
-    # via
-    #   -c requirements/constraints.txt
-    #   -r requirements/base.in
+jsonfield==3.1.0
+    # via -r requirements/base.in
     # via celery
 lazy==1.4
     # via bok-choy

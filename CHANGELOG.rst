@@ -16,6 +16,10 @@ Unreleased
 * Add GH action for migrations tests.
 * Add test for `_register_proctored_exam_attempt`.
 
+[4.0.4] - 2021-10-05
+~~~~~~~~~~~~~~~~~~~~~
+* Switched from jsonfield2 to jsonfield as the earlier one has archived and merged back in the latter one.
+
 [4.0.2] - 2021-09-28
 ~~~~~~~~~~~~~~~~~~~~~
 * Batch of refactorings to use format strings/lazy string formatting for logging calls
