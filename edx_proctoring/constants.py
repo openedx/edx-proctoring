@@ -72,6 +72,8 @@ ONBOARDING_PROFILE_API = 'edx_proctoring.onboarding_profile_api'
 
 ONBOARDING_PROFILE_INSTRUCTOR_DASHBOARD_API = 'edx_proctoring.onboarding_profile_instructor_dashboard_api'
 
+REDS_API_REDIRECT = 'edx_proctoring.reds_api_redirect'
+
 CONTENT_VIEWABLE_PAST_DUE_DATE = getattr(settings, 'PROCTORED_EXAM_VIEWABLE_PAST_DUE', False)
 
 TIME_MULTIPLIER = 'time_multiplier'

@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.1.2] - 2021-10-07
+~~~~~~~~~~~~~~~~~~~~
+* Instructor dashboard view should redirect to review url for PSI exam attempts
+
 [4.1.1] - 2021-10-05
 ~~~~~~~~~~~~~~~~~~~~
 * Bug fix to redact video url from raw data in exam review

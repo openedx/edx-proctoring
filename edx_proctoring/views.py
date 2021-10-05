@@ -64,7 +64,8 @@ from edx_proctoring.api import (
 from edx_proctoring.constants import (
     ONBOARDING_PROFILE_API,
     ONBOARDING_PROFILE_INSTRUCTOR_DASHBOARD_API,
-    PING_FAILURE_PASSTHROUGH_TEMPLATE
+    PING_FAILURE_PASSTHROUGH_TEMPLATE,
+    REDS_API_REDIRECT
 )
 from edx_proctoring.exceptions import (
     AllowanceValueNotAllowedException,
@@ -1998,12 +1999,20 @@ class InstructorDashboard(AuthenticatedAPIView):
             'email': request.user.email
         }
 
+        encrypted_video_review_url = None
+        if waffle.switch_is_active(REDS_API_REDIRECT) and attempt_id:
+            attempt = get_exam_attempt_by_external_id(attempt_id)
+            if attempt:
+                reviews = ProctoredExamSoftwareSecureReview.objects.filter(attempt_code=attempt['attempt_code'])
+                encrypted_video_review_url = reviews[0].encrypted_video_url if reviews else None
+
         url = backend.get_instructor_url(
             exam['course_id'],
             user,
             exam_id=ext_exam_id,
             attempt_id=attempt_id,
-            show_configuration_dashboard=show_configuration_dashboard
+            show_configuration_dashboard=show_configuration_dashboard,
+            encrypted_video_review_url=encrypted_video_review_url
         )
         if not url:
             return Response(

@@ -287,7 +287,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             data = {}
         return data.get('id')
 
-    def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None, show_configuration_dashboard=False):
+    def get_instructor_url(
+        self, course_id, user, exam_id=None, attempt_id=None,
+        show_configuration_dashboard=False, encrypted_video_review_url=None
+    ):
         """
         Return a URL to the instructor dashboard
         course_id: str
