@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.1.1] - 2021-10-05
+~~~~~~~~~~~~~~~~~~~~
+* Bug fix to redact video url from raw data in exam review
+
 [4.1.0] - 2021-09-28
 ~~~~~~~~~~~~~~~~~~~~
 * Add GH action for migrations tests.

@@ -1788,7 +1788,6 @@ class BaseReviewCallback:
         review.review_status = SoftwareSecureReviewStatus.from_standard_status.get(backend_review['status'])
 
         review.attempt_code = attempt_code
-        review.raw_data = json.dumps(data)
         review.student_id = attempt['user']['id']
         review.exam_id = attempt['proctored_exam']['id']
 
@@ -1813,6 +1812,11 @@ class BaseReviewCallback:
             if aes_key_str:
                 aes_key = codecs.decode(aes_key_str, "hex")
                 review.encrypted_video_url = encrypt_and_encode(video_review_link.encode("utf-8"), aes_key)
+
+        # redact the video link from the raw data
+        if 'videoReviewLink' in data:
+            del data['videoReviewLink']
+        review.raw_data = json.dumps(data)
 
         review.save()
 
