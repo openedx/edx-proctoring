@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-03 18:35+0000\n"
+"POT-Creation-Date: 2021-10-10 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Eirini Mageiropoulou <eirmageir@yahoo.com>, 2021\n"
 "Language-Team: Greek (https://www.transifex.com/open-edx/teams/6205/el/)\n"
@@ -118,7 +118,7 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:820 views.py:1137
+#: api.py:820 views.py:1139
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr ""
@@ -1320,117 +1320,117 @@ msgid ""
 "            "
 msgstr ""
 
-#: utils.py:79
+#: utils.py:87
 #, python-brace-format
 msgid "{num_of_hours} hour"
 msgstr ""
 
-#: utils.py:82
+#: utils.py:90
 #, python-brace-format
 msgid "{num_of_hours} hours"
 msgstr ""
 
-#: utils.py:90 utils.py:100
+#: utils.py:98 utils.py:108
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
 msgstr ""
 
-#: utils.py:93
+#: utils.py:101
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
 msgstr ""
 
-#: utils.py:95
+#: utils.py:103
 #, python-brace-format
 msgid "{num_of_minutes} minute"
 msgstr ""
 
-#: utils.py:98
+#: utils.py:106
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
 msgstr ""
 
-#: utils.py:313
+#: utils.py:321
 msgid "a proctored exam"
 msgstr ""
 
-#: utils.py:316
+#: utils.py:324
 msgid "a timed exam"
 msgstr ""
 
-#: utils.py:319
+#: utils.py:327
 msgid "an onboarding exam"
 msgstr ""
 
-#: utils.py:321
+#: utils.py:329
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:145
+#: views.py:147
 msgid "could not determine the course_id"
 msgstr ""
 
-#: views.py:154 views.py:536
+#: views.py:156 views.py:538
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 
-#: views.py:524
+#: views.py:526
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:544 views.py:715
+#: views.py:546 views.py:717
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:573
+#: views.py:575
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:623
+#: views.py:625
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr ""
 
-#: views.py:765
+#: views.py:767
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 
-#: views.py:1143
+#: views.py:1145
 msgid "you have less than a minute remaining"
 msgstr ""
 
-#: views.py:1601
+#: views.py:1603
 msgid "Enter a valid username or email"
 msgstr ""
 
-#: views.py:1601
+#: views.py:1603
 msgid "user_info"
 msgstr ""
 
-#: views.py:1614
+#: views.py:1616
 msgid "Enter a valid positive value number"
 msgstr ""
 
-#: views.py:1614
+#: views.py:1616
 msgid "allowance_value"
 msgstr ""
 
-#: views.py:1701
+#: views.py:1703
 msgid "Cannot update attempt review status"
 msgstr ""
 
-#: views.py:1972
+#: views.py:1985
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1978
+#: views.py:1991
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:1997
+#: views.py:2010
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
