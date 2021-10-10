@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-03 18:35+0000\n"
+"POT-Creation-Date: 2021-10-10 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2021\n"
 "Language-Team: French (Canada) (https://www.transifex.com/open-edx/teams/6205/fr_CA/)\n"
@@ -115,7 +115,7 @@ msgstr "Intégration en attente"
 msgid "Onboarding Expired"
 msgstr "L'intégration a expiré"
 
-#: api.py:820 views.py:1137
+#: api.py:820 views.py:1139
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "il vous reste {remaining_time}"
@@ -1745,120 +1745,120 @@ msgstr ""
 "                Une fois la date d'échéance passée, vous pouvez revoir l'examen, mais vous ne pouvez pas modifier vos réponses.\n"
 "            "
 
-#: utils.py:79
+#: utils.py:87
 #, python-brace-format
 msgid "{num_of_hours} hour"
 msgstr "{num_of_hours} heure"
 
-#: utils.py:82
+#: utils.py:90
 #, python-brace-format
 msgid "{num_of_hours} hours"
 msgstr "{num_of_hours} heures"
 
-#: utils.py:90 utils.py:100
+#: utils.py:98 utils.py:108
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
 msgstr "{num_of_minutes} minutes"
 
-#: utils.py:93
+#: utils.py:101
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
 msgstr "ajouter {num_of_minutes} minute"
 
-#: utils.py:95
+#: utils.py:103
 #, python-brace-format
 msgid "{num_of_minutes} minute"
 msgstr "{num_of_minutes} minute"
 
-#: utils.py:98
+#: utils.py:106
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
 msgstr "ajouter {num_of_minutes} minutes"
 
-#: utils.py:313
+#: utils.py:321
 msgid "a proctored exam"
 msgstr "un examen surveillé"
 
-#: utils.py:316
+#: utils.py:324
 msgid "a timed exam"
 msgstr "un examen chronométré"
 
-#: utils.py:319
+#: utils.py:327
 msgid "an onboarding exam"
 msgstr "un examen d'intégration"
 
-#: utils.py:321
+#: utils.py:329
 msgid "a practice exam"
 msgstr "un examen de pratique"
 
-#: views.py:145
+#: views.py:147
 msgid "could not determine the course_id"
 msgstr "impossible de déterminer l'id de cours"
 
-#: views.py:154 views.py:536
+#: views.py:156 views.py:538
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 "Doit être un membre de l'équipe pédagogique pour effectuer cette requête."
 
-#: views.py:524
+#: views.py:526
 msgid "Missing required query parameter course_id"
 msgstr "Paramètre de requête obligatoire course_id manquant"
 
-#: views.py:544 views.py:715
+#: views.py:546 views.py:717
 msgid "There is no onboarding exam related to this course id."
 msgstr "Il n'y a pas d'examen d'intégration lié à cet identifiant de cours."
 
-#: views.py:573
+#: views.py:575
 msgid "There is no onboarding exam accessible to this user."
 msgstr "Il n'y a pas d'examen d'intégration accessible à cet utilisateur."
 
-#: views.py:623
+#: views.py:625
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr "Aucune API de statut d'intégration pour {proctor_service}"
 
-#: views.py:765
+#: views.py:767
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 "Le service d'intégration est momentanément indisponible. Veuillez réessayer "
 "plus tard."
 
-#: views.py:1143
+#: views.py:1145
 msgid "you have less than a minute remaining"
 msgstr "il vous reste moins d'une minute"
 
-#: views.py:1601
+#: views.py:1603
 msgid "Enter a valid username or email"
 msgstr "Entrez un nom d'utilisateur ou un courriel valide"
 
-#: views.py:1601
+#: views.py:1603
 msgid "user_info"
 msgstr "user_info"
 
-#: views.py:1614
+#: views.py:1616
 msgid "Enter a valid positive value number"
 msgstr "Entrez un nombre de valeur positive valide"
 
-#: views.py:1614
+#: views.py:1616
 msgid "allowance_value"
 msgstr "allowance_value"
 
-#: views.py:1701
+#: views.py:1703
 msgid "Cannot update attempt review status"
 msgstr "Impossible de mettre à jour l'état d'examen de la tentative"
 
-#: views.py:1972
+#: views.py:1985
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "Aucun examen dans le cours {course_id}."
 
-#: views.py:1978
+#: views.py:1991
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "Aucun examen surveillé dans le cours {course_id}"
 
-#: views.py:1997
+#: views.py:2010
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "Aucun tableau de bord d'instructeur pour {proctor_service}"
