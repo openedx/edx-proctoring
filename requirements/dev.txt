@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-astroid==2.8.0
+astroid==2.8.2
     # via
     #   pylint
     #   pylint-celery
@@ -23,7 +23,7 @@ click-log==0.3.2
     # via edx-lint
 code-annotations==1.2.0
     # via edx-lint
-diff-cover==6.4.0
+diff-cover==6.4.2
     # via -r requirements/dev.in
 distlib==0.3.3
     # via virtualenv
@@ -35,13 +35,13 @@ django==2.2.24
     #   edx-i18n-tools
 docutils==0.17.1
     # via rstcheck
-edx-i18n-tools==0.7.0
+edx-i18n-tools==0.8.1
     # via -r requirements/dev.in
-edx-lint==5.1.0
+edx-lint==5.2.0
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.0.12
+filelock==3.3.0
     # via
     #   tox
     #   virtualenv
@@ -51,7 +51,7 @@ isort==5.9.3
     # via
     #   -r requirements/quality.in
     #   pylint
-jinja2==3.0.1
+jinja2==3.0.2
     # via
     #   code-annotations
     #   diff-cover
@@ -76,9 +76,9 @@ pbr==5.6.0
     # via stevedore
 pep517==0.11.0
     # via pip-tools
-pip-tools==6.3.0
+pip-tools==6.3.1
     # via -r requirements/dev.in
-platformdirs==2.3.0
+platformdirs==2.4.0
     # via
     #   pylint
     #   virtualenv
@@ -114,7 +114,7 @@ pyparsing==2.4.7
     # via packaging
 python-slugify==5.0.2
     # via code-annotations
-pytz==2021.1
+pytz==2021.3
     # via django
 pyyaml==5.4.1
     # via
@@ -124,7 +124,6 @@ rstcheck==3.3.1
     # via -r requirements/quality.in
 six==1.16.0
     # via
-    #   edx-i18n-tools
     #   edx-lint
     #   tox
     #   virtualenv
@@ -152,7 +151,7 @@ typing-extensions==3.10.0.2
     # via
     #   astroid
     #   pylint
-virtualenv==20.8.0
+virtualenv==20.8.1
     # via tox
 wheel==0.37.0
     # via

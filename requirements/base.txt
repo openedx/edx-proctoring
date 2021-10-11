@@ -14,7 +14,7 @@ celery==5.0.4
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
-certifi==2021.5.30
+certifi==2021.10.8
     # via requests
 cffi==1.14.6
     # via cryptography
@@ -27,13 +27,13 @@ click==7.1.2
     #   click-didyoumean
     #   click-plugins
     #   click-repl
-click-didyoumean==0.0.3
+click-didyoumean==0.3.0
     # via celery
 click-plugins==1.1.1
     # via celery
 click-repl==0.2.0
     # via celery
-cryptography==3.4.8
+cryptography==35.0.0
     # via pyjwt
 django==2.2.24
     # via
@@ -48,7 +48,6 @@ django==2.2.24
     #   edx-when
     #   event-tracking
     #   jsonfield
-    #   rest-condition
 django-crum==0.7.9
     # via
     #   -r requirements/base.in
@@ -75,7 +74,6 @@ djangorestframework==3.12.4
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-drf-extensions
-    #   rest-condition
 drf-jwt==1.19.0
     # via
     #   -c requirements/common_constraints.txt
@@ -85,7 +83,7 @@ edx-django-utils==4.4.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   edx-when
-edx-drf-extensions==7.0.1
+edx-drf-extensions==8.0.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -96,7 +94,7 @@ edx-opaque-keys==2.2.2
     #   edx-when
 edx-rest-api-client==5.4.0
     # via -r requirements/base.in
-edx-when==2.2.0
+edx-when==2.2.1
     # via -r requirements/base.in
 event-tracking==1.1.1
     # via -r requirements/base.in
@@ -124,13 +122,13 @@ psutil==5.8.0
     # via edx-django-utils
 pycparser==2.20
     # via cffi
-pycryptodomex==3.10.1
+pycryptodomex==3.11.0
     # via
     #   -r requirements/base.in
     #   pyjwkest
 pyjwkest==1.4.2
     # via edx-drf-extensions
-pyjwt[crypto]==2.1.0
+pyjwt[crypto]==2.2.0
     # via
     #   -r requirements/base.in
     #   drf-jwt
@@ -145,7 +143,7 @@ python-dateutil==2.8.2
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   xblock
-pytz==2021.1
+pytz==2021.3
     # via
     #   -r requirements/base.in
     #   celery
@@ -161,8 +159,6 @@ requests==2.26.0
     #   edx-rest-api-client
     #   pyjwkest
     #   slumber
-rest-condition==1.0.3
-    # via edx-drf-extensions
 rules==3.0
     # via -r requirements/base.in
 semantic-version==2.8.5

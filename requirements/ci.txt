@@ -6,17 +6,17 @@
 #
 backports.entry-points-selectable==1.1.0
     # via virtualenv
-certifi==2021.5.30
+certifi==2021.10.8
     # via requests
 charset-normalizer==2.0.6
     # via requests
 codecov==2.1.12
     # via -r requirements/ci.in
-coverage==5.5
+coverage==6.0.1
     # via codecov
 distlib==0.3.3
     # via virtualenv
-filelock==3.0.12
+filelock==3.3.0
     # via
     #   tox
     #   virtualenv
@@ -24,7 +24,7 @@ idna==3.2
     # via requests
 packaging==21.0
     # via tox
-platformdirs==2.3.0
+platformdirs==2.4.0
     # via virtualenv
 pluggy==1.0.0
     # via tox
@@ -48,5 +48,5 @@ tox-battery==0.6.1
     # via -r requirements/ci.in
 urllib3==1.26.7
     # via requests
-virtualenv==20.8.0
+virtualenv==20.8.1
     # via tox
