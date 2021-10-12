@@ -124,20 +124,28 @@ edx = edx || {};
                     // Bind a click handler to the exam controls
                     self = this;
                     $('.exam-button-turn-in-exam').click(function() {
-                        $(window).unbind('beforeunload', self.unloadMessage);
+                        // ask learner for confirmation
+                        var confirmed = confirm(
+                            'Did you submit all the problems? You must select "Submit" ' +
+                            'for each problem before you end the exam.'
+                        );
 
-                        $.ajax({
-                            url: '/api/edx_proctoring/v1/proctored_exam/attempt/' + self.model.get('attempt_id'),
-                            type: 'PUT',
-                            data: {
-                                action: 'stop'
-                            },
-                            success: function() {
-                                // change the location of the page to the active exam page
-                                // which will reflect the new state of the attempt
-                                location.href = self.model.get('exam_url_path');
-                            }
-                        });
+                        if (confirmed) {
+                            $(window).unbind('beforeunload', self.unloadMessage);
+
+                            $.ajax({
+                                url: '/api/edx_proctoring/v1/proctored_exam/attempt/' + self.model.get('attempt_id'),
+                                type: 'PUT',
+                                data: {
+                                    action: 'stop'
+                                },
+                                success: function() {
+                                    // change the location of the page to the active exam page
+                                    // which will reflect the new state of the attempt
+                                    location.href = self.model.get('exam_url_path');
+                                }
+                            });
+                        }
                     });
                 } else {
                     // remove callback on scroll event
