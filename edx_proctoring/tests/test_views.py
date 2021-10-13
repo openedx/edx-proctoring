@@ -5479,6 +5479,7 @@ class TestInstructorDashboard(LoggedInTestCase):
         self.client.login_user(self.user)
         self.course_id = 'a/b/c'
 
+        set_runtime_service('credit', MockCreditService())
         set_runtime_service('instructor', MockInstructorService(is_user_course_staff=True))
 
     def test_launch_for_course(self):
@@ -5653,6 +5654,182 @@ class TestInstructorDashboard(LoggedInTestCase):
             )
         else:
             self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @ddt.data(
+        (True, False),
+        (True, True),
+        (False, False),
+        (False, True),
+    )
+    @ddt.unpack
+    def test_psi_instructor_dashboard_url(self, include_attempt_id, is_switch_active, mock_switch):
+        """
+        Test that instructor dashboard redirects correctly for psi software secure backend
+        """
+        mock_switch.return_value = is_switch_active
+        # set up exam
+        exam = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=True,
+            backend='software_secure',
+        )
+
+        # create exam attempt
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(exam.id, self.second_user.id, True)
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertIsNotNone(attempt['external_id'])
+
+        # create review for attempt
+        test_payload = create_test_review_payload(
+            attempt_code=attempt['attempt_code'],
+            external_id=attempt['external_id'].upper(),
+            review_status='Clean'
+        )
+        response = self.client.post(
+            reverse('edx_proctoring:anonymous.proctoring_review_callback'),
+            data=test_payload,
+            content_type='foo'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # call dashboard exam url with attempt id
+        dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
+                                kwargs={'course_id': self.course_id, 'exam_id': exam.id})
+        query_params = {'attempt': attempt['external_id']} if include_attempt_id else {}
+        response = self.client.get(dashboard_url, query_params)
+        if not (include_attempt_id and is_switch_active):
+            self.assertEqual(response.status_code, 404)
+        else:
+            video_url = json.loads(test_payload)['videoReviewLink']
+            expected_url = video_url.replace('DirectLink-Generic', 'DirectLink-HTML5')
+            self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    def test_psi_instructor_dashboard_url_deleted_attempt(self, mock_switch):
+        """
+        Test that instructor dashboard redirects correctly for psi software secure backend when an attempt is deleted
+        """
+        mock_switch.return_value = True
+        # set up exam
+        exam = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=True,
+            backend='software_secure',
+        )
+
+        # create exam attempt
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(exam.id, self.second_user.id, True)
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        external_id = attempt['external_id']
+
+        # remove the attempt
+        response = self.client.delete(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id])
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # call dashboard exam url with attempt id
+        dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
+                                kwargs={'course_id': self.course_id, 'exam_id': exam.id})
+        response = self.client.get(dashboard_url, {'attempt': external_id})
+
+        self.assertEqual(response.status_code, 404)
+
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    def test_psi_instructor_dashboard_url_no_review(self, mock_switch):
+        """
+        Test that instructor dashboard redirects correctly for psi software secure backend when there
+        is no review for an attempt
+        """
+        mock_switch.return_value = True
+        # set up exam
+        exam = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=True,
+            backend='software_secure',
+        )
+
+        # create exam attempt
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(exam.id, self.second_user.id, True)
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        external_id = attempt['external_id']
+
+        # call dashboard exam url with attempt id
+        dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
+                                kwargs={'course_id': self.course_id, 'exam_id': exam.id})
+        response = self.client.get(dashboard_url, {'attempt': external_id})
+
+        self.assertEqual(response.status_code, 404)
+
+    @patch('edx_proctoring.backends.software_secure.decode_and_decrypt')
+    @patch('edx_proctoring.views.waffle.switch_is_active')
+    def test_psi_instructor_dashboard_url_decoding_error(self, mock_switch, mock_decode):
+        """
+        Test that the instructor dashboard returns a 404 if there was an error decoding the video url
+        """
+        mock_switch.return_value = True
+        mock_decode.side_effect = Exception()
+        # set up exam
+        exam = ProctoredExam.objects.create(
+            course_id=self.course_id,
+            content_id='test_content',
+            exam_name='Test Exam',
+            external_id='123aXqe3',
+            time_limit_mins=90,
+            is_active=True,
+            is_proctored=True,
+            backend='software_secure',
+        )
+
+        # create exam attempt
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(exam.id, self.second_user.id, True)
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertIsNotNone(attempt['external_id'])
+
+        # create review for attempt
+        test_payload = create_test_review_payload(
+            attempt_code=attempt['attempt_code'],
+            external_id=attempt['external_id'].upper(),
+            review_status='Clean'
+        )
+        response = self.client.post(
+            reverse('edx_proctoring:anonymous.proctoring_review_callback'),
+            data=test_payload,
+            content_type='foo'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # call dashboard exam url with attempt id
+        dashboard_url = reverse('edx_proctoring:instructor_dashboard_exam',
+                                kwargs={'course_id': self.course_id, 'exam_id': exam.id})
+        query_params = {'attempt': attempt['external_id']}
+        response = self.client.get(dashboard_url, query_params)
+
+        self.assertEqual(response.status_code, 404)
 
 
 class TestBackendUserDeletion(LoggedInTestCase):

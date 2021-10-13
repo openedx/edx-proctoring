@@ -4,6 +4,7 @@ Integration with Software Secure's proctoring system
 
 import base64
 import binascii
+import codecs
 import datetime
 import hmac
 import json
@@ -22,6 +23,7 @@ from edx_proctoring import constants
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.exceptions import BackendProviderCannotRegisterAttempt, ProctoredExamSuspiciousLookup
 from edx_proctoring.statuses import SoftwareSecureReviewStatus
+from edx_proctoring.utils import decode_and_decrypt
 
 log = logging.getLogger(__name__)
 
@@ -390,3 +392,29 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         Returns the aes key used to encrypt the video review url
         """
         return self.video_review_aes_key
+
+    def get_instructor_url(
+        self, course_id, user, exam_id=None, attempt_id=None,
+        show_configuration_dashboard=False, encrypted_video_review_url=None
+    ):
+        """
+        Returns the url for video reviews
+        """
+        # video_review_url is required for PSI backend
+        if not encrypted_video_review_url:
+            return None
+
+        try:
+            aes_key = codecs.decode(self.video_review_aes_key, "hex")
+            decrypted_video_url = decode_and_decrypt(encrypted_video_review_url, aes_key).decode("utf-8")
+
+            # reformat video url as per MST-871 findings
+            reformatted_url = decrypted_video_url.replace('DirectLink-Generic', 'DirectLink-HTML5')
+            return reformatted_url
+        except Exception as err:  # pylint: disable=broad-except
+            log.exception(
+                'Could not decrypt video url for attempt_id=%(attempt_id)s '
+                'due to the following error: %(error_string)s',
+                {'attempt_id': attempt_id, 'error_string': str(err)}
+            )
+            return None

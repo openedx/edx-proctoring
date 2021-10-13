@@ -113,7 +113,10 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
         return attempt
 
     # pylint: disable=unused-argument
-    def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None, show_configuration_dashboard=False):
+    def get_instructor_url(
+        self, course_id, user, exam_id=None, attempt_id=None,
+        show_configuration_dashboard=False, encrypted_video_review_url=None
+    ):
         """
         Returns the instructor dashboard url for reviews
         """

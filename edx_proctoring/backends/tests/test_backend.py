@@ -89,7 +89,10 @@ class TestBackendProvider(ProctoringBackendProvider):
         return exam.get('external_id', None) or 'externalid'
 
     # pylint: disable=unused-argument
-    def get_instructor_url(self, course_id, user, exam_id=None, attempt_id=None, show_configuration_dashboard=False):
+    def get_instructor_url(
+        self, course_id, user, exam_id=None, attempt_id=None,
+        show_configuration_dashboard=False, encrypted_video_review_url=None
+    ):
         "Return a fake instructor url"
         url = f'/instructor/{course_id}/'
         if exam_id:
