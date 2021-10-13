@@ -202,7 +202,6 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None
             'is_proctored': is_proctored,
             'is_practice_exam': is_practice_exam,
             'external_id': external_id,
-            'is_active': is_active,
             'hide_after_due': hide_after_due,
         }
     )
@@ -1271,14 +1270,19 @@ def is_state_transition_legal(from_status, to_status, attempt_obj):
     return True
 
 
-def can_update_credit_grades_and_email(attempts, to_status):
+def can_update_credit_grades_and_email(attempts, to_status, exam):
     """
     Determine and return as a boolean whether an attempt should trigger an update to credit and grades
 
     Arguments:
         attempts: a list of all currently active attempts for a given user_id and exam_id
         to_status: future status of a proctored exam attempt
+        exam: dict representation of exam object
     """
+    # if the exam is a practice exam, always allow updates
+    if exam['is_practice_exam']:
+        return True
+
     statuses = [attempt['status'] for attempt in attempts]
     if len(statuses) == 1:
         # if there is only one attempt for a user in an exam, it can be responsible for updates to credits and grades
@@ -1426,7 +1430,7 @@ def update_attempt_status(attempt_id, to_status,
 
     all_attempts = get_user_attempts_by_exam_id(user_id, exam_id)
 
-    if can_update_credit_grades_and_email(all_attempts, to_status):
+    if can_update_credit_grades_and_email(all_attempts, to_status, exam):
 
         # see if the status transition this changes credit requirement status
         if ProctoredExamStudentAttemptStatus.needs_credit_status_update(to_status):
