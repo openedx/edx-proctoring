@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-10 18:35+0000\n"
+"POT-Creation-Date: 2021-10-17 18:36+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Aprisa Chrysantina <aprisa.chrysantina@gmail.com>, 2021\n"
 "Language-Team: Indonesian (https://www.transifex.com/open-edx/teams/6205/id/)\n"
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:820 views.py:1139
+#: api.py:820 views.py:1140
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "Anda memiliki {remaining_time} tersisa"
@@ -1371,71 +1371,71 @@ msgstr ""
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:147
+#: views.py:148
 msgid "could not determine the course_id"
 msgstr "tidak dapat menentukan course_id"
 
-#: views.py:156 views.py:538
+#: views.py:157 views.py:539
 msgid "Must be a Staff User to Perform this request."
 msgstr "Harus menjadi Staf untuk melakukan permintaan ini."
 
-#: views.py:526
+#: views.py:527
 msgid "Missing required query parameter course_id"
 msgstr ""
 
-#: views.py:546 views.py:717
+#: views.py:547 views.py:718
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:575
+#: views.py:576
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:625
+#: views.py:626
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr ""
 
-#: views.py:767
+#: views.py:768
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 
-#: views.py:1145
+#: views.py:1146
 msgid "you have less than a minute remaining"
 msgstr "Anda hanya memiliki sisa waktu kurang dari satu menit."
 
-#: views.py:1603
+#: views.py:1604
 msgid "Enter a valid username or email"
 msgstr ""
 
-#: views.py:1603
+#: views.py:1604
 msgid "user_info"
 msgstr ""
 
-#: views.py:1616
+#: views.py:1617
 msgid "Enter a valid positive value number"
 msgstr ""
 
-#: views.py:1616
+#: views.py:1617
 msgid "allowance_value"
 msgstr ""
 
-#: views.py:1703
+#: views.py:1704
 msgid "Cannot update attempt review status"
 msgstr ""
 
-#: views.py:1985
+#: views.py:1986
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:1991
+#: views.py:1992
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:2010
+#: views.py:2019
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
