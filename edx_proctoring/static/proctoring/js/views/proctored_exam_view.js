@@ -124,13 +124,33 @@ edx = edx || {};
                     // Bind a click handler to the exam controls
                     self = this;
                     $('.exam-button-turn-in-exam').click(function() {
-                        // ask learner for confirmation
-                        var confirmed = confirm(
-                            'Did you submit all the problems? You must select "Submit" ' +
-                            'for each problem before you end the exam.'
-                        );
+                        /*
+                        Check if there are any unattempted problem in the sequence and
+                        show a window unload popup if there is.
+                        */
+                        var hasUnattemptedProblems = false;
+                        var endExamConfirmed = true;
+                        $('.seq_contents').each(function() {
+                            var $tempEl = $('<div></div>');
+                            // load the content of sequence in a temporary element
+                            edx.HtmlUtils.setHtml($tempEl, edx.HtmlUtils.HTML($(this).text()));
+                            $('.problems-wrapper', $tempEl).each(function() {
+                                var $el = $(this);
+                                if ($el.data('graded') && $el.data('attempts-used') === 0) {
+                                    hasUnattemptedProblems = true;
+                                }
+                            });
+                        });
 
-                        if (confirmed) {
+                        // ask learner for confirmation if there are unattempted problems
+                        if (hasUnattemptedProblems) {
+                            endExamConfirmed = confirm(
+                                'Did you submit all the problems? You must select "Submit" ' +
+                                'for each problem before you end the exam.'
+                            );
+                        }
+
+                        if (endExamConfirmed) {
                             $(window).unbind('beforeunload', self.unloadMessage);
 
                             $.ajax({
