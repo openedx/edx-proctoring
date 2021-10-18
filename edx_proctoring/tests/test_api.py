@@ -3279,6 +3279,76 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         else:
             self.assertEqual(override, None)
 
+    def test_grade_certificate_override_practice_exam(self):
+        """
+        Test that if a user has multiple attempts in a practice exam, grades/certificates/emails will
+        be updated for each attempt status update.
+        """
+        set_runtime_service('grades', MockGradesService())
+        # create first attempt, and reset attempt
+        first_attempt = self._create_exam_attempt(
+            self.onboarding_exam_id,
+            status=ProctoredExamStudentAttemptStatus.error,
+            is_practice_exam=True,
+        )
+        reset_practice_exam(self.onboarding_exam_id, self.user_id, self.user)
+        first_attempt.refresh_from_db()
+        self.assertEqual(first_attempt.status, ProctoredExamStudentAttemptStatus.onboarding_reset)
+        # that should create a second attempt, set second attempt to rejected
+        second_attempt = ProctoredExamStudentAttempt.objects.get_current_exam_attempt(
+            self.onboarding_exam_id, self.user.id
+        )
+
+        credit_service = get_runtime_service('credit')
+        grades_service = get_runtime_service('grades')
+        content_id = first_attempt.proctored_exam.content_id
+
+        grades_service.init_grade(
+            user_id=self.user.id,
+            course_key_or_id=self.course_id,
+            usage_key_or_id=content_id,
+            earned_all=5.0,
+            earned_graded=5.0
+        )
+
+        # set status to rejected, credit should be failed, email should be sent,
+        # grades should have override
+        update_attempt_status(second_attempt.id, ProctoredExamStudentAttemptStatus.rejected)
+        credit_status = credit_service.get_credit_state(self.user.id, self.course_id)
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            'failed'
+        )
+        override = grades_service.get_subsection_grade_override(
+            user_id=self.user.id,
+            course_key_or_id=self.course_id,
+            usage_key_or_id=content_id
+        )
+        self.assertDictEqual({
+            'earned_all': override.earned_all_override,
+            'earned_graded': override.earned_graded_override
+        }, {
+            'earned_all': 0.0,
+            'earned_graded': 0.0
+        })
+
+        # set status to verified, credit should be satisfied, email should be sent,
+        # grades should not have override
+        update_attempt_status(second_attempt.id, ProctoredExamStudentAttemptStatus.verified)
+        credit_status = credit_service.get_credit_state(self.user.id, self.course_id)
+        self.assertEqual(len(credit_status['credit_requirement_status']), 1)
+        self.assertEqual(
+            credit_status['credit_requirement_status'][0]['status'],
+            'satisfied'
+        )
+        override = grades_service.get_subsection_grade_override(
+            user_id=self.user.id,
+            course_key_or_id=self.course_id,
+            usage_key_or_id=content_id
+        )
+        self.assertEqual(override, None)
+
     def test_create_exam_attempt_empty_string(self):
         """
         Assert that exam attempt creation does not fail if the user's profile name is an

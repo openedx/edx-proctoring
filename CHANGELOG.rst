@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.1.3] - 2021-10-15
+~~~~~~~~~~~~~~~~~~~~
+* Always allow practice attempts to trigger grade/credit/certificate updates
+
 [4.1.2] - 2021-10-07
 ~~~~~~~~~~~~~~~~~~~~
 * Instructor dashboard view should redirect to review url for PSI exam attempts
