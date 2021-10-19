@@ -41,8 +41,10 @@ jobs:
         run: |
           git clone https://github.com/edx/testeng-ci.git
           cd $GITHUB_WORKSPACE/testeng-ci
+          git checkout origin/matthugs/set-output-of-created-PR-for-github-actions
           pip install -r requirements/base.txt
       - name: create pull request
+        id: createpullrequest
         env:
           GITHUB_TOKEN: ${{ secrets.REQUIREMENTS_BOT_GITHUB_TOKEN }}
           GITHUB_USER_EMAIL: ${{ secrets.REQUIREMENTS_BOT_GITHUB_EMAIL }}
@@ -52,7 +54,8 @@ jobs:
           --target-branch="${{ env.target_branch }}" --base-branch-name="upgrade-python-requirements" \
           --commit-message="chore: Updating Python Requirements" --pr-title="Python Requirements Update" \
           --pr-body="Python requirements update.Please review the [changelogs](https://openedx.atlassian.net/wiki/spaces/TE/pages/1001521320/Python+Package+Changelogs) for the upgraded packages." \
-          --user-reviewers="" --team-reviewers="masters-devs-cosmonauts" --delete-old-pull-requests
+          --user-reviewers="" --team-reviewers="masters-devs-cosmonauts" --delete-old-pull-requests \
+          --output-pr-url-for-github-action
 
       - name: Send failure notification
         if: ${{ failure() }}
@@ -77,4 +80,5 @@ jobs:
           subject: Upgrade python requirements workflow executed successfully in ${{github.repository}}
           to: masters-requirements-update@edx.opsgenie.net
           from: github-actions <github-actions@edx.org>
-          body: Upgrade python requirements workflow executed in {{github.repository}}. For details see "github.com/${{ github.repository }}/pulls"
+          body: Upgrade python requirements workflow executed in ${{github.repository}}. For details see ${{ steps.createpullrequest.outputs.generated_pr }}
+
