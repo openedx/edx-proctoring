@@ -2,8 +2,8 @@ name: Upgrade Requirements
 
 on:
   schedule:
-    # will start the job at 00:15 UTC every monday
-    - cron: "15 0 * * 1"
+    # will start the job at 15:15 UTC every other week starting on the 6th of the month
+    - cron: "15 15 6/14 * *"
   workflow_dispatch:
     inputs:
       branch:
@@ -65,4 +65,16 @@ jobs:
           subject: Upgrade python requirements workflow failed in ${{github.repository}}
           to: masters-requirements-update@edx.opsgenie.net
           from: github-actions <github-actions@edx.org>
-          body: Upgrade python requirements workflow in ${{github.repository}} failed! For details see "github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          body: Upgrade python requirements workflow executed in ${{github.repository}}. For details see "github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}". Run failed.
+
+      - name: Send success notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: email-smtp.us-east-1.amazonaws.com
+          server_port: 465
+          username: ${{secrets.EDX_SMTP_USERNAME}}
+          password: ${{secrets.EDX_SMTP_PASSWORD}}
+          subject: Upgrade python requirements workflow executed successfully in ${{github.repository}}
+          to: masters-requirements-update@edx.opsgenie.net
+          from: github-actions <github-actions@edx.org>
+          body: Upgrade python requirements workflow executed in {{github.repository}}. For details see "github.com/${{ github.repository }}/pulls"
