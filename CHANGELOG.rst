@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.2.0] - 2021-10-20
+~~~~~~~~~~~~~~~~~~~~
+* Timed exams should remain visible after the course end date has passed
+
 [4.1.3] - 2021-10-15
 ~~~~~~~~~~~~~~~~~~~~
 * Always allow practice attempts to trigger grade/credit/certificate updates

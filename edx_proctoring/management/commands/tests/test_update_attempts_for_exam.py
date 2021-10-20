@@ -36,7 +36,7 @@ class TestUpdateAttemptsForExam(LoggedInTestCase):
         Run the management command
         """
         exam_id = create_exam(
-            course_id='foo',
+            course_id='a/b/c',
             content_id='bar',
             exam_name='Test Exam 1',
             time_limit_mins=90

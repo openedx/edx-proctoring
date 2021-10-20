@@ -6,7 +6,7 @@ import base64
 import hashlib
 import hmac
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytz
 from cryptography.hazmat.backends import default_backend
@@ -244,10 +244,31 @@ def has_due_date_passed(due_datetime):
     Return True if due date is lesser than current datetime, otherwise False
     and if due_datetime is None then we don't have to consider the due date for return False
     """
-
     if due_datetime:
         return due_datetime <= datetime.now(pytz.UTC)
     return False
+
+
+def get_course_end_date(course_id):
+    """
+    Return the end date for the given course id
+    """
+    end_date = None
+    dates = when_api.get_dates_for_course(course_id)
+    end_dates = list(filter(lambda elem: elem[0][1] == 'end', dates.items()))
+    if end_dates and end_dates[0][1]:
+        try:
+            end_date = end_dates[0][1].replace(tzinfo=timezone.utc)
+        except (AttributeError, TypeError):
+            log.error('Could not retrieve course end date for course_id=%(course_id)s', {'course_id': course_id})
+    return end_date
+
+
+def has_end_date_passed(course_id):
+    """
+    Return True if the course end date has passed, otherwise False
+    """
+    return has_due_date_passed(get_course_end_date(course_id))
 
 
 def get_exam_due_date(exam, user=None):
