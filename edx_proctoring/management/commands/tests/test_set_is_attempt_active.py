@@ -25,7 +25,7 @@ class SetAttemptActiveFieldTests(LoggedInTestCase):
         set_runtime_service('grades', MockGradesService())
         set_runtime_service('certificates', MockCertificateService())
         self.exam_id = create_exam(
-            course_id='foo',
+            course_id='a/b/c',
             content_id='bar',
             exam_name='Test Exam',
             time_limit_mins=90

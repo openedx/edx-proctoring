@@ -627,6 +627,83 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             self.assertIsNone(rendered_response)
 
     @ddt.data(
+        datetime(2019, 4, 4).replace(tzinfo=pytz.UTC),
+        datetime.now(pytz.UTC) + timedelta(days=2),
+        datetime(9999, 4, 4).replace(tzinfo=pytz.UTC),
+        'bad'
+    )
+    @patch('edx_when.api.get_dates_for_course')
+    def test_get_studentview_submitted_timed_exam_past_course_end(self, end_date, mock_course_dates):
+        """
+        Test get_student_view timed exam returns None if we are passed the course end date
+        This is to fix inconsistent behavior for timed exam visibility in self paced courses,
+        where timed exams would be visible after a self paced due date, but not visible after
+        the course end date. Timed exams in instructor-paced courses are always visible after
+        the exam due date, and therefore after the course end date.
+        """
+        dates = [
+            (('11111111', 'start'), datetime(2019, 3, 15).replace(tzinfo=pytz.UTC)),
+            (('22222222', 'due'), datetime(2019, 3, 28).replace(tzinfo=pytz.UTC)),
+            (('33333333', 'end'), end_date),
+        ]
+        mock_course_dates.return_value = dict(dates)
+
+        self._create_exam_attempt(self.timed_exam_id, status='submitted')
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_timed,
+            context={
+                'is_proctored': False,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 10,
+            }
+        )
+
+        if not isinstance(end_date, str) and end_date < datetime.now(pytz.UTC):
+            self.assertIsNone(rendered_response)
+        else:
+            self.assertIn(self.timed_exam_submitted, rendered_response)
+
+    @ddt.data(
+        True,
+        False
+    )
+    @patch('edx_when.api.get_dates_for_course')
+    def test_get_studentview_submitted_timed_exam_past_course_end_no_date(self, include_end, mock_course_dates):
+        """
+        Test get_student_view timed exam returns blocks learners if no end date is specified
+        This is to fix inconsistent behavior for timed exam visibility in self paced courses,
+        where timed exams would be visible after a self paced due date, but not visible after
+        the course end date. Timed exams in instructor-paced courses are always visible after
+        the exam due date, and therefore after the course end date.
+        """
+        dates = [
+            (('11111111', 'start'), datetime(2019, 3, 15).replace(tzinfo=pytz.UTC)),
+            (('22222222', 'due'), datetime(2019, 3, 28).replace(tzinfo=pytz.UTC)),
+        ]
+        if include_end:
+            dates.append((('33333333', 'end'), None))
+
+        mock_course_dates.return_value = dict(dates)
+
+        self._create_exam_attempt(self.timed_exam_id, status='submitted')
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_timed,
+            context={
+                'is_proctored': False,
+                'display_name': self.exam_name,
+                'default_time_limit_mins': 10,
+            }
+        )
+
+        self.assertIn(self.timed_exam_submitted, rendered_response)
+
+    @ddt.data(
         (False, 'submitted', True, 1),
         (True, 'verified', False, 1),
         (False, 'submitted', True, 0),
@@ -1291,7 +1368,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         """
         rendered_response = get_student_view(
             user_id=self.user_id,
-            course_id="abc",
+            course_id='d/e/f',
             content_id=self.content_id,
             context={
                 'is_proctored': False,

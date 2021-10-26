@@ -67,6 +67,7 @@ from edx_proctoring.utils import (
     get_time_remaining_for_attempt,
     get_user_course_outline_details,
     has_due_date_passed,
+    has_end_date_passed,
     humanized_time,
     is_reattempting_exam,
     obscured_user_id,
@@ -881,7 +882,13 @@ def is_exam_passed_due(exam, user=None):
     Return whether the due date has passed.
     Uses edx_when to lookup the date for the subsection.
     """
-    return has_due_date_passed(get_exam_due_date(exam, user=user))
+    return (
+        has_due_date_passed(get_exam_due_date(exam, user=user))
+        # if the exam is timed and passed the course end date, it should also be considered passed due
+        or (
+            not exam['is_proctored'] and not exam['is_practice_exam'] and has_end_date_passed(exam['course_id'])
+        )
+    )
 
 
 def _was_review_status_acknowledged(is_status_acknowledged, exam):
