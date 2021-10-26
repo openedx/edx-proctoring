@@ -52,6 +52,7 @@ from edx_proctoring.api import (
     get_user_attempts_by_exam_id,
     is_exam_passed_due,
     mark_exam_attempt_as_ready,
+    mark_exam_attempt_as_ready_to_resume,
     remove_allowance_for_user,
     remove_exam_attempt,
     reset_practice_exam,
@@ -1253,10 +1254,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
                 ProctoredExamStudentAttemptStatus.declined
             )
         elif action == 'mark_ready_to_resume':
-            exam_attempt_id = update_attempt_status(
-                attempt_id,
-                ProctoredExamStudentAttemptStatus.ready_to_resume
-            )
+            exam_attempt_id = mark_exam_attempt_as_ready_to_resume(attempt_id)
 
         data = {"exam_attempt_id": exam_attempt_id}
         return Response(data)

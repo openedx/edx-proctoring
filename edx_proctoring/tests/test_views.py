@@ -3988,7 +3988,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # Make sure the exam attempt is in the ready_to_resume state.
         attempt = get_exam_attempt_by_id(old_attempt_id)
-        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+        self.assertTrue(attempt['ready_to_resume'])
         self.assertFalse(attempt['is_resumable'])
 
     @ddt.data(
@@ -4079,7 +4080,8 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
 
         # Make sure the exam attempt is in the ready_to_resume state.
         attempt = get_exam_attempt_by_id(old_attempt_id)
-        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
+        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.error)
+        self.assertTrue(attempt['ready_to_resume'])
 
     @ddt.data(
         (True, True),
@@ -4280,6 +4282,15 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         attempt_id = response_data['exam_attempt_id']
 
+        # Transition the exam attempt into the error state.
+        response = self.client.put(
+            reverse('edx_proctoring:proctored_exam.attempt', args=[attempt_id]),
+            json.dumps({
+                'action': 'error',
+            }),
+            content_type='application/json'
+        )
+
         # Log in the staff user.
         self.client.login_user(self.student_taking_exam)
 
@@ -4435,10 +4446,9 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(response_data['proctored_exam_attempts'][0]['all_attempts']), 2)
-        # assert that the older attempt has transitioned to the 'resumed' status
-        self.assertEqual(
-            response_data['proctored_exam_attempts'][0]['all_attempts'][1]['status'],
-            ProctoredExamStudentAttemptStatus.resumed
+        # assert that the older attempt has transitioned to the resumed
+        self.assertTrue(
+            response_data['proctored_exam_attempts'][0]['all_attempts'][1]['resumed'],
         )
         # Make sure the resumed attempt is no longer resumable again
         self.assertFalse(

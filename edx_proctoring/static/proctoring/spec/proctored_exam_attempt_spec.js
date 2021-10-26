@@ -88,7 +88,9 @@ describe('ProctoredExamAttemptView', function() {
         );
     }
 
-    function getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(status, isPracticeExam, isResumable) {
+    function getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(
+        status, isPracticeExam, isResumable, readyToResume, resumed
+    ) {
         // eslint-disable-next-line no-param-reassign
         isPracticeExam = typeof isPracticeExam !== 'undefined' ? isPracticeExam : false;
         // eslint-disable-next-line no-param-reassign
@@ -114,6 +116,8 @@ describe('ProctoredExamAttemptView', function() {
                     started_at: '2015-08-10T09:15:45Z',
                     status: status,
                     is_resumable: isResumable,
+                    ready_to_resume: readyToResume,
+                    resumed: resumed,
                     taking_as_proctored: true,
                     proctored_exam: {
                         content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
@@ -144,6 +148,8 @@ describe('ProctoredExamAttemptView', function() {
                             started_at: '2015-08-10T09:15:45Z',
                             status: status,
                             is_resumable: isResumable,
+                            ready_to_resume: readyToResume,
+                            resumed: resumed,
                             taking_as_proctored: true,
                             proctored_exam: {
                                 content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
@@ -174,6 +180,8 @@ describe('ProctoredExamAttemptView', function() {
                             started_at: '2015-08-10T09:15:45Z',
                             status: 'resumed',
                             is_resumable: false,
+                            ready_to_resume: true,
+                            resumed: true,
                             taking_as_proctored: true,
                             proctored_exam: {
                                 content_id: 'i4x://edX/DemoX/sequential/9f5e9b018a244ea38e5d157e0019e60c',
@@ -246,6 +254,7 @@ describe('ProctoredExamAttemptView', function() {
         '<th class="attempt-started-at">Started At</th>' +
         '<th class="attempt-completed-at">Completed At</th>' +
         '<th class="attempt-status">Status</th>' +
+        '<th class="attempt-ready-to-resume"><%- gettext("Ready to Resume") %> </th>' +
         '<th class="c_action">Actions</th>' +
         '</tr></thead>' +
         '<% if (is_proctored_attempts) { %>\n' +
@@ -280,7 +289,18 @@ describe('ProctoredExamAttemptView', function() {
         '<%= getExamAttemptStatus(proctored_exam_attempt.status) %>' +
         '<% } else { %> N/A <% } %>' +
         '</td>' +
+        '<% if (' +
+        '(proctored_exam_attempt.ready_to_resume || proctored_exam_attempt.status == "ready_to_resume") ' +
+        '&& !proctored_exam_attempt.resumed' +
+        ') { %>' +
+        '<td>' +
+        '<span class="fa fa-check-circle" aria-hidden="true"></span>' +
+        '</td>' +
         '<% } else { %>' +
+        '<td></td>' +
+        '<% } %>' +
+        '<% } else { %>' +
+        '<td></td>' +
         '<td></td>' +
         '<td></td>' +
         '<td></td>' +
@@ -340,7 +360,18 @@ describe('ProctoredExamAttemptView', function() {
         '<% if (proctored_exam_attempt.status) { %>' +
         '<%= getExamAttemptStatus(proctored_exam_attempt.status) %>' +
         '<% } else { %> N/A <% } %> </td>' +
-        '<td></td> </tr> <% }); %>' +
+        '<% if (' +
+        '(proctored_exam_attempt.ready_to_resume || proctored_exam_attempt.status == "ready_to_resume") ' +
+        '&& !proctored_exam_attempt.resumed' +
+        ') { %>' +
+        '<td>' +
+        '<span class="fa fa-check-circle" aria-hidden="true"></span>' +
+        '</td>' +
+        '<% } else { %>' +
+        '<td></td>' +
+        '<% } %>' +
+        '<td></td> ' +
+        '</tr> <% }); %>' +
         '</tbody> <% }%> <% }); %> <% } %>' +
         '</table>' +
         '<% if (!is_proctored_attempts) { %>' +
@@ -517,6 +548,69 @@ describe('ProctoredExamAttemptView', function() {
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('testuser1');
         expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
     });
+
+    it('should display check when exam attempt is ready to resume', function() {
+        var rows;
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(
+                    'error', false, true, true, false)
+                )
+            ]
+        );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
+
+        // Process all requests so far
+        this.server.respond();
+        this.server.respond();
+
+        rows = this.proctored_exam_attempt_view.$el.find('tbody').children();
+        expect(rows.length).toEqual(3);
+
+        // check that ready to resume check does not appear in outer level
+        expect(rows[0].outerHTML).not.toContain('fa-check-circle');
+
+        // check that status is present in other two rows
+        expect(rows[1].outerHTML).toContain('fa-check-circle');
+        expect(rows[2].outerHTML).not.toContain('fa-check-circle');
+    });
+
+    it('should not display check when exam attempt has status ready to resume but has been resumed', function() {
+        var rows;
+
+        this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
+            [
+                200,
+                {
+                    'Content-Type': 'application/json'
+                },
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(
+                    'ready_to_resume', false, false, false, true)
+                )
+            ]
+        );
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
+
+        // Process all requests so far
+        this.server.respond();
+        this.server.respond();
+
+        rows = this.proctored_exam_attempt_view.$el.find('tbody').children();
+        expect(rows.length).toEqual(3);
+
+        // check that ready to resume check does not appear in outer level
+        expect(rows[0].outerHTML).not.toContain('fa-check-circle');
+
+        // check that status is present in other two rows
+        expect(rows[1].outerHTML).not.toContain('fa-check-circle');
+        expect(rows[2].outerHTML).not.toContain('fa-check-circle');
+    });
+
     it('should mark exam attempt "ready_to_resume" on resume', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
             [
@@ -592,6 +686,7 @@ describe('ProctoredExamAttemptView', function() {
         expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('testuser1');
         expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('Normal Exam');
         expect(this.proctored_exam_attempt_view.$el.find('tbody.accordion-panel').html()).toContain('Ready to resume');
+        expect(this.proctored_exam_attempt_view.$el.find('tbody.accordion-panel').html()).toContain('fa-check-circle');
         expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').hasClass('is-visible')).toEqual(false);
     });
 

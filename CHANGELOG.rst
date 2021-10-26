@@ -13,6 +13,13 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[4.4.0] - 2021-10-29
+~~~~~~~~~~~~~~~~~~~~
+* Exam attempt should remain resumable after they have been marked as ready to resume. In order
+  for that to be true, the resume states are no longer represented as a status, but instead that
+  information is contained within the `ready_to_resume` and `resumed` fields.
+
 [4.3.3] - 2021-10-29
 ~~~~~~~~~~~~~~~~~~~~
 * Remove ProctoredExamSoftwareSecureReview.video_url column from database.

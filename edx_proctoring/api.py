@@ -31,6 +31,7 @@ from edx_proctoring.exceptions import (
     BackendProviderSentNoAttemptID,
     ProctoredBaseException,
     ProctoredExamAlreadyExists,
+    ProctoredExamIllegalResumeUpdate,
     ProctoredExamIllegalStatusTransition,
     ProctoredExamNotActiveException,
     ProctoredExamNotFoundException,
@@ -795,8 +796,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
         critically_low_threshold_pct * float(allowed_time_limit_mins) * 60
     )
 
-    if (not allowed_time_limit_mins
-            or (attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_resume)):
+    if not allowed_time_limit_mins or (attempt and is_attempt_ready_to_resume(attempt)):
         allowed_time_limit_mins = _calculate_allowed_mins(exam, attempt['user']['id'])
 
     total_time = humanized_time(allowed_time_limit_mins)
@@ -825,6 +825,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
             'edx_proctoring:proctored_exam.attempt',
             args=[attempt['id']]
         ),
+        'attempt_ready_to_resume': is_attempt_ready_to_resume(attempt),
     }
 
     if provider:
@@ -1070,7 +1071,7 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
     time_remaining_seconds = None
     # only practice exams and exams with resume states may have multiple attempts
     if existing_attempt:
-        if ProctoredExamStudentAttemptStatus.is_resume_status(existing_attempt.status):
+        if is_attempt_in_resume_process(existing_attempt):
             # save remaining time and mark the most recent attempt as resumed, if it isn't already
             time_remaining_seconds = existing_attempt.time_remaining_seconds
             mark_exam_attempt_as_resumed(existing_attempt.id)
@@ -1244,10 +1245,72 @@ def mark_exam_attempt_as_resumed(attempt_id):
     """
     Marks the current exam attempt as resumed
     """
-    return update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.resumed)
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+    ready_to_resume = is_attempt_in_resume_process(exam_attempt_obj)
+    if ready_to_resume:
+        exam_attempt_obj.resumed = True
+        exam_attempt_obj.is_resumable = False
+        exam_attempt_obj.save()
+        return exam_attempt_obj.id
+
+    raise ProctoredExamIllegalResumeUpdate(
+        f'Attempted to mark attempt_id={attempt_id} as resumed, but '
+        f'attempt was never marked as ready_to_resume. This is not allowed.'
+    )
 
 
-def is_state_transition_legal(from_status, to_status, attempt_obj):
+def mark_exam_attempt_as_ready_to_resume(attempt_id):
+    """
+    Marks the current exam attempt as ready to resume
+    """
+    exam_attempt_obj = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+    is_resumable = exam_attempt_obj.is_resumable
+    if is_resumable:
+        exam_attempt_obj.ready_to_resume = True
+        exam_attempt_obj.is_resumable = False
+        exam_attempt_obj.save()
+        return exam_attempt_obj.id
+
+    raise ProctoredExamIllegalResumeUpdate(
+        f'Attempted to mark attempt_id={attempt_id} as ready_to_resume, but '
+        f'attempt is not resumable. This is not allowed.'
+    )
+
+
+def is_attempt_ready_to_resume(attempt):
+    """
+    Determine if an exam attempt is ready to resume
+
+    Arguments:
+        attempt: serialized attempt obj
+    """
+
+    # if the attempt has been marked as ready to resume, check to see that it has not been resumed yet
+    # we also want to check if the status is ready to resume for backwards compatibility. Older attempts
+    # may still have this status, but not have the correct value for the ready_to_resume_field
+    return (
+        (attempt['ready_to_resume'] or attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_resume)
+        and not attempt['resumed']
+    )
+
+
+def is_attempt_in_resume_process(attempt_obj):
+    """
+    Determine if an exam attempt is in the resume process. This should check if either of the resume
+    related fields are set to true, or if the attempt status is a resume status. We must check both
+    in order for older attempts with the resume statuses to function as expected.
+
+    Arguments:
+        attempt_obj: attempt object
+    """
+    return (
+        attempt_obj.ready_to_resume
+        or attempt_obj.resumed
+        or ProctoredExamStudentAttemptStatus.is_resume_status(attempt_obj.status)
+    )
+
+
+def is_state_transition_legal(from_status, to_status):
     """
     Determine and return as a boolean whether a proctored exam attempt state transition
     from from_status to to_status is an allowed state transition.
@@ -1255,7 +1318,6 @@ def is_state_transition_legal(from_status, to_status, attempt_obj):
     Arguments:
         from_status: original status of a proctored exam attempt
         to_status: future status of a proctored exam attempt
-        attempt_obj: the actual student exam attempt
     """
     in_completed_status = ProctoredExamStudentAttemptStatus.is_completed_status(from_status)
     to_incompleted_status = ProctoredExamStudentAttemptStatus.is_incomplete_status(to_status)
@@ -1263,16 +1325,6 @@ def is_state_transition_legal(from_status, to_status, attempt_obj):
     # don't allow state transitions from a completed state to an incomplete state
     # if a re-attempt is desired then the current attempt must be deleted
     if in_completed_status and to_incompleted_status:
-        return False
-    # only allow a state transition to the ready_to_resume state when the attempt is resumable
-    if (to_status == ProctoredExamStudentAttemptStatus.ready_to_resume and
-            not attempt_obj.is_resumable):
-        return False
-    # only allowed state transition to the resumed state from ready_to_resume (or resumed).
-    # this accounts for cases where the previous attempt was marked as resumed, but a new
-    # attempt failed to be created.
-    if (to_status == ProctoredExamStudentAttemptStatus.resumed and
-            not ProctoredExamStudentAttemptStatus.is_resume_status(from_status)):
         return False
     return True
 
@@ -1328,12 +1380,7 @@ def _is_attempt_resumable(attempt_obj, to_status):
     Based on the attempt object and the status it's transitioning to,
     return whether the attempt should be resumable, or not
     """
-    status_to_reset_resumability = (
-        ProctoredExamStudentAttemptStatus.submitted,
-        ProctoredExamStudentAttemptStatus.resumed,
-        ProctoredExamStudentAttemptStatus.ready_to_resume,
-    )
-    if to_status in status_to_reset_resumability:
+    if to_status == ProctoredExamStudentAttemptStatus.submitted or is_attempt_in_resume_process(attempt_obj):
         # Make sure we have resumable to be false in conditions where the
         # attempt is either in the resume process, or it's successfully submitted
         return False
@@ -1401,7 +1448,7 @@ def update_attempt_status(attempt_id, to_status,
     exam = get_exam_by_id(exam_id)
     backend = get_backend_provider(exam)
 
-    if not is_state_transition_legal(from_status, to_status, exam_attempt_obj):
+    if not is_state_transition_legal(from_status, to_status):
         illegal_status_transition_msg = (
             f'A status transition from "{from_status}" to "{to_status}" was attempted '
             f'on exam_id={exam_id} for user_id={user_id}. This is not '
@@ -2559,7 +2606,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
     # if there is no attempt or an attempt with no time limit attribute, calculate the allowed time
     # also, if the attempt is in the ready to resume status, calculate the allowed time to correctly
     # display the time remaining
-    if not attempt_time or (attempt and attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_resume):
+    if not attempt_time or (attempt and is_attempt_ready_to_resume(attempt)):
         attempt_time = _calculate_allowed_mins(exam, user_id)
 
     total_time = humanized_time(attempt_time)
@@ -2648,6 +2695,8 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'proctored_exam/inactive_account.html'
     elif not attempt_status:
         student_view_template = 'practice_exam/entrance.html'
+    elif is_attempt_ready_to_resume(attempt):
+        student_view_template = 'proctored_exam/ready_to_resume.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         provider = get_backend_provider(exam)
         if provider.should_block_access_to_exam_material():
@@ -2666,8 +2715,6 @@ def _get_practice_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'practice_exam/submitted.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_submit:
         student_view_template = 'proctored_exam/ready_to_submit.html'
-    elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_resume:
-        student_view_template = 'proctored_exam/ready_to_resume.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -2699,6 +2746,8 @@ def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
             student_view_template = 'proctored_exam/expired.html'
         else:
             student_view_template = 'onboarding_exam/entrance.html'
+    elif is_attempt_ready_to_resume(attempt):
+        student_view_template = 'proctored_exam/ready_to_resume.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         # when we're taking the exam we should not override the view
         return None
@@ -2718,8 +2767,6 @@ def _get_onboarding_exam_view(exam, context, exam_id, user_id, course_id):
         student_view_template = 'onboarding_exam/verified.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.rejected:
         student_view_template = 'onboarding_exam/rejected.html'
-    elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_resume:
-        student_view_template = 'proctored_exam/ready_to_resume.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
@@ -2812,6 +2859,8 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
         # When the exam is past due, we should prevent learners from accessing the exam even if
         # they already accessed the exam before, but haven't completed.
         student_view_template = 'proctored_exam/expired.html'
+    elif is_attempt_ready_to_resume(attempt):
+        student_view_template = 'proctored_exam/ready_to_resume.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.started:
         provider = get_backend_provider(exam)
         if provider.should_block_access_to_exam_material():
@@ -2873,8 +2922,6 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
                                                        is_active=True,
                                                        is_practice_exam=True).first()
         context['onboarding_link'] = reverse('jump_to', args=[course_id, onboarding_exam.content_id])
-    elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_resume:
-        student_view_template = 'proctored_exam/ready_to_resume.html'
 
     if student_view_template:
         template = loader.get_template(student_view_template)
