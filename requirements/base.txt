@@ -8,6 +8,8 @@ amqp==5.0.6
     # via kombu
 appdirs==1.4.4
     # via fs
+asgiref==3.4.1
+    # via django
 billiard==3.6.4.0
     # via celery
 celery==5.0.4
@@ -16,9 +18,9 @@ celery==5.0.4
     #   event-tracking
 certifi==2021.10.8
     # via requests
-cffi==1.14.6
+cffi==1.15.0
     # via cryptography
-charset-normalizer==2.0.6
+charset-normalizer==2.0.7
     # via requests
 click==7.1.2
     # via
@@ -35,7 +37,7 @@ click-repl==0.2.0
     # via celery
 cryptography==35.0.0
     # via pyjwt
-django==2.2.24
+django==3.2.8
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -54,7 +56,7 @@ django-crum==0.7.9
     #   edx-django-utils
 django-ipware==4.0.0
     # via -r requirements/base.in
-django-model-utils==4.1.1
+django-model-utils==4.2.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -74,7 +76,7 @@ djangorestframework==3.12.4
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-drf-extensions
-drf-jwt==1.19.0
+drf-jwt==1.19.1
     # via
     #   -c requirements/common_constraints.txt
     #   edx-drf-extensions
@@ -83,6 +85,7 @@ edx-django-utils==4.4.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   edx-when
+    #   event-tracking
 edx-drf-extensions==8.0.0
     # via
     #   -r requirements/base.in
@@ -94,15 +97,15 @@ edx-opaque-keys==2.2.2
     #   edx-when
 edx-rest-api-client==5.4.0
     # via -r requirements/base.in
-edx-when==2.2.1
+edx-when==2.2.2
     # via -r requirements/base.in
-event-tracking==1.1.1
+event-tracking==1.1.3
     # via -r requirements/base.in
 fs==2.4.13
     # via xblock
 future==0.18.2
     # via pyjwkest
-idna==3.2
+idna==3.3
     # via requests
 jsonfield==3.1.0
     # via -r requirements/base.in
@@ -112,11 +115,11 @@ lxml==4.6.3
     # via xblock
 markupsafe==2.0.1
     # via xblock
-newrelic==7.0.0.166
+newrelic==7.2.2.169
     # via edx-django-utils
 pbr==5.6.0
     # via stevedore
-prompt-toolkit==3.0.20
+prompt-toolkit==3.0.21
     # via click-repl
 psutil==5.8.0
     # via edx-django-utils
@@ -128,13 +131,13 @@ pycryptodomex==3.11.0
     #   pyjwkest
 pyjwkest==1.4.2
     # via edx-drf-extensions
-pyjwt[crypto]==2.2.0
+pyjwt[crypto]==2.3.0
     # via
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-drf-extensions
     #   edx-rest-api-client
-pymongo==3.12.0
+pymongo==3.12.1
     # via
     #   edx-opaque-keys
     #   event-tracking
@@ -151,7 +154,7 @@ pytz==2021.3
     #   event-tracking
     #   fs
     #   xblock
-pyyaml==5.4.1
+pyyaml==6.0
     # via xblock
 requests==2.26.0
     # via
@@ -175,7 +178,7 @@ slumber==0.7.1
     # via edx-rest-api-client
 sqlparse==0.4.2
     # via django
-stevedore==3.4.0
+stevedore==3.5.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
