@@ -313,13 +313,6 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         obj.reviewed_by = request.user
         obj.save()
 
-    def get_form(self, request, obj=None, change=False, **kwargs):
-        """ Returns software secure review form """
-        form = super().get_form(request, obj, change, **kwargs)
-        if 'video_url' in form.base_fields:
-            del form.base_fields['video_url']
-        return form
-
     def lookup_allowed(self, lookup, value):
         """ Checks if lookup allowed or not """
         if lookup == 'exam__course_id':
