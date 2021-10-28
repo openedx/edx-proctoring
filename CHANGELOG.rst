@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.3.0] - 2021-10-28
+~~~~~~~~~~~~~~~~~~~~
+* Upgrade the requirements and move edx-proctoring to be on Django 3.2 instead of Django 2.2
+
 [4.2.0] - 2021-10-20
 ~~~~~~~~~~~~~~~~~~~~
 * Timed exams should remain visible after the course end date has passed

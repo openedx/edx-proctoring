@@ -4,7 +4,9 @@
 #
 #    make upgrade
 #
-astroid==2.8.2
+asgiref==3.4.1
+    # via django
+astroid==2.8.4
     # via
     #   pylint
     #   pylint-celery
@@ -27,21 +29,21 @@ diff-cover==6.4.2
     # via -r requirements/dev.in
 distlib==0.3.3
     # via virtualenv
-django==2.2.24
+django==3.2.8
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
     #   -r requirements/quality.in
     #   edx-i18n-tools
-docutils==0.17.1
+docutils==0.18
     # via rstcheck
 edx-i18n-tools==0.8.1
     # via -r requirements/dev.in
-edx-lint==5.2.0
+edx-lint==5.2.1
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.3.0
+filelock==3.3.1
     # via
     #   tox
     #   virtualenv
@@ -74,9 +76,9 @@ path.py==12.5.0
     # via -r requirements/dev.in
 pbr==5.6.0
     # via stevedore
-pep517==0.11.0
+pep517==0.12.0
     # via pip-tools
-pip-tools==6.3.1
+pip-tools==6.4.0
     # via -r requirements/dev.in
 platformdirs==2.4.0
     # via
@@ -90,7 +92,7 @@ polib==1.1.1
     # via edx-i18n-tools
 py==1.10.0
     # via tox
-pycodestyle==2.7.0
+pycodestyle==2.8.0
     # via -r requirements/quality.in
 pydocstyle==6.1.1
     # via -r requirements/quality.in
@@ -110,13 +112,13 @@ pylint-plugin-utils==0.6
     # via
     #   pylint-celery
     #   pylint-django
-pyparsing==2.4.7
+pyparsing==3.0.2
     # via packaging
 python-slugify==5.0.2
     # via code-annotations
 pytz==2021.3
     # via django
-pyyaml==5.4.1
+pyyaml==6.0
     # via
     #   code-annotations
     #   edx-i18n-tools
@@ -131,7 +133,7 @@ snowballstemmer==2.1.0
     # via pydocstyle
 sqlparse==0.4.2
     # via django
-stevedore==3.4.0
+stevedore==3.5.0
     # via code-annotations
 text-unidecode==1.3
     # via python-slugify
@@ -139,7 +141,7 @@ toml==0.10.2
     # via
     #   pylint
     #   tox
-tomli==1.2.1
+tomli==1.2.2
     # via pep517
 tox==3.24.4
     # via
@@ -151,13 +153,13 @@ typing-extensions==3.10.0.2
     # via
     #   astroid
     #   pylint
-virtualenv==20.8.1
+virtualenv==20.9.0
     # via tox
 wheel==0.37.0
     # via
     #   -r requirements/dev.in
     #   pip-tools
-wrapt==1.12.1
+wrapt==1.13.2
     # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:

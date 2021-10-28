@@ -21,8 +21,6 @@ jobs:
         node-version:
           - 10
         toxenv:
-          - django22-drf310
-          - django22-drflatest
           - django30-drflatest
           - django31-drflatest
           - django32-drflatest
@@ -60,7 +58,7 @@ jobs:
       run: tox
 
     - name: Run Coverage
-      if: matrix.toxenv == 'django22-drf310' || matrix.toxenv == 'django22-drflatest'
+      if: matrix.toxenv == 'django32-drflatest'
       uses: codecov/codecov-action@v1
       with:
         flags: unittests
