@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.3.2] - 2021-10-29
+~~~~~~~~~~~~~~~~~~~~
+* Video url field should be excluded from review admin
+
 [4.3.1] - 2021-10-28
 ~~~~~~~~~~~~~~~~~~~~
 * Set the to be retired column video_url on ProctoredExamSoftwareSecureReview to be nullable.

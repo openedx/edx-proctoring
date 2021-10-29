@@ -260,6 +260,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     search_fields = ['student__username', 'attempt_code']
     ordering = ['-modified']
     form = ProctoredExamSoftwareSecureReviewForm
+    exclude = ['video_url']
 
     def _get_exam_from_attempt_code(self, code):
         """Get exam from attempt code. Note that the attempt code could be an archived one"""
