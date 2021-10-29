@@ -771,11 +771,6 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     # reviewing service
     raw_data = models.TextField()
 
-    # URL for the exam video that had been reviewed
-    # NOTE: To be deleted in future release, once the code that depends on it
-    # has been removed
-    video_url = models.TextField(null=True)
-
     # Encrypted URL for the exam video that had been reviewed
     encrypted_video_url = models.BinaryField(null=True)
 
@@ -848,9 +843,6 @@ class ProctoredExamSoftwareSecureReviewHistory(TimeStampedModel):
     # The raw payload that was received back from the
     # reviewing service
     raw_data = models.TextField()
-
-    # URL for the exam video that had been reviewed
-    video_url = models.TextField(null=True)
 
     # user_id of person who did the review (can be None if submitted via server-to-server API)
     reviewed_by = models.ForeignKey(USER_MODEL, null=True, related_name='+', on_delete=models.CASCADE)

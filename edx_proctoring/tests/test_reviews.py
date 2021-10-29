@@ -141,7 +141,6 @@ class ReviewTests(LoggedInTestCase):
 
             self.assertIsNotNone(review)
             self.assertEqual(review.review_status, review_status)
-            self.assertFalse(review.video_url)
             self.assertTrue(review.encrypted_video_url)
 
             self.assertIsNotNone(review.raw_data)
@@ -301,7 +300,6 @@ class ReviewTests(LoggedInTestCase):
 
         self.assertIsNotNone(review)
         self.assertEqual(review.review_status, SoftwareSecureReviewStatus.clean)
-        self.assertFalse(review.video_url)
 
         self.assertIsNotNone(review.raw_data)
 
@@ -347,7 +345,6 @@ class ReviewTests(LoggedInTestCase):
 
         self.assertIsNotNone(review)
         self.assertEqual(review.review_status, SoftwareSecureReviewStatus.suspicious)
-        self.assertFalse(review.video_url)
 
         self.assertIsNotNone(review.raw_data)
 
