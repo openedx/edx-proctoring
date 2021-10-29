@@ -13,6 +13,10 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[4.3.3] - 2021-10-29
+~~~~~~~~~~~~~~~~~~~~
+* Remove ProctoredExamSoftwareSecureReview.video_url column from database.
+
 [4.3.2] - 2021-10-28
 ~~~~~~~~~~~~~~~~~~~~
 * Remove video_url reference from ProctoredExamSoftwareSecureReview.
