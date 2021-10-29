@@ -939,14 +939,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id)
         self.assertGreater(attempt_id, 0)
 
-    @ddt.data(
-        (False, False),
-        (True, False),
-        (False, True),
-        (True, True)
-    )
-    @ddt.unpack
-    def test_register_exam_attempt_context(self, verified_name_enabled, has_verified_name):
+    @ddt.data(True, False)
+    def test_register_exam_attempt_context(self, has_verified_name):
         """
         Test that the backend provider is called with the correct context when
         creating an exam attempt.
@@ -960,12 +954,9 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
                     self.user, verified_name='Verified Name', profile_name='Profile Name', status='approved',
                 )
 
-            if verified_name_enabled:
-                # Verified name should only be used if the feature is enabled
-                name_affirmation_service.enabled = True
-                verified_name_obj = name_affirmation_service.get_verified_name(self.user)
-                if verified_name_obj:
-                    verified_name = verified_name_obj.verified_name
+            verified_name_obj = name_affirmation_service.get_verified_name(self.user)
+            if verified_name_obj:
+                verified_name = verified_name_obj.verified_name
 
             proctored_exam = get_exam_by_id(self.proctored_exam_id)
 
@@ -2492,16 +2483,10 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         attempt = get_exam_attempt_by_id(exam_attempt.id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.resumed)
 
-    @ddt.data(
-        (True, True),
-        (False, True),
-        (True, False),
-        (False, False)
-    )
-    @ddt.unpack
+    @ddt.data(True, False)
     @patch('edx_proctoring.api.exam_attempt_status_signal.send')
     def test_create_and_update_exam_attempt_signal_verified_name(
-            self, has_verified_name, verified_name_enabled, mock_signal):
+            self, has_verified_name, mock_signal):
         """
         Test that creating and updating a proctored exam attempt status will trigger
         a signal emission with correct data
@@ -2516,9 +2501,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             name_affirmation_service.create_verified_name(
                 self.user, verified_name='John Doe', profile_name='Old Name', status='created',
             )
-        if verified_name_enabled:
-            name_affirmation_service.enabled = True
-        if has_verified_name and verified_name_enabled:
+
+        if has_verified_name:
             full_name = 'John Doe'
 
         # Check that signal is sent with verified name when attempt is created

@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.5.0] - 2021-11-01
+~~~~~~~~~~~~~~~~~~~~
+* Remove references to VERIFIED_NAME_FLAG Django waffle flag.
+
 [4.4.1] - 2021-11-01
 ~~~~~~~~~~~~~~~~~~~~
 * Fix version number for previous release

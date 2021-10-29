@@ -1023,14 +1023,10 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
 
 def _get_verified_name(user_id, name_affirmation_service):
     """
-    Get the user's verified name if name affirmation is enabled
-    and one exists.
+    Get the user's verified name if one exists.
 
     Returns a verified name object (or None)
     """
-    if not name_affirmation_service.is_verified_name_enabled():
-        return None
-
     verified_name = None
 
     user = USER_MODEL.objects.get(id=user_id)
