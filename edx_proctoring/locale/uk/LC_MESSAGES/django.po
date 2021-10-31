@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-17 18:36+0000\n"
+"POT-Creation-Date: 2021-10-31 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Danylo Shcherbak <danylo.shcherbak@raccoongang.com>, 2021\n"
 "Language-Team: Ukrainian (https://www.transifex.com/open-edx/teams/6205/uk/)\n"
@@ -51,75 +51,75 @@ msgstr ""
 msgid "courses with active proctored exams"
 msgstr ""
 
-#: admin.py:357
+#: admin.py:350
 msgid "Course Id"
 msgstr ""
 
-#: admin.py:395
+#: admin.py:388
 msgid "Created"
 msgstr ""
 
-#: admin.py:396
+#: admin.py:389
 msgid "Download Software Clicked"
 msgstr ""
 
-#: admin.py:397
+#: admin.py:390
 msgid "Ready To Start"
 msgstr ""
 
-#: admin.py:398
+#: admin.py:391
 msgid "Started"
 msgstr "Розпочався"
 
-#: admin.py:399
+#: admin.py:392
 msgid "Ready To Submit"
 msgstr ""
 
-#: admin.py:400
+#: admin.py:393
 msgid "Declined"
 msgstr ""
 
-#: admin.py:401
+#: admin.py:394
 msgid "Timed Out"
 msgstr ""
 
-#: admin.py:402
+#: admin.py:395
 msgid "Submitted"
 msgstr ""
 
-#: admin.py:403
+#: admin.py:396
 msgid "Second Review Required"
 msgstr ""
 
-#: admin.py:404
+#: admin.py:397
 msgid "Verified"
 msgstr "Перевірений"
 
-#: admin.py:405
+#: admin.py:398
 msgid "Rejected"
 msgstr ""
 
-#: admin.py:406
+#: admin.py:399
 msgid "Error"
 msgstr ""
 
-#: admin.py:407
+#: admin.py:400
 msgid "Ready To Resume"
 msgstr ""
 
-#: admin.py:411
+#: admin.py:404
 msgid "Onboarding Missing"
 msgstr ""
 
-#: admin.py:412
+#: admin.py:405
 msgid "Onboarding Failed"
 msgstr ""
 
-#: admin.py:413
+#: admin.py:406
 msgid "Onboarding Pending"
 msgstr ""
 
-#: admin.py:414
+#: admin.py:407
 msgid "Onboarding Expired"
 msgstr ""
 
@@ -128,70 +128,70 @@ msgstr ""
 msgid "you have {remaining_time} remaining"
 msgstr ""
 
-#: api.py:1595
+#: api.py:1606
 msgid "your course"
 msgstr ""
 
-#: api.py:1688
+#: api.py:1699
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1697
+#: api.py:1708
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1728
+#: api.py:1739
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 
-#: api.py:2204
+#: api.py:2215
 msgid "Taking As Proctored Exam"
 msgstr ""
 
-#: api.py:2209
+#: api.py:2220
 msgid "Proctored Option Available"
 msgstr ""
 
-#: api.py:2214
+#: api.py:2225
 msgid "Taking As Open Exam"
 msgstr ""
 
-#: api.py:2219 api.py:2224
+#: api.py:2230 api.py:2235
 msgid "Pending Session Review"
 msgstr ""
 
-#: api.py:2229
+#: api.py:2240
 msgid "Passed Proctoring"
 msgstr ""
 
-#: api.py:2234 api.py:2239
+#: api.py:2245 api.py:2250
 msgid "Failed Proctoring"
 msgstr ""
 
-#: api.py:2244
+#: api.py:2255
 msgid "Proctored Option No Longer Available"
 msgstr ""
 
-#: api.py:2253
+#: api.py:2264
 msgid "Ungraded Practice Exam"
 msgstr ""
 
-#: api.py:2258
+#: api.py:2269
 msgid "Practice Exam Completed"
 msgstr ""
 
-#: api.py:2263
+#: api.py:2274
 msgid "Practice Exam Failed"
 msgstr ""
 
-#: api.py:2271
+#: api.py:2282
 msgid "Timed Exam"
 msgstr ""
 
-#: api.py:2860
+#: api.py:2871
 msgid "Onboarding status question"
 msgstr ""
 
@@ -1353,19 +1353,19 @@ msgstr ""
 msgid " and {num_of_minutes} minutes"
 msgstr ""
 
-#: utils.py:321
+#: utils.py:342
 msgid "a proctored exam"
 msgstr ""
 
-#: utils.py:324
+#: utils.py:345
 msgid "a timed exam"
 msgstr ""
 
-#: utils.py:327
+#: utils.py:348
 msgid "an onboarding exam"
 msgstr ""
 
-#: utils.py:329
+#: utils.py:350
 msgid "a practice exam"
 msgstr ""
 
