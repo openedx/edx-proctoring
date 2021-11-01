@@ -4,8 +4,6 @@
 #
 #    make upgrade
 #
-asgiref==3.4.1
-    # via django
 astroid==2.8.4
     # via
     #   pylint
@@ -29,7 +27,7 @@ diff-cover==6.4.2
     # via -r requirements/dev.in
 distlib==0.3.3
     # via virtualenv
-django==3.2.8
+django==2.2.24
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
@@ -43,7 +41,7 @@ edx-lint==5.2.1
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.3.1
+filelock==3.3.2
     # via
     #   tox
     #   virtualenv
@@ -66,7 +64,7 @@ markupsafe==2.0.1
     # via jinja2
 mccabe==0.6.1
     # via pylint
-packaging==21.0
+packaging==21.2
     # via tox
 path==16.2.0
     # via
@@ -112,7 +110,7 @@ pylint-plugin-utils==0.6
     # via
     #   pylint-celery
     #   pylint-django
-pyparsing==3.0.2
+pyparsing==2.4.7
     # via packaging
 python-slugify==5.0.2
     # via code-annotations
@@ -159,7 +157,7 @@ wheel==0.37.0
     # via
     #   -r requirements/dev.in
     #   pip-tools
-wrapt==1.13.2
+wrapt==1.13.3
     # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:
