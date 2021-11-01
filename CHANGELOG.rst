@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.4.1] - 2021-11-01
+~~~~~~~~~~~~~~~~~~~~
+* Fix version number for previous release
+
 [4.4.0] - 2021-10-29
 ~~~~~~~~~~~~~~~~~~~~
 * Exam attempt should remain resumable after they have been marked as ready to resume. In order
