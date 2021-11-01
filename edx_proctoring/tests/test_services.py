@@ -404,11 +404,6 @@ class MockNameAffirmationService:
     """Mock Name Affirmation Service"""
     def __init__(self):
         self.verified_name = None
-        self.enabled = False
-
-    def is_verified_name_enabled(self):
-        """ Return Mock Enabled Flag"""
-        return self.enabled
 
     def get_verified_name(self, user, is_verified=False):
         """ Return mock VerifiedName """
