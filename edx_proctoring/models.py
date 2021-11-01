@@ -412,6 +412,14 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # has not yet marked submitted is resumable.
     is_resumable = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Resumable"))
 
+    # marks whether or not an attempt has been marked as ready to resume
+    # by staff. The value of this field does not necessarily mean that an
+    # attempt is ready to resume by a learner, only that the staff has marked it as such.
+    ready_to_resume = models.BooleanField(default=False, verbose_name=ugettext_noop("Ready to Resume"))
+
+    # marks whether or not an attempt has been resumed by a learner.
+    resumed = models.BooleanField(default=False, verbose_name=ugettext_noop("Resumed"))
+
     history = HistoricalRecords(table_name='proctoring_proctoredexamstudentattempt_history')
 
     class Meta:

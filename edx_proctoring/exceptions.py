@@ -148,6 +148,14 @@ class ProctoredExamIllegalStatusTransition(ProctoredBaseException):
     """
 
 
+class ProctoredExamIllegalResumeUpdate(ProctoredBaseException):
+    """
+    Raised if an update to the ready_to_resume or resumed fields should not be allowed,
+    e.g. if we try to update ready_to_resume to True on an examp attempt, but the attempt
+    is not resumable.
+    """
+
+
 class BackendProviderCannotRetireUser(ProctoredBaseException):
     """
     Raised when a back-end provider cannot retire a user

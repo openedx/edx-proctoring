@@ -154,6 +154,7 @@
                         <th class="attempt-started-at"><%- gettext("Started At") %></th>
                         <th class="attempt-completed-at"><%- gettext("Completed At") %> </th>
                         <th class="attempt-status"><%- gettext("Status") %> </th>
+                        <th class="attempt-ready-to-resume"><%- gettext("Ready to Resume") %> </th>
                         <th class="c_action"><%- gettext("Actions") %> </th>
                     </tr>
                 </thead>
@@ -192,7 +193,18 @@
                                     N/A
                                 <% } %>
                                 </td>
+                                <% if (
+                                    (proctored_exam_attempt.ready_to_resume || proctored_exam_attempt.status == "ready_to_resume")
+                                    && !proctored_exam_attempt.resumed
+                                ) { %>
+                                    <td>
+                                        <span class="fa fa-check-circle" aria-hidden="true"></span>
+                                    </td>
+                                <% } else { %>
+                                    <td></td>
+                                <% } %>
                             <% } else { %>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -251,6 +263,16 @@
                                         N/A
                                     <% } %>
                                     </td>
+                                    <% if (
+                                        (proctored_exam_attempt.ready_to_resume || proctored_exam_attempt.status == "ready_to_resume")
+                                        && !proctored_exam_attempt.resumed
+                                    ) { %>
+                                        <td>
+                                            <span class="fa fa-check-circle" aria-hidden="true"></span>
+                                        </td>
+                                    <% } else { %>
+                                        <td></td>
+                                    <% } %>
                                     <td></td>
                                 </tr>
                             <% }); %>
