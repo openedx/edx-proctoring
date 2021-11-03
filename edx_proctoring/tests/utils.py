@@ -18,7 +18,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from django.test.client import Client
 
-from edx_proctoring.api import create_exam, create_exam_review_policy
+from edx_proctoring.api import create_exam, create_exam_review_policy, is_attempt_in_resume_process
 from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -284,8 +284,10 @@ class ProctoredExamTestCase(LoggedInTestCase):
             is_active=False
         )
 
-    def _create_exam_attempt(self, exam_id, status=ProctoredExamStudentAttemptStatus.created,
-                             is_practice_exam=False, time_remaining_seconds=None):
+    def _create_exam_attempt(
+        self, exam_id, status=ProctoredExamStudentAttemptStatus.created, is_practice_exam=False,
+        time_remaining_seconds=None, ready_to_resume=False, resumed=False
+    ):
         """
         Creates the ProctoredExamStudentAttempt object.
         """
@@ -298,6 +300,8 @@ class ProctoredExamTestCase(LoggedInTestCase):
             taking_as_proctored=True,
             is_sample_attempt=is_practice_exam,
             time_remaining_seconds=time_remaining_seconds,
+            ready_to_resume=ready_to_resume,
+            resumed=resumed
         )
 
         if status in (ProctoredExamStudentAttemptStatus.started,
@@ -307,7 +311,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
         if ProctoredExamStudentAttemptStatus.is_completed_status(status):
             attempt.completed_at = datetime.now(pytz.UTC)
 
-        if status == ProctoredExamStudentAttemptStatus.error:
+        if status == ProctoredExamStudentAttemptStatus.error and not is_attempt_in_resume_process(attempt):
             attempt.is_resumable = True
 
         attempt.save()

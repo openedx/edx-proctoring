@@ -1232,7 +1232,7 @@ def mark_exam_attempt_timeout(attempt_id):
 
 def mark_exam_attempt_as_ready(attempt_id):
     """
-    Marks the exam attemp as ready to start
+    Marks the exam attempt as ready to start
     """
     return update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.ready_to_start)
 
@@ -1282,28 +1282,18 @@ def is_attempt_ready_to_resume(attempt):
     """
 
     # if the attempt has been marked as ready to resume, check to see that it has not been resumed yet
-    # we also want to check if the status is ready to resume for backwards compatibility. Older attempts
-    # may still have this status, but not have the correct value for the ready_to_resume_field
-    return (
-        (attempt['ready_to_resume'] or attempt['status'] == ProctoredExamStudentAttemptStatus.ready_to_resume)
-        and not attempt['resumed']
-    )
+    return attempt['ready_to_resume'] and not attempt['resumed']
 
 
 def is_attempt_in_resume_process(attempt_obj):
     """
     Determine if an exam attempt is in the resume process. This should check if either of the resume
-    related fields are set to true, or if the attempt status is a resume status. We must check both
-    in order for older attempts with the resume statuses to function as expected.
+    related fields are set to true.
 
     Arguments:
         attempt_obj: attempt object
     """
-    return (
-        attempt_obj.ready_to_resume
-        or attempt_obj.resumed
-        or ProctoredExamStudentAttemptStatus.is_resume_status(attempt_obj.status)
-    )
+    return attempt_obj.ready_to_resume or attempt_obj.resumed
 
 
 def is_state_transition_legal(from_status, to_status):

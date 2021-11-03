@@ -26,6 +26,7 @@ from edx_proctoring.api import (
     create_exam_attempt,
     get_backend_provider,
     get_exam_attempt_by_id,
+    mark_exam_attempt_as_ready_to_resume,
     reset_practice_exam,
     update_attempt_status
 )
@@ -3380,12 +3381,12 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         # create two attempts each for exam 1
         attempt_1 = create_exam_attempt(exam_id_1, self.user.id, taking_as_proctored=True)
         update_attempt_status(attempt_1, ProctoredExamStudentAttemptStatus.error)
-        update_attempt_status(attempt_1, ProctoredExamStudentAttemptStatus.ready_to_resume)
+        mark_exam_attempt_as_ready_to_resume(attempt_1)
         attempt_2 = create_exam_attempt(exam_id_1, self.user.id, taking_as_proctored=True)
 
         attempt_3 = create_exam_attempt(exam_id_1, self.second_user.id, taking_as_proctored=True)
         update_attempt_status(attempt_3, ProctoredExamStudentAttemptStatus.error)
-        update_attempt_status(attempt_3, ProctoredExamStudentAttemptStatus.ready_to_resume)
+        mark_exam_attempt_as_ready_to_resume(attempt_3)
         attempt_4 = create_exam_attempt(exam_id_1, self.second_user.id, taking_as_proctored=True)
 
         # create one attempt each for exam 2
@@ -4377,7 +4378,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(response.status_code, 403)
         self.assertRaises(ProctoredExamPermissionDenied)
 
-        # Make sure the exam attempt is in the ready_to_resume state.
+        # Make sure the exam attempt is in the original state.
         attempt = get_exam_attempt_by_id(old_attempt_id)
         self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.created)
 
@@ -6001,7 +6002,8 @@ class TestResetAttemptsView(LoggedInTestCase):
             True
         )
         ready_first = ProctoredExamStudentAttempt.objects.get(id=first_attempt_id)
-        ready_first.status = ProctoredExamStudentAttemptStatus.ready_to_resume
+        ready_first.status = ProctoredExamStudentAttemptStatus.error
+        ready_first.resumed = True
         ready_first.save()
         second_attempt_id = create_exam_attempt(
             self.exam_id,
@@ -6009,7 +6011,8 @@ class TestResetAttemptsView(LoggedInTestCase):
             True
         )
         ready_second = ProctoredExamStudentAttempt.objects.get(id=second_attempt_id)
-        ready_second.status = ProctoredExamStudentAttemptStatus.ready_to_resume
+        ready_second.status = ProctoredExamStudentAttemptStatus.error
+        ready_second.resumed = True
         ready_second.save()
         third_attempt_id = create_exam_attempt(
             self.exam_id,
