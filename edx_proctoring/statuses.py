@@ -65,12 +65,6 @@ class ProctoredExamStudentAttemptStatus:
     # the course end date has passed
     expired = 'expired'
 
-    # the learner is ready to resume their errored proctored exam
-    ready_to_resume = 'ready_to_resume'
-
-    # the exam has been resumed and new attempt has been created
-    resumed = 'resumed'
-
     # the onboarding attempt has been reset
     onboarding_reset = 'onboarding_reset'
 
@@ -94,8 +88,8 @@ class ProctoredExamStudentAttemptStatus:
         """
         return status in [
             cls.declined, cls.timed_out, cls.submitted, cls.second_review_required,
-            cls.verified, cls.rejected, cls.error, cls.ready_to_resume, cls.resumed,
-            cls.onboarding_missing, cls.onboarding_pending, cls.onboarding_failed, cls.onboarding_expired
+            cls.verified, cls.rejected, cls.error, cls.onboarding_missing, cls.onboarding_pending,
+            cls.onboarding_failed, cls.onboarding_expired
         ]
 
     @classmethod
@@ -159,15 +153,6 @@ class ProctoredExamStudentAttemptStatus:
         """
         return status in [
             cls.started, cls.ready_to_submit
-        ]
-
-    @classmethod
-    def is_resume_status(cls, status):
-        """
-        Returns a boolean if the status passed is "resumed" or "ready to resume"
-        """
-        return status in [
-            cls.ready_to_resume, cls.resumed
         ]
 
 

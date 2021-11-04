@@ -290,8 +290,7 @@ describe('ProctoredExamAttemptView', function() {
         '<% } else { %> N/A <% } %>' +
         '</td>' +
         '<% if (' +
-        '(proctored_exam_attempt.ready_to_resume || proctored_exam_attempt.status == "ready_to_resume") ' +
-        '&& !proctored_exam_attempt.resumed' +
+        'proctored_exam_attempt.ready_to_resume && !proctored_exam_attempt.resumed' +
         ') { %>' +
         '<td>' +
         '<span class="fa fa-check-circle" aria-hidden="true"></span>' +
@@ -361,8 +360,7 @@ describe('ProctoredExamAttemptView', function() {
         '<%= getExamAttemptStatus(proctored_exam_attempt.status) %>' +
         '<% } else { %> N/A <% } %> </td>' +
         '<% if (' +
-        '(proctored_exam_attempt.ready_to_resume || proctored_exam_attempt.status == "ready_to_resume") ' +
-        '&& !proctored_exam_attempt.resumed' +
+        'proctored_exam_attempt.ready_to_resume && !proctored_exam_attempt.resumed' +
         ') { %>' +
         '<td>' +
         '<span class="fa fa-check-circle" aria-hidden="true"></span>' +
@@ -590,7 +588,7 @@ describe('ProctoredExamAttemptView', function() {
                     'Content-Type': 'application/json'
                 },
                 JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(
-                    'ready_to_resume', false, false, false, true)
+                    'error', false, false, false, true)
                 )
             ]
         );
@@ -651,7 +649,9 @@ describe('ProctoredExamAttemptView', function() {
                 {
                     'Content-Type': 'application/json'
                 },
-                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson('ready_to_resume'))
+                JSON.stringify(getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(
+                    'error', false, false, true, false
+                ))
             ]
         );
 
@@ -685,7 +685,6 @@ describe('ProctoredExamAttemptView', function() {
 
         expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('testuser1');
         expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).toContain('Normal Exam');
-        expect(this.proctored_exam_attempt_view.$el.find('tbody.accordion-panel').html()).toContain('Ready to resume');
         expect(this.proctored_exam_attempt_view.$el.find('tbody.accordion-panel').html()).toContain('fa-check-circle');
         expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').hasClass('is-visible')).toEqual(false);
     });

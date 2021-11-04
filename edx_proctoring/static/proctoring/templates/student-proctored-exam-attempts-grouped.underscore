@@ -194,8 +194,7 @@
                                 <% } %>
                                 </td>
                                 <% if (
-                                    (proctored_exam_attempt.ready_to_resume || proctored_exam_attempt.status == "ready_to_resume")
-                                    && !proctored_exam_attempt.resumed
+                                    proctored_exam_attempt.ready_to_resume && !proctored_exam_attempt.resumed
                                 ) { %>
                                     <td>
                                         <span class="fa fa-check-circle" aria-hidden="true"></span>
@@ -264,8 +263,7 @@
                                     <% } %>
                                     </td>
                                     <% if (
-                                        (proctored_exam_attempt.ready_to_resume || proctored_exam_attempt.status == "ready_to_resume")
-                                        && !proctored_exam_attempt.resumed
+                                        proctored_exam_attempt.ready_to_resume && !proctored_exam_attempt.resumed
                                     ) { %>
                                         <td>
                                             <span class="fa fa-check-circle" aria-hidden="true"></span>

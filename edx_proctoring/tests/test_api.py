@@ -1032,7 +1032,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         # create an attempt that has been marked ready to resume
         initial_attempt = self._create_exam_attempt(
-            self.proctored_exam_id, ProctoredExamStudentAttemptStatus.ready_to_resume
+            self.proctored_exam_id, ProctoredExamStudentAttemptStatus.error, ready_to_resume=True
         )
         # populate the remaining time
         initial_attempt.time_remaining_seconds = 600
@@ -1068,7 +1068,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         An exam cannot be resumed if the previous attempt is not 'ready to resume' or 'resumed'
         """
-        self._create_exam_attempt(self.proctored_exam_id, status)
+        self._create_exam_attempt(self.proctored_exam_id, status, ready_to_resume=False, resumed=False)
         with self.assertRaises(StudentExamAttemptAlreadyExistsException):
             create_exam_attempt(self.proctored_exam_id, self.user_id)
 
@@ -1144,15 +1144,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         first_attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
         update_attempt_status(first_attempt_id, ProctoredExamStudentAttemptStatus.error)
-        update_attempt_status(first_attempt_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
+        mark_exam_attempt_as_ready_to_resume(first_attempt_id)
 
         second_attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
         update_attempt_status(second_attempt_id, ProctoredExamStudentAttemptStatus.error)
-        update_attempt_status(second_attempt_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
+        mark_exam_attempt_as_ready_to_resume(second_attempt_id)
 
         third_attempt_id = create_exam_attempt(self.proctored_exam_id, self.user_id, taking_as_proctored=True)
         update_attempt_status(third_attempt_id, ProctoredExamStudentAttemptStatus.error)
-        update_attempt_status(third_attempt_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
 
         attempts = get_user_attempts_by_exam_id(self.user_id, self.proctored_exam_id)
         self.assertEqual(len(attempts), 3)
@@ -1426,14 +1425,15 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         # create the first attempt
         first_exam_attempt = self._create_exam_attempt(
             exam_id=self.proctored_exam_id,
-            status=ProctoredExamStudentAttemptStatus.ready_to_resume,
-            time_remaining_seconds=600
+            status=ProctoredExamStudentAttemptStatus.error,
+            time_remaining_seconds=600,
+            ready_to_resume=True
         )
-        # create the second attempt, transitioning from error to ready_to_resume
+        # create the second attempt, setting the status to error and mark ready to resume
         second_exam_attempt_id = create_exam_attempt(exam_id=self.proctored_exam_id, user_id=self.user_id)
         update_attempt_status(second_exam_attempt_id, ProctoredExamStudentAttemptStatus.error)
         update_exam_attempt(second_exam_attempt_id, time_remaining_seconds=500)
-        update_attempt_status(second_exam_attempt_id, ProctoredExamStudentAttemptStatus.ready_to_resume)
+        mark_exam_attempt_as_ready_to_resume(second_exam_attempt_id)
         # create the third attempt, then assert that all attempts return correctly
         third_exam_attempt_id = create_exam_attempt(exam_id=self.proctored_exam_id, user_id=self.user_id)
         all_attempts = get_filtered_exam_attempts(self.course_id, self.user.username)
@@ -1443,7 +1443,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         self.assertEqual(all_attempts[2]['id'], first_exam_attempt.id)
         # the time remaining on the newest attempt should match the previous attempt
         self.assertEqual(all_attempts[0]['time_remaining_seconds'], all_attempts[1]['time_remaining_seconds'])
-        # when a new attempt is created, the previous attempt should have resumed sest to true
+        # when a new attempt is created, the previous attempt should have resumed set to true
         self.assertFalse(all_attempts[0]['resumed'])
         self.assertTrue(all_attempts[1]['resumed'])
         self.assertTrue(all_attempts[2]['resumed'])
@@ -2437,7 +2437,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         """
         Assert that an attempted transition of a proctored exam attempt from an error state
         to a ready_to_resume state completes successfully and does not raise a
-        ProctoredExamIllegalStatusTransition exception.
+        ProctoredExamIllegalResumeUpdate exception.
         """
         exam_attempt = self._create_started_exam_attempt()
 
@@ -2457,31 +2457,12 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         attempt = get_exam_attempt_by_id(exam_attempt.id)
         self.assertEqual(attempt['status'], resumable_status)
+        self.assertTrue(attempt['is_resumable'])
 
-        update_attempt_status(
-            exam_attempt.id,
-            ProctoredExamStudentAttemptStatus.ready_to_resume
-        )
+        mark_exam_attempt_as_ready_to_resume(exam_attempt.id)
 
         attempt = get_exam_attempt_by_id(exam_attempt.id)
-        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.ready_to_resume)
-
-    @ddt.data(
-        ProctoredExamStudentAttemptStatus.ready_to_resume,
-        ProctoredExamStudentAttemptStatus.resumed
-    )
-    def test_update_exam_attempt_resumed(self, from_status):
-        """
-        Assert that transition status to 'resumed' is successful if the previous status is
-        'ready_to_resume' or 'resumed'.
-        """
-        exam_attempt = self._create_exam_attempt(self.proctored_exam_id, status=from_status)
-        update_attempt_status(
-            exam_attempt.id,
-            ProctoredExamStudentAttemptStatus.resumed
-        )
-        attempt = get_exam_attempt_by_id(exam_attempt.id)
-        self.assertEqual(attempt['status'], ProctoredExamStudentAttemptStatus.resumed)
+        self.assertTrue(attempt['ready_to_resume'])
 
     @ddt.data(True, False)
     @patch('edx_proctoring.api.exam_attempt_status_signal.send')
@@ -2595,16 +2576,12 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         with self.assertRaises(ProctoredExamIllegalResumeUpdate):
             mark_exam_attempt_as_ready_to_resume(exam_attempt.id)
 
-    @ddt.data(
-        (ProctoredExamStudentAttemptStatus.ready_to_resume, False, False),
-        (ProctoredExamStudentAttemptStatus.resumed, False, False),
-        (ProctoredExamStudentAttemptStatus.error, True, False),
-        (ProctoredExamStudentAttemptStatus.error, False, True),
-        (ProctoredExamStudentAttemptStatus.ready_to_resume, True, False)
-    )
+    @ddt.data((True, False), (False, True))
     @ddt.unpack
-    def test_mark_resumed(self, status, ready_to_resume, expect_error):
-        exam_attempt = self._create_exam_attempt(self.proctored_exam_id, status=status)
+    def test_mark_resumed(self, ready_to_resume, expect_error):
+        exam_attempt = self._create_exam_attempt(
+            self.proctored_exam_id, status=ProctoredExamStudentAttemptStatus.error
+        )
         exam_attempt.ready_to_resume = ready_to_resume
         exam_attempt.save()
 
@@ -3683,7 +3660,8 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
             taking_as_proctored=True,
             is_sample_attempt=False,
             external_id=proctored_exam.external_id,
-            status=ProctoredExamStudentAttemptStatus.ready_to_resume
+            status=ProctoredExamStudentAttemptStatus.error,
+            ready_to_resume=True
         )
 
         data = get_exam_attempt_data(proctored_exam.id, attempt.id)

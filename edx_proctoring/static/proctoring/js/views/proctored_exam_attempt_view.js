@@ -11,7 +11,6 @@ edx = edx || {};
         created: gettext('Created'),
         download_software_clicked: gettext('Download Software Clicked'),
         ready_to_start: gettext('Ready to start'),
-        ready_to_resume: gettext('Ready to resume'),
         started: gettext('Started'),
         ready_to_submit: gettext('Ready to submit'),
         declined: gettext('Declined'),

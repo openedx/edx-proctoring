@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.6.0] - 2021-11-03
+~~~~~~~~~~~~~~~~~~~~
+* Remove references to "ready_to_resume" and "resumed" statuses.
+
 [4.5.0] - 2021-11-01
 ~~~~~~~~~~~~~~~~~~~~
 * Remove references to VERIFIED_NAME_FLAG Django waffle flag.
