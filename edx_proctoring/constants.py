@@ -68,7 +68,11 @@ VERIFICATION_DAYS_VALID = 730
 
 PING_FAILURE_PASSTHROUGH_TEMPLATE = 'edx_proctoring.{}_ping_failure_passthrough'
 
-ONBOARDING_PROFILE_API = 'edx_proctoring.onboarding_profile_api'
+ONBOARDING_PROFILE_API = (
+    settings.PROCTORING_SETTINGS['USE_ONBOARDING_PROFILE_API'] if
+    'USE_ONBOARDING_PROFILE_API' in settings.PROCTORING_SETTINGS
+    else getattr(settings, 'USE_ONBOARDING_PROFILE_API', False)
+)
 
 ONBOARDING_PROFILE_INSTRUCTOR_DASHBOARD_API = 'edx_proctoring.onboarding_profile_instructor_dashboard_api'
 

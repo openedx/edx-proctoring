@@ -1070,8 +1070,8 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         ))
         self.assertEqual(response_data['onboarding_release_date'], tomorrow.isoformat())
 
+    @patch('edx_proctoring.api.constants.ONBOARDING_PROFILE_API', True)
     @patch('logging.Logger.warning')
-    @patch('edx_proctoring.views.waffle.switch_is_active')
     @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
     @ddt.data(
         (VerificientOnboardingProfileStatus.no_profile, None),
@@ -1084,8 +1084,7 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
     )
     @ddt.unpack
     def test_onboarding_with_api_endpoint(self, api_status, attempt_status, mocked_onboarding_api,
-                                          mocked_switch_is_active, mock_logger):
-        mocked_switch_is_active.return_value = True
+                                          mock_logger):
         set_runtime_service('grades', MockGradesService(rejected_exam_overrides_grade=False))
 
         if attempt_status:
@@ -1114,11 +1113,10 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         self.assertEqual(response_data['expiration_date'], '2051-05-21')
         mock_logger.assert_not_called()
 
+    @patch('edx_proctoring.api.constants.ONBOARDING_PROFILE_API', True)
     @patch('logging.Logger.error')
-    @patch('edx_proctoring.views.waffle.switch_is_active')
     @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
-    def test_onboarding_with_differing_data(self, mocked_onboarding_api, mocked_switch_is_active, mock_logger):
-        mocked_switch_is_active.return_value = True
+    def test_onboarding_with_differing_data(self, mocked_onboarding_api, mock_logger):
         attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
 
@@ -1143,11 +1141,9 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         self.assertEqual(response_data['expiration_date'], '2051-05-21')
         mock_logger.assert_called()
 
-    @patch('edx_proctoring.views.waffle.switch_is_active')
+    @patch('edx_proctoring.api.constants.ONBOARDING_PROFILE_API', True)
     @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
-    def test_onboarding_with_api_404(self, mocked_onboarding_api, mocked_switch_is_active):
-        mocked_switch_is_active.return_value = True
-
+    def test_onboarding_with_api_404(self, mocked_onboarding_api):
         attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
 
@@ -1159,12 +1155,10 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         )
         self.assertEqual(response.status_code, 404)
 
+    @patch('edx_proctoring.api.constants.ONBOARDING_PROFILE_API', True)
     @patch('logging.Logger.warning')
-    @patch('edx_proctoring.views.waffle.switch_is_active')
     @patch.object(TestBackendProvider, 'get_onboarding_profile_info')
-    def test_onboarding_with_api_failure(self, mocked_onboarding_api, mocked_switch_is_active, mock_logger):
-        mocked_switch_is_active.return_value = True
-
+    def test_onboarding_with_api_failure(self, mocked_onboarding_api, mock_logger):
         attempt_id = create_exam_attempt(self.onboarding_exam_id, self.user_id, True)
         update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
 

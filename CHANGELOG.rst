@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.7.0] - 2021-11-08
+~~~~~~~~~~~~~~~~~~~~
+* Convert onboarding profile API waffle flag to Django setting.
+
 [4.6.0] - 2021-11-03
 ~~~~~~~~~~~~~~~~~~~~
 * Remove references to "ready_to_resume" and "resumed" statuses.
