@@ -63,7 +63,6 @@ from edx_proctoring.api import (
     update_exam_attempt
 )
 from edx_proctoring.constants import (
-    ONBOARDING_PROFILE_API,
     ONBOARDING_PROFILE_INSTRUCTOR_DASHBOARD_API,
     PING_FAILURE_PASSTHROUGH_TEMPLATE,
     REDS_API_REDIRECT
@@ -602,7 +601,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         data['onboarding_status'] = onboarding_attempt_data['onboarding_status']
         data['expiration_date'] = onboarding_attempt_data['expiration_date']
 
-        if waffle.switch_is_active(ONBOARDING_PROFILE_API):
+        if constants.ONBOARDING_PROFILE_API:
             try:
                 obs_user_id = obscured_user_id(user.id, onboarding_exam.backend)
                 onboarding_profile_data = backend.get_onboarding_profile_info(course_id, user_id=obs_user_id)
