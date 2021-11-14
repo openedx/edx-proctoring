@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-07 18:34+0000\n"
+"POT-Creation-Date: 2021-11-14 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Carolina De Mares <carolina.demares@edunext.co>, 2021\n"
 "Language-Team: Spanish (Latin America) (https://www.transifex.com/open-edx/teams/6205/es_419/)\n"
@@ -115,7 +115,7 @@ msgstr "Inducción pendiente"
 msgid "Onboarding Expired"
 msgstr "Inducción expirada"
 
-#: api.py:820 views.py:1141
+#: api.py:820 views.py:1140
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "Hay {remaining_time} restante"
@@ -201,11 +201,11 @@ msgstr "Es Resumible"
 
 #: models.py:418
 msgid "Ready to Resume"
-msgstr ""
+msgstr "Listo Para Resumir"
 
 #: models.py:421
 msgid "Resumed"
-msgstr ""
+msgstr "Resumido"
 
 #: models.py:598
 msgid "Additional Time (minutes)"
@@ -547,6 +547,14 @@ msgid ""
 "      so make sure this email has been added to your inbox filter.\n"
 "    "
 msgstr ""
+"\n"
+"      Una vez su perfil sea revisado, recibirás un correo \n"
+"      con los resultados revisados. El email vendrá de la siguiente dirección\n"
+"      <a href=\"mailto:%(learner_notification_from_email)s\">\n"
+"        %(learner_notification_from_email)s\n"
+"      </a>,\n"
+"      así que asegurarte de que este correo sea agregado a tu filtro de bandeja de entrada\n"
+"    "
 
 #: templates/onboarding_exam/submitted.html:29
 msgid ""
@@ -1074,6 +1082,13 @@ msgid ""
 "          passport.\n"
 "        "
 msgstr ""
+"\n"
+"         Nota: Como parte de la configuración del examen supervisado, se te solicitará \n"
+"         verificar tu identidad. Antes de empezar, asegúrate que cuentas con\n"
+"         un computador con cámara web, y que tienes un documento válido\n"
+"          de identificación fotográfica como lo es la licencia de conducción o él\n"
+"          pasaporte.\n"
+"        "
 
 #: templates/proctored_exam/instructions.html:27
 #, python-format
@@ -1768,74 +1783,74 @@ msgstr "examen de inducción"
 msgid "a practice exam"
 msgstr "un examen de práctica"
 
-#: views.py:149
+#: views.py:148
 msgid "could not determine the course_id"
 msgstr "No se pudo determinar la ID del curso"
 
-#: views.py:158 views.py:540
+#: views.py:157 views.py:539
 msgid "Must be a Staff User to Perform this request."
 msgstr "Hay que ser un usuario del equipo para cumplir esta pedida."
 
-#: views.py:528
+#: views.py:527
 msgid "Missing required query parameter course_id"
 msgstr ""
 "Requerimiento de parametro query de la identificación de curso faltante"
 
-#: views.py:548 views.py:719
+#: views.py:547 views.py:718
 msgid "There is no onboarding exam related to this course id."
 msgstr "No se registra un examen de inducción relacionado a este id de curso."
 
-#: views.py:577
+#: views.py:576
 msgid "There is no onboarding exam accessible to this user."
 msgstr "No se registra examen de inducción asequible para este usuario."
 
-#: views.py:627
+#: views.py:626
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr "API no disponible para el estado de inducción  {proctor_service}"
 
-#: views.py:769
+#: views.py:768
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 "El servicio de inducción se temporalmente fuera de servicio. Por favor "
 "intenta de nuevo."
 
-#: views.py:1147
+#: views.py:1146
 msgid "you have less than a minute remaining"
 msgstr "Queda menos de un minuto"
 
-#: views.py:1602
+#: views.py:1601
 msgid "Enter a valid username or email"
 msgstr "Ingrese un usuario o correo electrónico valido"
 
-#: views.py:1602
+#: views.py:1601
 msgid "user_info"
 msgstr "user_info"
 
-#: views.py:1615
+#: views.py:1614
 msgid "Enter a valid positive value number"
 msgstr "Ingrese un numero positivo valido"
 
-#: views.py:1615
+#: views.py:1614
 msgid "allowance_value"
 msgstr "allowance_value"
 
-#: views.py:1702
+#: views.py:1701
 msgid "Cannot update attempt review status"
 msgstr "No es posible actualizar el estado de revisión de los intentos "
 
-#: views.py:1984
+#: views.py:1983
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "No hay examenes en el curso {course_id}."
 
-#: views.py:1990
+#: views.py:1989
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "No hay examenes de revisión en el curso {course_id}"
 
-#: views.py:2017
+#: views.py:2016
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "No instructor registrado para {proctor_service}"
