@@ -7,8 +7,6 @@
     # via kombu
 appdirs==1.4.4
     # via fs
-asgiref==3.4.1
-    # via django
 attrs==21.2.0
     # via
     #   outcome
@@ -38,7 +36,7 @@ click-plugins==1.1.1
     # via celery
 code-annotations==1.2.0
     # via -r requirements/test.in
-coverage[toml]==6.0.2
+coverage[toml]==6.1.2
     # via pytest-cov
 cryptography==35.0.0
     # via pyjwt
@@ -83,16 +81,14 @@ django-webpack-loader==0.7.0
     #   drf-jwt
     #   edx-drf-extensions
 drf-jwt==1.19.1
-    # via
-    #   -c requirements/common_constraints.txt
-    #   edx-drf-extensions
+    # via edx-drf-extensions
 edx-django-utils==4.4.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   edx-when
     #   event-tracking
-edx-drf-extensions==8.0.0
+edx-drf-extensions==8.0.1
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -107,7 +103,7 @@ edx-rest-api-client==5.4.0
     # via -r requirements/base.in
 edx-when==2.2.2
     # via -r requirements/base.in
-event-tracking==1.1.3
+event-tracking==1.1.4
     # via -r requirements/base.in
 execnet==1.9.0
     # via pytest-xdist
@@ -125,7 +121,7 @@ idna==3.3
     # via requests
 iniconfig==1.1.1
     # via pytest
-jinja2==3.0.2
+jinja2==3.0.3
     # via code-annotations
 jsonfield==3.1.0
     # via -r requirements/base.in
@@ -134,7 +130,7 @@ lazy==1.4
     # via bok-choy
 logilab-common==1.8.1
     # via -r requirements/test.in
-lxml==4.6.3
+lxml==4.6.4
     # via xblock
 markupsafe==2.0.1
     # via
@@ -144,13 +140,13 @@ mock==4.0.3
     # via -r requirements/test.in
 mypy-extensions==0.4.3
     # via logilab-common
-newrelic==7.2.2.169
+newrelic==7.2.4.171
     # via edx-django-utils
-packaging==21.0
+packaging==21.2
     # via pytest
 path==16.2.0
     # via edx-i18n-tools
-pbr==5.6.0
+pbr==5.7.0
     # via stevedore
 pluggy==1.0.0
     # via pytest
@@ -159,11 +155,11 @@ polib==1.1.1
     # via click-repl
 psutil==5.8.0
     # via edx-django-utils
-py==1.10.0
+py==1.11.0
     # via
     #   pytest
     #   pytest-forked
-pycparser==2.20
+pycparser==2.21
     # via cffi
 pycryptodomex==3.11.0
     # via
@@ -181,7 +177,7 @@ pymongo==3.12.1
     # via
     #   edx-opaque-keys
     #   event-tracking
-pyparsing==3.0.2
+pyparsing==2.4.7
     # via packaging
 pytest==6.2.5
     # via
@@ -265,7 +261,7 @@ toml==0.10.2
     # via pytest
 tomli==1.2.2
     # via coverage
-typing-extensions==3.10.0.2
+typing-extensions==4.0.0
     # via logilab-common
 urllib3==1.26.7
     # via
