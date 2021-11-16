@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.7.1] - 2021-11-16
+~~~~~~~~~~~~~~~~~~~~
+* Assign interstitial to timed exam status
+
 [4.7.0] - 2021-11-08
 ~~~~~~~~~~~~~~~~~~~~
 * Convert onboarding profile API waffle flag to Django setting.

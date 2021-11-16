@@ -1439,6 +1439,27 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         )
         self.assertIn(expected_content, rendered_response)
 
+    def test_get_studentview_created_timed_exam(self):
+        """
+        Test that get_student_view for a created timed exam returns interstitial
+        """
+        self._create_unstarted_exam_attempt(is_proctored=False)
+
+        rendered_response = get_student_view(
+            user_id=self.user_id,
+            course_id=self.course_id,
+            content_id=self.content_id_timed,
+            context={
+                'display_name': self.exam_name,
+            }
+        )
+        self.assertNotIn(
+            f'data-exam-id="{self.proctored_exam_id}"',
+            rendered_response
+        )
+        self.assertIn(self.timed_exam_msg.format(exam_name=self.exam_name), rendered_response)
+        self.assertNotIn(self.start_an_exam_msg, rendered_response)
+
     def test_expired_exam(self):
         """
         Test that an expired exam shows a difference message when the exam is expired just recently
