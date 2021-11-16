@@ -2464,7 +2464,7 @@ def _get_timed_exam_view(exam, context, exam_id, user_id, course_id):
 
     attempt_status = attempt['status'] if attempt else None
     has_due_date = exam['due_date'] is not None
-    if not attempt_status:
+    if not attempt_status or attempt_status == ProctoredExamStudentAttemptStatus.created:
         if is_exam_passed_due(exam, user=user_id):
             student_view_template = 'timed_exam/expired.html'
         else:
