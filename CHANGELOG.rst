@@ -14,7 +14,12 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[3.25.0] - 2021-11-16
+~~~~~~~~~~~~~~~~~~~~~
+* Assign interstitial to timed exam status
+
 [3.24.6] - 2021-09-03
+~~~~~~~~~~~~~~~~~~~~~
 * Upgrade edx-lint for linting
 * Update code style
 * Handler test refactor
