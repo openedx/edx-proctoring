@@ -57,6 +57,23 @@ class ProctoredExamModelTests(LoggedInTestCase):
         output = str(policy)
         self.assertEqual(output, "ProctoredExamReviewPolicy: tester (test_course: अआईउऊऋऌ अआईउऊऋऌ (inactive))")
 
+    def test_history(self):
+        proctored_exam = ProctoredExam.objects.create(
+            course_id='test_course',
+            content_id='test_content',
+            exam_name='test_exam_name',
+            external_id='test_id',
+            time_limit_mins=60
+        )
+
+        self.assertEqual(len(proctored_exam.history.filter(course_id='test_course', content_id='test_content')), 1)
+
+        proctored_exam.external_id = 'test_id_2'
+        proctored_exam.backend = 'proctortrack'
+        proctored_exam.save()
+
+        self.assertEqual(len(proctored_exam.history.filter(course_id='test_course', content_id='test_content')), 2)
+
     def test_save_proctored_exam_student_allowance_history(self):  # pylint: disable=invalid-name
         """
         Test to Save and update the proctored Exam Student Allowance object.
