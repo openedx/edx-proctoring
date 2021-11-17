@@ -28,3 +28,5 @@ sessions.Session:
 # Automatically generated models that cannot be annotated
 edx_proctoring.HistoricalProctoredExamStudentAttempt:
     ".. no_pii": "This model has no PII"
+edx_proctoring.HistoricalProctoredExam:
+    ".. no_pii": "This model has no PII"

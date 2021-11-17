@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.7.2] - 2021-11-17
+~~~~~~~~~~~~~~~~~~~~
+* Add SimpleHistory to proctoring_proctoredexam table
+
 [4.7.1] - 2021-11-16
 ~~~~~~~~~~~~~~~~~~~~
 * Assign interstitial to timed exam status

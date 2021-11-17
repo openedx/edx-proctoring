@@ -70,6 +70,9 @@ class ProctoredExam(TimeStampedModel):
     # override the platform default backend choice
     backend = models.CharField(max_length=255, null=True, default=None)
 
+    # This is the reference to the SimpleHistory table
+    history = HistoricalRecords(table_name='proctoring_proctoredexamhistory')
+
     class Meta:
         """ Meta class for this Django model """
         unique_together = (('course_id', 'content_id'),)
