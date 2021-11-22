@@ -6,11 +6,11 @@
 #
 asgiref==3.4.1
     # via django
-astroid==2.8.4
+astroid==2.8.6
     # via
     #   pylint
     #   pylint-celery
-backports.entry-points-selectable==1.1.0
+backports.entry-points-selectable==1.1.1
     # via virtualenv
 chardet==4.0.0
     # via diff-cover
@@ -29,7 +29,7 @@ diff-cover==6.4.2
     # via -r requirements/dev.in
 distlib==0.3.3
     # via virtualenv
-django==3.2.8
+django==3.2.9
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
@@ -43,17 +43,17 @@ edx-lint==5.2.1
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.3.1
+filelock==3.4.0
     # via
     #   tox
     #   virtualenv
 inflect==5.3.0
     # via jinja2-pluralize
-isort==5.9.3
+isort==5.10.1
     # via
     #   -r requirements/quality.in
     #   pylint
-jinja2==3.0.2
+jinja2==3.0.3
     # via
     #   code-annotations
     #   diff-cover
@@ -66,7 +66,7 @@ markupsafe==2.0.1
     # via jinja2
 mccabe==0.6.1
     # via pylint
-packaging==21.0
+packaging==21.3
     # via tox
 path==16.2.0
     # via
@@ -74,7 +74,7 @@ path==16.2.0
     #   path.py
 path.py==12.5.0
     # via -r requirements/dev.in
-pbr==5.6.0
+pbr==5.8.0
     # via stevedore
 pep517==0.12.0
     # via pip-tools
@@ -90,7 +90,7 @@ pluggy==1.0.0
     #   tox
 polib==1.1.1
     # via edx-i18n-tools
-py==1.10.0
+py==1.11.0
     # via tox
 pycodestyle==2.8.0
     # via -r requirements/quality.in
@@ -112,7 +112,7 @@ pylint-plugin-utils==0.6
     # via
     #   pylint-celery
     #   pylint-django
-pyparsing==3.0.2
+pyparsing==3.0.6
     # via packaging
 python-slugify==5.0.2
     # via code-annotations
@@ -129,7 +129,7 @@ six==1.16.0
     #   edx-lint
     #   tox
     #   virtualenv
-snowballstemmer==2.1.0
+snowballstemmer==2.2.0
     # via pydocstyle
 sqlparse==0.4.2
     # via django
@@ -149,17 +149,17 @@ tox==3.24.4
     #   tox-battery
 tox-battery==0.6.1
     # via -r requirements/dev.in
-typing-extensions==3.10.0.2
+typing-extensions==4.0.0
     # via
     #   astroid
     #   pylint
-virtualenv==20.9.0
+virtualenv==20.10.0
     # via tox
 wheel==0.37.0
     # via
     #   -r requirements/dev.in
     #   pip-tools
-wrapt==1.13.2
+wrapt==1.13.3
     # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:
