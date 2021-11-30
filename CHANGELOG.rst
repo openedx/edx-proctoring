@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.8.0] - 2021-12-07
+~~~~~~~~~~~~~~~~~~~~
+* Remove older exam attempt history object that has been replaced.
+
 [4.7.3] - 2021-12-06
 ~~~~~~~~~~~~~~~~~~~~
 * Catch errors from `onStartExamAttempt` and `onEndExamAttempt`.

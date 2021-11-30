@@ -91,8 +91,7 @@ from edx_proctoring.models import (
     ProctoredExamSoftwareSecureComment,
     ProctoredExamSoftwareSecureReview,
     ProctoredExamStudentAllowance,
-    ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptHistory
+    ProctoredExamStudentAttempt
 )
 from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
@@ -2947,10 +2946,6 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         update_attempt_status(onboarding_attempt_id, ProctoredExamStudentAttemptStatus.verified)
         # now the original attempt will be deleted
         self.assertIsNone(get_exam_attempt_by_id(attempt_id))
-
-        # ensure that the attempt is still in the old history table
-        hist_attempt = ProctoredExamStudentAttemptHistory.objects.get(attempt_id=attempt_id)
-        self.assertEqual(hist_attempt.status, ProctoredExamStudentAttemptStatus.onboarding_missing)
 
         # simple history has the creation and the deletion
         # pylint: disable=no-member
