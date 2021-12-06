@@ -12,7 +12,7 @@ export const handlerWrapper = (Handler) => {
         if (handler.onStartExamAttempt) {
           handler.onStartExamAttempt()
             .then(() => self.postMessage({ type: 'examAttemptStarted' }))
-            .catch(() => self.postMessage({ type: 'examAttemptStartFailed' }));
+            .catch(error => self.postMessage({ type: 'examAttemptStartFailed', error }));
         }
         break;
       }
@@ -20,7 +20,7 @@ export const handlerWrapper = (Handler) => {
         if (handler.onEndExamAttempt) {
           handler.onEndExamAttempt()
             .then(() => self.postMessage({ type: 'examAttemptEnded' }))
-            .catch(() => self.postMessage({ type: 'examAttemptEndFailed' }));
+            .catch(error => self.postMessage({ type: 'examAttemptEndFailed', error }));
         }
         break;
       }

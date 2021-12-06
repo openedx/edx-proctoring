@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.7.3] - 2021-12-06
+~~~~~~~~~~~~~~~~~~~~
+* Catch errors from `onStartExamAttempt` and `onEndExamAttempt`.
+
 [4.7.2] - 2021-11-17
 ~~~~~~~~~~~~~~~~~~~~
 * Add SimpleHistory to proctoring_proctoredexam table
