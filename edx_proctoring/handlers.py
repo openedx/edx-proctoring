@@ -136,7 +136,6 @@ def on_attempt_changed(sender, instance, signal, **kwargs):  # pylint: disable=u
                     instance.id,
                     instance.proctored_exam.backend,
                 )
-    models.archive_model(models.ProctoredExamStudentAttemptHistory, instance, id='attempt_id')
 
 
 @receiver(post_delete, sender=models.ProctoredExamStudentAttempt)

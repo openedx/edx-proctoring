@@ -12,8 +12,7 @@ from edx_proctoring.models import (
     ProctoredExamReviewPolicyHistory,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAllowanceHistory,
-    ProctoredExamStudentAttempt,
-    ProctoredExamStudentAttemptHistory
+    ProctoredExamStudentAttempt
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
@@ -241,29 +240,9 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
             external_id="external"
         )
 
-        # No entry in the old history table
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(attempt_code="123456")
-        self.assertEqual(len(attempt_history), 0)
-
         # Simple history does have an entry and get_historic finds it
         # pylint: disable=no-member
         self.assertEqual(1, len(ProctoredExamStudentAttempt.history.filter(attempt_code="123456")))
-        hist_attempt = ProctoredExamStudentAttempt.get_historic_attempt_by_code(attempt.attempt_code)
-        self.assertEqual(attempt.external_id, hist_attempt.external_id)
-
-        attempt.delete_exam_attempt()
-
-        # Now there an entry in the old history table
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(attempt_code="123456")
-        self.assertEqual(len(attempt_history), 1)
-
-        # we need to empty simple history out for this test
-        # pylint: disable=no-member
-        ProctoredExamStudentAttempt.history.all().delete()
-        # pylint: disable=no-member
-        self.assertEqual(0, len(ProctoredExamStudentAttempt.history.filter(attempt_code="123456")))
-
-        # and get_historic finds the attempt out of the old table
         hist_attempt = ProctoredExamStudentAttempt.get_historic_attempt_by_code(attempt.attempt_code)
         self.assertEqual(attempt.external_id, hist_attempt.external_id)
 
@@ -289,27 +268,15 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
             external_id="external"
         )
 
-        # No entry in the old history table on creation of the Allowance entry.
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
-        self.assertEqual(len(attempt_history), 0)
-
-        # Simple history does have an entry
         self.assertEqual(1, len(attempt.history.all()))
 
         attempt.delete_exam_attempt()
 
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
-        self.assertEqual(len(attempt_history), 1)
-
-        # simple history table has more data
         # pylint: disable=no-member
         attempt_history = ProctoredExamStudentAttempt.history.filter(user_id=1)
         self.assertEqual(len(attempt_history), 2)
 
-        # make sure we can ready it back with the old helper class method
-        deleted_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
-        self.assertEqual(deleted_item.external_id, "external")
-        # and the new way
+        # make sure we can ready it back
         deleted_item = ProctoredExamStudentAttempt.get_historic_attempt_by_code("123456")
         self.assertEqual(deleted_item.external_id, "external")
 
@@ -326,17 +293,10 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
 
         attempt.delete_exam_attempt()
 
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
-        self.assertEqual(len(attempt_history), 2)
-
-        # simple history table has more data
         # pylint: disable=no-member
         attempt_history = ProctoredExamStudentAttempt.history.filter(user_id=1)
         self.assertEqual(len(attempt_history), 4)
 
-        deleted_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
-        self.assertEqual(deleted_item.external_id, "updated")
-        # and the new way
         deleted_item = ProctoredExamStudentAttempt.get_historic_attempt_by_code("123456")
         self.assertEqual(deleted_item.external_id, "updated")
 
@@ -362,37 +322,18 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
             external_id=1
         )
 
-        # No entry in the old History table on creation of the Allowance entry.
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
-        self.assertEqual(len(attempt_history), 0)
-
-        # Simple history does have an entry
         self.assertEqual(1, len(attempt.history.all()))
 
-        # re-saving, but not changing status should not make an archive copy
         attempt.external_id = "changed"
         attempt.save()
 
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
-        self.assertEqual(len(attempt_history), 0)
-
-        # Simple history has an entry per change
         self.assertEqual(2, len(attempt.history.all()))
 
         # change status...
         attempt.status = ProctoredExamStudentAttemptStatus.started
         attempt.save()
 
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(user_id=1)
-        self.assertEqual(len(attempt_history), 1)
-
-        # Simple history has an entry per change
         self.assertEqual(3, len(attempt.history.all()))
-
-        # make sure we can ready it back with old helper class method
-        updated_item = ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code("123456")
-        self.assertEqual(updated_item.external_id, "changed")
-        self.assertEqual(updated_item.status, ProctoredExamStudentAttemptStatus.created)
 
         # simple history reads the latest status
         updated_item = ProctoredExamStudentAttempt.get_historic_attempt_by_code("123456")
@@ -494,13 +435,6 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         with self.assertRaises(NotImplementedError):
             previous.delete()
 
-        # now delete attempt, to make sure we preserve the policy_id in the archive table
-        attempt.delete()
-
-        attempts = ProctoredExamStudentAttemptHistory.objects.all()
-        self.assertEqual(len(attempts), 1)
-        self.assertEqual(attempts[0].review_policy_id, deleted_id)
-
     def test_exam_attempt_is_resumable(self):
         # Create an exam.
         proctored_exam = ProctoredExam.objects.create(
@@ -525,11 +459,6 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         attempt = ProctoredExamStudentAttempt.objects.get(**filter_query)
         self.assertFalse(attempt.is_resumable)
 
-        # No entry in the History table on creation of the Allowance entry.
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(**filter_query)
-        self.assertEqual(len(attempt_history), 0)
-
-        # Simple history does have an entry
         # pylint: disable=no-member
         attempt_history = ProctoredExamStudentAttempt.history.filter(**filter_query)
         self.assertEqual(len(attempt_history), 1)
@@ -542,10 +471,6 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         attempt = ProctoredExamStudentAttempt.objects.get(**filter_query)
         self.assertTrue(attempt.is_resumable)
 
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(**filter_query)
-        self.assertEqual(len(attempt_history), 1)
-        self.assertFalse(attempt_history.first().is_resumable)
-
         # simple history has two entries including the resumable entry
         # pylint: disable=no-member
         attempt_history = ProctoredExamStudentAttempt.history.filter(**filter_query)
@@ -556,10 +481,6 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         attempt.save()
         attempt = ProctoredExamStudentAttempt.objects.get(**filter_query)
         self.assertTrue(attempt.is_resumable)
-
-        attempt_history = ProctoredExamStudentAttemptHistory.objects.filter(**filter_query)
-        self.assertEqual(len(attempt_history), 2)
-        self.assertTrue(attempt_history.last().is_resumable)
 
         # pylint: disable=no-member
         attempt_history = ProctoredExamStudentAttempt.history.filter(**filter_query)

@@ -462,90 +462,13 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         attempt_history = cls.history.filter(attempt_code=attempt_code)
         if attempt_history:
             return attempt_history.latest("modified").instance
-
-        # fall back to old history table until that is removed
-        return ProctoredExamStudentAttemptHistory.get_exam_attempt_by_code(attempt_code)
+        return None
 
     def delete_exam_attempt(self):
         """
         Deletes the exam attempt object and archives it to the ProctoredExamStudentAttemptHistory table.
         """
         self.delete()
-
-
-class ProctoredExamStudentAttemptHistory(TimeStampedModel):
-    """
-    This should be the same schema as ProctoredExamStudentAttempt
-    but will record (for audit history) all entries that have been updated.
-
-    .. no_pii:
-    """
-
-    user = models.ForeignKey(USER_MODEL, db_index=True, on_delete=models.CASCADE)
-
-    # this is the PK of the original table, note this is not a FK
-    attempt_id = models.IntegerField(null=True)
-
-    proctored_exam = models.ForeignKey(ProctoredExam, db_index=True, on_delete=models.CASCADE)
-
-    # started/completed date times
-    started_at = models.DateTimeField(null=True)
-    completed_at = models.DateTimeField(null=True)
-
-    # this will be a unique string ID that the user
-    # will have to use when starting the proctored exam
-    attempt_code = models.CharField(max_length=255, null=True, db_index=True)
-
-    # This will be a integration specific ID - say to SoftwareSecure.
-    external_id = models.CharField(max_length=255, null=True, db_index=True)
-
-    # this is the time limit allowed to the student
-    allowed_time_limit_mins = models.IntegerField(null=True)
-
-    # what is the status of this attempt
-    status = models.CharField(max_length=64)
-
-    # if the user is attempting this as a proctored exam
-    # in case there is an option to opt-out
-    taking_as_proctored = models.BooleanField(default=False)
-
-    # Whether this attampt is considered a sample attempt, e.g. to try out
-    # the proctoring software
-    is_sample_attempt = models.BooleanField(default=False)
-
-    # what review policy was this exam submitted under
-    # Note that this is not a foreign key because
-    # this ID might point to a record that is in the History table
-    review_policy_id = models.IntegerField(null=True)
-
-    # Marks whether the attempt at this current state is able to be resumed by user
-    # Only those attempts which had an error state before, but
-    # has not yet marked submitted is resumable.
-    is_resumable = models.BooleanField(default=False)
-
-    @classmethod
-    def get_exam_attempt_by_code(cls, attempt_code):
-        """
-        Returns the Student Exam Attempt object if found
-        else Returns None.
-        """
-        # NOTE: compared to the ProctoredExamAttempt table
-        # we can have multiple rows with the same attempt_code
-        # So, just return the first one (most recent) if
-        # there are any
-        exam_attempt_obj = None
-
-        try:
-            exam_attempt_obj = cls.objects.filter(attempt_code=attempt_code).latest("created")
-        except cls.DoesNotExist:  # pylint: disable=no-member
-            pass
-
-        return exam_attempt_obj
-
-    class Meta:
-        """ Meta class for this Django model """
-        db_table = 'proctoring_proctoredexamstudentattempthistory'
-        verbose_name = 'proctored exam attempt history'
 
 
 def archive_model(model, instance, **mapping):
