@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.8.1] - 2021-12-07
+~~~~~~~~~~~~~~~~~~~~
+* Remove older exam attempt history table.
+
 [4.8.0] - 2021-12-07
 ~~~~~~~~~~~~~~~~~~~~
 * Remove older exam attempt history object that has been replaced.
