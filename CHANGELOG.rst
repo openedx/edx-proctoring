@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.8.2] - 2021-12-21
+~~~~~~~~~~~~~~~~~~~~
+* Fix timeout value not getting passed to worker handler
+
 [4.8.1] - 2021-12-07
 ~~~~~~~~~~~~~~~~~~~~
 * Remove older exam attempt history table.
