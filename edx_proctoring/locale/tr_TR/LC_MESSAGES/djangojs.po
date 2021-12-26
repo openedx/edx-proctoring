@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-14 18:34+0000\n"
+"POT-Creation-Date: 2021-12-26 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Ali Işıngör <ali@artistanbul.io>, 2021\n"
 "Language-Team: Turkish (Turkey) (https://www.transifex.com/open-edx/teams/6205/tr_TR/)\n"
@@ -190,31 +190,31 @@ msgstr "Zamanlanmış Sınav"
 msgid "Onboarding status question"
 msgstr "Oryantasyon durumu sorusu"
 
-#: models.py:391
+#: models.py:394
 msgid "Taking as Proctored"
 msgstr "Gözetmenli Olarak Alınıyor"
 
-#: models.py:395
+#: models.py:398
 msgid "Is Sample Attempt"
 msgstr "Bir Örnek Denemedir"
 
-#: models.py:413
+#: models.py:416
 msgid "Is Resumable"
 msgstr "Devam Edilebilir"
 
-#: models.py:418
+#: models.py:421
 msgid "Ready to Resume"
 msgstr ""
 
-#: models.py:421
+#: models.py:424
 msgid "Resumed"
 msgstr ""
 
-#: models.py:598
+#: models.py:524
 msgid "Additional Time (minutes)"
 msgstr "Ek Zaman (dakika)"
 
-#: models.py:599
+#: models.py:525
 msgid "Review Policy Exception"
 msgstr "İnceleme Politikası İstisnası"
 

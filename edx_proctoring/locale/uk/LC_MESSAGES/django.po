@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-14 18:34+0000\n"
+"POT-Creation-Date: 2021-12-26 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Danylo Shcherbak <danylo.shcherbak@raccoongang.com>, 2021\n"
 "Language-Team: Ukrainian (https://www.transifex.com/open-edx/teams/6205/uk/)\n"
@@ -191,31 +191,31 @@ msgstr ""
 msgid "Onboarding status question"
 msgstr ""
 
-#: models.py:391
+#: models.py:394
 msgid "Taking as Proctored"
 msgstr ""
 
-#: models.py:395
+#: models.py:398
 msgid "Is Sample Attempt"
 msgstr ""
 
-#: models.py:413
+#: models.py:416
 msgid "Is Resumable"
 msgstr ""
 
-#: models.py:418
+#: models.py:421
 msgid "Ready to Resume"
 msgstr ""
 
-#: models.py:421
+#: models.py:424
 msgid "Resumed"
 msgstr ""
 
-#: models.py:598
+#: models.py:524
 msgid "Additional Time (minutes)"
 msgstr ""
 
-#: models.py:599
+#: models.py:525
 msgid "Review Policy Exception"
 msgstr ""
 
