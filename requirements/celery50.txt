@@ -4,6 +4,6 @@ celery==5.0.4
 click==7.1.2
 click-didyoumean==0.3.0
 click-repl==0.2.0
-kombu==5.2.2
+kombu==5.2.3
 prompt-toolkit==3.0.24
 vine==5.0.0
