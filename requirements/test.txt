@@ -9,7 +9,7 @@ appdirs==1.4.4
     # via fs
 asgiref==3.4.1
     # via django
-attrs==21.2.0
+attrs==21.4.0
     # via
     #   outcome
     #   pytest
@@ -23,7 +23,7 @@ certifi==2021.10.8
     # via requests
 cffi==1.15.0
     # via cryptography
-charset-normalizer==2.0.9
+charset-normalizer==2.0.10
     # via requests
     # via
     #   -c requirements/constraints.txt
@@ -101,7 +101,7 @@ edx-opaque-keys==2.2.2
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
-edx-rest-api-client==5.4.0
+edx-rest-api-client==5.4.1
     # via -r requirements/base.in
 edx-when==2.2.2
     # via -r requirements/base.in
@@ -130,7 +130,7 @@ jsonfield==3.1.0
     # via celery
 lazy==1.4
     # via bok-choy
-logilab-common==1.8.2
+logilab-common==1.8.3
     # via -r requirements/test.in
 lxml==4.7.1
     # via xblock
@@ -155,7 +155,7 @@ pluggy==1.0.0
 polib==1.1.1
     # via edx-i18n-tools
     # via click-repl
-psutil==5.8.0
+psutil==5.9.0
     # via edx-django-utils
 py==1.11.0
     # via
@@ -217,7 +217,7 @@ pyyaml==6.0
     #   code-annotations
     #   edx-i18n-tools
     #   xblock
-requests==2.26.0
+requests==2.27.1
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -227,7 +227,7 @@ requests==2.26.0
     #   slumber
 responses==0.16.0
     # via -r requirements/test.in
-rules==3.0
+rules==3.1
     # via -r requirements/base.in
 selenium==3.141.0
     # via

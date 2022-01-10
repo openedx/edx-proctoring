@@ -277,7 +277,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         except Exception as exc:  # pylint: disable=broad-except
             if response:
                 # pylint: disable=no-member
-                content = exc.response.content if hasattr(exc, 'response') else response.content
+                if hasattr(exc, 'response') and exc.response is not None:
+                    content = exc.response.content
+                else:
+                    content = response.content
             else:
                 content = None
             log.exception(
@@ -330,7 +333,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             assert data in (True, False)
         except Exception as exc:  # pylint: disable=broad-except
             # pylint: disable=no-member
-            content = exc.response.content if hasattr(exc, 'response') else response.content
+            if hasattr(exc, 'response') and exc.response is not None:
+                content = exc.response.content
+            else:
+                content = response.content
             raise BackendProviderCannotRetireUser(content) from exc
         return data
 

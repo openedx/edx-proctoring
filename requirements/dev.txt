@@ -6,12 +6,10 @@
 #
 asgiref==3.4.1
     # via django
-astroid==2.9.0
+astroid==2.9.2
     # via
     #   pylint
     #   pylint-celery
-backports.entry-points-selectable==1.1.1
-    # via virtualenv
 chardet==4.0.0
     # via diff-cover
 click==7.1.2
@@ -29,7 +27,7 @@ diff-cover==6.4.4
     # via -r requirements/dev.in
 distlib==0.3.4
     # via virtualenv
-django==3.2.10
+django==3.2.11
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
@@ -43,7 +41,7 @@ edx-lint==5.2.1
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.4.0
+filelock==3.4.2
     # via
     #   tox
     #   virtualenv
@@ -75,7 +73,7 @@ pep517==0.12.0
     # via pip-tools
 pip-tools==6.4.0
     # via -r requirements/dev.in
-platformdirs==2.4.0
+platformdirs==2.4.1
     # via
     #   pylint
     #   virtualenv
@@ -91,7 +89,7 @@ pycodestyle==2.8.0
     # via -r requirements/quality.in
 pydocstyle==6.1.1
     # via -r requirements/quality.in
-pygments==2.10.0
+pygments==2.11.2
     # via diff-cover
 pylint==2.12.2
     # via
@@ -101,9 +99,9 @@ pylint==2.12.2
     #   pylint-plugin-utils
 pylint-celery==0.3
     # via edx-lint
-pylint-django==2.4.4
+pylint-django==2.5.0
     # via edx-lint
-pylint-plugin-utils==0.6
+pylint-plugin-utils==0.7
     # via
     #   pylint-celery
     #   pylint-django
@@ -138,7 +136,7 @@ toml==0.10.2
     #   tox
 tomli==2.0.0
     # via pep517
-tox==3.24.4
+tox==3.24.5
     # via
     #   -r requirements/dev.in
     #   tox-battery
@@ -148,9 +146,9 @@ typing-extensions==4.0.1
     # via
     #   astroid
     #   pylint
-virtualenv==20.10.0
+virtualenv==20.13.0
     # via tox
-wheel==0.37.0
+wheel==0.37.1
     # via
     #   -r requirements/dev.in
     #   pip-tools
