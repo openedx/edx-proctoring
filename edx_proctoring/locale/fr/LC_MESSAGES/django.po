@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-26 18:34+0000\n"
+"POT-Creation-Date: 2022-01-10 21:04+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: iderr <ibrahim@derraz.fr>, 2021\n"
 "Language-Team: French (https://www.transifex.com/open-edx/teams/6205/fr/)\n"
@@ -208,7 +208,7 @@ msgstr "Prêt à reprendre"
 
 #: models.py:424
 msgid "Resumed"
-msgstr ""
+msgstr "Recommencé"
 
 #: models.py:524
 msgid "Additional Time (minutes)"
