@@ -1752,6 +1752,23 @@ class BaseReviewCallback:
         if not backend:
             backend = get_backend_provider(attempt['proctored_exam'])
 
+        if not backend:
+            LOG.warning(
+                (
+                    'Tried to mark review on an exam attempt that is no longer a proctored exam.'
+                    'The exam id=%(exam_id)s, exam.is_proctored=%(is_proctored)s,'
+                    'exam.course_id=%(course_id)s and attempt_id=%(attempt_id)s'
+                    'The review status will not be preserved on this attempt'
+                ),
+                {
+                    'attempt_id': attempt['id'],
+                    'exam_id': attempt['proctored_exam']['id'],
+                    'is_proctored': attempt['proctored_exam']['is_proctored'],
+                    'course_id': attempt['proctored_exam']['course_id'],
+                }
+            )
+            return Response(data='Exam no longer proctored', status=412)
+
         # this method should convert the payload into a normalized format
         backend_review = backend.on_review_callback(attempt, data)
 
@@ -1847,6 +1864,7 @@ class BaseReviewCallback:
                     review_status=review.review_status,
                     review_url=review_url,
                 )
+        return Response(data='OK')
 
 
 class ProctoredExamReviewCallback(ProctoredAPIView, BaseReviewCallback):
@@ -1866,8 +1884,7 @@ class ProctoredExamReviewCallback(ProctoredAPIView, BaseReviewCallback):
             )
             raise StudentExamAttemptDoesNotExistsException(err_msg)
         if request.user.has_perm('edx_proctoring.can_review_attempt', attempt):
-            self.make_review(attempt, request.data)
-            resp = Response(data='OK')
+            resp = self.make_review(attempt, request.data)
         else:
             resp = Response(status=403)
         return resp
@@ -1927,10 +1944,11 @@ class AnonymousReviewCallback(BaseReviewCallback, APIView):
             raise StudentExamAttemptDoesNotExistsException(err_msg)
         serialized = ProctoredExamStudentAttemptSerializer(attempt_obj).data
         serialized['is_archived'] = is_archived
-        self.make_review(serialized,
-                         request.data,
-                         backend=provider)
-        return Response('OK')
+        return self.make_review(
+            serialized,
+            request.data,
+            backend=provider
+        )
 
 
 class InstructorDashboard(AuthenticatedAPIView):

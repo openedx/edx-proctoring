@@ -28,7 +28,8 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     mark_exam_attempt_as_ready_to_resume,
     reset_practice_exam,
-    update_attempt_status
+    update_attempt_status,
+    update_exam
 )
 from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
@@ -3800,6 +3801,47 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
+
+    def test_review_callback_non_proctored_exam(self):
+        """
+        Simulates a callback from the proctoring service with the
+        review data but the matched attempt had the exam not proctored
+        """
+        exam_id = create_exam(
+            course_id='foo/bar/baz',
+            content_id='content',
+            exam_name='Sample Exam',
+            time_limit_mins=10,
+            is_proctored=True
+        )
+
+        # be sure to use the mocked out exam provider handlers
+        with HTTMock(mock_response_content):
+            attempt_id = create_exam_attempt(
+                exam_id,
+                self.user.id,
+                taking_as_proctored=True
+            )
+
+        attempt = get_exam_attempt_by_id(attempt_id)
+        self.assertIsNotNone(attempt['external_id'])
+
+        update_exam(exam_id, is_proctored=False)
+
+        test_payload = create_test_review_payload(
+            attempt_code=attempt['attempt_code'],
+            external_id=attempt['external_id'],
+        )
+        response = self.client.post(
+            reverse(
+                'edx_proctoring:proctored_exam.attempt.callback',
+                args=[attempt['external_id']]
+            ),
+            data=test_payload,
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 412)
+        self.assertEqual(response.data, 'Exam no longer proctored')
 
     def test_review_callback_get(self):
         """
