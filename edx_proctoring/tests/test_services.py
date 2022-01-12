@@ -405,7 +405,7 @@ class MockNameAffirmationService:
     def __init__(self):
         self.verified_name = None
 
-    def get_verified_name(self, user, is_verified=False):
+    def get_verified_name(self, user, is_verified=False, statuses_to_exclude=None):
         """ Return mock VerifiedName """
         return self.verified_name
 

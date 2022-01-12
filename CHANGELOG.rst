@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.8.3] - 2022-01-12
+~~~~~~~~~~~~~~~~~~~~
+* Exclude verified name results with a "denied" status when registering a proctored
+  exam attempt.
+
 [4.8.2] - 2021-12-21
 ~~~~~~~~~~~~~~~~~~~~
 * Fix timeout value not getting passed to worker handler
