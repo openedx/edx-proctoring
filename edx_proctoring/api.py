@@ -1023,14 +1023,19 @@ def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, revie
 
 def _get_verified_name(user_id, name_affirmation_service):
     """
-    Get the user's verified name if one exists.
+    Get the user's verified name if one exists. This will ignore verified names
+    which have a "denied" status.
 
     Returns a verified name object (or None)
     """
     verified_name = None
 
     user = USER_MODEL.objects.get(id=user_id)
-    verified_name_obj = name_affirmation_service.get_verified_name(user)
+
+    # Only use verified name if it is approved or pending approval
+    verified_name_obj = name_affirmation_service.get_verified_name(
+        user, is_verified=False, statuses_to_exclude=['denied']
+    )
 
     if verified_name_obj:
         verified_name = verified_name_obj.verified_name
