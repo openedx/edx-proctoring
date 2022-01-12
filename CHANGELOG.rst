@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.8.4] - 2022-01-12
+~~~~~~~~~~~~~~~~~~~~
+* Return better http status when review callback resulted in the original
+  exam no longer being proctored 
+
 [4.8.3] - 2022-01-12
 ~~~~~~~~~~~~~~~~~~~~
 * Exclude verified name results with a "denied" status when registering a proctored
