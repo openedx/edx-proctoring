@@ -6,7 +6,7 @@
 #
 asgiref==3.4.1
     # via django
-astroid==2.9.2
+astroid==2.9.3
     # via
     #   pylint
     #   pylint-celery
@@ -61,7 +61,7 @@ mccabe==0.6.1
     # via pylint
 packaging==21.3
     # via tox
-path==16.2.0
+path==16.3.0
     # via
     #   edx-i18n-tools
     #   path.py
