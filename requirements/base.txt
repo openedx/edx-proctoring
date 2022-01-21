@@ -62,7 +62,7 @@ django-model-utils==4.2.0
     #   edx-when
 django-simple-history==3.0.0
     # via -r requirements/base.in
-django-waffle==2.2.1
+django-waffle==2.3.0
     # via
     #   -r requirements/base.in
     #   edx-django-utils
@@ -76,7 +76,7 @@ djangorestframework==3.13.1
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-drf-extensions
-drf-jwt==1.19.1
+drf-jwt==1.19.2
     # via edx-drf-extensions
 edx-django-utils==4.4.1
     # via
@@ -93,7 +93,7 @@ edx-opaque-keys==2.2.2
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
-edx-rest-api-client==5.4.1
+edx-rest-api-client==5.5.0
     # via -r requirements/base.in
 edx-when==2.2.2
     # via -r requirements/base.in
@@ -181,7 +181,7 @@ stevedore==3.5.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
-urllib3==1.26.7
+urllib3==1.26.8
     # via requests
 vine==5.0.0
     # via

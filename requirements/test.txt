@@ -69,7 +69,7 @@ django-model-utils==4.2.0
     #   edx-when
 django-simple-history==3.0.0
     # via -r requirements/base.in
-django-waffle==2.2.1
+django-waffle==2.3.0
     # via
     #   -r requirements/base.in
     #   edx-django-utils
@@ -82,7 +82,7 @@ django-webpack-loader==0.7.0
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-drf-extensions
-drf-jwt==1.19.1
+drf-jwt==1.19.2
     # via edx-drf-extensions
 edx-django-utils==4.4.1
     # via
@@ -101,7 +101,7 @@ edx-opaque-keys==2.2.2
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
-edx-rest-api-client==5.4.1
+edx-rest-api-client==5.5.0
     # via -r requirements/base.in
 edx-when==2.2.2
     # via -r requirements/base.in
@@ -146,7 +146,7 @@ newrelic==7.2.4.171
     # via edx-django-utils
 packaging==21.3
     # via pytest
-path==16.2.0
+path==16.3.0
     # via edx-i18n-tools
 pbr==5.8.0
     # via stevedore
@@ -225,7 +225,7 @@ requests==2.27.1
     #   pyjwkest
     #   responses
     #   slumber
-responses==0.16.0
+responses==0.17.0
     # via -r requirements/test.in
 rules==3.1
     # via -r requirements/base.in
@@ -266,7 +266,7 @@ tomli==2.0.0
     # via coverage
 typing-extensions==4.0.1
     # via logilab-common
-urllib3==1.26.7
+urllib3==1.26.8
     # via
     #   requests
     #   responses
