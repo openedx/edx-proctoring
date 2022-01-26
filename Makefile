@@ -2,7 +2,7 @@
 	requirements-test coverage pii_check \
 	compile_translations dummy_translations extract_translations \
 	fake_translations pull_translations push_translations test test-python \
-	test-js quality-python quality-js
+	test-js quality-python quality-js check_keywords
 
 .DEFAULT_GOAL := help
 
@@ -146,3 +146,6 @@ build_dummy_translations: extract_translations dummy_translations compile_transl
 check_translations_up_to_date: build_dummy_translations detect_changed_source_translations ## validate translations
 
 test: test-python test-js ## run tests
+
+check_keywords: ## Scan the Django models in all installed apps in this project for restricted field names
+	python manage.py check_reserved_keywords --override_file db_keyword_overrides.yml
