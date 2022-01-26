@@ -31,6 +31,7 @@ jobs:
           - js_tests
           - js_lint
           - rst_validation
+          - check_keywords
     steps:
     - uses: actions/checkout@v1
     - name: Setup python
