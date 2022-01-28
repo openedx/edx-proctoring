@@ -14,23 +14,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os:
-          - ubuntu-20.04
-        python-version:
-          - 3.8
-        node-version:
-          - 10
+        os: ['ubuntu-20.04']
+        python-version: ['3.8']
+        node-version: ['10']
         toxenv:
-          - django30-drflatest
-          - django31-drflatest
-          - django32-drflatest
-          - quality
-          - pii_check
-          - version_check
-          - translations
-          - js_tests
-          - js_lint
-          - rst_validation
+        ['django32-drflatest', 'django40-drflatest', 'quality', 'pii_check', 'version_check', 'translations', 'js_tests', 'js_lint', 'rst_validation']
     steps:
     - uses: actions/checkout@v1
     - name: Setup python
