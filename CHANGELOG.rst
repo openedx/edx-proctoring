@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.9.0] - 2022-01-25
+~~~~~~~~~~~~~~~~~~~~
+* Dropped Django22, 30 and 31
+* Added Support for Django40
+
 [4.8.4] - 2022-01-12
 ~~~~~~~~~~~~~~~~~~~~
 * Return better http status when review callback resulted in the original
