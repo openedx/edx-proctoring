@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.4.1
+asgiref==3.5.0
     # via django
 astroid==2.9.3
     # via
@@ -20,7 +20,7 @@ click-log==0.3.2
     # via edx-lint
 code-annotations==1.2.0
     # via edx-lint
-django==3.2.11
+django==3.2.12
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/quality.in
