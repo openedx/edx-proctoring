@@ -14,7 +14,7 @@ billiard==3.6.4.0
     # via celery
 celery==5.0.4
     # via
-    #   -c requirements/constraints.txt
+    #   -c constraints.txt
     #   event-tracking
 certifi==2021.10.8
     # via requests
@@ -24,7 +24,7 @@ charset-normalizer==2.0.10
     # via requests
 click==7.1.2
     # via
-    #   -c requirements/constraints.txt
+    #   -c constraints.txt
     #   celery
     #   click-didyoumean
     #   click-plugins
@@ -37,10 +37,10 @@ click-repl==0.2.0
     # via celery
 cryptography==36.0.1
     # via pyjwt
-django==3.2.11
+django==3.2.12
     # via
-    #   -c requirements/common_constraints.txt
-    #   -r requirements/base.in
+    #   -c common_constraints.txt
+    #   -r base.in
     #   django-crum
     #   django-model-utils
     #   djangorestframework
@@ -52,28 +52,28 @@ django==3.2.11
     #   jsonfield
 django-crum==0.7.9
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-django-utils
 django-ipware==4.0.2
-    # via -r requirements/base.in
+    # via -r base.in
 django-model-utils==4.2.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-when
 django-simple-history==3.0.0
-    # via -r requirements/base.in
+    # via -r base.in
 django-waffle==2.3.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-django-utils
     #   edx-drf-extensions
 django-webpack-loader==0.7.0
     # via
-    #   -c requirements/constraints.txt
-    #   -r requirements/base.in
+    #   -c constraints.txt
+    #   -r base.in
 djangorestframework==3.13.1
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   drf-jwt
     #   edx-drf-extensions
 drf-jwt==1.19.2
@@ -86,19 +86,19 @@ edx-django-utils==4.4.1
     #   event-tracking
 edx-drf-extensions==8.0.1
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-when
 edx-opaque-keys==2.2.2
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-drf-extensions
     #   edx-when
 edx-rest-api-client==5.5.0
-    # via -r requirements/base.in
+    # via -r base.in
 edx-when==2.2.2
-    # via -r requirements/base.in
+    # via -r base.in
 event-tracking==1.1.4
-    # via -r requirements/base.in
+    # via -r base.in
 fs==2.4.14
     # via xblock
 future==0.18.2
@@ -106,7 +106,7 @@ future==0.18.2
 idna==3.3
     # via requests
 jsonfield==3.1.0
-    # via -r requirements/base.in
+    # via -r base.in
 kombu==5.2.3
     # via celery
 lxml==4.7.1
@@ -125,13 +125,13 @@ pycparser==2.21
     # via cffi
 pycryptodomex==3.12.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   pyjwkest
 pyjwkest==1.4.2
     # via edx-drf-extensions
 pyjwt[crypto]==2.3.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   drf-jwt
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -141,12 +141,12 @@ pymongo==3.12.3
     #   event-tracking
 python-dateutil==2.8.2
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-drf-extensions
     #   xblock
 pytz==2021.3
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   celery
     #   django
     #   djangorestframework
@@ -162,7 +162,7 @@ requests==2.27.1
     #   pyjwkest
     #   slumber
 rules==3.1
-    # via -r requirements/base.in
+    # via -r base.in
 semantic-version==2.8.5
     # via edx-drf-extensions
 six==1.16.0
