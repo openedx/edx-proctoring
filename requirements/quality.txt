@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.4.1
+asgiref==3.5.0
     # via django
 astroid==2.9.3
     # via
@@ -18,9 +18,9 @@ click==7.1.2
     #   edx-lint
 click-log==0.3.2
     # via edx-lint
-code-annotations==1.2.0
+code-annotations==1.3.0
     # via edx-lint
-django==3.2.11
+django==3.2.12
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/quality.in
@@ -36,13 +36,13 @@ jinja2==3.0.3
     # via code-annotations
 lazy-object-proxy==1.7.1
     # via astroid
-markupsafe==2.0.1
+markupsafe==2.1.0
     # via jinja2
 mccabe==0.6.1
     # via pylint
-pbr==5.8.0
+pbr==5.8.1
     # via stevedore
-platformdirs==2.4.1
+platformdirs==2.5.1
     # via pylint
 pycodestyle==2.8.0
     # via -r requirements/quality.in
@@ -56,13 +56,13 @@ pylint==2.12.2
     #   pylint-plugin-utils
 pylint-celery==0.3
     # via edx-lint
-pylint-django==2.5.0
+pylint-django==2.5.2
     # via edx-lint
 pylint-plugin-utils==0.7
     # via
     #   pylint-celery
     #   pylint-django
-python-slugify==5.0.2
+python-slugify==6.1.1
     # via code-annotations
 pytz==2021.3
     # via django
@@ -82,7 +82,7 @@ text-unidecode==1.3
     # via python-slugify
 toml==0.10.2
     # via pylint
-typing-extensions==4.0.1
+typing-extensions==4.1.1
     # via
     #   astroid
     #   pylint

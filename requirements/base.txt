@@ -4,11 +4,11 @@
 #
 #    make upgrade
 #
-amqp==5.0.9
+amqp==5.1.0
     # via kombu
 appdirs==1.4.4
     # via fs
-asgiref==3.4.1
+asgiref==3.5.0
     # via django
 billiard==3.6.4.0
     # via celery
@@ -20,7 +20,7 @@ certifi==2021.10.8
     # via requests
 cffi==1.15.0
     # via cryptography
-charset-normalizer==2.0.10
+charset-normalizer==2.0.12
     # via requests
 click==7.1.2
     # via
@@ -37,7 +37,7 @@ click-repl==0.2.0
     # via celery
 cryptography==36.0.1
     # via pyjwt
-django==3.2.11
+django==3.2.12
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -78,7 +78,7 @@ djangorestframework==3.13.1
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==4.4.1
+edx-django-utils==4.5.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -88,18 +88,18 @@ edx-drf-extensions==8.0.1
     # via
     #   -r requirements/base.in
     #   edx-when
-edx-opaque-keys==2.2.2
+edx-opaque-keys==2.3.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
 edx-rest-api-client==5.5.0
     # via -r requirements/base.in
-edx-when==2.2.2
+edx-when==2.3.0
     # via -r requirements/base.in
-event-tracking==1.1.4
+event-tracking==2.1.0
     # via -r requirements/base.in
-fs==2.4.14
+fs==2.4.15
     # via xblock
 future==0.18.2
     # via pyjwkest
@@ -107,23 +107,23 @@ idna==3.3
     # via requests
 jsonfield==3.1.0
     # via -r requirements/base.in
-kombu==5.2.3
+kombu==5.2.4
     # via celery
-lxml==4.7.1
+lxml==4.8.0
     # via xblock
-markupsafe==2.0.1
+markupsafe==2.1.0
     # via xblock
-newrelic==7.2.4.171
+newrelic==7.6.0.173
     # via edx-django-utils
-pbr==5.8.0
+pbr==5.8.1
     # via stevedore
-prompt-toolkit==3.0.24
+prompt-toolkit==3.0.28
     # via click-repl
 psutil==5.9.0
     # via edx-django-utils
 pycparser==2.21
     # via cffi
-pycryptodomex==3.12.0
+pycryptodomex==3.14.1
     # via
     #   -r requirements/base.in
     #   pyjwkest
@@ -161,9 +161,9 @@ requests==2.27.1
     #   edx-rest-api-client
     #   pyjwkest
     #   slumber
-rules==3.1
+rules==3.2.1
     # via -r requirements/base.in
-semantic-version==2.8.5
+semantic-version==2.9.0
     # via edx-drf-extensions
 six==1.16.0
     # via
@@ -194,7 +194,7 @@ web-fragments==2.0.0
     # via xblock
 webob==1.8.7
     # via xblock
-xblock==1.5.1
+xblock==1.6.1
     # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
