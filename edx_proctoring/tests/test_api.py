@@ -40,6 +40,7 @@ from edx_proctoring.api import (
     get_exam_attempt_by_id,
     get_exam_attempt_data,
     get_exam_by_content_id,
+    get_exam_histories_by_content_id,
     get_exam_by_id,
     get_exam_configuration_dashboard_url,
     get_exam_violation_report,
@@ -440,6 +441,32 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
         with self.assertRaises(ProctoredExamNotFoundException):
             get_exam_by_content_id('teasd', 'tewasda')
+
+    def test_get_exam_histories_by_content_id(self):
+        exam_histories = get_exam_histories_by_content_id(self.course_id, self.content_id)
+        self.assertEqual(len(exam_histories), 1)
+        exam_history = exam_histories[0]
+        self.assertEqual(exam_history['course_id'], self.course_id)
+        self.assertEqual(exam_history['content_id'], self.content_id)
+        self.assertEqual(exam_history['is_proctored'], True)
+
+
+    def test_get_multiple_exam_histories_by_content_id(self):
+        update_exam(self.proctored_exam_id, is_proctored=False)
+        exam_histories = get_exam_histories_by_content_id(self.course_id, self.content_id)
+        self.assertEqual(len(exam_histories), 2)
+        is_proctored = True
+        for exam_history in exam_histories:
+            self.assertEqual(exam_history['course_id'], self.course_id)
+            self.assertEqual(exam_history['content_id'], self.content_id)
+            self.assertEqual(exam_history['is_proctored'], is_proctored)
+            is_proctored = False
+
+
+    def test_get_exam_histories_by_content_id_not_found(self):
+        with self.assertRaises(ProctoredExamNotFoundException):
+            get_exam_histories_by_content_id('teasd', 'tewasda')
+
 
     def test_add_allowance_for_user(self):
         """

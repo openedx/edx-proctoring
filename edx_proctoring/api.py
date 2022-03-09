@@ -481,6 +481,33 @@ def get_exam_by_content_id(course_id, content_id):
     serialized_exam_object = ProctoredExamSerializer(proctored_exam)
     return serialized_exam_object.data
 
+def get_exam_histories_by_content_id(course_id, content_id):
+    """
+    Get all the historical records associated with the content_id.
+    If the exam is not found on content_id, raise not found exception
+
+    Returns a list of dictionary version of the Exam Django ORM object
+    
+    e.g.
+    [{
+        "course_id": "edX/DemoX/Demo_Course",
+        "content_id": "123",
+        "external_id": "",
+        "exam_name": "Midterm",
+        "time_limit_mins": 90,
+        "is_proctored": true,
+        "is_active": true
+    }]
+    """
+    proctored_exam = ProctoredExam.get_exam_by_content_id(course_id, content_id)
+    if proctored_exam is None:
+        err_msg = (
+            f'Cannot find proctored exam in course_id={course_id} with content_id={content_id}'
+        )
+        raise ProctoredExamNotFoundException(err_msg)
+    serialized_exam_history_object = ProctoredExamSerializer(proctored_exam.history.order_by('modified'), many=True)
+    return serialized_exam_history_object.data
+
 
 def add_allowance_for_user(exam_id, user_info, key, value):
     """

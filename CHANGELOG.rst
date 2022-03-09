@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.9.1] - 2022-03-09
+~~~~~~~~~~~~~~~~~~~~
+* Added a python API endpoint to retrieve serialized exam history records
+
 [4.9.0] - 2022-01-25
 ~~~~~~~~~~~~~~~~~~~~
 * Dropped Django22, 30 and 31
