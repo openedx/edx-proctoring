@@ -1,14 +1,15 @@
 [main]
 host = https://www.transifex.com
 
-[edx-platform.edx-proctoring]
+[o:open-edx:p:edx-platform:r:edx-proctoring]
 file_filter = edx_proctoring/locale/<lang>/LC_MESSAGES/django.po
 source_file = edx_proctoring/locale/en/LC_MESSAGES/django.po
 source_lang = en
-type = PO
+type        = PO
 
-[edx-platform.edx-proctoring-js]
+[o:open-edx:p:edx-platform:r:edx-proctoring-js]
 file_filter = edx_proctoring/locale/<lang>/LC_MESSAGES/djangojs.po
 source_file = edx_proctoring/locale/en/LC_MESSAGES/django.po
 source_lang = en
-type = PO
+type        = PO
+
