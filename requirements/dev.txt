@@ -19,7 +19,7 @@ click==7.1.2
     #   code-annotations
     #   edx-lint
     #   pip-tools
-click-log==0.3.2
+click-log==0.4.0
     # via edx-lint
 code-annotations==1.3.0
     # via edx-lint
@@ -55,7 +55,7 @@ jinja2==3.0.3
     #   diff-cover
 lazy-object-proxy==1.7.1
     # via astroid
-markupsafe==2.1.0
+markupsafe==2.1.1
     # via jinja2
 mccabe==0.6.1
     # via pylint
@@ -109,7 +109,7 @@ pyparsing==3.0.7
     # via packaging
 python-slugify==6.1.1
     # via code-annotations
-pytz==2021.3
+pytz==2022.1
     # via django
 pyyaml==6.0
     # via
@@ -146,7 +146,7 @@ typing-extensions==4.1.1
     # via
     #   astroid
     #   pylint
-virtualenv==20.13.2
+virtualenv==20.13.4
     # via tox
 wheel==0.37.1
     # via
