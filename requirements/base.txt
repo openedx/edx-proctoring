@@ -35,7 +35,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.2.0
     # via celery
-cryptography==36.0.1
+cryptography==36.0.2
     # via pyjwt
 django==3.2.12
     # via
@@ -78,7 +78,7 @@ djangorestframework==3.13.1
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==4.5.0
+edx-django-utils==4.6.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -111,7 +111,7 @@ kombu==5.2.4
     # via celery
 lxml==4.8.0
     # via xblock
-markupsafe==2.1.0
+markupsafe==2.1.1
     # via xblock
 newrelic==7.6.0.173
     # via edx-django-utils
@@ -144,7 +144,7 @@ python-dateutil==2.8.2
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   xblock
-pytz==2021.3
+pytz==2022.1
     # via
     #   -r requirements/base.in
     #   celery
@@ -181,7 +181,7 @@ stevedore==3.5.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
-urllib3==1.26.8
+urllib3==1.26.9
     # via requests
 vine==5.0.0
     # via
