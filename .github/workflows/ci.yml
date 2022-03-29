@@ -16,7 +16,7 @@ jobs:
       matrix:
         os: ['ubuntu-20.04']
         python-version: ['3.8']
-        node-version: ['10']
+        node-version: ['16']
         toxenv:
         ['django32-drflatest', 'django40-drflatest', 'quality', 'pii_check', 'version_check', 'translations', 'js_tests', 'js_lint', 'rst_validation']
     steps:
