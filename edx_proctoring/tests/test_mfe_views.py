@@ -63,16 +63,13 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
             self.course_scheduled_sections,
         ))
 
-    def assertHasExamData(self, response_data, has_attempt,
-                          has_verification_url=False, has_download_url=False, content_id=None):
+    def assertHasExamData(self, response_data, has_attempt, has_download_url=False, content_id=None):
         """ Ensure expected exam data is present. """
         exam_data = response_data['exam']
         assert 'exam' in response_data
         assert 'attempt' in exam_data
         if has_attempt:
             assert exam_data['attempt']
-            if has_verification_url:
-                assert exam_data['attempt']['verification_url']
             if has_download_url:
                 assert 'software_download_url' in exam_data['attempt']
             else:
@@ -264,8 +261,7 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
     def test_exam_data_contains_necessary_data_based_on_the_attempt_status(self, status):
         """
         Tests the GET exam attempts data contains software download url ONLY when attempt
-        is in created or download_software_clicked status and contains verification
-        url ONLY when attempt is in created status
+        is in created or download_software_clicked status
         """
         self._create_exam_attempt(self.proctored_exam_id, status=status)
 
@@ -275,13 +271,11 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
             ProctoredExamStudentAttemptStatus.created,
             ProctoredExamStudentAttemptStatus.download_software_clicked
         )
-        has_verification_url = status == ProctoredExamStudentAttemptStatus.created
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertHasExamData(
             response_data,
             has_attempt=True,
             has_download_url=has_download_url,
-            has_verification_url=has_verification_url,
         )
 
     @ddt.data(

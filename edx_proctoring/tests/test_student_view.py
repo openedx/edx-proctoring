@@ -99,8 +99,6 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 'enrollment_mode': 'verified',
                 'credit_requirement_status': [],
             },
-            'verification_status': 'approved',
-            'verification_url': '/reverify',
             'is_integrity_signature_enabled': False,
         }
         if context_overrides:
@@ -124,8 +122,6 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
                 'enrollment_mode': 'verified',
                 'credit_requirement_status': [],
             },
-            'verification_status': 'approved',
-            'verification_url': '/reverify',
         }
         if context_overrides:
             exam_context_overrides.update(context_overrides)
@@ -186,36 +182,6 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             },
         })
         self.assertIsNotNone(rendered_response)
-
-    @ddt.data(
-        (None, 'Make sure you are on a computer with a webcam, and that you have valid photo identification'),
-        ('pending', 'Your verification is pending'),
-        ('must_reverify', 'Your verification attempt failed'),
-        ('expired', 'Your verification has expired'),
-    )
-    @ddt.unpack
-    def test_verification_status(self, verification_status, expected_message):
-        """
-        This test asserts that the correct id verification message is shown
-        to the user when they choose to take a proctored exam.
-        """
-        self._create_unstarted_exam_attempt()
-        rendered_response = self.render_proctored_exam({
-            'verification_status': verification_status,
-        })
-        self.assertIn(expected_message, rendered_response)
-
-    def test_integrity_signature_enabled(self):
-        """
-        This test asserts that the ID verification message is not shown if the
-        integrity signature feature is enabled.
-        """
-        self._create_unstarted_exam_attempt()
-        rendered_response = self.render_proctored_exam({
-            'verification_status': None,
-            'is_integrity_signature_enabled': True,
-        })
-        self.assertIn(self.chose_proctored_exam_msg, rendered_response)
 
     def test_proctored_only_entrance(self):
         """
