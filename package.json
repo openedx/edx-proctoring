@@ -29,7 +29,7 @@
     "karma-chrome-launcher": "^0.2.0",
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^0.3.6",
-    "karma-jasmine-jquery": "github:bessdsv/karma-jasmine-jquery#c1579f7bc8e98dd7b225367dbe52b49e75c9bfaf",
+    "karma-jasmine-jquery-2": "latest",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-sinon": "^1.0.5",
     "phantomjs-prebuilt": "^2.1.14",
