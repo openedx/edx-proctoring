@@ -18,8 +18,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail.message import EmailMessage
 from django.template import loader
 from django.urls import NoReverseMatch, reverse
-from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_noop
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_noop
 
 from edx_proctoring import constants
 from edx_proctoring.backends import get_backend_provider
@@ -2250,47 +2250,47 @@ def _resolve_prerequisite_links(exam, prerequisites):
 
 STATUS_SUMMARY_MAP = {
     '_default': {
-        'short_description': ugettext_noop('Taking As Proctored Exam'),
+        'short_description': gettext_noop('Taking As Proctored Exam'),
         'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.eligible: {
-        'short_description': ugettext_noop('Proctored Option Available'),
+        'short_description': gettext_noop('Proctored Option Available'),
         'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.declined: {
-        'short_description': ugettext_noop('Taking As Open Exam'),
+        'short_description': gettext_noop('Taking As Open Exam'),
         'suggested_icon': 'fa-pencil-square-o',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.submitted: {
-        'short_description': ugettext_noop('Pending Session Review'),
+        'short_description': gettext_noop('Pending Session Review'),
         'suggested_icon': 'fa-spinner fa-spin',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.second_review_required: {
-        'short_description': ugettext_noop('Pending Session Review'),
+        'short_description': gettext_noop('Pending Session Review'),
         'suggested_icon': 'fa-spinner fa-spin',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.verified: {
-        'short_description': ugettext_noop('Passed Proctoring'),
+        'short_description': gettext_noop('Passed Proctoring'),
         'suggested_icon': 'fa-check',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.rejected: {
-        'short_description': ugettext_noop('Failed Proctoring'),
+        'short_description': gettext_noop('Failed Proctoring'),
         'suggested_icon': 'fa-exclamation-triangle',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.error: {
-        'short_description': ugettext_noop('Failed Proctoring'),
+        'short_description': gettext_noop('Failed Proctoring'),
         'suggested_icon': 'fa-exclamation-triangle',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.expired: {
-        'short_description': ugettext_noop('Proctored Option No Longer Available'),
+        'short_description': gettext_noop('Proctored Option No Longer Available'),
         'suggested_icon': 'fa-times-circle',
         'in_completed_state': False
     }
@@ -2299,17 +2299,17 @@ STATUS_SUMMARY_MAP = {
 
 PRACTICE_STATUS_SUMMARY_MAP = {
     '_default': {
-        'short_description': ugettext_noop('Ungraded Practice Exam'),
+        'short_description': gettext_noop('Ungraded Practice Exam'),
         'suggested_icon': '',
         'in_completed_state': False
     },
     ProctoredExamStudentAttemptStatus.submitted: {
-        'short_description': ugettext_noop('Practice Exam Completed'),
+        'short_description': gettext_noop('Practice Exam Completed'),
         'suggested_icon': 'fa-check',
         'in_completed_state': True
     },
     ProctoredExamStudentAttemptStatus.error: {
-        'short_description': ugettext_noop('Practice Exam Failed'),
+        'short_description': gettext_noop('Practice Exam Failed'),
         'suggested_icon': 'fa-exclamation-triangle',
         'in_completed_state': True
     }
@@ -2317,7 +2317,7 @@ PRACTICE_STATUS_SUMMARY_MAP = {
 
 TIMED_EXAM_STATUS_SUMMARY_MAP = {
     '_default': {
-        'short_description': ugettext_noop('Timed Exam'),
+        'short_description': gettext_noop('Timed Exam'),
         'suggested_icon': 'fa-clock-o',
         'in_completed_state': False
     }
