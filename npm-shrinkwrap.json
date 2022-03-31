@@ -1676,8 +1676,26 @@
       "integrity": "sha1-OytQZoFwhlNLqBoJK9z0viW4vuA=",
       "dev": true,
       "requires": {
-        "fsevents": "fsevents@pipobscure/fsevents#7dcdf9fa3f8956610fd6f69f72c67bace2de7138",
+        "fsevents": "github:pipobscure/fsevents#7dcdf9fa3f8956610fd6f69f72c67bace2de7138",
         "recursive-readdir": "0.0.2"
+      },
+      "dependencies": {
+        "fsevents": {
+          "version": "github:pipobscure/fsevents#7dcdf9fa3f8956610fd6f69f72c67bace2de7138",
+          "from": "github:pipobscure/fsevents#7dcdf9fa3f8956610fd6f69f72c67bace2de7138",
+          "dev": true,
+          "optional": true,
+          "requires": {
+            "nan": "~0.8.0"
+          }
+        },
+        "nan": {
+          "version": "0.8.0",
+          "resolved": "https://registry.npmjs.org/nan/-/nan-0.8.0.tgz",
+          "integrity": "sha1-AiqPpen+hCCWSsH7PclOF/RJ9f0=",
+          "dev": true,
+          "optional": true
+        }
       }
     },
     "circular-json": {
@@ -4412,22 +4430,10 @@
       "dev": true
     },
     "fsevents": {
-      "version": "git+ssh://git@github.com/pipobscure/fsevents.git#7dcdf9fa3f8956610fd6f69f72c67bace2de7138",
-      "from": "fsevents@pipobscure/fsevents#7dcdf9fa3f8956610fd6f69f72c67bace2de7138",
-      "dev": true,
-      "optional": true,
-      "requires": {
-        "nan": "~0.8.0"
-      },
-      "dependencies": {
-        "nan": {
-          "version": "0.8.0",
-          "resolved": "https://registry.npmjs.org/nan/-/nan-0.8.0.tgz",
-          "integrity": "sha1-AiqPpen+hCCWSsH7PclOF/RJ9f0=",
-          "dev": true,
-          "optional": true
-        }
-      }
+      "version": "2.3.2",
+      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz",
+      "integrity": "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==",
+      "dev": true
     },
     "fstream": {
       "version": "1.0.12",
