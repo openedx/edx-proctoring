@@ -16,13 +16,34 @@ jobs:
       matrix:
         os: ['ubuntu-20.04']
         python-version: ['3.8']
-        toxenv: ['django32-drflatest', 'django40-drflatest', 'quality', 'pii_check', 'version_check', 'translations', 'rst_validation']
+        node-version: ['12','16']
+        toxenv: ['django32-drflatest', 'django40-drflatest', 'quality', 'pii_check', 'version_check', 'translations', 'js_tests', 'js_lint', 'rst_validation']
+        exlude:
+          - node-version: '16'
+            toxenv: 'django32-drflatest'
+          - node-version: '16'
+            toxenv: 'django40-drflatest'
+          - node-version: '16'
+            toxenv: 'quality'
+          - node-version: '16'
+            toxenv: 'pii_check'
+          - node-version: '16'
+            toxenv: 'version_check'
+          - node-version: '16'
+            toxenv: 'translations'
+          - node-version: '16'
+            toxenv: 'rst_validation'
     steps:
     - uses: actions/checkout@v1
     - name: Setup python
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
+    - name: Setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
 
     - name: Set display to virtual frame buffer
       run: export DISPLAY=:99.0
