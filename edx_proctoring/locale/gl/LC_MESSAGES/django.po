@@ -1,0 +1,1434 @@
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
+# 
+# Translators:
+# Eu <luz.armas@udc.es>, 2016
+# Xabier Sánchez Santos <xsantos@novaconsultores.es>, 2018
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-03 18:34+0000\n"
+"PO-Revision-Date: 2016-12-20 19:52+0000\n"
+"Last-Translator: Xabier Sánchez Santos <xsantos@novaconsultores.es>, 2018\n"
+"Language-Team: Galician (https://www.transifex.com/open-edx/teams/6205/gl/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: gl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: admin.py:110
+msgid "internally reviewed"
+msgstr ""
+
+#: admin.py:119
+msgid "All Unreviewed"
+msgstr ""
+
+#: admin.py:120
+msgid "All Unreviewed Failures"
+msgstr ""
+
+#: admin.py:140
+msgid "active proctored exams"
+msgstr ""
+
+#: admin.py:195
+msgid "courses with active proctored exams"
+msgstr ""
+
+#: admin.py:350
+msgid "Course Id"
+msgstr ""
+
+#: admin.py:388
+msgid "Created"
+msgstr ""
+
+#: admin.py:389
+msgid "Download Software Clicked"
+msgstr ""
+
+#: admin.py:390
+msgid "Ready To Start"
+msgstr ""
+
+#: admin.py:391
+msgid "Started"
+msgstr ""
+
+#: admin.py:392
+msgid "Ready To Submit"
+msgstr ""
+
+#: admin.py:393
+msgid "Declined"
+msgstr ""
+
+#: admin.py:394
+msgid "Timed Out"
+msgstr ""
+
+#: admin.py:395
+msgid "Submitted"
+msgstr ""
+
+#: admin.py:396
+msgid "Second Review Required"
+msgstr ""
+
+#: admin.py:397
+msgid "Verified"
+msgstr ""
+
+#: admin.py:398
+msgid "Rejected"
+msgstr ""
+
+#: admin.py:399
+msgid "Error"
+msgstr ""
+
+#: admin.py:403
+msgid "Onboarding Missing"
+msgstr ""
+
+#: admin.py:404
+msgid "Onboarding Failed"
+msgstr ""
+
+#: admin.py:405
+msgid "Onboarding Pending"
+msgstr ""
+
+#: admin.py:406
+msgid "Onboarding Expired"
+msgstr ""
+
+#: api.py:820 views.py:1140
+#, python-brace-format
+msgid "you have {remaining_time} remaining"
+msgstr ""
+
+#: api.py:1644
+msgid "your course"
+msgstr ""
+
+#: api.py:1737
+#, python-brace-format
+msgid "Proctoring Results For {course_name} {exam_name}"
+msgstr ""
+
+#: api.py:1746
+#, python-brace-format
+msgid "Proctoring Review In Progress For {course_name} {exam_name}"
+msgstr ""
+
+#: api.py:1777
+#, python-brace-format
+msgid "Proctored exam {exam_name} in {course_name} for user {username}"
+msgstr ""
+
+#: api.py:2253
+msgid "Taking As Proctored Exam"
+msgstr ""
+
+#: api.py:2258
+msgid "Proctored Option Available"
+msgstr ""
+
+#: api.py:2263
+msgid "Taking As Open Exam"
+msgstr ""
+
+#: api.py:2268 api.py:2273
+msgid "Pending Session Review"
+msgstr ""
+
+#: api.py:2278
+msgid "Passed Proctoring"
+msgstr ""
+
+#: api.py:2283 api.py:2288
+msgid "Failed Proctoring"
+msgstr ""
+
+#: api.py:2293
+msgid "Proctored Option No Longer Available"
+msgstr ""
+
+#: api.py:2302
+msgid "Ungraded Practice Exam"
+msgstr ""
+
+#: api.py:2307
+msgid "Practice Exam Completed"
+msgstr ""
+
+#: api.py:2312
+msgid "Practice Exam Failed"
+msgstr ""
+
+#: api.py:2320
+msgid "Timed Exam"
+msgstr ""
+
+#: api.py:2911
+msgid "Onboarding status question"
+msgstr ""
+
+#: models.py:394
+msgid "Taking as Proctored"
+msgstr ""
+
+#: models.py:398
+msgid "Is Sample Attempt"
+msgstr ""
+
+#: models.py:416
+msgid "Is Resumable"
+msgstr ""
+
+#: models.py:421
+msgid "Ready to Resume"
+msgstr ""
+
+#: models.py:424
+msgid "Resumed"
+msgstr ""
+
+#: models.py:524
+msgid "Additional Time (minutes)"
+msgstr ""
+
+#: models.py:525
+msgid "Review Policy Exception"
+msgstr ""
+
+#: templates/common/waiting_banner.html:3
+msgid ""
+"\n"
+"        The result will be visible after <strong id=\"wait_deadline\"> Loading... </strong>\n"
+"    "
+msgstr ""
+
+#: templates/emails/proctoring_attempt_satisfactory_email.html:5
+#: templates/emails/proctoring_attempt_submitted_email.html:5
+#: templates/emails/proctoring_attempt_unsatisfactory_email.html:5
+#, python-format
+msgid ""
+"\n"
+"        Hello %(username)s,\n"
+"    "
+msgstr ""
+
+#: templates/emails/proctoring_attempt_satisfactory_email.html:12
+#, python-format
+msgid ""
+"\n"
+"        Your proctored exam \"%(exam_name)s\" in\n"
+"        <a href=\"%(course_url)s\">%(course_name)s</a> was reviewed and you\n"
+"        met all proctoring requirements.\n"
+"    "
+msgstr ""
+
+#: templates/emails/proctoring_attempt_satisfactory_email.html:21
+#, python-format
+msgid ""
+"\n"
+"    If you have any questions about your results, you can reach out at \n"
+"        <a href=\"%(contact_url)s\">\n"
+"            %(contact_url_text)s\n"
+"        </a>.\n"
+"    "
+msgstr ""
+
+#: templates/emails/proctoring_attempt_submitted_email.html:12
+#, python-format
+msgid ""
+"\n"
+"        Your proctored exam \"%(exam_name)s\" in\n"
+"        <a href=\"%(course_url)s\">%(course_name)s</a> was submitted\n"
+"        successfully and will now be reviewed to ensure all exam\n"
+"        rules were followed. You should receive an email with your exam\n"
+"        status within 5 business days.\n"
+"    "
+msgstr ""
+
+#: templates/emails/proctoring_attempt_unsatisfactory_email.html:12
+#, python-format
+msgid ""
+"\n"
+"        Your proctored exam \"%(exam_name)s\" in\n"
+"        <a href=\"%(course_url)s\">%(course_name)s</a> was reviewed and the\n"
+"        course team has identified one or more violations of the proctored exam rules. Examples\n"
+"        of issues that may result in a rules violation include browsing\n"
+"        the internet, blurry or missing photo identification, using a phone,\n"
+"        or getting help from another person. As a result of the identified issue(s),\n"
+"        you did not successfully meet the proctored exam requirements.\n"
+"    "
+msgstr ""
+
+#: templates/emails/proctoring_attempt_unsatisfactory_email.html:25
+#, python-format
+msgid ""
+"\n"
+"        To appeal your proctored exam results, please reach out with any relevant information\n"
+"        about your exam at \n"
+"        <a href=\"%(contact_url)s\">\n"
+"            %(contact_url_text)s\n"
+"        </a>.\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:5
+msgid ""
+"\n"
+"    Proctoring onboarding exam\n"
+"  "
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:12
+msgid ""
+"\n"
+"      Why this is important to you:\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:18
+msgid ""
+"\n"
+"        Establish your identity with the proctoring system to take a proctored exam\n"
+"      "
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:23
+msgid ""
+"\n"
+"        Create your onboarding profile for faster access in the future\n"
+"      "
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:28
+msgid ""
+"\n"
+"        Practice taking a proctored test\n"
+"      "
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:34
+#, python-format
+msgid ""
+"\n"
+"      Proctoring for this course is provided via %(provider_name)s.  Onboarding review, including identity verification, can take 2+ business days.\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:40
+#, python-format
+msgid ""
+"\n"
+"        Once your profile has been reviewed, you will receive an email with review results. The email will come from\n"
+"        <a href=\"mailto:%(learner_notification_from_email)s\">%(learner_notification_from_email)s</a>.\n"
+"        Make sure this email has been added to your inbox filter.\n"
+"      "
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:49
+#, python-format
+msgid ""
+"\n"
+"        Please contact\n"
+"        <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a>\n"
+"        if you have questions.\n"
+"      "
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:58
+msgid "Continue to onboarding"
+msgstr ""
+
+#: templates/onboarding_exam/entrance.html:62
+msgid ""
+"\n"
+"    You will be guided through online proctoring software set up and identity verification.\n"
+"  "
+msgstr ""
+
+#: templates/onboarding_exam/error.html:4
+msgid ""
+"\n"
+"    Error: There was a problem with your onboarding session\n"
+"  "
+msgstr ""
+
+#: templates/onboarding_exam/error.html:13
+msgid ""
+"\n"
+"    Your proctoring session ended before you completed this onboarding exam.\n"
+"    You should retry this onboarding exam.\n"
+"  "
+msgstr ""
+
+#: templates/onboarding_exam/ready_to_submit.html:6
+#, python-format
+msgid ""
+"\n"
+"      You are taking \"%(exam_display_name)s\" as an onboarding exam. You must click “Yes, end my proctored exam” and submit your proctoring session to complete onboarding.\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/rejected.html:5
+msgid ""
+"\n"
+"    Your onboarding session was reviewed, but did not pass all requirements\n"
+"  "
+msgstr ""
+
+#: templates/onboarding_exam/rejected.html:12
+#, python-format
+msgid ""
+"\n"
+"      Please contact\n"
+"      <a href=\"mailto:%(integration_specific_email)s\">\n"
+"        %(integration_specific_email)s\n"
+"      </a> if you have questions. You may retake this onboarding exam by clicking \"Retry my exam\".\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/rejected.html:20
+#: templates/onboarding_exam/submitted.html:47
+#: templates/practice_exam/error.html:29
+#: templates/practice_exam/submitted.html:18
+msgid "Retry my exam"
+msgstr ""
+
+#: templates/onboarding_exam/rejected.html:21
+#: templates/practice_exam/error.html:30
+#: templates/practice_exam/submitted.html:19
+msgid "Resetting Onboarding Exam"
+msgstr ""
+
+#: templates/onboarding_exam/submitted.html:4
+msgid ""
+"\n"
+"    You have submitted this onboarding exam\n"
+"  "
+msgstr ""
+
+#: templates/onboarding_exam/submitted.html:11
+msgid ""
+"\n"
+"      If you do not have an onboarding profile with the system,\n"
+"      Verificient will review your submission and create an onboarding\n"
+"      profile to grant you access to proctored exams. Onboarding\n"
+"      profile review can take 2+ business days.\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/submitted.html:19
+#, python-format
+msgid ""
+"\n"
+"      Once your profile has been reviewed, you will receive an email\n"
+"      with review results. The email will come from\n"
+"      <a href=\"mailto:%(learner_notification_from_email)s\">\n"
+"        %(learner_notification_from_email)s\n"
+"      </a>,\n"
+"      so make sure this email has been added to your inbox filter.\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/submitted.html:29
+msgid ""
+"\n"
+"      If you already have an onboarding profile approved through another course,\n"
+"      this submission will not be reviewed. You may retry this exam at any time\n"
+"      to validate that your setup still meets the requirements for proctoring.\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/submitted.html:36
+msgid ""
+"\n"
+"      If you have made an error in this submission you may restart the onboarding process. \n"
+"      Your current submission will be removed and will not receive a review.\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/submitted.html:41
+msgid "I understand and want to reset this onboarding exam."
+msgstr ""
+
+#: templates/onboarding_exam/submitted.html:53
+#: templates/onboarding_exam/verified.html:16
+#, python-format
+msgid ""
+"\n"
+"      Please contact\n"
+"      <a href=\"mailto:%(integration_specific_email)s\">\n"
+"        %(integration_specific_email)s\n"
+"      </a> if you have questions.\n"
+"    "
+msgstr ""
+
+#: templates/onboarding_exam/verified.html:4
+msgid ""
+"\n"
+"    Your onboarding profile was reviewed successfully\n"
+"  "
+msgstr ""
+
+#: templates/onboarding_exam/verified.html:11
+msgid ""
+"\n"
+"      Your profile has been established, and you're ready to take proctored exams in this course.\n"
+"    "
+msgstr ""
+
+#: templates/practice_exam/entrance.html:5
+msgid ""
+"\n"
+"        Try a proctored exam\n"
+"      "
+msgstr ""
+
+#: templates/practice_exam/entrance.html:12
+msgid ""
+"\n"
+"        Get familiar with proctoring for real exams later in the course. This practice exam has no impact\n"
+"        on your grade in the course.\n"
+"      "
+msgstr ""
+
+#: templates/practice_exam/entrance.html:20
+msgid "Continue to my practice exam"
+msgstr ""
+
+#: templates/practice_exam/entrance.html:25
+msgid ""
+"\n"
+"          You will be guided through steps to set up online proctoring software and verify your identity.\n"
+"        "
+msgstr ""
+
+#: templates/practice_exam/error.html:5
+msgid ""
+"\n"
+"        There was a problem with your practice proctoring session\n"
+"      "
+msgstr ""
+
+#: templates/practice_exam/error.html:13
+msgid ""
+"\n"
+"      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
+"    "
+msgstr ""
+
+#: templates/practice_exam/error.html:21
+msgid ""
+"\n"
+"        Your proctoring session ended before you completed this practice exam.\n"
+"        You can retry this practice exam if you had problems setting up the online proctoring software.\n"
+"      "
+msgstr ""
+
+#: templates/practice_exam/submitted.html:5
+msgid ""
+"\n"
+"        You have submitted this practice proctored exam\n"
+"      "
+msgstr ""
+
+#: templates/practice_exam/submitted.html:13
+msgid ""
+"\n"
+"        Practice exams do not affect your grade.\n"
+"        You have completed this practice exam and can continue with your course work.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/confirm-decline.html:5
+msgid ""
+"\n"
+"        Are you sure you want to take this exam without proctoring?\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/confirm-decline.html:10
+msgid ""
+"\n"
+"        If you take this exam without proctoring, you will not be eligible for course credit or the MicroMasters credential if either applies to this course.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/confirm-decline.html:16
+msgid "Continue Exam Without Proctoring"
+msgstr ""
+
+#: templates/proctored_exam/confirm-decline.html:19
+msgid "Go Back"
+msgstr ""
+
+#: templates/proctored_exam/entrance.html:4
+#: templates/proctored_exam/failed-prerequisites.html:4
+#: templates/proctored_exam/pending-prerequisites.html:4
+msgid ""
+"\n"
+"      This exam is proctored\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/entrance.html:9
+msgid ""
+"\n"
+"      To be eligible for credit or the program credential associated with this course, you must pass the proctoring review for this exam.\n"
+"\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/entrance.html:15
+#: templates/proctored_exam/ready_to_resume.html:19
+msgid "Continue to my proctored exam."
+msgstr ""
+
+#: templates/proctored_exam/entrance.html:18
+#: templates/proctored_exam/ready_to_resume.html:22
+msgid ""
+"\n"
+"        You will be guided through steps to set up online proctoring software and verify your identity.</br>\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/error.html:4
+#: templates/proctored_exam/error_wrong_browser.html:4
+msgid ""
+"\n"
+"      Error with proctored exam\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/error.html:11
+#, python-format
+msgid ""
+"\n"
+"        A system error has occurred with your proctored exam. Please reach out to your course \n"
+"        team at <a href=\"mailto:%(proctoring_escalation_email)s\">%(proctoring_escalation_email)s</a> \n"
+"        for assistance, and return to the exam once you receive further instructions.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/error.html:17
+#, python-format
+msgid ""
+"\n"
+"        A system error has occurred with your proctored exam. Please reach out to \n"
+"        <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">%(platform_name)s Support</a> for \n"
+"        assistance, and return to the exam once you receive further instructions.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/error_modal.html:7
+msgid "Close"
+msgstr ""
+
+#: templates/proctored_exam/error_wrong_browser.html:10
+msgid ""
+"\n"
+"      The content of this exam can only be viewed through the RPNow\n"
+"      application. If you have yet to complete your exam, please\n"
+"      return to the RPNow application to proceed.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/error_wrong_browser.html:17
+msgid ""
+"\n"
+"      Alternatively, you can end your exam.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/error_wrong_browser.html:22
+msgid "End My Exam"
+msgstr ""
+
+#: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
+msgid ""
+"\n"
+"      The due date for this exam has passed\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
+msgid ""
+"\n"
+"      Because the due date has passed, you are no longer able to take this exam.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/failed-prerequisites.html:9
+msgid ""
+"\n"
+"    You did not satisfy the requirements for taking this exam with proctoring.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/failed-prerequisites.html:14
+msgid ""
+"\n"
+"    You did not satisfy the following prerequisites:\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/failed-prerequisites.html:32
+msgid ""
+"\n"
+"        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/failed-prerequisites.html:40
+#, python-format
+msgid ""
+"\n"
+"      If you have questions about the status of your requirements, contact %(platform_name)s Support.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/footer.html:5
+msgid ""
+"\n"
+"        About Proctored Exams\n"
+"        "
+msgstr ""
+
+#: templates/proctored_exam/id_verification.html:6
+msgid ""
+"\n"
+"                Complete your verification before starting the proctored exam.\n"
+"            "
+msgstr ""
+
+#: templates/proctored_exam/id_verification.html:11
+msgid ""
+"\n"
+"                You must successfully complete identity verification before you can start the proctored exam.\n"
+"            "
+msgstr ""
+
+#: templates/proctored_exam/id_verification.html:17
+msgid ""
+"\n"
+"                    Your verification is pending. Results should be available 2-3 days after you\n"
+"                    submit your verification.\n"
+"                "
+msgstr ""
+
+#: templates/proctored_exam/id_verification.html:24
+msgid ""
+"\n"
+"                    Your verification attempt failed. Please read our guidelines to make\n"
+"                    sure you understand the requirements for successfully completing verification,\n"
+"                    then try again.\n"
+"                "
+msgstr ""
+
+#: templates/proctored_exam/id_verification.html:32
+msgid "Retry Verification"
+msgstr ""
+
+#: templates/proctored_exam/id_verification.html:37
+msgid ""
+"\n"
+"                    Your verification has expired. You must successfully complete a new identity verification\n"
+"                    before you can start the proctored exam.\n"
+"                "
+msgstr ""
+
+#: templates/proctored_exam/id_verification.html:44
+#: templates/proctored_exam/id_verification.html:56
+msgid "Continue to Verification"
+msgstr ""
+
+#: templates/proctored_exam/id_verification.html:49
+msgid ""
+"\n"
+"                    Make sure you are on a computer with a webcam, and that you have valid photo identification\n"
+"                    such as a driver's license or passport, before you continue.\n"
+"                "
+msgstr ""
+
+#: templates/proctored_exam/inactive_account.html:4
+msgid ""
+"\n"
+"      You have not activated your account.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/inactive_account.html:10
+#, python-format
+msgid ""
+"\n"
+"      Your %(platform_name)s account has not yet been activated. To take the proctored exam,\n"
+"      you are required to activate your account.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/inactive_account.html:16
+#, python-format
+msgid ""
+"\n"
+"      Please check your registered email's Inbox and Spam folders for an activation email from\n"
+"      %(platform_name)s.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/inactive_account.html:21
+#, python-format
+msgid ""
+"\n"
+"        If you cannot find this email, you can <a href=\"%(reset_link)s\" target=\"_blank\">reset your password</a> to\n"
+"        activate your account.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/inactive_account.html:26
+msgid ""
+"\n"
+"        If you cannot find this email, you can reset your password to activate your account.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/inactive_account.html:32
+#, python-format
+msgid ""
+"\n"
+"      If you continue to have trouble please contact <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">\n"
+"      %(platform_name)s Support</a>.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:6
+msgid ""
+"\n"
+"      Set up and start your proctored exam\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:12
+msgid ""
+"\n"
+"          Note: As part of the proctored exam setup, you will be asked\n"
+"          to verify your identity. Before you begin, make sure you are\n"
+"          on a computer with a webcam, and that you have a valid form\n"
+"          of photo identification such as a driver’s license or\n"
+"          passport.\n"
+"        "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:27
+#, python-format
+msgid ""
+"\n"
+"            If you have issues relating to proctoring, you can contact %(provider_name)s technical support by emailing %(provider_tech_support_email)s  or by calling %(provider_tech_support_phone)s.\n"
+"          "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:33
+#: templates/proctored_exam/instructions.html:78
+msgid "Start System Check"
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:36
+msgid "Start Exam"
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:40
+msgid ""
+"\n"
+"          Step 1\n"
+"        "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:45
+msgid ""
+"\n"
+"          Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
+"        "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:51
+msgid "Copy Exam Code"
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:54
+msgid ""
+"\n"
+"        Select the exam code, then copy it using Control + C (Windows) or Command + C (Mac).\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:59
+msgid ""
+"\n"
+"          Step 2\n"
+"        "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:64
+msgid ""
+"\n"
+"        Start your system check now. A new window will open for this step and you will verify your identity.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:69
+msgid ""
+"\n"
+"        Make sure you:\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:74
+msgid "Have a computer with a functioning webcam"
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:75
+msgid "Have your valid photo ID (e.g. driver's license or passport) ready"
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:81
+msgid ""
+"\n"
+"          Step 3\n"
+"        "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:86
+msgid ""
+"\n"
+"          For security and exam integrity reasons, we ask you to sign in to your edX account. Then we will direct you to the RPNow proctoring experience.\n"
+"        "
+msgstr ""
+
+#: templates/proctored_exam/instructions.html:100
+#: templates/proctored_exam/proctoring_opt_out_button.html:5
+msgid "Take this exam without proctoring."
+msgstr ""
+
+#: templates/proctored_exam/onboarding_error.html:4
+msgid ""
+"\n"
+"      You must complete an onboarding exam before taking this proctored exam\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/onboarding_error.html:11
+msgid ""
+"\n"
+"      Please complete an onboarding exam before attempting this exam.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/onboarding_error.html:17
+#: templates/proctored_exam/onboarding_error.html:32
+msgid "Navigate to onboarding exam"
+msgstr ""
+
+#: templates/proctored_exam/onboarding_error.html:21
+msgid ""
+"\n"
+"    Your onboarding exam is being reviewed. Before attempting this exam, please allow 2+ business days for your onboarding exam to be reviewed.\n"
+"  "
+msgstr ""
+
+#: templates/proctored_exam/onboarding_error.html:26
+msgid ""
+"\n"
+"      Your onboarding exam failed to pass all requirements.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/onboarding_error.html:38
+#, python-format
+msgid ""
+"\n"
+"      Proctoring for your exam is provided via %(provider_name)s.\n"
+"      If you have questions about the status of your onboarding exam, contact\n"
+"      <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a>.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/pending-prerequisites.html:9
+msgid ""
+"\n"
+"    You have not completed the prerequisites for this exam. All requirements must be satisfied before you can take this proctored exam.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/pending-prerequisites.html:14
+msgid ""
+"\n"
+"    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/pending-prerequisites.html:30
+msgid ""
+"\n"
+"    You can take this exam with proctoring only when all prerequisites have been successfully completed.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/proctoring_launch_callback.html:164
+msgid " Your Proctoring Session Has Started "
+msgstr ""
+
+#: templates/proctored_exam/proctoring_launch_callback.html:165
+#, python-format
+msgid ""
+" From this point in time, you must follow the <a "
+"href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
+"proctoring rules</a> to pass the proctoring review for your exam. "
+msgstr ""
+
+#: templates/proctored_exam/proctoring_launch_callback.html:168
+msgid ""
+"\n"
+"            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
+"          "
+msgstr ""
+
+#: templates/proctored_exam/proctoring_launch_callback.html:173
+#, python-format
+msgid ""
+"\n"
+"            Return to the %(platform_name)s course window to start your exam. When you have finished your exam and\n"
+"            have marked it as complete, you can close this window to end the proctoring session\n"
+"            and upload your proctoring session data for review.\n"
+"          "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_resume.html:4
+msgid ""
+"\n"
+"      Your exam is ready to be resumed.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_resume.html:9
+#, python-format
+msgid ""
+"\n"
+"        You will have %(total_time)s to complete your exam.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_resume.html:14
+msgid ""
+"\n"
+"        To be eligible for credit or the program credential associated with this course, you must pass the proctoring review for this exam.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_start.html:5
+msgid ""
+"\n"
+"      Important\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_start.html:10
+#, python-format
+msgid ""
+"\n"
+"        &#8226; You have %(total_time)s to complete this exam. </br>\n"
+"        &#8226; Once you start the exam, you cannot stop the timer. </br>\n"
+"        &#8226; For all question types, you must click \"submit\" to complete your answer. </br>\n"
+"        &#8226; If time expires before you click \"End My Exam\", only your submitted answers will be graded.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_start.html:18
+msgid ""
+"\n"
+"      Proctored Exam Rules\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_start.html:23
+msgid ""
+"\n"
+"         You must adhere to the following rules while you complete this exam.\n"
+"         <strong>If you violate these rules, you will receive a score of 0 on the exam, and you will not be eligible for academic course credit.\n"
+"         </strong></br>\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_start.html:29
+#, python-format
+msgid ""
+"\n"
+"          %(platform_name)s Rules for Online Proctored Exams\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_start.html:36
+msgid ""
+"\n"
+"      Additional Exam Rules\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_start.html:41
+#, python-format
+msgid ""
+"\n"
+"        The following additional rules apply to this exam. These rules take precedence over the Rules for Online Proctored Exams.</br> </br>\n"
+"\n"
+"        %(exam_review_policy)s </br>\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_start.html:49
+msgid "Start my exam"
+msgstr ""
+
+#: templates/proctored_exam/ready_to_start.html:50
+msgid "Starting Exam"
+msgstr ""
+
+#: templates/proctored_exam/ready_to_submit.html:4
+msgid ""
+"\n"
+"      Are you sure you want to end your proctored exam?\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/ready_to_submit.html:10
+msgid ""
+"Make sure that you have selected \"Submit\" for each answer before you "
+"submit your exam."
+msgstr ""
+
+#: templates/proctored_exam/ready_to_submit.html:12
+msgid ""
+"Once you click \"Yes, end my proctored exam\", the exam will be closed, and "
+"your proctoring session will be submitted for review."
+msgstr ""
+
+#: templates/proctored_exam/ready_to_submit.html:15
+msgid "Yes, end my proctored exam"
+msgstr ""
+
+#: templates/proctored_exam/ready_to_submit.html:16
+msgid "Ending Exam"
+msgstr ""
+
+#: templates/proctored_exam/ready_to_submit.html:21
+msgid ""
+"\n"
+"        No, I'd like to continue working\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/rejected.html:5
+msgid ""
+"\n"
+"        Your proctoring session was reviewed, but did not pass all requirements\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/rejected.html:13
+#, python-format
+msgid ""
+"\n"
+"        If you have questions about the status of your proctoring session results, contact %(platform_name)s Support.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/rejected.html:23
+msgid ""
+"\n"
+"        If you have concerns about your proctoring session results, contact your course team.\n"
+"      "
+msgstr ""
+
+#: templates/proctored_exam/submitted.html:4
+msgid ""
+"\n"
+"      You have submitted this proctored exam for review\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/submitted.html:9
+msgid "Your recorded data should now be uploaded for review."
+msgstr ""
+
+#: templates/proctored_exam/submitted.html:11
+msgid ""
+"If the proctoring software window is still open, close it now and confirm "
+"that you want to quit the application."
+msgstr ""
+
+#: templates/proctored_exam/submitted.html:13
+msgid ""
+"Proctoring results are usually available within 5 business days after you "
+"submit your exam."
+msgstr ""
+
+#: templates/proctored_exam/submitted.html:19
+#, python-format
+msgid ""
+"\n"
+"      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/verified.html:5
+msgid ""
+"\n"
+"                Your proctoring session was reviewed successfully. Go to your progress page to view your exam grade.\n"
+"            "
+msgstr ""
+
+#: templates/proctored_exam/visit_exam_content.html:5
+msgid ""
+"\n"
+"      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
+"    "
+msgstr ""
+
+#: templates/proctored_exam/visit_exam_content.html:11
+msgid "View my exam"
+msgstr ""
+
+#: templates/timed_exam/entrance.html:4
+#, python-format
+msgid ""
+"\n"
+"    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
+"    "
+msgstr ""
+
+#: templates/timed_exam/entrance.html:9
+msgid "This exam has a time limit associated with it."
+msgstr ""
+
+#: templates/timed_exam/entrance.html:11
+msgid "To pass this exam, you must complete the problems in the time allowed."
+msgstr ""
+
+#: templates/timed_exam/entrance.html:13
+msgid "After you select "
+msgstr ""
+
+#: templates/timed_exam/entrance.html:15
+msgid "I am ready to start this timed exam,"
+msgstr ""
+
+#: templates/timed_exam/entrance.html:17
+msgid "you will have "
+msgstr ""
+
+#: templates/timed_exam/entrance.html:17
+msgid " to complete and submit the exam."
+msgstr ""
+
+#: templates/timed_exam/entrance.html:21
+msgid ""
+"\n"
+"        I am ready to start this timed exam.\n"
+"      "
+msgstr ""
+
+#: templates/timed_exam/footer.html:3
+msgid "Can I request additional time to complete my exam?"
+msgstr ""
+
+#: templates/timed_exam/footer.html:4
+msgid ""
+"\n"
+"      If you have disabilities,\n"
+"      you might be eligible for an additional time allowance on timed exams.\n"
+"      Ask your course team for information about additional time allowances.\n"
+"    "
+msgstr ""
+
+#: templates/timed_exam/ready_to_submit.html:4
+msgid ""
+"\n"
+"      Are you sure that you want to submit your timed exam?\n"
+"    "
+msgstr ""
+
+#: templates/timed_exam/ready_to_submit.html:9
+msgid ""
+"\n"
+"      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
+"    "
+msgstr ""
+
+#: templates/timed_exam/ready_to_submit.html:14
+msgid ""
+"\n"
+"      After you submit your exam, your exam will be graded.\n"
+"    "
+msgstr ""
+
+#: templates/timed_exam/ready_to_submit.html:19
+msgid ""
+"\n"
+"      Yes, submit my timed exam.\n"
+"    "
+msgstr ""
+
+#: templates/timed_exam/ready_to_submit.html:25
+msgid ""
+"\n"
+"        No, I want to continue working.\n"
+"      "
+msgstr ""
+
+#: templates/timed_exam/submitted.html:6
+msgid ""
+"\n"
+"                The time allotted for this exam has expired. Your exam has been submitted and any work you completed\n"
+"                will be graded.\n"
+"            "
+msgstr ""
+
+#: templates/timed_exam/submitted.html:11
+msgid ""
+"\n"
+"                You have submitted your timed exam.\n"
+"            "
+msgstr ""
+
+#: templates/timed_exam/submitted.html:21
+msgid ""
+"\n"
+"                After the due date has passed, you can review the exam, but you cannot change your answers.\n"
+"            "
+msgstr ""
+
+#: utils.py:87
+#, python-brace-format
+msgid "{num_of_hours} hour"
+msgstr ""
+
+#: utils.py:90
+#, python-brace-format
+msgid "{num_of_hours} hours"
+msgstr ""
+
+#: utils.py:98 utils.py:108
+#, python-brace-format
+msgid "{num_of_minutes} minutes"
+msgstr ""
+
+#: utils.py:101
+#, python-brace-format
+msgid " and {num_of_minutes} minute"
+msgstr ""
+
+#: utils.py:103
+#, python-brace-format
+msgid "{num_of_minutes} minute"
+msgstr ""
+
+#: utils.py:106
+#, python-brace-format
+msgid " and {num_of_minutes} minutes"
+msgstr ""
+
+#: utils.py:342
+msgid "a proctored exam"
+msgstr ""
+
+#: utils.py:345
+msgid "a timed exam"
+msgstr ""
+
+#: utils.py:348
+msgid "an onboarding exam"
+msgstr ""
+
+#: utils.py:350
+msgid "a practice exam"
+msgstr ""
+
+#: views.py:148
+msgid "could not determine the course_id"
+msgstr ""
+
+#: views.py:157 views.py:539
+msgid "Must be a Staff User to Perform this request."
+msgstr ""
+
+#: views.py:527
+msgid "Missing required query parameter course_id"
+msgstr ""
+
+#: views.py:547 views.py:718
+msgid "There is no onboarding exam related to this course id."
+msgstr ""
+
+#: views.py:576
+msgid "There is no onboarding exam accessible to this user."
+msgstr ""
+
+#: views.py:626
+#, python-brace-format
+msgid "No onboarding status API for {proctor_service}"
+msgstr ""
+
+#: views.py:768
+msgid ""
+"The onboarding service is temporarily unavailable. Please try again later."
+msgstr ""
+
+#: views.py:1146
+msgid "you have less than a minute remaining"
+msgstr ""
+
+#: views.py:1601
+msgid "Enter a valid username or email"
+msgstr ""
+
+#: views.py:1601
+msgid "user_info"
+msgstr ""
+
+#: views.py:1614
+msgid "Enter a valid positive value number"
+msgstr ""
+
+#: views.py:1614
+msgid "allowance_value"
+msgstr ""
+
+#: views.py:1701
+msgid "Cannot update attempt review status"
+msgstr ""
+
+#: views.py:2001
+#, python-brace-format
+msgid "No exams in course {course_id}."
+msgstr ""
+
+#: views.py:2007
+#, python-brace-format
+msgid "No proctored exams in course {course_id}"
+msgstr ""
+
+#: views.py:2034
+#, python-brace-format
+msgid "No instructor dashboard for {proctor_service}"
+msgstr ""
