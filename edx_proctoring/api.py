@@ -834,9 +834,6 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
             'ping_interval': provider.ping_interval,
             'attempt_code': attempt['attempt_code']
         })
-        # in case user is not verified we need to send them to verification page
-        if attempt['status'] == ProctoredExamStudentAttemptStatus.created:
-            attempt_data['verification_url'] = f'{settings.ACCOUNT_MICROFRONTEND_URL}/id-verification'
         if attempt['status'] in (
                 ProctoredExamStudentAttemptStatus.created,
                 ProctoredExamStudentAttemptStatus.download_software_clicked
@@ -2228,7 +2225,6 @@ def _are_prerequirements_satisfied(
 
 JUMPTO_SUPPORTED_NAMESPACES = [
     'proctored_exam',
-    'reverification',
 ]
 
 
@@ -2861,15 +2857,7 @@ def _get_proctored_exam_view(exam, context, exam_id, user_id, course_id):
             return None
     elif attempt_status in [ProctoredExamStudentAttemptStatus.created,
                             ProctoredExamStudentAttemptStatus.download_software_clicked]:
-        if not (
-            context.get('is_integrity_signature_enabled')
-            or context.get('verification_status') is APPROVED_STATUS
-        ):
-            # if the user has not id verified yet, show them the page that requires them to do so,
-            # unless the integrity signature feature is enabled
-            student_view_template = 'proctored_exam/id_verification.html'
-        else:
-            student_view_template = 'proctored_exam/instructions.html'
+        student_view_template = 'proctored_exam/instructions.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.ready_to_start:
         student_view_template = 'proctored_exam/ready_to_start.html'
     elif attempt_status == ProctoredExamStudentAttemptStatus.error:

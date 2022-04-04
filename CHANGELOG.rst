@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.10.0] - 2022-04-04
+~~~~~~~~~~~~~~~~~~~~~
+* Remove IDV as a prerequisite to proctored exams
+
 [4.9.0] - 2022-01-25
 ~~~~~~~~~~~~~~~~~~~~
 * Dropped Django22, 30 and 31
@@ -22,7 +26,7 @@ Unreleased
 [4.8.4] - 2022-01-12
 ~~~~~~~~~~~~~~~~~~~~
 * Return better http status when review callback resulted in the original
-  exam no longer being proctored 
+  exam no longer being proctored
 
 [4.8.3] - 2022-01-12
 ~~~~~~~~~~~~~~~~~~~~
