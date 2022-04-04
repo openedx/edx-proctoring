@@ -3,7 +3,7 @@ URL mappings for edX Proctoring Server.
 """
 
 from django.conf import settings
-from django.urls import include, path, re_path
+from django.urls import include, re_path
 
 from edx_proctoring import callbacks, instructor_dashboard_exam_urls, views
 
