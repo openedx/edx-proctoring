@@ -1,14 +1,14 @@
 
 
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import include, re_path
 
 from edx_proctoring import views
 
 urlpatterns = [
-  url(r'^', include('edx_proctoring.urls', namespace='edx_proctoring')),
+  re_path(r'^', include('edx_proctoring.urls', namespace='edx_proctoring')),
   # Fake view to mock url pattern provided by edx_platform
-  url(
+  re_path(
         r'^courses/{}/jump_to/(?P<location>.*)$'.format(
             settings.COURSE_ID_PATTERN,
         ),
