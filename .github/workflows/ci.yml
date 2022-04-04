@@ -17,7 +17,7 @@ jobs:
         os: ['ubuntu-20.04']
         python-version: ['3.8']
         node-version: ['10','16']
-        toxenv: ['django32-drflatest', 'django40-drflatest', 'quality', 'pii_check', 'version_check', 'translations', 'rst_validation']
+        toxenv: ['django32-drflatest', 'django40-drflatest', 'quality', 'pii_check', 'version_check', 'rst_validation']
         exclude:
           - node-version: '16'
             toxenv: 'django32-drflatest'
@@ -29,8 +29,6 @@ jobs:
             toxenv: 'pii_check'
           - node-version: '16'
             toxenv: 'version_check'
-          - node-version: '16'
-            toxenv: 'translations'
           - node-version: '16'
             toxenv: 'rst_validation'
     steps:
