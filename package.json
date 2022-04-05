@@ -34,5 +34,8 @@
     "phantomjs-prebuilt": "^2.1.14",
     "sinon": "^3.2.1"
   },
+  "optionalDependencies": {
+    "fsevents": "2.1.2"
+  },
   "license": "GNU Affero GPLv3"
 }
