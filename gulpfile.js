@@ -26,7 +26,7 @@ gulp.task('tdd', gulp.series(function(done) {
     }, done);
 }));
 
-gulp.task('default', ['tdd']);
+gulp.task('default', gulp.series('tdd'));
 
 
 /**
