@@ -7,36 +7,37 @@ var path = require('path');
 /**
  * Run test once and exit
  */
-gulp.task('test', gulp.series(function(done) {
+gulp.task('test', function(done) {
     'use strict';
+
     karma.start({
         configFile: path.join(__dirname, '/karma.conf.js'),
         singleRun: true
     }, done);
-}));
+});
 
 /**
  * Watch for file changes and re-run tests on each change
  */
-gulp.task('tdd', gulp.series(function(done) {
+gulp.task('tdd', function(done) {
     'use strict';
 
     karma.start({
         configFile: path.join(__dirname, '/karma.conf.js')
     }, done);
-}));
+});
 
-gulp.task('default', gulp.series('tdd'));
+gulp.task('default', ['tdd']);
 
 
 /**
  * Run test in debug mode
  */
-gulp.task('debug', gulp.series(function(done) {
+gulp.task('debug', function(done) {
     'use strict';
 
     karma.start({
         configFile: path.join(__dirname, '/karma.conf.js'),
         singleRun: false
     }, done);
-}));
+});
