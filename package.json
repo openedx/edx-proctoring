@@ -17,11 +17,11 @@
     "access": "public"
   },
   "devDependencies": {
+    "@edx/eslint-config": "^2.0.0",
     "babel-polyfill": "^6.26.0",
     "eslint": "^8.10.0",
-    "@edx/eslint-config": "^2.0.0",
     "eslint-config-edx-es5": "^3.0.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-karma": "0.0.1",
     "jasmine-core": "^2.8.0",
     "karma": "^0.13.0",
@@ -34,6 +34,8 @@
     "phantomjs-prebuilt": "^2.1.14",
     "sinon": "^3.2.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "run": "^1.4.0"
+  },
   "license": "GNU Affero GPLv3"
 }
