@@ -18,7 +18,7 @@ jobs:
         python-version: ['3.8']
         node-version: ['12','16']
         toxenv:
-          ['django32-drflatest', 'django40-drflatest', 'quality', 'pii_check', 'version_check', 'translations', 'js_tests', 'js_lint', 'rst_validation']
+          ['django32-drflatest', 'quality', 'pii_check', 'version_check', 'translations', 'js_tests', 'js_lint', 'rst_validation']
     steps:
     - uses: actions/checkout@v1
     - name: Setup python
