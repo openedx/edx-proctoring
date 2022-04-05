@@ -19,9 +19,9 @@
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
     "eslint": "^5.9.0",
-    "eslint-config-edx": "^4.0.4",
-    "eslint-config-edx-es5": "^4.0.1",
-    "gulp": "^4.0.0",
+    "eslint-config-edx": "^3.0.1",
+    "eslint-config-edx-es5": "^3.0.0",
+    "gulp": "^3.9.1",
     "gulp-karma": "0.0.1",
     "jasmine-core": "^2.8.0",
     "karma": "^0.13.0",
@@ -34,6 +34,5 @@
     "phantomjs-prebuilt": "^2.1.14",
     "sinon": "^3.2.1"
   },
-  "dependencies": {},
   "license": "GNU Affero GPLv3"
 }
