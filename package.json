@@ -1,7 +1,7 @@
 {
   "name": "@edx/edx-proctoring",
   "//": "Note that the version format is slightly different than that of the Python version when using prereleases.",
-  "version": "4.10.0",
+  "version": "4.10.1",
   "main": "edx_proctoring/static/index.js",
   "scripts": {
     "test": "gulp test"
@@ -21,14 +21,15 @@
     "eslint": "^5.9.0",
     "eslint-config-edx": "^4.0.4",
     "eslint-config-edx-es5": "^4.0.1",
-    "gulp": "^3.9.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "gulp": "4.0.0",
     "gulp-karma": "0.0.1",
     "jasmine-core": "^2.8.0",
     "karma": "^0.13.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^0.3.6",
-    "karma-jasmine-jquery": "github:bessdsv/karma-jasmine-jquery#c1579f7bc8e98dd7b225367dbe52b49e75c9bfaf",
+    "karma-jasmine-jquery-2": "latest",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-sinon": "^1.0.5",
     "phantomjs-prebuilt": "^2.1.14",
