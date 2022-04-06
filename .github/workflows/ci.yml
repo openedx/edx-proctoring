@@ -6,48 +6,58 @@ on:
       - master
   pull_request:
     branches:
-      - '**'
+      - "**"
 
 jobs:
   run_tests:
     name: Tests
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: ['ubuntu-20.04']
-        python-version: ['3.8']
-        node-version: ['12','16']
+        os: ["ubuntu-20.04"]
+        python-version: ["3.8"]
+        node-version: ["16"]
         toxenv:
-        ['django32-drflatest', 'django40-drflatest', 'quality', 'pii_check', 'version_check', 'translations', 'js_tests', 'js_lint', 'rst_validation']
+          [
+            "django32-drflatest",
+            "quality",
+            "pii_check",
+            "version_check",
+            "js_tests",
+            "js_lint",
+            "rst_validation",
+            "translations",
+          ]
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup python
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v1
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Setup node
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Set display to virtual frame buffer
-      run: export DISPLAY=:99.0
+      - name: Set display to virtual frame buffer
+        run: export DISPLAY=:99.0
 
-    - name: Install pip
-      run: pip install -r requirements/pip.txt
+      - name: Install pip
+        run: pip install -r requirements/pip.txt
 
-    - name: Install requirements
-      run: pip install -r requirements/ci.txt
+      - name: Install requirements
+        run: pip install -r requirements/ci.txt
 
-    - name: Run tests
-      env:
-        TOXENV: ${{ matrix.toxenv }}
-      run: tox
+      - name: Run tests
+        env:
+          TOXENV: ${{ matrix.toxenv }}
+        run: tox
 
-    - name: Run Coverage
-      if: matrix.toxenv == 'django32-drflatest'
-      uses: codecov/codecov-action@v1
-      with:
-        flags: unittests
-        fail_ci_if_error: true
+      - name: Run Coverage
+        if: matrix.toxenv == 'django32-drflatest'
+        uses: codecov/codecov-action@v1
+        with:
+          flags: unittests
+          fail_ci_if_error: true

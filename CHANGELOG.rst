@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.10.1] - 2022-04-06
+* Fixed the syntax error in CI workflow to make it work.
+* Removed Django40 tests for now which will be enabled in subsequent PR
+
 [4.10.0] - 2022-04-04
 ~~~~~~~~~~~~~~~~~~~~~
 * Remove IDV as a prerequisite to proctored exams
