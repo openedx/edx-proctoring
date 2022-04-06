@@ -69,7 +69,7 @@ django-model-utils==4.2.0
     #   edx-when
 django-simple-history==3.0.0
     # via -r requirements/base.in
-django-waffle==2.3.0
+django-waffle==2.4.1
     # via
     #   -r requirements/base.in
     #   edx-django-utils
@@ -123,14 +123,14 @@ idna==3.3
     # via requests
 iniconfig==1.1.1
     # via pytest
-jinja2==3.0.3
+jinja2==3.1.1
     # via code-annotations
 jsonfield==3.1.0
     # via -r requirements/base.in
     # via celery
 lazy==1.4
     # via bok-choy
-logilab-common==1.8.3
+logilab-common==1.9.3
     # via -r requirements/test.in
 lxml==4.8.0
     # via xblock
@@ -142,7 +142,7 @@ mock==4.0.3
     # via -r requirements/test.in
 mypy-extensions==0.4.3
     # via logilab-common
-newrelic==7.6.0.173
+newrelic==7.8.0.174
     # via edx-django-utils
 packaging==21.3
     # via pytest
@@ -227,7 +227,7 @@ requests==2.27.1
     #   slumber
 responses==0.20.0
     # via -r requirements/test.in
-rules==3.2.1
+rules==3.3
     # via -r requirements/base.in
 selenium==3.141.0
     # via
