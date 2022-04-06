@@ -23,7 +23,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from edx_proctoring import constants
 from edx_proctoring.api import (

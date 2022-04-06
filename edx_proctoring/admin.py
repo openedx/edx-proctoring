@@ -13,7 +13,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from edx_proctoring.api import update_attempt_status
 from edx_proctoring.exceptions import ProctoredExamIllegalStatusTransition, StudentExamAttemptDoesNotExistsException

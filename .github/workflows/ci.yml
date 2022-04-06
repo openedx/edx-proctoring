@@ -21,6 +21,7 @@ jobs:
         toxenv:
           [
             "django32-drflatest",
+            "django40-drflatest",
             "quality",
             "pii_check",
             "version_check",
