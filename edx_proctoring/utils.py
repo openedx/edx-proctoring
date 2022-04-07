@@ -26,7 +26,7 @@ from rest_framework.views import APIView
 
 from django.conf import settings
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.runtime import get_runtime_service

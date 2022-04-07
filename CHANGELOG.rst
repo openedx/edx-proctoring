@@ -15,6 +15,12 @@ Unreleased
 ~~~~~~~~~~
 
 [4.10.1] - 2022-04-06
+~~~~~~~~~~~~~~~~~~~~~
+* Enabled Django40 testing
+* Removed Deprecated and Removed Featured from Django40
+
+[4.10.1] - 2022-04-06
+~~~~~~~~~~~~~~~~~~~~~
 * Fixed the syntax error in CI workflow to make it work.
 * Removed Django40 tests for now which will be enabled in subsequent PR
 

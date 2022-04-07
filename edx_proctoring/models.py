@@ -16,7 +16,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
 from django.db.models.base import ObjectDoesNotExist
-from django.utils.translation import ugettext_noop
+from django.utils.translation import gettext_noop
 
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.constants import VERIFICATION_DAYS_VALID
@@ -213,6 +213,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
     """
     Custom manager
     """
+
     def get_current_exam_attempt(self, exam_id, user_id):
         """
         Returns the most recent Student Exam Attempt object if found
@@ -391,11 +392,11 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
 
     # if the user is attempting this as a proctored exam
     # in case there is an option to opt-out
-    taking_as_proctored = models.BooleanField(default=False, verbose_name=ugettext_noop("Taking as Proctored"))
+    taking_as_proctored = models.BooleanField(default=False, verbose_name=gettext_noop("Taking as Proctored"))
 
     # Whether this attempt is considered a sample attempt, e.g. to try out
     # the proctoring software
-    is_sample_attempt = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Sample Attempt"))
+    is_sample_attempt = models.BooleanField(default=False, verbose_name=gettext_noop("Is Sample Attempt"))
 
     # what review policy was this exam submitted under
     # Note that this is not a foreign key because
@@ -413,15 +414,15 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
     # marks whether the attempt is able to be resumed by user
     # Only those attempts which had an error state before, but
     # has not yet marked submitted is resumable.
-    is_resumable = models.BooleanField(default=False, verbose_name=ugettext_noop("Is Resumable"))
+    is_resumable = models.BooleanField(default=False, verbose_name=gettext_noop("Is Resumable"))
 
     # marks whether or not an attempt has been marked as ready to resume
     # by staff. The value of this field does not necessarily mean that an
     # attempt is ready to resume by a learner, only that the staff has marked it as such.
-    ready_to_resume = models.BooleanField(default=False, verbose_name=ugettext_noop("Ready to Resume"))
+    ready_to_resume = models.BooleanField(default=False, verbose_name=gettext_noop("Ready to Resume"))
 
     # marks whether or not an attempt has been resumed by a learner.
-    resumed = models.BooleanField(default=False, verbose_name=ugettext_noop("Resumed"))
+    resumed = models.BooleanField(default=False, verbose_name=gettext_noop("Resumed"))
 
     history = HistoricalRecords(table_name='proctoring_proctoredexamstudentattempt_history')
 
@@ -492,6 +493,7 @@ class QuerySetWithUpdateOverride(models.QuerySet):
     Custom QuerySet class to make an archive copy
     every time the object is updated.
     """
+
     def update(self, **kwargs):
         """ Create a copy after update """
         super().update(**kwargs)
@@ -503,6 +505,7 @@ class ProctoredExamStudentAllowanceManager(models.Manager):
     Custom manager to override with the custom queryset
     to enable archiving on Allowance updation.
     """
+
     def get_queryset(self):
         """
         Return a specialized queryset
@@ -521,8 +524,8 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
 
     # DONT EDIT THE KEYS - THE FIRST VALUE OF THE TUPLE - AS ARE THEY ARE STORED IN THE DATABASE
     # THE SECOND ELEMENT OF THE TUPLE IS A DISPLAY STRING AND CAN BE EDITED
-    ADDITIONAL_TIME_GRANTED = ('additional_time_granted', ugettext_noop('Additional Time (minutes)'))
-    REVIEW_POLICY_EXCEPTION = ('review_policy_exception', ugettext_noop('Review Policy Exception'))
+    ADDITIONAL_TIME_GRANTED = ('additional_time_granted', gettext_noop('Additional Time (minutes)'))
+    REVIEW_POLICY_EXCEPTION = ('review_policy_exception', gettext_noop('Review Policy Exception'))
 
     all_allowances = [
         ADDITIONAL_TIME_GRANTED + REVIEW_POLICY_EXCEPTION
