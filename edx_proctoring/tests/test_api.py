@@ -3016,13 +3016,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.rejected, False),
         (ProctoredExamStudentAttemptStatus.rejected, ProctoredExamStudentAttemptStatus.verified, False),
     )
-    @ddt.unpack  # pylint: disable=too-many-statements
+    @ddt.unpack
     def test_grade_certificate_release_with_multiple_attempts(
         self,
         first_attempt_status,
         second_attempt_status,
         update_in_order
     ):
+        # pylint: disable=too-many-statements
         set_runtime_service('grades', MockGradesService())
 
         # create attempt

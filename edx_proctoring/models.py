@@ -460,7 +460,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         This code bridges the improved history using django simple history
         and the older history tables
         """
-        attempt_history = cls.history.filter(attempt_code=attempt_code)
+        attempt_history = cls.history.filter(attempt_code=attempt_code)  # pylint: disable=no-member
         if attempt_history:
             return attempt_history.latest("modified").instance
         return None
