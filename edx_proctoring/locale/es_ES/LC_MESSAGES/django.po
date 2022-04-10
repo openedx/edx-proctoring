@@ -5,15 +5,13 @@
 # EdX Team <info@edx.org>, 2018.
 # 
 # Translators:
-# Nadav Stark <nadav@yeda.org.il>, 2016
-# Natalia Berdnikov <nberdnikov@edx.org>, 2016
-# Bentsi Magidovich <magidovich@gmail.com>, 2016
-# e2f_HE c1 <e2f_HE_c1@outlook.com>, 2016
-# Naaman nov <naaman.nov@gmail.com>, 2016
-# qualityalltext <quality@alltext.co.il>, 2017
-# Hodaya Zada <hodayaz@mse.gov.il>, 2021
-# Glib Glugovskiy <glugov1998@gmail.com>, 2022
-# Yaron Shahrabani <sh.yaron@gmail.com>, 2022
+# spentamanyu <i.delamo@gmail.com>, 2016
+# David Martínez <jokerdm@gmail.com>, 2016
+# Mariangeles Fernandez <mariangelesfm@gmail.com>, 2016
+# Javier Orts <jorts@upv.es>, 2016
+# Miguel Angel Cordova <miguel.angel.cordova.uned@gmail.com>, 2017
+# URJConline <online.mooc@urjc.es>, 2021
+# UAMx <uamx.dev@gmail.com>, 2022
 # 
 msgid ""
 msgstr ""
@@ -21,85 +19,85 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-10 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>, 2022\n"
-"Language-Team: Hebrew (https://www.transifex.com/open-edx/teams/6205/he/)\n"
+"Last-Translator: UAMx <uamx.dev@gmail.com>, 2022\n"
+"Language-Team: Spanish (Spain) (https://www.transifex.com/open-edx/teams/6205/es_ES/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: he\n"
-"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;\n"
+"Language: es_ES\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: admin.py:110
 msgid "internally reviewed"
-msgstr "ביקורת פנימית"
+msgstr ""
 
 #: admin.py:119
 msgid "All Unreviewed"
-msgstr "כל אלה שלא נבדקו"
+msgstr ""
 
 #: admin.py:120
 msgid "All Unreviewed Failures"
-msgstr "כל הכשלים שלא נבדקו"
+msgstr ""
 
 #: admin.py:140
 msgid "active proctored exams"
-msgstr "מבחנים תחת פיקוח פעיל"
+msgstr ""
 
 #: admin.py:195
 msgid "courses with active proctored exams"
-msgstr "קורסים עם מבחנים תחת פיקוח פעיל"
+msgstr ""
 
 #: admin.py:350
 msgid "Course Id"
-msgstr "מזהה קורס"
+msgstr ""
 
 #: admin.py:388
 msgid "Created"
-msgstr "נוצר"
+msgstr ""
 
 #: admin.py:389
 msgid "Download Software Clicked"
-msgstr "הורד את התוכנה שנבחרה"
+msgstr ""
 
 #: admin.py:390
 msgid "Ready To Start"
-msgstr "מוכן להתחלה"
+msgstr ""
 
 #: admin.py:391
 msgid "Started"
-msgstr "התחיל"
+msgstr ""
 
 #: admin.py:392
 msgid "Ready To Submit"
-msgstr "מוכן להגשה"
+msgstr ""
 
 #: admin.py:393
 msgid "Declined"
-msgstr "נדחה"
+msgstr ""
 
 #: admin.py:394
 msgid "Timed Out"
-msgstr "תוזמן"
+msgstr ""
 
 #: admin.py:395
 msgid "Submitted"
-msgstr "הוגש"
+msgstr ""
 
 #: admin.py:396
 msgid "Second Review Required"
-msgstr "דרושה סקירה נוספת"
+msgstr "Es necesario revisarlo una segunda vez"
 
 #: admin.py:397
 msgid "Verified"
-msgstr "מאומת"
+msgstr ""
 
 #: admin.py:398
 msgid "Rejected"
-msgstr "נדחה"
+msgstr ""
 
 #: admin.py:399
 msgid "Error"
-msgstr "שגיאה"
+msgstr ""
 
 #: admin.py:403
 msgid "Onboarding Missing"
@@ -120,11 +118,11 @@ msgstr ""
 #: api.py:820 views.py:1140
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
-msgstr "נותרה לך {remaining_time}"
+msgstr ""
 
 #: api.py:1641
 msgid "your course"
-msgstr "הקורס שלך"
+msgstr ""
 
 #: api.py:1734
 #, python-brace-format
@@ -139,51 +137,51 @@ msgstr ""
 #: api.py:1774
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
-msgstr ""
+msgstr "Examen supervisado {exam_name} en {course_name} para {username}"
 
 #: api.py:2249
 msgid "Taking As Proctored Exam"
-msgstr "בחירה כמבחן תחת פיקוח"
+msgstr ""
 
 #: api.py:2254
 msgid "Proctored Option Available"
-msgstr "אפשרות תחת פיקוח זמינה"
+msgstr ""
 
 #: api.py:2259
 msgid "Taking As Open Exam"
-msgstr " בחירה במבחן פתוח"
+msgstr ""
 
 #: api.py:2264 api.py:2269
 msgid "Pending Session Review"
-msgstr "סקירת מפגש בהמתנה"
+msgstr ""
 
 #: api.py:2274
 msgid "Passed Proctoring"
-msgstr "פיקוח שעבר"
+msgstr ""
 
 #: api.py:2279 api.py:2284
 msgid "Failed Proctoring"
-msgstr "פיקוח שנכשל"
+msgstr ""
 
 #: api.py:2289
 msgid "Proctored Option No Longer Available"
-msgstr "האופציה תחת פיקוח אינה זמינה עוד."
+msgstr ""
 
 #: api.py:2298
 msgid "Ungraded Practice Exam"
-msgstr "מבחן תרגול ללא ציון"
+msgstr ""
 
 #: api.py:2303
 msgid "Practice Exam Completed"
-msgstr "הושלם מבחן תרגול"
+msgstr ""
 
 #: api.py:2308
 msgid "Practice Exam Failed"
-msgstr "מבחן תרגול שנכשל"
+msgstr ""
 
 #: api.py:2316
 msgid "Timed Exam"
-msgstr "מבחן מתוזמן"
+msgstr ""
 
 #: api.py:2899
 msgid "Onboarding status question"
@@ -191,11 +189,11 @@ msgstr ""
 
 #: models.py:395
 msgid "Taking as Proctored"
-msgstr "בחירה בפיקוח"
+msgstr ""
 
 #: models.py:399
 msgid "Is Sample Attempt"
-msgstr "דוגמת ניסיון"
+msgstr ""
 
 #: models.py:417
 msgid "Is Resumable"
@@ -211,11 +209,11 @@ msgstr ""
 
 #: models.py:527
 msgid "Additional Time (minutes)"
-msgstr "תוספת זמן (דקות)"
+msgstr ""
 
 #: models.py:528
 msgid "Review Policy Exception"
-msgstr "סקירת מדיניות בנוגע למקרים חריגים"
+msgstr ""
 
 #: templates/common/waiting_banner.html:3
 msgid ""
@@ -233,6 +231,9 @@ msgid ""
 "        Hello %(username)s,\n"
 "    "
 msgstr ""
+"\n"
+"        Hola, %(username)s:\n"
+"    "
 
 #: templates/emails/proctoring_attempt_satisfactory_email.html:12
 #, python-format
@@ -515,7 +516,7 @@ msgstr ""
 
 #: templates/practice_exam/entrance.html:20
 msgid "Continue to my practice exam"
-msgstr "המשך למבחן התרגול שלי"
+msgstr ""
 
 #: templates/practice_exam/entrance.html:25
 msgid ""
@@ -537,8 +538,6 @@ msgid ""
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
 "    "
 msgstr ""
-"\n"
-"תוצאות התרגול תחת פיקוח: <b class=\"failure\">  חוסר שביעות רצון </b>"
 
 #: templates/practice_exam/error.html:21
 msgid ""
@@ -570,7 +569,8 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"האם אתה בטוח שאתה רוצה להיבחן במבחן זה ללא פיקוח?"
+"        ¿Seguro que quieres hacer este examen sin supervisión?\n"
+"      "
 
 #: templates/proctored_exam/confirm-decline.html:10
 msgid ""
@@ -581,11 +581,11 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
-msgstr "המשך במבחן ללא פיקוח"
+msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr "חזור"
+msgstr ""
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -595,8 +595,6 @@ msgid ""
 "      This exam is proctored\n"
 "    "
 msgstr ""
-"\n"
-"מבחן זה נמצא תחת פיקוח."
 
 #: templates/proctored_exam/entrance.html:9
 msgid ""
@@ -626,8 +624,6 @@ msgid ""
 "      Error with proctored exam\n"
 "    "
 msgstr ""
-"\n"
-"טעות במבחן תחת פיקוח"
 
 #: templates/proctored_exam/error.html:11
 #, python-format
@@ -651,7 +647,7 @@ msgstr ""
 
 #: templates/proctored_exam/error_modal.html:7
 msgid "Close"
-msgstr "סגור"
+msgstr ""
 
 #: templates/proctored_exam/error_wrong_browser.html:10
 msgid ""
@@ -679,8 +675,6 @@ msgid ""
 "      The due date for this exam has passed\n"
 "    "
 msgstr ""
-"\n"
-"תאריך היעד למבחן זה עבר."
 
 #: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
@@ -688,8 +682,6 @@ msgid ""
 "      Because the due date has passed, you are no longer able to take this exam.\n"
 "    "
 msgstr ""
-"\n"
-"היות ותאריך היעד עבר, אינך זכאי עוד להיבחן במבחן זה."
 
 #: templates/proctored_exam/failed-prerequisites.html:9
 msgid ""
@@ -704,8 +696,6 @@ msgid ""
 "    You did not satisfy the following prerequisites:\n"
 "    "
 msgstr ""
-"\n"
-"לא ענית על הדרישות המקדימות הבאות:"
 
 #: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
@@ -713,8 +703,6 @@ msgid ""
 "        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
 "      "
 msgstr ""
-"\n"
-"הודות לחוסר שביעות בדרישות מקדימות, תוכל להיבחן במבחן זה ללא פיקוח."
 
 #: templates/proctored_exam/failed-prerequisites.html:40
 #, python-format
@@ -730,8 +718,6 @@ msgid ""
 "        About Proctored Exams\n"
 "        "
 msgstr ""
-"\n"
-"אודות המבחנים תחת פיקוח"
 
 #: templates/proctored_exam/inactive_account.html:4
 msgid ""
@@ -748,6 +734,10 @@ msgid ""
 "      you are required to activate your account.\n"
 "    "
 msgstr ""
+"\n"
+"      No has activado aún tu cuenta de  %(platform_name)s. Para realizar el examen supervisado,\n"
+"      es necesario que actives tu cuenta primero.\n"
+"    "
 
 #: templates/proctored_exam/inactive_account.html:16
 #, python-format
@@ -800,6 +790,13 @@ msgid ""
 "          passport.\n"
 "        "
 msgstr ""
+"\n"
+"         Nota: Como parte de la configuración del examen supervisado, se te solicitará \n"
+"         verificar tu identidad. Antes de empezar, asegúrate de que cuentas con\n"
+"         un ordenador con cámara web y de que tienes un documento válido\n"
+"          de identificación con tu foto como el carné de conducir o\n"
+"          el pasaporte.\n"
+"        "
 
 #: templates/proctored_exam/instructions.html:27
 #, python-format
@@ -812,7 +809,7 @@ msgstr ""
 #: templates/proctored_exam/instructions.html:33
 #: templates/proctored_exam/instructions.html:78
 msgid "Start System Check"
-msgstr "התחל בבדיקת מערכת"
+msgstr ""
 
 #: templates/proctored_exam/instructions.html:36
 msgid "Start Exam"
@@ -889,7 +886,7 @@ msgstr ""
 #: templates/proctored_exam/instructions.html:100
 #: templates/proctored_exam/proctoring_opt_out_button.html:5
 msgid "Take this exam without proctoring."
-msgstr "היבחן במבחן זה ללא פיקוח."
+msgstr ""
 
 #: templates/proctored_exam/onboarding_error.html:4
 msgid ""
@@ -947,8 +944,6 @@ msgid ""
 "    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
 "    "
 msgstr ""
-"\n"
-"הדרישות המקדימות שלהלן נמצאות <strong> בתהליך </strong> בדיקה וחייבות להסתיים בהצלחה לפני שתוכל להמשיך:"
 
 #: templates/proctored_exam/pending-prerequisites.html:30
 msgid ""
@@ -959,7 +954,7 @@ msgstr ""
 
 #: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
-msgstr "מפגש הפיקוח שלך התחיל."
+msgstr ""
 
 #: templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
@@ -968,9 +963,6 @@ msgid ""
 "href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
 "proctoring rules</a> to pass the proctoring review for your exam. "
 msgstr ""
-"מרגע זה ואילך, עליך לעקוב אחר <a "
-"href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\"> חוקי "
-"הפיקוח הנמצאים און ליין </a> על מנת לעבור את הסקירה תחת פיקוח עבור מבחנך."
 
 #: templates/proctored_exam/proctoring_launch_callback.html:168
 msgid ""
@@ -978,8 +970,6 @@ msgid ""
 "            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
 "          "
 msgstr ""
-"\n"
-"אל תסגור חלון זה לפני סיום מבחנך. אם תסגור חלון זה, יסתיים ה'מפגש תחת פיקוח' שלך ולא תוכל להשלים בהצלחה את ה'מבחן תחת פיקוח'."
 
 #: templates/proctored_exam/proctoring_launch_callback.html:173
 #, python-format
@@ -990,10 +980,6 @@ msgid ""
 "            and upload your proctoring session data for review.\n"
 "          "
 msgstr ""
-"\n"
-"חזור לחלון קורס  %(platform_name)s כדי להתחיל את מבחנך. כאשר תסיים את מבחנך\n"
-"ותסמן אותו כגמור, תוכל לסגור את החלון הזה על מנת לסיים את המפגש תחת פיקוח\n"
-"ולהעלות את המידע על המפגש תחת פיקוח לצורך סקירה."
 
 #: templates/proctored_exam/ready_to_resume.html:4
 msgid ""
@@ -1091,7 +1077,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"האם אתה בטוח שאתה רוצה לסיים את ה'מבחן תחת פיקוח' שלך?"
+"      ¿Seguro que quieres terminar tu examen supervisado?\n"
+"    "
 
 #: templates/proctored_exam/ready_to_submit.html:10
 msgid ""
@@ -1119,8 +1106,6 @@ msgid ""
 "        No, I'd like to continue working\n"
 "      "
 msgstr ""
-"\n"
-"לא, אני רוצה להמשיך לעבוד."
 
 #: templates/proctored_exam/rejected.html:5
 msgid ""
@@ -1150,8 +1135,6 @@ msgid ""
 "      You have submitted this proctored exam for review\n"
 "    "
 msgstr ""
-"\n"
-"הגשת לסקירה את ה'מבחן תחת פיקוח' שלך."
 
 #: templates/proctored_exam/submitted.html:9
 msgid "Your recorded data should now be uploaded for review."
@@ -1176,8 +1159,6 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
-"\n"
-"במידה ויש לך שאלות אודות סטטוס תוצאות המבחן תחת פיקוח שלך, צור קשר עם צוות התמיכה של  %(platform_name)s."
 
 #: templates/proctored_exam/verified.html:5
 msgid ""
@@ -1192,12 +1173,10 @@ msgid ""
 "      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
 "    "
 msgstr ""
-"\n"
-"על מנת לצפות בשאלות ותשובות מבחנך, בחר <strong> צפה במבחן שלי </strong>.  סטטוס סקירת המבחן יוצג משמאל בחלונית הניווט."
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr "צפה במבחן שלי"
+msgstr ""
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -1206,32 +1185,30 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
-"\n"
-"%(exam_name)s הוא מבחן מתוזמן (%(total_time)s)"
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr "למבחן זה יש מגבלת זמן."
+msgstr ""
 
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
-msgstr "על מנת לעבור מבחן זה, עליכם להשלים את הבעיות בזמן המוקצב."
+msgstr ""
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
-msgstr "לאחר בחירתך"
+msgstr ""
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr "אני רוצה להתחיל את המבחן המתוזמן,"
+msgstr ""
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr "רגע זה יעמדו בפניכם"
+msgstr ""
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
-msgstr "להשלים ולהגיש את המבחן."
+msgstr ""
 
 #: templates/timed_exam/entrance.html:21
 msgid ""
@@ -1239,12 +1216,10 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
-"\n"
-"אני רוצה להתחיל את המבחן המתוזמן."
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
-msgstr "האם אני יכול לבקש הארכת זמן על מנת להשלים את המבחן שלי?"
+msgstr ""
 
 #: templates/timed_exam/footer.html:4
 msgid ""
@@ -1254,10 +1229,6 @@ msgid ""
 "      Ask your course team for information about additional time allowances.\n"
 "    "
 msgstr ""
-"\n"
-"אם יש לך מגבלות כלשהן,\n"
-"אתה עשוי להיות זכאי להארכת זמן נוספת במבחנים מתוזמנים.\n"
-"שאל את צוות הקורס על מידע אודות הארכות זמן נוספות."
 
 #: templates/timed_exam/ready_to_submit.html:4
 msgid ""
@@ -1266,7 +1237,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"האם את הבטוח שאת הרומה להגיש את המבחן המתוזמן שלך?"
+"      ¿Seguro que quieres enviar tu examen cronometrado?\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:9
 msgid ""
@@ -1274,9 +1246,6 @@ msgid ""
 "      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
 "    "
 msgstr ""
-"\n"
-"      ודאו שבחרתם 'הגשה' עבור כל בעיה, לפני שאתם מגישים את המבחן.\n"
-"    "
 
 #: templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -1284,9 +1253,6 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
-"\n"
-"      לאחר שתגישו את המבחן תוכלו לקבל את הציון. בהצלחה! \n"
-"    "
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -1294,8 +1260,6 @@ msgid ""
 "      Yes, submit my timed exam.\n"
 "    "
 msgstr ""
-"\n"
-"כן, הגש את המבחן המתוזמן שלי."
 
 #: templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -1303,8 +1267,6 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
-"\n"
-"לא, אני מעוניין להמשיך לעבוד."
 
 #: templates/timed_exam/submitted.html:6
 msgid ""
@@ -1331,32 +1293,32 @@ msgstr ""
 #: utils.py:87
 #, python-brace-format
 msgid "{num_of_hours} hour"
-msgstr "{num_of_hours} שעה"
+msgstr ""
 
 #: utils.py:90
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr "{num_of_hours}  שעות"
+msgstr ""
 
 #: utils.py:98 utils.py:108
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
-msgstr "{num_of_minutes}  דקות"
+msgstr ""
 
 #: utils.py:101
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr "ו- {num_of_minutes} דקה"
+msgstr ""
 
 #: utils.py:103
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr " {num_of_minutes} דקה"
+msgstr ""
 
 #: utils.py:106
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr "ו-  {num_of_minutes} דקות"
+msgstr ""
 
 #: utils.py:342
 msgid "a proctored exam"
@@ -1376,15 +1338,15 @@ msgstr ""
 
 #: views.py:148
 msgid "could not determine the course_id"
-msgstr "לא ניתן להגדיר את מזהה הקורס"
+msgstr ""
 
 #: views.py:157 views.py:539
 msgid "Must be a Staff User to Perform this request."
-msgstr "חייב להיות משתמש צוות על מנת לבצע בקשה זו."
+msgstr ""
 
 #: views.py:527
 msgid "Missing required query parameter course_id"
-msgstr ""
+msgstr "Falta el parámetro obligatorio course_id"
 
 #: views.py:547 views.py:718
 msgid "There is no onboarding exam related to this course id."
@@ -1406,11 +1368,11 @@ msgstr ""
 
 #: views.py:1146
 msgid "you have less than a minute remaining"
-msgstr "נותרה לך פחות מדקה"
+msgstr ""
 
 #: views.py:1601
 msgid "Enter a valid username or email"
-msgstr ""
+msgstr "Escribe un nombre de usuario o un correo electrónico válido"
 
 #: views.py:1601
 msgid "user_info"

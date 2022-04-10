@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-13 18:34+0000\n"
+"POT-Creation-Date: 2022-04-10 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: swaleh amin <mkupuofirstnameswaleh@yahoo.com>, 2021\n"
 "Language-Team: Swahili (Kenya) (https://www.transifex.com/open-edx/teams/6205/sw_KE/)\n"
@@ -119,98 +119,98 @@ msgstr ""
 msgid "you have {remaining_time} remaining"
 msgstr "umebakiwa na {remaining_time}"
 
-#: api.py:1644
+#: api.py:1641
 msgid "your course"
 msgstr "kozi yako"
 
-#: api.py:1737
+#: api.py:1734
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1746
+#: api.py:1743
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr ""
 
-#: api.py:1777
+#: api.py:1774
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 
-#: api.py:2253
+#: api.py:2249
 msgid "Taking As Proctored Exam"
 msgstr "Kufanya Mtihani kwa Usimamizi"
 
-#: api.py:2258
+#: api.py:2254
 msgid "Proctored Option Available"
 msgstr "Kipengele cha kufanya mtihani kwa Usimamizi Kinapatikana"
 
-#: api.py:2263
+#: api.py:2259
 msgid "Taking As Open Exam"
 msgstr "Kufanya Mtihani bila Usimamizi"
 
-#: api.py:2268 api.py:2273
+#: api.py:2264 api.py:2269
 msgid "Pending Session Review"
 msgstr "Muda wa kuanza mtihani unaandaliwa"
 
-#: api.py:2278
+#: api.py:2274
 msgid "Passed Proctoring"
 msgstr "Imefanikiwa kuanza mtihani wa kusimamiwa"
 
-#: api.py:2283 api.py:2288
+#: api.py:2279 api.py:2284
 msgid "Failed Proctoring"
 msgstr "Imeshindwa kuanza mtihani wa kusimamiwa"
 
-#: api.py:2293
+#: api.py:2289
 msgid "Proctored Option No Longer Available"
 msgstr "Kipengele cha Kufanya mtihani wa Kusimamiwa Hakipo tena"
 
-#: api.py:2302
+#: api.py:2298
 msgid "Ungraded Practice Exam"
 msgstr "Mtihani wa mazoezi usio na daraja"
 
-#: api.py:2307
+#: api.py:2303
 msgid "Practice Exam Completed"
 msgstr "Mtihani wa majaribio umekamilika"
 
-#: api.py:2312
+#: api.py:2308
 msgid "Practice Exam Failed"
 msgstr "Mtihani wa majaribio umefeli"
 
-#: api.py:2320
+#: api.py:2316
 msgid "Timed Exam"
 msgstr "Mtihani wa Muda Maalum"
 
-#: api.py:2911
+#: api.py:2899
 msgid "Onboarding status question"
 msgstr ""
 
-#: models.py:394
+#: models.py:395
 msgid "Taking as Proctored"
 msgstr "Kufanya mtihani kwa usimamizi"
 
-#: models.py:398
+#: models.py:399
 msgid "Is Sample Attempt"
 msgstr "Ni Jaribio la Mfano"
 
-#: models.py:416
+#: models.py:417
 msgid "Is Resumable"
 msgstr ""
 
-#: models.py:421
+#: models.py:422
 msgid "Ready to Resume"
 msgstr ""
 
-#: models.py:424
+#: models.py:425
 msgid "Resumed"
 msgstr ""
 
-#: models.py:524
+#: models.py:527
 msgid "Additional Time (minutes)"
 msgstr "Muda wa Nyongeza (dakika)"
 
-#: models.py:525
+#: models.py:528
 msgid "Review Policy Exception"
 msgstr "Pitia upya Vipengele maalum vya Sera "
 
@@ -738,81 +738,6 @@ msgstr ""
 "\n"
 "        Kuhusu Mitihani ya Muda maalum\n"
 "        "
-
-#: templates/proctored_exam/id_verification.html:6
-msgid ""
-"\n"
-"                Complete your verification before starting the proctored exam.\n"
-"            "
-msgstr ""
-"\n"
-"                Kamilisha uhakiki wako kabla ya kuanza kufanya mtihani.\n"
-"            "
-
-#: templates/proctored_exam/id_verification.html:11
-msgid ""
-"\n"
-"                You must successfully complete identity verification before you can start the proctored exam.\n"
-"            "
-msgstr ""
-"\n"
-"                Lazima ukamilishe kwa usahihi uhakiki wa kitambulisho kabla ya kuanza kufanya mtihani.\n"
-"            "
-
-#: templates/proctored_exam/id_verification.html:17
-msgid ""
-"\n"
-"                    Your verification is pending. Results should be available 2-3 days after you\n"
-"                    submit your verification.\n"
-"                "
-msgstr ""
-"\n"
-"                    Uhakiki wako unasubiri kushughulikiwa. Majibu yatatolewa siku 2-3 baada ya kuwasilisha uhakiki wako.\n"
-"                "
-
-#: templates/proctored_exam/id_verification.html:24
-msgid ""
-"\n"
-"                    Your verification attempt failed. Please read our guidelines to make\n"
-"                    sure you understand the requirements for successfully completing verification,\n"
-"                    then try again.\n"
-"                "
-msgstr ""
-"\n"
-"                    Jaribio lako la kufanya uhakiki halikufanikiwa. Tafdhali soma maelekezo yetu uweze kufahamu kukamilisha uhakiki kwa usahihi,\n"
-"                    kisha jaribu tena.\n"
-"                "
-
-#: templates/proctored_exam/id_verification.html:32
-msgid "Retry Verification"
-msgstr "Jaribu upya Uhakiki"
-
-#: templates/proctored_exam/id_verification.html:37
-msgid ""
-"\n"
-"                    Your verification has expired. You must successfully complete a new identity verification\n"
-"                    before you can start the proctored exam.\n"
-"                "
-msgstr ""
-"\n"
-"                    Uhakiki wako umepitwa na wakati. Lazima ukamilishe kwa usahihi uhakiki wa utambulisho mpya kabla ya kuanza kufanya mtihani.\n"
-"                "
-
-#: templates/proctored_exam/id_verification.html:44
-#: templates/proctored_exam/id_verification.html:56
-msgid "Continue to Verification"
-msgstr "Endelea kwenye Uhakiki"
-
-#: templates/proctored_exam/id_verification.html:49
-msgid ""
-"\n"
-"                    Make sure you are on a computer with a webcam, and that you have valid photo identification\n"
-"                    such as a driver's license or passport, before you continue.\n"
-"                "
-msgstr ""
-"\n"
-"                    Hakikisha unatumia kompyuta yenye kamera ya wavuti, na pia una kitambusho halali chenye picha kama vile leseni ya udereva au pasipoti kabla ya kuendelea.\n"
-"                "
 
 #: templates/proctored_exam/inactive_account.html:4
 msgid ""
