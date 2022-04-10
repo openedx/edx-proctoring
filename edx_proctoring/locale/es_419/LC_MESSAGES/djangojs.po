@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-13 18:34+0000\n"
+"POT-Creation-Date: 2022-04-10 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Carolina De Mares <carolina.demares@edunext.co>, 2021\n"
 "Language-Team: Spanish (Latin America) (https://www.transifex.com/open-edx/teams/6205/es_419/)\n"
@@ -120,98 +120,98 @@ msgstr "Inducción expirada "
 msgid "you have {remaining_time} remaining"
 msgstr "usted tiene {remaining_time} para terminar"
 
-#: api.py:1644
+#: api.py:1641
 msgid "your course"
 msgstr "su curso"
 
-#: api.py:1737
+#: api.py:1734
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr "Resultados de Examen de Supervisión Para {course_name} {exam_name}"
 
-#: api.py:1746
+#: api.py:1743
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr "Revisión Supervisada En Progreso Para {course_name} {exam_name}"
 
-#: api.py:1777
+#: api.py:1774
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr "Examen supervisado {exam_name} en {course_name} para {username}"
 
-#: api.py:2253
+#: api.py:2249
 msgid "Taking As Proctored Exam"
 msgstr "Tomando como examen supervisado"
 
-#: api.py:2258
+#: api.py:2254
 msgid "Proctored Option Available"
 msgstr "Opción supervisada disponible"
 
-#: api.py:2263
+#: api.py:2259
 msgid "Taking As Open Exam"
 msgstr "Tomando como examen abierto"
 
-#: api.py:2268 api.py:2273
+#: api.py:2264 api.py:2269
 msgid "Pending Session Review"
 msgstr "Revisión de sesión pendiente"
 
-#: api.py:2278
+#: api.py:2274
 msgid "Passed Proctoring"
 msgstr "Supervisión aprobada"
 
-#: api.py:2283 api.py:2288
+#: api.py:2279 api.py:2284
 msgid "Failed Proctoring"
 msgstr "Supervisión fallida"
 
-#: api.py:2293
+#: api.py:2289
 msgid "Proctored Option No Longer Available"
 msgstr "La opción supervisado ya no está disponible"
 
-#: api.py:2302
+#: api.py:2298
 msgid "Ungraded Practice Exam"
 msgstr "Examen de práctica no calificado"
 
-#: api.py:2307
+#: api.py:2303
 msgid "Practice Exam Completed"
 msgstr "Examen de práctica completado"
 
-#: api.py:2312
+#: api.py:2308
 msgid "Practice Exam Failed"
 msgstr "Examen de práctica no aprobado"
 
-#: api.py:2320
+#: api.py:2316
 msgid "Timed Exam"
 msgstr "Examen cronometrado"
 
-#: api.py:2911
+#: api.py:2899
 msgid "Onboarding status question"
 msgstr "estado de pregunta de inducción"
 
-#: models.py:394
+#: models.py:395
 msgid "Taking as Proctored"
 msgstr "Tomando como examen supervisado"
 
-#: models.py:398
+#: models.py:399
 msgid "Is Sample Attempt"
 msgstr "Es un intento de muestra"
 
-#: models.py:416
+#: models.py:417
 msgid "Is Resumable"
 msgstr "Es Resumible"
 
-#: models.py:421
+#: models.py:422
 msgid "Ready to Resume"
 msgstr "Listo Para Resumir"
 
-#: models.py:424
+#: models.py:425
 msgid "Resumed"
 msgstr "Resumido"
 
-#: models.py:524
+#: models.py:527
 msgid "Additional Time (minutes)"
 msgstr "Tiempo adicional (minutos)"
 
-#: models.py:525
+#: models.py:528
 msgid "Review Policy Exception"
 msgstr "Revisar excepción a la política"
 
@@ -916,79 +916,6 @@ msgid ""
 msgstr ""
 "\n"
 "Acerca de los exámenes supervisados"
-
-#: templates/proctored_exam/id_verification.html:6
-msgid ""
-"\n"
-"                Complete your verification before starting the proctored exam.\n"
-"            "
-msgstr ""
-"\n"
-"Complete su verificación antes de iniciar el examen supervisado."
-
-#: templates/proctored_exam/id_verification.html:11
-msgid ""
-"\n"
-"                You must successfully complete identity verification before you can start the proctored exam.\n"
-"            "
-msgstr ""
-"\n"
-"Es necesario completar la verificación de su identidad antes de iniciar el examen supervisado."
-
-#: templates/proctored_exam/id_verification.html:17
-msgid ""
-"\n"
-"                    Your verification is pending. Results should be available 2-3 days after you\n"
-"                    submit your verification.\n"
-"                "
-msgstr ""
-"\n"
-"Su verificación está en proceso. Los resultados deben estar disponibles entre 2-3 días después del\n"
-"envío de su verificación."
-
-#: templates/proctored_exam/id_verification.html:24
-msgid ""
-"\n"
-"                    Your verification attempt failed. Please read our guidelines to make\n"
-"                    sure you understand the requirements for successfully completing verification,\n"
-"                    then try again.\n"
-"                "
-msgstr ""
-"\n"
-"Su verificación no fue aprobada. Por favor, lea nuestra guía para asegurarse\n"
-"de que entienda los requisitos para completar la verificación exitósamente,\n"
-"y después intente de nuevo."
-
-#: templates/proctored_exam/id_verification.html:32
-msgid "Retry Verification"
-msgstr "Reenviar verificación"
-
-#: templates/proctored_exam/id_verification.html:37
-msgid ""
-"\n"
-"                    Your verification has expired. You must successfully complete a new identity verification\n"
-"                    before you can start the proctored exam.\n"
-"                "
-msgstr ""
-"\n"
-"Su verificación ha expirado. Debe completar la verificación de identidad nuevamente\n"
-"antes de poder iniciar el examen supervisado."
-
-#: templates/proctored_exam/id_verification.html:44
-#: templates/proctored_exam/id_verification.html:56
-msgid "Continue to Verification"
-msgstr "Continuar a la verificación"
-
-#: templates/proctored_exam/id_verification.html:49
-msgid ""
-"\n"
-"                    Make sure you are on a computer with a webcam, and that you have valid photo identification\n"
-"                    such as a driver's license or passport, before you continue.\n"
-"                "
-msgstr ""
-"\n"
-"Asegúrese de que esté usando una computadora con cámara web, y que tiene una identificación fotográfica válida\n"
-"como una licencia para conducir o un pasaporte, antes de seguir."
 
 #: templates/proctored_exam/inactive_account.html:4
 msgid ""
