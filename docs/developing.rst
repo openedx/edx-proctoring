@@ -43,7 +43,7 @@ The packages we specified in ``private.txt`` will be automatically pulled down b
     $ make studio-shell
     root@a7ff4f3f3f6b:/edx/app/edxapp/edx-platform# paver install_prereqs;exit
 
-In edx-platform/lms/envs/private.py and edx-platform/cms/envs/private.py:
+In ``edx-platform/lms/envs/private.py`` and ``edx-platform/cms/envs/private.py``:
 
 .. code-block:: python
 
@@ -147,7 +147,7 @@ Rebuild static assets to make sure mockprock ui scripts are available. In devsta
 
    make dev.static.lms
 
-Then back in your host shell::
+Then back in your host shell, install and run the server. It is recommended to run this in a virtual environment.::
 
     cd ~/workspace/src/mockprock/
     pip install -e .[server]
@@ -160,6 +160,14 @@ If you use Z shell (zsh), the command ``pip install -e .[server]`` will fail wit
 The command will tell you you have to supply an client_id and client_secret. It'll open your browser to the Django admin page where you should create or use an existing credential. You'll also need to add the user associated with the credential to the "mockprock_review" Django group. You can create the group at ``/admin/auth/group/``. Note the client_id and client_secret and restart the server::
 
     python -m mockprock.server {client_id} {client_secret}
+
+Note that mockprock does not run in a Docker container; it runs on the host machine. If you are running Docker devstack, the LMS, which includes the ``edx-proctoring`` subsystem, runs in a Docker container.
+In a few spots, the ``edx-proctoring`` code, running in the LMS Docker container, needs to redirect the user to pages on the host.
+The URL that the user is sent to is defined in the mockprock backend as ``base_url``, which is ``http://host.docker.internal:11136``.
+``host.docker.internal`` is a special DNS name that is used by Docker to resolve to the host IP, since the host IP is not static; you can view Docker documentation on this feature `here <https://docs.docker.com/desktop/mac/networking/>`_.
+Docker `claims <https://github.com/docker/for-mac/issues/2965>`_ that this should resolve correctly to the host's internal IP address as of Docker desktop version ``3.4.0``. However, if it does not resolve correctly, you can add the following entry to your host's ``/etc/hosts`` file.::
+
+    127.0.0.1	host.docker.internal
 
 If you need to run local changes to the `mockprock Javascript worker`_ or the `worker interface`_ in this library::
 

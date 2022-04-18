@@ -13,6 +13,7 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Improved ``developing.rst`` docs for installing and running the mockprock proctoring provider.
 
 [4.10.1] - 2022-04-06
 ~~~~~~~~~~~~~~~~~~~~~
