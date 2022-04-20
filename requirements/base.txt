@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-amqp==5.1.0
+amqp==5.1.1
     # via kombu
 appdirs==1.4.4
     # via fs
@@ -37,7 +37,7 @@ click-repl==0.2.0
     # via celery
 cryptography==36.0.2
     # via pyjwt
-django==3.2.12
+django==3.2.13
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -113,7 +113,7 @@ lxml==4.8.0
     # via xblock
 markupsafe==2.1.1
     # via xblock
-newrelic==7.8.0.174
+newrelic==7.10.0.175
     # via edx-django-utils
 pbr==5.8.1
     # via stevedore

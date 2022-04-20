@@ -142,7 +142,7 @@ mock==4.0.3
     # via -r requirements/test.in
 mypy-extensions==0.4.3
     # via logilab-common
-newrelic==7.8.0.174
+newrelic==7.10.0.175
     # via edx-django-utils
 packaging==21.3
     # via pytest
@@ -179,7 +179,7 @@ pymongo==3.12.3
     # via
     #   edx-opaque-keys
     #   event-tracking
-pyparsing==3.0.7
+pyparsing==3.0.8
     # via packaging
 pytest==7.1.1
     # via
@@ -263,7 +263,7 @@ tomli==2.0.1
     # via
     #   coverage
     #   pytest
-typing-extensions==4.1.1
+typing-extensions==4.2.0
     # via logilab-common
 urllib3==1.26.9
     # via
