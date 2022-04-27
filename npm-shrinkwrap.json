@@ -14,6 +14,7 @@
         "eslint": "^6.8.0",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-config-edx-es5": "^4.0.1",
+        "eslint-plugin-dollar-sign": "^1.0.0",
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-jsx-a11y": "^6.5.1",
         "eslint-plugin-react": "^7.29.4",
@@ -2797,15 +2798,6 @@
         "eslint-plugin-import": "^2.7.0"
       }
     },
-    "node_modules/eslint-config-edx-es5/node_modules/eslint-plugin-dollar-sign": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-dollar-sign/-/eslint-plugin-dollar-sign-1.0.0.tgz",
-      "integrity": "sha1-r7pQRZ6d6XpfzXdjJ55MOp4ltaw=",
-      "dev": true,
-      "peerDependencies": {
-        "eslint": ">=1.0.0"
-      }
-    },
     "node_modules/eslint-config-edx-es5/node_modules/eslint-scope": {
       "version": "3.7.3",
       "resolved": "https://registry.npmjs.org/eslint-scope/-/eslint-scope-3.7.3.tgz",
@@ -2969,6 +2961,15 @@
       "dev": true,
       "dependencies": {
         "ms": "^2.1.1"
+      }
+    },
+    "node_modules/eslint-plugin-dollar-sign": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-dollar-sign/-/eslint-plugin-dollar-sign-1.0.0.tgz",
+      "integrity": "sha1-r7pQRZ6d6XpfzXdjJ55MOp4ltaw=",
+      "dev": true,
+      "peerDependencies": {
+        "eslint": ">=1.0.0"
       }
     },
     "node_modules/eslint-plugin-import": {
@@ -14772,13 +14773,6 @@
             "eslint-restricted-globals": "^0.1.1"
           }
         },
-        "eslint-plugin-dollar-sign": {
-          "version": "1.0.0",
-          "resolved": "https://registry.npmjs.org/eslint-plugin-dollar-sign/-/eslint-plugin-dollar-sign-1.0.0.tgz",
-          "integrity": "sha1-r7pQRZ6d6XpfzXdjJ55MOp4ltaw=",
-          "dev": true,
-          "requires": {}
-        },
         "eslint-scope": {
           "version": "3.7.3",
           "resolved": "https://registry.npmjs.org/eslint-scope/-/eslint-scope-3.7.3.tgz",
@@ -14928,6 +14922,13 @@
           }
         }
       }
+    },
+    "eslint-plugin-dollar-sign": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-dollar-sign/-/eslint-plugin-dollar-sign-1.0.0.tgz",
+      "integrity": "sha1-r7pQRZ6d6XpfzXdjJ55MOp4ltaw=",
+      "dev": true,
+      "requires": {}
     },
     "eslint-plugin-import": {
       "version": "2.26.0",

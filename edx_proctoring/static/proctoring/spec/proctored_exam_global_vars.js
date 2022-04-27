@@ -6,5 +6,5 @@
  * order-agnostic global setting pattern we always do to namespace
  * global variables.
  */
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-redeclare, no-unused-vars
 var edx;

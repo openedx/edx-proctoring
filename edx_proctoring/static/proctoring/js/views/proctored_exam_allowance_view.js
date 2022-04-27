@@ -30,7 +30,7 @@ edx = edx || {};
             /* Load the static template for rendering. */
             this.loadTemplateData();
 
-            this.proctoredExamCollection.url = this.proctoredExamCollection.url + this.course_id;
+            this.proctoredExamCollection.url += this.course_id;
         },
         events: {
             'click #add-allowance': 'showAddModal',

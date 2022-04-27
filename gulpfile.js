@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-redeclare
 /* global path:false */
 
 var gulp = require('gulp');
