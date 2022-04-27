@@ -7,4 +7,4 @@
  * global variables.
  */
 // eslint-disable-next-line no-redeclare, no-unused-vars
-var edx;
+let edx;
