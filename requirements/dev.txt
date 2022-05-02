@@ -4,9 +4,9 @@
 #
 #    make upgrade
 #
-asgiref==3.5.0
+asgiref==3.5.1
     # via django
-astroid==2.11.3
+astroid==2.11.4
     # via
     #   pylint
     #   pylint-celery
@@ -51,7 +51,7 @@ isort==5.10.1
     # via
     #   -r requirements/quality.in
     #   pylint
-jinja2==3.1.1
+jinja2==3.1.2
     # via
     #   code-annotations
     #   diff-cover
@@ -66,8 +66,8 @@ packaging==21.3
 path==16.4.0
     # via
     #   edx-i18n-tools
-    #   path-py
-path-py==12.5.0
+    #   path.py
+path.py==12.5.0
     # via -r requirements/dev.in
 pbr==5.8.1
     # via stevedore
@@ -91,9 +91,9 @@ pycodestyle==2.8.0
     # via -r requirements/quality.in
 pydocstyle==6.1.1
     # via -r requirements/quality.in
-pygments==2.11.2
+pygments==2.12.0
     # via diff-cover
-pylint==2.13.7
+pylint==2.13.8
     # via
     #   edx-lint
     #   pylint-celery
@@ -109,7 +109,7 @@ pylint-plugin-utils==0.7
     #   pylint-django
 pyparsing==3.0.8
     # via packaging
-python-slugify==6.1.1
+python-slugify==6.1.2
     # via code-annotations
 pytz==2022.1
     # via django
@@ -144,7 +144,7 @@ tox==3.25.0
     #   tox-battery
 tox-battery==0.6.1
     # via -r requirements/dev.in
-types-docutils==0.18.2
+types-docutils==0.18.3
     # via rstcheck
 typing-extensions==4.2.0
     # via
@@ -157,7 +157,7 @@ wheel==0.37.1
     # via
     #   -r requirements/dev.in
     #   pip-tools
-wrapt==1.14.0
+wrapt==1.14.1
     # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:

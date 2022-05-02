@@ -8,7 +8,7 @@ amqp==5.1.1
     # via kombu
 appdirs==1.4.4
     # via fs
-asgiref==3.5.0
+asgiref==3.5.1
     # via django
 billiard==3.6.4.0
     # via celery
@@ -35,7 +35,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.2.0
     # via celery
-cryptography==36.0.2
+cryptography==37.0.1
     # via pyjwt
 django==3.2.13
     # via
@@ -99,7 +99,7 @@ edx-when==2.3.0
     # via -r requirements/base.in
 event-tracking==2.1.0
     # via -r requirements/base.in
-fs==2.4.15
+fs==2.4.16
     # via xblock
 future==0.18.2
     # via pyjwkest
@@ -151,7 +151,6 @@ pytz==2022.1
     #   django
     #   djangorestframework
     #   event-tracking
-    #   fs
     #   xblock
 pyyaml==6.0
     # via xblock
