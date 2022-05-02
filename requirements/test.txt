@@ -252,8 +252,6 @@ stevedore==3.5.0
     #   code-annotations
     #   edx-django-utils
     #   edx-opaque-keys
-sure==1.2.7
-    # via -r requirements/test.in
 testfixtures==6.18.5
     # via -r requirements/test.in
 text-unidecode==1.3

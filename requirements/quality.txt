@@ -50,7 +50,7 @@ pycodestyle==2.8.0
     # via -r requirements/quality.in
 pydocstyle==6.1.1
     # via -r requirements/quality.in
-pylint==2.13.7
+pylint==2.13.8
     # via
     #   edx-lint
     #   pylint-celery
