@@ -19,7 +19,9 @@ celery==5.0.4
 certifi==2021.10.8
     # via requests
 cffi==1.15.0
-    # via cryptography
+    # via
+    #   cryptography
+    #   pynacl
 charset-normalizer==2.0.12
     # via requests
 click==7.1.2
@@ -29,13 +31,14 @@ click==7.1.2
     #   click-didyoumean
     #   click-plugins
     #   click-repl
+    #   edx-django-utils
 click-didyoumean==0.3.0
     # via celery
 click-plugins==1.1.1
     # via celery
 click-repl==0.2.0
     # via celery
-cryptography==37.0.1
+cryptography==37.0.2
     # via pyjwt
 django==3.2.13
     # via
@@ -78,7 +81,7 @@ djangorestframework==3.13.1
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==4.6.0
+edx-django-utils==4.7.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -115,7 +118,7 @@ markupsafe==2.1.1
     # via xblock
 newrelic==7.10.0.175
     # via edx-django-utils
-pbr==5.8.1
+pbr==5.9.0
     # via stevedore
 prompt-toolkit==3.0.29
     # via click-repl
@@ -139,6 +142,8 @@ pymongo==3.12.3
     # via
     #   edx-opaque-keys
     #   event-tracking
+pynacl==1.5.0
+    # via edx-django-utils
 python-dateutil==2.8.2
     # via
     #   -r requirements/base.in
