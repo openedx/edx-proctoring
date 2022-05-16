@@ -4,7 +4,7 @@ Exams as an Independently Deployed Application
 Status
 ------
 
-Propsed (circa April 2022)
+Accepted (circa May 2022)
 
 Context
 -------
