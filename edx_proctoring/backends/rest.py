@@ -25,6 +25,7 @@ from edx_proctoring.exceptions import (
     BackendProviderSentNoAttemptID
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
+from edx_proctoring.models import MockProviderConfiguration
 
 log = logging.getLogger(__name__)
 
@@ -97,6 +98,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         super().__init__(**kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
+        try:
+            self.base_url = MockProviderConfiguration.objects.first().base_url
+        except Exception:
+            pass
         self.session = OAuthAPIClient(self.base_url, self.client_id, self.client_secret)
 
     def get_javascript(self):
@@ -147,7 +152,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         Returns the metadata and configuration options for the proctoring service
         """
         url = self.config_url
-        log.debug('Requesting config from %r', url)
+        log.info('Requesting config from %r', url)
         response = self.session.get(url, headers=self._get_language_headers()).json()
         return response
 
