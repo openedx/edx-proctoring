@@ -30,6 +30,9 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareS
 USER_MODEL = get_user_model()
 
 
+class MockProviderConfiguration(TimeStampedModel):
+    base_url = models.CharField(max_length=255, db_index=True)
+
 class ProctoredExam(TimeStampedModel):
     """
     Information about the Proctored Exam.
