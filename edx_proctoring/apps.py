@@ -155,6 +155,9 @@ class EdxProctoringConfig(AppConfig):
                     key: val for (key, val) in config[name].items()
                     if key in BACKEND_CONFIGURATION_ALLOW_LIST
                 }
+                # always use localhost for js worker to avoid local DNS issues w/ ngrok
+                # this will get overridden by config model later
+                options['base_url'] = 'http://localhost:11136'
                 self.backends[name] = extension.plugin(**options)
             except KeyError:
                 pass
