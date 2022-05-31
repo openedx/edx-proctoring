@@ -46,41 +46,49 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     @property
     def exam_attempt_url(self):
         "Returns exam attempt url"
+        self.get_base_url()
         return self.base_url + '/api/v1/exam/{exam_id}/attempt/{attempt_id}/'
 
     @property
     def create_exam_attempt_url(self):
         "Returns the create exam url"
+        self.get_base_url()
         return self.base_url + '/api/v1/exam/{exam_id}/attempt/'
 
     @property
     def create_exam_url(self):
         "Returns create exam url"
+        self.get_base_url()
         return self.base_url + '/api/v1/exam/'
 
     @property
     def exam_url(self):
         "Returns exam url"
+        self.get_base_url()
         return self.base_url + '/api/v1/exam/{exam_id}/'
 
     @property
     def config_url(self):
         "Returns proctor config url"
+        self.get_base_url()
         return self.base_url + '/api/v1/config/'
 
     @property
     def instructor_url(self):
         "Returns the instructor dashboard url"
+        self.get_base_url()
         return self.base_url + '/api/v1/instructor/{client_id}/?jwt={jwt}'
 
     @property
     def user_info_url(self):
         "Returns the user info url"
+        self.get_base_url()
         return self.base_url + '/api/v1/user/{user_id}/'
 
     @property
     def onboarding_statuses_url(self):
         "Returns the onboarding statuses url"
+        self.get_base_url()
         return self.base_url + '/api/v1/courses/{course_id}/onboarding_statuses'
 
     @property
@@ -98,11 +106,21 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         super().__init__(**kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
+        self.session = OAuthAPIClient(self.base_url, self.client_id, self.client_secret)
+
+    def get_base_url(self):
+        """
+        Somewhat janky, quick and dirty way to pull base url at runtime without reinitializing
+        the plugin. This means we're constantly rebuilding the session, but that's ok
+        """
         try:
-            self.base_url = MockProviderConfiguration.objects.first().base_url
+            base_url = MockProviderConfiguration.objects.first().base_url
+            if self.base_url != base_url:
+                self.base_url = base_url
+                self.session = OAuthAPIClient(self.base_url, self.client_id, self.client_secret)
         except Exception:
             pass
-        self.session = OAuthAPIClient(self.base_url, self.client_id, self.client_secret)
+        return self.base_url
 
     def get_javascript(self):
         """
