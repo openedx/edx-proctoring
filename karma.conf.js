@@ -11,6 +11,8 @@ if (process.argv.some(isDebug)) {
     sourcePreprocessors = [];
 }
 
+const puppeteer = require('puppeteer');
+process.env.CHROME_BIN = puppeteer.executablePath();
 
 module.exports = function(config) {
     'use strict';
@@ -24,13 +26,13 @@ module.exports = function(config) {
             'karma-jasmine',
             'karma-jasmine-jquery-2',
             'karma-chrome-launcher',
-            'karma-phantomjs-launcher',
+            // 'karma-phantomjs-launcher',
             'karma-coverage',
             'karma-sinon'
         ],
 
         // start the browser
-        browsers: ['PhantomJS'],
+        browsers: ['ChromeHeadless'],
 
         // frameworks to use
         frameworks: ['jasmine-jquery', 'jasmine', 'sinon'],

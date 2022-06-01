@@ -1,5 +1,6 @@
 {
   "extends": "@edx/eslint-config",
+  "parser": "@babel/eslint-parser",
   "globals": {
     "sinon": false,
     "setFixtures": false,
