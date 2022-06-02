@@ -1,5 +1,5 @@
 edx = edx || {};
-(function (Backbone) {
+(Backbone => {
   'use strict';
 
   edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -10,5 +10,6 @@ edx = edx || {};
     model: edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel,
     url: '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/',
   });
-  this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptGroupedCollection = edx.instructor_dashboard.proctoring.ProctoredExamAttemptGroupedCollection;
+  const groupedCollection = edx.instructor_dashboard.proctoring.ProctoredExamAttemptGroupedCollection;
+  this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptGroupedCollection = groupedCollection;
 }).call(this, Backbone);

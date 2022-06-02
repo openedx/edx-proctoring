@@ -3,7 +3,7 @@
 // It has been slightly modified to fit the needs of the edx-proctoring library.
 edx = edx || {};
 
-(function ($) {
+($ => {
   'use strict';
 
   const keyCodes = {
@@ -17,7 +17,7 @@ edx = edx || {};
   edx.dashboard = edx.dashboard || {};
   edx.dashboard.dropdown = {};
 
-  edx.dashboard.dropdown.toggleExamAttemptActionDropdownMenu = function (event) {
+  edx.dashboard.dropdown.toggleExamAttemptActionDropdownMenu = event => {
     const $target = $(event.currentTarget);
     const { dashboardIndex } = $target.data();
     const $dropdown = $($target.data('dropdownSelector') || `#actions-dropdown-${dashboardIndex}`);
@@ -25,7 +25,7 @@ edx = edx || {};
     const ariaExpandedState = ($dropdownButton.attr('aria-expanded') === 'true');
     const menuItems = $dropdown.find('a');
 
-    const catchKeyPress = function (object, keyPressEvent) {
+    const catchKeyPress = (object, keyPressEvent) => {
       // get currently focused item
       const $focusedItem = $(':focus');
 
@@ -78,13 +78,13 @@ edx = edx || {};
 
     // catch keypresses when inside dropdownMenu (we want to catch spacebar;
     // escape; up arrow or shift+tab; and down arrow or tab)
-    $dropdown.on('keydown', function (e) {
+    $dropdown.on('keydown', e => {
       catchKeyPress($(this), e);
     });
     event.stopPropagation();
   };
 
-  edx.dashboard.dropdown.bindToggleButtons = function (selector) {
+  edx.dashboard.dropdown.bindToggleButtons = selector => {
     $(selector).bind(
       'click',
       edx.dashboard.dropdown.toggleExamAttemptActionDropdownMenu,
@@ -94,4 +94,4 @@ edx = edx || {};
   $(document).ready(() => {
     edx.dashboard.dropdown.bindToggleButtons('.action-more');
   });
-}(jQuery));
+})(jQuery);

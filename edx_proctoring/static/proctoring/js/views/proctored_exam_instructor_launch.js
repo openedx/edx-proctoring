@@ -36,5 +36,6 @@ edx = edx || {};
       }
     },
   });
-  this.edx.instructor_dashboard.proctoring.ProctoredExamDashboardView = edx.instructor_dashboard.proctoring.ProctoredExamDashboardView;
+  const proctoredExamDashboardView = edx.instructor_dashboard.proctoring.ProctoredExamDashboardView;
+  this.edx.instructor_dashboard.proctoring.ProctoredExamDashboardView = proctoredExamDashboardView;
 }).call(this, Backbone, $, _);

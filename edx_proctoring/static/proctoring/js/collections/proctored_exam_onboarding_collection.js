@@ -1,5 +1,5 @@
 edx = edx || {};
-(function (Backbone) {
+(Backbone => {
   'use strict';
 
   edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -8,5 +8,6 @@ edx = edx || {};
   edx.instructor_dashboard.proctoring.ProctoredExamOnboardingCollection = Backbone.Collection.extend({
     url: '/api/edx_proctoring/v1/user_onboarding/status/course_id/',
   });
-  this.edx.instructor_dashboard.proctoring.ProctoredExamOnboardingCollection = edx.instructor_dashboard.proctoring.ProctoredExamOnboardingCollection;
+  const proctoredExamOnboardingCollection = edx.instructor_dashboard.proctoring.ProctoredExamOnboardingCollection;
+  this.edx.instructor_dashboard.proctoring.ProctoredExamOnboardingCollection = proctoredExamOnboardingCollection;
 }).call(this, Backbone);

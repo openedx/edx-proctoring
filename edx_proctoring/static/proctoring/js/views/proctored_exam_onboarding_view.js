@@ -3,11 +3,9 @@ edx = edx || {};
 (function (Backbone, $, _, gettext) {
   'use strict';
 
-  let viewHelper; let onboardingStatuses; let onboardingProfileAPIStatuses; let
-    statusAndModeReadableFormat;
   edx.instructor_dashboard = edx.instructor_dashboard || {};
   edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
-  onboardingStatuses = [
+  const onboardingStatuses = [
     'not_started',
     'setup_started',
     'onboarding_started',
@@ -17,7 +15,7 @@ edx = edx || {};
     'rejected',
     'error',
   ];
-  onboardingProfileAPIStatuses = [
+  const onboardingProfileAPIStatuses = [
     'not_started',
     'other_course_approved',
     'submitted',
@@ -25,7 +23,7 @@ edx = edx || {};
     'rejected',
     'expired',
   ];
-  statusAndModeReadableFormat = {
+  const statusAndModeReadableFormat = {
     // Onboarding statuses
     not_started: gettext('Not Started'),
     setup_started: gettext('Setup Started'),
@@ -48,7 +46,7 @@ edx = edx || {};
     masters: gettext('Master\'s'),
     'executive-education': gettext('Executive Education'),
   };
-  viewHelper = {
+  const viewHelper = {
     getDateFormat(date) {
       if (date) {
         return new Date(date).toString('MMM dd, yyyy h:mmtt');
@@ -91,17 +89,15 @@ edx = edx || {};
       'click li > a.target-link': 'getPaginatedItems',
     },
     searchItems(event) {
-      let $searchIcon; let
-        $spinner;
       const searchText = $('#search_onboarding_id').val();
       if (searchText !== '') {
         this.inSearchMode = true;
         this.searchText = searchText;
         this.currentPage = 1;
         this.collection.url = this.constructUrl();
-        $searchIcon = $(document.getElementById('onboarding-search-indicator'));
+        const $searchIcon = $(document.getElementById('onboarding-search-indicator'));
         $searchIcon.addClass('hidden');
-        $spinner = $(document.getElementById('onboarding-loading-indicator'));
+        const $spinner = $(document.getElementById('onboarding-loading-indicator'));
         $spinner.removeClass('hidden');
         this.hydrate();
         event.stopPropagation();
@@ -189,17 +185,14 @@ edx = edx || {};
       const self = this;
       self.collection.fetch({
         success() {
-          let $searchIcon; let
-            $spinner;
           self.render();
-          $spinner = $(document.getElementById('onboarding-loading-indicator'));
+          const $spinner = $(document.getElementById('onboarding-loading-indicator'));
           $spinner.addClass('hidden');
-          $searchIcon = $(document.getElementById('onboarding-search-indicator'));
+          const $searchIcon = $(document.getElementById('onboarding-search-indicator'));
           $searchIcon.removeClass('hidden');
         },
         error(unused, response) {
-          let data; let $searchIcon; let $spinner; let $errorResponse; let
-            $onboardingPanel;
+          let data; let $errorResponse; let $onboardingPanel;
 
           // in the case that there is no onboarding data, we
           // still want the view to render
@@ -220,9 +213,9 @@ edx = edx || {};
             $onboardingPanel.hide();
           }
 
-          $spinner = $(document.getElementById('onboarding-loading-indicator'));
+          const $spinner = $(document.getElementById('onboarding-loading-indicator'));
           $spinner.addClass('hidden');
-          $searchIcon = $(document.getElementById('onboarding-search-indicator'));
+          const $searchIcon = $(document.getElementById('onboarding-search-indicator'));
           $searchIcon.removeClass('hidden');
         },
       });
@@ -249,7 +242,7 @@ edx = edx || {};
           endPage: 1,
         };
 
-        dataJson = this.collection.toJSON()[0];
+        [dataJson] = this.collection.toJSON();
         if (dataJson) {
           // calculate which pages ranges to display
           // show no more than 5 pages at the same time
@@ -287,5 +280,6 @@ edx = edx || {};
       }
     },
   });
-  this.edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView = edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView;
+  const proctoredExamOnboardingView = edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView;
+  this.edx.instructor_dashboard.proctoring.ProctoredExamOnboardingView = proctoredExamOnboardingView;
 }).call(this, Backbone, $, _, gettext);

@@ -1,5 +1,5 @@
 edx = edx || {};
-(function (Backbone) {
+(Backbone => {
   'use strict';
 
   edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -10,5 +10,6 @@ edx = edx || {};
     model: edx.instructor_dashboard.proctoring.ProctoredExamAllowanceModel,
     url: '/api/edx_proctoring/v1/proctored_exam/',
   });
-  this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection = edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection;
+  const proctoredExamAllowanceCollection = edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection;
+  this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceCollection = proctoredExamAllowanceCollection;
 }).call(this, Backbone);

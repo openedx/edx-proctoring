@@ -283,7 +283,7 @@ describe('ProctoredExamInfo', () => {
   it('should render proctoring info panel correctly for past due exam', function () {
     const twoDaysAgo = new Date();
     const data = {
-      onboarding_status: status,
+      onboarding_status: 'Not Started',
       onboarding_link: null,
       onboarding_release_date: twoDaysAgo,
       expiration_date: null,

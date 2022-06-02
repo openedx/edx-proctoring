@@ -83,7 +83,7 @@ describe('ProctoredExamAAllowanceView', () => {
     ['time_multiplier', gettext('Time Multiplier')],
   ];
 
-  beforeEach(function () {
+  beforeEach(() => {
     // We have converted the edx_proctoring/static/proctoring/templates/add-new-allowance.underscore template
     // from http://www.howtocreate.co.uk/tutorials/jsexamples/syntax/prepareInline.html
 
@@ -165,11 +165,10 @@ describe('ProctoredExamAAllowanceView', () => {
     );
   });
 
-  afterEach(function () {
+  afterEach(() => {
     this.server.restore();
   });
-  it('should render the proctored exam add allowance view properly', function () {
-    let addAllowanceView;
+  it('should render the proctored exam add allowance view properly', () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
@@ -183,7 +182,7 @@ describe('ProctoredExamAAllowanceView', () => {
     );
 
     this.proctored_exam_allowance = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView();
-    addAllowanceView = new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
+    const addAllowanceView = new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
       course_id: 'test_course_id',
       proctored_exams: proctoredExamJson,
       proctored_exam_allowance_view: this.proctored_exam_allowance,
@@ -198,8 +197,7 @@ describe('ProctoredExamAAllowanceView', () => {
     $('#proctored_exam').val('5');
   });
 
-  it('should render the timed exam add allowance view properly', function () {
-    let addAllowanceView;
+  it('should render the timed exam add allowance view properly', () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
@@ -213,7 +211,7 @@ describe('ProctoredExamAAllowanceView', () => {
     );
 
     this.proctored_exam_allowance = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView();
-    addAllowanceView = new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
+    const addAllowanceView = new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
       course_id: 'test_course_id',
       proctored_exams: proctoredExamJson,
       proctored_exam_allowance_view: this.proctored_exam_allowance,
@@ -227,7 +225,7 @@ describe('ProctoredExamAAllowanceView', () => {
     $('#timed_exam').val('6');
   });
 
-  it('should add the proctored exam allowance', function () {
+  it('should add the proctored exam allowance', () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
@@ -275,8 +273,7 @@ describe('ProctoredExamAAllowanceView', () => {
       ],
     );
   });
-  it('should send error when adding proctored exam allowance', function () {
-    let addAllowanceView;
+  it('should send error when adding proctored exam allowance', () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/test_course_id/allowance',
@@ -290,7 +287,7 @@ describe('ProctoredExamAAllowanceView', () => {
     );
 
     this.proctored_exam_allowance = new edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView();
-    addAllowanceView = new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
+    const addAllowanceView = new edx.instructor_dashboard.proctoring.AddBulkAllowanceView({
       course_id: 'test_course_id',
       proctored_exams: proctoredExamJson,
       proctored_exam_allowance_view: this.proctored_exam_allowance,

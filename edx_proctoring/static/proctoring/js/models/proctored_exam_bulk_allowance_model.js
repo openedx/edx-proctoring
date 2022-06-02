@@ -1,6 +1,6 @@
 edx = edx || {};
 
-(function (Backbone) {
+(Backbone => {
   'use strict';
 
   edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -10,5 +10,6 @@ edx = edx || {};
     url: '/api/edx_proctoring/v1/proctored_exam/bulk_allowance',
 
   });
-  this.edx.instructor_dashboard.proctoring.ProctoredExamBulkAllowanceModel = edx.instructor_dashboard.proctoring.ProctoredExamBulkAllowanceModel;
+  const bulkAllowanceModel = edx.instructor_dashboard.proctoring.ProctoredExamBulkAllowanceModel;
+  this.edx.instructor_dashboard.proctoring.ProctoredExamBulkAllowanceModel = bulkAllowanceModel;
 }).call(this, Backbone);

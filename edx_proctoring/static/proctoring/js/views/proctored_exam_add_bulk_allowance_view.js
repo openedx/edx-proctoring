@@ -1,6 +1,6 @@
 edx = edx || {};
 
-(function (Backbone, $, _, gettext) {
+((Backbone, $, _, gettext) => {
   'use strict';
 
   edx.instructor_dashboard = edx.instructor_dashboard || {};
@@ -149,20 +149,19 @@ edx = edx || {};
       this.updateCss();
     },
     addAllowance(event) {
-      let $errorResponse; let formValues; let formHasErrors; let
-        examIdCollection;
+      let examIdCollection;
       const self = this;
       event.preventDefault();
-      $errorResponse = $('.error-response');
+      const $errorResponse = $('.error-response');
       $errorResponse.html();
-      formValues = this.getCurrentFormValues();
+      const formValues = this.getCurrentFormValues();
       examIdCollection = '';
 
-      $('.close-selected-exam').each(function () {
+      $('.close-selected-exam').each(() => {
         examIdCollection += `${$(this).attr('data-item')},`;
       });
 
-      formHasErrors = this.checkFormErrors(formValues, examIdCollection);
+      const formHasErrors = this.checkFormErrors(formValues, examIdCollection);
 
       if (!formHasErrors) {
         self.model.fetch({
@@ -205,7 +204,7 @@ edx = edx || {};
       this.updateAllowanceLabels($('#allowance_type').val());
     },
     selectExamType() {
-      $('.close-selected-exam').each(function () {
+      $('.close-selected-exam').each(() => {
         $(this).trigger('click');
       });
       if ($('#proctored_exam').is(':visible')) {

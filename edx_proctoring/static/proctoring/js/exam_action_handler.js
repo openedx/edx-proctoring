@@ -1,7 +1,7 @@
 /* globals accessible_modal:false */
 edx = edx || {};
 
-(function ($) {
+($ => {
   'use strict';
 
   const actionToMessageTypesMap = {
@@ -55,10 +55,10 @@ edx = edx || {};
   }
 
   function workerPromiseForEventNames(eventNames) {
-    return function (timeout) {
+    return timeout => {
       const proctoringBackendWorker = createWorker(edx.courseware.proctored_exam.configuredWorkerURL);
       return new Promise((resolve, reject) => {
-        var responseHandler = function (e) {
+        const responseHandler = e => {
           if (e.data.type === eventNames.successEventName) {
             proctoringBackendWorker.removeEventListener('message', responseHandler);
             proctoringBackendWorker.terminate();
@@ -84,19 +84,17 @@ edx = edx || {};
 
   // Update the state of the attempt
   function updateExamAttemptStatusPromise(actionUrl, action) {
-    return function () {
-      return Promise.resolve($.ajax({
-        url: actionUrl,
-        type: 'PUT',
-        data: {
-          action,
-        },
-      }));
-    };
+    return () => Promise.resolve($.ajax({
+      url: actionUrl,
+      type: 'PUT',
+      data: {
+        action,
+      },
+    }));
   }
 
   function reloadPage() {
-    location.reload();
+    window.location.reload();
   }
 
   function setActionButtonLoadingState($button) {
@@ -111,14 +109,14 @@ edx = edx || {};
 
   function errorHandlerGivenMessage($button, title, message) {
     setActionButtonSteadyState($button);
-    return function () {
+    return () => {
       accessibleError(title, message);
     };
   }
 
   edx.courseware = edx.courseware || {};
   edx.courseware.proctored_exam = edx.courseware.proctored_exam || {};
-  edx.courseware.proctored_exam.updateStatusHandler = function () {
+  edx.courseware.proctored_exam.updateStatusHandler = () => {
     const $this = $(this);
     const actionUrl = $this.data('change-state-url');
     const action = $this.data('action');
@@ -133,7 +131,7 @@ edx = edx || {};
         ),
       ));
   };
-  edx.courseware.proctored_exam.examStartHandler = function (e) {
+  edx.courseware.proctored_exam.examStartHandler = e => {
     const $this = $(this);
     const actionUrl = $this.data('change-state-url');
     const action = $this.data('action');
@@ -174,7 +172,7 @@ edx = edx || {};
         ));
     }
   };
-  edx.courseware.proctored_exam.examEndHandler = function () {
+  edx.courseware.proctored_exam.examEndHandler = () => {
     const $this = $(this);
     const actionUrl = $this.data('change-state-url');
     const action = $this.data('action');
@@ -210,20 +208,18 @@ edx = edx || {};
         ));
     }
   };
-  edx.courseware.proctored_exam.checkExamAttemptStatus = function (attemptStatusPollURL) {
-    return new Promise((resolve, reject) => {
-      $.ajax(attemptStatusPollURL).success((data) => {
-        if (data.status) {
-          resolve(data.status);
-        } else {
-          reject();
-        }
-      }).fail(() => {
+  edx.courseware.proctored_exam.checkExamAttemptStatus = attemptStatusPollURL => new Promise((resolve, reject) => {
+    $.ajax(attemptStatusPollURL).success((data) => {
+      if (data.status) {
+        resolve(data.status);
+      } else {
         reject();
-      });
+      }
+    }).fail(() => {
+      reject();
     });
-  };
-  edx.courseware.proctored_exam.endExam = function (attemptStatusPollURL) {
+  });
+  edx.courseware.proctored_exam.endExam = attemptStatusPollURL => {
     const shouldUseWorker = window.Worker
                           && edx.courseware.proctored_exam.configuredWorkerURL;
     if (shouldUseWorker) {
@@ -238,7 +234,7 @@ edx = edx || {};
     }
     return Promise.resolve();
   };
-  edx.courseware.proctored_exam.pingApplication = function (timeoutInSeconds) {
+  edx.courseware.proctored_exam.pingApplication = timeoutInSeconds => {
     const TIMEOUT_BUFFER_SECONDS = 10;
     const workerPingTimeout = timeoutInSeconds - TIMEOUT_BUFFER_SECONDS; // 10s buffer for worker to respond
     return Promise.race([

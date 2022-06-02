@@ -3,11 +3,9 @@ edx = edx || {};
 (function (Backbone, $, _, gettext) {
   'use strict';
 
-  let viewHelper; let
-    examStatusReadableFormat;
   edx.instructor_dashboard = edx.instructor_dashboard || {};
   edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
-  examStatusReadableFormat = {
+  const examStatusReadableFormat = {
     eligible: gettext('Eligible'),
     created: gettext('Created'),
     download_software_clicked: gettext('Download Software Clicked'),
@@ -26,7 +24,7 @@ edx = edx || {};
     onboarding_failed: gettext('Onboarding Failed'),
     onboarding_expired: gettext('Onboarding Expired'),
   };
-  viewHelper = {
+  const viewHelper = {
     getDateFormat(date) {
       if (date) {
         return new Date(date).toString('MMM dd, yyyy h:mmtt');
@@ -76,16 +74,14 @@ edx = edx || {};
       edx.dashboard.dropdown.toggleExamAttemptActionDropdownMenu(event);
     },
     searchAttempts(event) {
-      let $searchIcon; let
-        $spinner;
       const searchText = $('#search_attempt_id').val();
       if (searchText !== '') {
         this.inSearchMode = true;
         this.searchText = searchText;
         this.collection.url = `${this.initial_url + this.course_id}/search/${searchText}`;
-        $searchIcon = $(document.getElementById('attempt-search-indicator'));
+        const $searchIcon = $(document.getElementById('attempt-search-indicator'));
         $searchIcon.addClass('hidden');
-        $spinner = $(document.getElementById('attempt-loading-indicator'));
+        const $spinner = $(document.getElementById('attempt-loading-indicator'));
         $spinner.removeClass('hidden');
         this.hydrate();
         event.stopPropagation();
@@ -142,12 +138,10 @@ edx = edx || {};
       const self = this;
       self.collection.fetch({
         success() {
-          let $searchIcon; let
-            $spinner;
           self.render();
-          $spinner = $(document.getElementById('attempt-loading-indicator'));
+          const $spinner = $(document.getElementById('attempt-loading-indicator'));
           $spinner.addClass('hidden');
-          $searchIcon = $(document.getElementById('attempt-search-indicator'));
+          const $searchIcon = $(document.getElementById('attempt-search-indicator'));
           $searchIcon.removeClass('hidden');
         },
       });
@@ -159,7 +153,7 @@ edx = edx || {};
       let dataJson; let startPage; let endPage; let data; let
         html;
       if (this.template !== null) {
-        dataJson = this.collection.toJSON()[0];
+        [dataJson] = this.collection.toJSON();
 
         // calculate which pages ranges to display
         // show no more than 5 pages at the same time
@@ -207,21 +201,19 @@ edx = edx || {};
       }
     },
     onRemoveAttempt(event) {
-      let $target; let attemptId; let userId; let
-        examId;
       const self = this;
       event.preventDefault();
 
       // confirm the user's intent
       // eslint-disable-next-line no-alert
-      if (!confirm(gettext('Are you sure you want to remove this student\'s exam attempt?'))) {
+      if (!window.confirm(gettext('Are you sure you want to remove this student\'s exam attempt?'))) {
         return;
       }
       $('body').css('cursor', 'wait');
-      $target = $(event.currentTarget);
-      attemptId = $target.data('attemptId');
-      userId = $target.data('userId');
-      examId = $target.data('examId');
+      const $target = $(event.currentTarget);
+      const attemptId = $target.data('attemptId');
+      const userId = $target.data('userId');
+      const examId = $target.data('examId');
 
       self.model.url = this.attempt_url + attemptId;
 
@@ -242,20 +234,18 @@ edx = edx || {};
       });
     },
     onResumeAttempt(event) {
-      let $target; let attemptId; let
-        userId;
       const self = this;
       event.preventDefault();
 
       // confirm the user's intent
       // eslint-disable-next-line no-alert
-      if (!confirm(gettext('Are you sure you want to resume this student\'s exam attempt?'))) {
+      if (!window.confirm(gettext('Are you sure you want to resume this student\'s exam attempt?'))) {
         return;
       }
       $('body').css('cursor', 'wait');
-      $target = $(event.currentTarget);
-      attemptId = $target.data('attemptId');
-      userId = $target.data('userId');
+      const $target = $(event.currentTarget);
+      const attemptId = $target.data('attemptId');
+      const userId = $target.data('userId');
 
       self.model.url = this.attempt_url + attemptId;
       self.model.fetch({
@@ -277,10 +267,10 @@ edx = edx || {};
     toggleAttemptAccordion(event) {
       // based on code from openedx/features/course_experience/static/course_experience/js/CourseOutline.js
       // but modified to better fit this feature's needs
-      let accordionRow; let isExpanded; let $toggleChevron; let
+      let isExpanded; let $toggleChevron; let
         $contentPanel;
       event.preventDefault();
-      accordionRow = event.currentTarget;
+      const accordionRow = event.currentTarget;
       if (accordionRow.classList.contains('accordion-trigger')) {
         isExpanded = accordionRow.getAttribute('aria-expanded') === 'true';
         if (!isExpanded) {
@@ -307,5 +297,6 @@ edx = edx || {};
       }
     },
   });
-  this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = edx.instructor_dashboard.proctoring.ProctoredExamAttemptView;
+  const proctoredExamAttemptView = edx.instructor_dashboard.proctoring.ProctoredExamAttemptView;
+  this.edx.instructor_dashboard.proctoring.ProctoredExamAttemptView = proctoredExamAttemptView;
 }).call(this, Backbone, $, _, gettext);

@@ -105,13 +105,12 @@ edx = edx || {};
       this.updateCss();
     },
     editAllowance(event) {
-      let $errorResponse; let formHasErrors; let
-        allowanceValue;
+      let formHasErrors;
       const self = this;
       event.preventDefault();
-      $errorResponse = $('.error-response');
+      const $errorResponse = $('.error-response');
       $errorResponse.html();
-      allowanceValue = this.getAllowanceValue();
+      const allowanceValue = this.getAllowanceValue();
       formHasErrors = false;
 
       if (allowanceValue === '') {

@@ -8,8 +8,6 @@ edx = edx || {};
 
   edx.courseware.proctored_exam.ProctoredExamView = Backbone.View.extend({
     initialize(options) {
-      let templateHtml; let
-        controlsTemplateHtml;
       _.bindAll(this, 'detectScroll');
       this.$el = options.el;
       this.timerBarTopPosition = this.$el.position().top;
@@ -29,13 +27,13 @@ edx = edx || {};
       // get destroyed before onbeforeunload is called
       this.taking_as_proctored = false;
 
-      templateHtml = $(this.templateId).text();
+      const templateHtml = $(this.templateId).text();
       if (templateHtml !== null) {
         /* don't assume this backbone view is running on a page with the underscore templates */
         this.template = _.template(templateHtml);
       }
 
-      controlsTemplateHtml = $(this.examControlsTemplateId).text();
+      const controlsTemplateHtml = $(this.examControlsTemplateId).text();
       if (controlsTemplateHtml !== null) {
         /* don't assume this backbone view is running on a page with the underscore templates */
         this.controls_template = _.template(controlsTemplateHtml);
@@ -56,12 +54,11 @@ edx = edx || {};
       'click .js-toggle-show-more': 'toggleShowText',
     },
     detectScroll(event) {
-      let examStatusBarHeight;
       let $courseNavBar = $('.wrapper-course-material');
       if (!$courseNavBar.length) {
         $courseNavBar = $('.course-tabs');
       }
-      examStatusBarHeight = this.$el.height();
+      const examStatusBarHeight = this.$el.height();
       if ($(event.currentTarget).scrollTop() > this.timerBarTopPosition) {
         $('.proctored_exam_status').addClass('is-fixed');
         $courseNavBar.css('margin-top', `${examStatusBarHeight}px`);
@@ -71,7 +68,6 @@ edx = edx || {};
       }
     },
     modelChanged() {
-      let desktopApplicationJsUrl;
       // if we are a proctored exam, then we need to alert user that he/she
       // should not be navigating around the courseware
       const takingAsProctored = this.model.get('taking_as_proctored');
@@ -88,7 +84,7 @@ edx = edx || {};
         // remove callback on unload event
         $(window).unbind('beforeunload', this.unloadMessage);
       }
-      desktopApplicationJsUrl = this.model.get('desktop_application_js_url');
+      const desktopApplicationJsUrl = this.model.get('desktop_application_js_url');
       if (desktopApplicationJsUrl && !edx.courseware.proctored_exam.configuredWorkerURL) {
         edx.courseware.proctored_exam.configuredWorkerURL = desktopApplicationJsUrl;
       }
@@ -137,7 +133,7 @@ edx = edx || {};
               success() {
                 // change the location of the page to the active exam page
                 // which will reflect the new state of the attempt
-                location.href = self.model.get('exam_url_path');
+                window.location.href = self.model.get('exam_url_path');
               },
             });
           });
@@ -149,15 +145,14 @@ edx = edx || {};
       return this;
     },
     reloadPage() {
-      location.reload();
+      window.location.reload();
     },
     unloadMessage() {
       return gettext('Are you sure you want to leave this page? \n'
                 + 'To pass your proctored exam you must also pass the online proctoring session review.');
     },
     updateRemainingTime() {
-      let url; let queryString; let
-        newState;
+      let url; let queryString;
       const self = this;
       const pingInterval = self.model.get('ping_interval');
       self.timerTick += 1;
@@ -204,7 +199,7 @@ edx = edx || {};
           });
       }
       self.$el.find('div.exam-timer').attr('class');
-      newState = self.model.getRemainingTimeState(self.secondsLeft);
+      const newState = self.model.getRemainingTimeState(self.secondsLeft);
 
       if (newState !== null && !self.$el.find('div.exam-timer').hasClass(newState)) {
         self.$el.find('div.exam-timer').removeClass('warning critical');

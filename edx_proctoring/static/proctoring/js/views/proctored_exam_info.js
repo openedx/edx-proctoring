@@ -1,26 +1,23 @@
 (function (Backbone, $) {
   'use strict';
 
-  let examStatusReadableFormat; let notStartedText; let startedText; let
-    submittedText;
-
   edx.courseware = edx.courseware || {};
   edx.courseware.proctored_exam = edx.courseware.proctored_exam || {};
 
-  notStartedText = {
+  const notStartedText = {
     status: gettext('Not Started'),
     message: gettext('You have not started your onboarding exam.'),
   };
-  startedText = {
+  const startedText = {
     status: gettext('Started'),
     message: gettext('You have started your onboarding exam.'),
   };
-  submittedText = {
+  const submittedText = {
     status: gettext('Submitted'),
     message: gettext('You have submitted your onboarding exam.'),
   };
 
-  examStatusReadableFormat = {
+  const examStatusReadableFormat = {
     created: notStartedText,
     download_software_clicked: notStartedText,
     ready_to_start: notStartedText,

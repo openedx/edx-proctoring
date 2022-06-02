@@ -88,7 +88,13 @@ describe('ProctoredExamAttemptView', () => {
     );
   }
 
-  function getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(status, isPracticeExam, isResumable, readyToResume, resumed) {
+  function getExpectedGroupedProctoredExamAttemptWithAttemptStatusJson(
+    status,
+    isPracticeExam,
+    isResumable,
+    readyToResume,
+    resumed,
+  ) {
     // eslint-disable-next-line no-param-reassign
     isPracticeExam = typeof isPracticeExam !== 'undefined' ? isPracticeExam : false;
     // eslint-disable-next-line no-param-reassign
@@ -553,8 +559,6 @@ describe('ProctoredExamAttemptView', () => {
   });
 
   it('should display check when exam attempt is ready to resume', function () {
-    let rows;
-
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -572,7 +576,7 @@ describe('ProctoredExamAttemptView', () => {
     this.server.respond();
     this.server.respond();
 
-    rows = this.proctored_exam_attempt_view.$el.find('tbody').children();
+    const rows = this.proctored_exam_attempt_view.$el.find('tbody').children();
     expect(rows.length).toEqual(3);
 
     // check that ready to resume check does not appear in outer level
@@ -584,8 +588,6 @@ describe('ProctoredExamAttemptView', () => {
   });
 
   it('should not display check when exam attempt has status ready to resume but has been resumed', function () {
-    let rows;
-
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -603,7 +605,7 @@ describe('ProctoredExamAttemptView', () => {
     this.server.respond();
     this.server.respond();
 
-    rows = this.proctored_exam_attempt_view.$el.find('tbody').children();
+    const rows = this.proctored_exam_attempt_view.$el.find('tbody').children();
     expect(rows.length).toEqual(3);
 
     // check that ready to resume check does not appear in outer level
@@ -749,8 +751,6 @@ describe('ProctoredExamAttemptView', () => {
   });
 
   it('should display grouped attempts', function () {
-    let rows;
-
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -768,7 +768,7 @@ describe('ProctoredExamAttemptView', () => {
     this.server.respond();
     this.server.respond();
 
-    rows = this.proctored_exam_attempt_view.$el.find('tbody').children();
+    const rows = this.proctored_exam_attempt_view.$el.find('tbody').children();
 
     expect(rows.length).toEqual(3);
 

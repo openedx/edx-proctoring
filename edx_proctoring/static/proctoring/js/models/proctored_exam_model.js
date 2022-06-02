@@ -21,16 +21,14 @@
     },
     getFormattedRemainingTime(secondsLeft) {
       let secsLeft = secondsLeft;
-      let hours; let minutes; let
-        seconds;
       /* since we can have a small grace period, we can end in the negative numbers */
       if (secondsLeft < 0) {
         secsLeft = 0;
       }
 
-      hours = Math.floor(secsLeft / 3600);
-      minutes = Math.floor(secsLeft / 60) % 60;
-      seconds = Math.floor(secsLeft % 60);
+      const hours = Math.floor(secsLeft / 3600);
+      const minutes = Math.floor(secsLeft / 60) % 60;
+      const seconds = Math.floor(secsLeft % 60);
 
       return `${hours}:${minutes < 10 ? `0${minutes}` : minutes
       }:${seconds < 10 ? `0${seconds}` : seconds}`;

@@ -1,13 +1,13 @@
 edx = edx || {};
 
-(function (Backbone, $, _) {
+((Backbone, $, _) => {
   'use strict';
 
   edx.instructor_dashboard = edx.instructor_dashboard || {};
   edx.instructor_dashboard.proctoring = edx.instructor_dashboard.proctoring || {};
 
   edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = Backbone.View.extend({
-    initialize: function() {
+    initialize() {
       this.allowance_types = [
         ['additional_time_granted', gettext('Additional Time (minutes)')],
         ['review_policy_exception', gettext('Review Policy Exception')],
@@ -30,7 +30,7 @@ edx = edx || {};
       /* Load the static template for rendering. */
       this.loadTemplateData();
 
-      this.proctoredExamCollection.url = this.proctoredExamCollection.url + this.course_id;
+      this.proctoredExamCollection.url += this.course_id;
     },
     events: {
       'click #add-allowance': 'showAddModal',
@@ -38,7 +38,7 @@ edx = edx || {};
       'click .accordion-trigger': 'toggleAllowanceAccordion',
       'click .edit_allowance': 'editAllowance',
     },
-    getCSRFToken: function() {
+    getCSRFToken() {
       let cookieValue = null;
       const name = 'csrftoken';
       let cookies; let cookie; let
@@ -56,7 +56,7 @@ edx = edx || {};
       }
       return cookieValue;
     },
-    removeAllowance: function(event) {
+    removeAllowance(event) {
       const $element = $(event.currentTarget);
       const userID = $element.data('user-id');
       const examID = $element.data('exam-id');
@@ -88,17 +88,17 @@ edx = edx || {};
          See setup_instructor_dashboard_sections() in
          instructor_dashboard.coffee (in edx-platform)
          */
-    constructor: function(section) {
+    constructor: function (section) {
       /* the Instructor Dashboard javascript expects this to be set up */
       $(section).data('wrapper', this);
 
       this.initialize({});
     },
-    onClickTitle: function() {
+    onClickTitle() {
       // called when this is selected in the instructor dashboard
 
     },
-    loadTemplateData: function() {
+    loadTemplateData() {
       const self = this;
       $.ajax({ url: self.template_url, dataType: 'html' })
         .done((templateData) => {
@@ -106,7 +106,7 @@ edx = edx || {};
           self.hydrate();
         });
     },
-    hydrate: function() {
+    hydrate() {
       /* This function will load the bound collection */
 
       /* add and remove a class when we do the initial loading */
@@ -115,15 +115,15 @@ edx = edx || {};
       const self = this;
       self.collection.url = `${self.initial_url + self.course_id}/grouped/allowance`;
       self.collection.fetch({
-        success: function() {
+        success() {
           self.render();
         },
       });
     },
-    collectionChanged: function() {
+    collectionChanged() {
       this.hydrate();
     },
-    render: function() {
+    render() {
       const self = this;
       let html;
       if (this.template !== null) {
@@ -135,7 +135,7 @@ edx = edx || {};
         this.$el.html(html);
       }
     },
-    showAddModal: function(event) {
+    showAddModal(event) {
       const self = this;
       self.proctoredExamCollection.fetch({
         success() {
@@ -151,7 +151,7 @@ edx = edx || {};
       event.stopPropagation();
       event.preventDefault();
     },
-    editAllowance: function(event) {
+    editAllowance(event) {
       const $element = $(event.currentTarget);
       const userName = $element.data('user-name');
       const examID = $element.data('exam-id');
@@ -160,7 +160,7 @@ edx = edx || {};
       const keyName = $element.data('key-value');
       const self = this;
       self.proctoredExamCollection.fetch({
-        success: function() {
+        success() {
           // eslint-disable-next-line no-new
           new edx.instructor_dashboard.proctoring.EditAllowanceView({
             course_id: self.course_id,
@@ -174,12 +174,12 @@ edx = edx || {};
         },
       });
     },
-    toggleAllowanceAccordion: function(event) {
+    toggleAllowanceAccordion(event) {
       // based on code from openedx/features/course_experience/static/course_experience/js/CourseOutline.js
       // but modified to better fit this feature's needs
-      let accordionRow; let isExpanded; let $toggleChevron; let
+      let isExpanded; let $toggleChevron; let
         $contentPanel;
-      accordionRow = event.currentTarget;
+      const accordionRow = event.currentTarget;
       if (accordionRow.classList.contains('accordion-trigger')) {
         isExpanded = accordionRow.getAttribute('aria-expanded') === 'true';
         if (!isExpanded) {
@@ -197,9 +197,10 @@ edx = edx || {};
         }
       }
     },
-    generateDomId: function(username) {
+    generateDomId(username) {
       return `ui-id-${username.replace(/\W/g, '')}`;
     },
   });
-  this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView;
+  const proctoredExamAllowanceView = edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView;
+  this.edx.instructor_dashboard.proctoring.ProctoredExamAllowanceView = proctoredExamAllowanceView;
 }).call(this, Backbone, $, _);
