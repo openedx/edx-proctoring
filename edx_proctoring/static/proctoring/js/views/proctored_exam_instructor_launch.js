@@ -1,6 +1,6 @@
 edx = edx || {};
 
-(function (Backbone, $, _) {
+((Backbone, $, _) => {
   'use strict';
 
   edx.instructor_dashboard = edx.instructor_dashboard || {};

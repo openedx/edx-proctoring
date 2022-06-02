@@ -1,4 +1,4 @@
-(function (Backbone, $) {
+((Backbone, $) => {
   'use strict';
 
   edx.courseware = edx.courseware || {};

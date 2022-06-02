@@ -1,6 +1,6 @@
 edx = edx || {};
 
-(function (Backbone, $, _, gettext) {
+((Backbone, $, _, gettext) => {
   'use strict';
 
   edx.courseware = edx.courseware || {};

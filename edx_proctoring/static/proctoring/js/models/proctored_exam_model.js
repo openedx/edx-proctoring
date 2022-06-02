@@ -1,7 +1,7 @@
-(function (Backbone) {
+(Backbone => {
   'use strict';
 
-  const ProctoredExamModel = Backbone.Model.extend({
+  this.ProctoredExamModel = Backbone.Model.extend({
     /* we should probably pull this from a data attribute on the HTML */
     url: '/api/edx_proctoring/v1/proctored_exam/attempt',
 
@@ -49,6 +49,4 @@
       return 'critical';
     },
   });
-
-  this.ProctoredExamModel = ProctoredExamModel;
 }).call(this, Backbone);

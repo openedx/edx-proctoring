@@ -2,7 +2,7 @@
 describe('ProctoredExamView', () => {
   'use strict';
 
-  beforeEach(function () {
+  beforeEach(() => {
     this.server = sinon.fakeServer.create();
     jasmine.clock().install();
     setFixtures(
@@ -51,26 +51,26 @@ describe('ProctoredExamView', () => {
     this.proctored_exam_view.render();
   });
 
-  afterEach(function () {
+  afterEach(async () => {
     this.server.restore();
     jasmine.clock().uninstall();
   });
 
-  it('renders items correctly', function () {
+  it('renders items correctly', async () => {
     expect(this.proctored_exam_view.$el.find('a')).toHaveAttr('href', this.model.get('exam_url_path'));
     expect(this.proctored_exam_view.$el.find('a')).toContainHtml(this.model.get('exam_display_name'));
   });
-  it('changes behavior when clock time decreases low threshold', function () {
+  it('changes behavior when clock time decreases low threshold', async () => {
     this.proctored_exam_view.secondsLeft = 25;
     this.proctored_exam_view.render();
     expect(this.proctored_exam_view.$el.find('div.exam-timer')).toHaveClass('low-time warning');
   });
-  it('changes behavior when clock time decreases critically low threshold', function () {
+  it('changes behavior when clock time decreases critically low threshold', async () => {
     this.proctored_exam_view.secondsLeft = 5;
     this.proctored_exam_view.render();
     expect(this.proctored_exam_view.$el.find('div.exam-timer')).toHaveClass('low-time critical');
   });
-  it('toggles timer visibility correctly', function () {
+  it('toggles timer visibility correctly', async () => {
     const button = this.proctored_exam_view.$el.find('#toggle_timer');
     const timer = this.proctored_exam_view.$el.find('h3#time_remaining_id b');
     expect(timer).not.toHaveClass('timer-hidden');
@@ -79,7 +79,7 @@ describe('ProctoredExamView', () => {
     button.click();
     expect(timer).not.toHaveClass('timer-hidden');
   });
-  it('toggles long text visibility on show more/less', function () {
+  it('toggles long text visibility on show more/less', async () => {
     const button = this.proctored_exam_view.$el.find('.js-toggle-show-more');
     const textToToggle = this.proctored_exam_view.$el.find('.js-exam-additional-text');
     const initiallyHidden = textToToggle.hasClass('hidden');
@@ -88,7 +88,7 @@ describe('ProctoredExamView', () => {
     button.click();
     expect(textToToggle.hasClass('hidden')).toBe(initiallyHidden);
   });
-  it('toggles initial visibility according to whether media query is satisfied', function () {
+  it('toggles initial visibility according to whether media query is satisfied', async () => {
     const { matchMedia } = window;
     const fakeMediaQuery = sinon.stub().returns({ matches: true });
     this.proctored_exam_view.first_time_rendering = true;
@@ -97,7 +97,7 @@ describe('ProctoredExamView', () => {
     expect(this.proctored_exam_view.$el.find('.js-exam-additional-text')).not.toHaveClass('hidden');
     window.matchMedia = matchMedia;
   });
-  it('reload the page when the exam time finishes', function () {
+  it('reload the page when the exam time finishes', async () => {
     // Stubbed out so tests don't reload endlessly when debugging in the browser
     spyOn(this.proctored_exam_view, 'reloadPage');
     this.proctored_exam_view.secondsLeft = -10;
@@ -106,7 +106,7 @@ describe('ProctoredExamView', () => {
     expect(edx.courseware.proctored_exam.endExam).toHaveBeenCalled();
     delete edx.courseware.proctored_exam.endExam;
   });
-  it('resets the remaining exam time after the ajax response', function () {
+  it('resets the remaining exam time after the ajax response', async () => {
     this.server.respondWith(
       'GET',
       `/api/edx_proctoring/v1/proctored_exam/attempt/${
@@ -128,7 +128,7 @@ describe('ProctoredExamView', () => {
     this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
     expect(edx.courseware.proctored_exam.endExam).toHaveBeenCalled();
   });
-  it('reloads the page after unauthorized ajax ping', function () {
+  it('reloads the page after unauthorized ajax ping', async () => {
     const reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
     this.server.respondWith(
       'GET',
@@ -149,7 +149,7 @@ describe('ProctoredExamView', () => {
     this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
     expect(reloadPage).toHaveBeenCalled();
   });
-  it('reloads the page after error state ajax ping', function () {
+  it('reloads the page after error state ajax ping', async () => {
     const reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
     this.server.respondWith(
       'GET',
@@ -170,7 +170,7 @@ describe('ProctoredExamView', () => {
     this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
     expect(reloadPage).toHaveBeenCalled();
   });
-  it('does not reload the page on general 400 errors', function () {
+  it('does not reload the page on general 400 errors', async () => {
     const reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
     this.server.respondWith(
       'GET',
@@ -191,7 +191,7 @@ describe('ProctoredExamView', () => {
     this.proctored_exam_view.updateRemainingTime(this.proctored_exam_view);
     expect(reloadPage).not.toHaveBeenCalled();
   });
-  it('calls external js global function on off-beat', function () {
+  it('calls external js global function on off-beat', async () => {
     this.proctored_exam_view.model.set('ping_interval', 60);
     edx.courseware.proctored_exam.pingApplication = jasmine.createSpy().and.returnValue(Promise.resolve());
     edx.courseware.proctored_exam.configuredWorkerURL = 'nonempty/string.html';
@@ -201,7 +201,7 @@ describe('ProctoredExamView', () => {
     delete edx.courseware.proctored_exam.pingApplication;
     delete edx.courseware.proctored_exam.configuredWorkerURL;
   });
-  it('reloads the page after failure-state ajax call', function (done) {
+  it('reloads the page after failure-state ajax call', async (done) => {
     const reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
     this.server.respondWith(
       (request) => {
@@ -220,7 +220,7 @@ describe('ProctoredExamView', () => {
   });
   it(
     'does not reload the page after failure-state ajax call when server responds with no attempt id',
-    function (done) {
+    async (done) => {
       const reloadPage = spyOn(this.proctored_exam_view, 'reloadPage');
       // this case mimics current behavior of the server when the
       // proctoring backend is configured to not block the user for a
@@ -242,7 +242,7 @@ describe('ProctoredExamView', () => {
     },
   );
 
-  it('sets global variable when unset', function () {
+  it('sets global variable when unset', async () => {
     expect(window.edx.courseware.proctored_exam.configuredWorkerURL).toBeUndefined();
     this.proctored_exam_view.model.set('desktop_application_js_url', 'nonempty string');
     expect(window.edx.courseware.proctored_exam.configuredWorkerURL).not.toBeUndefined();

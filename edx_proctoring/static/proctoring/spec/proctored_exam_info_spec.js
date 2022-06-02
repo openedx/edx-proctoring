@@ -35,7 +35,7 @@ describe('ProctoredExamInfo', () => {
     );
   }
 
-  beforeEach(function () {
+  beforeEach(() => {
     html = '<div class="proctoring-info">'
             + '<h3 class="message-title"> <%= gettext("This course contains proctored exams") %></h3>'
             + '<% if (onboardingStatusText) { %>'
@@ -97,11 +97,11 @@ describe('ProctoredExamInfo', () => {
     );
   });
 
-  afterEach(function () {
+  afterEach(async () => {
     this.server.restore();
   });
 
-  it('should not render proctoring info panel when template is not defined', function () {
+  it('should not render proctoring info panel when template is not defined', async () => {
     this.proctored_exam_info = new edx.courseware.proctored_exam.ProctoredExamInfo({
       el: $('.proctoring-info-panel'),
       model: new LearnerOnboardingModel(),
@@ -111,7 +111,7 @@ describe('ProctoredExamInfo', () => {
       .toHaveLength(0);
   });
 
-  it('should not render proctoring info panel if no course id is provided', function () {
+  it('should not render proctoring info panel if no course id is provided', async () => {
     setFixtures('<div class="proctoring-info-panel" data-course-id=""></div>');
     this.server.respondWith(
       'GET',
@@ -135,7 +135,7 @@ describe('ProctoredExamInfo', () => {
       .toHaveLength(0);
   });
 
-  it('should render if username is provided', function () {
+  it('should render if username is provided', async () => {
     setFixtures(
       '<div class="proctoring-info-panel" data-course-id="test_course_id" '
             + 'data-username="test_username"></div>',
@@ -162,7 +162,7 @@ describe('ProctoredExamInfo', () => {
       .toContain('Verified');
   });
 
-  it('should not render proctoring info panel for exam with 404 response', function () {
+  it('should not render proctoring info panel for exam with 404 response', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
@@ -185,7 +185,7 @@ describe('ProctoredExamInfo', () => {
       .toHaveLength(0);
   });
 
-  it('should render proctoring info panel correctly for exam with other status', function () {
+  it('should render proctoring info panel correctly for exam with other status', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
@@ -216,7 +216,7 @@ describe('ProctoredExamInfo', () => {
       .toContain('Complete Onboarding');
   });
 
-  it('should render proctoring info panel correctly for exam with empty string status', function () {
+  it('should render proctoring info panel correctly for exam with empty string status', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
@@ -247,7 +247,7 @@ describe('ProctoredExamInfo', () => {
       .toContain('Complete Onboarding');
   });
 
-  it('should render proctoring info panel correctly for exam that has yet to be released', function () {
+  it('should render proctoring info panel correctly for exam that has yet to be released', async () => {
     const tomorrow = new Date();
     tomorrow.setDate(new Date().getDate() + 1);
     this.server.respondWith(
@@ -280,7 +280,7 @@ describe('ProctoredExamInfo', () => {
       .toContain(`Onboarding Opens ${tomorrow.toLocaleDateString()}`);
   });
 
-  it('should render proctoring info panel correctly for past due exam', function () {
+  it('should render proctoring info panel correctly for past due exam', async () => {
     const twoDaysAgo = new Date();
     const data = {
       onboarding_status: 'Not Started',
@@ -319,7 +319,7 @@ describe('ProctoredExamInfo', () => {
       .toContain('Onboarding Past Due');
   });
 
-  it('should render proctoring info panel correctly for created exam', function () {
+  it('should render proctoring info panel correctly for created exam', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
@@ -348,7 +348,7 @@ describe('ProctoredExamInfo', () => {
       .toContain('Complete Onboarding');
   });
 
-  it('should render proctoring info panel correctly for started exam', function () {
+  it('should render proctoring info panel correctly for started exam', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
@@ -377,7 +377,7 @@ describe('ProctoredExamInfo', () => {
       .toContain('Complete Onboarding');
   });
 
-  it('should render proctoring info panel correctly for submitted onboarding exam', function () {
+  it('should render proctoring info panel correctly for submitted onboarding exam', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
@@ -405,7 +405,7 @@ describe('ProctoredExamInfo', () => {
       .not.toContain('Complete Onboarding');
   });
 
-  it('should render proctoring info panel correctly for second_review_required exam', function () {
+  it('should render proctoring info panel correctly for second_review_required exam', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
@@ -433,7 +433,7 @@ describe('ProctoredExamInfo', () => {
       .not.toContain('Complete Onboarding');
   });
 
-  it('should render proctoring info panel correctly for verified exam', function () {
+  it('should render proctoring info panel correctly for verified exam', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
@@ -461,7 +461,7 @@ describe('ProctoredExamInfo', () => {
       .not.toContain('Complete Onboarding');
   });
 
-  it('should render proctoring info panel correctly for rejected exam', function () {
+  it('should render proctoring info panel correctly for rejected exam', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status?course_id=test_course_id',
@@ -489,7 +489,7 @@ describe('ProctoredExamInfo', () => {
       .toContain('Complete Onboarding');
   });
 
-  it('should render proctoring info panel correctly for other course approved', function () {
+  it('should render proctoring info panel correctly for other course approved', async () => {
     const expirationDate = new Date();
     // Set the expiration date 50 days in the future
     expirationDate.setTime(expirationDate.getTime() + 3456900000);
@@ -520,7 +520,7 @@ describe('ProctoredExamInfo', () => {
       .toContain('Complete Onboarding');
   });
 
-  it('should render proctoring info panel when expiring soon', function () {
+  it('should render proctoring info panel when expiring soon', async () => {
     const expirationDate = new Date();
     // This message will render if the expiration date is within 28 days
     // Set the expiration date 10 days in future

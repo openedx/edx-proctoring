@@ -210,7 +210,7 @@ describe('ProctoredExamAttemptView', () => {
     );
   }
 
-  beforeEach(function () {
+  beforeEach(() => {
     html = '<div class="wrapper-content wrapper">'
         + '<% var is_proctored_attempts = proctored_exam_attempts.length !== 0 %>'
         + '<div class="content exam-attempts-content">'
@@ -397,10 +397,10 @@ describe('ProctoredExamAttemptView', () => {
     );
   });
 
-  afterEach(function () {
+  afterEach(async () => {
     this.server.restore();
   });
-  it('should render the proctored exam attempt view properly', function () {
+  it('should render the proctored exam attempt view properly', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -421,7 +421,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
   });
 
-  it('should search for the proctored exam attempt', function () {
+  it('should search for the proctored exam attempt', async () => {
     const searchText = 'testuser1';
     this.server.respondWith(
       'GET',
@@ -486,7 +486,7 @@ describe('ProctoredExamAttemptView', () => {
       .toEqual(true);
   });
 
-  it('should clear the search for the proctored exam attempt', function () {
+  it('should clear the search for the proctored exam attempt', async () => {
     const searchText = 'invalid_search_text';
     this.server.respondWith(
       'GET',
@@ -558,7 +558,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(this.proctored_exam_attempt_view.$el.find('tr.allowance-items').html()).toContain('Normal Exam');
   });
 
-  it('should display check when exam attempt is ready to resume', function () {
+  it('should display check when exam attempt is ready to resume', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -587,7 +587,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(rows[2].outerHTML).not.toContain('fa-check-circle');
   });
 
-  it('should not display check when exam attempt has status ready to resume but has been resumed', function () {
+  it('should not display check when exam attempt has status ready to resume but has been resumed', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -616,7 +616,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(rows[2].outerHTML).not.toContain('fa-check-circle');
   });
 
-  it('should mark exam attempt "ready_to_resume" on resume', function () {
+  it('should mark exam attempt "ready_to_resume" on resume', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -698,7 +698,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').hasClass('is-visible')).toEqual(false);
   });
 
-  it('should not display actions dropdown for practice exam attempts', function () {
+  it('should not display actions dropdown for practice exam attempts', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -724,7 +724,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').html()).toHaveLength(0);
   });
 
-  it('should not display actions dropdown for exam attempts not resumable', function () {
+  it('should not display actions dropdown for exam attempts not resumable', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -750,7 +750,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(this.proctored_exam_attempt_view.$el.find('.actions-dropdown').html()).toHaveLength(0);
   });
 
-  it('should display grouped attempts', function () {
+  it('should display grouped attempts', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -784,7 +784,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(rows[2].outerHTML).not.toContain('action-more');
   });
 
-  it('deletes attempts', function () {
+  it('deletes attempts', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -853,7 +853,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(this.proctored_exam_attempt_view.$el.find('tbody').html()).not.toContain('Normal Exam');
   });
 
-  it('shows and hides accordion when toggled', function () {
+  it('shows and hides accordion when toggled', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
@@ -882,7 +882,7 @@ describe('ProctoredExamAttemptView', () => {
     expect(this.proctored_exam_attempt_view.$el.find('.accordion-panel').hasClass('is-hidden')).toEqual(false);
   });
 
-  it('searches and shows spinner for grouped attempts', function () {
+  it('searches and shows spinner for grouped attempts', async () => {
     const searchText = 'testuser1';
 
     this.server.respondWith(

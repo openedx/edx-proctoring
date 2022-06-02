@@ -45,7 +45,7 @@ describe('ProctoredExamOnboardingView', () => {
     use_onboarding_profile_api: false,
   }];
 
-  beforeEach(function () {
+  beforeEach(() => {
     html = '<div class="wrapper-content wrapper">'
         + '<h3 class="error-response" id="error-response"></h3>'
         + '<% var isOnboardingItems = onboardingItems.length !== 0 %>'
@@ -182,11 +182,11 @@ describe('ProctoredExamOnboardingView', () => {
     );
   });
 
-  afterEach(function () {
+  afterEach(async () => {
     this.server.restore();
   });
 
-  it('should render the proctored exam onboarding view properly', function () {
+  it('should render the proctored exam onboarding view properly', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
@@ -220,7 +220,7 @@ describe('ProctoredExamOnboardingView', () => {
       .toContain('Executive Education');
   });
 
-  it('renders correctly with no data', function () {
+  it('renders correctly with no data', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
@@ -242,7 +242,7 @@ describe('ProctoredExamOnboardingView', () => {
       .toContain('There are no learners');
   });
 
-  it('filters onboarding statuses', function () {
+  it('filters onboarding statuses', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
@@ -304,7 +304,7 @@ describe('ProctoredExamOnboardingView', () => {
     );
   });
 
-  it('Renders approved in another course correctly', function () {
+  it('Renders approved in another course correctly', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
@@ -330,7 +330,7 @@ describe('ProctoredExamOnboardingView', () => {
       .toContain('Approved in Another Course');
   });
 
-  it('should search for onboarding attempts', function () {
+  it('should search for onboarding attempts', async () => {
     const searchText = 'badSearch';
     this.server.respondWith(
       'GET',
@@ -395,16 +395,14 @@ describe('ProctoredExamOnboardingView', () => {
       .toEqual(true);
   });
 
-  it('Renders correct filters for onboarding API', function () {
-    let onboardingData;
-
+  it('Renders correct filters for onboarding API', async () => {
     setFixtures(
       '<div class="student-onboarding-status-container"'
             + 'data-course-id="test_course_id">'
             + '</div>',
     );
 
-    onboardingData = JSON.parse(JSON.stringify(expectedOnboardingDataJson));
+    const onboardingData = JSON.parse(JSON.stringify(expectedOnboardingDataJson));
     onboardingData[0].use_onboarding_profile_api = true;
 
     this.server.respondWith(
@@ -438,9 +436,7 @@ describe('ProctoredExamOnboardingView', () => {
       .not.toContain('Setup Started');
   });
 
-  it('renders correctly with 503 response', function () {
-    let errorMessage;
-
+  it('renders correctly with 503 response', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
@@ -458,15 +454,13 @@ describe('ProctoredExamOnboardingView', () => {
     this.server.respond();
     this.server.respond();
 
-    errorMessage = this.proctored_exam_onboarding_view.$el.find('.error-response');
+    const errorMessage = this.proctored_exam_onboarding_view.$el.find('.error-response');
     expect(errorMessage.html()).toContain('Error message.');
     expect(errorMessage).toBeVisible();
     expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-status-content')).not.toBeVisible();
   });
 
-  it('renders correctly with non-JSON parseable error message response', function () {
-    let errorMessage;
-
+  it('renders correctly with non-JSON parseable error message response', async () => {
     this.server.respondWith(
       'GET',
       '/api/edx_proctoring/v1/user_onboarding/status/course_id/test_course_id',
@@ -484,7 +478,7 @@ describe('ProctoredExamOnboardingView', () => {
     this.server.respond();
     this.server.respond();
 
-    errorMessage = this.proctored_exam_onboarding_view.$el.find('.error-response');
+    const errorMessage = this.proctored_exam_onboarding_view.$el.find('.error-response');
     expect(errorMessage.html()).toContain('An unexpected error occured. Please try again later.');
     expect(errorMessage).toBeVisible();
     expect(this.proctored_exam_onboarding_view.$el.find('.onboarding-status-content')).not.toBeVisible();
