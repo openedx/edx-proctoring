@@ -84,10 +84,11 @@ edx = edx || {};
       event.preventDefault();
     },
     /*
-         This entry point is required for Instructor Dashboard
-         See setup_instructor_dashboard_sections() in
-         instructor_dashboard.coffee (in edx-platform)
-         */
+      This entry point is required for Instructor Dashboard
+      See setup_instructor_dashboard_sections() in
+      instructor_dashboard.coffee (in edx-platform)
+    */
+    // eslint-disable-next-line func-names
     constructor: function (section) {
       /* the Instructor Dashboard javascript expects this to be set up */
       $(section).data('wrapper', this);
