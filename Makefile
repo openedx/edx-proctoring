@@ -96,7 +96,7 @@ quality-python: ## Run python linters
 	tox -e quality
 
 quality-rst: ## validate rst files
-	rstcheck -r --report warning .
+	rstcheck -r --report-level warning .
 
 quality: quality-js quality-python quality-rst ## Run linters
 
