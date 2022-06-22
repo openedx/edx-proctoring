@@ -43,7 +43,7 @@ code-annotations==1.3.0
     # via -r requirements/test.in
 coverage[toml]==6.4.1
     # via pytest-cov
-cryptography==37.0.2
+cryptography==37.0.3
     # via pyjwt
 ddt==1.5.0
     # via -r requirements/test.in
