@@ -38,7 +38,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.2.0
     # via celery
-cryptography==37.0.3
+cryptography==37.0.2
     # via pyjwt
 django==3.2.13
     # via
