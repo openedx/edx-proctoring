@@ -18,7 +18,6 @@ click==7.1.2
     #   click-log
     #   code-annotations
     #   edx-lint
-    #   pip-tools
     #   typer
 click-log==0.4.0
     # via edx-lint
@@ -76,10 +75,6 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.9.0
     # via stevedore
-pep517==0.12.0
-    # via pip-tools
-pip-tools==6.6.2
-    # via -r requirements/dev.in
 platformdirs==2.5.2
     # via
     #   pylint
@@ -148,9 +143,7 @@ text-unidecode==1.3
 toml==0.10.2
     # via tox
 tomli==2.0.1
-    # via
-    #   pep517
-    #   pylint
+    # via pylint
 tomlkit==0.11.0
     # via pylint
 tox==3.25.0
@@ -173,12 +166,9 @@ typing-extensions==4.2.0
 virtualenv==20.14.1
     # via tox
 wheel==0.37.1
-    # via
-    #   -r requirements/dev.in
-    #   pip-tools
+    # via -r requirements/dev.in
 wrapt==1.14.1
     # via astroid
 
 # The following packages are considered to be unsafe in a requirements file:
-# pip
 # setuptools
