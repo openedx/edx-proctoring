@@ -362,11 +362,13 @@ def resolve_exam_url_for_learning_mfe(course_id, content_id):
     url = f'{settings.LEARNING_MICROFRONTEND_URL}/course/{course_key}/{usage_key}'
     return url
 
+
 def get_course_home_url(course_id):
     """ Helper that builds the course home url """
     course_key = CourseKey.from_string(course_id)
     url = f'{settings.LEARNING_MICROFRONTEND_URL}/course/{course_key}/home'
     return url
+
 
 def get_exam_url(course_id, content_id, is_learning_mfe):
     """ Helper to build exam url depending if it is requested for the learning MFE app or not. """

@@ -15,7 +15,11 @@ Unreleased
 ~~~~~~~~~~
 * Improved ``developing.rst`` docs for installing and running the mockprock proctoring provider.
 
-[4.10.1] - 2022-04-06
+[4.10.3] - 2022-04-06
+~~~~~~~~~~~~~~~~~~~~~
+* Fixed invalid course url in proctored attempt email
+
+[4.10.2] - 2022-04-06
 ~~~~~~~~~~~~~~~~~~~~~
 * Enabled Django40 testing
 * Removed Deprecated and Removed Featured from Django40

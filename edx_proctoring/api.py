@@ -62,6 +62,7 @@ from edx_proctoring.statuses import InstructorDashboardOnboardingAttemptStatus, 
 from edx_proctoring.utils import (
     categorize_inaccessible_exams_by_date,
     emit_event,
+    get_course_home_url,
     get_exam_due_date,
     get_exam_type,
     get_exam_url,
@@ -72,7 +73,6 @@ from edx_proctoring.utils import (
     humanized_time,
     is_reattempting_exam,
     obscured_user_id,
-    get_course_home_url,
     verify_and_add_wait_deadline
 )
 
