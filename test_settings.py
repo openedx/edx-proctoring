@@ -35,6 +35,8 @@ DATABASES = {
 SITE_ID = 1
 SITE_NAME = 'localhost:8000'
 
+LEARNING_MICROFRONTEND_URL = 'https://learning.test.org'
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
