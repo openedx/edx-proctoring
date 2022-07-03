@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-10 18:34+0000\n"
+"POT-Creation-Date: 2022-07-03 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: iderr <ibrahim@derraz.fr>, 2021\n"
 "Language-Team: French (https://www.transifex.com/open-edx/teams/6205/fr/)\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: fr\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: admin.py:110
 msgid "internally reviewed"
@@ -116,12 +116,12 @@ msgstr "Intégration en attente"
 msgid "Onboarding Expired"
 msgstr "L'intégration a expiré"
 
-#: api.py:820 views.py:1140
+#: api.py:821 views.py:1140
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "vous avez {remaining_time} restant"
 
-#: api.py:1641
+#: api.py:1642
 msgid "your course"
 msgstr "votre cours"
 
@@ -135,58 +135,58 @@ msgstr "Résultats d'examen surveillé pour {course_name} {exam_name}"
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr "Revue d'examen surveillé en cours pour {course_name} {exam_name}"
 
-#: api.py:1774
+#: api.py:1761
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 "Examen surveillé {exam_name} pour {course_name} pour l'utilisateur "
 "{username}"
 
-#: api.py:2249
+#: api.py:2237
 msgid "Taking As Proctored Exam"
 msgstr "Faire en tant qu'examen surveillé"
 
-#: api.py:2254
+#: api.py:2242
 msgid "Proctored Option Available"
 msgstr "Option Examen Surveillé Possible"
 
-#: api.py:2259
+#: api.py:2247
 msgid "Taking As Open Exam"
 msgstr "Prendre comme session libre"
 
-#: api.py:2264 api.py:2269
+#: api.py:2252 api.py:2257
 msgid "Pending Session Review"
 msgstr "En attente de la revue de la session."
 
-#: api.py:2274
+#: api.py:2262
 msgid "Passed Proctoring"
 msgstr "Examen Surveillé Effectué."
 
-#: api.py:2279 api.py:2284
+#: api.py:2267 api.py:2272
 msgid "Failed Proctoring"
 msgstr "Echec de l'Examen Surveillé"
 
-#: api.py:2289
+#: api.py:2277
 msgid "Proctored Option No Longer Available"
 msgstr "Option Examen Surveillé Plus Disponible."
 
-#: api.py:2298
+#: api.py:2286
 msgid "Ungraded Practice Exam"
 msgstr "Examen d'entrainement non noté"
 
-#: api.py:2303
+#: api.py:2291
 msgid "Practice Exam Completed"
 msgstr "Examen d'essai complété"
 
-#: api.py:2308
+#: api.py:2296
 msgid "Practice Exam Failed"
 msgstr "Examen d'essai échoué"
 
-#: api.py:2316
+#: api.py:2304
 msgid "Timed Exam"
 msgstr "Examen minuté"
 
-#: api.py:2899
+#: api.py:2887
 msgid "Onboarding status question"
 msgstr "Question sur le statut d'intégration"
 
