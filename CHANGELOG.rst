@@ -15,6 +15,11 @@ Unreleased
 ~~~~~~~~~~
 * Improved ``developing.rst`` docs for installing and running the mockprock proctoring provider.
 
+[4.11.0] - 2022-07-13
+~~~~~~~~~~~~~~~~~~~~~
+* Replaced PhantomJS with Headless Chromium
+* Replaced the deprecated `eslint-config-edx` with the newer `@edx/eslint-config` package
+
 [4.10.1] - 2022-04-06
 ~~~~~~~~~~~~~~~~~~~~~
 * Enabled Django40 testing
