@@ -62,6 +62,7 @@ from edx_proctoring.statuses import InstructorDashboardOnboardingAttemptStatus, 
 from edx_proctoring.utils import (
     categorize_inaccessible_exams_by_date,
     emit_event,
+    get_course_home_url,
     get_exam_due_date,
     get_exam_type,
     get_exam_url,
@@ -1729,7 +1730,6 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         return None
 
     user = USER_MODEL.objects.get(id=user_id)
-    course_info_url = ''
     email_subject = (
         _('Proctoring Results For {course_name} {exam_name}').format(
             course_name=course_name,
@@ -1755,21 +1755,8 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
 
     backend = exam_attempt_obj.proctored_exam.backend
     email_template = loader.select_template(_get_email_template_paths(template_name, backend))
-    try:
-        course_info_url = reverse('info', args=[exam_attempt_obj.proctored_exam.course_id])
-    except NoReverseMatch:
-        log.exception(
-            ('Attempted to create proctoring status email for user_id=%(user_id)s in exam_id=%(exam_id)s, '
-             'but could not find course info url for course_id=%(course_id)s'),
-            {
-                'user_id': user_id,
-                'exam_id': exam_attempt_obj.proctored_exam.id,
-                'course_id': course_id,
-            }
-        )
+    course_home_url = get_course_home_url(exam_attempt_obj.proctored_exam.course_id)
 
-    scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
-    course_url = f'{scheme}://{constants.SITE_NAME}{course_info_url}'
     exam_name = exam_attempt_obj.proctored_exam.exam_name
     support_email_subject = _('Proctored exam {exam_name} in {course_name} for user {username}').format(
         exam_name=exam_name,
@@ -1777,6 +1764,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         username=user.username,
     )
 
+    scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
     default_contact_url = f'{scheme}://{constants.SITE_NAME}/support/contact_us'
 
     # If the course has a proctoring escalation email set, use that rather than edX Support.
@@ -1792,7 +1780,7 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
 
     body = email_template.render({
         'username': user.username,
-        'course_url': course_url,
+        'course_url': course_home_url,
         'course_name': course_name,
         'exam_name': exam_name,
         'status': status,
