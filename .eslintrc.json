@@ -1,5 +1,5 @@
 {
-  "extends": "eslint-config-edx-es5",
+  "extends": "@edx/eslint-config",
   "globals": {
     "sinon": false,
     "setFixtures": false,
@@ -8,6 +8,13 @@
     "Backbone": false,
     "gettext": false,
     "Promise": false,
-    "edx": true
+    "edx": true,
+    "$": true,
+    "jQuery": true,
+    "spyOn": true,
+    "jasmine": true
+  },
+  "rules": {
+    "object-shorthand": [0, "always", { "ignoreConstructors": true }]
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "@edx/edx-proctoring",
   "//": "Note that the version format is slightly different than that of the Python version when using prereleases.",
-  "version": "4.10.3",
+  "version": "4.11.0",
   "main": "edx_proctoring/static/index.js",
   "scripts": {
     "test": "gulp test"
@@ -17,24 +17,22 @@
     "access": "public"
   },
   "devDependencies": {
+    "@edx/eslint-config": "^3.1.0",
     "babel-polyfill": "^6.26.0",
-    "eslint": "^5.9.0",
-    "eslint-config-edx": "^4.0.4",
-    "eslint-config-edx-es5": "^4.0.1",
     "eslint-plugin-jsx-a11y": "^6.5.1",
-    "gulp": "4.0.0",
     "gulp-karma": "0.0.1",
     "jasmine-core": "^2.8.0",
     "karma": "^0.13.0",
-    "karma-chrome-launcher": "^0.2.0",
-    "karma-coverage": "^1.1.1",
+    "karma-chrome-launcher": "^3.1.1",
+    "karma-coverage": "^2.2.0",
     "karma-jasmine": "^0.3.6",
     "karma-jasmine-jquery-2": "latest",
-    "karma-phantomjs-launcher": "^1.0.4",
     "karma-sinon": "^1.0.5",
-    "phantomjs-prebuilt": "^2.1.14",
+    "puppeteer": "^14.1.2",
     "sinon": "^3.2.1"
   },
-  "dependencies": {},
-  "license": "GNU Affero GPLv3"
+  "license": "GNU Affero GPLv3",
+  "dependencies": {
+    "gulp": "^4.0.2"
+  }
 }
