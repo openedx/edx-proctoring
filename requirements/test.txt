@@ -9,7 +9,7 @@ appdirs==1.4.4
     # via fs
 asgiref==3.5.2
     # via django
-attrs==21.4.0
+attrs==22.1.0
     # via
     #   outcome
     #   pytest
@@ -21,11 +21,11 @@ bok-choy==1.1.1
     #   event-tracking
 certifi==2022.6.15
     # via requests
-cffi==1.15.0
+cffi==1.15.1
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==2.0.12
+charset-normalizer==2.1.0
     # via requests
     # via
     #   -c requirements/constraints.txt
@@ -41,9 +41,9 @@ click-plugins==1.1.1
     # via celery
 code-annotations==1.3.0
     # via -r requirements/test.in
-coverage[toml]==6.4.1
+coverage[toml]==6.4.2
     # via pytest-cov
-cryptography==37.0.2
+cryptography==37.0.4
     # via pyjwt
 ddt==1.5.0
     # via -r requirements/test.in
@@ -74,7 +74,7 @@ django-simple-history==3.0.0
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
-django-waffle==2.5.0
+django-waffle==2.6.0
     # via
     #   -r requirements/base.in
     #   edx-django-utils
@@ -137,7 +137,7 @@ lazy==1.4
     # via bok-choy
 logilab-common==1.9.7
     # via -r requirements/test.in
-lxml==4.9.0
+lxml==4.9.1
     # via xblock
 markupsafe==2.1.1
     # via
@@ -147,7 +147,7 @@ mock==4.0.3
     # via -r requirements/test.in
 mypy-extensions==0.4.3
     # via logilab-common
-newrelic==7.12.0.176
+newrelic==7.16.0.178
     # via edx-django-utils
 packaging==21.3
     # via pytest
@@ -168,7 +168,7 @@ py==1.11.0
     #   pytest-forked
 pycparser==2.21
     # via cffi
-pycryptodomex==3.14.1
+pycryptodomex==3.15.0
     # via
     #   -r requirements/base.in
     #   pyjwkest
@@ -223,7 +223,7 @@ pyyaml==6.0
     #   code-annotations
     #   edx-i18n-tools
     #   xblock
-requests==2.28.0
+requests==2.28.1
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -254,12 +254,12 @@ slumber==0.7.1
     # via edx-rest-api-client
 sqlparse==0.4.2
     # via django
-stevedore==3.5.0
+stevedore==4.0.0
     # via
     #   code-annotations
     #   edx-django-utils
     #   edx-opaque-keys
-testfixtures==6.18.5
+testfixtures==7.0.0
     # via -r requirements/test.in
 text-unidecode==1.3
     # via python-slugify
@@ -267,9 +267,9 @@ tomli==2.0.1
     # via
     #   coverage
     #   pytest
-typing-extensions==4.2.0
+typing-extensions==4.3.0
     # via logilab-common
-urllib3==1.26.9
+urllib3==1.26.11
     # via
     #   requests
     #   responses
