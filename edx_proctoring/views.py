@@ -477,6 +477,90 @@ class ProctoredExamView(ProctoredAPIView):
                 )
         return Response(data)
 
+    def patch(self, request, course_id):
+        """
+        Create or update a list of exams.
+        """
+
+        # What proctoring.py Does:
+            # some things that I don't have to think about
+                # check whether 'enable_special_exams' is enabled
+                #   if not then exit
+                # check whether the course exists
+                #   if not then exit
+                # if timed or proctored exams are enabled
+                #   if not then exit
+                # ^ this is something that's still going to happen in the edx-platform
+                # and doesn't need to be done here
+
+            # get a list of requested exams
+            # for each exam
+                # grab the metadata
+
+                # check if exam exists
+                #   you can do this by checking by exam_content_id
+                # if it exists then:
+                #   define the exam_id
+                #   update_exam
+                # else:
+                #   define the metadata course_id and content_id
+                #   create_exam
+                
+            # mark any non-requested exams as inactive
+            # return a request
+
+        # grab the request
+        # this is the list of metadata that is passed from platform
+        request_exams = request.data
+        serializer = ProctoredExamSerializer(data=request.data, many=True)
+
+        # validate the serializer
+        if serializer.is_valid():
+
+            # for each exam
+            for exam in request_exams:
+                exam_metadata = {
+                        'exam_name': exam['exam_name'],
+                        'time_limit_mins': exam['time_limit_mins'],
+                        'due_date': exam['due_date'],
+                        'is_proctored': exam['is_proctored'],
+                        'is_practice_exam': exam['is_practice_exam'],
+                        'is_active': True,
+                        'hide_after_due': exam['hide_after_due'],
+                        'backend': exam['backend'],
+                }
+
+                try:
+                    exam = get_exam_by_content_id(str(course_id), str(exam['content_id']))
+
+                    exam_metadata['exam_id'] = exam['id']
+                    update_exam(**exam_metadata)
+
+                except ProctoredExamNotFoundException:
+                    exam_metadata['course_id'] = str(course_id)
+                    exam_metadata['content_id'] = str(exam['content_id'])
+
+                    create_exam(**exam_metadata)
+
+            course_exams = get_all_exams_for_course(course_id)
+
+            # mark any exams not included in the request as inactive. The Query set has already been filtered by course
+            remaining_exams = course_exams.exclude(content_id__in=[exam['content_id'] for exam in request_exams])
+            for exam in remaining_exams:
+                update_exam(
+                            exam_id=exam['id'],
+                            is_proctored=False,
+                            is_active=False,
+                        )
+
+            response_status = status.HTTP_200_OK
+            data = {}
+        else:
+            response_status = status.HTTP_400_BAD_REQUEST
+            data = {"detail": "Invalid data", "errors": serializer.errors}
+
+        return Response(status=response_status, data=data)
+
 
 class StudentOnboardingStatusView(ProctoredAPIView):
     """
