@@ -535,12 +535,16 @@ class ProctoredExamView(ProctoredAPIView):
 
                     exam_metadata['exam_id'] = exam['id']
                     update_exam(**exam_metadata)
+                    msg = 'Updated timed exam {exam_id}'.format(exam_id=exam['id'])
+                    LOG.info(msg)
 
                 except ProctoredExamNotFoundException:
                     exam_metadata['course_id'] = str(course_id)
                     exam_metadata['content_id'] = str(exam['content_id'])
 
                     create_exam(**exam_metadata)
+                    msg = f'Created new timed exam {exam_id}'
+                    LOG.info(msg)
 
             course_exams = get_all_exams_for_course(course_id)
 
