@@ -534,7 +534,8 @@ class ProctoredExamView(ProctoredAPIView):
                     exam = get_exam_by_content_id(str(course_id), str(exam['content_id']))
 
                     exam_metadata['exam_id'] = exam['id']
-                    update_exam(**exam_metadata)
+                    exam_id = update_exam(**exam_metadata)
+
                     msg = 'Updated timed exam {exam_id}'.format(exam_id=exam['id'])
                     LOG.info(msg)
 
@@ -542,16 +543,38 @@ class ProctoredExamView(ProctoredAPIView):
                     exam_metadata['course_id'] = str(course_id)
                     exam_metadata['content_id'] = str(exam['content_id'])
 
-                    create_exam(**exam_metadata)
+                    exam_id = create_exam(**exam_metadata)
+
                     msg = f'Created new timed exam {exam_id}'
                     LOG.info(msg)
 
             course_exams = get_all_exams_for_course(course_id)
+            # course_exams = Exam.objects.filter(course_id=course_id)
 
             # mark any exams not included in the request as inactive. The Query set has already been filtered by course
-            remaining_exams = course_exams.exclude(content_id__in=[exam['content_id'] for exam in request_exams])
-            for exam in remaining_exams:
-                update_exam(
+            # remaining_exams = course_exams.exclude(content_id__in=[exam['content_id'] for exam in request_exams])
+            # for exam in remaining_exams:
+            #     update_exam(
+            #                 exam_id=exam['id'],
+            #                 is_proctored=False,
+            #                 is_active=False,
+            #             )
+
+            for exam in course_exams:
+                if exam['is_active']:
+                    # try to look up the content_id in the sequences location
+
+                    search = [
+                        request_exam for request_exam in request_exams if
+                        str(request_exam['content_id']) == exam['content_id']
+                    ]
+
+                    if not search:
+                        # This means it was turned off in Studio, we need to mark
+                        # the exam as inactive (we don't delete!)
+                        msg = 'Disabling timed exam {exam_id}'.format(exam_id=exam['id'])
+                        LOG.info(msg)
+                        update_exam(
                             exam_id=exam['id'],
                             is_proctored=False,
                             is_active=False,
