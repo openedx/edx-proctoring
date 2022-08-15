@@ -20,8 +20,8 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
     Serializer for the ProctoredExam Model.
     """
     id = serializers.IntegerField(required=False)  # pylint: disable=invalid-name
-    course_id = serializers.CharField(required=True)
-    content_id = serializers.CharField(required=True)
+    course_id = serializers.CharField(required=True, validators = [])
+    content_id = serializers.CharField(required=True, validators = [])
     external_id = serializers.CharField(required=True)
     exam_name = serializers.CharField(required=True)
     time_limit_mins = serializers.IntegerField(required=True)
