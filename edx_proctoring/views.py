@@ -505,48 +505,69 @@ class ProctoredExamView(ProctoredAPIView):
                 # else:
                 #   define the metadata course_id and content_id
                 #   create_exam
-                
+
             # mark any non-requested exams as inactive
             # return a request
 
         # grab the request
         # this is the list of metadata that is passed from platform
         request_exams = request.data
-        serializer = ProctoredExamSerializer(data=request.data, many=True)
+        # serializer = ProctoredExamSerializer(data=request_exams, many=True)
 
         # validate the serializer
-        if serializer.is_valid():
+        # if serializer.is_valid():
 
-            # for each exam
-            for exam in request_exams:
-                exam_metadata = {
-                        'exam_name': exam['exam_name'],
-                        'time_limit_mins': exam['time_limit_mins'],
-                        'due_date': exam['due_date'],
-                        'is_proctored': exam['is_proctored'],
-                        'is_practice_exam': exam['is_practice_exam'],
-                        'is_active': True,
-                        'hide_after_due': exam['hide_after_due'],
-                        'backend': exam['backend'],
-                }
+        # for each exam
+        for exam in request_exams:
+            exam_metadata = {
+                    'exam_name': exam['exam_name'],
+                    'time_limit_mins': exam['time_limit_mins'],
+                    'due_date': exam['due_date'],
+                    'is_proctored': exam['is_proctored'],
+                    'is_practice_exam': exam['is_practice_exam'],
+                    'is_active': True,
+                    'hide_after_due': exam['hide_after_due'],
+                    'backend': exam['backend'],
+            }
 
-                try:
-                    exam = get_exam_by_content_id(str(course_id), str(exam['content_id']))
+            try:
+                # some concern with not validating before update exams
+                # but the .save in the update_exams method should do any validation
+                # so we will only serialize for creation for now
+                exam = get_exam_by_content_id(str(course_id), str(exam['content_id']))
+                
+                exam_from_db = ProctoredExam.objects.get(course_id=str(course_id), content_id=str(exam['content_id']))
+                serializer = ProctoredExamSerializer(exam_from_db, data=request.data, partial=True)
 
-                    exam_metadata['exam_id'] = exam['id']
-                    exam_id = update_exam(**exam_metadata)
+                exam_metadata['exam_id'] = exam['id']
+                exam_id = update_exam(**exam_metadata)
+                
+                # serialize into it with a partial update?
+                # 
+                # sv= SV.objects.get(pk=pk)
+                
+                # this is putting request.data on top of sv and comparing that
+                # this is good bc then we don't have conflicts with uniqueness
+                # serializer = SVSerializer(sv, data=request.data, partial=True)
+                # if serializer.is_valid():
 
-                    msg = 'Updated timed exam {exam_id}'.format(exam_id=exam['id'])
-                    LOG.info(msg)
+                msg = 'Updated timed exam {exam_id}'.format(exam_id=exam['id'])
+                LOG.info(msg)
 
-                except ProctoredExamNotFoundException:
-                    exam_metadata['course_id'] = str(course_id)
-                    exam_metadata['content_id'] = str(exam['content_id'])
+            except ProctoredExamNotFoundException:
+                # serializing is only done for exams that are created
+                # because the uniqueness constraint on the model invalidates the exams to be updated
 
-                    exam_id = create_exam(**exam_metadata)
+                serializer = ProctoredExamSerializer(data=exam)
+                serializer.is_valid()
 
-                    msg = f'Created new timed exam {exam_id}'
-                    LOG.info(msg)
+                exam_metadata['course_id'] = str(course_id)
+                exam_metadata['content_id'] = str(exam['content_id'])
+
+                exam_id = create_exam(**exam_metadata)
+
+                msg = f'Created new timed exam {exam_id}'
+                LOG.info(msg)
 
             course_exams = get_all_exams_for_course(course_id)
             # course_exams = Exam.objects.filter(course_id=course_id)
