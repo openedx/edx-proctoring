@@ -40,7 +40,7 @@ click-repl==0.2.0
     # via celery
 cryptography==37.0.4
     # via pyjwt
-django==3.2.14
+django==3.2.15
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -118,9 +118,9 @@ lxml==4.9.1
     # via xblock
 markupsafe==2.1.1
     # via xblock
-newrelic==7.16.0.178
+newrelic==8.0.0.179
     # via edx-django-utils
-pbr==5.9.0
+pbr==5.10.0
     # via stevedore
 prompt-toolkit==3.0.30
     # via click-repl
@@ -151,7 +151,7 @@ python-dateutil==2.8.2
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   xblock
-pytz==2022.1
+pytz==2022.2.1
     # via
     #   -r requirements/base.in
     #   celery
