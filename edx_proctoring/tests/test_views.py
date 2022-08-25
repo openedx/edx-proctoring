@@ -24,8 +24,10 @@ from edx_proctoring.api import (
     add_allowance_for_user,
     create_exam,
     create_exam_attempt,
+    get_all_exams_for_course,
     get_backend_provider,
     get_exam_attempt_by_id,
+    get_exam_by_id,
     mark_exam_attempt_as_ready_to_resume,
     reset_practice_exam,
     update_attempt_status,
@@ -116,9 +118,9 @@ class ProctoredExamsApiTests(LoggedInTestCase):
                 self.assertEqual(response.status_code, 403)
 
 
-class ProctoredExamViewTests(LoggedInTestCase):
+class RegisterProctoredExamsViewTest(LoggedInTestCase):
     """
-    Tests for the ProctoredExamView
+    Test for the RegisterProctoredExamsView
     """
     def setUp(self):
         super().setUp()
@@ -131,12 +133,225 @@ class ProctoredExamViewTests(LoggedInTestCase):
             exam_name="my test exam",
             content_id=self.content_id,
             time_limit_mins=90,
+            due_date='2026-01-01T00:00:00Z',
             external_id='4835',
             is_proctored=True,
             is_practice_exam=False,
             is_active=True,
-            hide_after_due= False,
+            hide_after_due=False,
+            backend='null',
         )
+
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login_user(self.user)
+        set_runtime_service('credit', MockCreditService())
+        set_runtime_service('instructor', MockInstructorService())
+
+    def make_request(self, exam_data):
+        """ make request helper """
+        return self.client.patch(
+            reverse('edx_proctoring:proctored_exam.register_exams_by_course_id', kwargs={
+                'course_id': self.course_id
+            }),
+            exam_data,
+            content_type='application/json'
+        )
+
+    def assert_response_success(self, response, expected_len):
+        """ Assert result includes all exams without errors """
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), expected_len)
+        for result in response.data:
+            self.assertIsNone(result.get('error'))
+            self.assertGreater(result.get('exam_id'), 0)
+
+    def test_register_new_exams(self):
+        """
+        If an exam does not yet exist for content_id a new exam is created
+        """
+        exam_data = [
+            {
+                'course_id': self.course_id,
+                'content_id': '123aaaa',
+                'exam_name': "midterm1",
+                'due_date': '2026-01-01T00:00:00Z',
+                'time_limit_mins': 90,
+                'is_proctored': True,
+                'is_practice_exam': False,
+                'is_active': True,
+                'hide_after_due': False,
+                'backend': 'null'
+            },
+            {
+                'course_id': self.course_id,
+                'content_id': '123zzzz',
+                'exam_name': "midterm2",
+                'external_id': None,
+                'due_date': '2026-01-01T00:00:00Z',
+                'time_limit_mins': 90,
+                'is_proctored': True,
+                'is_practice_exam': False,
+                'is_active': True,
+                'hide_after_due': False,
+                'backend': 'null'
+            },
+            get_exam_by_id(self.exam.id),
+        ]
+        response = self.make_request(exam_data)
+
+        # Assert 3 records are returned without error
+        self.assert_response_success(response, 3)
+
+        # Assert list of active exams match registered exams
+        exams = get_all_exams_for_course(course_id=self.course_id, active_only=True)
+        expected_content_ids = [self.content_id, '123aaaa', '123zzzz']
+        actual_content_ids = [exam.get('content_id') for exam in exams]
+        self.assertEqual(expected_content_ids, actual_content_ids)
+
+        # Assert 'midterm1' is created with correct fields
+        created_exam = ProctoredExam.get_exam_by_content_id(self.course_id, '123aaaa')
+        self.assertEqual(created_exam.exam_name, exam_data[0]['exam_name'])
+        self.assertEqual(created_exam.time_limit_mins, exam_data[0]['time_limit_mins'])
+        self.assertEqual(created_exam.is_proctored, exam_data[0]['is_proctored'])
+        self.assertEqual(created_exam.is_practice_exam, exam_data[0]['is_practice_exam'])
+        self.assertEqual(created_exam.hide_after_due, exam_data[0]['hide_after_due'])
+        self.assertEqual(created_exam.backend, exam_data[0]['backend'])
+        self.assertEqual(created_exam.external_id, None)
+
+    def test_register_removed_exam(self):
+        """
+        If an active exam is not included in the registration payload
+        that exam will be disabled
+        """
+        exam_data = [
+            {
+                'course_id': self.course_id,
+                'content_id': '123aaaa',
+                'exam_name': "midterm1",
+                'due_date': '2026-01-01T00:00:00Z',
+                'time_limit_mins': 90,
+                'external_id': '123',
+                'is_proctored': True,
+                'is_practice_exam': False,
+                'is_active': True,
+                'hide_after_due': False,
+                'backend': 'null'
+            },
+        ]
+        response = self.make_request(exam_data)
+        self.assert_response_success(response, 1)
+
+        # Assert list of active exams match registered exams
+        exams = get_all_exams_for_course(course_id=self.course_id, active_only=True)
+        expected_content_ids = ['123aaaa']
+        actual_content_ids = [exam.get('content_id') for exam in exams]
+        self.assertEqual(expected_content_ids, actual_content_ids)
+
+        # Assert existing exam is disabled
+        self.exam.refresh_from_db()
+        self.assertFalse(self.exam.is_active)
+        self.assertFalse(self.exam.is_proctored)
+
+    def test_register_updated_exam(self):
+        """
+        If an exam already exists for content_id, that exam will be updated
+        """
+        # Remove proctoring and update time limit
+        exam = get_exam_by_id(self.exam.id)
+        exam['time_limit_mins'] = 120
+        exam['is_proctored'] = False
+
+        response = self.make_request([exam])
+
+        # Assert 1 records are returned without error
+        self.assert_response_success(response, 1)
+
+        # Assert existing exam is updated
+        self.exam.refresh_from_db()
+        self.assertEqual(self.exam.time_limit_mins, 120)
+        self.assertFalse(self.exam.is_proctored)
+
+    def test_register_no_exams(self):
+        """
+        An empty list should deactivate all exams
+        """
+        response = self.make_request([])
+
+        # Assert 0 records are returned without error
+        self.assert_response_success(response, 0)
+
+        # Assert existing exam is updated
+        exams = get_all_exams_for_course(course_id=self.course_id, active_only=True)
+        self.assertEqual(exams, [])
+
+    def test_register_updated_exam_invalid(self):
+        """
+        If an exam already exists for content_id, that exam will be updated
+        """
+        existing_exam = get_exam_by_id(self.exam.id)
+        del existing_exam['content_id']          # required
+        existing_exam['due_date'] = 'tomorrow'   # invalid
+        existing_exam['hide_after_due'] = True             # valid change
+
+        response = self.make_request([existing_exam])
+
+        # Assert an error response with invalid fields included
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(len(response.data), 1)
+        error_fields = response.data[0].keys()
+        self.assertEqual(
+            set(error_fields),
+            set(['content_id', 'due_date'])
+        )
+
+        # Assert existing exam is not changed
+        self.exam.refresh_from_db()
+        self.assertFalse(self.exam.hide_after_due)
+
+    def test_register_exams_mixed_valid(self):
+        """
+        If an exam already exists for content_id, that exam will be updated
+        """
+        existing_exam = get_exam_by_id(self.exam.id)
+        existing_exam['due_date'] = 'tomorrow'   # invalid
+        existing_exam['time_limit_mins'] = 999
+
+        valid_new_exam = {
+            'course_id': self.course_id,
+            'content_id': '123aaaa',
+            'exam_name': "midterm1",
+            'due_date': '2026-01-01T00:00:00Z',
+            'time_limit_mins': 90,
+            'is_proctored': True,
+            'is_practice_exam': False,
+            'is_active': True,
+            'hide_after_due': False,
+            'backend': 'null'
+        }
+
+        response = self.make_request([valid_new_exam, existing_exam])
+
+        # Assert an error response with invalid fields included
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(len(response.data), 2)
+        # Expect error responses to map to request list
+        self.assertEqual(
+            set(response.data[1].keys()),
+            set(['due_date'])
+        )
+
+        # Assert nothing is written
+        self.exam.refresh_from_db()
+        self.assertEqual(self.exam.time_limit_mins, 90)
+
+
+class ProctoredExamViewTests(LoggedInTestCase):
+    """
+    Tests for the ProctoredExamView
+    """
+    def setUp(self):
+        super().setUp()
 
         self.user.is_staff = True
         self.user.save()
@@ -461,243 +676,6 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.assertEqual(response_data['content_id'], proctored_exam.content_id)
         self.assertEqual(response_data['external_id'], proctored_exam.external_id)
         self.assertEqual(response_data['time_limit_mins'], proctored_exam.time_limit_mins)
-
-
-    def patch_api(self, user, data):
-        """
-        Helper function to make a patch request to the API
-        """
-
-        data = json.dumps(data)
-        # headers = self.build_jwt_headers(user)
-        temp_url = reverse('edx_proctoring:proctored_exam.course_exams_update', kwargs={'course_id': self.course_id})
-
-        return self.client.patch(temp_url, data, content_type="application/json")
-
-    def get_response(self, user, data, expected_response):
-        """
-        Helper function to get API response
-        """
-        response = self.patch_api(user, data)
-        self.assertEqual(response.status_code, expected_response)
-
-        return response
-
-    # this one might not make sense here
-    def test_auth_failures(self):
-        # """
-        # Verify the endpoint validates permissions
-        # """
-
-        # # Test unauthenticated
-        # response = self.client.patch(self.url)
-        # self.assertEqual(response.status_code, 401)
-
-        # # Test non-staff worker
-        # random_user = UserFactory()
-        # self.get_response(random_user, [], 403)
-        return
-
-    # done
-    def test_exam_empty_exam_list(self):
-        """
-        Test that exams not included in request are marked as inactive
-        """
-        # There should only be one exam in there that is active
-        course_exams = ProctoredExam.objects.filter(course_id=self.course_id)
-        self.assertEqual(len(course_exams.filter(is_active=True)), 1)
-        self.assertEqual(len(course_exams.filter(is_active=False)), 0)
-
-        self.get_response(self.user, [], 200)
-
-        # after we submit a patch endpoint with an empty list, that exam should be marked as inactive
-        course_exams = ProctoredExam.objects.filter(course_id=self.course_id)
-        self.assertEqual(len(course_exams.filter(is_active=True)), 0)
-        self.assertEqual(len(course_exams.filter(is_active=False)), 1)
-
-    # works
-    def test_invalid_data(self):
-        """
-        Assert that endpoint returns 400 if data does not pass serializer validation
-        """
-
-        # i grabbed this data format from post-request expected
-        # is_active is invalid bc it's not a boolean
-        data = [
-            {
-                "course_id": self.course_id,
-                "content_id": self.content_id,
-                "exam_name": self.exam.exam_name,
-                "time_limit_mins": self.exam.time_limit_mins,
-                "is_proctored": self.exam.is_proctored,
-                "is_practice_exam": self.exam.is_practice_exam,
-                "external_id": self.exam.external_id,
-                "is_active": 'a string that is not valid',
-                "hide_after_due": self.exam.hide_after_due
-            }
-        ]
-
-        response = self.get_response(self.user, data, 400)
-        self.assertIn("is_active", response.data["errors"][0])
-
-    # no point in this bc i don't have exam_type; maybe replace with dif test if it makes sense
-    def test_invalid_exam_type(self):
-    #     """
-    #     Test that endpoint returns 400 if exam type is invalid
-    #     """
-    #     data = [
-    #         {
-    #             'content_id': '22222222',
-    #             'exam_name': 'Test Exam 2',
-    #             'exam_type': 'something_bad',
-    #             'time_limit_mins': 30,
-    #             'due_date': '2025-07-01 00:00:00',
-    #             'hide_after_due': False,
-    #             'is_active': True,
-    #         }
-    #     ]
-    #     response = self.get_response(self.user, data, 400)
-    #     self.assertIn("exam_type", response.data["errors"][0])
-        return
-
-    # keep
-    def test_existing_exam_update(self):
-        """
-        Test that an exam can be updated if it already exists
-        """
-
-        data = [
-            {
-                "course_id": self.course_id,
-                "content_id": self.content_id,
-                "exam_name": "Something different",
-                "time_limit_mins": self.exam.time_limit_mins,
-                "is_proctored": self.exam.is_proctored,
-                "is_practice_exam": self.exam.is_practice_exam,
-                "external_id": self.exam.external_id,
-                "is_active": self.exam.is_active,
-                "hide_after_due": self.exam.hide_after_due
-            }
-        ]
-
-        response = self.get_response(self.user, data, 200)
-
-
-        exam = ProctoredExam.objects.get(course_id=self.course_id, content_id=self.content_id)
-        self.assertEqual(exam.exam_name, 'Something Different')
-        self.assertEqual(exam.provider, self.exam.provider)
-        self.assertEqual(exam.time_limit_mins, 45)
-        self.assertEqual(exam.hide_after_due, self.exam.hide_after_due)
-        self.assertEqual(exam.is_active, self.exam.is_active)
-
-    # doesn't need to be tested bc there is no exam_type attribute. 
-    # I don't think this model would ever run into an issue like this
-    def test_exam_modified_type(self):
-        # """
-        # Test that when updating an exam to a different exam_type, the pre-existing exam
-        # is marked as inactive, and a new exam is created
-        # """
-        # data = [
-        #     {
-        #         'content_id': self.exam.content_id,
-        #         'exam_name': self.exam.exam_name,
-        #         'exam_type': 'timed',  # exam type differs from existing exam
-        #         'time_limit_mins': 30,
-        #         'due_date': self.exam.due_date,
-        #         'hide_after_due': self.exam.hide_after_due,
-        #         'is_active': True,
-        #     }
-        # ]
-        # self.get_response(self.user, data, 200)
-
-        # # check that proctored exam has been marked as inactive
-        # proctored_exam = Exam.objects.get(course_id=self.course_id, content_id=self.content_id, exam_type='proctored')
-        # self.assertFalse(proctored_exam.is_active)
-
-        # # check that timed exam has been created
-        # timed_exam = Exam.objects.get(course_id=self.course_id, content_id=self.content_id, exam_type='timed')
-        # self.assertEqual(timed_exam.exam_name, self.exam.exam_name)
-        # self.assertEqual(timed_exam.provider, None)
-        # self.assertEqual(timed_exam.time_limit_mins, 30)
-        # self.assertEqual(timed_exam.due_date, pytz.utc.localize(datetime.fromisoformat(self.exam.due_date)))
-        # self.assertEqual(timed_exam.hide_after_due, self.exam.hide_after_due)
-        # self.assertEqual(timed_exam.is_active, True)
-
-        # # modify same exam back to proctored
-        # data = [
-        #     {
-        #         'content_id': self.exam.content_id,
-        #         'exam_name': self.exam.exam_name,
-        #         'exam_type': 'proctored',  # exam type differs from existing exam
-        #         'time_limit_mins': 30,
-        #         'due_date': self.exam.due_date,
-        #         'hide_after_due': self.exam.hide_after_due,
-        #         'is_active': True,
-        #     }
-        # ]
-        # self.get_response(self.user, data, 200)
-
-        # # check that only two exams still exist (should not create a third)
-        # exams = Exam.objects.filter(course_id=self.course_id, content_id=self.content_id)
-        # self.assertEqual(len(exams), 2)
-
-        # # check that timed exam is marked inactive
-        # timed_exam = Exam.objects.get(course_id=self.course_id, content_id=self.content_id, exam_type='timed')
-        # self.assertFalse(timed_exam.is_active)
-
-        # # check that proctored exam data is correct
-        # proctored_exam = Exam.objects.get(course_id=self.course_id, content_id=self.content_id, exam_type='proctored')
-        # self.assertEqual(proctored_exam.exam_name, self.exam.exam_name)
-        # self.assertEqual(proctored_exam.provider, self.exam.provider)
-        # self.assertEqual(proctored_exam.time_limit_mins, 30)
-        # self.assertEqual(proctored_exam.due_date, pytz.utc.localize(datetime.fromisoformat(self.exam.due_date)))
-        # self.assertEqual(proctored_exam.hide_after_due, self.exam.hide_after_due)
-        # self.assertEqual(proctored_exam.is_active, True)
-        return
-
-
-    # this definitely needs to be different, tho idk how i'd test this. There isn't really a config in proctoring
-    @ddt.data(
-        (True, 'proctored', True),  # test case for a proctored exam with no course config
-        (False, 'proctored', False),  # test case for a proctored exam with a course config
-        (False, 'timed', True),  # test case for a timed exam with a course config
-        (True, 'timed', True)  # test case for a timed exam with no course config
-    )
-    @ddt.unpack
-    def test_exams_config(self, other_course_id, exam_type, expect_none_provider):
-        """
-        Test that the correct provider is set for a new exam based on the course's exam config
-        """
-        # course_id = 'courses-v1:edx+testing2+2022' if other_course_id else self.course_id
-        # provider = None if expect_none_provider else self.test_provider
-
-        # data = [
-        #     {
-        #         'content_id': '22222222',
-        #         'exam_name': 'Test Exam 2',
-        #         'exam_type': exam_type,
-        #         'time_limit_mins': 30,
-        #         'due_date': '2025-07-01 00:00:00',
-        #         'hide_after_due': False,
-        #         'is_active': True,
-        #     }
-        # ]
-
-        # self.url = reverse('api:v1:exams-course_exams', kwargs={'course_id': course_id})
-        # self.get_response(self.user, data, 200)
-
-        # self.assertEqual(len(Exam.objects.filter(course_id=self.course_id)), 1 if other_course_id else 2)
-        # new_exam = Exam.objects.get(content_id='22222222')
-        # self.assertEqual(new_exam.exam_name, 'Test Exam 2')
-        # self.assertEqual(new_exam.exam_type, exam_type)
-        # self.assertEqual(new_exam.provider, provider)
-        # self.assertEqual(new_exam.time_limit_mins, 30)
-        # self.assertEqual(new_exam.due_date, pytz.utc.localize(datetime.fromisoformat('2025-07-01 00:00:00')))
-        # self.assertEqual(new_exam.hide_after_due, False)
-        # self.assertEqual(new_exam.is_active, True)
-        
-        return
-
 
 
 @ddt.ddt

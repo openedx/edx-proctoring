@@ -18,9 +18,6 @@ CONTENT_ID_PATTERN = r'(?P<content_id>([A-z0-9]+|(?:i4x://?[^/]+/[^/]+/[^/]+/[^@
 
 
 urlpatterns = [
-    re_path(fr'edx_proctoring/v1/proctored_exam/course_exams_update/{settings.COURSE_ID_PATTERN}', views.ProctoredExamView.as_view(),
-         name='proctored_exam.course_exams_update'
-         ),
     path('edx_proctoring/v1/proctored_exam/exam', views.ProctoredExamView.as_view(),
          name='proctored_exam.exam'
          ),
@@ -37,6 +34,11 @@ urlpatterns = [
         fr'edx_proctoring/v1/proctored_exam/exam/course_id/{settings.COURSE_ID_PATTERN}$',
         views.ProctoredExamView.as_view(),
         name='proctored_exam.exams_by_course_id'
+    ),
+    re_path(
+        fr'edx_proctoring/v1/proctored_exam/exam_registration/course_id/{settings.COURSE_ID_PATTERN}$',
+        views.RegisterProctoredExamsView.as_view(),
+        name='proctored_exam.register_exams_by_course_id'
     ),
     path('edx_proctoring/v1/proctored_exam/attempt/<int:attempt_id>', views.StudentProctoredExamAttempt.as_view(),
          name='proctored_exam.attempt'

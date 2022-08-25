@@ -20,8 +20,8 @@ class ProctoredExamSerializer(serializers.ModelSerializer):
     Serializer for the ProctoredExam Model.
     """
     id = serializers.IntegerField(required=False)  # pylint: disable=invalid-name
-    course_id = serializers.CharField(required=True, validators = [])
-    content_id = serializers.CharField(required=True, validators = [])
+    course_id = serializers.CharField(required=True)
+    content_id = serializers.CharField(required=True)
     external_id = serializers.CharField(required=True)
     exam_name = serializers.CharField(required=True)
     time_limit_mins = serializers.IntegerField(required=True)
@@ -51,6 +51,19 @@ class ProctoredExamJSONSafeSerializer(ProctoredExamSerializer):
     ProctoredExam serializer which will return dates as strings.
     """
     due_date = serializers.DateTimeField(required=False)
+
+
+class ProctoredExamRegistrationSerializer(ProctoredExamSerializer):
+    """
+    ProctoredExam serializer for registration requests.
+    This is used for a create or update operation so we remove
+    the unique together constraints.
+    """
+    external_id = serializers.CharField(required=False, allow_null=True)
+    due_date = serializers.DateTimeField(required=False, format=None, allow_null=True)
+
+    def get_unique_together_validators(self):
+        return []
 
 
 class UserSerializer(serializers.ModelSerializer):

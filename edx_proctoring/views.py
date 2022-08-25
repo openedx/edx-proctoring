@@ -88,6 +88,7 @@ from edx_proctoring.models import (
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import (
     ProctoredExamSerializer,
+    ProctoredExamRegistrationSerializer,
     ProctoredExamStudentAllowanceSerializer,
     ProctoredExamStudentAttemptSerializer
 )
@@ -477,135 +478,83 @@ class ProctoredExamView(ProctoredAPIView):
                 )
         return Response(data)
 
+
+class RegisterProctoredExamsView(ProctoredAPIView):
+    """
+    Endpoint for registering all proctored exams in a course
+    """
+    @method_decorator(require_staff)
     def patch(self, request, course_id):
         """
-        Create or update a list of exams.
+        Create or update a list of all active exams.
+        Exams not included in the registration payload will be deactivated
         """
-
-        # What proctoring.py Does:
-            # some things that I don't have to think about
-                # check whether 'enable_special_exams' is enabled
-                #   if not then exit
-                # check whether the course exists
-                #   if not then exit
-                # if timed or proctored exams are enabled
-                #   if not then exit
-                # ^ this is something that's still going to happen in the edx-platform
-                # and doesn't need to be done here
-
-            # get a list of requested exams
-            # for each exam
-                # grab the metadata
-
-                # check if exam exists
-                #   you can do this by checking by exam_content_id
-                # if it exists then:
-                #   define the exam_id
-                #   update_exam
-                # else:
-                #   define the metadata course_id and content_id
-                #   create_exam
-
-            # mark any non-requested exams as inactive
-            # return a request
-
-        # grab the request
-        # this is the list of metadata that is passed from platform
         request_exams = request.data
-        # serializer = ProctoredExamSerializer(data=request_exams, many=True)
+        write_result = []
 
-        # validate the serializer
-        # if serializer.is_valid():
+        serializer = ProctoredExamRegistrationSerializer(data=request_exams, many=True)
 
-        # for each exam
-        for exam in request_exams:
-            exam_metadata = {
-                    'exam_name': exam['exam_name'],
-                    'time_limit_mins': exam['time_limit_mins'],
-                    'due_date': exam['due_date'],
-                    'is_proctored': exam['is_proctored'],
-                    'is_practice_exam': exam['is_practice_exam'],
-                    'is_active': True,
-                    'hide_after_due': exam['hide_after_due'],
-                    'backend': exam['backend'],
-            }
+        if serializer.is_valid():
+            course_exams = {exam.content_id: exam for exam in ProctoredExam.get_all_exams_for_course(str(course_id))}
+            for request_exam in request_exams:
+                content_id = request_exam.get('content_id')
 
-            try:
-                # some concern with not validating before update exams
-                # but the .save in the update_exams method should do any validation
-                # so we will only serialize for creation for now
-                exam = get_exam_by_content_id(str(course_id), str(exam['content_id']))
-                
-                exam_from_db = ProctoredExam.objects.get(course_id=str(course_id), content_id=str(exam['content_id']))
-                serializer = ProctoredExamSerializer(exam_from_db, data=request.data, partial=True)
+                if content_id in course_exams:
+                    exam = course_exams.pop(content_id)
+                    exam_id = update_exam(
+                        exam.id,
+                        exam_name=request_exam.get('exam_name', None),
+                        time_limit_mins=request_exam.get('time_limit_mins', None),
+                        due_date=request_exam.get('due_date', None),
+                        is_proctored=request_exam.get('is_proctored', None),
+                        is_practice_exam=request_exam.get('is_practice_exam', None),
+                        external_id=request_exam.get('external_id', None),
+                        is_active=request_exam.get('is_active', None),
+                        hide_after_due=request_exam.get('hide_after_due', None),
+                        backend=request_exam.get('backend', None),
+                    )
 
-                exam_metadata['exam_id'] = exam['id']
-                exam_id = update_exam(**exam_metadata)
-                
-                # serialize into it with a partial update?
-                # 
-                # sv= SV.objects.get(pk=pk)
-                
-                # this is putting request.data on top of sv and comparing that
-                # this is good bc then we don't have conflicts with uniqueness
-                # serializer = SVSerializer(sv, data=request.data, partial=True)
-                # if serializer.is_valid():
+                    write_result.append({'exam_id': exam.id})
+                    msg = 'Updated exam {exam_id}'.format(exam_id=exam.id)
+                    LOG.info(msg)
+                else:
+                    exam_id = create_exam(
+                        course_id=course_id,
+                        content_id=content_id,
+                        exam_name=request_exam.get('exam_name',),
+                        time_limit_mins=request_exam.get('time_limit_mins'),
+                        due_date=request_exam.get('due_date'),
+                        is_proctored=request_exam.get('is_proctored'),
+                        is_practice_exam=request_exam.get('is_practice_exam'),
+                        external_id=request_exam.get('external_id'),
+                        is_active=request_exam.get('is_active'),
+                        hide_after_due=request_exam.get('hide_after_due'),
+                        backend=request_exam.get('backend'),
+                    )
 
-                msg = 'Updated timed exam {exam_id}'.format(exam_id=exam['id'])
-                LOG.info(msg)
+                    write_result.append({'exam_id': exam_id})
+                    msg = f'Created new exam {exam_id}'
+                    LOG.info(msg)
 
-            except ProctoredExamNotFoundException:
-                # serializing is only done for exams that are created
-                # because the uniqueness constraint on the model invalidates the exams to be updated
-
-                serializer = ProctoredExamSerializer(data=exam)
-                serializer.is_valid()
-
-                exam_metadata['course_id'] = str(course_id)
-                exam_metadata['content_id'] = str(exam['content_id'])
-
-                exam_id = create_exam(**exam_metadata)
-
-                msg = f'Created new timed exam {exam_id}'
-                LOG.info(msg)
-
-            course_exams = get_all_exams_for_course(course_id)
-            # course_exams = Exam.objects.filter(course_id=course_id)
-
-            # mark any exams not included in the request as inactive. The Query set has already been filtered by course
-            # remaining_exams = course_exams.exclude(content_id__in=[exam['content_id'] for exam in request_exams])
-            # for exam in remaining_exams:
-            #     update_exam(
-            #                 exam_id=exam['id'],
-            #                 is_proctored=False,
-            #                 is_active=False,
-            #             )
-
-            for exam in course_exams:
-                if exam['is_active']:
-                    # try to look up the content_id in the sequences location
-
-                    search = [
-                        request_exam for request_exam in request_exams if
-                        str(request_exam['content_id']) == exam['content_id']
-                    ]
-
-                    if not search:
-                        # This means it was turned off in Studio, we need to mark
-                        # the exam as inactive (we don't delete!)
-                        msg = 'Disabling timed exam {exam_id}'.format(exam_id=exam['id'])
-                        LOG.info(msg)
-                        update_exam(
-                            exam_id=exam['id'],
-                            is_proctored=False,
-                            is_active=False,
-                        )
+            # The remaining exams exist but are not included in the registration payload.
+            # That means this exam should be disabled.
+            # We need to mark these exams as inactive (we don't delete!)
+            for exam in course_exams.values():
+                if exam.is_active:
+                    msg = 'Disabling exam {exam_id}'.format(exam_id=exam.id)
+                    LOG.info(msg)
+                    update_exam(
+                        exam.id,
+                        is_proctored=False,
+                        is_active=False,
+                    )
 
             response_status = status.HTTP_200_OK
-            data = {}
-        else:
-            response_status = status.HTTP_400_BAD_REQUEST
-            data = {"detail": "Invalid data", "errors": serializer.errors}
+            data = write_result
+
+        else:   # invalid serializer
+            response_status = status.HTTP_422_UNPROCESSABLE_ENTITY
+            data = serializer.errors
 
         return Response(status=response_status, data=data)
 
