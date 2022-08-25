@@ -9,13 +9,7 @@ from edx_proctoring import callbacks, instructor_dashboard_exam_urls, views
 
 app_name = 'edx_proctoring'
 
-# # these should probably go in a constants file if one exists
-# INTERNAL_COURSE_KEY_PATTERN = r'([^/+]+(/|\+)[^/+]+(/|\+)[^/?]+)'
-# EXTERNAL_COURSE_KEY_PATTERN = r'([A-Za-z0-9-_:]+)'
-
 CONTENT_ID_PATTERN = r'(?P<content_id>([A-z0-9]+|(?:i4x://?[^/]+/[^/]+/[^/]+/[^@]+(?:@[^/]+)?)|(?:[^/]+)))'
-# COURSE_ID_PATTERN = rf'(?P<course_id>({INTERNAL_COURSE_KEY_PATTERN}|{EXTERNAL_COURSE_KEY_PATTERN}))'
-
 
 urlpatterns = [
     path('edx_proctoring/v1/proctored_exam/exam', views.ProctoredExamView.as_view(),

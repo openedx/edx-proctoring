@@ -87,8 +87,8 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import (
-    ProctoredExamSerializer,
     ProctoredExamRegistrationSerializer,
+    ProctoredExamSerializer,
     ProctoredExamStudentAllowanceSerializer,
     ProctoredExamStudentAttemptSerializer
 )
