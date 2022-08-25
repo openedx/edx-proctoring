@@ -515,7 +515,7 @@ class RegisterProctoredExamsView(ProctoredAPIView):
                     )
 
                     write_result.append({'exam_id': exam.id})
-                    msg = 'Updated exam {exam_id}'.format(exam_id=exam.id)
+                    msg = f'Updated exam {exam.id}'
                     LOG.info(msg)
                 else:
                     exam_id = create_exam(
@@ -541,7 +541,7 @@ class RegisterProctoredExamsView(ProctoredAPIView):
             # We need to mark these exams as inactive (we don't delete!)
             for exam in course_exams.values():
                 if exam.is_active:
-                    msg = 'Disabling exam {exam_id}'.format(exam_id=exam.id)
+                    msg = f'Disabling exam {exam.id}'
                     LOG.info(msg)
                     update_exam(
                         exam.id,
