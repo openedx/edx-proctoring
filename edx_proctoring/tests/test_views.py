@@ -163,8 +163,17 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), expected_len)
         for result in response.data:
-            self.assertIsNone(result.get('error'))
             self.assertGreater(result.get('exam_id'), 0)
+
+    def test_requires_staff_user(self):
+        """
+        Test endpoint requires a staff user
+        """
+        self.user.is_staff = False
+        self.user.save()
+        self.client.login_user(self.user)
+        response = self.make_request([])
+        self.assertEqual(response.status_code, 403)
 
     def test_register_new_exams(self):
         """
@@ -200,16 +209,16 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
         ]
         response = self.make_request(exam_data)
 
-        # Assert 3 records are returned without error
+        # 3 records are returned without error
         self.assert_response_success(response, 3)
 
-        # Assert list of active exams match registered exams
+        # list of active exams match registered exams
         exams = get_all_exams_for_course(course_id=self.course_id, active_only=True)
         expected_content_ids = [self.content_id, '123aaaa', '123zzzz']
         actual_content_ids = [exam.get('content_id') for exam in exams]
         self.assertEqual(expected_content_ids, actual_content_ids)
 
-        # Assert 'midterm1' is created with correct fields
+        # 'midterm1' is created with correct fields
         created_exam = ProctoredExam.get_exam_by_content_id(self.course_id, '123aaaa')
         self.assertEqual(created_exam.exam_name, exam_data[0]['exam_name'])
         self.assertEqual(created_exam.time_limit_mins, exam_data[0]['time_limit_mins'])
@@ -240,15 +249,17 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
             },
         ]
         response = self.make_request(exam_data)
+
+        # 1 records are returned without error
         self.assert_response_success(response, 1)
 
-        # Assert list of active exams match registered exams
+        # list of active exams match registered exams
         exams = get_all_exams_for_course(course_id=self.course_id, active_only=True)
         expected_content_ids = ['123aaaa']
         actual_content_ids = [exam.get('content_id') for exam in exams]
         self.assertEqual(expected_content_ids, actual_content_ids)
 
-        # Assert existing exam is disabled
+        # existing exam is disabled
         self.exam.refresh_from_db()
         self.assertFalse(self.exam.is_active)
         self.assertFalse(self.exam.is_proctored)
@@ -264,10 +275,10 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
 
         response = self.make_request([exam])
 
-        # Assert 1 records are returned without error
+        # 1 records are returned without error
         self.assert_response_success(response, 1)
 
-        # Assert existing exam is updated
+        # existing exam is updated
         self.exam.refresh_from_db()
         self.assertEqual(self.exam.time_limit_mins, 120)
         self.assertFalse(self.exam.is_proctored)
@@ -278,16 +289,16 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
         """
         response = self.make_request([])
 
-        # Assert 0 records are returned without error
+        # 0 records are returned without error
         self.assert_response_success(response, 0)
 
-        # Assert existing exam is updated
+        # existing exam is updated
         exams = get_all_exams_for_course(course_id=self.course_id, active_only=True)
         self.assertEqual(exams, [])
 
     def test_register_updated_exam_invalid(self):
         """
-        If an exam already exists for content_id, that exam will be updated
+        Updating and existing exam with invalid data should fail
         """
         existing_exam = get_exam_by_id(self.exam.id)
         del existing_exam['content_id']          # required
@@ -296,7 +307,7 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
 
         response = self.make_request([existing_exam])
 
-        # Assert an error response with invalid fields included
+        # error response with invalid fields included
         self.assertEqual(response.status_code, 422)
         self.assertEqual(len(response.data), 1)
         error_fields = response.data[0].keys()
@@ -305,13 +316,13 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
             set(['content_id', 'due_date'])
         )
 
-        # Assert existing exam is not changed
+        # existing exam is not changed
         self.exam.refresh_from_db()
         self.assertFalse(self.exam.hide_after_due)
 
     def test_register_exams_mixed_valid(self):
         """
-        If an exam already exists for content_id, that exam will be updated
+        Any invalid object should cause the request to fail
         """
         existing_exam = get_exam_by_id(self.exam.id)
         existing_exam['due_date'] = 'tomorrow'   # invalid
@@ -332,7 +343,7 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
 
         response = self.make_request([valid_new_exam, existing_exam])
 
-        # Assert an error response with invalid fields included
+        # an error response with invalid fields included
         self.assertEqual(response.status_code, 422)
         self.assertEqual(len(response.data), 2)
         # Expect error responses to map to request list
@@ -341,7 +352,7 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
             set(['due_date'])
         )
 
-        # Assert nothing is written
+        # nothing is written
         self.exam.refresh_from_db()
         self.assertEqual(self.exam.time_limit_mins, 90)
 
