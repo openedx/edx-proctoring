@@ -29,6 +29,11 @@ urlpatterns = [
         views.ProctoredExamView.as_view(),
         name='proctored_exam.exams_by_course_id'
     ),
+    re_path(
+        fr'edx_proctoring/v1/proctored_exam/exam_registration/course_id/{settings.COURSE_ID_PATTERN}$',
+        views.RegisterProctoredExamsView.as_view(),
+        name='proctored_exam.register_exams_by_course_id'
+    ),
     path('edx_proctoring/v1/proctored_exam/attempt/<int:attempt_id>', views.StudentProctoredExamAttempt.as_view(),
          name='proctored_exam.attempt'
          ),

@@ -87,6 +87,7 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.serializers import (
+    ProctoredExamRegistrationSerializer,
     ProctoredExamSerializer,
     ProctoredExamStudentAllowanceSerializer,
     ProctoredExamStudentAttemptSerializer
@@ -476,6 +477,86 @@ class ProctoredExamView(ProctoredAPIView):
                     active_only=True
                 )
         return Response(data)
+
+
+class RegisterProctoredExamsView(ProctoredAPIView):
+    """
+    Endpoint for registering all proctored exams in a course
+    """
+    @method_decorator(require_staff)
+    def patch(self, request, course_id):
+        """
+        Create or update a list of all active exams.
+        Exams not included in the registration payload will be deactivated
+        """
+        request_exams = request.data
+        write_result = []
+
+        serializer = ProctoredExamRegistrationSerializer(data=request_exams, many=True)
+
+        if serializer.is_valid():
+            course_exams = {exam.content_id: exam for exam in ProctoredExam.get_all_exams_for_course(str(course_id))}
+            for request_exam in request_exams:
+                content_id = request_exam.get('content_id')
+
+                if content_id in course_exams:
+                    exam = course_exams.pop(content_id)
+                    exam_id = update_exam(
+                        exam.id,
+                        exam_name=request_exam.get('exam_name', None),
+                        time_limit_mins=request_exam.get('time_limit_mins', None),
+                        due_date=request_exam.get('due_date', None),
+                        is_proctored=request_exam.get('is_proctored', None),
+                        is_practice_exam=request_exam.get('is_practice_exam', None),
+                        external_id=request_exam.get('external_id', None),
+                        is_active=request_exam.get('is_active', None),
+                        hide_after_due=request_exam.get('hide_after_due', None),
+                        backend=request_exam.get('backend', None),
+                    )
+
+                    write_result.append({'exam_id': exam.id})
+                    msg = f'Updated exam {exam.id}'
+                    LOG.info(msg)
+                else:
+                    exam_id = create_exam(
+                        course_id=course_id,
+                        content_id=content_id,
+                        exam_name=request_exam.get('exam_name',),
+                        time_limit_mins=request_exam.get('time_limit_mins'),
+                        due_date=request_exam.get('due_date'),
+                        is_proctored=request_exam.get('is_proctored'),
+                        is_practice_exam=request_exam.get('is_practice_exam'),
+                        external_id=request_exam.get('external_id'),
+                        is_active=request_exam.get('is_active'),
+                        hide_after_due=request_exam.get('hide_after_due'),
+                        backend=request_exam.get('backend'),
+                    )
+
+                    write_result.append({'exam_id': exam_id})
+                    msg = f'Created new exam {exam_id}'
+                    LOG.info(msg)
+
+            # The remaining exams exist but are not included in the registration payload.
+            # That means this exam should be disabled.
+            # We need to mark these exams as inactive (we don't delete!)
+            for exam in course_exams.values():
+                if exam.is_active:
+                    msg = f'Disabling exam {exam.id}'
+                    LOG.info(msg)
+                    update_exam(
+                        exam.id,
+                        is_proctored=False,
+                        is_active=False,
+                    )
+
+            response_status = status.HTTP_200_OK
+            data = write_result
+
+        else:   # invalid serializer
+            response_status = status.HTTP_422_UNPROCESSABLE_ENTITY
+            data = serializer.errors
+
+        return Response(status=response_status, data=data)
 
 
 class StudentOnboardingStatusView(ProctoredAPIView):

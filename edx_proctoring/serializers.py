@@ -53,6 +53,19 @@ class ProctoredExamJSONSafeSerializer(ProctoredExamSerializer):
     due_date = serializers.DateTimeField(required=False)
 
 
+class ProctoredExamRegistrationSerializer(ProctoredExamSerializer):
+    """
+    ProctoredExam serializer for registration requests.
+    This is used for a create or update operation so we remove
+    the unique together constraints.
+    """
+    external_id = serializers.CharField(required=False, allow_null=True)
+    due_date = serializers.DateTimeField(required=False, format=None, allow_null=True)
+
+    def get_unique_together_validators(self):
+        return []
+
+
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the User Model.
