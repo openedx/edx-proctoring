@@ -13,7 +13,11 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[4.12.0] - 2022-08-29
+~~~~~~~~~~~~~~~~~~~~~
 * Improved ``developing.rst`` docs for installing and running the mockprock proctoring provider.
+* Added new registration endpoint to handle syncing exams from a studio publish
 
 [4.11.0] - 2022-07-13
 ~~~~~~~~~~~~~~~~~~~~~
