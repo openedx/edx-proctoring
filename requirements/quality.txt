@@ -6,7 +6,7 @@
 #
 asgiref==3.5.2
     # via django
-astroid==2.11.7
+astroid==2.12.5
     # via
     #   pylint
     #   pylint-celery
@@ -55,7 +55,7 @@ platformdirs==2.5.2
     # via pylint
 pycodestyle==2.9.1
     # via -r requirements/quality.in
-pydantic==1.9.2
+pydantic==1.10.1
     # via
     #   rstcheck
     #   rstcheck-core
@@ -63,7 +63,7 @@ pydocstyle==6.1.1
     # via -r requirements/quality.in
 pygments==2.13.0
     # via rich
-pylint==2.14.5
+pylint==2.15.0
     # via
     #   edx-lint
     #   pylint-celery
@@ -119,6 +119,3 @@ typing-extensions==4.3.0
     #   rich
 wrapt==1.14.1
     # via astroid
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
