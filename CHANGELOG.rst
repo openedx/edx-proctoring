@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.13.0] - 2022-09-15
+~~~~~~~~~~~~~~~~~~~~~
+* Do not use course's due date when a timed exam has one specified
+
 [4.12.1] - 2022-09-15
 ~~~~~~~~~~~~~~~~~~~~~
 * Revert Phantom JS and eslint migration made in version 4.11.0

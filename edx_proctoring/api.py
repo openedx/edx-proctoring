@@ -881,11 +881,16 @@ def is_exam_passed_due(exam, user=None):
     Return whether the due date has passed.
     Uses edx_when to lookup the date for the subsection.
     """
+    due_date = get_exam_due_date(exam, user=user)
     return (
-        has_due_date_passed(get_exam_due_date(exam, user=user))
-        # if the exam is timed and passed the course end date, it should also be considered passed due
+        has_due_date_passed(due_date)
+        # If the exam is timed and passed the course end date, it should also be considered passed due, unless
+        # it has a due date set. The exam's due date has a higher priority than the course's end date.
         or (
-            not exam['is_proctored'] and not exam['is_practice_exam'] and has_end_date_passed(exam['course_id'])
+            not due_date
+            and not exam['is_proctored']
+            and not exam['is_practice_exam']
+            and has_end_date_passed(exam['course_id'])
         )
     )
 

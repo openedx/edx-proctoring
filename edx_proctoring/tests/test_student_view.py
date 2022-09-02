@@ -873,6 +873,33 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
             )
             self.assertIn(self.exam_expired_msg, rendered_response)
 
+    @patch('edx_when.api.get_date_for_block')
+    @patch('edx_when.api.get_dates_for_course')
+    def test_timed_exam_attempt_with_past_course_due_date_and_future_exam_due_date(
+        self, mock_course_dates, mock_exam_due_date
+    ):
+        """
+        When the course due date is in the past, but the exam-specific due date is in the future, students should still
+        be able to start this exam.
+        """
+        current_date = datetime.now(pytz.UTC)
+        course_end_date = current_date - timedelta(days=14)
+        exam_due_date = current_date + timedelta(days=14)
+
+        mock_course_dates.return_value = {('dummy', 'end'): course_end_date}
+        mock_exam_due_date.return_value = exam_due_date
+
+        self._create_exam_with_due_time(due_date=exam_due_date, is_proctored=False)
+
+        with freeze_time(current_date):
+            rendered_response = get_student_view(
+                user_id=self.user_id,
+                course_id=self.course_id,
+                content_id=self.content_id_for_exam_with_due_date,
+                context={},
+            )
+            self.assertIn(self.timed_footer_msg, rendered_response)
+
     @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
     def test_get_studentview_timedout(self):
         """
