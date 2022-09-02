@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.13.0] - 2022-10-26
+~~~~~~~~~~~~~~~~~~~~~
+* Do not use course's due date when a timed exam has one specified
+
 [4.12.2] - 2022-10-19
 ~~~~~~~~~~~~~~~~~~~~~
 * Return external id when requesting exam attempt
