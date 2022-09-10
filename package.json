@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/edx/edx-proctoring"
+    "url": "git://github.com/openedx/edx-proctoring"
   },
   "files": [
     "/edx_proctoring/static"

@@ -33,10 +33,10 @@ some of the copy on these interstitials is very important.
 
 Notable Code:
 
-- `LMS render student_view() <https://github.com/edx/edx-platform/blob/a7dff8c21ee794e90bdc0f22876334a7843a032d/common/lib/xmodule/xmodule/seq_module.py#L274>`_
-- `edx-proctoring template logic <https://github.com/edx/edx-proctoring/blob/78976d93ab6ca5206f259dc420d2f45818fe636c/edx_proctoring/api.py#L1912>`_
-- `edx-proctoring interstitial templates <https://github.com/edx/edx-proctoring/tree/323ea43acbd6f12d5131546e8648dedff719bf9e/edx_proctoring/templates>`_
-- `Learning MFE <https://github.com/edx/frontend-app-learning>`_
+- `LMS render student_view() <https://github.com/openedx/edx-platform/blob/a7dff8c21ee794e90bdc0f22876334a7843a032d/common/lib/xmodule/xmodule/seq_module.py#L274>`_
+- `edx-proctoring template logic <https://github.com/openedx/edx-proctoring/blob/78976d93ab6ca5206f259dc420d2f45818fe636c/edx_proctoring/api.py#L1912>`_
+- `edx-proctoring interstitial templates <https://github.com/openedx/edx-proctoring/tree/323ea43acbd6f12d5131546e8648dedff719bf9e/edx_proctoring/templates>`_
+- `Learning MFE <https://github.com/openedx/frontend-app-learning>`_
 - `React lib for special exams <https://github.com/edx/frontend-lib-special-exams/>`_
 
 edx-proctoring
@@ -51,14 +51,14 @@ Provider Backend Plugin
 Integration layer to handle making REST/http requests to the provider's backend.
 This can exist as a Python module or be committed directly into edx-proctoring as a backend.
 
-`More information on configuring backends <https://github.com/edx/edx-proctoring/blob/master/docs/backends.rst>`_
+`More information on configuring backends <https://github.com/openedx/edx-proctoring/blob/master/docs/backends.rst>`_
 
 We have two real backends used in production:
 
 #. Proctortrack: https://github.com/joshivj/edx-proctoring-proctortrack
-#. RPNow: https://github.com/edx/edx-proctoring/blob/447c0bf49f31fa4df2aa2b0339137ccfd173f237/edx_proctoring/backends/software_secure.py
+#. RPNow: https://github.com/openedx/edx-proctoring/blob/447c0bf49f31fa4df2aa2b0339137ccfd173f237/edx_proctoring/backends/software_secure.py
 
-For testing backends see `mockprock <https://github.com/edx/edx-proctoring/blob/master/docs/developing.rst#using-mockprock-as-a-backend>`_
+For testing backends see `mockprock <https://github.com/openedx/edx-proctoring/blob/master/docs/developing.rst#using-mockprock-as-a-backend>`_
 
 JavaScript Message Interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -68,7 +68,7 @@ and a desktop application.  Messages are emitted when the exam content is starte
 Additionally a ping message will poll at a configurable interval. Successful callback responses
 are required for each of these messages to keep the exam from entering an error state.
 
-Message Interface: `exam_action_handler.js <https://github.com/edx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
+Message Interface: `exam_action_handler.js <https://github.com/openedx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
 
 JavaScript Worker
 ^^^^^^^^^^^^^^^^^

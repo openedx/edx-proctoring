@@ -799,4 +799,4 @@ Unreleased
 For details of changes prior to this release, please see
 the `GitHub commit history`_.
 
-.. _GitHub commit history: https://github.com/edx/edx-proctoring/commits/master
+.. _GitHub commit history: https://github.com/openedx/edx-proctoring/commits/master

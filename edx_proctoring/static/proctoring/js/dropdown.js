@@ -1,5 +1,5 @@
 // This dropdown component was borrowed from
-// https://github.com/edx/edx-platform/blob/master/lms/static/js/dashboard/dropdown.js.
+// https://github.com/openedx/edx-platform/blob/master/lms/static/js/dashboard/dropdown.js.
 // It has been slightly modified to fit the needs of the edx-proctoring library.
 edx = edx || {};
 

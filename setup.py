@@ -64,7 +64,7 @@ setup(
     long_description=README + '\n\n' + CHANGELOG,
     author='edX',
     author_email='oscm@edx.org',
-    url='https://github.com/edx/edx-proctoring',
+    url='https://github.com/openedx/edx-proctoring',
     license="AGPL 3.0",
     zip_safe=False,
     keywords='Django edx',
