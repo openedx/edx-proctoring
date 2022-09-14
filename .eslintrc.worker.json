@@ -1,5 +1,5 @@
 {
-  "extends": "@edx/eslint-config",
+  "extends": "eslint-config-edx",
   "env": {
     "worker": true
   }
