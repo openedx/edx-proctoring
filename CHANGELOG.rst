@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.12.1] - 2022-09-15
+~~~~~~~~~~~~~~~~~~~~~
+* Revert Phantom JS and eslint migration made in version 4.11.0
+
 [4.12.0] - 2022-08-29
 ~~~~~~~~~~~~~~~~~~~~~
 * Improved ``developing.rst`` docs for installing and running the mockprock proctoring provider.

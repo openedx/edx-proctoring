@@ -1,7 +1,9 @@
-(Backbone => {
-  'use strict';
+(function(Backbone) {
+    'use strict';
 
-  this.LearnerOnboardingModel = Backbone.Model.extend({
-    url: '/api/edx_proctoring/v1/user_onboarding/status',
-  });
+    var LearnerOnboardingModel = Backbone.Model.extend({
+        url: '/api/edx_proctoring/v1/user_onboarding/status'
+    });
+
+    this.LearnerOnboardingModel = LearnerOnboardingModel;
 }).call(this, Backbone);
