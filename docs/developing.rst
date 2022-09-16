@@ -26,7 +26,7 @@ These are the steps to install edx-proctoring into your pre-existing devstack im
 Clone edx-proctoring into the src directory next to edx-platform folder in your host filesystem::
 
     $ cd src
-    $ git clone https://github.com/edx/edx-proctoring
+    $ git clone https://github.com/openedx/edx-proctoring
 
 Install the proctoring package into edx-platform in the container, for both LMS and Studio:
 
@@ -119,7 +119,7 @@ of processes in a way that is compatible with ``pytest``
 Using mockprock as a backend
 ----------------------------
 
-`Mockprock <https://github.com/edx/mockprock>`_ is a proctoring backend that runs as an HTTP server and a python module. It allows you to simulate the entire proctoring workflow.
+`Mockprock <https://github.com/openedx/mockprock>`_ is a proctoring backend that runs as an HTTP server and a python module. It allows you to simulate the entire proctoring workflow.
 
 To install it::
 
@@ -180,8 +180,8 @@ If you need to run local changes to the `mockprock Javascript worker`_ or the `w
    (cd /edx/src/edx-proctoring; npm link)
    npm link @edx/edx-proctoring
 
-.. _mockprock Javascript worker: https://github.com/edx/mockprock/tree/master/static
-.. _worker interface: https://github.com/edx/edx-proctoring/blob/master/edx_proctoring/static/index.js
+.. _mockprock Javascript worker: https://github.com/openedx/mockprock/tree/master/static
+.. _worker interface: https://github.com/openedx/edx-proctoring/blob/master/edx_proctoring/static/index.js
 
 How do I run proctoring tests?
 ------------------------------
@@ -193,7 +193,7 @@ How do I run proctoring tests?
 How do I set up proctoring on a running sandbox?
 ------------------------------------------------
 
-Start by following the steps here: https://github.com/edx/edx-proctoring
+Start by following the steps here: https://github.com/openedx/edx-proctoring
 
 * Add the edX-specific configuration settings
 
@@ -328,7 +328,7 @@ Release a new version of edx-proctoring
 
 * Update the version in ``edx_proctoring/__init__.py`` and ``package.json``
 * Describe your changes in `CHANGELOG.rst`
-* Create a `new release on GitHub <https://github.com/edx/edx-proctoring/releases>`_ using the version number
+* Create a `new release on GitHub <https://github.com/openedx/edx-proctoring/releases>`_ using the version number
 * Update edx-platform to use the new version
     * In edx-platform, create a branch and update the requirements/edx/base.txt, development.txt, and testing.txt files to reflect the new tagged branch.
 * create a PR of this branch in edx-platform onto edx-platform:master

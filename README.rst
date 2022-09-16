@@ -5,8 +5,8 @@ edx-proctoring
     :target: https://pypi.python.org/pypi/edx-proctoring/
     :alt: PyPI
 
-.. image:: https://github.com/edx/edx-proctoring/workflows/Python%20CI/badge.svg
-    :target: https://github.com/edx/edx-proctoring/actions?query=workflow%3A%22Python+CI%22
+.. image:: https://github.com/openedx/edx-proctoring/workflows/Python%20CI/badge.svg
+    :target: https://github.com/openedx/edx-proctoring/actions?query=workflow%3A%22Python+CI%22
     :alt: Python CI
 
 .. image:: https://codecov.io/gh/edx/edx-proctoring/branch/master/graph/badge.svg
@@ -18,7 +18,7 @@ edx-proctoring
     :alt: Supported Python versions
 
 .. image:: https://img.shields.io/github/license/edx/django-component-views.svg
-    :target: https://github.com/edx/edx-proctoring/blob/master/LICENSE.txt
+    :target: https://github.com/openedx/edx-proctoring/blob/master/LICENSE.txt
     :alt: License
 
 This is the exam proctoring subsystem for the Open edX platform.
@@ -89,7 +89,7 @@ How To Contribute
 
 Contributions are very welcome.
 
-Please read `How To Contribute <https://github.com/edx/edx-platform/blob/master/CONTRIBUTING.rst>`_ for details.
+Please read `How To Contribute <https://github.com/openedx/edx-platform/blob/master/CONTRIBUTING.rst>`_ for details.
 
 Even though they were written with ``edx-platform`` in mind, the guidelines
 should be followed for Open edX code in general.

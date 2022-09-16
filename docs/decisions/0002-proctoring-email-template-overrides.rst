@@ -14,7 +14,7 @@ has submitted their proctored exam. The content(s) of these emails is specified 
 in the edx-proctoring repository. These emails may include contact information in the event that a learner
 has further questions about their proctored exam status.
 
-.. _`email templates`: https://github.com/edx/edx-proctoring/tree/master/edx_proctoring/templates/emails
+.. _`email templates`: https://github.com/openedx/edx-proctoring/tree/master/edx_proctoring/templates/emails
 
 Proctoring services are provided by edX by integrating with third-party proctoring solutions.
 
@@ -44,5 +44,5 @@ Consequences
 References
 ----------
 
-- `Email Templates in edx-proctoring Subsystem <https://github.com/edx/edx-proctoring/tree/master/edx_proctoring/templates/emails>`_
-- `Code Where We Leverage Django’s Template Override System <https://github.com/edx/edx-proctoring/blob/c92f2e55a3fa2249e48fb383f53f77b84daefc90/edx_proctoring/api.py#L1144>`_
+- `Email Templates in edx-proctoring Subsystem <https://github.com/openedx/edx-proctoring/tree/master/edx_proctoring/templates/emails>`_
+- `Code Where We Leverage Django’s Template Override System <https://github.com/openedx/edx-proctoring/blob/c92f2e55a3fa2249e48fb383f53f77b84daefc90/edx_proctoring/api.py#L1144>`_
