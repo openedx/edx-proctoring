@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines, invalid-name
+# pylint: disable=too-many-lines
 """
 All tests for the proctored_exams.py
 """
@@ -492,7 +492,7 @@ class ProctoredExamViewTests(LoggedInTestCase):
         self.assertEqual(response.status_code, 403)
         self.assertFalse(func.called)
 
-    def test_decorator_require_course_or_global_staff(self):  # pylint: disable=invalid-name
+    def test_decorator_require_course_or_global_staff(self):
         """
         Test assert require_course_or_global_staff before hitting any api url.
         """
@@ -3501,7 +3501,7 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         self.assertEqual(attempt['proctored_exam']['id'], proctored_exam.id)
         self.assertEqual(attempt['user']['id'], self.user.id)
 
-    def test_get_filtered_timed_exam_attempts(self):  # pylint: disable=invalid-name
+    def test_get_filtered_timed_exam_attempts(self):
         """
         Test to get the filtered timed exam attempts in a course.
         """
@@ -3781,7 +3781,6 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        # pylint: disable=no-member
         ProctoredExamStudentAttempt.objects.filter(
             proctored_exam_id=proctored_exam.id,
             user_id=self.user.id,
@@ -4899,7 +4898,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_add_allowance_non_staff_user(self):  # pylint: disable=invalid-name
+    def test_add_allowance_non_staff_user(self):
         """
         Test to add allowance with not staff/global user
         returns forbidden response.
@@ -4967,7 +4966,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         self.assertEqual(response_data[0]['proctored_exam']['course_id'], proctored_exam.course_id)
         self.assertEqual(response_data[0]['key'], allowance_data['key'])
 
-    def test_get_allowance_non_staff_user(self):  # pylint: disable=invalid-name
+    def test_get_allowance_non_staff_user(self):
         """
         Test to get allowance of a user with not staff/global user
         returns forbidden response.
@@ -5008,7 +5007,7 @@ class TestExamAllowanceView(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['detail'], 'Must be a Staff User to Perform this request.')
 
-    def test_get_timed_exam_allowances_for_course(self):  # pylint: disable=invalid-name
+    def test_get_timed_exam_allowances_for_course(self):
         """
         get the timed exam allowances for the course
         """
@@ -5231,7 +5230,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
 
     @ddt.data((True, 200), (False, 403))
     @ddt.unpack
-    def test_add_bulk_allowance_non_global_staff_user(  # pylint: disable=invalid-name
+    def test_add_bulk_allowance_non_global_staff_user(
         self, is_user_course_staff, expected_status_code,
     ):
         """
@@ -5296,7 +5295,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         )
     )
     @ddt.unpack
-    def test_add_bulk_allowance_invalid_user(self, allowance_type, value):  # pylint: disable=invalid-name
+    def test_add_bulk_allowance_invalid_user(self, allowance_type, value):
         """
         Test to add bulk allowance with an invalid user in the list
         """
@@ -5354,7 +5353,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         )
     )
     @ddt.unpack
-    def test_add_bulk_allowance_invalid_exam(self, allowance_type, value):  # pylint: disable=invalid-name
+    def test_add_bulk_allowance_invalid_exam(self, allowance_type, value):
         """
         Test to add bulk allowance with an invalid exam in the list
         """
@@ -5407,7 +5406,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         )
     )
     @ddt.unpack
-    def test_add_bulk_allowance_invalid_allowance_value(self, allowance_type, value):  # pylint: disable=invalid-name
+    def test_add_bulk_allowance_invalid_allowance_value(self, allowance_type, value):
         """
         Test to add bulk allowance with invalid allowance value
         """
@@ -5447,7 +5446,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         self.assertEqual(response_data['detail'], 'Enter a valid positive value number')
         self.assertEqual(response_data['field'], 'allowance_value')
 
-    def test_add_bulk_allowance_all_invalid_data(self):  # pylint: disable=invalid-name
+    def test_add_bulk_allowance_all_invalid_data(self):
         """
         Test to add bulk allowance with invalid exams and users
         """
@@ -5469,7 +5468,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 400)
 
-    def test_add_bulk_allowance_no_users(self):  # pylint: disable=invalid-name
+    def test_add_bulk_allowance_no_users(self):
         """
         Test to add bulk allowance with no users
         """
@@ -5504,7 +5503,7 @@ class ExamBulkAllowanceView(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 400)
 
-    def test_add_bulk_allowance_no_exams(self):  # pylint: disable=invalid-name
+    def test_add_bulk_allowance_no_exams(self):
         """
         Test to add bulk allowance with no exams
         """

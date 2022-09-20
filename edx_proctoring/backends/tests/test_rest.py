@@ -28,7 +28,7 @@ class RESTBackendTests(TestCase):
     """
     Tests for the REST backend
     """
-    def setUp(self):  # pylint: disable=super-method-not-called
+    def setUp(self):
         "setup tests"
         BaseRestProctoringProvider.base_url = 'http://rr.fake'
         self.provider = BaseRestProctoringProvider('client_id', 'client_secret')

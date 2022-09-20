@@ -88,7 +88,6 @@ class TestBackendProvider(ProctoringBackendProvider):
         self.last_exam = exam
         return exam.get('external_id', None) or 'externalid'
 
-    # pylint: disable=unused-argument
     def get_instructor_url(
         self, course_id, user, exam_id=None, attempt_id=None,
         show_configuration_dashboard=False, encrypted_video_review_url=None

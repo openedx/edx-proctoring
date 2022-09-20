@@ -119,7 +119,7 @@ LOG = logging.getLogger("edx_proctoring_views")
 
 def require_staff(func):
     """View decorator that requires that the user have staff permissions. """
-    def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
+    def wrapped(request, *args, **kwargs):
         if request.user.is_staff:
             return func(request, *args, **kwargs)
         return Response(
@@ -131,7 +131,7 @@ def require_staff(func):
 
 def require_course_or_global_staff(func):
     """View decorator that requires that the user have staff permissions. """
-    def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
+    def wrapped(request, *args, **kwargs):
         instructor_service = get_runtime_service('instructor')
         course_id = request.data.get('course_id') or kwargs.get('course_id', None)
         exam_id = request.data.get('exam_id') or kwargs.get('exam_id', None)
@@ -457,7 +457,7 @@ class ProctoredExamView(ProctoredAPIView):
         )
         return Response({'exam_id': exam_id})
 
-    def get(self, request, exam_id=None, course_id=None, content_id=None):  # pylint: disable=unused-argument
+    def get(self, request, exam_id=None, course_id=None, content_id=None):
         """
         HTTP GET handler.
             Scenarios:
@@ -585,7 +585,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         * 'onboarding_past_due': Whether the onboarding exam is past due. All onboarding exams in the course must
           be past due in order for onboarding_past_due to be true.
     """
-    def get(self, request):  # pylint: disable=too-many-statements
+    def get(self, request):
         """
         HTTP GET handler. Returns the learner's onboarding status.
         """
@@ -1340,7 +1340,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
         return Response(data)
 
     @method_decorator(require_course_or_global_staff)
-    def delete(self, request, attempt_id):  # pylint: disable=unused-argument
+    def delete(self, request, attempt_id):
         """
         HTTP DELETE handler. Removes an exam attempt.
         """
@@ -1405,7 +1405,7 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
         return the status of the exam attempt
     """
 
-    def get(self, request):  # pylint: disable=unused-argument
+    def get(self, request):
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
@@ -1594,7 +1594,7 @@ class ExamAllowanceView(ProctoredAPIView):
         * returns Nothing. deletes the allowance for the user proctored exam.
     """
     @method_decorator(require_course_or_global_staff)
-    def get(self, request, course_id):  # pylint: disable=unused-argument
+    def get(self, request, course_id):
         """
         HTTP GET handler. Get all allowances for a course.
         Course and Global staff can view both timed and proctored exam allowances.
@@ -1772,7 +1772,7 @@ class ProctoredExamAttemptReviewStatus(ProctoredAPIView):
     Supports:
         HTTP PUT: Update the is_status_acknowledged flag
     """
-    def put(self, request, attempt_id):     # pylint: disable=unused-argument
+    def put(self, request, attempt_id):
         """
         Update the is_status_acknowledged flag for the specific attempt
         """
@@ -1803,7 +1803,7 @@ class ExamReadyCallback(ProctoredAPIView):
     Called by REST based proctoring backends to indicate that the learner is able to
     proceed with the exam.
     """
-    def post(self, request, external_id):  # pylint: disable=unused-argument
+    def post(self, request, external_id):
         """
         Post callback handler
         """
@@ -2125,7 +2125,7 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
     """
     Manage user information stored on the backends
     """
-    def post(self, request, user_id, **kwargs):  # pylint: disable=unused-argument
+    def post(self, request, user_id, **kwargs):
         """
         Deletes all user data for the particular user_id
         from all configured backends
@@ -2135,7 +2135,6 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
         results = {}
         code = 200
         seen = set()
-        # pylint: disable=no-member
         attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id).select_related('proctored_exam')
         if attempts:
             for attempt in attempts:
@@ -2185,7 +2184,7 @@ class UserRetirement(AuthenticatedAPIView):
             allowance_history.value = ''
             allowance_history.save()
 
-    def post(self, request, user_id):  # pylint: disable=unused-argument
+    def post(self, request, user_id):
         """ Obfuscates all PII for a given user_id """
         if not request.user.has_perm('accounts.can_retire_user'):
             return Response(status=403)
