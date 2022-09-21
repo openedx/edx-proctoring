@@ -70,7 +70,6 @@ class MockCreditService:
         self.order = self.order + 1
 
     # pylint: disable=unused-argument
-    # pylint: disable=invalid-name
     def remove_credit_requirement_status(self, user_id, course_key_or_id, req_namespace, req_name):
         """
         Mock implementation for removing the credit requirement status.
@@ -94,7 +93,7 @@ class MockCreditServiceWithCourseEndDate(MockCreditService):
     mock of the Credit Service but overrides get_credit_state to return a past course_end_date
     """
 
-    def get_credit_state(self, user_id, course_key, return_course_info=False):  # pylint: disable=unused-argument
+    def get_credit_state(self, user_id, course_key, return_course_info=False):
         """
         Mock implementation
         """
@@ -107,7 +106,7 @@ class MockCreditServiceNone(MockCreditService):
     Mock Credit Service that returns None for the credit state every time.
     """
 
-    def get_credit_state(self, user_id, course_key, return_course_info=False):  # pylint: disable=unused-argument
+    def get_credit_state(self, user_id, course_key, return_course_info=False):
         """
         Mock implementation
         """

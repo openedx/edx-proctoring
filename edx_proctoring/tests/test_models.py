@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=invalid-name
 """
 All tests for the models.py
 """
@@ -73,7 +72,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
 
         self.assertEqual(len(proctored_exam.history.filter(course_id='test_course', content_id='test_content')), 2)
 
-    def test_save_proctored_exam_student_allowance_history(self):  # pylint: disable=invalid-name
+    def test_save_proctored_exam_student_allowance_history(self):
         """
         Test to Save and update the proctored Exam Student Allowance object.
         Upon first save, a new entry is _not_ created in the History table
@@ -97,7 +96,6 @@ class ProctoredExamModelTests(LoggedInTestCase):
         self.assertEqual(len(proctored_exam_student_history), 0)
 
         # Update the allowance object twice
-        # pylint: disable=no-member
         ProctoredExamStudentAllowance.objects.filter(
             user_id=1,
             proctored_exam=proctored_exam,
@@ -108,7 +106,6 @@ class ProctoredExamModelTests(LoggedInTestCase):
             value='10 minutes'
         )
 
-        # pylint: disable=no-member
         ProctoredExamStudentAllowance.objects.filter(
             user_id=1,
             proctored_exam=proctored_exam,
@@ -132,7 +129,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
         proctored_exam_student_history = ProctoredExamStudentAllowanceHistory.objects.filter(user_id=1)
         self.assertEqual(len(proctored_exam_student_history), 3)
 
-    def test_delete_proctored_exam_student_allowance_history(self):  # pylint: disable=invalid-name
+    def test_delete_proctored_exam_student_allowance_history(self):
         """
         Test to delete the proctored Exam Student Allowance object.
         Upon first save, a new entry is _not_ created in the History table
@@ -246,7 +243,7 @@ class ProctoredExamStudentAttemptTests(LoggedInTestCase):
         hist_attempt = ProctoredExamStudentAttempt.get_historic_attempt_by_code(attempt.attempt_code)
         self.assertEqual(attempt.external_id, hist_attempt.external_id)
 
-    def test_delete_proctored_exam_attempt(self):  # pylint: disable=invalid-name
+    def test_delete_proctored_exam_attempt(self):
         """
         Deleting the proctored exam attempt creates an entry in the history table.
         """

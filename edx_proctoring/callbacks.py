@@ -13,7 +13,7 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 log = logging.getLogger(__name__)
 
 
-def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argument
+def start_exam_callback(request, attempt_code):
     """
     A callback endpoint which is called when SoftwareSecure completes
     the proctoring setup and the exam should be started.

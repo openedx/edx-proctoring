@@ -7,7 +7,7 @@ import logging
 import time
 import uuid
 import warnings
-from urllib.parse import urlencode, urlparse  # pylint: disable=import-error, wrong-import-order
+from urllib.parse import urlencode, urlparse
 
 import jwt
 from edx_rest_api_client.client import OAuthAPIClient
@@ -276,7 +276,6 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             data = response.json()
         except Exception as exc:  # pylint: disable=broad-except
             if response:
-                # pylint: disable=no-member
                 if hasattr(exc, 'response') and exc.response is not None:
                     content = exc.response.content
                 else:
@@ -331,7 +330,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             response = self.session.delete(url)
             data = response.json()
             assert data in (True, False)
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             # pylint: disable=no-member
             if hasattr(exc, 'response') and exc.response is not None:
                 content = exc.response.content
