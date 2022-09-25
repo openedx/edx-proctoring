@@ -5,26 +5,34 @@
 # EdX Team <info@edx.org>, 2018.
 # 
 # Translators:
-# Eliana Moran <eliana_474@hotmail.com>, 2016
-# Aylén <aylen_00@hotmail.com>, 2021
+# lucek <lucjan.kierczak@gmail.com>, 2016
+# Greg Wasowski <gwasowski@salesforce.com>, 2016
+# Magdalena Jarosińska <m.jarosinska@stud.elka.pw.edu.pl>, 2016
+# Bartosz Muczyński <b.muczynski@gmail.com>, 2016
+# Jaroslaw Lukawski <sekretariat@kmti.uz.zgora.pl>, 2016
+# Maciej Kolankowski <maciej@eduprojekt.org>, 2017
+# Martyna Boguszewicz <martyna.boguszewicz@bluesoft.com>, 2020
+# jakubfajkowski <j.fajkowski@stud.elka.pw.edu.pl>, 2021
+# Aleks Ada, 2022
+# Magdalena Dulęba <magdalena.duleba@e-science.pl>, 2022
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-11 18:34+0000\n"
-"PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: Aylén <aylen_00@hotmail.com>, 2021\n"
-"Language-Team: Spanish (Argentina) (https://www.transifex.com/open-edx/teams/6205/es_AR/)\n"
+"PO-Revision-Date: 2016-12-20 19:52+0000\n"
+"Last-Translator: Magdalena Dulęba <magdalena.duleba@e-science.pl>, 2022\n"
+"Language-Team: Polish (https://www.transifex.com/open-edx/teams/6205/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_AR\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
 #: admin.py:110
 msgid "internally reviewed"
-msgstr "revisado internamente"
+msgstr ""
 
 #: admin.py:119
 msgid "All Unreviewed"
@@ -44,11 +52,11 @@ msgstr ""
 
 #: admin.py:350
 msgid "Course Id"
-msgstr ""
+msgstr "ID kursu"
 
 #: admin.py:388
 msgid "Created"
-msgstr ""
+msgstr "Stworzone"
 
 #: admin.py:389
 msgid "Download Software Clicked"
@@ -84,7 +92,7 @@ msgstr ""
 
 #: admin.py:397
 msgid "Verified"
-msgstr "Verificado"
+msgstr "Zweryfikowany "
 
 #: admin.py:398
 msgid "Rejected"
@@ -92,7 +100,7 @@ msgstr ""
 
 #: admin.py:399
 msgid "Error"
-msgstr "Error"
+msgstr "Błąd"
 
 #: admin.py:403
 msgid "Onboarding Missing"
@@ -117,7 +125,7 @@ msgstr ""
 
 #: api.py:1642
 msgid "your course"
-msgstr ""
+msgstr "Twój kurs"
 
 #: api.py:1734
 #, python-brace-format
@@ -574,7 +582,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr ""
+msgstr "Wróć"
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -636,7 +644,7 @@ msgstr ""
 
 #: templates/proctored_exam/error_modal.html:7
 msgid "Close"
-msgstr "Cerrar"
+msgstr "Zamknij"
 
 #: templates/proctored_exam/error_wrong_browser.html:10
 msgid ""
@@ -1151,7 +1159,7 @@ msgstr ""
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "Zobacz mój egzamin"
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -1270,17 +1278,17 @@ msgstr ""
 #: utils.py:90
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr ""
+msgstr "{num_of_hours} godzin"
 
 #: utils.py:98 utils.py:108
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
-msgstr ""
+msgstr "{num_of_minutes} minut"
 
 #: utils.py:101
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr ""
+msgstr "i {num_of_minutes} minuty"
 
 #: utils.py:103
 #, python-brace-format
