@@ -12,14 +12,16 @@
 # Miguel Angel Cordova <miguel.angel.cordova.uned@gmail.com>, 2017
 # URJConline <online.mooc@urjc.es>, 2021
 # UAMx <uamx.dev@gmail.com>, 2022
+# Jesica Greco, 2022
+# Varsha Menon, 2022
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-03 18:34+0000\n"
+"POT-Creation-Date: 2022-09-25 18:39+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: UAMx <uamx.dev@gmail.com>, 2022\n"
+"Last-Translator: Varsha Menon, 2022\n"
 "Language-Team: Spanish (Spain) (https://www.transifex.com/open-edx/teams/6205/es_ES/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -115,7 +117,7 @@ msgstr ""
 msgid "Onboarding Expired"
 msgstr ""
 
-#: api.py:821 views.py:1140
+#: api.py:821 views.py:1221
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr ""
@@ -187,31 +189,31 @@ msgstr ""
 msgid "Onboarding status question"
 msgstr ""
 
-#: models.py:395
+#: models.py:391
 msgid "Taking as Proctored"
 msgstr ""
 
-#: models.py:399
+#: models.py:395
 msgid "Is Sample Attempt"
 msgstr ""
 
-#: models.py:417
+#: models.py:413
 msgid "Is Resumable"
 msgstr ""
 
-#: models.py:422
+#: models.py:418
 msgid "Ready to Resume"
 msgstr ""
 
-#: models.py:425
+#: models.py:421
 msgid "Resumed"
 msgstr ""
 
-#: models.py:527
+#: models.py:523
 msgid "Additional Time (minutes)"
 msgstr ""
 
-#: models.py:528
+#: models.py:524
 msgid "Review Policy Exception"
 msgstr ""
 
@@ -267,6 +269,8 @@ msgid ""
 "        status within 5 business days.\n"
 "    "
 msgstr ""
+"\n"
+"Su examen supervisado \"%(exam_name)s\" en <a href=\"%(course_url)s\">%(course_name)s</a> se envió correctamente y ahora se revisará para garantizar que se hayan seguido todas las reglas del examen. Debería recibir un correo electrónico con el estado de su examen dentro de los 5 días hábiles."
 
 #: templates/emails/proctoring_attempt_unsatisfactory_email.html:12
 #, python-format
@@ -281,6 +285,8 @@ msgid ""
 "        you did not successfully meet the proctored exam requirements.\n"
 "    "
 msgstr ""
+"\n"
+"Su examen supervisado \"%(exam_name)s\" en <a href=\"%(course_url)s\">%(course_name)s</a>fue revisado y el equipo del curso identificó una o más violaciones de las reglas del examen supervisado. Los ejemplos de problemas que pueden resultar en una violación de las reglas incluyen navegar por Internet, una identificación con foto borrosa o faltante, usar un teléfono u obtener ayuda de otra persona. Como resultado de los problemas identificados, no cumplió satisfactoriamente con los requisitos del examen supervisado."
 
 #: templates/emails/proctoring_attempt_unsatisfactory_email.html:25
 #, python-format
@@ -1336,71 +1342,71 @@ msgstr ""
 msgid "a practice exam"
 msgstr ""
 
-#: views.py:148
+#: views.py:149
 msgid "could not determine the course_id"
 msgstr ""
 
-#: views.py:157 views.py:539
+#: views.py:158 views.py:620
 msgid "Must be a Staff User to Perform this request."
 msgstr ""
 
-#: views.py:527
+#: views.py:608
 msgid "Missing required query parameter course_id"
 msgstr "Falta el parámetro obligatorio course_id"
 
-#: views.py:547 views.py:718
+#: views.py:628 views.py:799
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
 
-#: views.py:576
+#: views.py:657
 msgid "There is no onboarding exam accessible to this user."
 msgstr ""
 
-#: views.py:626
+#: views.py:707
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr ""
 
-#: views.py:768
+#: views.py:849
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 
-#: views.py:1146
+#: views.py:1227
 msgid "you have less than a minute remaining"
 msgstr ""
 
-#: views.py:1601
+#: views.py:1682
 msgid "Enter a valid username or email"
 msgstr "Escribe un nombre de usuario o un correo electrónico válido"
 
-#: views.py:1601
+#: views.py:1682
 msgid "user_info"
 msgstr ""
 
-#: views.py:1614
+#: views.py:1695
 msgid "Enter a valid positive value number"
 msgstr ""
 
-#: views.py:1614
+#: views.py:1695
 msgid "allowance_value"
 msgstr ""
 
-#: views.py:1701
+#: views.py:1782
 msgid "Cannot update attempt review status"
 msgstr ""
 
-#: views.py:2001
+#: views.py:2082
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr ""
 
-#: views.py:2007
+#: views.py:2088
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr ""
 
-#: views.py:2034
+#: views.py:2115
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr ""
