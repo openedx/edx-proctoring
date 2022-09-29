@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-03 18:34+0000\n"
+"POT-Creation-Date: 2022-09-11 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Carolina De Mares <carolina.demares@edunext.co>, 2021\n"
 "Language-Team: Spanish (Latin America) (https://www.transifex.com/open-edx/teams/6205/es_419/)\n"
@@ -115,7 +115,7 @@ msgstr "Inducción pendiente"
 msgid "Onboarding Expired"
 msgstr "Inducción expirada"
 
-#: api.py:821 views.py:1140
+#: api.py:821 views.py:1221
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "Hay {remaining_time} restante"
@@ -1710,74 +1710,74 @@ msgstr "examen de inducción"
 msgid "a practice exam"
 msgstr "un examen de práctica"
 
-#: views.py:148
+#: views.py:149
 msgid "could not determine the course_id"
 msgstr "No se pudo determinar la ID del curso"
 
-#: views.py:157 views.py:539
+#: views.py:158 views.py:620
 msgid "Must be a Staff User to Perform this request."
 msgstr "Hay que ser un usuario del equipo para cumplir esta pedida."
 
-#: views.py:527
+#: views.py:608
 msgid "Missing required query parameter course_id"
 msgstr ""
 "Requerimiento de parametro query de la identificación de curso faltante"
 
-#: views.py:547 views.py:718
+#: views.py:628 views.py:799
 msgid "There is no onboarding exam related to this course id."
 msgstr "No se registra un examen de inducción relacionado a este id de curso."
 
-#: views.py:576
+#: views.py:657
 msgid "There is no onboarding exam accessible to this user."
 msgstr "No se registra examen de inducción asequible para este usuario."
 
-#: views.py:626
+#: views.py:707
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr "API no disponible para el estado de inducción  {proctor_service}"
 
-#: views.py:768
+#: views.py:849
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 "El servicio de inducción se temporalmente fuera de servicio. Por favor "
 "intenta de nuevo."
 
-#: views.py:1146
+#: views.py:1227
 msgid "you have less than a minute remaining"
 msgstr "Queda menos de un minuto"
 
-#: views.py:1601
+#: views.py:1682
 msgid "Enter a valid username or email"
 msgstr "Ingrese un usuario o correo electrónico valido"
 
-#: views.py:1601
+#: views.py:1682
 msgid "user_info"
 msgstr "user_info"
 
-#: views.py:1614
+#: views.py:1695
 msgid "Enter a valid positive value number"
 msgstr "Ingrese un numero positivo valido"
 
-#: views.py:1614
+#: views.py:1695
 msgid "allowance_value"
 msgstr "allowance_value"
 
-#: views.py:1701
+#: views.py:1782
 msgid "Cannot update attempt review status"
 msgstr "No es posible actualizar el estado de revisión de los intentos "
 
-#: views.py:2001
+#: views.py:2082
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "No hay examenes en el curso {course_id}."
 
-#: views.py:2007
+#: views.py:2088
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "No hay examenes de revisión en el curso {course_id}"
 
-#: views.py:2034
+#: views.py:2115
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "No instructor registrado para {proctor_service}"

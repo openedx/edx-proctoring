@@ -13,14 +13,16 @@
 # Miguel Angel Cordova <miguel.angel.cordova.uned@gmail.com>, 2017
 # URJConline <online.mooc@urjc.es>, 2021
 # UAMx <uamx.dev@gmail.com>, 2022
+# Jesica Greco, 2022
+# Varsha Menon, 2022
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-03 18:34+0000\n"
+"POT-Creation-Date: 2022-09-25 18:39+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: UAMx <uamx.dev@gmail.com>, 2022\n"
+"Last-Translator: Varsha Menon, 2022\n"
 "Language-Team: Spanish (Spain) (https://www.transifex.com/open-edx/teams/6205/es_ES/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,59 +32,59 @@ msgstr ""
 
 #: admin.py:110
 msgid "internally reviewed"
-msgstr ""
+msgstr "revisado internamente"
 
 #: admin.py:119
 msgid "All Unreviewed"
-msgstr ""
+msgstr "Todo sin revisar"
 
 #: admin.py:120
 msgid "All Unreviewed Failures"
-msgstr ""
+msgstr "Todas las fallas no revisadas"
 
 #: admin.py:140
 msgid "active proctored exams"
-msgstr ""
+msgstr "Exámenes supervisados activos"
 
 #: admin.py:195
 msgid "courses with active proctored exams"
-msgstr ""
+msgstr "cursos con exámenes supervisados activos"
 
 #: admin.py:350
 msgid "Course Id"
-msgstr ""
+msgstr "Identificación del curso"
 
 #: admin.py:388
 msgid "Created"
-msgstr ""
+msgstr "Creado"
 
 #: admin.py:389
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "Software de descarga hecho clic"
 
 #: admin.py:390
 msgid "Ready To Start"
-msgstr ""
+msgstr "Listo para empezar"
 
 #: admin.py:391
 msgid "Started"
-msgstr ""
+msgstr "Inició"
 
 #: admin.py:392
 msgid "Ready To Submit"
-msgstr ""
+msgstr "Listo para enviar"
 
 #: admin.py:393
 msgid "Declined"
-msgstr ""
+msgstr "Rechazado"
 
 #: admin.py:394
 msgid "Timed Out"
-msgstr ""
+msgstr "Caducado"
 
 #: admin.py:395
 msgid "Submitted"
-msgstr ""
+msgstr "Enviado"
 
 #: admin.py:396
 msgid "Second Review Required"
@@ -90,50 +92,50 @@ msgstr "Es necesario revisarlo una segunda vez"
 
 #: admin.py:397
 msgid "Verified"
-msgstr ""
+msgstr "Verificado"
 
 #: admin.py:398
 msgid "Rejected"
-msgstr ""
+msgstr "Rechazado"
 
 #: admin.py:399
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #: admin.py:403
 msgid "Onboarding Missing"
-msgstr ""
+msgstr "Falta incorporación"
 
 #: admin.py:404
 msgid "Onboarding Failed"
-msgstr ""
+msgstr "Error de incorporación"
 
 #: admin.py:405
 msgid "Onboarding Pending"
-msgstr ""
+msgstr "Incorporación pendiente"
 
 #: admin.py:406
 msgid "Onboarding Expired"
-msgstr ""
+msgstr "Incorporación caducada"
 
-#: api.py:821 views.py:1140
+#: api.py:821 views.py:1221
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
-msgstr ""
+msgstr "te queda {remaining_time} restante"
 
 #: api.py:1642
 msgid "your course"
-msgstr ""
+msgstr "Tu curso"
 
 #: api.py:1734
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
-msgstr ""
+msgstr "Resultados de supervisión para {course_name} {exam_name}"
 
 #: api.py:1743
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
-msgstr ""
+msgstr "Revisión de supervisión en curso para {course_name} {exam_name}"
 
 #: api.py:1761
 #, python-brace-format
@@ -142,79 +144,79 @@ msgstr "Examen supervisado {exam_name} en {course_name} para {username}"
 
 #: api.py:2237
 msgid "Taking As Proctored Exam"
-msgstr ""
+msgstr "Haciendo como examen supervisado"
 
 #: api.py:2242
 msgid "Proctored Option Available"
-msgstr ""
+msgstr "Opción supervisada disponible"
 
 #: api.py:2247
 msgid "Taking As Open Exam"
-msgstr ""
+msgstr "Haciendo como examen abierto"
 
 #: api.py:2252 api.py:2257
 msgid "Pending Session Review"
-msgstr ""
+msgstr "Revisión de la sesión pendiente"
 
 #: api.py:2262
 msgid "Passed Proctoring"
-msgstr ""
+msgstr "Práctica supervisada"
 
 #: api.py:2267 api.py:2272
 msgid "Failed Proctoring"
-msgstr ""
+msgstr "Prueba fallida"
 
 #: api.py:2277
 msgid "Proctored Option No Longer Available"
-msgstr ""
+msgstr "Opción supervisada no disponible"
 
 #: api.py:2286
 msgid "Ungraded Practice Exam"
-msgstr ""
+msgstr "Examen de práctica no graduado"
 
 #: api.py:2291
 msgid "Practice Exam Completed"
-msgstr ""
+msgstr "Examen práctico completado"
 
 #: api.py:2296
 msgid "Practice Exam Failed"
-msgstr ""
+msgstr "Examen práctico fallido"
 
 #: api.py:2304
 msgid "Timed Exam"
-msgstr ""
+msgstr "Examen con Tiempo"
 
 #: api.py:2887
 msgid "Onboarding status question"
-msgstr ""
+msgstr "Pregunta sobre el estado de incorporación"
+
+#: models.py:391
+msgid "Taking as Proctored"
+msgstr "Tomando como examen supervisado"
 
 #: models.py:395
-msgid "Taking as Proctored"
-msgstr ""
-
-#: models.py:399
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "Intento de prueba"
 
-#: models.py:417
+#: models.py:413
 msgid "Is Resumable"
-msgstr ""
+msgstr "es reanudable"
 
-#: models.py:422
+#: models.py:418
 msgid "Ready to Resume"
-msgstr ""
+msgstr "Listo para reanudar"
 
-#: models.py:425
+#: models.py:421
 msgid "Resumed"
-msgstr ""
+msgstr "reanudado"
 
-#: models.py:527
+#: models.py:523
 msgid "Additional Time (minutes)"
-msgstr ""
+msgstr "Tiempo adicional (minutes)"
 
-#: models.py:528
+#: models.py:524
 msgid "Review Policy Exception"
-msgstr ""
+msgstr "Excepción de la política de revisión"
 
 #: templates/common/waiting_banner.html:3
 msgid ""
@@ -222,6 +224,8 @@ msgid ""
 "        The result will be visible after <strong id=\"wait_deadline\"> Loading... </strong>\n"
 "    "
 msgstr ""
+"\n"
+"El resultado será visible después de <strong id=\"wait_deadline\">Cargar...</strong>"
 
 #: templates/emails/proctoring_attempt_satisfactory_email.html:5
 #: templates/emails/proctoring_attempt_submitted_email.html:5
@@ -245,6 +249,8 @@ msgid ""
 "        met all proctoring requirements.\n"
 "    "
 msgstr ""
+"\n"
+"Se revisó su examen supervisado \"%(exam_name)s\" en <a href=\"%(course_url)s\">%(course_name)s</a> y cumplió con todos los requisitos de supervisión."
 
 #: templates/emails/proctoring_attempt_satisfactory_email.html:21
 #, python-format
@@ -256,6 +262,8 @@ msgid ""
 "        </a>.\n"
 "    "
 msgstr ""
+"\n"
+"Si tiene alguna pregunta sobre sus resultados, puede comunicarse con <a href=\"%(contact_url)s\">%(contact_url_text)s</a> ."
 
 #: templates/emails/proctoring_attempt_submitted_email.html:12
 #, python-format
@@ -268,6 +276,8 @@ msgid ""
 "        status within 5 business days.\n"
 "    "
 msgstr ""
+"\n"
+"Su examen supervisado \"%(exam_name)s\" en <a href=\"%(course_url)s\">%(course_name)s</a> se envió correctamente y ahora se revisará para garantizar que se hayan seguido todas las reglas del examen. Debería recibir un correo electrónico con el estado de su examen dentro de los 5 días hábiles."
 
 #: templates/emails/proctoring_attempt_unsatisfactory_email.html:12
 #, python-format
@@ -282,6 +292,8 @@ msgid ""
 "        you did not successfully meet the proctored exam requirements.\n"
 "    "
 msgstr ""
+"\n"
+"Su examen supervisado \"%(exam_name)s\" en <a href=\"%(course_url)s\">%(course_name)s</a>\" fue revisado y el equipo del curso identificó una o más violaciones de las reglas del examen supervisado. Los ejemplos de problemas que pueden resultar en una violación de las reglas incluyen navegar por Internet, una identificación con foto borrosa o faltante, usar un teléfono u obtener ayuda de otra persona. Como resultado de los problema(s) identificado, no cumplió satisfactoriamente con los requisitos del examen supervisado."
 
 #: templates/emails/proctoring_attempt_unsatisfactory_email.html:25
 #, python-format
@@ -294,6 +306,8 @@ msgid ""
 "        </a>.\n"
 "    "
 msgstr ""
+"\n"
+"Para apelar los resultados de su examen supervisado, comuníquese con cualquier información relevante sobre su examen en <a href=\"%(contact_url)s\">%(contact_url_text)s</a> ."
 
 #: templates/onboarding_exam/entrance.html:5
 msgid ""
@@ -301,6 +315,8 @@ msgid ""
 "    Proctoring onboarding exam\n"
 "  "
 msgstr ""
+"\n"
+"Supervisión del examen de ingreso"
 
 #: templates/onboarding_exam/entrance.html:12
 msgid ""
@@ -308,6 +324,8 @@ msgid ""
 "      Why this is important to you:\n"
 "    "
 msgstr ""
+"\n"
+"Por qué esto es importante para usted:"
 
 #: templates/onboarding_exam/entrance.html:18
 msgid ""
@@ -315,6 +333,8 @@ msgid ""
 "        Establish your identity with the proctoring system to take a proctored exam\n"
 "      "
 msgstr ""
+"\n"
+"Establezca su identidad con el sistema de supervisión para realizar un examen supervisado"
 
 #: templates/onboarding_exam/entrance.html:23
 msgid ""
@@ -322,6 +342,8 @@ msgid ""
 "        Create your onboarding profile for faster access in the future\n"
 "      "
 msgstr ""
+"\n"
+"Cree su perfil de incorporación para un acceso más rápido en el futuro"
 
 #: templates/onboarding_exam/entrance.html:28
 msgid ""
@@ -329,6 +351,8 @@ msgid ""
 "        Practice taking a proctored test\n"
 "      "
 msgstr ""
+"\n"
+"Practique tomando una prueba supervisada"
 
 #: templates/onboarding_exam/entrance.html:34
 #, python-format
@@ -337,6 +361,8 @@ msgid ""
 "      Proctoring for this course is provided via %(provider_name)s.  Onboarding review, including identity verification, can take 2+ business days.\n"
 "    "
 msgstr ""
+"\n"
+"La supervisión de este curso se proporciona a través de %(provider_name)s. La revisión de incorporación, incluida la verificación de identidad, puede demorar más de 2 días hábiles."
 
 #: templates/onboarding_exam/entrance.html:40
 #, python-format
@@ -347,6 +373,8 @@ msgid ""
 "        Make sure this email has been added to your inbox filter.\n"
 "      "
 msgstr ""
+"\n"
+"Una vez que se haya revisado su perfil, recibirá un correo electrónico con los resultados de la revisión. El correo electrónico provendrá de <a href=\"mailto:%(learner_notification_from_email)s\">%(learner_notification_from_email)s</a> . Asegúrese de que este correo electrónico se haya agregado a su filtro de bandeja de entrada."
 
 #: templates/onboarding_exam/entrance.html:49
 #, python-format
@@ -357,10 +385,12 @@ msgid ""
 "        if you have questions.\n"
 "      "
 msgstr ""
+"\n"
+"Comuníquese con <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a> si tiene preguntas."
 
 #: templates/onboarding_exam/entrance.html:58
 msgid "Continue to onboarding"
-msgstr ""
+msgstr "Continuar con el ingreso"
 
 #: templates/onboarding_exam/entrance.html:62
 msgid ""
@@ -368,6 +398,8 @@ msgid ""
 "    You will be guided through online proctoring software set up and identity verification.\n"
 "  "
 msgstr ""
+"\n"
+"Se lo guiará a través de la configuración del software de supervisión en línea y la verificación de identidad."
 
 #: templates/onboarding_exam/error.html:4
 msgid ""
@@ -375,6 +407,8 @@ msgid ""
 "    Error: There was a problem with your onboarding session\n"
 "  "
 msgstr ""
+"\n"
+"Error: Ocurrió un problema con su sesión de incorporación"
 
 #: templates/onboarding_exam/error.html:13
 msgid ""
@@ -383,6 +417,8 @@ msgid ""
 "    You should retry this onboarding exam.\n"
 "  "
 msgstr ""
+"\n"
+"Su sesión de supervisión finalizó antes de completar este examen de ingreso. Debe volver a intentar este examen de ingreso."
 
 #: templates/onboarding_exam/ready_to_submit.html:6
 #, python-format
@@ -391,6 +427,8 @@ msgid ""
 "      You are taking \"%(exam_display_name)s\" as an onboarding exam. You must click “Yes, end my proctored exam” and submit your proctoring session to complete onboarding.\n"
 "    "
 msgstr ""
+"\n"
+"Está realizando \"%(exam_display_name)s\" como examen de ingreso. Debe hacer clic en \"Sí, finalizar mi examen supervisado\" y enviar su sesión de supervisión para completar el ingreso."
 
 #: templates/onboarding_exam/rejected.html:5
 msgid ""
@@ -398,6 +436,8 @@ msgid ""
 "    Your onboarding session was reviewed, but did not pass all requirements\n"
 "  "
 msgstr ""
+"\n"
+"Se revisó su sesión de ingreso, pero no pasó todos los requisitos"
 
 #: templates/onboarding_exam/rejected.html:12
 #, python-format
@@ -409,19 +449,21 @@ msgid ""
 "      </a> if you have questions. You may retake this onboarding exam by clicking \"Retry my exam\".\n"
 "    "
 msgstr ""
+"\n"
+"Comuníquese con <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a> si tiene preguntas. Puede volver a realizar este examen de ingreso haciendo clic en \"Reintentar mi examen\"."
 
 #: templates/onboarding_exam/rejected.html:20
 #: templates/onboarding_exam/submitted.html:47
 #: templates/practice_exam/error.html:29
 #: templates/practice_exam/submitted.html:18
 msgid "Retry my exam"
-msgstr ""
+msgstr "Reintentar mi examen"
 
 #: templates/onboarding_exam/rejected.html:21
 #: templates/practice_exam/error.html:30
 #: templates/practice_exam/submitted.html:19
 msgid "Resetting Onboarding Exam"
-msgstr ""
+msgstr "Restablecimiento del examen de ingreso"
 
 #: templates/onboarding_exam/submitted.html:4
 msgid ""
@@ -429,6 +471,8 @@ msgid ""
 "    You have submitted this onboarding exam\n"
 "  "
 msgstr ""
+"\n"
+"Envió este examen de ingreso"
 
 #: templates/onboarding_exam/submitted.html:11
 msgid ""
@@ -439,6 +483,8 @@ msgid ""
 "      profile review can take 2+ business days.\n"
 "    "
 msgstr ""
+"\n"
+"Si no tiene un perfil de ingreso con el sistema, Verificient revisará su envío y creará un perfil de incorporación para otorgarle acceso a los exámenes supervisados. La revisión del perfil de incorporación puede demorar más de 2 días hábiles."
 
 #: templates/onboarding_exam/submitted.html:19
 #, python-format
@@ -452,6 +498,8 @@ msgid ""
 "      so make sure this email has been added to your inbox filter.\n"
 "    "
 msgstr ""
+"\n"
+"Una vez que se haya revisado su perfil, recibirá un correo electrónico con los resultados de la revisión. El correo electrónico provendrá de <a href=\"mailto:%(learner_notification_from_email)s\">%(learner_notification_from_email)s</a> , así que asegúrese de que este correo electrónico se haya agregado a su filtro de bandeja de entrada."
 
 #: templates/onboarding_exam/submitted.html:29
 msgid ""
@@ -461,6 +509,8 @@ msgid ""
 "      to validate that your setup still meets the requirements for proctoring.\n"
 "    "
 msgstr ""
+"\n"
+"Si ya tiene un perfil de incorporación aprobado a través de otro curso, esta presentación no se revisará. Puede volver a intentar este examen en cualquier momento para validar que su configuración aún cumple con los requisitos para la supervisión."
 
 #: templates/onboarding_exam/submitted.html:36
 msgid ""
@@ -469,10 +519,12 @@ msgid ""
 "      Your current submission will be removed and will not receive a review.\n"
 "    "
 msgstr ""
+"\n"
+"Si ha cometido un error en este envío, puede reiniciar el proceso de incorporación. Su presentación actual será eliminada y no recibirá una revisión."
 
 #: templates/onboarding_exam/submitted.html:41
 msgid "I understand and want to reset this onboarding exam."
-msgstr ""
+msgstr "Entiendo y quiero restablecer este examen de incorporación."
 
 #: templates/onboarding_exam/submitted.html:53
 #: templates/onboarding_exam/verified.html:16
@@ -485,6 +537,8 @@ msgid ""
 "      </a> if you have questions.\n"
 "    "
 msgstr ""
+"\n"
+"Comuníquese con <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a> si tiene preguntas."
 
 #: templates/onboarding_exam/verified.html:4
 msgid ""
@@ -492,6 +546,8 @@ msgid ""
 "    Your onboarding profile was reviewed successfully\n"
 "  "
 msgstr ""
+"\n"
+"Su perfil de ingreso se revisó con éxito"
 
 #: templates/onboarding_exam/verified.html:11
 msgid ""
@@ -499,6 +555,8 @@ msgid ""
 "      Your profile has been established, and you're ready to take proctored exams in this course.\n"
 "    "
 msgstr ""
+"\n"
+"Se ha establecido su perfil y está listo para realizar los exámenes supervisados de este curso."
 
 #: templates/practice_exam/entrance.html:5
 msgid ""
@@ -506,6 +564,8 @@ msgid ""
 "        Try a proctored exam\n"
 "      "
 msgstr ""
+"\n"
+"Prueba un examen supervisado"
 
 #: templates/practice_exam/entrance.html:12
 msgid ""
@@ -514,10 +574,12 @@ msgid ""
 "        on your grade in the course.\n"
 "      "
 msgstr ""
+"\n"
+"Familiarícese con la supervisión de exámenes reales más adelante en el curso. Este examen de práctica no tiene impacto en su calificación en el curso."
 
 #: templates/practice_exam/entrance.html:20
 msgid "Continue to my practice exam"
-msgstr ""
+msgstr "Continuar con mi examen de práctica"
 
 #: templates/practice_exam/entrance.html:25
 msgid ""
@@ -525,6 +587,8 @@ msgid ""
 "          You will be guided through steps to set up online proctoring software and verify your identity.\n"
 "        "
 msgstr ""
+"\n"
+"Se le guiará a través de los pasos para configurar el software de supervisión en línea y verificar su identidad."
 
 #: templates/practice_exam/error.html:5
 msgid ""
@@ -532,6 +596,8 @@ msgid ""
 "        There was a problem with your practice proctoring session\n"
 "      "
 msgstr ""
+"\n"
+"Hubo un problema con su sesión de supervisión de práctica"
 
 #: templates/practice_exam/error.html:13
 msgid ""
@@ -539,6 +605,9 @@ msgid ""
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
 "    "
 msgstr ""
+"\n"
+"      Resultado de tu práctica supervisada: <b class=\"failure\"> No satisfactoria </b>\n"
+"    "
 
 #: templates/practice_exam/error.html:21
 msgid ""
@@ -547,6 +616,8 @@ msgid ""
 "        You can retry this practice exam if you had problems setting up the online proctoring software.\n"
 "      "
 msgstr ""
+"\n"
+"Su sesión de supervisión terminó antes de que completara este examen de práctica. Puede volver a intentar este examen de práctica si tuvo problemas para configurar el software de supervisión en línea."
 
 #: templates/practice_exam/submitted.html:5
 msgid ""
@@ -554,6 +625,8 @@ msgid ""
 "        You have submitted this practice proctored exam\n"
 "      "
 msgstr ""
+"\n"
+"Ha enviado este examen supervisado de práctica"
 
 #: templates/practice_exam/submitted.html:13
 msgid ""
@@ -562,6 +635,8 @@ msgid ""
 "        You have completed this practice exam and can continue with your course work.\n"
 "      "
 msgstr ""
+"\n"
+"Los exámenes de práctica no afectan su calificación. Ha completado este examen de práctica y puede continuar con su trabajo de curso."
 
 #: templates/proctored_exam/confirm-decline.html:5
 msgid ""
@@ -579,14 +654,16 @@ msgid ""
 "        If you take this exam without proctoring, you will not be eligible for course credit or the MicroMasters credential if either applies to this course.\n"
 "      "
 msgstr ""
+"\n"
+"Si realiza este examen sin supervisión, no será elegible para crédito del curso o la credencial de MicroMasters si se aplica a este curso."
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
-msgstr ""
+msgstr "Continuar el examen sin supervisión"
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr ""
+msgstr "Volver atrás"
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -596,6 +673,9 @@ msgid ""
 "      This exam is proctored\n"
 "    "
 msgstr ""
+"\n"
+"      Este examen es supervisado\n"
+"    "
 
 #: templates/proctored_exam/entrance.html:9
 msgid ""
@@ -604,11 +684,13 @@ msgid ""
 "\n"
 "    "
 msgstr ""
+"\n"
+"Para ser apto para el crédito o la credencial del programa asociado con este curso, debe aprobar la revisión de supervisión para este examen."
 
 #: templates/proctored_exam/entrance.html:15
 #: templates/proctored_exam/ready_to_resume.html:19
 msgid "Continue to my proctored exam."
-msgstr ""
+msgstr "Continuar con mi examen supervisado."
 
 #: templates/proctored_exam/entrance.html:18
 #: templates/proctored_exam/ready_to_resume.html:22
@@ -617,6 +699,8 @@ msgid ""
 "        You will be guided through steps to set up online proctoring software and verify your identity.</br>\n"
 "      "
 msgstr ""
+"\n"
+"Se le guiará a través de los pasos para configurar el software de supervisión en línea y verificar su identidad.</br>"
 
 #: templates/proctored_exam/error.html:4
 #: templates/proctored_exam/error_wrong_browser.html:4
@@ -625,6 +709,9 @@ msgid ""
 "      Error with proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"      Error con el examen supervisado\n"
+"    "
 
 #: templates/proctored_exam/error.html:11
 #, python-format
@@ -635,6 +722,8 @@ msgid ""
 "        for assistance, and return to the exam once you receive further instructions.\n"
 "      "
 msgstr ""
+"\n"
+"Se ha producido un error del sistema con su examen supervisado. Comuníquese con su equipo del curso al <a href=\"mailto:%(proctoring_escalation_email)s\">%(proctoring_escalation_email)s </a> para obtener ayuda y regrese al examen una vez que reciba más instrucciones."
 
 #: templates/proctored_exam/error.html:17
 #, python-format
@@ -645,10 +734,12 @@ msgid ""
 "        assistance, and return to the exam once you receive further instructions.\n"
 "      "
 msgstr ""
+"\n"
+"Se ha producido un error del sistema con su examen supervisado. Comuníquese con el servicio de <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">asistencia técnica %(platform_name)s</a> para obtener ayuda y regrese al examen una vez que reciba más instrucciones."
 
 #: templates/proctored_exam/error_modal.html:7
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: templates/proctored_exam/error_wrong_browser.html:10
 msgid ""
@@ -658,6 +749,8 @@ msgid ""
 "      return to the RPNow application to proceed.\n"
 "    "
 msgstr ""
+"\n"
+"El contenido de este examen solo se puede ver a través de la aplicación RPNow. Si aún tiene que completar su examen, regrese a la aplicación RPNow para continuar."
 
 #: templates/proctored_exam/error_wrong_browser.html:17
 msgid ""
@@ -665,10 +758,12 @@ msgid ""
 "      Alternatively, you can end your exam.\n"
 "    "
 msgstr ""
+"\n"
+"Alternativamente, puede finalizar su examen."
 
 #: templates/proctored_exam/error_wrong_browser.html:22
 msgid "End My Exam"
-msgstr ""
+msgstr "Finalizar mi examen"
 
 #: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
 msgid ""
@@ -676,6 +771,8 @@ msgid ""
 "      The due date for this exam has passed\n"
 "    "
 msgstr ""
+"\n"
+"La fecha límite para este examen ha vencido."
 
 #: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
@@ -683,6 +780,9 @@ msgid ""
 "      Because the due date has passed, you are no longer able to take this exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Dado que la fecha límite ha pasado, ya no es posible realizar este examen.\n"
+"    "
 
 #: templates/proctored_exam/failed-prerequisites.html:9
 msgid ""
@@ -690,6 +790,8 @@ msgid ""
 "    You did not satisfy the requirements for taking this exam with proctoring.\n"
 "    "
 msgstr ""
+"\n"
+"No cumplió con los requisitos para realizar este examen con supervisión."
 
 #: templates/proctored_exam/failed-prerequisites.html:14
 msgid ""
@@ -697,6 +799,9 @@ msgid ""
 "    You did not satisfy the following prerequisites:\n"
 "    "
 msgstr ""
+"\n"
+"    No se han satisfecho los siguientes prerrequisitos:\n"
+"    "
 
 #: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
@@ -704,6 +809,9 @@ msgid ""
 "        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
 "      "
 msgstr ""
+"\n"
+"        Debido a que no se han satisfecho algunos prerrequisitos, solo puedes realizar este examen sin supervisión.\n"
+"      "
 
 #: templates/proctored_exam/failed-prerequisites.html:40
 #, python-format
@@ -712,6 +820,8 @@ msgid ""
 "      If you have questions about the status of your requirements, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"Si tiene preguntas sobre el estado de sus requisitos, comuníquese con Soporte %(platform_name)s."
 
 #: templates/proctored_exam/footer.html:5
 msgid ""
@@ -719,6 +829,9 @@ msgid ""
 "        About Proctored Exams\n"
 "        "
 msgstr ""
+"\n"
+"        Acerca de exámenes supervisados\n"
+"        "
 
 #: templates/proctored_exam/inactive_account.html:4
 msgid ""
@@ -726,6 +839,8 @@ msgid ""
 "      You have not activated your account.\n"
 "    "
 msgstr ""
+"\n"
+"No ha activado su cuenta."
 
 #: templates/proctored_exam/inactive_account.html:10
 #, python-format
@@ -748,6 +863,8 @@ msgid ""
 "      %(platform_name)s.\n"
 "    "
 msgstr ""
+"\n"
+"Verifique las carpetas de correo no deseado y la bandeja de entrada de su correo electrónico registrado para obtener un correo electrónico de activación de %(platform_name)s."
 
 #: templates/proctored_exam/inactive_account.html:21
 #, python-format
@@ -757,6 +874,8 @@ msgid ""
 "        activate your account.\n"
 "      "
 msgstr ""
+"\n"
+"Si no puede encontrar este correo electrónico, puede <a href=\"%(reset_link)s\" target=\"_blank\">restablecer su contraseña</a> para activar su cuenta."
 
 #: templates/proctored_exam/inactive_account.html:26
 msgid ""
@@ -764,6 +883,8 @@ msgid ""
 "        If you cannot find this email, you can reset your password to activate your account.\n"
 "      "
 msgstr ""
+"\n"
+"Si no puede encontrar este correo electrónico, puede restablecer su contraseña para activar su cuenta."
 
 #: templates/proctored_exam/inactive_account.html:32
 #, python-format
@@ -773,6 +894,8 @@ msgid ""
 "      %(platform_name)s Support</a>.\n"
 "    "
 msgstr ""
+"\n"
+"Si sigue teniendo problemas, póngase en contacto con <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">el servicio de asistencia técnica %(platform_name)s</a> ."
 
 #: templates/proctored_exam/instructions.html:6
 msgid ""
@@ -780,6 +903,8 @@ msgid ""
 "      Set up and start your proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"Configure y comience su examen supervisado"
 
 #: templates/proctored_exam/instructions.html:12
 msgid ""
@@ -806,15 +931,17 @@ msgid ""
 "            If you have issues relating to proctoring, you can contact %(provider_name)s technical support by emailing %(provider_tech_support_email)s  or by calling %(provider_tech_support_phone)s.\n"
 "          "
 msgstr ""
+"\n"
+"Si tiene problemas relacionados con la supervisión, puede comunicarse con el soporte técnico %(provider_name)s enviando un correo electrónico %(provider_tech_support_email)s o llamando %(provider_tech_support_phone)s."
 
 #: templates/proctored_exam/instructions.html:33
 #: templates/proctored_exam/instructions.html:78
 msgid "Start System Check"
-msgstr ""
+msgstr "Comenzar comprobación del sistema"
 
 #: templates/proctored_exam/instructions.html:36
 msgid "Start Exam"
-msgstr ""
+msgstr "Iniciar examen"
 
 #: templates/proctored_exam/instructions.html:40
 msgid ""
@@ -822,6 +949,9 @@ msgid ""
 "          Step 1\n"
 "        "
 msgstr ""
+"\n"
+"          Paso 1\n"
+"        "
 
 #: templates/proctored_exam/instructions.html:45
 msgid ""
@@ -829,10 +959,12 @@ msgid ""
 "          Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
 "        "
 msgstr ""
+"\n"
+"Copie este código de examen único. Se le pedirá que pegue este código más tarde antes de comenzar el examen."
 
 #: templates/proctored_exam/instructions.html:51
 msgid "Copy Exam Code"
-msgstr ""
+msgstr "Copiar código de examen"
 
 #: templates/proctored_exam/instructions.html:54
 msgid ""
@@ -840,6 +972,8 @@ msgid ""
 "        Select the exam code, then copy it using Control + C (Windows) or Command + C (Mac).\n"
 "      "
 msgstr ""
+"\n"
+"Seleccione el código del examen, luego cópielo usando Control + C (Windows) o Comando + C (Mac)."
 
 #: templates/proctored_exam/instructions.html:59
 msgid ""
@@ -847,6 +981,8 @@ msgid ""
 "          Step 2\n"
 "        "
 msgstr ""
+"\n"
+"Paso 2"
 
 #: templates/proctored_exam/instructions.html:64
 msgid ""
@@ -854,6 +990,8 @@ msgid ""
 "        Start your system check now. A new window will open for this step and you will verify your identity.\n"
 "      "
 msgstr ""
+"\n"
+"Inicie la comprobación de su sistema ahora. Se abrirá una nueva ventana para este paso y verificará su identidad."
 
 #: templates/proctored_exam/instructions.html:69
 msgid ""
@@ -861,14 +999,18 @@ msgid ""
 "        Make sure you:\n"
 "      "
 msgstr ""
+"\n"
+"Asegúrese:"
 
 #: templates/proctored_exam/instructions.html:74
 msgid "Have a computer with a functioning webcam"
-msgstr ""
+msgstr "Tener una computadora con una cámara web que funcione"
 
 #: templates/proctored_exam/instructions.html:75
 msgid "Have your valid photo ID (e.g. driver's license or passport) ready"
 msgstr ""
+"Tenga lista su identificación con foto válida (por ejemplo, licencia de "
+"conducir o pasaporte)"
 
 #: templates/proctored_exam/instructions.html:81
 msgid ""
@@ -876,6 +1018,8 @@ msgid ""
 "          Step 3\n"
 "        "
 msgstr ""
+"\n"
+"Paso 3"
 
 #: templates/proctored_exam/instructions.html:86
 msgid ""
@@ -883,11 +1027,13 @@ msgid ""
 "          For security and exam integrity reasons, we ask you to sign in to your edX account. Then we will direct you to the RPNow proctoring experience.\n"
 "        "
 msgstr ""
+"\n"
+"Por razones de seguridad e integridad del examen, le pedimos que inicie sesión en su cuenta edX. Luego lo dirigiremos a la experiencia de supervisión de RPNow."
 
 #: templates/proctored_exam/instructions.html:100
 #: templates/proctored_exam/proctoring_opt_out_button.html:5
 msgid "Take this exam without proctoring."
-msgstr ""
+msgstr "Realizar este examen sin supervisión."
 
 #: templates/proctored_exam/onboarding_error.html:4
 msgid ""
@@ -895,6 +1041,8 @@ msgid ""
 "      You must complete an onboarding exam before taking this proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"Debe completar un examen de incorporación antes de realizar este examen supervisado"
 
 #: templates/proctored_exam/onboarding_error.html:11
 msgid ""
@@ -902,11 +1050,13 @@ msgid ""
 "      Please complete an onboarding exam before attempting this exam.\n"
 "    "
 msgstr ""
+"\n"
+"Complete un examen de incorporación antes de intentar este examen."
 
 #: templates/proctored_exam/onboarding_error.html:17
 #: templates/proctored_exam/onboarding_error.html:32
 msgid "Navigate to onboarding exam"
-msgstr ""
+msgstr "Navegar al examen de incorporación"
 
 #: templates/proctored_exam/onboarding_error.html:21
 msgid ""
@@ -914,6 +1064,8 @@ msgid ""
 "    Your onboarding exam is being reviewed. Before attempting this exam, please allow 2+ business days for your onboarding exam to be reviewed.\n"
 "  "
 msgstr ""
+"\n"
+"Su examen de ingreso está siendo revisado. Antes de intentar este examen, espere más de 2 días hábiles para que se revise su examen de ingreso."
 
 #: templates/proctored_exam/onboarding_error.html:26
 msgid ""
@@ -921,6 +1073,8 @@ msgid ""
 "      Your onboarding exam failed to pass all requirements.\n"
 "    "
 msgstr ""
+"\n"
+"Su examen de ingreso no pasó todos los requisitos."
 
 #: templates/proctored_exam/onboarding_error.html:38
 #, python-format
@@ -931,6 +1085,8 @@ msgid ""
 "      <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a>.\n"
 "    "
 msgstr ""
+"\n"
+"La supervisión de su examen se proporciona a través de %(provider_name)s. Si tiene preguntas sobre el estado de su examen de incorporación, comuníquese con <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a> ."
 
 #: templates/proctored_exam/pending-prerequisites.html:9
 msgid ""
@@ -938,6 +1094,8 @@ msgid ""
 "    You have not completed the prerequisites for this exam. All requirements must be satisfied before you can take this proctored exam.\n"
 "    "
 msgstr ""
+"\n"
+"No ha completado los requisitos previos para este examen. Se deben cumplir todos los requisitos antes de poder realizar este examen supervisado."
 
 #: templates/proctored_exam/pending-prerequisites.html:14
 msgid ""
@@ -945,6 +1103,9 @@ msgid ""
 "    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
 "    "
 msgstr ""
+"\n"
+"    Los siguientes requisitos están <strong>pendientes</strong> y deben ser complidos con éxito antes de que puedas proceder:\n"
+"    "
 
 #: templates/proctored_exam/pending-prerequisites.html:30
 msgid ""
@@ -952,10 +1113,12 @@ msgid ""
 "    You can take this exam with proctoring only when all prerequisites have been successfully completed.\n"
 "    "
 msgstr ""
+"\n"
+"Puede realizar este examen con supervisión solo cuando se hayan completado con éxito todos los requisitos previos."
 
 #: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
-msgstr ""
+msgstr "Tu sesión de supervisión ha comenzado"
 
 #: templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
@@ -964,6 +1127,10 @@ msgid ""
 "href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
 "proctoring rules</a> to pass the proctoring review for your exam. "
 msgstr ""
+"A partir de este momento, debe seguir las <a "
+"href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">reglas de "
+"supervisión en línea</a> para aprobar la revisión de supervisión de su "
+"examen."
 
 #: templates/proctored_exam/proctoring_launch_callback.html:168
 msgid ""
@@ -971,6 +1138,8 @@ msgid ""
 "            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
 "          "
 msgstr ""
+"\n"
+"No cierre esta ventana antes de terminar su examen. si cierra esta ventana, su sesión de supervisión finaliza y no completará con éxito el examen supervisado."
 
 #: templates/proctored_exam/proctoring_launch_callback.html:173
 #, python-format
@@ -981,6 +1150,8 @@ msgid ""
 "            and upload your proctoring session data for review.\n"
 "          "
 msgstr ""
+"\n"
+"Regrese a la ventana del curso %(platform_name)s para comenzar su examen. Cuando haya terminado su examen y lo haya marcado como completo, puede cerrar esta ventana para finalizar la sesión de supervisión y cargar los datos de la sesión de supervisión para su revisión."
 
 #: templates/proctored_exam/ready_to_resume.html:4
 msgid ""
@@ -988,6 +1159,8 @@ msgid ""
 "      Your exam is ready to be resumed.\n"
 "    "
 msgstr ""
+"\n"
+"Su examen está listo para ser reanudado."
 
 #: templates/proctored_exam/ready_to_resume.html:9
 #, python-format
@@ -996,6 +1169,8 @@ msgid ""
 "        You will have %(total_time)s to complete your exam.\n"
 "    "
 msgstr ""
+"\n"
+"Tendrá %(total_time)s para completar su examen."
 
 #: templates/proctored_exam/ready_to_resume.html:14
 msgid ""
@@ -1003,6 +1178,8 @@ msgid ""
 "        To be eligible for credit or the program credential associated with this course, you must pass the proctoring review for this exam.\n"
 "    "
 msgstr ""
+"\n"
+"Para ser apto para el crédito o la credencial del programa asociado con este curso, debe aprobar la revisión de supervisión para este examen."
 
 #: templates/proctored_exam/ready_to_start.html:5
 msgid ""
@@ -1010,6 +1187,8 @@ msgid ""
 "      Important\n"
 "    "
 msgstr ""
+"\n"
+"Importante"
 
 #: templates/proctored_exam/ready_to_start.html:10
 #, python-format
@@ -1021,6 +1200,8 @@ msgid ""
 "        &#8226; If time expires before you click \"End My Exam\", only your submitted answers will be graded.\n"
 "      "
 msgstr ""
+"\n"
+"• Tiene %(total_time)s para completar este examen.</br> • Una vez que comience el examen, no podrá detener el cronómetro.</br> • Para todos los tipos de preguntas, debe hacer clic en &quot;enviar&quot; para completar su respuesta.</br> • Si se agota el tiempo antes de hacer clic en \"Terminar mi examen\" solo se calificarán las respuestas enviadas."
 
 #: templates/proctored_exam/ready_to_start.html:18
 msgid ""
@@ -1028,6 +1209,8 @@ msgid ""
 "      Proctored Exam Rules\n"
 "    "
 msgstr ""
+"\n"
+"Reglas de examen supervisado"
 
 #: templates/proctored_exam/ready_to_start.html:23
 msgid ""
@@ -1037,6 +1220,8 @@ msgid ""
 "         </strong></br>\n"
 "      "
 msgstr ""
+"\n"
+"Debe cumplir con las siguientes reglas mientras completa este examen. <strong>Si se infringe estas reglas, recibirá una calificación de 0 en el examen y no será elegible para recibir crédito por cursos académicos.</strong></br>"
 
 #: templates/proctored_exam/ready_to_start.html:29
 #, python-format
@@ -1045,6 +1230,8 @@ msgid ""
 "          %(platform_name)s Rules for Online Proctored Exams\n"
 "      "
 msgstr ""
+"\n"
+"%(platform_name)s Reglas para los exámenes supervisados en línea"
 
 #: templates/proctored_exam/ready_to_start.html:36
 msgid ""
@@ -1052,6 +1239,8 @@ msgid ""
 "      Additional Exam Rules\n"
 "    "
 msgstr ""
+"\n"
+"Reglas de examen adicionales"
 
 #: templates/proctored_exam/ready_to_start.html:41
 #, python-format
@@ -1062,14 +1251,16 @@ msgid ""
 "        %(exam_review_policy)s </br>\n"
 "      "
 msgstr ""
+"\n"
+"Las siguientes reglas adicionales se aplican a este examen. Estas reglas prevalecen sobre las Reglas para los exámenes supervisados en línea.</br></br> %(exam_review_policy)s</br>"
 
 #: templates/proctored_exam/ready_to_start.html:49
 msgid "Start my exam"
-msgstr ""
+msgstr "comenzar mi examen"
 
 #: templates/proctored_exam/ready_to_start.html:50
 msgid "Starting Exam"
-msgstr ""
+msgstr "examen inicial"
 
 #: templates/proctored_exam/ready_to_submit.html:4
 msgid ""
@@ -1086,20 +1277,24 @@ msgid ""
 "Make sure that you have selected \"Submit\" for each answer before you "
 "submit your exam."
 msgstr ""
+"Asegúrese de haber seleccionado \"Enviar\" para cada respuesta antes de "
+"enviar su examen."
 
 #: templates/proctored_exam/ready_to_submit.html:12
 msgid ""
 "Once you click \"Yes, end my proctored exam\", the exam will be closed, and "
 "your proctoring session will be submitted for review."
 msgstr ""
+"Una vez que haga clic en \"Sí, finalizar mi examen supervisado\", el examen "
+"se cerrará y su sesión de supervisión se enviará para su revisión."
 
 #: templates/proctored_exam/ready_to_submit.html:15
 msgid "Yes, end my proctored exam"
-msgstr ""
+msgstr "Sí, finalizar mi examen supervisado"
 
 #: templates/proctored_exam/ready_to_submit.html:16
 msgid "Ending Exam"
-msgstr ""
+msgstr "Examen final"
 
 #: templates/proctored_exam/ready_to_submit.html:21
 msgid ""
@@ -1107,6 +1302,9 @@ msgid ""
 "        No, I'd like to continue working\n"
 "      "
 msgstr ""
+"\n"
+"        No, prefiero seguir trabajando\n"
+"      "
 
 #: templates/proctored_exam/rejected.html:5
 msgid ""
@@ -1114,6 +1312,8 @@ msgid ""
 "        Your proctoring session was reviewed, but did not pass all requirements\n"
 "      "
 msgstr ""
+"\n"
+"Se revisó su sesión de supervisión, pero no pasó todos los requisitos"
 
 #: templates/proctored_exam/rejected.html:13
 #, python-format
@@ -1122,6 +1322,8 @@ msgid ""
 "        If you have questions about the status of your proctoring session results, contact %(platform_name)s Support.\n"
 "      "
 msgstr ""
+"\n"
+"Si tiene preguntas sobre el estado de los resultados de su sesión de supervisión, comuníquese con Soporte %(platform_name)s."
 
 #: templates/proctored_exam/rejected.html:23
 msgid ""
@@ -1129,6 +1331,8 @@ msgid ""
 "        If you have concerns about your proctoring session results, contact your course team.\n"
 "      "
 msgstr ""
+"\n"
+"Si tiene inquietudes sobre los resultados de su sesión de supervisión, comuníquese con el equipo del curso."
 
 #: templates/proctored_exam/submitted.html:4
 msgid ""
@@ -1136,22 +1340,29 @@ msgid ""
 "      You have submitted this proctored exam for review\n"
 "    "
 msgstr ""
+"\n"
+"      Has enviado tu examen supervisado para revisión\n"
+"    "
 
 #: templates/proctored_exam/submitted.html:9
 msgid "Your recorded data should now be uploaded for review."
-msgstr ""
+msgstr "Sus datos registrados ahora deben cargarse para su revisión."
 
 #: templates/proctored_exam/submitted.html:11
 msgid ""
 "If the proctoring software window is still open, close it now and confirm "
 "that you want to quit the application."
 msgstr ""
+"Si la ventana del software de supervisión aún está abierta, ciérrela ahora y"
+" confirme que desea salir de la aplicación."
 
 #: templates/proctored_exam/submitted.html:13
 msgid ""
 "Proctoring results are usually available within 5 business days after you "
 "submit your exam."
 msgstr ""
+"Los resultados de supervisión generalmente están disponibles dentro de los 5"
+" días hábiles posteriores a la presentación del examen."
 
 #: templates/proctored_exam/submitted.html:19
 #, python-format
@@ -1160,6 +1371,8 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"Si tiene preguntas sobre el estado de los resultados de su examen supervisado, comuníquese con el soporte %(platform_name)s."
 
 #: templates/proctored_exam/verified.html:5
 msgid ""
@@ -1167,6 +1380,8 @@ msgid ""
 "                Your proctoring session was reviewed successfully. Go to your progress page to view your exam grade.\n"
 "            "
 msgstr ""
+"\n"
+"Su sesión de supervisión se revisó con éxito. Vaya a su página de progreso para ver la calificación de su examen."
 
 #: templates/proctored_exam/visit_exam_content.html:5
 msgid ""
@@ -1174,10 +1389,12 @@ msgid ""
 "      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
 "    "
 msgstr ""
+"\n"
+"Para ver las preguntas y respuestas de su examen, seleccione <strong>Ver mi examen</strong> . El estado de revisión del examen se muestra en el panel de navegación izquierdo."
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "Ver mi examen"
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -1186,30 +1403,33 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
+"\n"
+"%(exam_name)s es un examen cronometrado (%(total_time)s)"
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr ""
+msgstr "Este examen tiene un límite de tiempo"
 
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
 msgstr ""
+"Para aprobar este examen, debe terminar los ejercicios en el tiempo acordado"
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
-msgstr ""
+msgstr "Después de seleccionar"
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr ""
+msgstr "Estoy listo para comenzar este examen cronometrado,"
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr ""
+msgstr "Tendrá"
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
-msgstr ""
+msgstr "para completar y enviar el examen."
 
 #: templates/timed_exam/entrance.html:21
 msgid ""
@@ -1217,10 +1437,13 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"        Estoy listo para empezar este examen cronometrado.\n"
+"      "
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
-msgstr ""
+msgstr "¿Puedo solicitar un tiempo adicional para completar mi examen?"
 
 #: templates/timed_exam/footer.html:4
 msgid ""
@@ -1230,6 +1453,8 @@ msgid ""
 "      Ask your course team for information about additional time allowances.\n"
 "    "
 msgstr ""
+"\n"
+"Si tiene discapacidades, puede ser elegible para una asignación de tiempo adicional en los exámenes cronometrados. Solicite a su equipo del curso información sobre asignaciones de tiempo adicionales."
 
 #: templates/timed_exam/ready_to_submit.html:4
 msgid ""
@@ -1247,6 +1472,8 @@ msgid ""
 "      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
 "    "
 msgstr ""
+"\n"
+"Confirme que haya seleccionado \"Enviar\" para cada problema antes de enviar examen completo."
 
 #: templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -1254,6 +1481,9 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
+"\n"
+"      Después de enviar tu examen, éste será evaluado.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -1261,6 +1491,9 @@ msgid ""
 "      Yes, submit my timed exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Sí, enviar mi examen cronometrado.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -1268,6 +1501,9 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
+"\n"
+"        No, quiero seguir trabajando.\n"
+"      "
 
 #: templates/timed_exam/submitted.html:6
 msgid ""
@@ -1276,6 +1512,8 @@ msgid ""
 "                will be graded.\n"
 "            "
 msgstr ""
+"\n"
+"El tiempo asignado para este examen ha expirado. Su examen ha sido enviado y cualquier trabajo que haya completado será calificado."
 
 #: templates/timed_exam/submitted.html:11
 msgid ""
@@ -1283,6 +1521,8 @@ msgid ""
 "                You have submitted your timed exam.\n"
 "            "
 msgstr ""
+"\n"
+"Ha enviado tu examen cronometrado."
 
 #: templates/timed_exam/submitted.html:21
 msgid ""
@@ -1290,118 +1530,123 @@ msgid ""
 "                After the due date has passed, you can review the exam, but you cannot change your answers.\n"
 "            "
 msgstr ""
+"\n"
+"Después de que haya pasado la fecha límite, puede revisar el examen, pero no puede cambiar sus respuestas."
 
 #: utils.py:87
 #, python-brace-format
 msgid "{num_of_hours} hour"
-msgstr ""
+msgstr "{num_of_hours} hora"
 
 #: utils.py:90
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr ""
+msgstr "{num_of_hours} horas"
 
 #: utils.py:98 utils.py:108
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
-msgstr ""
+msgstr "{num_of_minutes} minutos"
 
 #: utils.py:101
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr ""
+msgstr " y {num_of_minutes} minuto"
 
 #: utils.py:103
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr ""
+msgstr "{num_of_minutes} minuto"
 
 #: utils.py:106
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr ""
+msgstr " y {num_of_minutes} minutos"
 
 #: utils.py:342
 msgid "a proctored exam"
-msgstr ""
+msgstr "un examen supervisado"
 
 #: utils.py:345
 msgid "a timed exam"
-msgstr ""
+msgstr "un examen cronometrado"
 
 #: utils.py:348
 msgid "an onboarding exam"
-msgstr ""
+msgstr "un examen de incorporación"
 
 #: utils.py:350
 msgid "a practice exam"
-msgstr ""
+msgstr "un examen de practica"
 
-#: views.py:148
+#: views.py:149
 msgid "could not determine the course_id"
-msgstr ""
+msgstr "no se pudo determinar el id_del_curso"
 
-#: views.py:157 views.py:539
+#: views.py:158 views.py:620
 msgid "Must be a Staff User to Perform this request."
-msgstr ""
+msgstr "Debes ser un miembro del equipo para realizar esta petición."
 
-#: views.py:527
+#: views.py:608
 msgid "Missing required query parameter course_id"
 msgstr "Falta el parámetro obligatorio course_id"
 
-#: views.py:547 views.py:718
+#: views.py:628 views.py:799
 msgid "There is no onboarding exam related to this course id."
 msgstr ""
+"No hay un examen de ingreso relacionado con esta identificación de curso."
 
-#: views.py:576
+#: views.py:657
 msgid "There is no onboarding exam accessible to this user."
-msgstr ""
+msgstr "No hay ningún examen de ingreso accesible para este usuario."
 
-#: views.py:626
+#: views.py:707
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
-msgstr ""
+msgstr "Sin API de estado de ingreso para {proctor_service}"
 
-#: views.py:768
+#: views.py:849
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
+"El servicio de ingreso no está disponible temporalmente. Por favor, "
+"inténtelo de nuevo más tarde."
 
-#: views.py:1146
+#: views.py:1227
 msgid "you have less than a minute remaining"
-msgstr ""
+msgstr "te queda menos de un minuto"
 
-#: views.py:1601
+#: views.py:1682
 msgid "Enter a valid username or email"
 msgstr "Escribe un nombre de usuario o un correo electrónico válido"
 
-#: views.py:1601
+#: views.py:1682
 msgid "user_info"
-msgstr ""
+msgstr "user_info"
 
-#: views.py:1614
+#: views.py:1695
 msgid "Enter a valid positive value number"
-msgstr ""
+msgstr "Introduzca un número de valor positivo válido"
 
-#: views.py:1614
+#: views.py:1695
 msgid "allowance_value"
-msgstr ""
+msgstr "allowance_value"
 
-#: views.py:1701
+#: views.py:1782
 msgid "Cannot update attempt review status"
-msgstr ""
+msgstr "No se puede actualizar el estado de revisión del intento"
 
-#: views.py:2001
+#: views.py:2082
 #, python-brace-format
 msgid "No exams in course {course_id}."
-msgstr ""
+msgstr "No hay exámenes en curso {course_id}."
 
-#: views.py:2007
+#: views.py:2088
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
-msgstr ""
+msgstr "No hay exámenes supervisados en curso {course_id}"
 
-#: views.py:2034
+#: views.py:2115
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
-msgstr ""
+msgstr "No hay panel de instructor para {proctor_service}"
