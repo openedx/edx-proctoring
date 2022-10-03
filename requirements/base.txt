@@ -16,7 +16,7 @@ celery==5.0.4
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
-certifi==2022.9.14
+certifi==2022.9.24
     # via requests
 cffi==1.15.1
     # via
@@ -76,14 +76,14 @@ django-webpack-loader==0.7.0
     # via
     #   -c requirements/constraints.txt
     #   -r requirements/base.in
-djangorestframework==3.13.1
+djangorestframework==3.14.0
     # via
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==5.0.1
+edx-django-utils==5.1.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -118,7 +118,7 @@ lxml==4.9.1
     # via xblock
 markupsafe==2.1.1
     # via xblock
-newrelic==8.1.0.180
+newrelic==8.2.0.181
     # via edx-django-utils
 pbr==5.10.0
     # via stevedore
@@ -134,7 +134,7 @@ pycryptodomex==3.15.0
     #   pyjwkest
 pyjwkest==1.4.2
     # via edx-drf-extensions
-pyjwt[crypto]==2.4.0
+pyjwt[crypto]==2.5.0
     # via
     #   -r requirements/base.in
     #   drf-jwt
@@ -151,7 +151,7 @@ python-dateutil==2.8.2
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   xblock
-pytz==2022.2.1
+pytz==2022.4
     # via
     #   -r requirements/base.in
     #   celery
@@ -181,12 +181,14 @@ six==1.16.0
     #   python-dateutil
 slumber==0.7.1
     # via edx-rest-api-client
-sqlparse==0.4.2
+sqlparse==0.4.3
     # via django
 stevedore==4.0.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
+types-cryptography==3.3.23
+    # via pyjwt
 urllib3==1.26.12
     # via requests
 vine==5.0.0
