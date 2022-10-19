@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.12.2] - 2022-10-19
+~~~~~~~~~~~~~~~~~~~~~
+* Return external id when requesting exam attempt
+* Add new parameter to JS worker to pass attempt external id
+
 [4.12.1] - 2022-09-15
 ~~~~~~~~~~~~~~~~~~~~~
 * Revert Phantom JS and eslint migration made in version 4.11.0
