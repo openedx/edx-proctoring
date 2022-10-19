@@ -10,7 +10,7 @@ export const handlerWrapper = (Handler) => {
       }
       case 'startExamAttempt': {
         if (handler.onStartExamAttempt) {
-          handler.onStartExamAttempt(message.data.timeout)
+          handler.onStartExamAttempt(message.data.timeout, message.data.attemptExternalId)
             .then(() => self.postMessage({ type: 'examAttemptStarted' }))
             .catch(error => self.postMessage({ type: 'examAttemptStartFailed', error }));
         }
