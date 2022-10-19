@@ -818,6 +818,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
         'critically_low_threshold_sec': critically_low_threshold,
         'course_id': exam['course_id'],
         'attempt_id': attempt['id'],
+        'external_id': attempt['external_id'],
         'accessibility_time_string': _('you have {remaining_time} remaining').format(
             remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
         ),
