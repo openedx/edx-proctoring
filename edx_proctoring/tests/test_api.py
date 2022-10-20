@@ -3550,6 +3550,14 @@ class GetExamAttemptDataTests(ProctoredExamTestCase):
         assert 'exam_url_path' in attempt_data
         assert attempt_data['exam_url_path'] == expected_exam_url
 
+    def test_exam_attempt_external_id(self):
+        """ Test external id is included in attempt data """
+        attempt = self._create_started_exam_attempt(is_proctored=True)
+        external_id = self.external_id
+
+        attempt_data = get_exam_attempt_data(self.proctored_exam_id, attempt.id, is_learning_mfe=True)
+        assert attempt_data['external_id'] == external_id
+
     @ddt.data(
         (True, True, 'an onboarding exam'),
         (True, False, 'a proctored exam'),
