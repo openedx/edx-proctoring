@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[4.13.1] - 2022-10-27
+~~~~~~~~~~~~~~~~~~~~~
+* Adjust verification time to one year down from two
 
 [4.13.0] - 2022-10-26
 ~~~~~~~~~~~~~~~~~~~~~
