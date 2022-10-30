@@ -13,14 +13,14 @@
 # de446acfe3933e9efb9fb802ff0b00c1_8cdef0a, 2016
 # Tiziana Longeri <tiziana.longeri@polimi.it>, 2016
 # Stefano <furins@gmail.com>, 2020
-# Mauri Macera, 2021
+# 20bdf6b5822f7ccbe16f09a657dbe357_e29decb, 2021
 # Domenico Casanica <domenico.casanica@sistinf.it>, 2021
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-11 18:34+0000\n"
+"POT-Creation-Date: 2022-10-30 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Domenico Casanica <domenico.casanica@sistinf.it>, 2021\n"
 "Language-Team: Italian (Italy) (https://www.transifex.com/open-edx/teams/6205/it_IT/)\n"
@@ -118,104 +118,104 @@ msgstr "Onboarding in sospeso"
 msgid "Onboarding Expired"
 msgstr "Onboarding scaduto"
 
-#: api.py:821 views.py:1221
+#: api.py:822 views.py:1221
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "hai a disposizione ancora {remaining_time}"
 
-#: api.py:1642
+#: api.py:1648
 msgid "your course"
 msgstr "il tuo corso"
 
-#: api.py:1734
+#: api.py:1740
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr "Risultati supervisione del {course_name} {exam_name}"
 
-#: api.py:1743
+#: api.py:1749
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr "Verifica supervisione in corso per {course_name} {exam_name}"
 
-#: api.py:1761
+#: api.py:1767
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr ""
 "Esame supervisionato {exam_name} in {course_name} per utente {username}"
 
-#: api.py:2237
+#: api.py:2243
 msgid "Taking As Proctored Exam"
 msgstr "Esame sostenuto con supervisore"
 
-#: api.py:2242
+#: api.py:2248
 msgid "Proctored Option Available"
 msgstr "Possibilità di supervisione disponibile"
 
-#: api.py:2247
+#: api.py:2253
 msgid "Taking As Open Exam"
 msgstr "Esame sostenuto come aperto"
 
-#: api.py:2252 api.py:2257
+#: api.py:2258 api.py:2263
 msgid "Pending Session Review"
 msgstr "Verifica sessione in sospeso"
 
-#: api.py:2262
+#: api.py:2268
 msgid "Passed Proctoring"
 msgstr "Supervisione superata"
 
-#: api.py:2267 api.py:2272
+#: api.py:2273 api.py:2278
 msgid "Failed Proctoring"
 msgstr "Supervisione non superata"
 
-#: api.py:2277
+#: api.py:2283
 msgid "Proctored Option No Longer Available"
 msgstr "Possibilità di supervisione non più disponibile"
 
-#: api.py:2286
+#: api.py:2292
 msgid "Ungraded Practice Exam"
 msgstr "Esame di prova senza voto"
 
-#: api.py:2291
+#: api.py:2297
 msgid "Practice Exam Completed"
 msgstr "Esame di prova completato"
 
-#: api.py:2296
+#: api.py:2302
 msgid "Practice Exam Failed"
 msgstr "Esame di prova non superato"
 
-#: api.py:2304
+#: api.py:2310
 msgid "Timed Exam"
 msgstr "Esame a Tempo"
 
-#: api.py:2887
+#: api.py:2893
 msgid "Onboarding status question"
 msgstr "Domanda sullo stato di onboarding"
 
-#: models.py:395
+#: models.py:391
 msgid "Taking as Proctored"
 msgstr "Sostenuto come supervisionato"
 
-#: models.py:399
+#: models.py:395
 msgid "Is Sample Attempt"
 msgstr "È un tentativo di esempio"
 
-#: models.py:417
+#: models.py:413
 msgid "Is Resumable"
 msgstr ""
 
-#: models.py:422
+#: models.py:418
 msgid "Ready to Resume"
 msgstr ""
 
-#: models.py:425
+#: models.py:421
 msgid "Resumed"
 msgstr ""
 
-#: models.py:527
+#: models.py:523
 msgid "Additional Time (minutes)"
 msgstr "Tempo aggiuntivo (minuti)"
 
-#: models.py:528
+#: models.py:524
 msgid "Review Policy Exception"
 msgstr "Verifica Eccezione Policy"
 
