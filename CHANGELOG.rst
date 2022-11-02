@@ -13,6 +13,10 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[4.13.2] - 2022-10-27
+~~~~~~~~~~~~~~~~~~~~~
+* Fix onboarding expiration messaging to not say expiring soon after expiration.
+
 [4.13.1] - 2022-10-27
 ~~~~~~~~~~~~~~~~~~~~~
 * Adjust verification time to one year down from two

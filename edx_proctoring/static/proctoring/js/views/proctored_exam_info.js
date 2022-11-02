@@ -3,6 +3,9 @@
 
     var examStatusReadableFormat, notStartedText, startedText, submittedText;
 
+    // warning threshold for "onboarding expires soon"
+    var twentyeightDays = 28 * 24 * 60 * 60 * 1000;
+
     edx.courseware = edx.courseware || {};
     edx.courseware.proctored_exam = edx.courseware.proctored_exam || {};
 
@@ -51,10 +54,17 @@
         expiring_soon: {
             status: gettext('Expiring Soon'),
             message: gettext(
-                'Your onboarding profile has been approved in another course. ' +
+                'Your onboarding profile has been approved. ' +
                 'However, your onboarding status is expiring soon. Please ' +
                 'complete onboarding again to ensure that you will be ' +
                 'able to continue taking proctored exams.'
+            )
+        },
+        expired: {
+            status: gettext('Expired'),
+            message: gettext(
+                'Your onboarding status has expired. Please ' +
+                'complete onboarding again to continue taking proctored exams.'
             )
         }
     };
@@ -142,11 +152,20 @@
         },
 
         isExpiringSoon: function(expirationDate) {
-            var today = new Date();
-            var expirationDateObject = new Date(expirationDate);
-            // Return true if the expiration date is within 28 days
-            return today.getTime() > expirationDateObject.getTime() - 2419200000;
+            // returns true if expiring soon, returns false if not soon or already expired
+            var expirationTime = new Date(expirationDate).getTime();
+            var now = new Date().getTime();
+            return (!this.isExpired(expirationDate))
+                && (now > (expirationTime - twentyeightDays));
         },
+
+        isExpired: function(expirationDate) {
+            // returns true if already expired
+            var expirationTime = new Date(expirationDate).getTime();
+            var now = new Date().getTime();
+            return now >= expirationTime;
+        },
+
 
         shouldShowExamLink: function(status) {
             // show the exam link if the user should retry onboarding, or if they haven't submitted the exam
@@ -160,7 +179,9 @@
             var now = new Date();
             var data = this.model.toJSON();
             if (this.template) {
-                if (data.expiration_date && this.isExpiringSoon(data.expiration_date)) {
+                if (data.expiration_date && this.isExpired(data.expiration_date)) {
+                    this.status = 'expired';
+                } else if (data.expiration_date && this.isExpiringSoon(data.expiration_date)) {
                     this.status = 'expiring_soon';
                 } else {
                     this.status = data.onboarding_status;
