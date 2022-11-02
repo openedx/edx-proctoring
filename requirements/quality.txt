@@ -12,7 +12,7 @@ astroid==2.12.10
     #   pylint-celery
 click==7.1.2
     # via
-    #   -c requirements/constraints.txt
+    #   -c constraints.txt
     #   click-log
     #   code-annotations
     #   edx-lint
@@ -27,19 +27,19 @@ commonmark==0.9.1
     # via rich
 dill==0.3.5.1
     # via pylint
-django==3.2.15
+django==3.2.16
     # via
-    #   -c requirements/common_constraints.txt
-    #   -r requirements/quality.in
+    #   -c common_constraints.txt
+    #   -r quality.in
 docutils==0.18.1
     # via
     #   rstcheck
     #   rstcheck-core
 edx-lint==5.3.0
-    # via -r requirements/quality.in
+    # via -r quality.in
 isort==5.10.1
     # via
-    #   -r requirements/quality.in
+    #   -r quality.in
     #   pylint
 jinja2==3.1.2
     # via code-annotations
@@ -54,13 +54,13 @@ pbr==5.10.0
 platformdirs==2.5.2
     # via pylint
 pycodestyle==2.9.1
-    # via -r requirements/quality.in
+    # via -r quality.in
 pydantic==1.10.2
     # via
     #   rstcheck
     #   rstcheck-core
 pydocstyle==6.1.1
-    # via -r requirements/quality.in
+    # via -r quality.in
 pygments==2.13.0
     # via rich
 pylint==2.15.3
@@ -86,7 +86,7 @@ pyyaml==6.0
 rich==12.5.1
     # via typer
 rstcheck==6.1.0
-    # via -r requirements/quality.in
+    # via -r quality.in
 rstcheck-core==1.0.2
     # via rstcheck
 shellingham==1.5.0
@@ -112,10 +112,6 @@ types-docutils==0.18.3
     #   rstcheck
     #   rstcheck-core
 typing-extensions==4.3.0
-    # via
-    #   astroid
-    #   pydantic
-    #   pylint
-    #   rich
+    # via pydantic
 wrapt==1.14.1
     # via astroid

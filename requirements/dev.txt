@@ -14,7 +14,7 @@ chardet==5.0.0
     # via diff-cover
 click==7.1.2
     # via
-    #   -c requirements/constraints.txt
+    #   -c constraints.txt
     #   click-log
     #   code-annotations
     #   edx-lint
@@ -28,34 +28,34 @@ colorama==0.4.5
 commonmark==0.9.1
     # via rich
 diff-cover==7.0.1
-    # via -r requirements/dev.in
+    # via -r dev.in
 dill==0.3.5.1
     # via pylint
 distlib==0.3.6
     # via virtualenv
-django==3.2.15
+django==3.2.16
     # via
-    #   -c requirements/common_constraints.txt
-    #   -r requirements/dev.in
-    #   -r requirements/quality.in
+    #   -c common_constraints.txt
+    #   -r dev.in
+    #   -r quality.in
     #   edx-i18n-tools
 docutils==0.18.1
     # via
     #   rstcheck
     #   rstcheck-core
 edx-i18n-tools==0.9.1
-    # via -r requirements/dev.in
+    # via -r dev.in
 edx-lint==5.3.0
     # via
-    #   -r requirements/dev.in
-    #   -r requirements/quality.in
+    #   -r dev.in
+    #   -r quality.in
 filelock==3.8.0
     # via
     #   tox
     #   virtualenv
 isort==5.10.1
     # via
-    #   -r requirements/quality.in
+    #   -r quality.in
     #   pylint
 jinja2==3.1.2
     # via
@@ -74,7 +74,7 @@ path==16.5.0
     #   edx-i18n-tools
     #   path-py
 path-py==12.5.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 pbr==5.10.0
     # via stevedore
 platformdirs==2.5.2
@@ -90,13 +90,13 @@ polib==1.1.1
 py==1.11.0
     # via tox
 pycodestyle==2.9.1
-    # via -r requirements/quality.in
+    # via -r quality.in
 pydantic==1.10.2
     # via
     #   rstcheck
     #   rstcheck-core
 pydocstyle==6.1.1
-    # via -r requirements/quality.in
+    # via -r quality.in
 pygments==2.13.0
     # via
     #   diff-cover
@@ -128,7 +128,7 @@ pyyaml==6.0
 rich==12.5.1
     # via typer
 rstcheck==6.1.0
-    # via -r requirements/quality.in
+    # via -r quality.in
 rstcheck-core==1.0.2
     # via rstcheck
 shellingham==1.5.0
@@ -153,10 +153,10 @@ tomlkit==0.11.5
     # via pylint
 tox==3.26.0
     # via
-    #   -r requirements/dev.in
+    #   -r dev.in
     #   tox-battery
 tox-battery==0.6.1
-    # via -r requirements/dev.in
+    # via -r dev.in
 typer[all]==0.6.1
     # via rstcheck
 types-docutils==0.18.3
@@ -164,14 +164,10 @@ types-docutils==0.18.3
     #   rstcheck
     #   rstcheck-core
 typing-extensions==4.3.0
-    # via
-    #   astroid
-    #   pydantic
-    #   pylint
-    #   rich
+    # via pydantic
 virtualenv==20.16.5
     # via tox
 wheel==0.37.1
-    # via -r requirements/dev.in
+    # via -r dev.in
 wrapt==1.14.1
     # via astroid
