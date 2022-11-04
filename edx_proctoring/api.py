@@ -3106,7 +3106,6 @@ def get_onboarding_attempt_data_for_learner(course_id, user, backend):
         * user: User object
         * backend: proctoring provider to filter exams on
     """
-    data = {'onboarding_status': None, 'expiration_date': None}
     attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(course_id, [user])
 
     # Default to the most recent attempt in the course if there are no verified attempts
@@ -3116,19 +3115,32 @@ def get_onboarding_attempt_data_for_learner(course_id, user, backend):
             relevant_attempt = attempt
             break
 
-    # If there is no verified attempt in the current course, check for a verified attempt in another course
-    verified_attempt = None
-    if not relevant_attempt or relevant_attempt.status != ProctoredExamStudentAttemptStatus.verified:
-        attempt_dict = get_last_verified_onboarding_attempts_per_user(
-            [user],
-            backend,
-        )
-        verified_attempt = attempt_dict.get(user.id)
+    if relevant_attempt and relevant_attempt.status == ProctoredExamStudentAttemptStatus.verified:
+        return {
+            'onboarding_status': relevant_attempt.status,
+            'expiration_date': relevant_attempt.modified + timedelta(days=constants.VERIFICATION_DAYS_VALID),
+        }
+
+    # otherwise look for another course's verified attempt
+    attempt_dict = get_last_verified_onboarding_attempts_per_user(
+         [user],
+         backend,
+    )
+    verified_attempt = attempt_dict.get(user.id)
 
     if verified_attempt:
-        data['onboarding_status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
-        data['expiration_date'] = verified_attempt.modified + timedelta(days=constants.VERIFICATION_DAYS_VALID)
-    elif relevant_attempt:
-        data['onboarding_status'] = relevant_attempt.status
+        return {
+            'onboarding_status': InstructorDashboardOnboardingAttemptStatus.other_course_approved,
+            'expiration_date': verified_attempt.modified + timedelta(days=constants.VERIFICATION_DAYS_VALID),
+        }
 
-    return data
+    if relevant_attempt:
+        return {
+            'onboarding_status': relevant_attempt.status,
+            'expiration_date': None,
+        }
+
+    return {
+        'onboarding_status': None,
+        'expiration_date': None,
+    }
