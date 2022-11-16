@@ -31,10 +31,8 @@ django==3.2.16
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/quality.in
-docutils==0.18.1
-    # via
-    #   rstcheck
-    #   rstcheck-core
+docutils==0.19
+    # via rstcheck-core
 edx-lint==5.3.0
     # via -r requirements/quality.in
 isort==5.10.1
@@ -51,14 +49,12 @@ mccabe==0.7.0
     # via pylint
 pbr==5.11.0
     # via stevedore
-platformdirs==2.5.2
+platformdirs==2.5.4
     # via pylint
 pycodestyle==2.9.1
     # via -r requirements/quality.in
 pydantic==1.10.2
-    # via
-    #   rstcheck
-    #   rstcheck-core
+    # via rstcheck-core
 pydocstyle==6.1.1
     # via -r requirements/quality.in
 pygments==2.13.0
@@ -85,9 +81,9 @@ pyyaml==6.0
     # via code-annotations
 rich==12.6.0
     # via typer
-rstcheck==6.1.0
+rstcheck==6.1.1
     # via -r requirements/quality.in
-rstcheck-core==1.0.2
+rstcheck-core==1.0.3
     # via rstcheck
 shellingham==1.5.0
     # via typer
@@ -97,7 +93,7 @@ snowballstemmer==2.2.0
     # via pydocstyle
 sqlparse==0.4.3
     # via django
-stevedore==4.1.0
+stevedore==4.1.1
     # via code-annotations
 text-unidecode==1.3
     # via python-slugify
@@ -105,12 +101,10 @@ tomli==2.0.1
     # via pylint
 tomlkit==0.11.6
     # via pylint
-typer[all]==0.6.1
+typer[all]==0.7.0
     # via rstcheck
-types-docutils==0.18.3
-    # via
-    #   rstcheck
-    #   rstcheck-core
+types-docutils==0.19.1.1
+    # via rstcheck-core
 typing-extensions==4.4.0
     # via
     #   astroid

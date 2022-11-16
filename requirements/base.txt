@@ -59,7 +59,7 @@ django-crum==0.7.9
     #   edx-django-utils
 django-ipware==4.0.2
     # via -r requirements/base.in
-django-model-utils==4.2.0
+django-model-utils==4.3.1
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -122,9 +122,9 @@ newrelic==8.4.0
     # via edx-django-utils
 pbr==5.11.0
     # via stevedore
-prompt-toolkit==3.0.31
+prompt-toolkit==3.0.32
     # via click-repl
-psutil==5.9.3
+psutil==5.9.4
     # via edx-django-utils
 pycparser==2.21
     # via cffi
@@ -183,7 +183,7 @@ slumber==0.7.1
     # via edx-rest-api-client
 sqlparse==0.4.3
     # via django
-stevedore==4.1.0
+stevedore==4.1.1
     # via
     #   edx-django-utils
     #   edx-opaque-keys
