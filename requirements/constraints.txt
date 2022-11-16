@@ -12,7 +12,7 @@
 -c common_constraints.txt
 
 # pinning it to latest release.
-celery==5.0.4
+celery==5.2.2
 # celery latest version requires click<8.0.0
 click<8.0.0
 
