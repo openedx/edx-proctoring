@@ -11,10 +11,5 @@
 # Common constraints for edx repos
 -c common_constraints.txt
 
-# pinning it to latest release.
-celery==5.0.4
-# celery latest version requires click<8.0.0
-click<8.0.0
-
 # pinning because to match pin in edx-platform: https://github.com/openedx/edx-platform/blob/e25f00f35cb2ed70502bb0b28909535d55e5525e/requirements/constraints.txt#L83
 django-webpack-loader<1.0.0
