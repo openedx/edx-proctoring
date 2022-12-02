@@ -13,6 +13,11 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[4.13.3] - 2022-12-2
+~~~~~~~~~~~~~~~~~~~~~
+* Update celery pin to match current platform
+
 [4.13.2] - 2022-10-27
 ~~~~~~~~~~~~~~~~~~~~~
 * Fix onboarding expiration messaging to not say expiring soon after expiration.
