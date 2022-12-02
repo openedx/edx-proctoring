@@ -18,7 +18,6 @@ django-waffle
 rules
 
 # edX packages
-event-tracking>=0.2.5
 edx-opaque-keys>=0.4
 edx-drf-extensions
 edx-rest-api-client>=1.9.2
