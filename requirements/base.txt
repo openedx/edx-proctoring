@@ -16,7 +16,7 @@ celery==5.2.7
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
-certifi==2022.9.24
+certifi==2022.12.7
     # via requests
 cffi==1.15.1
     # via
@@ -114,15 +114,15 @@ jsonfield==3.1.0
     # via -r requirements/base.in
 kombu==5.2.4
     # via celery
-lxml==4.9.1
+lxml==4.9.2
     # via xblock
 markupsafe==2.1.1
     # via xblock
-newrelic==8.4.0
+newrelic==8.5.0
     # via edx-django-utils
 pbr==5.11.0
     # via stevedore
-prompt-toolkit==3.0.33
+prompt-toolkit==3.0.36
     # via click-repl
 psutil==5.9.4
     # via edx-django-utils

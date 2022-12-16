@@ -27,7 +27,7 @@ colorama==0.4.6
     # via typer
 commonmark==0.9.1
     # via rich
-diff-cover==7.2.0
+diff-cover==7.3.0
     # via -r requirements/dev.in
 dill==0.3.6
     # via pylint
@@ -47,11 +47,11 @@ edx-lint==5.3.0
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.8.0
+filelock==3.8.2
     # via
     #   tox
     #   virtualenv
-isort==5.10.1
+isort==5.11.2
     # via
     #   -r requirements/quality.in
     #   pylint
@@ -65,7 +65,7 @@ markupsafe==2.1.1
     # via jinja2
 mccabe==0.7.0
     # via pylint
-packaging==21.3
+packaging==22.0
     # via tox
 path==16.6.0
     # via
@@ -75,7 +75,7 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.11.0
     # via stevedore
-platformdirs==2.5.4
+platformdirs==2.6.0
     # via
     #   pylint
     #   virtualenv
@@ -97,7 +97,7 @@ pygments==2.13.0
     # via
     #   diff-cover
     #   rich
-pylint==2.15.7
+pylint==2.15.8
     # via
     #   edx-lint
     #   pylint-celery
@@ -111,8 +111,6 @@ pylint-plugin-utils==0.7
     # via
     #   pylint-celery
     #   pylint-django
-pyparsing==3.0.9
-    # via packaging
 python-slugify==7.0.0
     # via code-annotations
 pytz==2022.6
@@ -149,6 +147,7 @@ tomlkit==0.11.6
     # via pylint
 tox==3.27.1
     # via
+    #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
     #   tox-battery
 tox-battery==0.6.1
@@ -163,7 +162,7 @@ typing-extensions==4.4.0
     #   pydantic
     #   pylint
     #   rich
-virtualenv==20.17.0
+virtualenv==20.17.1
     # via tox
 wheel==0.38.4
     # via -r requirements/dev.in
