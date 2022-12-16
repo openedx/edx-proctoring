@@ -35,7 +35,7 @@ docutils==0.19
     # via rstcheck-core
 edx-lint==5.3.0
     # via -r requirements/quality.in
-isort==5.10.1
+isort==5.11.2
     # via
     #   -r requirements/quality.in
     #   pylint
@@ -49,7 +49,7 @@ mccabe==0.7.0
     # via pylint
 pbr==5.11.0
     # via stevedore
-platformdirs==2.5.4
+platformdirs==2.6.0
     # via pylint
 pycodestyle==2.10.0
     # via -r requirements/quality.in
@@ -59,7 +59,7 @@ pydocstyle==6.1.1
     # via -r requirements/quality.in
 pygments==2.13.0
     # via rich
-pylint==2.15.7
+pylint==2.15.8
     # via
     #   edx-lint
     #   pylint-celery

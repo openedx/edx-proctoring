@@ -19,7 +19,7 @@ bok-choy==1.1.1
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
-certifi==2022.9.24
+certifi==2022.12.7
     # via requests
 cffi==1.15.1
     # via
@@ -139,7 +139,7 @@ lazy==1.5
     # via bok-choy
 logilab-common==1.9.7
     # via -r requirements/test.in
-lxml==4.9.1
+lxml==4.9.2
     # via xblock
 markupsafe==2.1.1
     # via
@@ -149,9 +149,9 @@ mock==4.0.3
     # via -r requirements/test.in
 mypy-extensions==0.4.3
     # via logilab-common
-newrelic==8.4.0
+newrelic==8.5.0
     # via edx-django-utils
-packaging==21.3
+packaging==22.0
     # via pytest
 path==16.6.0
     # via edx-i18n-tools
@@ -184,8 +184,6 @@ pymongo==3.13.0
     #   event-tracking
 pynacl==1.5.0
     # via edx-django-utils
-pyparsing==3.0.9
-    # via packaging
 pytest==7.2.0
     # via
     #   pytest-cov
@@ -195,7 +193,7 @@ pytest-cov==4.0.0
     # via -r requirements/test.in
 pytest-django==4.5.2
     # via -r requirements/test.in
-pytest-xdist==3.0.2
+pytest-xdist==3.1.0
     # via -r requirements/test.in
 python-dateutil==2.8.2
     # via
@@ -254,7 +252,7 @@ stevedore==4.1.1
     #   code-annotations
     #   edx-django-utils
     #   edx-opaque-keys
-testfixtures==7.0.3
+testfixtures==7.0.4
     # via -r requirements/test.in
 text-unidecode==1.3
     # via python-slugify
