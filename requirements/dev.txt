@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.5.2
+asgiref==3.6.0
     # via django
 astroid==2.12.13
     # via
@@ -47,11 +47,11 @@ edx-lint==5.3.0
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.8.2
+filelock==3.9.0
     # via
     #   tox
     #   virtualenv
-isort==5.11.2
+isort==5.11.4
     # via
     #   -r requirements/quality.in
     #   pylint
@@ -75,7 +75,7 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.11.0
     # via stevedore
-platformdirs==2.6.0
+platformdirs==2.6.2
     # via
     #   pylint
     #   virtualenv
@@ -89,15 +89,15 @@ py==1.11.0
     # via tox
 pycodestyle==2.10.0
     # via -r requirements/quality.in
-pydantic==1.10.2
+pydantic==1.10.4
     # via rstcheck-core
 pydocstyle==6.1.1
     # via -r requirements/quality.in
-pygments==2.13.0
+pygments==2.14.0
     # via
     #   diff-cover
     #   rich
-pylint==2.15.8
+pylint==2.15.9
     # via
     #   edx-lint
     #   pylint-celery
@@ -113,7 +113,7 @@ pylint-plugin-utils==0.7
     #   pylint-django
 python-slugify==7.0.0
     # via code-annotations
-pytz==2022.6
+pytz==2022.7
     # via django
 pyyaml==6.0
     # via
@@ -145,7 +145,7 @@ tomli==2.0.1
     #   tox
 tomlkit==0.11.6
     # via pylint
-tox==3.27.1
+tox==3.28.0
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
