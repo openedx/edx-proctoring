@@ -6,7 +6,7 @@
 #
 asgiref==3.6.0
     # via django
-astroid==2.12.13
+astroid==2.13.2
     # via
     #   pylint
     #   pylint-celery
@@ -59,13 +59,13 @@ jinja2==3.1.2
     # via
     #   code-annotations
     #   diff-cover
-lazy-object-proxy==1.8.0
+lazy-object-proxy==1.9.0
     # via astroid
 markupsafe==2.1.1
     # via jinja2
 mccabe==0.7.0
     # via pylint
-packaging==22.0
+packaging==23.0
     # via tox
 path==16.6.0
     # via
@@ -73,7 +73,7 @@ path==16.6.0
     #   path-py
 path-py==12.5.0
     # via -r requirements/dev.in
-pbr==5.11.0
+pbr==5.11.1
     # via stevedore
 platformdirs==2.6.2
     # via
@@ -91,13 +91,13 @@ pycodestyle==2.10.0
     # via -r requirements/quality.in
 pydantic==1.10.4
     # via rstcheck-core
-pydocstyle==6.1.1
+pydocstyle==6.2.3
     # via -r requirements/quality.in
 pygments==2.14.0
     # via
     #   diff-cover
     #   rich
-pylint==2.15.9
+pylint==2.15.10
     # via
     #   edx-lint
     #   pylint-celery
@@ -113,7 +113,7 @@ pylint-plugin-utils==0.7
     #   pylint-django
 python-slugify==7.0.0
     # via code-annotations
-pytz==2022.7
+pytz==2022.7.1
     # via django
 pyyaml==6.0
     # via
@@ -125,7 +125,7 @@ rstcheck==6.1.1
     # via -r requirements/quality.in
 rstcheck-core==1.0.3
     # via rstcheck
-shellingham==1.5.0
+shellingham==1.5.0.post1
     # via typer
 six==1.16.0
     # via
