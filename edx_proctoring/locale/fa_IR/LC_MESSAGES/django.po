@@ -9,16 +9,16 @@
 # Saman Ismael <saman.2791@gmail.com>, 2016
 # mr ash <mrash14@gmail.com>, 2017
 # Somaye Julaie <ketabdar222somaye@gmail.com>, 2021
-# Somaye Joolaee, 2022
 # Varsha Menon, 2022
+# Somaye Joolaee, 2022
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-30 18:34+0000\n"
+"POT-Creation-Date: 2023-01-15 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: Varsha Menon, 2022\n"
+"Last-Translator: Somaye Joolaee, 2022\n"
 "Language-Team: Persian (Iran) (https://www.transifex.com/open-edx/teams/6205/fa_IR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -583,7 +583,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"پرونده کاربری شما ایجاد شده است، و شما آماده شرکت در آزمون‌های آزمایشی در این دوره آموزشی هستید."
+"پرونده کاربری شما ایجاد شده است، و شما آماده شرکت در آزمون‌های حفاظت‌شده در این دوره آموزشی هستید."
 
 #: templates/practice_exam/entrance.html:5
 msgid ""

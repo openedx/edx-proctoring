@@ -15,14 +15,15 @@
 # Stefano <furins@gmail.com>, 2020
 # 20bdf6b5822f7ccbe16f09a657dbe357_e29decb, 2021
 # Domenico Casanica <domenico.casanica@sistinf.it>, 2021
+# Ilaria Botti <ilabotti@gmail.com>, 2023
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-30 18:34+0000\n"
+"POT-Creation-Date: 2023-01-22 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: Domenico Casanica <domenico.casanica@sistinf.it>, 2021\n"
+"Last-Translator: Ilaria Botti <ilabotti@gmail.com>, 2023\n"
 "Language-Team: Italian (Italy) (https://www.transifex.com/open-edx/teams/6205/it_IT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -201,15 +202,15 @@ msgstr "È un tentativo di esempio"
 
 #: models.py:413
 msgid "Is Resumable"
-msgstr ""
+msgstr "É recuperabile"
 
 #: models.py:418
 msgid "Ready to Resume"
-msgstr ""
+msgstr "Pronto da valutare"
 
 #: models.py:421
 msgid "Resumed"
-msgstr ""
+msgstr "Recuperato"
 
 #: models.py:523
 msgid "Additional Time (minutes)"
@@ -484,6 +485,12 @@ msgid ""
 "      </a> if you have questions. You may retake this onboarding exam by clicking \"Retry my exam\".\n"
 "    "
 msgstr ""
+"\n"
+"        In caso di domande puoi contattare\n"
+"        <a href=\"mailto:%(integration_specific_email)s\">\n"
+"          %(integration_specific_email)s\n"
+"        </a>. Potresti sostenere di nuovo l'esame di onboarding facendo clic su \"Riprovo il mio esame\".\n"
+"      "
 
 #: templates/onboarding_exam/rejected.html:20
 #: templates/onboarding_exam/submitted.html:47
@@ -554,6 +561,8 @@ msgid ""
 "      Your current submission will be removed and will not receive a review.\n"
 "    "
 msgstr ""
+"\n"
+"        Se hai commesso un errore in questo invio, puoi riavviare il processo di onboarding. La tua richiesta attuale verrà rimossa e non verrà esaminata."
 
 #: templates/onboarding_exam/submitted.html:41
 msgid "I understand and want to reset this onboarding exam."
@@ -1657,12 +1666,14 @@ msgstr ""
 #: views.py:707
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
-msgstr ""
+msgstr "Nessuno status API di onboarding per {proctor_service}"
 
 #: views.py:849
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
+"Il servizio di onboarding è temporaneamente non disponibile. Per favore "
+"riprova più tardi."
 
 #: views.py:1227
 msgid "you have less than a minute remaining"
@@ -1670,23 +1681,23 @@ msgstr "hai a disposizione meno di un minuto"
 
 #: views.py:1682
 msgid "Enter a valid username or email"
-msgstr ""
+msgstr "Inserisci una username o email valida"
 
 #: views.py:1682
 msgid "user_info"
-msgstr ""
+msgstr "user_info"
 
 #: views.py:1695
 msgid "Enter a valid positive value number"
-msgstr ""
+msgstr "Inserisci un numero di valore positivo valido"
 
 #: views.py:1695
 msgid "allowance_value"
-msgstr ""
+msgstr "quota_valore"
 
 #: views.py:1782
 msgid "Cannot update attempt review status"
-msgstr ""
+msgstr "Non è possibile aggiornare lo stato di verifica del tentativo"
 
 #: views.py:2082
 #, python-brace-format

@@ -6,16 +6,16 @@
 # 
 # Translators:
 # Etienne Laurin <etienne.laurin@gmail.com>, 2016
-# Pierre Mailhot <pierre.mailhot@gmail.com>, 2021
 # David Truong <david.truong@edulib.org>, 2021
+# Pierre Mailhot <pierre.mailhot@gmail.com>, 2023
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-30 18:34+0000\n"
+"POT-Creation-Date: 2023-01-22 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: David Truong <david.truong@edulib.org>, 2021\n"
+"Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2023\n"
 "Language-Team: French (Canada) (https://www.transifex.com/open-edx/teams/6205/fr_CA/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -195,7 +195,7 @@ msgstr "Tentative d'échantillonnage"
 
 #: models.py:413
 msgid "Is Resumable"
-msgstr "Est reprenable"
+msgstr "Peut être repris"
 
 #: models.py:418
 msgid "Ready to Resume"
@@ -885,7 +885,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Vous n'avez pas satisfait aux conditions préalables suivantes:"
+"Vous n'avez pas satisfait aux conditions préalables suivantes :"
 
 #: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
