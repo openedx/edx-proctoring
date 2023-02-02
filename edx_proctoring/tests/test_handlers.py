@@ -44,7 +44,7 @@ class SignalTests(ProctoredExamTestCase):
         # If there is no response from the backend, assert that it is logged correctly
         with HTTMock(None):
             self.attempt.delete_exam_attempt()
-            log_format_string = ('Failed to remove attempt_id=%s from backend=%s')
+            log_format_string = 'Failed to remove attempt_id=%s from backend=%s'
             logger_mock.assert_any_call(log_format_string, 1, self.backend_name)
 
     @ddt.data(None, MockInstructorService())

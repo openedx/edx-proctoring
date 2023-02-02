@@ -298,7 +298,7 @@ class TestBackends(TestCase):
 
         self.assertTrue(get_attempt_mock.called)
 
-        log_format_string = ("BLOCKING ERROR: Can't find course info url for course_id=%s")
+        log_format_string = "BLOCKING ERROR: Can't find course info url for course_id=%s"
         logger_mock.assert_any_call(log_format_string, '')
 
 

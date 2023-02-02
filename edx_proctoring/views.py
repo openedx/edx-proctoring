@@ -344,7 +344,7 @@ class ProctoredExamReviewPolicyView(ProctoredAPIView):
         except ProctoredExamReviewPolicyNotFoundException as exc:
             LOG.warning(str(exc))
             review_policy = None
-        return Response(data=dict(review_policy=review_policy), status=status.HTTP_200_OK)
+        return Response(data={'review_policy': review_policy}, status=status.HTTP_200_OK)
 
 
 class ProctoredExamView(ProctoredAPIView):
@@ -918,7 +918,7 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
 
         # add modified time to each user in the paginated data, as Verificient's API does not currently return this data
         results = paginated_data['results']
-        response_users = [get_user_model().objects.get(username=(user['username'])) for user in results]
+        response_users = [get_user_model().objects.get(username=user['username']) for user in results]
         response_onboarding_data = self._get_onboarding_info_no_onboarding_api(
             course_id,
             onboarding_exam,
