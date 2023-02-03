@@ -538,7 +538,7 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         if under_exception:
             update_exam(exam_id, time_limit_mins=((20 * 60)))  # exactly 20 hours
         else:
-            update_exam(exam_id, time_limit_mins=((20 * 60) + 1))  # 1 minute greater than 20 hours
+            update_exam(exam_id, time_limit_mins=(20 * 60) + 1)  # 1 minute greater than 20 hours
         rendered_response = get_student_view(
             user_id=self.user_id,
             course_id=self.course_id,
