@@ -13,6 +13,8 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* Changed the recommended install location for frontend-lib-special-exams to avoid
+  potential npm problems.
 
 [4.13.3] - 2022-12-2
 ~~~~~~~~~~~~~~~~~~~~~

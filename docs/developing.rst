@@ -65,23 +65,20 @@ special exams in the Learning MFE.
 Make sure that `frontend-app-learning` is setup and running on your devstack.
 
 The special exam lib is installed as a dependency of Learning MFE.
-And for the local development module export flow should be overridden, the following steps are required:
+And for the local development module export flow should be overridden following the instructions at
+in `local-module-development <https://github.com/openedx/frontend-app-learning#local-module-development>`_
 
-* Create new directory `packages` in the `frontend-app-learning` repository and clone special exam library::
 
-    $ cd frontend-app-learning
-    $ mkdir packages
-    $ cd packages
-    $ git clone https://github.com/edx/frontend-lib-special-exams.git
 
-* override module export flow, create `module.config.js` file in the `frontend-app-learning`:
+* Example `module.config.js` file in `frontend-app-learning` assuming this library is located at
+  `$YOUR_WORKSPACE/src/frontend-lib-special-exams/`. Please note your project folders may be different:
 
 .. code-block::
 
   // module.config.js
   module.exports = {
     localModules: [
-      { moduleName: '@edx/frontend-lib-special-exams', dir: './packages/frontend-lib-special-exams', dist: 'src' },
+      { moduleName: '@edx/frontend-lib-special-exams', dir: '../src/frontend-lib-special-exams', dist: 'src' },
     ],
   };
 
