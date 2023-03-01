@@ -18,7 +18,7 @@ export const handlerWrapper = (Handler) => {
       }
       case 'endExamAttempt': {
         if (handler.onEndExamAttempt) {
-          handler.onEndExamAttempt()
+          handler.onEndExamAttempt(message.data.attemptExternalId)
             .then(() => self.postMessage({ type: 'examAttemptEnded' }))
             .catch(error => self.postMessage({ type: 'examAttemptEndFailed', error }));
         }
@@ -26,7 +26,7 @@ export const handlerWrapper = (Handler) => {
       }
       case 'ping': {
         if (handler.onPing) {
-          handler.onPing(message.data.timeout)
+          handler.onPing(message.data.timeout, message.data.attemptExternalId)
             .then(() => self.postMessage({ type: 'echo' }))
             .catch(error => self.postMessage({ type: 'pingFailed', error }));
         }

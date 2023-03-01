@@ -13,8 +13,13 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+
+[4.14.0] - 2023-02-28
+~~~~~~~~~~~~~~~~~~~~~
 * Changed the recommended install location for frontend-lib-special-exams to avoid
   potential npm problems.
+* Attempt external id is now included in all JS worker messages
 
 [4.13.3] - 2022-12-2
 ~~~~~~~~~~~~~~~~~~~~~
