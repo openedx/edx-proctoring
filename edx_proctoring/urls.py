@@ -116,6 +116,11 @@ urlpatterns = [
         views.ProctoredExamAttemptView.as_view(),
         name='proctored_exam.exam_attempts'
     ),
+    re_path(
+        fr'edx_proctoring/v1/proctored_exam/active_attempt',
+        views.ProctoredExamActiveAttemptView.as_view(),
+        name='proctored_exam.active_attempt'
+    ),
     path('edx_proctoring/v1/proctored_exam/settings/exam_id/<int:exam_id>/', views.ProctoredSettingsView.as_view(),
          name='proctored_exam.proctoring_settings'
          ),

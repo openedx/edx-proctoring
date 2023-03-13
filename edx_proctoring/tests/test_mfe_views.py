@@ -10,6 +10,7 @@ from mock import patch
 from opaque_keys.edx.locator import BlockUsageLocator
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -23,6 +24,8 @@ from edx_proctoring.utils import humanized_time
 
 from .test_services import MockLearningSequencesService, MockScheduleItemData
 from .utils import ProctoredExamTestCase
+
+User = get_user_model()
 
 
 @override_settings(LEARNING_MICROFRONTEND_URL='https//learningmfe', ACCOUNT_MICROFRONTEND_URL='https//localhost')
@@ -79,6 +82,33 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         self.assertEqual(exam_data['course_id'], self.course_id)
         self.assertEqual(exam_data['content_id'], self.content_id if not content_id else content_id)
         self.assertEqual(exam_data['time_limit_mins'], self.default_time_limit)
+
+    def test_staff_get_user_exam_data(self):
+        """
+        Test staff can get any user's exam data.
+        """
+        started_attempt = self._create_started_exam_attempt(is_proctored=True)
+
+        # login as different staff user
+        admin_user = User(username='test_staff', email='staff@test.com', is_staff=True)
+        admin_user.save()
+        self.client.login_user(admin_user)
+        response = self.client.get(self.url + f'&user_id={self.user.id}')
+        response_data = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response_data['active_attempt']['attempt_id'], started_attempt.id)
+
+    def test_non_staff_cannot_get_specific_user_data(self):
+        """
+        Test non staff cannot get other user's exam data.
+        """
+        self._create_started_exam_attempt(is_proctored=True)
+
+        other_user = User(username='nefarious_bob', email='tester_bob@test.com')
+        other_user.save()
+        self.client.login_user(other_user)
+        response = self.client.get(self.url + f'&user_id={self.user.id}')
+        self.assertEqual(response.status_code, 403)
 
     def test_exam_total_time_with_allowance_time_before_exam_starts(self):
         """
@@ -366,6 +396,78 @@ class ProctoredExamAttemptsMFEViewTests(ProctoredExamTestCase):
         exam = response_data['exam']
         assert 'onboarding_link' in exam
         self.assertEqual(exam['onboarding_link'], '')
+
+
+# @override_settings(LEARNING_MICROFRONTEND_URL='https//learningmfe', ACCOUNT_MICROFRONTEND_URL='https//localhost')
+class ProctoredExamActiveAttemptsMFEViewTests(ProctoredExamTestCase):
+    """
+    Tests for the ProctoredExamView called from MFE application.
+    """
+    def setUp(self):
+        """
+        Initialize
+        """
+        super().setUp()
+        self.proctored_exam_id = self._create_proctored_exam()
+        self.url = reverse('edx_proctoring:proctored_exam.active_attempt')
+
+    def test_get_started_attempt(self):
+        """
+        Tests the get attempt for user with started attempt.
+        """
+        started_attempt = self._create_started_exam_attempt(is_proctored=True)
+        self._create_exam_attempt(
+            self.proctored_exam_id,
+            ProctoredExamStudentAttemptStatus.rejected,
+        )
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response_data['attempt_id'], started_attempt.id)
+
+    def test_get_no_started_attempts(self):
+        """
+        Tests the get attempt for user with no started attempts.
+        """
+        self._create_exam_attempt(
+            self.proctored_exam_id,
+            ProctoredExamStudentAttemptStatus.submitted,
+        )
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response_data, {})
+
+    def test_staff_get_user_attempt(self):
+        """
+        Test staff can get any user's started attempt.
+        """
+        started_attempt = self._create_started_exam_attempt(is_proctored=True)
+
+        # login as different staff user
+        admin_user = User(username='test_staff', email='staff@test.com', is_staff=True)
+        admin_user.save()
+        self.client.login_user(admin_user)
+        response = self.client.get(self.url + f'?user_id={self.user.id}')
+        response_data = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(response_data['attempt_id'], started_attempt.id)
+
+    def test_non_staff_cannot_get_user_attempt(self):
+        """
+        Test non staff cannot get another user's attempt.
+        """
+        self._create_started_exam_attempt(is_proctored=True)
+
+        other_user = User(username='nefarious_bob', email='tester_bob@test.com')
+        other_user.save()
+        self.client.login_user(other_user)
+        response = self.client.get(self.url + f'?user_id={self.user.id}')
+        self.assertEqual(response.status_code, 403)
 
 
 class ProctoredSettingsViewTests(ProctoredExamTestCase):
