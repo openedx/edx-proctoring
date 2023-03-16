@@ -25,7 +25,7 @@ cffi==1.15.1
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via requests
     # via
     #   -c requirements/constraints.txt
@@ -41,9 +41,9 @@ click-plugins==1.1.1
     # via celery
 code-annotations==1.3.0
     # via -r requirements/test.in
-coverage[toml]==7.2.1
+coverage[toml]==7.2.2
     # via pytest-cov
-cryptography==39.0.1
+cryptography==39.0.2
     # via pyjwt
 ddt==1.6.0
     # via -r requirements/test.in
@@ -64,7 +64,7 @@ django-crum==0.7.9
     # via
     #   -r requirements/base.in
     #   edx-django-utils
-django-ipware==4.0.2
+django-ipware==5.0.0
     # via -r requirements/base.in
 django-model-utils==4.3.1
     # via
@@ -112,7 +112,7 @@ edx-when==2.3.0
     # via -r requirements/base.in
 event-tracking==2.1.0
     # via -r requirements/base.in
-exceptiongroup==1.1.0
+exceptiongroup==1.1.1
     # via pytest
 execnet==1.9.0
     # via pytest-xdist
@@ -186,7 +186,7 @@ pymongo==3.13.0
     #   event-tracking
 pynacl==1.5.0
     # via edx-django-utils
-pytest==7.2.1
+pytest==7.2.2
     # via
     #   pytest-cov
     #   pytest-django
@@ -195,7 +195,7 @@ pytest-cov==4.0.0
     # via -r requirements/test.in
 pytest-django==4.5.2
     # via -r requirements/test.in
-pytest-xdist==3.2.0
+pytest-xdist==3.2.1
     # via -r requirements/test.in
 python-dateutil==2.8.2
     # via
@@ -217,6 +217,7 @@ pyyaml==6.0
     # via
     #   code-annotations
     #   edx-i18n-tools
+    #   responses
     #   xblock
 requests==2.28.2
     # via
@@ -226,7 +227,7 @@ requests==2.28.2
     #   pyjwkest
     #   responses
     #   slumber
-responses==0.22.0
+responses==0.23.1
     # via -r requirements/test.in
 rules==3.3
     # via -r requirements/base.in
@@ -258,17 +259,15 @@ testfixtures==7.1.0
     # via -r requirements/test.in
 text-unidecode==1.3
     # via python-slugify
-toml==0.10.2
-    # via responses
 tomli==2.0.1
     # via
     #   coverage
     #   pytest
-types-toml==0.10.8.5
+types-pyyaml==6.0.12.8
     # via responses
 typing-extensions==4.5.0
     # via logilab-common
-urllib3==1.26.14
+urllib3==1.26.15
     # via
     #   requests
     #   responses
