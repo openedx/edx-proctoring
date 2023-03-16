@@ -6,7 +6,7 @@
 #
 asgiref==3.6.0
     # via django
-astroid==2.14.2
+astroid==2.15.0
     # via
     #   pylint
     #   pylint-celery
@@ -43,11 +43,11 @@ docutils==0.19
     # via rstcheck-core
 edx-i18n-tools==0.9.2
     # via -r requirements/dev.in
-edx-lint==5.3.2
+edx-lint==5.3.4
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.9.0
+filelock==3.10.0
     # via
     #   tox
     #   virtualenv
@@ -75,7 +75,7 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.11.1
     # via stevedore
-platformdirs==3.0.0
+platformdirs==3.1.1
     # via
     #   pylint
     #   virtualenv
@@ -89,7 +89,7 @@ py==1.11.0
     # via tox
 pycodestyle==2.10.0
     # via -r requirements/quality.in
-pydantic==1.10.5
+pydantic==1.10.6
     # via rstcheck-core
 pydocstyle==6.3.0
     # via -r requirements/quality.in
@@ -97,7 +97,7 @@ pygments==2.14.0
     # via
     #   diff-cover
     #   rich
-pylint==2.16.2
+pylint==2.17.0
     # via
     #   edx-lint
     #   pylint-celery
@@ -121,7 +121,7 @@ pyyaml==6.0
     #   edx-i18n-tools
 rich==12.6.0
     # via typer
-rstcheck==6.1.1
+rstcheck==6.1.2
     # via -r requirements/quality.in
 rstcheck-core==1.0.3
     # via rstcheck
@@ -162,9 +162,9 @@ typing-extensions==4.5.0
     #   pydantic
     #   pylint
     #   rich
-virtualenv==20.20.0
+virtualenv==20.21.0
     # via tox
-wheel==0.38.4
+wheel==0.40.0
     # via -r requirements/dev.in
 wrapt==1.15.0
     # via astroid
