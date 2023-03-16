@@ -117,7 +117,7 @@ urlpatterns = [
         name='proctored_exam.exam_attempts'
     ),
     re_path(
-        fr'edx_proctoring/v1/proctored_exam/active_attempt',
+        'edx_proctoring/v1/proctored_exam/active_attempt',
         views.ProctoredExamActiveAttemptView.as_view(),
         name='proctored_exam.active_attempt'
     ),
