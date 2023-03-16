@@ -828,6 +828,9 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
             args=[attempt['id']]
         ),
         'attempt_ready_to_resume': is_attempt_ready_to_resume(attempt),
+        # used by the frontend to determine if attempt is managed by edx-proctoring
+        # instead of the newer edx-exams service
+        'use_legacy_attempt_api': True,
     }
 
     if provider:

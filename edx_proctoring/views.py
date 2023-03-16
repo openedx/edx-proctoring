@@ -112,6 +112,8 @@ from edx_proctoring.utils import (
     obscured_user_id
 )
 
+User = get_user_model()
+
 ATTEMPTS_PER_PAGE = 25
 
 LOG = logging.getLogger("edx_proctoring_views")
@@ -194,6 +196,47 @@ class ProctoredAPIView(AuthenticatedAPIView):
         return resp
 
 
+class ProctoredExamActiveAttemptView(ProctoredAPIView):
+    """
+    Endpoint for getting attempt data for an active exam attempt.
+
+    Supports:
+        HTTP GET:
+            Active attempt for any exam in progress (for the timer feature)
+    """
+    def get(self, request):
+        """
+        HTTP GET handler. Returns active attempt
+        """
+        user_id = request.user.id
+        requested_user_id = request.GET.get('user_id', None)
+        if requested_user_id:
+            if request.user.is_staff:
+                user_id = requested_user_id
+            else:
+                return Response(
+                    status=status.HTTP_403_FORBIDDEN,
+                    data={'detail': 'Must be a Staff User to Perform this request.'}
+                )
+
+        active_exams = get_active_exams_for_user(user_id)
+        if active_exams:
+            # Even if there is more than one exam, we want the first one.
+            # Normally this should not be an issue as there will be list of one item.
+            active_exam_info = active_exams[0]
+            active_exam = active_exam_info['exam']
+            active_attempt = active_exam_info['attempt']
+            active_attempt_data = get_exam_attempt_data(
+                active_exam.get('id'),
+                active_attempt.get('id'),
+                is_learning_mfe=True
+            )
+        else:
+            active_attempt_data = {}
+
+        return Response(data=active_attempt_data)
+
+
 class ProctoredExamAttemptView(ProctoredAPIView):
     """
     Endpoint for getting timed or proctored exam and its attempt data.
@@ -228,7 +271,18 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         is_learning_mfe = request.GET.get('is_learning_mfe') in ['1', 'true', 'True']
         content_id = request.GET.get('content_id', content_id)
 
-        active_exams = get_active_exams_for_user(request.user.id)
+        user_id = request.user.id
+        requested_user_id = request.GET.get('user_id', None)
+        if requested_user_id:
+            if request.user.is_staff:
+                user_id = requested_user_id
+            else:
+                return Response(
+                    status=status.HTTP_403_FORBIDDEN,
+                    data={'detail': 'Must be a Staff User to Perform this request.'}
+                )
+
+        active_exams = get_active_exams_for_user(user_id)
         if active_exams:
             # Even if there is more than one exam, we want the first one.
             # Normally this should not be an issue as there will be list of one item.
@@ -254,7 +308,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         else:
             try:
                 exam = get_exam_by_content_id(course_id, content_id)
-                attempt = get_current_exam_attempt(exam.get('id'), request.user.id)
+                attempt = get_current_exam_attempt(exam.get('id'), user_id)
                 if attempt:
                     attempt_data = get_exam_attempt_data(
                         exam.get('id'),
@@ -264,14 +318,14 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 else:
                     # calculate total allowed time for the exam including
                     # allowance time to show on the MFE entrance pages
-                    exam['total_time'] = get_total_allowed_time_for_exam(exam, request.user.id)
+                    exam['total_time'] = get_total_allowed_time_for_exam(exam, user_id)
 
                     # Exam hasn't been started yet but it is proctored so needs to be checked
                     # if prerequisites are satisfied. We only do this for proctored exam hence
                     # additional check 'not exam['is_practice_exam']', meaning we do not check
                     # prerequisites for practice or onboarding exams
                     if exam['is_proctored'] and not exam['is_practice_exam']:
-                        exam = check_prerequisites(exam, request.user.id)
+                        exam = check_prerequisites(exam, user_id)
 
                 # if user hasn't completed required onboarding exam before taking
                 # proctored exam we need to navigate them to it with a link
@@ -284,7 +338,8 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         if exam:
             provider = get_backend_provider(exam)
             exam['type'] = get_exam_type(exam, provider)['type']
-            exam['passed_due_date'] = is_exam_passed_due(exam, user=request.user.id)
+            exam['passed_due_date'] = is_exam_passed_due(exam, user=User.objects.get(id=user_id))
+            exam['use_legacy_attempt_api'] = True
         response_dict = {
             'exam': exam,
             'active_attempt': active_attempt_data,
