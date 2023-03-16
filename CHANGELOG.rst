@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.15.0] - 2023-03-16
+~~~~~~~~~~~~~~~~~~~~~
+* Add new endpoint get the currently active exam attempt.
+* Add parameter for staff users to request another users attempt. This is used by
+  the edx-exams service worker.
 
 [4.14.0] - 2023-02-28
 ~~~~~~~~~~~~~~~~~~~~~
