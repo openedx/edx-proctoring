@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-22 18:34+0000\n"
+"POT-Creation-Date: 2023-03-19 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Carolina De Mares <carolina.demares@edunext.co>, 2021\n"
 "Language-Team: Spanish (Latin America) (https://www.transifex.com/open-edx/teams/6205/es_419/)\n"
@@ -115,75 +115,75 @@ msgstr "Inducción pendiente"
 msgid "Onboarding Expired"
 msgstr "Inducción expirada"
 
-#: api.py:822 views.py:1221
+#: api.py:822 views.py:1276
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
 msgstr "Hay {remaining_time} restante"
 
-#: api.py:1648
+#: api.py:1651
 msgid "your course"
 msgstr "tu curso"
 
-#: api.py:1740
+#: api.py:1743
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
 msgstr "Resultados de Examen de Supervisión Para {course_name} {exam_name}"
 
-#: api.py:1749
+#: api.py:1752
 #, python-brace-format
 msgid "Proctoring Review In Progress For {course_name} {exam_name}"
 msgstr "Revisión Supervisada En Progreso Para {course_name} {exam_name}"
 
-#: api.py:1767
+#: api.py:1770
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
 msgstr "Examen supervisado {exam_name} en {course_name} para {username}"
 
-#: api.py:2243
+#: api.py:2246
 msgid "Taking As Proctored Exam"
 msgstr "Haciendo como examen supervisado"
 
-#: api.py:2248
+#: api.py:2251
 msgid "Proctored Option Available"
 msgstr "Opción supervisada disponible"
 
-#: api.py:2253
+#: api.py:2256
 msgid "Taking As Open Exam"
 msgstr "Haciendo como examen abierto"
 
-#: api.py:2258 api.py:2263
+#: api.py:2261 api.py:2266
 msgid "Pending Session Review"
 msgstr "Revisión de sesión pendiente"
 
-#: api.py:2268
+#: api.py:2271
 msgid "Passed Proctoring"
 msgstr "Supervisión aprobada"
 
-#: api.py:2273 api.py:2278
+#: api.py:2276 api.py:2281
 msgid "Failed Proctoring"
 msgstr "Supervisión negada"
 
-#: api.py:2283
+#: api.py:2286
 msgid "Proctored Option No Longer Available"
 msgstr "Opción supervisado ya no está disponible"
 
-#: api.py:2292
+#: api.py:2295
 msgid "Ungraded Practice Exam"
 msgstr "Examen de práctica no calificado"
 
-#: api.py:2297
+#: api.py:2300
 msgid "Practice Exam Completed"
 msgstr "Examen de práctica completado"
 
-#: api.py:2302
+#: api.py:2305
 msgid "Practice Exam Failed"
 msgstr "Examen de práctica no aprobado"
 
-#: api.py:2310
+#: api.py:2313
 msgid "Timed Exam"
 msgstr "Examen cronometrado"
 
-#: api.py:2893
+#: api.py:2896
 msgid "Onboarding status question"
 msgstr "estado de pregunta de inducción"
 
@@ -1710,74 +1710,74 @@ msgstr "examen de inducción"
 msgid "a practice exam"
 msgstr "un examen de práctica"
 
-#: views.py:149
+#: views.py:151
 msgid "could not determine the course_id"
 msgstr "No se pudo determinar la ID del curso"
 
-#: views.py:158 views.py:620
+#: views.py:160 views.py:675
 msgid "Must be a Staff User to Perform this request."
 msgstr "Hay que ser un usuario del equipo para cumplir esta pedida."
 
-#: views.py:608
+#: views.py:663
 msgid "Missing required query parameter course_id"
 msgstr ""
 "Requerimiento de parametro query de la identificación de curso faltante"
 
-#: views.py:628 views.py:799
+#: views.py:683 views.py:854
 msgid "There is no onboarding exam related to this course id."
 msgstr "No se registra un examen de inducción relacionado a este id de curso."
 
-#: views.py:657
+#: views.py:712
 msgid "There is no onboarding exam accessible to this user."
 msgstr "No se registra examen de inducción asequible para este usuario."
 
-#: views.py:707
+#: views.py:762
 #, python-brace-format
 msgid "No onboarding status API for {proctor_service}"
 msgstr "API no disponible para el estado de inducción  {proctor_service}"
 
-#: views.py:849
+#: views.py:904
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
 "El servicio de inducción se temporalmente fuera de servicio. Por favor "
 "intenta de nuevo."
 
-#: views.py:1227
+#: views.py:1282
 msgid "you have less than a minute remaining"
 msgstr "Queda menos de un minuto"
 
-#: views.py:1682
+#: views.py:1737
 msgid "Enter a valid username or email"
 msgstr "Ingrese un usuario o correo electrónico valido"
 
-#: views.py:1682
+#: views.py:1737
 msgid "user_info"
 msgstr "user_info"
 
-#: views.py:1695
+#: views.py:1750
 msgid "Enter a valid positive value number"
 msgstr "Ingrese un numero positivo valido"
 
-#: views.py:1695
+#: views.py:1750
 msgid "allowance_value"
 msgstr "allowance_value"
 
-#: views.py:1782
+#: views.py:1837
 msgid "Cannot update attempt review status"
 msgstr "No es posible actualizar el estado de revisión de los intentos "
 
-#: views.py:2082
+#: views.py:2137
 #, python-brace-format
 msgid "No exams in course {course_id}."
 msgstr "No hay examenes en el curso {course_id}."
 
-#: views.py:2088
+#: views.py:2143
 #, python-brace-format
 msgid "No proctored exams in course {course_id}"
 msgstr "No hay examenes de revisión en el curso {course_id}"
 
-#: views.py:2115
+#: views.py:2170
 #, python-brace-format
 msgid "No instructor dashboard for {proctor_service}"
 msgstr "No instructor registrado para {proctor_service}"
