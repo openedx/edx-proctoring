@@ -14,6 +14,39 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.15.0] - 2023-03-16
+~~~~~~~~~~~~~~~~~~~~~
+* Add new endpoint get the currently active exam attempt.
+* Add parameter for staff users to request another users attempt. This is used by
+  the edx-exams service worker.
+
+[4.14.0] - 2023-02-28
+~~~~~~~~~~~~~~~~~~~~~
+* Changed the recommended install location for frontend-lib-special-exams to avoid
+  potential npm problems.
+* Attempt external id is now included in all JS worker messages
+
+[4.13.3] - 2022-12-2
+~~~~~~~~~~~~~~~~~~~~~
+* Update celery pin to match current platform
+
+[4.13.2] - 2022-10-27
+~~~~~~~~~~~~~~~~~~~~~
+* Fix onboarding expiration messaging to not say expiring soon after expiration.
+
+[4.13.1] - 2022-10-27
+~~~~~~~~~~~~~~~~~~~~~
+* Adjust verification time to one year down from two
+
+[4.13.0] - 2022-10-26
+~~~~~~~~~~~~~~~~~~~~~
+* Do not use course's due date when a timed exam has one specified
+
+[4.12.2] - 2022-10-19
+~~~~~~~~~~~~~~~~~~~~~
+* Return external id when requesting exam attempt
+* Add new parameter to JS worker to pass attempt external id
+
 [4.12.1] - 2022-09-15
 ~~~~~~~~~~~~~~~~~~~~~
 * Revert Phantom JS and eslint migration made in version 4.11.0

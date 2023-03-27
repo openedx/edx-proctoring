@@ -45,7 +45,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         Class initializer
         """
-        # pylint: disable=no-member
         super().__init__(**kwargs)
         self.organization = organization
         self.exam_sponsor = exam_sponsor
@@ -95,7 +94,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
 
         return ssi_record_locator
 
-    def start_exam_attempt(self, exam, attempt):  # pylint: disable=unused-argument
+    def start_exam_attempt(self, exam, attempt):
         """
         Called when the exam attempt has been created but not started
         """
@@ -372,7 +371,6 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         browser other than PSI's secure browser
         """
         req = get_current_request()
-        # pylint: disable=illegal-waffle-usage
         return not req.get_signed_cookie('exam', default=False)
 
     def get_proctoring_config(self):

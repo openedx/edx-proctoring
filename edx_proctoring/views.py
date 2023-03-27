@@ -112,6 +112,8 @@ from edx_proctoring.utils import (
     obscured_user_id
 )
 
+User = get_user_model()
+
 ATTEMPTS_PER_PAGE = 25
 
 LOG = logging.getLogger("edx_proctoring_views")
@@ -119,7 +121,7 @@ LOG = logging.getLogger("edx_proctoring_views")
 
 def require_staff(func):
     """View decorator that requires that the user have staff permissions. """
-    def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
+    def wrapped(request, *args, **kwargs):
         if request.user.is_staff:
             return func(request, *args, **kwargs)
         return Response(
@@ -131,7 +133,7 @@ def require_staff(func):
 
 def require_course_or_global_staff(func):
     """View decorator that requires that the user have staff permissions. """
-    def wrapped(request, *args, **kwargs):  # pylint: disable=missing-docstring
+    def wrapped(request, *args, **kwargs):
         instructor_service = get_runtime_service('instructor')
         course_id = request.data.get('course_id') or kwargs.get('course_id', None)
         exam_id = request.data.get('exam_id') or kwargs.get('exam_id', None)
@@ -194,6 +196,47 @@ class ProctoredAPIView(AuthenticatedAPIView):
         return resp
 
 
+class ProctoredExamActiveAttemptView(ProctoredAPIView):
+    """
+    Endpoint for getting attempt data for an active exam attempt.
+
+    Supports:
+        HTTP GET:
+            Active attempt for any exam in progress (for the timer feature)
+    """
+    def get(self, request):
+        """
+        HTTP GET handler. Returns active attempt
+        """
+        user_id = request.user.id
+        requested_user_id = request.GET.get('user_id', None)
+        if requested_user_id:
+            if request.user.is_staff:
+                user_id = requested_user_id
+            else:
+                return Response(
+                    status=status.HTTP_403_FORBIDDEN,
+                    data={'detail': 'Must be a Staff User to Perform this request.'}
+                )
+
+        active_exams = get_active_exams_for_user(user_id)
+        if active_exams:
+            # Even if there is more than one exam, we want the first one.
+            # Normally this should not be an issue as there will be list of one item.
+            active_exam_info = active_exams[0]
+            active_exam = active_exam_info['exam']
+            active_attempt = active_exam_info['attempt']
+            active_attempt_data = get_exam_attempt_data(
+                active_exam.get('id'),
+                active_attempt.get('id'),
+                is_learning_mfe=True
+            )
+        else:
+            active_attempt_data = {}
+
+        return Response(data=active_attempt_data)
+
+
 class ProctoredExamAttemptView(ProctoredAPIView):
     """
     Endpoint for getting timed or proctored exam and its attempt data.
@@ -228,7 +271,18 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         is_learning_mfe = request.GET.get('is_learning_mfe') in ['1', 'true', 'True']
         content_id = request.GET.get('content_id', content_id)
 
-        active_exams = get_active_exams_for_user(request.user.id)
+        user_id = request.user.id
+        requested_user_id = request.GET.get('user_id', None)
+        if requested_user_id:
+            if request.user.is_staff:
+                user_id = requested_user_id
+            else:
+                return Response(
+                    status=status.HTTP_403_FORBIDDEN,
+                    data={'detail': 'Must be a Staff User to Perform this request.'}
+                )
+
+        active_exams = get_active_exams_for_user(user_id)
         if active_exams:
             # Even if there is more than one exam, we want the first one.
             # Normally this should not be an issue as there will be list of one item.
@@ -254,7 +308,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         else:
             try:
                 exam = get_exam_by_content_id(course_id, content_id)
-                attempt = get_current_exam_attempt(exam.get('id'), request.user.id)
+                attempt = get_current_exam_attempt(exam.get('id'), user_id)
                 if attempt:
                     attempt_data = get_exam_attempt_data(
                         exam.get('id'),
@@ -264,14 +318,14 @@ class ProctoredExamAttemptView(ProctoredAPIView):
                 else:
                     # calculate total allowed time for the exam including
                     # allowance time to show on the MFE entrance pages
-                    exam['total_time'] = get_total_allowed_time_for_exam(exam, request.user.id)
+                    exam['total_time'] = get_total_allowed_time_for_exam(exam, user_id)
 
                     # Exam hasn't been started yet but it is proctored so needs to be checked
                     # if prerequisites are satisfied. We only do this for proctored exam hence
                     # additional check 'not exam['is_practice_exam']', meaning we do not check
                     # prerequisites for practice or onboarding exams
                     if exam['is_proctored'] and not exam['is_practice_exam']:
-                        exam = check_prerequisites(exam, request.user.id)
+                        exam = check_prerequisites(exam, user_id)
 
                 # if user hasn't completed required onboarding exam before taking
                 # proctored exam we need to navigate them to it with a link
@@ -284,7 +338,8 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         if exam:
             provider = get_backend_provider(exam)
             exam['type'] = get_exam_type(exam, provider)['type']
-            exam['passed_due_date'] = is_exam_passed_due(exam, user=request.user.id)
+            exam['passed_due_date'] = is_exam_passed_due(exam, user=User.objects.get(id=user_id))
+            exam['use_legacy_attempt_api'] = True
         response_dict = {
             'exam': exam,
             'active_attempt': active_attempt_data,
@@ -344,7 +399,7 @@ class ProctoredExamReviewPolicyView(ProctoredAPIView):
         except ProctoredExamReviewPolicyNotFoundException as exc:
             LOG.warning(str(exc))
             review_policy = None
-        return Response(data=dict(review_policy=review_policy), status=status.HTTP_200_OK)
+        return Response(data={'review_policy': review_policy}, status=status.HTTP_200_OK)
 
 
 class ProctoredExamView(ProctoredAPIView):
@@ -457,7 +512,7 @@ class ProctoredExamView(ProctoredAPIView):
         )
         return Response({'exam_id': exam_id})
 
-    def get(self, request, exam_id=None, course_id=None, content_id=None):  # pylint: disable=unused-argument
+    def get(self, request, exam_id=None, course_id=None, content_id=None):
         """
         HTTP GET handler.
             Scenarios:
@@ -585,7 +640,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         * 'onboarding_past_due': Whether the onboarding exam is past due. All onboarding exams in the course must
           be past due in order for onboarding_past_due to be true.
     """
-    def get(self, request):  # pylint: disable=too-many-statements
+    def get(self, request):
         """
         HTTP GET handler. Returns the learner's onboarding status.
         """
@@ -918,7 +973,7 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
 
         # add modified time to each user in the paginated data, as Verificient's API does not currently return this data
         results = paginated_data['results']
-        response_users = [get_user_model().objects.get(username=(user['username'])) for user in results]
+        response_users = [get_user_model().objects.get(username=user['username']) for user in results]
         response_onboarding_data = self._get_onboarding_info_no_onboarding_api(
             course_id,
             onboarding_exam,
@@ -1340,7 +1395,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
         return Response(data)
 
     @method_decorator(require_course_or_global_staff)
-    def delete(self, request, attempt_id):  # pylint: disable=unused-argument
+    def delete(self, request, attempt_id):
         """
         HTTP DELETE handler. Removes an exam attempt.
         """
@@ -1405,7 +1460,7 @@ class StudentProctoredExamAttemptCollection(ProctoredAPIView):
         return the status of the exam attempt
     """
 
-    def get(self, request):  # pylint: disable=unused-argument
+    def get(self, request):
         """
         HTTP GET Handler. Returns the status of the exam attempt.
         """
@@ -1594,7 +1649,7 @@ class ExamAllowanceView(ProctoredAPIView):
         * returns Nothing. deletes the allowance for the user proctored exam.
     """
     @method_decorator(require_course_or_global_staff)
-    def get(self, request, course_id):  # pylint: disable=unused-argument
+    def get(self, request, course_id):
         """
         HTTP GET handler. Get all allowances for a course.
         Course and Global staff can view both timed and proctored exam allowances.
@@ -1772,7 +1827,7 @@ class ProctoredExamAttemptReviewStatus(ProctoredAPIView):
     Supports:
         HTTP PUT: Update the is_status_acknowledged flag
     """
-    def put(self, request, attempt_id):     # pylint: disable=unused-argument
+    def put(self, request, attempt_id):
         """
         Update the is_status_acknowledged flag for the specific attempt
         """
@@ -1803,7 +1858,7 @@ class ExamReadyCallback(ProctoredAPIView):
     Called by REST based proctoring backends to indicate that the learner is able to
     proceed with the exam.
     """
-    def post(self, request, external_id):  # pylint: disable=unused-argument
+    def post(self, request, external_id):
         """
         Post callback handler
         """
@@ -2125,7 +2180,7 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
     """
     Manage user information stored on the backends
     """
-    def post(self, request, user_id, **kwargs):  # pylint: disable=unused-argument
+    def post(self, request, user_id, **kwargs):
         """
         Deletes all user data for the particular user_id
         from all configured backends
@@ -2135,7 +2190,6 @@ class BackendUserManagementAPI(AuthenticatedAPIView):
         results = {}
         code = 200
         seen = set()
-        # pylint: disable=no-member
         attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id).select_related('proctored_exam')
         if attempts:
             for attempt in attempts:
@@ -2185,7 +2239,7 @@ class UserRetirement(AuthenticatedAPIView):
             allowance_history.value = ''
             allowance_history.save()
 
-    def post(self, request, user_id):  # pylint: disable=unused-argument
+    def post(self, request, user_id):
         """ Obfuscates all PII for a given user_id """
         if not request.user.has_perm('accounts.can_retire_user'):
             return Response(status=403)

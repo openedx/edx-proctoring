@@ -1,10 +1,6 @@
-# pylint: disable=too-many-lines
 """
 Data models for the proctoring subsystem
 """
-
-# pylint: disable=model-missing-unicode
-
 
 from datetime import datetime, timedelta
 
@@ -92,7 +88,7 @@ class ProctoredExam(TimeStampedModel):
         """
         try:
             proctored_exam = cls.objects.get(course_id=course_id, content_id=content_id)
-        except cls.DoesNotExist:  # pylint: disable=no-member
+        except cls.DoesNotExist:
             proctored_exam = None
         return proctored_exam
 
@@ -104,7 +100,7 @@ class ProctoredExam(TimeStampedModel):
         """
         try:
             proctored_exam = cls.objects.get(id=exam_id)
-        except cls.DoesNotExist:  # pylint: disable=no-member
+        except cls.DoesNotExist:
             proctored_exam = None
         return proctored_exam
 
@@ -174,7 +170,7 @@ class ProctoredExamReviewPolicy(TimeStampedModel):
 
         try:
             return cls.objects.get(proctored_exam_id=exam_id)
-        except cls.DoesNotExist:  # pylint: disable=no-member
+        except cls.DoesNotExist:
             return None
 
 
@@ -202,7 +198,7 @@ class ProctoredExamReviewPolicyHistory(TimeStampedModel):
         db_table = 'proctoring_proctoredexamreviewpolicyhistory'
         verbose_name = 'proctored exam review policy history'
 
-    def delete(self, *args, **kwargs):  # pylint: disable=signature-differs
+    def delete(self, *args, **kwargs):
         """
         Don't allow deletions!
         """
@@ -222,8 +218,8 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         try:
             exam_attempt_obj = self.filter(
                 proctored_exam_id=exam_id, user_id=user_id
-            ).latest('created')  # pylint: disable=no-member
-        except ObjectDoesNotExist:  # pylint: disable=no-member
+            ).latest('created')
+        except ObjectDoesNotExist:
             exam_attempt_obj = None
         return exam_attempt_obj
 
@@ -232,8 +228,8 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         Returns the Student Exam Attempt by the attempt_id else return None
         """
         try:
-            exam_attempt_obj = self.get(id=attempt_id)  # pylint: disable=no-member
-        except ObjectDoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = self.get(id=attempt_id)
+        except ObjectDoesNotExist:
             exam_attempt_obj = None
         return exam_attempt_obj
 
@@ -243,8 +239,8 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         else Returns None.
         """
         try:
-            exam_attempt_obj = self.get(attempt_code=attempt_code)  # pylint: disable=no-member
-        except ObjectDoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = self.get(attempt_code=attempt_code)
+        except ObjectDoesNotExist:
             exam_attempt_obj = None
         return exam_attempt_obj
 
@@ -254,8 +250,8 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         else Returns None.
         """
         try:
-            exam_attempt_obj = self.get(external_id=external_id)  # pylint: disable=no-member
-        except ObjectDoesNotExist:  # pylint: disable=no-member
+            exam_attempt_obj = self.get(external_id=external_id)
+        except ObjectDoesNotExist:
             exam_attempt_obj = None
         return exam_attempt_obj
 
@@ -264,7 +260,7 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         Returns the Student Exam Attempts for the given course_id.
         """
         filtered_query = Q(proctored_exam__course_id=course_id)
-        return self.filter(filtered_query).order_by('-created')  # pylint: disable=no-member
+        return self.filter(filtered_query).order_by('-created')
 
     def get_all_exam_attempts_by_exam_id(self, exam_id):
         """
@@ -317,13 +313,13 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         filtered_query = Q(proctored_exam__course_id=course_id) & (
             Q(user__username__contains=search_by) | Q(user__email__contains=search_by)
         )
-        return self.filter(filtered_query).order_by('-created')  # pylint: disable=no-member
+        return self.filter(filtered_query).order_by('-created')
 
     def get_proctored_exam_attempts(self, course_id, username):
         """
         Returns the Student's Proctored Exam Attempts for the given course_id.
         """
-        # pylint: disable=no-member
+
         return self.filter(
             proctored_exam__course_id=course_id,
             user__username=username,
@@ -340,14 +336,14 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         if course_id is not None:
             filtered_query = filtered_query & Q(proctored_exam__course_id=course_id)
 
-        return self.filter(filtered_query).order_by('-created')  # pylint: disable=no-member
+        return self.filter(filtered_query).order_by('-created')
 
     def clear_onboarding_errors(self, user_id):
         """
         Removes any attempts in the onboarding error states.
         (They will automatically be saved to the attempt history table)
         """
-        # pylint: disable=no-member
+
         self.filter(user_id=user_id,
                     status__in=ProctoredExamStudentAttemptStatus.onboarding_errors).delete()
 
@@ -450,7 +446,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
             status=status,
             review_policy_id=review_policy_id,
             time_remaining_seconds=time_remaining_seconds
-        )  # pylint: disable=no-member
+        )
 
     @classmethod
     def get_historic_attempt_by_code(cls, attempt_code):
@@ -562,7 +558,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         """
         try:
             student_allowance = cls.objects.get(proctored_exam_id=exam_id, user_id=user_id, key=key)
-        except cls.DoesNotExist:  # pylint: disable=no-member
+        except cls.DoesNotExist:
             student_allowance = None
         return student_allowance
 
@@ -581,7 +577,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
         user_id = None
 
         # see if key is a tuple, if it is, then the first element is the key
-        if isinstance(key, tuple) and len(key) > 0:  # pylint: disable=len-as-condition
+        if isinstance(key, tuple) and len(key) > 0:
             key = key[0]
 
         if not cls.is_allowance_value_valid(key, value):
@@ -619,7 +615,7 @@ class ProctoredExamStudentAllowance(TimeStampedModel):
             student_allowance.value = value
             student_allowance.save()
             action = "updated"
-        except cls.DoesNotExist:  # pylint: disable=no-member
+        except cls.DoesNotExist:
             student_allowance = cls.objects.create(proctored_exam_id=exam_id, user_id=user_id, key=key, value=value)
             action = "created"
         return student_allowance, action
@@ -754,7 +750,7 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
         try:
             review = cls.objects.get(attempt_code=attempt_code)
             return review
-        except cls.DoesNotExist:  # pylint: disable=no-member
+        except cls.DoesNotExist:
             return None
 
 

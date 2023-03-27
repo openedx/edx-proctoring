@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines, invalid-name, protected-access
+# pylint: disable=protected-access
 """
 Tests for the software_secure module
 """
@@ -272,7 +272,6 @@ class SoftwareSecureTests(TestCase):
             test_self.assertEqual(policy.review_policy, context['review_policy'])
 
             # call into real implementation
-            # pylint: disable=too-many-function-args
             result = software_secure_get_payload(self, exam, context)
 
             # assert that this is in the 'reviewerNotes' field that is passed to SoftwareSecure
@@ -319,7 +318,6 @@ class SoftwareSecureTests(TestCase):
             test_self.assertNotIn('review_policy', context)
 
             # call into real implementation
-            # pylint: disable=too-many-function-args
             result = software_secure_get_payload(self, exam, context)
 
             # assert that we use the default that is defined in system configuration
@@ -388,7 +386,6 @@ class SoftwareSecureTests(TestCase):
             assert_get_payload_mock_unicode_characters.called = True
 
             # call into real implementation
-            # pylint: disable=too-many-function-args
             result = software_secure_get_payload(self, exam, context)
             test_self.assertTrue(is_ascii(result['examName']))
             test_self.assertGreater(len(result['examName']), 0)

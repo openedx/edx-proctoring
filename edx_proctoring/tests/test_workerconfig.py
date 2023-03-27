@@ -17,12 +17,12 @@ from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 class TestWorkerConfig(unittest.TestCase):
     "Tests for generating webpack config json"
 
-    def setUp(self):  # pylint: disable=super-method-not-called
+    def setUp(self):
         super().setUp()
         self.outfile = tempfile.mktemp(prefix=f'test-{os.getpid()}')
         self.to_del = [self.outfile]
 
-    def tearDown(self):  # pylint: disable=super-method-not-called
+    def tearDown(self):
         for path in self.to_del:
             if os.path.exists(path):
                 os.unlink(path)

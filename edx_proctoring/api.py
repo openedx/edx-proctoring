@@ -818,6 +818,7 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
         'critically_low_threshold_sec': critically_low_threshold,
         'course_id': exam['course_id'],
         'attempt_id': attempt['id'],
+        'external_id': attempt['external_id'],
         'accessibility_time_string': _('you have {remaining_time} remaining').format(
             remaining_time=humanized_time(int(round(time_remaining_seconds / 60.0, 0)))
         ),
@@ -827,6 +828,9 @@ def get_exam_attempt_data(exam_id, attempt_id, is_learning_mfe=False):
             args=[attempt['id']]
         ),
         'attempt_ready_to_resume': is_attempt_ready_to_resume(attempt),
+        # used by the frontend to determine if attempt is managed by edx-proctoring
+        # instead of the newer edx-exams service
+        'use_legacy_attempt_api': True,
     }
 
     if provider:
@@ -881,11 +885,16 @@ def is_exam_passed_due(exam, user=None):
     Return whether the due date has passed.
     Uses edx_when to lookup the date for the subsection.
     """
+    due_date = get_exam_due_date(exam, user=user)
     return (
-        has_due_date_passed(get_exam_due_date(exam, user=user))
-        # if the exam is timed and passed the course end date, it should also be considered passed due
+        has_due_date_passed(due_date)
+        # If the exam is timed and passed the course end date, it should also be considered passed due, unless
+        # it has a due date set. The exam's due date has a higher priority than the course's end date.
         or (
-            not exam['is_proctored'] and not exam['is_practice_exam'] and has_end_date_passed(exam['course_id'])
+            not due_date
+            and not exam['is_proctored']
+            and not exam['is_practice_exam']
+            and has_end_date_passed(exam['course_id'])
         )
     )
 
@@ -3100,7 +3109,6 @@ def get_onboarding_attempt_data_for_learner(course_id, user, backend):
         * user: User object
         * backend: proctoring provider to filter exams on
     """
-    data = {'onboarding_status': None, 'expiration_date': None}
     attempts = ProctoredExamStudentAttempt.objects.get_proctored_practice_attempts_by_course_id(course_id, [user])
 
     # Default to the most recent attempt in the course if there are no verified attempts
@@ -3110,19 +3118,32 @@ def get_onboarding_attempt_data_for_learner(course_id, user, backend):
             relevant_attempt = attempt
             break
 
-    # If there is no verified attempt in the current course, check for a verified attempt in another course
-    verified_attempt = None
-    if not relevant_attempt or relevant_attempt.status != ProctoredExamStudentAttemptStatus.verified:
-        attempt_dict = get_last_verified_onboarding_attempts_per_user(
-            [user],
-            backend,
-        )
-        verified_attempt = attempt_dict.get(user.id)
+    if relevant_attempt and relevant_attempt.status == ProctoredExamStudentAttemptStatus.verified:
+        return {
+            'onboarding_status': relevant_attempt.status,
+            'expiration_date': relevant_attempt.modified + timedelta(days=constants.VERIFICATION_DAYS_VALID),
+        }
+
+    # otherwise look for another course's verified attempt
+    attempt_dict = get_last_verified_onboarding_attempts_per_user(
+         [user],
+         backend,
+    )
+    verified_attempt = attempt_dict.get(user.id)
 
     if verified_attempt:
-        data['onboarding_status'] = InstructorDashboardOnboardingAttemptStatus.other_course_approved
-        data['expiration_date'] = verified_attempt.modified + timedelta(days=constants.VERIFICATION_DAYS_VALID)
-    elif relevant_attempt:
-        data['onboarding_status'] = relevant_attempt.status
+        return {
+            'onboarding_status': InstructorDashboardOnboardingAttemptStatus.other_course_approved,
+            'expiration_date': verified_attempt.modified + timedelta(days=constants.VERIFICATION_DAYS_VALID),
+        }
 
-    return data
+    if relevant_attempt:
+        return {
+            'onboarding_status': relevant_attempt.status,
+            'expiration_date': None,
+        }
+
+    return {
+        'onboarding_status': None,
+        'expiration_date': None,
+    }

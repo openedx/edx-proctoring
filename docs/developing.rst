@@ -9,7 +9,7 @@ How do I use proctoring on devstack?
 * Create a test course
     * Follow the steps here: `Including Proctored Exams in Your Course <https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/proctored_exams/proctored_enabling.html>`_
         * Note that the UI may be different on devstack with Enable Proctored Exams in Advanced Settings
-* Read the `learner guide for using proctoring <http://edx.readthedocs.io/projects/edx-guide-for-students/en/latest/completing_assignments/SFD_proctored_exams.html>`_
+* Read the `learner guide for using proctoring <https://edx.readthedocs.io/projects/open-edx-learner-guide/en/latest/completing_assignments/proctored_exams.html>`_
 * Start out by trying a practice proctored exam to understand the process
 * The Instructor Dashboard has a "Special Exams" tab for administering proctoring
     * can add allowances per user, e.g. additional time for an exam
@@ -65,23 +65,20 @@ special exams in the Learning MFE.
 Make sure that `frontend-app-learning` is setup and running on your devstack.
 
 The special exam lib is installed as a dependency of Learning MFE.
-And for the local development module export flow should be overridden, the following steps are required:
+And for the local development module export flow should be overridden following the instructions at
+in `local-module-development <https://github.com/openedx/frontend-app-learning#local-module-development>`_
 
-* Create new directory `packages` in the `frontend-app-learning` repository and clone special exam library::
 
-    $ cd frontend-app-learning
-    $ mkdir packages
-    $ cd packages
-    $ git clone https://github.com/edx/frontend-lib-special-exams.git
 
-* override module export flow, create `module.config.js` file in the `frontend-app-learning`:
+* Example `module.config.js` file in `frontend-app-learning` assuming this library is located at
+  `$YOUR_WORKSPACE/src/frontend-lib-special-exams/`. Please note your project folders may be different:
 
 .. code-block::
 
   // module.config.js
   module.exports = {
     localModules: [
-      { moduleName: '@edx/frontend-lib-special-exams', dir: './packages/frontend-lib-special-exams', dist: 'src' },
+      { moduleName: '@edx/frontend-lib-special-exams', dir: '../src/frontend-lib-special-exams', dist: 'src' },
     ],
   };
 

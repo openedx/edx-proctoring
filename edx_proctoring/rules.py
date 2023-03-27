@@ -12,4 +12,5 @@ def is_in_reviewer_group(user, attempt):
     return user.groups.filter(name=backend_group).exists()
 
 
+# pylint: disable=unsupported-binary-operation
 rules.add_perm('edx_proctoring.can_review_attempt', is_in_reviewer_group | rules.is_staff)

@@ -2,3 +2,8 @@
 [MASTER]
 ignore = migrations
 load-plugins = edx_lint.pylint,pylint_django,pylint_celery
+[MESSAGES CONTROL]
+DISABLE+=
+    invalid-name,
+    django-not-configured,
+    consider-using-with,

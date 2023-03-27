@@ -335,7 +335,7 @@ class ProctoredExamSoftwareSecureReviewHistoryAdmin(ProctoredExamSoftwareSecureR
         'modified',
     ]
 
-    def save_model(self, request, obj, form, change):  # pylint: disable=unused-argument
+    def save_model(self, request, obj, form, change):
         """
         History can't be updated
         """
