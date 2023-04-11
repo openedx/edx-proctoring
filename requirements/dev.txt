@@ -47,7 +47,7 @@ edx-lint==5.3.4
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.10.7
+filelock==3.11.0
     # via
     #   tox
     #   virtualenv
@@ -93,7 +93,7 @@ pydantic==1.10.7
     # via rstcheck-core
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pygments==2.14.0
+pygments==2.15.0
     # via
     #   diff-cover
     #   rich
