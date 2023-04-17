@@ -6,7 +6,7 @@
 #
 asgiref==3.6.0
     # via django
-astroid==2.15.2
+astroid==2.15.3
     # via
     #   pylint
     #   pylint-celery
@@ -65,7 +65,7 @@ markupsafe==2.1.2
     # via jinja2
 mccabe==0.7.0
     # via pylint
-packaging==23.0
+packaging==23.1
     # via tox
 path==16.6.0
     # via

@@ -6,7 +6,7 @@
 #
 asgiref==3.6.0
     # via django
-astroid==2.15.2
+astroid==2.15.3
     # via
     #   pylint
     #   pylint-celery
