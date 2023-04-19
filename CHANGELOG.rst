@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.15.1] - 2023-04-19
+~~~~~~~~~~~~~~~~~~~~~
+* Fix bug in parameter for staff users to request another users attempt, which caused the resulting user id to
+  be a string as opposed to an integer.
+
 [4.15.0] - 2023-03-16
 ~~~~~~~~~~~~~~~~~~~~~
 * Add new endpoint get the currently active exam attempt.

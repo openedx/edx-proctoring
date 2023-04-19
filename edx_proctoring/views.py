@@ -212,7 +212,7 @@ class ProctoredExamActiveAttemptView(ProctoredAPIView):
         requested_user_id = request.GET.get('user_id', None)
         if requested_user_id:
             if request.user.is_staff:
-                user_id = requested_user_id
+                user_id = int(requested_user_id)
             else:
                 return Response(
                     status=status.HTTP_403_FORBIDDEN,
@@ -275,7 +275,7 @@ class ProctoredExamAttemptView(ProctoredAPIView):
         requested_user_id = request.GET.get('user_id', None)
         if requested_user_id:
             if request.user.is_staff:
-                user_id = requested_user_id
+                user_id = int(requested_user_id)
             else:
                 return Response(
                     status=status.HTTP_403_FORBIDDEN,
