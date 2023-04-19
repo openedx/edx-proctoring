@@ -38,7 +38,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.2.0
     # via celery
-cryptography==40.0.1
+cryptography==40.0.2
     # via pyjwt
 django==3.2.18
     # via
@@ -83,13 +83,13 @@ djangorestframework==3.14.0
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==5.3.0
+edx-django-utils==5.4.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   edx-when
     #   event-tracking
-edx-drf-extensions==8.4.1
+edx-drf-extensions==8.7.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -124,7 +124,7 @@ pbr==5.11.1
     # via stevedore
 prompt-toolkit==3.0.38
     # via click-repl
-psutil==5.9.4
+psutil==5.9.5
     # via edx-django-utils
 pycparser==2.21
     # via cffi
@@ -181,7 +181,7 @@ six==1.16.0
     #   python-dateutil
 slumber==0.7.1
     # via edx-rest-api-client
-sqlparse==0.4.3
+sqlparse==0.4.4
     # via django
 stevedore==5.0.0
     # via

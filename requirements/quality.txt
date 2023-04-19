@@ -6,7 +6,7 @@
 #
 asgiref==3.6.0
     # via django
-astroid==2.15.2
+astroid==2.15.3
     # via
     #   pylint
     #   pylint-celery
@@ -57,7 +57,7 @@ pydantic==1.10.7
     # via rstcheck-core
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pygments==2.14.0
+pygments==2.15.1
     # via rich
 pylint==2.17.2
     # via
@@ -91,7 +91,7 @@ six==1.16.0
     # via edx-lint
 snowballstemmer==2.2.0
     # via pydocstyle
-sqlparse==0.4.3
+sqlparse==0.4.4
     # via django
 stevedore==5.0.0
     # via code-annotations
@@ -110,6 +110,5 @@ typing-extensions==4.5.0
     #   astroid
     #   pydantic
     #   pylint
-    #   rich
 wrapt==1.15.0
     # via astroid
