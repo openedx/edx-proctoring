@@ -10,7 +10,7 @@ appdirs==1.4.4
 asgiref==3.6.0
     # via django
     # via celery
-bok-choy==1.1.1
+bok-choy==2.0.2
     # via -r requirements/test.in
     # via
     #   -c requirements/constraints.txt
@@ -235,7 +235,6 @@ semantic-version==2.10.0
     # via edx-drf-extensions
 six==1.16.0
     # via
-    #   bok-choy
     #   click-repl
     #   edx-drf-extensions
     #   event-tracking
