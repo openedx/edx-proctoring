@@ -13,17 +13,17 @@
 # Rui Ribeiro <info@nau.edu.pt>, 2020
 # Cátia Lopes <catia.lopes@bridgelk.com>, 2021
 # Filipa Macieira <filipa.macieira@fccn.pt>, 2021
-# Ivo Branco <ivo.branco@fccn.pt>, 2021
 # Nika Shahidian, 2022
+# Ivo Branco <ivo.branco@fccn.pt>, 2023
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-19 18:34+0000\n"
+"POT-Creation-Date: 2023-04-16 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: Nika Shahidian, 2022\n"
-"Language-Team: Portuguese (Portugal) (https://www.transifex.com/open-edx/teams/6205/pt_PT/)\n"
+"Last-Translator: Ivo Branco <ivo.branco@fccn.pt>, 2023\n"
+"Language-Team: Portuguese (Portugal) (https://app.transifex.com/open-edx/teams/6205/pt_PT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -206,11 +206,11 @@ msgstr "É Retomável"
 
 #: models.py:418
 msgid "Ready to Resume"
-msgstr ""
+msgstr "Pronto a Retomar"
 
 #: models.py:421
 msgid "Resumed"
-msgstr ""
+msgstr "Retomado"
 
 #: models.py:523
 msgid "Additional Time (minutes)"
@@ -1750,6 +1750,8 @@ msgstr "Nenhum estado API de integração para {proctor_service}"
 msgid ""
 "The onboarding service is temporarily unavailable. Please try again later."
 msgstr ""
+"O serviço de integração está temporariamente indisponível. Por favor, tente "
+"novamente mais tarde."
 
 #: views.py:1282
 msgid "you have less than a minute remaining"
@@ -1757,19 +1759,19 @@ msgstr "Tem menos de um minuto"
 
 #: views.py:1737
 msgid "Enter a valid username or email"
-msgstr ""
+msgstr "Insira um nome de utilizador ou email válido."
 
 #: views.py:1737
 msgid "user_info"
-msgstr ""
+msgstr "user_info"
 
 #: views.py:1750
 msgid "Enter a valid positive value number"
-msgstr ""
+msgstr "Insira um número positivo válido"
 
 #: views.py:1750
 msgid "allowance_value"
-msgstr ""
+msgstr "allowance_value"
 
 #: views.py:1837
 msgid "Cannot update attempt review status"
