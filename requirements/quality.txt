@@ -6,7 +6,7 @@
 #
 asgiref==3.6.0
     # via django
-astroid==2.15.3
+astroid==2.15.4
     # via
     #   pylint
     #   pylint-celery
@@ -49,7 +49,7 @@ mccabe==0.7.0
     # via pylint
 pbr==5.11.1
     # via stevedore
-platformdirs==3.2.0
+platformdirs==3.3.0
     # via pylint
 pycodestyle==2.10.0
     # via -r requirements/quality.in
@@ -59,7 +59,7 @@ pydocstyle==6.3.0
     # via -r requirements/quality.in
 pygments==2.15.1
     # via rich
-pylint==2.17.2
+pylint==2.17.3
     # via
     #   edx-lint
     #   pylint-celery

@@ -6,7 +6,7 @@
 #
 asgiref==3.6.0
     # via django
-astroid==2.15.3
+astroid==2.15.4
     # via
     #   pylint
     #   pylint-celery
@@ -75,7 +75,7 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.11.1
     # via stevedore
-platformdirs==3.2.0
+platformdirs==3.3.0
     # via
     #   pylint
     #   virtualenv
@@ -97,7 +97,7 @@ pygments==2.15.1
     # via
     #   diff-cover
     #   rich
-pylint==2.17.2
+pylint==2.17.3
     # via
     #   edx-lint
     #   pylint-celery
