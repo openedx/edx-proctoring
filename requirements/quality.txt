@@ -49,7 +49,7 @@ mccabe==0.7.0
     # via pylint
 pbr==5.11.1
     # via stevedore
-platformdirs==3.3.0
+platformdirs==3.5.0
     # via pylint
 pycodestyle==2.10.0
     # via -r requirements/quality.in
@@ -99,11 +99,11 @@ text-unidecode==1.3
     # via python-slugify
 tomli==2.0.1
     # via pylint
-tomlkit==0.11.7
+tomlkit==0.11.8
     # via pylint
 typer[all]==0.7.0
     # via rstcheck
-types-docutils==0.19.1.7
+types-docutils==0.19.1.8
     # via rstcheck-core
 typing-extensions==4.5.0
     # via

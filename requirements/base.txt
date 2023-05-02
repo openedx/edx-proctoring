@@ -161,7 +161,7 @@ pytz==2023.3
     #   xblock
 pyyaml==6.0
     # via xblock
-requests==2.28.2
+requests==2.29.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
