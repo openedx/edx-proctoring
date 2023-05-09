@@ -33,7 +33,7 @@ dill==0.3.6
     # via pylint
 distlib==0.3.6
     # via virtualenv
-django==3.2.18
+django==3.2.19
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
@@ -97,7 +97,7 @@ pygments==2.15.1
     # via
     #   diff-cover
     #   rich
-pylint==2.17.3
+pylint==2.17.4
     # via
     #   edx-lint
     #   pylint-celery
@@ -154,7 +154,7 @@ tox-battery==0.6.1
     # via -r requirements/dev.in
 typer[all]==0.7.0
     # via rstcheck
-types-docutils==0.19.1.8
+types-docutils==0.19.1.9
     # via rstcheck-core
 typing-extensions==4.5.0
     # via
