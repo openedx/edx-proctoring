@@ -121,11 +121,11 @@ diff_cover: test
 ## Localization targets
 
 extract_translations: ## extract strings to be translated, outputting .mo files
-	cd edx_proctoring && ../manage.py makemessages -l en -v1 -d django
-	cd edx_proctoring && ../manage.py makemessages -l en -v1 -d djangojs
+	cd edx_proctoring && django-admin makemessages -l en -v1 -d django
+	cd edx_proctoring && django-admin makemessages -l en -v1 -d djangojs
 
 compile_translations: ## compile translation files, outputting .po files for each supported language
-	cd edx_proctoring && ../manage.py compilemessages
+	cd edx_proctoring && django-admin compilemessages
 
 detect_changed_source_translations:
 	cd edx_proctoring && i18n_tool changed
