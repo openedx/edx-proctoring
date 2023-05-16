@@ -6,7 +6,7 @@
 #
 asgiref==3.6.0
     # via django
-astroid==2.15.4
+astroid==2.15.5
     # via
     #   pylint
     #   pylint-celery
@@ -49,7 +49,7 @@ mccabe==0.7.0
     # via pylint
 pbr==5.11.1
     # via stevedore
-platformdirs==3.5.0
+platformdirs==3.5.1
     # via pylint
 pycodestyle==2.10.0
     # via -r requirements/quality.in
@@ -69,7 +69,7 @@ pylint-celery==0.3
     # via edx-lint
 pylint-django==2.5.3
     # via edx-lint
-pylint-plugin-utils==0.7
+pylint-plugin-utils==0.8.1
     # via
     #   pylint-celery
     #   pylint-django
@@ -93,7 +93,7 @@ snowballstemmer==2.2.0
     # via pydocstyle
 sqlparse==0.4.4
     # via django
-stevedore==5.0.0
+stevedore==5.1.0
     # via code-annotations
 text-unidecode==1.3
     # via python-slugify
