@@ -8,7 +8,7 @@ amqp==5.1.1
     # via kombu
 appdirs==1.4.4
     # via fs
-asgiref==3.6.0
+asgiref==3.7.1
     # via django
 billiard==3.6.4.0
     # via celery
@@ -89,7 +89,7 @@ edx-django-utils==5.4.0
     #   edx-rest-api-client
     #   edx-when
     #   event-tracking
-edx-drf-extensions==8.7.0
+edx-drf-extensions==8.8.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -98,7 +98,7 @@ edx-opaque-keys==2.3.0
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
-edx-rest-api-client==5.5.1
+edx-rest-api-client==5.5.2
     # via -r requirements/base.in
 edx-when==2.3.0
     # via -r requirements/base.in
@@ -106,8 +106,6 @@ event-tracking==2.1.0
     # via -r requirements/base.in
 fs==2.4.16
     # via xblock
-future==0.18.3
-    # via pyjwkest
 idna==3.4
     # via requests
 jsonfield==3.1.0
@@ -128,12 +126,8 @@ psutil==5.9.5
     # via edx-django-utils
 pycparser==2.21
     # via cffi
-pycryptodomex==3.17
-    # via
-    #   -r requirements/base.in
-    #   pyjwkest
-pyjwkest==1.4.2
-    # via edx-drf-extensions
+pycryptodomex==3.18.0
+    # via -r requirements/base.in
 pyjwt[crypto]==2.7.0
     # via
     #   -r requirements/base.in
@@ -161,11 +155,10 @@ pytz==2023.3
     #   xblock
 pyyaml==6.0
     # via xblock
-requests==2.30.0
+requests==2.31.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
-    #   pyjwkest
     #   slumber
 rules==3.3
     # via -r requirements/base.in
@@ -177,7 +170,6 @@ six==1.16.0
     #   edx-drf-extensions
     #   event-tracking
     #   fs
-    #   pyjwkest
     #   python-dateutil
 slumber==0.7.1
     # via edx-rest-api-client
@@ -187,6 +179,8 @@ stevedore==5.1.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
+typing-extensions==4.6.1
+    # via asgiref
 urllib3==2.0.2
     # via requests
 vine==5.0.0
