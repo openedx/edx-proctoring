@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.7.1
+asgiref==3.7.2
     # via django
 astroid==2.15.5
     # via
@@ -105,7 +105,7 @@ typer[all]==0.7.0
     # via rstcheck
 types-docutils==0.19.1.9
     # via rstcheck-core
-typing-extensions==4.6.1
+typing-extensions==4.6.2
     # via
     #   asgiref
     #   astroid
