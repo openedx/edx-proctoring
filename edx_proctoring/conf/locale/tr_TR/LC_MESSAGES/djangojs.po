@@ -13,15 +13,15 @@
 # ali selek <aliselek01@gmail.com>, 2016
 # Burak Özalp <realburq@gmail.com>, 2016
 # Adem Özgür <admozgur@gmail.com>, 2021
-# Ali Işıngör <ali@artistanbul.io>, 2022
+# Ali Işıngör <ali@artistanbul.io>, 2023
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-09 18:34+0000\n"
+"POT-Creation-Date: 2023-06-04 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: Ali Işıngör <ali@artistanbul.io>, 2022\n"
+"Last-Translator: Ali Işıngör <ali@artistanbul.io>, 2023\n"
 "Language-Team: Turkish (Turkey) (https://app.transifex.com/open-edx/teams/6205/tr_TR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -43,11 +43,11 @@ msgstr "Tüm İncelenmemiş Hatalar"
 
 #: admin.py:140
 msgid "active proctored exams"
-msgstr "etkinleştirilmiş gözetmenli sınavlar"
+msgstr "etkinleştirilmiş gözetimli sınavlar"
 
 #: admin.py:195
 msgid "courses with active proctored exams"
-msgstr "gözetmenli sınavlara sahip dersler"
+msgstr "gözetimli sınavlara sahip dersler"
 
 #: admin.py:350
 msgid "Course Id"
@@ -129,7 +129,7 @@ msgstr "dersiniz"
 #: api.py:1743
 #, python-brace-format
 msgid "Proctoring Results For {course_name} {exam_name}"
-msgstr "{course_name} dersi {exam_name} sınavı için Gözetmen Sonuçları"
+msgstr "{course_name} dersi {exam_name} sınavı için Gözetim Sonuçları"
 
 #: api.py:1752
 #, python-brace-format
@@ -140,15 +140,15 @@ msgstr ""
 #: api.py:1770
 #, python-brace-format
 msgid "Proctored exam {exam_name} in {course_name} for user {username}"
-msgstr "{username} için {course_name} dersi {exam_name} gözetmenli sınavı"
+msgstr "{username} için {course_name} dersi {exam_name} gözetimli sınavı"
 
 #: api.py:2246
 msgid "Taking As Proctored Exam"
-msgstr "Gözetmenli Sınav Olarak Alınıyor"
+msgstr "Gözetimli Sınav Olarak Alınıyor"
 
 #: api.py:2251
 msgid "Proctored Option Available"
-msgstr "Gözetmenli Seçenek Mevcut"
+msgstr "Gözetim Seçeneği Mevcut"
 
 #: api.py:2256
 msgid "Taking As Open Exam"
@@ -160,15 +160,15 @@ msgstr "Bekleyen Oturum İncelemesi"
 
 #: api.py:2271
 msgid "Passed Proctoring"
-msgstr "Başarılı Gözetmenli Sınav"
+msgstr "Başarılı Gözetimli Sınav"
 
 #: api.py:2276 api.py:2281
 msgid "Failed Proctoring"
-msgstr "Başarısız Gözetmenli Sınav"
+msgstr "Başarısız Gözetimli Sınav"
 
 #: api.py:2286
 msgid "Proctored Option No Longer Available"
-msgstr "Gözetmenli Seçenek Artık Mevcut Değil"
+msgstr "Gözetim Seçeneği Artık Mevcut Değil"
 
 #: api.py:2295
 msgid "Ungraded Practice Exam"
@@ -192,7 +192,7 @@ msgstr "Oryantasyon durumu sorusu"
 
 #: models.py:391
 msgid "Taking as Proctored"
-msgstr "Gözetmenli Olarak Alınıyor"
+msgstr "Gözetimli Olarak Alınıyor"
 
 #: models.py:395
 msgid "Is Sample Attempt"
@@ -208,7 +208,7 @@ msgstr "Devam Etmeye Hazır"
 
 #: models.py:421
 msgid "Resumed"
-msgstr ""
+msgstr "Yeniden Başladı"
 
 #: models.py:523
 msgid "Additional Time (minutes)"
@@ -310,6 +310,9 @@ msgid ""
 "      Why this is important to you:\n"
 "    "
 msgstr ""
+"\n"
+"     Bu sizin için neden önemli:\n"
+"    "
 
 #: templates/onboarding_exam/entrance.html:18
 msgid ""
@@ -331,6 +334,9 @@ msgid ""
 "        Practice taking a proctored test\n"
 "      "
 msgstr ""
+"\n"
+"       Gözetimli bir sınava girme alıştırması yapın\n"
+"      "
 
 #: templates/onboarding_exam/entrance.html:34
 #, python-format
@@ -370,6 +376,9 @@ msgid ""
 "    You will be guided through online proctoring software set up and identity verification.\n"
 "  "
 msgstr ""
+"\n"
+"    Çevrimiçi gözetim yazılımı kurulumu ve kimlik doğrulaması boyunca size rehberlik edilecek.\n"
+"  "
 
 #: templates/onboarding_exam/error.html:4
 msgid ""
@@ -377,6 +386,9 @@ msgid ""
 "    Error: There was a problem with your onboarding session\n"
 "  "
 msgstr ""
+"\n"
+"    Hata: Gözetimli alıştırma oturumunuzda bir problem gerçekleşti\n"
+"  "
 
 #: templates/onboarding_exam/error.html:13
 msgid ""
@@ -508,6 +520,9 @@ msgid ""
 "        Try a proctored exam\n"
 "      "
 msgstr ""
+"\n"
+"       Gözetimli sınav dene\n"
+"      "
 
 #: templates/practice_exam/entrance.html:12
 msgid ""
@@ -516,6 +531,10 @@ msgid ""
 "        on your grade in the course.\n"
 "      "
 msgstr ""
+"\n"
+"       Ders sonrası gerçek sınavlar için gözetimli sınavları deneyimleyin. Alıştırma sınavı \n"
+"       ders notunuzu etkilemeyecek.\n"
+"    "
 
 #: templates/practice_exam/entrance.html:20
 msgid "Continue to my practice exam"
@@ -553,8 +572,8 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        Alıştırma sınavını tamamlamanızdan önce gözetmenli oturumunuz sona erdi.\n"
-"        Çevrimiçi gözetmen yazılımının kurulumunda bir sorun yaşadıysanız bu alıştırma sınavını tekrar deneyebilirsiniz.\n"
+"        Alıştırma sınavını tamamlamanızdan önce gözetimli oturumunuz sona erdi.\n"
+"        Çevrimiçi gözetim yazılımının kurulumunda bir sorun yaşadıysanız bu alıştırma sınavını tekrar deneyebilirsiniz.\n"
 "      "
 
 #: templates/practice_exam/submitted.html:5
@@ -564,7 +583,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        Bu gözetmenli alıştırma sınavını gönderdiniz\n"
+"        Bu gözetimli alıştırma sınavını gönderdiniz\n"
 "      "
 
 #: templates/practice_exam/submitted.html:13
@@ -582,7 +601,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        Bu sınavı gözetmensiz olarak almak istediğinize emin misiniz?\n"
+"        Bu sınavı gözetimsiz olarak almak istediğinize emin misiniz?\n"
 "      "
 
 #: templates/proctored_exam/confirm-decline.html:10
@@ -594,7 +613,7 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
-msgstr "Sınava Gözetmensiz Olarak Devam Et"
+msgstr "Sınava Gözetimsiz Olarak Devam Et"
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
@@ -609,7 +628,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"      Bu sınav gözetmenlidir\n"
+"      Bu sınav gözetimlidir\n"
 "    "
 
 #: templates/proctored_exam/entrance.html:9
@@ -623,7 +642,7 @@ msgstr ""
 #: templates/proctored_exam/entrance.html:15
 #: templates/proctored_exam/ready_to_resume.html:19
 msgid "Continue to my proctored exam."
-msgstr "Gözetmenli sınavıma devam et."
+msgstr "Gözetimli sınavıma devam et."
 
 #: templates/proctored_exam/entrance.html:18
 #: templates/proctored_exam/ready_to_resume.html:22
@@ -641,7 +660,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"     Gözetmenli sınavda hata\n"
+"      Gözetimli sınavda hata\n"
 "    "
 
 #: templates/proctored_exam/error.html:11
@@ -732,7 +751,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        Karşılanmayan ön gerekliler yüzünden, bu sınavı sadece gözetmensiz olarak alabilirsiniz.\n"
+"        Karşılanmayan öngerekliler yüzünden, bu sınavı sadece gözetimsiz olarak alabilirsiniz.\n"
 "      "
 
 #: templates/proctored_exam/failed-prerequisites.html:40
@@ -750,7 +769,7 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"        Gözetmenli Sınavlar Hakkında\n"
+"        Gözetimli Sınavlar Hakkında\n"
 "        "
 
 #: templates/proctored_exam/inactive_account.html:4
@@ -809,6 +828,9 @@ msgid ""
 "      Set up and start your proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"      Gözetimli sınavınızı kurun ve başlatın\n"
+"    "
 
 #: templates/proctored_exam/instructions.html:12
 msgid ""
@@ -860,7 +882,7 @@ msgstr ""
 
 #: templates/proctored_exam/instructions.html:51
 msgid "Copy Exam Code"
-msgstr ""
+msgstr "Sınav Kodunu Kopyala"
 
 #: templates/proctored_exam/instructions.html:54
 msgid ""
@@ -892,14 +914,18 @@ msgid ""
 "        Make sure you:\n"
 "      "
 msgstr ""
+"\n"
+"       Şunlardan emin olun:\n"
+"      "
 
 #: templates/proctored_exam/instructions.html:74
 msgid "Have a computer with a functioning webcam"
-msgstr ""
+msgstr "Çalışan bir web kamerası olan bir bilgisayara sahip olun"
 
 #: templates/proctored_exam/instructions.html:75
 msgid "Have your valid photo ID (e.g. driver's license or passport) ready"
 msgstr ""
+"Geçerli fotoğraflı kimliğinizi (örn. ehliyet veya pasaport) hazır bulundurun"
 
 #: templates/proctored_exam/instructions.html:81
 msgid ""
@@ -917,11 +943,14 @@ msgid ""
 "          For security and exam integrity reasons, we ask you to sign in to your edX account. Then we will direct you to the RPNow proctoring experience.\n"
 "        "
 msgstr ""
+"\n"
+"         Güvenlik ve sınav bütünlüğü nedeniyle, edX hesabınızda oturum açmanızı rica ediyoruz. Ardından sizi RPNow gözetim deneyimine yönlendireceğiz.\n"
+"        "
 
 #: templates/proctored_exam/instructions.html:100
 #: templates/proctored_exam/proctoring_opt_out_button.html:5
 msgid "Take this exam without proctoring."
-msgstr "Bu sınavı gözetmensiz olarak al."
+msgstr "Bu sınavı gözetimsiz olarak al."
 
 #: templates/proctored_exam/onboarding_error.html:4
 msgid ""
@@ -992,7 +1021,7 @@ msgstr ""
 
 #: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
-msgstr "Gözetmenli Sınav Oturumunuz Başladı"
+msgstr "Gözetimli Sınav Oturumunuz Başladı"
 
 #: templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
@@ -1001,9 +1030,9 @@ msgid ""
 "href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
 "proctoring rules</a> to pass the proctoring review for your exam. "
 msgstr ""
-" Bu noktadan itibaren, gözetmen denetiminden geçebilmek için <a "
+" Bu noktadan itibaren, gözetim denetiminden geçebilmek için <a "
 "href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">çevrimiçi "
-"gözetmenli sınav kurallarını</a> takip etmelisiniz."
+"gözetimli sınav kurallarını</a> takip etmelisiniz."
 
 #: templates/proctored_exam/proctoring_launch_callback.html:168
 msgid ""
@@ -1012,7 +1041,7 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"            Sınavınızı bitirmeden bu pencereyi kapatmayın. Bu pencereyi kapatmanız durumunda, gözetmenli sınav oturumunuz sona erecek ve sınavı başarıyla tamamlayamayacaksınız.\n"
+"            Sınavınızı bitirmeden bu pencereyi kapatmayın. Bu pencereyi kapatmanız durumunda, gözetimli sınav oturumunuz sona erecek ve sınavı başarıyla tamamlayamayacaksınız.\n"
 "          "
 
 #: templates/proctored_exam/proctoring_launch_callback.html:173
@@ -1075,7 +1104,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"      Gözetmenli Sınav Kuralları\n"
+"      Gözetimli Sınav Kuralları\n"
 "    "
 
 #: templates/proctored_exam/ready_to_start.html:23
@@ -1095,7 +1124,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"          %(platform_name)s Çevrimiçi Gözetmenli Sınav Kuralları\n"
+"          %(platform_name)s Çevrimiçi Gözetimli Sınav Kuralları\n"
 "      "
 
 #: templates/proctored_exam/ready_to_start.html:36
@@ -1133,7 +1162,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"      Gözetmenli sınavınızı sona erdirmek istediğinize emin misiniz?\n"
+"      Gözetimli sınavınızı sona erdirmek istediğinize emin misiniz?\n"
 "    "
 
 #: templates/proctored_exam/ready_to_submit.html:10
@@ -1150,7 +1179,7 @@ msgstr ""
 
 #: templates/proctored_exam/ready_to_submit.html:15
 msgid "Yes, end my proctored exam"
-msgstr "Evet, gözetmenli sınavımı sonlandır"
+msgstr "Evet, gözetimli sınavımı sonlandır"
 
 #: templates/proctored_exam/ready_to_submit.html:16
 msgid "Ending Exam"
@@ -1195,7 +1224,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"      Gözetmenli sınavınızı inceleme için gönderdiniz\n"
+"      Gözetimli sınavınızı inceleme için gönderdiniz\n"
 "    "
 
 #: templates/proctored_exam/submitted.html:9
@@ -1222,7 +1251,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"      Gözetmenli sınavınızın sonucuna dair sorularınız varsa, lütfen %(platform_name)s Destek Ekibi ile iletişime geçin.\n"
+"      Gözetimli sınavınızın sonucuna dair sorularınız varsa, lütfen %(platform_name)s Destek Ekibi ile iletişime geçin.\n"
 "    "
 
 #: templates/proctored_exam/verified.html:5
@@ -1413,7 +1442,7 @@ msgstr " ve {num_of_minutes} dakika"
 
 #: utils.py:342
 msgid "a proctored exam"
-msgstr "bir gözetmenli sınav"
+msgstr "bir gözetimli sınav"
 
 #: utils.py:345
 msgid "a timed exam"
