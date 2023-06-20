@@ -126,7 +126,7 @@ httpretty==1.1.4
     # via -r requirements/test.in
 idna==3.4
     # via requests
-importlib-metadata==6.6.0
+importlib-metadata==6.7.0
     # via logilab-common
 iniconfig==2.0.0
     # via pytest
@@ -232,7 +232,6 @@ semantic-version==2.10.0
     # via edx-drf-extensions
 six==1.16.0
     # via
-    #   click-repl
     #   edx-drf-extensions
     #   event-tracking
     #   fs
