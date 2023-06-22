@@ -193,8 +193,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
         )
 
         self.assertQuerysetEqual(
-            ProctoredExam.get_practice_proctored_exams_for_course(course_id),
-            [(exam) for exam in practice_proctored_exams]
+            ProctoredExam.get_practice_proctored_exams_for_course(course_id), list(practice_proctored_exams)
         )
 
 
