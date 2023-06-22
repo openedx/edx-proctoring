@@ -49,7 +49,7 @@ mccabe==0.7.0
     # via pylint
 pbr==5.11.1
     # via stevedore
-platformdirs==3.5.3
+platformdirs==3.6.0
     # via pylint
 pycodestyle==2.10.0
     # via -r requirements/quality.in
