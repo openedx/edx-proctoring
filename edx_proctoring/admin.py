@@ -500,5 +500,3 @@ def prettify_course_id(course_id):
     Prettify the COURSE ID string
     """
     return course_id.replace('+', ' ').replace('/', ' ').replace('course-v1:', '')
-
-
