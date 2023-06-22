@@ -22,6 +22,7 @@ jobs:
           [
             "django32-drflatest",
             "django40-drflatest",
+            "django42-drflatest",
             "quality",
             "pii_check",
             "version_check",
@@ -57,7 +58,7 @@ jobs:
         run: tox
 
       - name: Run Coverage
-        if: matrix.toxenv == 'django32-drflatest'
+        if: matrix.toxenv == 'django42-drflatest'
         uses: codecov/codecov-action@v3
         with:
           flags: unittests

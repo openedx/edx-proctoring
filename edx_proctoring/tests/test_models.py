@@ -192,7 +192,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
             is_practice_exam=True
         )
 
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             ProctoredExam.get_practice_proctored_exams_for_course(course_id),
             [repr(exam) for exam in practice_proctored_exams]
         )

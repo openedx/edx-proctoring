@@ -1,9 +1,9 @@
 
 
 from django.conf import settings
-from django.conf.urls import include
 
 from edx_proctoring import views
+from django.urls import include
 from django.urls import path, re_path
 
 urlpatterns = [
