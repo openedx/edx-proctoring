@@ -108,7 +108,7 @@ edx-opaque-keys==2.3.0
     #   edx-when
 edx-rest-api-client==5.5.2
     # via -r requirements/base.in
-edx-when==2.3.0
+edx-when==2.4.0
     # via -r requirements/base.in
 event-tracking==2.1.0
     # via -r requirements/base.in
@@ -149,7 +149,7 @@ mock==5.0.2
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via logilab-common
-newrelic==8.8.0
+newrelic==8.8.1
     # via edx-django-utils
 packaging==23.1
     # via pytest
@@ -157,7 +157,7 @@ path==16.6.0
     # via edx-i18n-tools
 pbr==5.11.1
     # via stevedore
-pluggy==1.0.0
+pluggy==1.2.0
     # via pytest
 polib==1.2.0
     # via edx-i18n-tools
@@ -180,7 +180,7 @@ pymongo==3.13.0
     #   event-tracking
 pynacl==1.5.0
     # via edx-django-utils
-pytest==7.3.2
+pytest==7.4.0
     # via
     #   pytest-cov
     #   pytest-django
