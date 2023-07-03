@@ -75,11 +75,11 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.11.1
     # via stevedore
-platformdirs==3.5.3
+platformdirs==3.8.0
     # via
     #   pylint
     #   virtualenv
-pluggy==1.0.0
+pluggy==1.2.0
     # via
     #   diff-cover
     #   tox
@@ -163,7 +163,7 @@ typing-extensions==4.6.3
     #   pydantic
     #   pylint
     #   rich
-virtualenv==20.23.0
+virtualenv==20.23.1
     # via tox
 wheel==0.40.0
     # via -r requirements/dev.in
