@@ -29,7 +29,8 @@ jobs:
             "js_tests",
             "js_lint",
             "rst_validation",
-            "translations",
+            "translations-django32",
+            "translations-django42",
           ]
     steps:
       - uses: actions/checkout@v1
