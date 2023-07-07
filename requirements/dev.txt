@@ -33,7 +33,7 @@ dill==0.3.6
     # via pylint
 distlib==0.3.6
     # via virtualenv
-django==3.2.19
+django==3.2.20
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
@@ -89,7 +89,7 @@ py==1.11.0
     # via tox
 pycodestyle==2.10.0
     # via -r requirements/quality.in
-pydantic==1.10.9
+pydantic==1.10.10
     # via rstcheck-core
 pydocstyle==6.3.0
     # via -r requirements/quality.in
@@ -156,7 +156,7 @@ typer[all]==0.7.0
     # via rstcheck
 types-docutils==0.19.1.9
     # via rstcheck-core
-typing-extensions==4.6.3
+typing-extensions==4.7.1
     # via
     #   asgiref
     #   astroid

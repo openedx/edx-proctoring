@@ -112,7 +112,7 @@ edx-when==2.4.0
     # via -r requirements/base.in
 event-tracking==2.1.0
     # via -r requirements/base.in
-exceptiongroup==1.1.1
+exceptiongroup==1.1.2
     # via pytest
 execnet==1.9.0
     # via pytest-xdist
@@ -255,7 +255,7 @@ tomli==2.0.1
     #   pytest
 types-pyyaml==6.0.12.10
     # via responses
-typing-extensions==4.6.3
+typing-extensions==4.7.1
     # via
     #   asgiref
     #   kombu
