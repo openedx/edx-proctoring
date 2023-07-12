@@ -43,6 +43,7 @@ class ProctoredExamForm(forms.ModelForm):
         fields = '__all__'
 
 
+@admin.register(ProctoredExam)
 class ProctoredExamAdmin(admin.ModelAdmin):
     """
     Admin panel for Proctored Exams
@@ -51,6 +52,7 @@ class ProctoredExamAdmin(admin.ModelAdmin):
     search_fields = ['course_id', 'exam_name']
 
 
+@admin.register(ProctoredExamReviewPolicy)
 class ProctoredExamReviewPolicyAdmin(admin.ModelAdmin):
     """
     The admin panel for Review Policies
@@ -244,6 +246,7 @@ class ProctoredExamCoursesListFilter(admin.SimpleListFilter):
         )
 
 
+@admin.register(ProctoredExamSoftwareSecureReview)
 class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     """
     The admin panel for SoftwareSecure Review records
@@ -320,6 +323,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         return super().lookup_allowed(lookup, value)
 
 
+@admin.register(ProctoredExamSoftwareSecureReviewHistory)
 class ProctoredExamSoftwareSecureReviewHistoryAdmin(ProctoredExamSoftwareSecureReviewAdmin):
     """
     The admin panel for SoftwareSecure Review records
@@ -408,6 +412,7 @@ class ProctoredExamAttemptForm(forms.ModelForm):
     status = forms.ChoiceField(choices=STATUS_CHOICES)
 
 
+@admin.register(ProctoredExamStudentAttempt)
 class ProctoredExamStudentAttemptAdmin(SimpleHistoryAdmin):
     """
     Admin panel for Proctored Exam Attempts
@@ -495,10 +500,3 @@ def prettify_course_id(course_id):
     Prettify the COURSE ID string
     """
     return course_id.replace('+', ' ').replace('/', ' ').replace('course-v1:', '')
-
-
-admin.site.register(ProctoredExam, ProctoredExamAdmin)
-admin.site.register(ProctoredExamStudentAttempt, ProctoredExamStudentAttemptAdmin)
-admin.site.register(ProctoredExamReviewPolicy, ProctoredExamReviewPolicyAdmin)
-admin.site.register(ProctoredExamSoftwareSecureReview, ProctoredExamSoftwareSecureReviewAdmin)
-admin.site.register(ProctoredExamSoftwareSecureReviewHistory, ProctoredExamSoftwareSecureReviewHistoryAdmin)
