@@ -12,7 +12,7 @@ astroid==2.15.6
     #   pylint-celery
 chardet==5.1.0
     # via diff-cover
-click==8.1.4
+click==8.1.5
     # via
     #   -c requirements/constraints.txt
     #   click-log
@@ -27,11 +27,11 @@ colorama==0.4.6
     # via typer
 commonmark==0.9.1
     # via rich
-diff-cover==7.6.0
+diff-cover==7.7.0
     # via -r requirements/dev.in
 dill==0.3.6
     # via pylint
-distlib==0.3.6
+distlib==0.3.7
     # via virtualenv
 django==3.2.20
     # via
@@ -75,7 +75,7 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.11.1
     # via stevedore
-platformdirs==3.8.1
+platformdirs==3.9.1
     # via
     #   pylint
     #   virtualenv
@@ -115,7 +115,7 @@ python-slugify==8.0.1
     # via code-annotations
 pytz==2023.3
     # via django
-pyyaml==6.0
+pyyaml==6.0.1
     # via
     #   code-annotations
     #   edx-i18n-tools
@@ -163,7 +163,7 @@ typing-extensions==4.7.1
     #   pydantic
     #   pylint
     #   rich
-virtualenv==20.23.1
+virtualenv==20.24.0
     # via tox
 wheel==0.40.0
     # via -r requirements/dev.in

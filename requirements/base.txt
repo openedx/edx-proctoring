@@ -28,7 +28,7 @@ cffi==1.15.1
     #   pynacl
 charset-normalizer==3.2.0
     # via requests
-click==8.1.4
+click==8.1.5
     # via
     #   -c requirements/constraints.txt
     #   celery
@@ -157,7 +157,7 @@ pytz==2023.3
     #   djangorestframework
     #   event-tracking
     #   xblock
-pyyaml==6.0
+pyyaml==6.0.1
     # via xblock
 requests==2.31.0
     # via

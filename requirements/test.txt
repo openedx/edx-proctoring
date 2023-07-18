@@ -137,7 +137,7 @@ jsonfield==3.1.0
     # via celery
 lazy==1.5
     # via bok-choy
-logilab-common==1.9.8
+logilab-common==1.10.0
     # via -r requirements/test.in
 lxml==4.9.3
     # via xblock
@@ -207,7 +207,7 @@ pytz==2023.3
     #   djangorestframework
     #   event-tracking
     #   xblock
-pyyaml==6.0
+pyyaml==6.0.1
     # via
     #   code-annotations
     #   edx-i18n-tools
@@ -281,7 +281,7 @@ webob==1.8.7
     # via xblock
 xblock==1.6.2
     # via edx-when
-zipp==3.16.0
+zipp==3.16.2
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
