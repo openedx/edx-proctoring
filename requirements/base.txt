@@ -20,7 +20,7 @@ celery==5.3.1
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
-certifi==2023.5.7
+certifi==2023.7.22
     # via requests
 cffi==1.15.1
     # via
@@ -28,7 +28,7 @@ cffi==1.15.1
     #   pynacl
 charset-normalizer==3.2.0
     # via requests
-click==8.1.5
+click==8.1.6
     # via
     #   -c requirements/constraints.txt
     #   celery
@@ -87,7 +87,7 @@ djangorestframework==3.14.0
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==5.5.0
+edx-django-utils==5.6.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -132,7 +132,7 @@ pycparser==2.21
     # via cffi
 pycryptodomex==3.18.0
     # via -r requirements/base.in
-pyjwt[crypto]==2.7.0
+pyjwt[crypto]==2.8.0
     # via
     #   -r requirements/base.in
     #   drf-jwt
@@ -190,7 +190,7 @@ tzdata==2023.3
     # via
     #   backports-zoneinfo
     #   celery
-urllib3==2.0.3
+urllib3==2.0.4
     # via requests
 vine==5.0.0
     # via
