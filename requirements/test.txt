@@ -52,6 +52,7 @@ ddt==1.6.0
     #   -r requirements/base.in
     #   django-crum
     #   django-model-utils
+    #   django-waffle
     #   djangorestframework
     #   drf-jwt
     #   edx-django-utils
@@ -70,11 +71,9 @@ django-model-utils==4.3.1
     # via
     #   -r requirements/base.in
     #   edx-when
-django-simple-history==3.0.0
-    # via
-    #   -c requirements/common_constraints.txt
-    #   -r requirements/base.in
-django-waffle==3.0.0
+django-simple-history==3.3.0
+    # via -r requirements/base.in
+django-waffle==4.0.0
     # via
     #   -r requirements/base.in
     #   edx-django-utils
@@ -220,7 +219,7 @@ requests==2.31.0
     #   httmock
     #   responses
     #   slumber
-responses==0.23.1
+responses==0.23.2
     # via -r requirements/test.in
 rules==3.3
     # via -r requirements/base.in
