@@ -75,7 +75,7 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.11.1
     # via stevedore
-platformdirs==3.9.1
+platformdirs==3.10.0
     # via
     #   pylint
     #   virtualenv
@@ -87,7 +87,7 @@ polib==1.2.0
     # via edx-i18n-tools
 py==1.11.0
     # via tox
-pycodestyle==2.10.0
+pycodestyle==2.11.0
     # via -r requirements/quality.in
 pydantic==1.10.12
     # via rstcheck-core
