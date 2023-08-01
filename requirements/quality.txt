@@ -49,9 +49,9 @@ mccabe==0.7.0
     # via pylint
 pbr==5.11.1
     # via stevedore
-platformdirs==3.9.1
+platformdirs==3.10.0
     # via pylint
-pycodestyle==2.10.0
+pycodestyle==2.11.0
     # via -r requirements/quality.in
 pydantic==1.10.12
     # via rstcheck-core
@@ -59,7 +59,7 @@ pydocstyle==6.3.0
     # via -r requirements/quality.in
 pygments==2.15.1
     # via rich
-pylint==2.17.4
+pylint==2.17.5
     # via
     #   edx-lint
     #   pylint-celery
@@ -99,7 +99,7 @@ text-unidecode==1.3
     # via python-slugify
 tomli==2.0.1
     # via pylint
-tomlkit==0.11.8
+tomlkit==0.12.1
     # via pylint
 typer[all]==0.7.0
     # via rstcheck

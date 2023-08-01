@@ -75,7 +75,7 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.11.1
     # via stevedore
-platformdirs==3.9.1
+platformdirs==3.10.0
     # via
     #   pylint
     #   virtualenv
@@ -87,7 +87,7 @@ polib==1.2.0
     # via edx-i18n-tools
 py==1.11.0
     # via tox
-pycodestyle==2.10.0
+pycodestyle==2.11.0
     # via -r requirements/quality.in
 pydantic==1.10.12
     # via rstcheck-core
@@ -97,7 +97,7 @@ pygments==2.15.1
     # via
     #   diff-cover
     #   rich
-pylint==2.17.4
+pylint==2.17.5
     # via
     #   edx-lint
     #   pylint-celery
@@ -143,7 +143,7 @@ tomli==2.0.1
     # via
     #   pylint
     #   tox
-tomlkit==0.11.8
+tomlkit==0.12.1
     # via pylint
 tox==3.28.0
     # via
