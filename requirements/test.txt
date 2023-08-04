@@ -52,6 +52,7 @@ ddt==1.6.0
     #   -r requirements/base.in
     #   django-crum
     #   django-model-utils
+    #   django-waffle
     #   djangorestframework
     #   drf-jwt
     #   edx-django-utils
@@ -74,7 +75,7 @@ django-simple-history==3.0.0
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
-django-waffle==3.0.0
+django-waffle==4.0.0
     # via
     #   -r requirements/base.in
     #   edx-django-utils
@@ -106,7 +107,7 @@ edx-opaque-keys==2.3.0
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
-edx-rest-api-client==5.5.2
+edx-rest-api-client==5.6.0
     # via -r requirements/base.in
 edx-when==2.4.0
     # via -r requirements/base.in
@@ -149,7 +150,7 @@ mock==5.1.0
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via logilab-common
-newrelic==8.8.1
+newrelic==8.9.0
     # via edx-django-utils
 packaging==23.1
     # via pytest
@@ -220,7 +221,7 @@ requests==2.31.0
     #   httmock
     #   responses
     #   slumber
-responses==0.23.1
+responses==0.23.3
     # via -r requirements/test.in
 rules==3.3
     # via -r requirements/base.in
