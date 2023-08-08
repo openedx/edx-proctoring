@@ -10,7 +10,7 @@ astroid==2.15.6
     # via
     #   pylint
     #   pylint-celery
-chardet==5.1.0
+chardet==5.2.0
     # via diff-cover
 click==8.1.6
     # via
@@ -41,7 +41,7 @@ django==3.2.20
     #   edx-i18n-tools
 docutils==0.19
     # via rstcheck-core
-edx-i18n-tools==1.0.0
+edx-i18n-tools==1.1.0
     # via -r requirements/dev.in
 edx-lint==5.3.4
     # via
@@ -93,7 +93,7 @@ pydantic==1.10.12
     # via rstcheck-core
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pygments==2.15.1
+pygments==2.16.1
     # via
     #   diff-cover
     #   rich
@@ -165,7 +165,7 @@ typing-extensions==4.7.1
     #   rich
 virtualenv==20.24.2
     # via tox
-wheel==0.41.0
+wheel==0.41.1
     # via -r requirements/dev.in
 wrapt==1.15.0
     # via astroid

@@ -42,7 +42,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-cryptography==41.0.2
+cryptography==41.0.3
     # via pyjwt
 django==3.2.20
     # via
@@ -88,7 +88,7 @@ djangorestframework==3.14.0
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==5.6.0
+edx-django-utils==5.7.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -98,7 +98,7 @@ edx-drf-extensions==8.8.0
     # via
     #   -r requirements/base.in
     #   edx-when
-edx-opaque-keys==2.3.0
+edx-opaque-keys==2.4.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -107,7 +107,7 @@ edx-rest-api-client==5.6.0
     # via -r requirements/base.in
 edx-when==2.4.0
     # via -r requirements/base.in
-event-tracking==2.1.0
+event-tracking==2.2.0
     # via -r requirements/base.in
 fs==2.4.16
     # via xblock
@@ -200,11 +200,11 @@ vine==5.0.0
     #   kombu
 wcwidth==0.2.6
     # via prompt-toolkit
-web-fragments==2.0.0
+web-fragments==2.1.0
     # via xblock
 webob==1.8.7
     # via xblock
-xblock==1.6.2
+xblock==1.7.0
     # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
