@@ -107,7 +107,7 @@ edx-opaque-keys==2.3.0
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
-edx-rest-api-client==5.5.2
+edx-rest-api-client==5.6.0
     # via -r requirements/base.in
 edx-when==2.4.0
     # via -r requirements/base.in
@@ -221,7 +221,7 @@ requests==2.31.0
     #   httmock
     #   responses
     #   slumber
-responses==0.23.2
+responses==0.23.3
     # via -r requirements/test.in
 rules==3.3
     # via -r requirements/base.in
