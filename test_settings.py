@@ -58,6 +58,10 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+JWT_AUTH = {
+    'JWT_AUTH_COOKIE': 'edx-jwt-cookie'
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
