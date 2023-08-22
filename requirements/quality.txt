@@ -10,7 +10,7 @@ astroid==2.15.6
     # via
     #   pylint
     #   pylint-celery
-click==8.1.6
+click==8.1.7
     # via
     #   -c requirements/constraints.txt
     #   click-log
@@ -85,7 +85,7 @@ rstcheck==6.1.2
     # via -r requirements/quality.in
 rstcheck-core==1.0.3
     # via rstcheck
-shellingham==1.5.0.post1
+shellingham==1.5.3
     # via typer
 six==1.16.0
     # via edx-lint
