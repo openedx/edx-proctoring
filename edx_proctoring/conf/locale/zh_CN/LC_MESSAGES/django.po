@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-21 18:34+0000\n"
+"POT-Creation-Date: 2023-08-27 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: meelo <bbvy@qq.com>, 2021\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/open-edx/teams/6205/zh_CN/)\n"
@@ -31,91 +31,91 @@ msgstr ""
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: admin.py:110
+#: admin.py:112
 msgid "internally reviewed"
 msgstr "内部审核"
 
-#: admin.py:119
+#: admin.py:121
 msgid "All Unreviewed"
 msgstr "全部未审核"
 
-#: admin.py:120
+#: admin.py:122
 msgid "All Unreviewed Failures"
 msgstr "所有未审核的失败项"
 
-#: admin.py:140
+#: admin.py:142
 msgid "active proctored exams"
 msgstr "已激活监考功能"
 
-#: admin.py:195
+#: admin.py:197
 msgid "courses with active proctored exams"
 msgstr "已激活监考模式的课程"
 
-#: admin.py:350
+#: admin.py:354
 msgid "Course Id"
 msgstr "课程编号"
 
-#: admin.py:388
+#: admin.py:392
 msgid "Created"
 msgstr "已创建"
 
-#: admin.py:389
+#: admin.py:393
 msgid "Download Software Clicked"
 msgstr "已点击下载软件"
 
-#: admin.py:390
+#: admin.py:394
 msgid "Ready To Start"
 msgstr "准备开始"
 
-#: admin.py:391
+#: admin.py:395
 msgid "Started"
 msgstr "已经开始"
 
-#: admin.py:392
+#: admin.py:396
 msgid "Ready To Submit"
 msgstr "准备提交"
 
-#: admin.py:393
+#: admin.py:397
 msgid "Declined"
 msgstr "拒绝"
 
-#: admin.py:394
+#: admin.py:398
 msgid "Timed Out"
 msgstr "时间到"
 
-#: admin.py:395
+#: admin.py:399
 msgid "Submitted"
 msgstr "已提交"
 
-#: admin.py:396
+#: admin.py:400
 msgid "Second Review Required"
 msgstr "需要二次审核"
 
-#: admin.py:397
+#: admin.py:401
 msgid "Verified"
 msgstr "已认证"
 
-#: admin.py:398
+#: admin.py:402
 msgid "Rejected"
 msgstr "拒绝"
 
-#: admin.py:399
+#: admin.py:403
 msgid "Error"
 msgstr "错误"
 
-#: admin.py:403
+#: admin.py:407
 msgid "Onboarding Missing"
 msgstr ""
 
-#: admin.py:404
+#: admin.py:408
 msgid "Onboarding Failed"
 msgstr ""
 
-#: admin.py:405
+#: admin.py:409
 msgid "Onboarding Pending"
 msgstr ""
 
-#: admin.py:406
+#: admin.py:410
 msgid "Onboarding Expired"
 msgstr ""
 

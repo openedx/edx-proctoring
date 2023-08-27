@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-21 18:34+0000\n"
+"POT-Creation-Date: 2023-08-27 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: swaleh amin <mkupuofirstnameswaleh@yahoo.com>, 2021\n"
 "Language-Team: Swahili (Kenya) (https://app.transifex.com/open-edx/teams/6205/sw_KE/)\n"
@@ -26,91 +26,91 @@ msgstr ""
 "Language: sw_KE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:110
+#: admin.py:112
 msgid "internally reviewed"
 msgstr "yaliyopitiwa ndani"
 
-#: admin.py:119
+#: admin.py:121
 msgid "All Unreviewed"
 msgstr "Yote Hayajapitiwa upya"
 
-#: admin.py:120
+#: admin.py:122
 msgid "All Unreviewed Failures"
 msgstr "Makosa Yote ambayo Hayajapitiwa"
 
-#: admin.py:140
+#: admin.py:142
 msgid "active proctored exams"
 msgstr "mitihani yenye usimamizi"
 
-#: admin.py:195
+#: admin.py:197
 msgid "courses with active proctored exams"
 msgstr "kozi zenye mitihani yenye usimamizi"
 
-#: admin.py:350
+#: admin.py:354
 msgid "Course Id"
 msgstr "Kitambulisho cha Kozi"
 
-#: admin.py:388
+#: admin.py:392
 msgid "Created"
 msgstr "Imebuniwa"
 
-#: admin.py:389
+#: admin.py:393
 msgid "Download Software Clicked"
 msgstr "Programu ya Kupakua Imebofya"
 
-#: admin.py:390
+#: admin.py:394
 msgid "Ready To Start"
 msgstr "Ipo tayari kuanza"
 
-#: admin.py:391
+#: admin.py:395
 msgid "Started"
 msgstr "Imeanza"
 
-#: admin.py:392
+#: admin.py:396
 msgid "Ready To Submit"
 msgstr "Ipo tayari kuwasilishwa"
 
-#: admin.py:393
+#: admin.py:397
 msgid "Declined"
 msgstr "Imekataliwa"
 
-#: admin.py:394
+#: admin.py:398
 msgid "Timed Out"
 msgstr "Imepitwa na muda"
 
-#: admin.py:395
+#: admin.py:399
 msgid "Submitted"
 msgstr "Imewasilishwa"
 
-#: admin.py:396
+#: admin.py:400
 msgid "Second Review Required"
 msgstr "Inahitajika kukaguliwa kwa mara ya pili"
 
-#: admin.py:397
+#: admin.py:401
 msgid "Verified"
 msgstr "Imethibitishwa"
 
-#: admin.py:398
+#: admin.py:402
 msgid "Rejected"
 msgstr "Imekataliwa"
 
-#: admin.py:399
+#: admin.py:403
 msgid "Error"
 msgstr "Kosa"
 
-#: admin.py:403
+#: admin.py:407
 msgid "Onboarding Missing"
 msgstr ""
 
-#: admin.py:404
+#: admin.py:408
 msgid "Onboarding Failed"
 msgstr ""
 
-#: admin.py:405
+#: admin.py:409
 msgid "Onboarding Pending"
 msgstr ""
 
-#: admin.py:406
+#: admin.py:410
 msgid "Onboarding Expired"
 msgstr ""
 

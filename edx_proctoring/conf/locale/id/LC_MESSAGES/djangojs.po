@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-28 18:34+0000\n"
+"POT-Creation-Date: 2023-08-27 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Faizar Septiawan <faizarsangster@gmail.com>, 2023\n"
 "Language-Team: Indonesian (https://app.transifex.com/open-edx/teams/6205/id/)\n"
@@ -27,91 +27,91 @@ msgstr ""
 "Language: id\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: admin.py:110
+#: admin.py:112
 msgid "internally reviewed"
 msgstr "Telah diulas secara internal"
 
-#: admin.py:119
+#: admin.py:121
 msgid "All Unreviewed"
 msgstr "Semua yang belum diulas"
 
-#: admin.py:120
+#: admin.py:122
 msgid "All Unreviewed Failures"
 msgstr ""
 
-#: admin.py:140
+#: admin.py:142
 msgid "active proctored exams"
 msgstr "Ujian proktor aktif"
 
-#: admin.py:195
+#: admin.py:197
 msgid "courses with active proctored exams"
 msgstr "Pelatihan dengan ujian proktor aktif"
 
-#: admin.py:350
+#: admin.py:354
 msgid "Course Id"
 msgstr "Id pelatihan"
 
-#: admin.py:388
+#: admin.py:392
 msgid "Created"
 msgstr "Telah dibuat"
 
-#: admin.py:389
+#: admin.py:393
 msgid "Download Software Clicked"
 msgstr "Unduh software yang telah dipilih"
 
-#: admin.py:390
+#: admin.py:394
 msgid "Ready To Start"
 msgstr "Siap memulai"
 
-#: admin.py:391
+#: admin.py:395
 msgid "Started"
 msgstr "Dimulai"
 
-#: admin.py:392
+#: admin.py:396
 msgid "Ready To Submit"
 msgstr "Siap untuk mengirimkan"
 
-#: admin.py:393
+#: admin.py:397
 msgid "Declined"
 msgstr "Ditolak"
 
-#: admin.py:394
+#: admin.py:398
 msgid "Timed Out"
 msgstr "Waktu habis"
 
-#: admin.py:395
+#: admin.py:399
 msgid "Submitted"
 msgstr "Terkirim"
 
-#: admin.py:396
+#: admin.py:400
 msgid "Second Review Required"
 msgstr "Diperlukan ulasan kedua"
 
-#: admin.py:397
+#: admin.py:401
 msgid "Verified"
 msgstr "Terverifikasi"
 
-#: admin.py:398
+#: admin.py:402
 msgid "Rejected"
 msgstr "Ditolak"
 
-#: admin.py:399
+#: admin.py:403
 msgid "Error"
 msgstr "Kesalahan"
 
-#: admin.py:403
+#: admin.py:407
 msgid "Onboarding Missing"
 msgstr ""
 
-#: admin.py:404
+#: admin.py:408
 msgid "Onboarding Failed"
 msgstr ""
 
-#: admin.py:405
+#: admin.py:409
 msgid "Onboarding Pending"
 msgstr ""
 
-#: admin.py:406
+#: admin.py:410
 msgid "Onboarding Expired"
 msgstr ""
 
