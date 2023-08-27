@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-21 18:34+0000\n"
+"POT-Creation-Date: 2023-08-27 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Jesica Greco, 2022\n"
 "Language-Team: Spanish (Spain) (https://app.transifex.com/open-edx/teams/6205/es_ES/)\n"
@@ -29,91 +29,91 @@ msgstr ""
 "Language: es_ES\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
-#: admin.py:110
+#: admin.py:112
 msgid "internally reviewed"
 msgstr "Revisado internamente"
 
-#: admin.py:119
+#: admin.py:121
 msgid "All Unreviewed"
 msgstr "Todos sin revisar"
 
-#: admin.py:120
+#: admin.py:122
 msgid "All Unreviewed Failures"
 msgstr "Todas las fallas no revisadas"
 
-#: admin.py:140
+#: admin.py:142
 msgid "active proctored exams"
 msgstr "Exámenes supervisados activos"
 
-#: admin.py:195
+#: admin.py:197
 msgid "courses with active proctored exams"
 msgstr "cursos con exámenes activos supervisados"
 
-#: admin.py:350
+#: admin.py:354
 msgid "Course Id"
 msgstr "Id del curso"
 
-#: admin.py:388
+#: admin.py:392
 msgid "Created"
 msgstr "Creado"
 
-#: admin.py:389
+#: admin.py:393
 msgid "Download Software Clicked"
 msgstr "Descargar software"
 
-#: admin.py:390
+#: admin.py:394
 msgid "Ready To Start"
 msgstr "Listo para empezar"
 
-#: admin.py:391
+#: admin.py:395
 msgid "Started"
 msgstr "Inició"
 
-#: admin.py:392
+#: admin.py:396
 msgid "Ready To Submit"
 msgstr "Listo para enviar"
 
-#: admin.py:393
+#: admin.py:397
 msgid "Declined"
 msgstr "Rechazado"
 
-#: admin.py:394
+#: admin.py:398
 msgid "Timed Out"
 msgstr "Tiempo finalizado"
 
-#: admin.py:395
+#: admin.py:399
 msgid "Submitted"
 msgstr "Enviado"
 
-#: admin.py:396
+#: admin.py:400
 msgid "Second Review Required"
 msgstr "Es necesario revisarlo una segunda vez"
 
-#: admin.py:397
+#: admin.py:401
 msgid "Verified"
 msgstr "Verificado"
 
-#: admin.py:398
+#: admin.py:402
 msgid "Rejected"
 msgstr "Rechazado"
 
-#: admin.py:399
+#: admin.py:403
 msgid "Error"
 msgstr "Error"
 
-#: admin.py:403
+#: admin.py:407
 msgid "Onboarding Missing"
 msgstr "Falta incorporación"
 
-#: admin.py:404
+#: admin.py:408
 msgid "Onboarding Failed"
 msgstr "Error de incorporación"
 
-#: admin.py:405
+#: admin.py:409
 msgid "Onboarding Pending"
 msgstr "Incorporación pendiente"
 
-#: admin.py:406
+#: admin.py:410
 msgid "Onboarding Expired"
 msgstr "Incorporación caducada"
 

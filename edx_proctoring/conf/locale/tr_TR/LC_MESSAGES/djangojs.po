@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-04 18:34+0000\n"
+"POT-Creation-Date: 2023-08-27 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Ali Işıngör <ali@artistanbul.io>, 2023\n"
 "Language-Team: Turkish (Turkey) (https://app.transifex.com/open-edx/teams/6205/tr_TR/)\n"
@@ -29,91 +29,91 @@ msgstr ""
 "Language: tr_TR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin.py:110
+#: admin.py:112
 msgid "internally reviewed"
 msgstr "dahili olarak gözden geçirildi"
 
-#: admin.py:119
+#: admin.py:121
 msgid "All Unreviewed"
 msgstr "Tüm İncelenmeyenler"
 
-#: admin.py:120
+#: admin.py:122
 msgid "All Unreviewed Failures"
 msgstr "Tüm İncelenmemiş Hatalar"
 
-#: admin.py:140
+#: admin.py:142
 msgid "active proctored exams"
 msgstr "etkinleştirilmiş gözetimli sınavlar"
 
-#: admin.py:195
+#: admin.py:197
 msgid "courses with active proctored exams"
 msgstr "gözetimli sınavlara sahip dersler"
 
-#: admin.py:350
+#: admin.py:354
 msgid "Course Id"
 msgstr "Ders No"
 
-#: admin.py:388
+#: admin.py:392
 msgid "Created"
 msgstr "Oluşturuldu"
 
-#: admin.py:389
+#: admin.py:393
 msgid "Download Software Clicked"
 msgstr "Yazılım İndir'e Tıklandı"
 
-#: admin.py:390
+#: admin.py:394
 msgid "Ready To Start"
 msgstr "Başlamaya Hazır"
 
-#: admin.py:391
+#: admin.py:395
 msgid "Started"
 msgstr "Başladı"
 
-#: admin.py:392
+#: admin.py:396
 msgid "Ready To Submit"
 msgstr "Göndermeye Hazır"
 
-#: admin.py:393
+#: admin.py:397
 msgid "Declined"
 msgstr "Reddedildi"
 
-#: admin.py:394
+#: admin.py:398
 msgid "Timed Out"
 msgstr "Zaman Aşımına Uğradı"
 
-#: admin.py:395
+#: admin.py:399
 msgid "Submitted"
 msgstr "Girildi"
 
-#: admin.py:396
+#: admin.py:400
 msgid "Second Review Required"
 msgstr "İkinci Bir İnceleme Gerekli"
 
-#: admin.py:397
+#: admin.py:401
 msgid "Verified"
 msgstr "Onaylandı"
 
-#: admin.py:398
+#: admin.py:402
 msgid "Rejected"
 msgstr "Reddedildi"
 
-#: admin.py:399
+#: admin.py:403
 msgid "Error"
 msgstr "Hata"
 
-#: admin.py:403
+#: admin.py:407
 msgid "Onboarding Missing"
 msgstr "Oryantasyon Eksik"
 
-#: admin.py:404
+#: admin.py:408
 msgid "Onboarding Failed"
 msgstr "Oryantasyon Başarısız"
 
-#: admin.py:405
+#: admin.py:409
 msgid "Onboarding Pending"
 msgstr "Oryantasyon Beklemede"
 
-#: admin.py:406
+#: admin.py:410
 msgid "Onboarding Expired"
 msgstr "Oryantasyon Süresi Doldu"
 

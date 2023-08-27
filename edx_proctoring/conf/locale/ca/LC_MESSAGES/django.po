@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-21 18:34+0000\n"
+"POT-Creation-Date: 2023-08-27 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Juanjo Bote <juanjo.botev@ub.edu>, 2021\n"
 "Language-Team: Catalan (https://app.transifex.com/open-edx/teams/6205/ca/)\n"
@@ -24,91 +24,91 @@ msgstr ""
 "Language: ca\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:110
+#: admin.py:112
 msgid "internally reviewed"
 msgstr "Revisat internament"
 
-#: admin.py:119
+#: admin.py:121
 msgid "All Unreviewed"
 msgstr "Tots sense veure"
 
-#: admin.py:120
+#: admin.py:122
 msgid "All Unreviewed Failures"
 msgstr "Tots els errors que no s'han vist"
 
-#: admin.py:140
+#: admin.py:142
 msgid "active proctored exams"
 msgstr "exàmens supervisats actius"
 
-#: admin.py:195
+#: admin.py:197
 msgid "courses with active proctored exams"
 msgstr "cursos amb exàmens supervisats actius"
 
-#: admin.py:350
+#: admin.py:354
 msgid "Course Id"
 msgstr "Identificador del curs"
 
-#: admin.py:388
+#: admin.py:392
 msgid "Created"
 msgstr "Creat"
 
-#: admin.py:389
+#: admin.py:393
 msgid "Download Software Clicked"
 msgstr "Descarregueu el programari amb el clic fet"
 
-#: admin.py:390
+#: admin.py:394
 msgid "Ready To Start"
 msgstr "Preparar per Començar"
 
-#: admin.py:391
+#: admin.py:395
 msgid "Started"
 msgstr "Començat"
 
-#: admin.py:392
+#: admin.py:396
 msgid "Ready To Submit"
 msgstr "Preparat per enviar"
 
-#: admin.py:393
+#: admin.py:397
 msgid "Declined"
 msgstr "Rebutjat"
 
-#: admin.py:394
+#: admin.py:398
 msgid "Timed Out"
 msgstr "S'ha acabat el temps"
 
-#: admin.py:395
+#: admin.py:399
 msgid "Submitted"
 msgstr "Enviat"
 
-#: admin.py:396
+#: admin.py:400
 msgid "Second Review Required"
 msgstr "Es requereix una segona revisió"
 
-#: admin.py:397
+#: admin.py:401
 msgid "Verified"
 msgstr "Verificat"
 
-#: admin.py:398
+#: admin.py:402
 msgid "Rejected"
 msgstr "Es requereix una segona revisió"
 
-#: admin.py:399
+#: admin.py:403
 msgid "Error"
 msgstr "Error"
 
-#: admin.py:403
+#: admin.py:407
 msgid "Onboarding Missing"
 msgstr ""
 
-#: admin.py:404
+#: admin.py:408
 msgid "Onboarding Failed"
 msgstr ""
 
-#: admin.py:405
+#: admin.py:409
 msgid "Onboarding Pending"
 msgstr ""
 
-#: admin.py:406
+#: admin.py:410
 msgid "Onboarding Expired"
 msgstr ""
 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-21 18:34+0000\n"
+"POT-Creation-Date: 2023-08-27 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: LTMC Latvijas Tiesnešu mācību centrs <ltmc.training@gmail.com>, 2018\n"
 "Language-Team: Latvian (https://app.transifex.com/open-edx/teams/6205/lv/)\n"
@@ -21,91 +21,91 @@ msgstr ""
 "Language: lv\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);\n"
 
-#: admin.py:110
+#: admin.py:112
 msgid "internally reviewed"
 msgstr ""
 
-#: admin.py:119
+#: admin.py:121
 msgid "All Unreviewed"
 msgstr ""
 
-#: admin.py:120
+#: admin.py:122
 msgid "All Unreviewed Failures"
 msgstr ""
 
-#: admin.py:140
+#: admin.py:142
 msgid "active proctored exams"
 msgstr ""
 
-#: admin.py:195
+#: admin.py:197
 msgid "courses with active proctored exams"
 msgstr ""
 
-#: admin.py:350
+#: admin.py:354
 msgid "Course Id"
 msgstr "Kursa ID"
 
-#: admin.py:388
+#: admin.py:392
 msgid "Created"
 msgstr ""
 
-#: admin.py:389
+#: admin.py:393
 msgid "Download Software Clicked"
 msgstr ""
 
-#: admin.py:390
+#: admin.py:394
 msgid "Ready To Start"
 msgstr ""
 
-#: admin.py:391
+#: admin.py:395
 msgid "Started"
 msgstr ""
 
-#: admin.py:392
+#: admin.py:396
 msgid "Ready To Submit"
 msgstr ""
 
-#: admin.py:393
+#: admin.py:397
 msgid "Declined"
 msgstr ""
 
-#: admin.py:394
+#: admin.py:398
 msgid "Timed Out"
 msgstr ""
 
-#: admin.py:395
+#: admin.py:399
 msgid "Submitted"
 msgstr "Iesniegts izskatīšanai"
 
-#: admin.py:396
+#: admin.py:400
 msgid "Second Review Required"
 msgstr ""
 
-#: admin.py:397
+#: admin.py:401
 msgid "Verified"
 msgstr "Verificēts"
 
-#: admin.py:398
+#: admin.py:402
 msgid "Rejected"
 msgstr ""
 
-#: admin.py:399
+#: admin.py:403
 msgid "Error"
 msgstr "Kļūda"
 
-#: admin.py:403
+#: admin.py:407
 msgid "Onboarding Missing"
 msgstr ""
 
-#: admin.py:404
+#: admin.py:408
 msgid "Onboarding Failed"
 msgstr ""
 
-#: admin.py:405
+#: admin.py:409
 msgid "Onboarding Pending"
 msgstr ""
 
-#: admin.py:406
+#: admin.py:410
 msgid "Onboarding Expired"
 msgstr ""
 
