@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-27 18:34+0000\n"
+"POT-Creation-Date: 2023-09-03 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
 "Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2023\n"
 "Language-Team: French (Canada) (https://app.transifex.com/open-edx/teams/6205/fr_CA/)\n"
@@ -187,7 +187,7 @@ msgstr "Question sur le statut d'intégration"
 
 #: models.py:391
 msgid "Taking as Proctored"
-msgstr "Prendre comme examen surveillé"
+msgstr "Prendre comme surveillé"
 
 #: models.py:395
 msgid "Is Sample Attempt"
@@ -577,7 +577,7 @@ msgid ""
 msgstr ""
 "\n"
 "      Si vous avez fait une erreur dans cette soumission, vous pouvez redémarrer le processus d'intégration.\n"
-"      Votre soumission actuelle sera supprimée et ne sera pas examinée.\n"
+"      Votre soumission actuelle sera retirée et ne sera pas examinée.\n"
 "    "
 
 #: templates/onboarding_exam/submitted.html:41
@@ -885,7 +885,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Vous n'avez pas satisfait aux conditions préalables suivantes:"
+"    Vous n'avez pas satisfait aux conditions préalables suivantes :\n"
+"    "
 
 #: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
@@ -915,7 +916,8 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"À propos des examens surveillés"
+"        À propos des examens surveillés\n"
+"        "
 
 #: templates/proctored_exam/inactive_account.html:4
 msgid ""
@@ -1416,7 +1418,7 @@ msgid ""
 "Once you click \"Yes, end my proctored exam\", the exam will be closed, and "
 "your proctoring session will be submitted for review."
 msgstr ""
-"Une fois que vous aurez cliqué sur «Oui, terminer mon examen surveillé», "
+"Une fois que vous aurez cliqué sur \"Oui, terminer mon examen surveillé\", "
 "l'examen sera fermé et votre session de surveillance sera soumise pour "
 "examen."
 
@@ -1691,17 +1693,17 @@ msgstr "{num_of_minutes} minutes"
 #: utils.py:101
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr "ajouter {num_of_minutes} minute"
+msgstr "et {num_of_minutes} minute"
 
 #: utils.py:103
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr "{num_of_minutes} minutes"
+msgstr "{num_of_minutes} minute"
 
 #: utils.py:106
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr "ajouter {num_of_minutes} minutes"
+msgstr "et {num_of_minutes} minutes"
 
 #: utils.py:342
 msgid "a proctored exam"
