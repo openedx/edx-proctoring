@@ -16,7 +16,7 @@ backports-zoneinfo[tzdata]==0.2.1
     #   kombu
 billiard==4.1.0
     # via celery
-celery==5.3.1
+celery==5.3.4
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
@@ -44,7 +44,7 @@ click-repl==0.3.0
     # via celery
 cryptography==41.0.3
     # via pyjwt
-django==3.2.20
+django==3.2.21
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -94,7 +94,7 @@ edx-django-utils==5.7.0
     #   edx-rest-api-client
     #   edx-when
     #   event-tracking
-edx-drf-extensions==8.9.1
+edx-drf-extensions==8.9.2
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -115,7 +115,7 @@ idna==3.4
     # via requests
 jsonfield==3.1.0
     # via -r requirements/base.in
-kombu==5.3.1
+kombu==5.3.2
     # via celery
 lxml==4.9.3
     # via xblock
@@ -151,7 +151,7 @@ python-dateutil==2.8.2
     #   celery
     #   edx-drf-extensions
     #   xblock
-pytz==2023.3
+pytz==2023.3.post1
     # via
     #   -r requirements/base.in
     #   django
