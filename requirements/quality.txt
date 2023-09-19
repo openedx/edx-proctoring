@@ -89,7 +89,7 @@ pytz==2023.3.post1
     # via django
 pyyaml==6.0.1
     # via code-annotations
-rich==13.5.2
+rich==13.5.3
     # via typer
 rstcheck==6.2.0
     # via -r requirements/quality.in
@@ -113,7 +113,7 @@ tomlkit==0.12.1
     # via pylint
 typer[all]==0.9.0
     # via rstcheck
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   annotated-types
     #   asgiref
@@ -127,5 +127,5 @@ typing-extensions==4.7.1
     #   typer
 wrapt==1.15.0
     # via astroid
-zipp==3.16.2
+zipp==3.17.0
     # via importlib-metadata
