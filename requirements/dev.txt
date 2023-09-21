@@ -41,13 +41,13 @@ django==3.2.21
     #   edx-i18n-tools
 docutils==0.20.1
     # via rstcheck-core
-edx-i18n-tools==1.1.0
+edx-i18n-tools==1.2.0
     # via -r requirements/dev.in
 edx-lint==5.3.4
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.12.3
+filelock==3.12.4
     # via
     #   tox
     #   virtualenv
@@ -129,7 +129,7 @@ pyyaml==6.0.1
     # via
     #   code-annotations
     #   edx-i18n-tools
-rich==13.5.2
+rich==13.5.3
     # via typer
 rstcheck==6.2.0
     # via -r requirements/quality.in
@@ -164,12 +164,11 @@ tox-battery==0.6.2
     # via -r requirements/dev.in
 typer[all]==0.9.0
     # via rstcheck
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   annotated-types
     #   asgiref
     #   astroid
-    #   filelock
     #   pydantic
     #   pydantic-core
     #   pylint
@@ -183,5 +182,5 @@ wheel==0.41.2
     # via -r requirements/dev.in
 wrapt==1.15.0
     # via astroid
-zipp==3.16.2
+zipp==3.17.0
     # via importlib-metadata

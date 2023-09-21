@@ -94,7 +94,7 @@ edx-django-utils==5.7.0
     #   edx-rest-api-client
     #   edx-when
     #   event-tracking
-edx-drf-extensions==8.9.2
+edx-drf-extensions==8.10.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -131,7 +131,7 @@ psutil==5.9.5
     # via edx-django-utils
 pycparser==2.21
     # via cffi
-pycryptodomex==3.18.0
+pycryptodomex==3.19.0
     # via -r requirements/base.in
 pyjwt[crypto]==2.8.0
     # via
@@ -149,7 +149,6 @@ python-dateutil==2.8.2
     # via
     #   -r requirements/base.in
     #   celery
-    #   edx-drf-extensions
     #   xblock
 pytz==2023.3.post1
     # via
@@ -171,7 +170,6 @@ semantic-version==2.10.0
     # via edx-drf-extensions
 six==1.16.0
     # via
-    #   edx-drf-extensions
     #   event-tracking
     #   fs
     #   python-dateutil
@@ -183,7 +181,7 @@ stevedore==5.1.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   asgiref
     #   edx-opaque-keys
