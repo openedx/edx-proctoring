@@ -43,7 +43,7 @@ code-annotations==1.5.0
     # via -r requirements/test.in
 coverage[toml]==7.3.1
     # via pytest-cov
-cryptography==41.0.3
+cryptography==41.0.4
     # via pyjwt
 ddt==1.6.0
     # via -r requirements/test.in
@@ -102,7 +102,7 @@ edx-drf-extensions==8.10.0
     #   edx-when
 edx-i18n-tools==1.2.0
     # via -r requirements/test.in
-edx-opaque-keys==2.5.0
+edx-opaque-keys==2.5.1
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -150,7 +150,7 @@ mock==5.1.0
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via logilab-common
-newrelic==9.0.0
+newrelic==9.1.0
     # via edx-django-utils
 packaging==23.1
     # via pytest
@@ -252,7 +252,7 @@ tomli==2.0.1
     # via
     #   coverage
     #   pytest
-types-pyyaml==6.0.12.11
+types-pyyaml==6.0.12.12
     # via responses
 typing-extensions==4.8.0
     # via
@@ -264,7 +264,7 @@ tzdata==2023.3
     # via
     #   backports-zoneinfo
     #   celery
-urllib3==2.0.4
+urllib3==2.0.5
     # via
     #   requests
     #   responses
@@ -279,7 +279,7 @@ web-fragments==2.1.0
     # via xblock
 webob==1.8.7
     # via xblock
-xblock==1.7.0
+xblock==1.8.0
     # via edx-when
 zipp==3.17.0
     # via importlib-metadata
