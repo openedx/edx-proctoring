@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-24 18:34+0000\n"
+"POT-Creation-Date: 2023-10-01 18:34+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
 "Last-Translator: Pierre Mailhot <pierre.mailhot@gmail.com>, 2023\n"
 "Language-Team: French (Canada) (https://app.transifex.com/open-edx/teams/6205/fr_CA/)\n"
@@ -167,15 +167,15 @@ msgstr "L'option surveillée n'est plus disponible"
 
 #: api.py:2295
 msgid "Ungraded Practice Exam"
-msgstr "Examen de pratique non noté"
+msgstr "Examen d'entraînement non noté"
 
 #: api.py:2300
 msgid "Practice Exam Completed"
-msgstr "Examen de pratique terminé"
+msgstr "Examen d'entraînement terminé"
 
 #: api.py:2305
 msgid "Practice Exam Failed"
-msgstr "Examen de pratique échoué"
+msgstr "Examen d'entraînement échoué"
 
 #: api.py:2313
 msgid "Timed Exam"
@@ -640,13 +640,13 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        Familiarisez-vous avec la surveillance pour de vrais examens plus tard dans le cours. Cet examen de pratique n'a aucun impact\n"
+"        Familiarisez-vous avec la surveillance pour de vrais examens plus tard dans le cours. Cet examen d'entraînement n'a aucun impact\n"
 "        sur votre note dans le cours.\n"
 "      "
 
 #: templates/practice_exam/entrance.html:20
 msgid "Continue to my practice exam"
-msgstr "Continuer à mon examen de pratique"
+msgstr "Continuer à mon examen d'entraînement"
 
 #: templates/practice_exam/entrance.html:25
 msgid ""
@@ -665,7 +665,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        Il y a eu un problème avec votre séance d'examen surveillé de pratique\n"
+"        Il y a eu un problème avec votre séance d'examen surveillé d'entraînement\n"
 "      "
 
 #: templates/practice_exam/error.html:13
@@ -675,7 +675,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Les résultats de votre examen surveillé de pratique : <b class=\"failure\"> Insatisfaisant </b>"
+"Les résultats de votre examen surveillé d'entraînement : <b class=\"failure\"> Insatisfaisant </b>"
 
 #: templates/practice_exam/error.html:21
 msgid ""
@@ -685,8 +685,8 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        Votre session de surveillance s'est terminée avant que vous ayez terminé cet examen de pratique.\n"
-"        Vous pouvez réessayer cet examen de pratique si vous rencontrez des problèmes lors de la configuration du logiciel de surveillance en ligne.\n"
+"        Votre session de surveillance s'est terminée avant que vous ayez terminé cet examen d'entraînement.\n"
+"        Vous pouvez réessayer cet examen d'entraînement si vous rencontrez des problèmes lors de la configuration du logiciel de surveillance en ligne.\n"
 "      "
 
 #: templates/practice_exam/submitted.html:5
@@ -696,7 +696,7 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        Vous avez soumis cet examen de pratique surveillé\n"
+"        Vous avez soumis cet examen d'entraînement surveillé\n"
 "      "
 
 #: templates/practice_exam/submitted.html:13
@@ -707,8 +707,8 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        Les examens de pratique n'affectent pas votre note.\n"
-"        Vous avez terminé cet examen de pratique et pouvez continuer votre travail de cours.\n"
+"        Les examens d'entraînement n'affectent pas votre note.\n"
+"        Vous avez terminé cet examen d'entraînement et pouvez continuer votre travail de cours.\n"
 "      "
 
 #: templates/proctored_exam/confirm-decline.html:5
@@ -1716,7 +1716,7 @@ msgstr "un examen d'intégration"
 
 #: utils.py:350
 msgid "a practice exam"
-msgstr "un examen de pratique"
+msgstr "un examen d'entraînement"
 
 #: views.py:151
 msgid "could not determine the course_id"
