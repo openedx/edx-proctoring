@@ -73,7 +73,7 @@ mccabe==0.7.0
     # via pylint
 mdurl==0.1.2
     # via markdown-it-py
-packaging==23.1
+packaging==23.2
     # via tox
 path==16.7.1
     # via
@@ -83,7 +83,7 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==5.11.1
     # via stevedore
-platformdirs==3.10.0
+platformdirs==3.11.0
     # via
     #   pylint
     #   virtualenv
@@ -97,7 +97,7 @@ py==1.11.0
     # via tox
 pycodestyle==2.11.0
     # via -r requirements/quality.in
-pydantic==2.4.1
+pydantic==2.4.2
     # via rstcheck-core
 pydantic-core==2.10.1
     # via pydantic
@@ -107,7 +107,7 @@ pygments==2.16.1
     # via
     #   diff-cover
     #   rich
-pylint==2.17.6
+pylint==2.17.7
     # via
     #   edx-lint
     #   pylint-celery
@@ -129,7 +129,7 @@ pyyaml==6.0.1
     # via
     #   code-annotations
     #   edx-i18n-tools
-rich==13.5.3
+rich==13.6.0
     # via typer
 rstcheck==6.2.0
     # via -r requirements/quality.in
