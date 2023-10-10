@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-annotated-types==0.5.0
+annotated-types==0.6.0
     # via pydantic
 asgiref==3.7.2
     # via django
@@ -27,7 +27,7 @@ colorama==0.4.6
     # via typer
 dill==0.3.7
     # via pylint
-django==3.2.21
+django==3.2.22
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/quality.in
