@@ -59,7 +59,7 @@ pbr==5.11.1
     # via stevedore
 platformdirs==3.11.0
     # via pylint
-pycodestyle==2.11.0
+pycodestyle==2.11.1
     # via -r requirements/quality.in
 pydantic==2.4.2
     # via rstcheck-core
@@ -112,7 +112,9 @@ tomli==2.0.1
 tomlkit==0.12.1
     # via pylint
 typer[all]==0.9.0
-    # via rstcheck
+    # via
+    #   rstcheck
+    #   typer
 typing-extensions==4.8.0
     # via
     #   annotated-types

@@ -27,7 +27,7 @@ code-annotations==1.5.0
     # via edx-lint
 colorama==0.4.6
     # via typer
-diff-cover==7.7.0
+diff-cover==8.0.0
     # via -r requirements/dev.in
 dill==0.3.7
     # via pylint
@@ -97,7 +97,7 @@ polib==1.2.0
     # via edx-i18n-tools
 py==1.11.0
     # via tox
-pycodestyle==2.11.0
+pycodestyle==2.11.1
     # via -r requirements/quality.in
 pydantic==2.4.2
     # via rstcheck-core
@@ -165,7 +165,9 @@ tox==3.28.0
 tox-battery==0.6.2
     # via -r requirements/dev.in
 typer[all]==0.9.0
-    # via rstcheck
+    # via
+    #   rstcheck
+    #   typer
 typing-extensions==4.8.0
     # via
     #   annotated-types

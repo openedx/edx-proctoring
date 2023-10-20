@@ -94,7 +94,7 @@ edx-django-utils==5.7.0
     #   edx-rest-api-client
     #   edx-when
     #   event-tracking
-edx-drf-extensions==8.10.0
+edx-drf-extensions==8.12.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -103,7 +103,7 @@ edx-opaque-keys==2.5.1
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
-edx-rest-api-client==5.6.0
+edx-rest-api-client==5.6.1
     # via -r requirements/base.in
 edx-when==2.4.0
     # via -r requirements/base.in
@@ -131,7 +131,7 @@ pbr==5.11.1
     # via stevedore
 prompt-toolkit==3.0.39
     # via click-repl
-psutil==5.9.5
+psutil==5.9.6
     # via edx-django-utils
 pycparser==2.21
     # via cffi
@@ -143,6 +143,7 @@ pyjwt[crypto]==2.8.0
     #   drf-jwt
     #   edx-drf-extensions
     #   edx-rest-api-client
+    #   pyjwt
 pymongo==3.13.0
     # via
     #   edx-opaque-keys
