@@ -8,7 +8,7 @@ annotated-types==0.6.0
     # via pydantic
 asgiref==3.7.2
     # via django
-astroid==2.15.8
+astroid==3.0.1
     # via
     #   pylint
     #   pylint-celery
@@ -63,8 +63,6 @@ jinja2==3.1.2
     # via
     #   code-annotations
     #   diff-cover
-lazy-object-proxy==1.9.0
-    # via astroid
 lxml==4.9.3
     # via edx-i18n-tools
 markdown-it-py==3.0.0
@@ -109,7 +107,7 @@ pygments==2.16.1
     # via
     #   diff-cover
     #   rich
-pylint==2.17.7
+pylint==3.0.2
     # via
     #   edx-lint
     #   pylint-celery
@@ -117,7 +115,7 @@ pylint==2.17.7
     #   pylint-plugin-utils
 pylint-celery==0.3
     # via edx-lint
-pylint-django==2.5.3
+pylint-django==2.5.4
     # via edx-lint
 pylint-plugin-utils==0.8.2
     # via
@@ -161,9 +159,6 @@ tox==3.28.0
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
-    #   tox-battery
-tox-battery==0.6.2
-    # via -r requirements/dev.in
 typer[all]==0.9.0
     # via
     #   rstcheck
@@ -184,7 +179,5 @@ virtualenv==20.24.5
     # via tox
 wheel==0.41.2
     # via -r requirements/dev.in
-wrapt==1.15.0
-    # via astroid
 zipp==3.17.0
     # via importlib-metadata

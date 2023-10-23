@@ -8,7 +8,7 @@ annotated-types==0.6.0
     # via pydantic
 asgiref==3.7.2
     # via django
-astroid==2.15.8
+astroid==3.0.1
     # via
     #   pylint
     #   pylint-celery
@@ -45,8 +45,6 @@ isort==5.12.0
     #   pylint
 jinja2==3.1.2
     # via code-annotations
-lazy-object-proxy==1.9.0
-    # via astroid
 markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.3
@@ -69,7 +67,7 @@ pydocstyle==6.3.0
     # via -r requirements/quality.in
 pygments==2.16.1
     # via rich
-pylint==2.17.7
+pylint==3.0.2
     # via
     #   edx-lint
     #   pylint-celery
@@ -77,7 +75,7 @@ pylint==2.17.7
     #   pylint-plugin-utils
 pylint-celery==0.3
     # via edx-lint
-pylint-django==2.5.3
+pylint-django==2.5.4
     # via edx-lint
 pylint-plugin-utils==0.8.2
     # via
@@ -127,7 +125,5 @@ typing-extensions==4.8.0
     #   rstcheck
     #   rstcheck-core
     #   typer
-wrapt==1.15.0
-    # via astroid
 zipp==3.17.0
     # via importlib-metadata
