@@ -33,7 +33,7 @@ django==3.2.22
     #   -r requirements/quality.in
 docutils==0.20.1
     # via rstcheck-core
-edx-lint==5.3.4
+edx-lint==5.3.6
     # via -r requirements/quality.in
 importlib-metadata==6.8.0
     # via
@@ -75,7 +75,7 @@ pylint==3.0.2
     #   pylint-plugin-utils
 pylint-celery==0.3
     # via edx-lint
-pylint-django==2.5.4
+pylint-django==2.5.5
     # via edx-lint
 pylint-plugin-utils==0.8.2
     # via
@@ -93,7 +93,7 @@ rstcheck==6.2.0
     # via -r requirements/quality.in
 rstcheck-core==1.1.1
     # via rstcheck
-shellingham==1.5.3
+shellingham==1.5.4
     # via typer
 six==1.16.0
     # via edx-lint
