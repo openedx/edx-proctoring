@@ -7,7 +7,6 @@ diff-cover                # Changeset diff test coverage
 edx_lint                  # Python code linting rules
 edx-i18n-tools            # For i18n_tool dummy
 tox                       # virtualenv management for tests
-tox-battery               # Makes tox aware of requirements file changes
 wheel                     # For generation of wheels for PyPI
 path.py
 django
