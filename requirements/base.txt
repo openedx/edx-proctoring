@@ -42,7 +42,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-cryptography==41.0.4
+cryptography==41.0.5
     # via pyjwt
 django==3.2.22
     # via
@@ -62,7 +62,7 @@ django-crum==0.7.9
     # via
     #   -r requirements/base.in
     #   edx-django-utils
-django-ipware==5.0.1
+django-ipware==5.0.2
     # via -r requirements/base.in
 django-model-utils==4.3.1
     # via
@@ -204,7 +204,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.2.8
+wcwidth==0.2.9
     # via prompt-toolkit
 web-fragments==2.1.0
     # via xblock

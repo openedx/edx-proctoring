@@ -47,7 +47,7 @@ edx-lint==5.3.6
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.12.4
+filelock==3.13.1
     # via
     #   tox
     #   virtualenv
@@ -177,7 +177,7 @@ typing-extensions==4.8.0
     #   typer
 virtualenv==20.24.6
     # via tox
-wheel==0.41.2
+wheel==0.41.3
     # via -r requirements/dev.in
 zipp==3.17.0
     # via importlib-metadata
