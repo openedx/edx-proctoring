@@ -33,7 +33,7 @@ dill==0.3.7
     # via pylint
 distlib==0.3.7
     # via virtualenv
-django==3.2.22
+django==3.2.23
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
@@ -153,7 +153,7 @@ tomli==2.0.1
     # via
     #   pylint
     #   tox
-tomlkit==0.12.1
+tomlkit==0.12.2
     # via pylint
 tox==3.28.0
     # via
