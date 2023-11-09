@@ -27,7 +27,7 @@ colorama==0.4.6
     # via typer
 dill==0.3.7
     # via pylint
-django==3.2.22
+django==3.2.23
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/quality.in
@@ -107,7 +107,7 @@ text-unidecode==1.3
     # via python-slugify
 tomli==2.0.1
     # via pylint
-tomlkit==0.12.1
+tomlkit==0.12.2
     # via pylint
 typer[all]==0.9.0
     # via
