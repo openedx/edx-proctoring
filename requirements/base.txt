@@ -119,7 +119,7 @@ kombu==5.3.3
     # via celery
 lxml==4.9.3
     # via xblock
-mako==1.2.4
+mako==1.3.0
     # via xblock
 markupsafe==2.1.3
     # via
@@ -127,7 +127,7 @@ markupsafe==2.1.3
     #   xblock
 newrelic==9.1.1
     # via edx-django-utils
-pbr==5.11.1
+pbr==6.0.0
     # via stevedore
 prompt-toolkit==3.0.39
     # via click-repl

@@ -81,7 +81,7 @@ path==16.7.1
     #   path-py
 path-py==12.5.0
     # via -r requirements/dev.in
-pbr==5.11.1
+pbr==6.0.0
     # via stevedore
 platformdirs==3.11.0
     # via

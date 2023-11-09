@@ -3,7 +3,6 @@
 
 -r base.in
 
-bok-choy>=0.3.1
 code-annotations>=0.3.1
 ddt>=0.8.0
 edx-i18n-tools	          # be able to run `make validate_translations`
