@@ -53,15 +53,17 @@ mccabe==0.7.0
     # via pylint
 mdurl==0.1.2
     # via markdown-it-py
-pbr==5.11.1
+pbr==6.0.0
     # via stevedore
 platformdirs==3.11.0
-    # via pylint
+    # via
+    #   -c requirements/common_constraints.txt
+    #   pylint
 pycodestyle==2.11.1
     # via -r requirements/quality.in
-pydantic==2.4.2
+pydantic==2.5.0
     # via rstcheck-core
-pydantic-core==2.10.1
+pydantic-core==2.14.1
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
@@ -91,7 +93,7 @@ rich==13.6.0
     # via typer
 rstcheck==6.2.0
     # via -r requirements/quality.in
-rstcheck-core==1.1.1
+rstcheck-core==1.2.0
     # via rstcheck
 shellingham==1.5.4
     # via typer
