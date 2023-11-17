@@ -15,5 +15,4 @@ pytest-cov                # pytest extension for code coverage statistics
 pytest-django             # pytest extension for better Django support
 pytest-xdist              # pytest extension for parallel execution
 responses
-selenium>=2.45.0
 testfixtures>=4.0.0
