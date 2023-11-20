@@ -3,7 +3,6 @@
 
 -r base.in
 
-bok-choy>=0.3.1
 code-annotations>=0.3.1
 ddt>=0.8.0
 edx-i18n-tools	          # be able to run `make validate_translations`
@@ -16,5 +15,4 @@ pytest-cov                # pytest extension for code coverage statistics
 pytest-django             # pytest extension for better Django support
 pytest-xdist              # pytest extension for parallel execution
 responses
-selenium>=2.45.0
 testfixtures>=4.0.0
