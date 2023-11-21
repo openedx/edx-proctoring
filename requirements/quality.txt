@@ -67,7 +67,7 @@ pydantic-core==2.14.3
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pygments==2.16.1
+pygments==2.17.1
     # via rich
 pylint==3.0.2
     # via
