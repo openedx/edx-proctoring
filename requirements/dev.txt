@@ -105,13 +105,13 @@ polib==1.2.0
     # via edx-i18n-tools
 pycodestyle==2.11.1
     # via -r requirements/quality.in
-pydantic==2.5.1
+pydantic==2.5.2
     # via rstcheck-core
-pydantic-core==2.14.3
+pydantic-core==2.14.5
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pygments==2.17.1
+pygments==2.17.2
     # via
     #   diff-cover
     #   rich
@@ -164,7 +164,7 @@ tomli==2.0.1
     #   tox
 tomlkit==0.12.3
     # via pylint
-tox==4.11.3
+tox==4.11.4
     # via -r requirements/dev.in
 typer[all]==0.9.0
     # via
@@ -182,9 +182,9 @@ typing-extensions==4.8.0
     #   rstcheck
     #   rstcheck-core
     #   typer
-virtualenv==20.24.6
+virtualenv==20.24.7
     # via tox
-wheel==0.41.3
+wheel==0.42.0
     # via -r requirements/dev.in
 zipp==3.17.0
     # via importlib-metadata
