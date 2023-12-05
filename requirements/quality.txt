@@ -35,7 +35,7 @@ docutils==0.20.1
     # via rstcheck-core
 edx-lint==5.3.6
     # via -r requirements/quality.in
-importlib-metadata==6.8.0
+importlib-metadata==7.0.0
     # via
     #   rstcheck
     #   rstcheck-core
@@ -55,10 +55,8 @@ mdurl==0.1.2
     # via markdown-it-py
 pbr==6.0.0
     # via stevedore
-platformdirs==3.11.0
-    # via
-    #   -c requirements/common_constraints.txt
-    #   pylint
+platformdirs==4.1.0
+    # via pylint
 pycodestyle==2.11.1
     # via -r requirements/quality.in
 pydantic==2.5.2

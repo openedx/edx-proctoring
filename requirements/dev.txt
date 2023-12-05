@@ -57,7 +57,7 @@ filelock==3.13.1
     # via
     #   tox
     #   virtualenv
-importlib-metadata==6.8.0
+importlib-metadata==7.0.0
     # via
     #   rstcheck
     #   rstcheck-core
@@ -83,7 +83,7 @@ packaging==23.2
     # via
     #   pyproject-api
     #   tox
-path==16.7.1
+path==16.9.0
     # via
     #   edx-i18n-tools
     #   path-py
@@ -91,9 +91,8 @@ path-py==12.5.0
     # via -r requirements/dev.in
 pbr==6.0.0
     # via stevedore
-platformdirs==3.11.0
+platformdirs==4.1.0
     # via
-    #   -c requirements/common_constraints.txt
     #   pylint
     #   tox
     #   virtualenv
@@ -182,7 +181,7 @@ typing-extensions==4.8.0
     #   rstcheck
     #   rstcheck-core
     #   typer
-virtualenv==20.24.7
+virtualenv==20.25.0
     # via tox
 wheel==0.42.0
     # via -r requirements/dev.in
