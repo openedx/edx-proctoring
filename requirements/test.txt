@@ -65,7 +65,7 @@ django-crum==0.7.9
     # via
     #   -r requirements/base.in
     #   edx-django-utils
-django-ipware==6.0.0
+django-ipware==6.0.2
     # via -r requirements/base.in
 django-model-utils==4.3.1
     # via
@@ -75,7 +75,7 @@ django-simple-history==3.1.1
     # via
     #   -c requirements/constraints.txt
     #   -r requirements/base.in
-django-waffle==4.0.0
+django-waffle==4.1.0
     # via
     #   -r requirements/base.in
     #   edx-django-utils
@@ -96,7 +96,7 @@ edx-django-utils==5.9.0
     #   edx-rest-api-client
     #   edx-when
     #   event-tracking
-edx-drf-extensions==9.0.0
+edx-drf-extensions==9.0.1
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -117,7 +117,7 @@ exceptiongroup==1.2.0
     # via pytest
 execnet==2.0.2
     # via pytest-xdist
-freezegun==1.2.2
+freezegun==1.3.1
     # via -r requirements/test.in
 fs==2.4.16
     # via xblock
@@ -127,7 +127,7 @@ httpretty==1.1.4
     # via -r requirements/test.in
 idna==3.6
     # via requests
-importlib-metadata==6.8.0
+importlib-metadata==6.11.0
     # via logilab-common
 iniconfig==2.0.0
     # via pytest
@@ -136,7 +136,7 @@ jinja2==3.1.2
 jsonfield==3.1.0
     # via -r requirements/base.in
     # via celery
-logilab-common==1.11.0
+logilab-common==2.0.0
     # via -r requirements/test.in
 lxml==4.9.3
     # via
@@ -153,11 +153,11 @@ mock==5.1.0
     # via -r requirements/test.in
 mypy-extensions==1.0.0
     # via logilab-common
-newrelic==9.2.0
+newrelic==9.3.0
     # via edx-django-utils
 packaging==23.2
     # via pytest
-path==16.7.1
+path==16.9.0
     # via edx-i18n-tools
 pbr==6.0.0
     # via stevedore
@@ -256,7 +256,7 @@ tomli==2.0.1
     # via
     #   coverage
     #   pytest
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via
     #   asgiref
     #   edx-opaque-keys
