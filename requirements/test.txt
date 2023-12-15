@@ -127,7 +127,7 @@ httpretty==1.1.4
     # via -r requirements/test.in
 idna==3.6
     # via requests
-importlib-metadata==6.11.0
+importlib-metadata==7.0.0
     # via logilab-common
 iniconfig==2.0.0
     # via pytest
