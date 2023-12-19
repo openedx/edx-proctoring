@@ -33,7 +33,7 @@ colorama==0.4.6
     # via
     #   tox
     #   typer
-diff-cover==8.0.1
+diff-cover==8.0.2
     # via -r requirements/dev.in
 dill==0.3.7
     # via pylint
@@ -61,7 +61,7 @@ importlib-metadata==7.0.0
     # via
     #   rstcheck
     #   rstcheck-core
-isort==5.13.1
+isort==5.13.2
     # via
     #   -r requirements/quality.in
     #   pylint
