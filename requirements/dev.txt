@@ -33,7 +33,7 @@ colorama==0.4.6
     # via
     #   tox
     #   typer
-diff-cover==8.0.1
+diff-cover==8.0.2
     # via -r requirements/dev.in
 dill==0.3.7
     # via pylint
@@ -57,11 +57,11 @@ filelock==3.13.1
     # via
     #   tox
     #   virtualenv
-importlib-metadata==7.0.0
+importlib-metadata==7.0.1
     # via
     #   rstcheck
     #   rstcheck-core
-isort==5.13.1
+isort==5.13.2
     # via
     #   -r requirements/quality.in
     #   pylint
@@ -69,7 +69,7 @@ jinja2==3.1.2
     # via
     #   code-annotations
     #   diff-cover
-lxml==4.9.3
+lxml==4.9.4
     # via edx-i18n-tools
 markdown-it-py==3.0.0
     # via rich
@@ -104,9 +104,9 @@ polib==1.2.0
     # via edx-i18n-tools
 pycodestyle==2.11.1
     # via -r requirements/quality.in
-pydantic==2.5.2
+pydantic==2.5.3
     # via rstcheck-core
-pydantic-core==2.14.5
+pydantic-core==2.14.6
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
