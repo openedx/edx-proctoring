@@ -9,7 +9,6 @@ edx-i18n-tools	          # be able to run `make validate_translations`
 freezegun>=0.3.1
 httmock>=1.2.3
 httpretty>=0.8.0
-logilab-common>=0.63.2
 mock>=1.0.1
 pytest-cov                # pytest extension for code coverage statistics
 pytest-django             # pytest extension for better Django support
