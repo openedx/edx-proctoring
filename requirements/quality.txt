@@ -43,11 +43,11 @@ isort==5.13.2
     # via
     #   -r requirements/quality.in
     #   pylint
-jinja2==3.1.2
+jinja2==3.1.3
     # via code-annotations
 markdown-it-py==3.0.0
     # via rich
-markupsafe==2.1.3
+markupsafe==2.1.4
     # via jinja2
 mccabe==0.7.0
     # via pylint
