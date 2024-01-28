@@ -1,0 +1,1692 @@
+# #-#-#-#-#  django.po (edx-proctoring)  #-#-#-#-#
+# edX translation file
+# Copyright (C) 2018 edX
+# This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
+# EdX Team <info@edx.org>, 2018.
+# 
+# Translators:
+# 1285417725d5bac0bab58be81ee1dd27_168d7b1, 2016
+# Alexandra <alexandra_fischer90@hotmail.com>, 2016
+# Johan Sannemo <johan.sannemo@gmail.com>, 2016
+# Thomas Ochman <thomas@nocebo.se>, 2018
+# Emil Örberg <emil.orberg@live.se>, 2023
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: edx-proctoring\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-21 18:35+0000\n"
+"PO-Revision-Date: 2016-12-20 19:55+0000\n"
+"Last-Translator: Emil Örberg <emil.orberg@live.se>, 2023\n"
+"Language-Team: Swedish (https://app.transifex.com/open-edx/teams/6205/sv/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sv\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: admin.py:112
+msgid "internally reviewed"
+msgstr "granskas internt"
+
+#: admin.py:121
+msgid "All Unreviewed"
+msgstr "Alla ej granskade"
+
+#: admin.py:122
+msgid "All Unreviewed Failures"
+msgstr "Alla ogranskade misslyckanden"
+
+#: admin.py:142
+msgid "active proctored exams"
+msgstr "aktiva proctorade prov"
+
+#: admin.py:197
+msgid "courses with active proctored exams"
+msgstr "kurser med aktiva proctored examen"
+
+#: admin.py:354
+msgid "Course Id"
+msgstr "Kursid"
+
+#: admin.py:392
+msgid "Created"
+msgstr "Skapad"
+
+#: admin.py:393
+msgid "Download Software Clicked"
+msgstr "Ladda ner programvara klickade"
+
+#: admin.py:394
+msgid "Ready To Start"
+msgstr "Färdig att starta"
+
+#: admin.py:395
+msgid "Started"
+msgstr "Påbörjad"
+
+#: admin.py:396
+msgid "Ready To Submit"
+msgstr "Färdig att skicka in"
+
+#: admin.py:397
+msgid "Declined"
+msgstr "Avvisad"
+
+#: admin.py:398
+msgid "Timed Out"
+msgstr "Timeout"
+
+#: admin.py:399
+msgid "Submitted"
+msgstr "Inlämnad"
+
+#: admin.py:400
+msgid "Second Review Required"
+msgstr "En andra översikt krävs"
+
+#: admin.py:401
+msgid "Verified"
+msgstr "Verifierad"
+
+#: admin.py:402
+msgid "Rejected"
+msgstr "Avvisad"
+
+#: admin.py:403
+msgid "Error"
+msgstr "Fel"
+
+#: admin.py:407
+msgid "Onboarding Missing"
+msgstr "Onboarding saknas"
+
+#: admin.py:408
+msgid "Onboarding Failed"
+msgstr "Onboarding misslyckades"
+
+#: admin.py:409
+msgid "Onboarding Pending"
+msgstr "Onboarding väntar"
+
+#: admin.py:410
+msgid "Onboarding Expired"
+msgstr "Onboarding har löpt ut"
+
+#: api.py:822 views.py:1276
+#, python-brace-format
+msgid "you have {remaining_time} remaining"
+msgstr "du har {remaining_time} kvar"
+
+#: api.py:1651
+msgid "your course"
+msgstr "din kurs"
+
+#: api.py:1743
+#, python-brace-format
+msgid "Proctoring Results For {course_name} {exam_name}"
+msgstr "Proctoring-resultat för {course_name} {exam_name}"
+
+#: api.py:1752
+#, python-brace-format
+msgid "Proctoring Review In Progress For {course_name} {exam_name}"
+msgstr "Proctoring Granskning pågår för {course_name} {exam_name}"
+
+#: api.py:1770
+#, python-brace-format
+msgid "Proctored exam {exam_name} in {course_name} for user {username}"
+msgstr ""
+"Proctored examen {exam_name} i {course_name} för användaren {username}"
+
+#: api.py:2246
+msgid "Taking As Proctored Exam"
+msgstr "Avlägger som Proctored examen"
+
+#: api.py:2251
+msgid "Proctored Option Available"
+msgstr "Proctored Option tillgängligt"
+
+#: api.py:2256
+msgid "Taking As Open Exam"
+msgstr "Avlägger som öppen tentamen"
+
+#: api.py:2261 api.py:2266
+msgid "Pending Session Review"
+msgstr "Väntar på sessionsgranskning"
+
+#: api.py:2271
+msgid "Passed Proctoring"
+msgstr "Godkänd proctoring"
+
+#: api.py:2276 api.py:2281
+msgid "Failed Proctoring"
+msgstr "Misslyckad Proctoring"
+
+#: api.py:2286
+msgid "Proctored Option No Longer Available"
+msgstr "Proctored-alternativet är inte längre tillgängligt"
+
+#: api.py:2295
+msgid "Ungraded Practice Exam"
+msgstr "Obetygsatt övningsprov"
+
+#: api.py:2300
+msgid "Practice Exam Completed"
+msgstr "Övningsprov avklarat"
+
+#: api.py:2305
+msgid "Practice Exam Failed"
+msgstr "Övningsprovet misslyckades"
+
+#: api.py:2313
+msgid "Timed Exam"
+msgstr "Tidsbestämd examen"
+
+#: api.py:2896
+msgid "Onboarding status question"
+msgstr "Onboarding status fråga"
+
+#: models.py:391
+msgid "Taking as Proctored"
+msgstr "Tar som Proctored"
+
+#: models.py:395
+msgid "Is Sample Attempt"
+msgstr "Är provförsök"
+
+#: models.py:413
+msgid "Is Resumable"
+msgstr "Går att återuppta"
+
+#: models.py:418
+msgid "Ready to Resume"
+msgstr "Redo att återuppta"
+
+#: models.py:421
+msgid "Resumed"
+msgstr "Återupptas"
+
+#: models.py:523
+msgid "Additional Time (minutes)"
+msgstr "Ytterligare tid (minuter)"
+
+#: models.py:524
+msgid "Review Policy Exception"
+msgstr "Granska policyundantag"
+
+#: templates/common/waiting_banner.html:3
+msgid ""
+"\n"
+"        The result will be visible after <strong id=\"wait_deadline\"> Loading... </strong>\n"
+"    "
+msgstr ""
+"\n"
+"Resultatet kommer att synas efter <strong id=\"wait_deadline\"> Laddar... </strong>"
+
+#: templates/emails/proctoring_attempt_satisfactory_email.html:5
+#: templates/emails/proctoring_attempt_submitted_email.html:5
+#: templates/emails/proctoring_attempt_unsatisfactory_email.html:5
+#, python-format
+msgid ""
+"\n"
+"        Hello %(username)s,\n"
+"    "
+msgstr ""
+"\n"
+"Hej %(username)s,"
+
+#: templates/emails/proctoring_attempt_satisfactory_email.html:12
+#, python-format
+msgid ""
+"\n"
+"        Your proctored exam \"%(exam_name)s\" in\n"
+"        <a href=\"%(course_url)s\">%(course_name)s</a> was reviewed and you\n"
+"        met all proctoring requirements.\n"
+"    "
+msgstr ""
+"\n"
+"Din proctored examen \"%(exam_name)s\" i\n"
+"        <a href=\"%(course_url)s\">%(course_name)s</a> har granskats och du\n"
+"        uppfyllde alla proctoringskrav."
+
+#: templates/emails/proctoring_attempt_satisfactory_email.html:21
+#, python-format
+msgid ""
+"\n"
+"    If you have any questions about your results, you can reach out at \n"
+"        <a href=\"%(contact_url)s\">\n"
+"            %(contact_url_text)s\n"
+"        </a>.\n"
+"    "
+msgstr ""
+"\n"
+"Om du har några frågor om dina resultat kan du kontakta oss på\n"
+"        <a href=\"%(contact_url)s\">\n"
+"            %(contact_url_text)s\n"
+"        </a>."
+
+#: templates/emails/proctoring_attempt_submitted_email.html:12
+#, python-format
+msgid ""
+"\n"
+"        Your proctored exam \"%(exam_name)s\" in\n"
+"        <a href=\"%(course_url)s\">%(course_name)s</a> was submitted\n"
+"        successfully and will now be reviewed to ensure all exam\n"
+"        rules were followed. You should receive an email with your exam\n"
+"        status within 5 business days.\n"
+"    "
+msgstr ""
+"\n"
+"Din proctored examen \"%(exam_name)s\" i\n"
+"        <a href=\"%(course_url)s\">%(course_name)s</a> skickades\n"
+"        framgångsrikt och kommer nu att granskas för att säkerställa alla prov\n"
+"        reglerna följdes. Du bör få ett mail med din tentamen\n"
+"        status inom 5 arbetsdagar."
+
+#: templates/emails/proctoring_attempt_unsatisfactory_email.html:12
+#, python-format
+msgid ""
+"\n"
+"        Your proctored exam \"%(exam_name)s\" in\n"
+"        <a href=\"%(course_url)s\">%(course_name)s</a> was reviewed and the\n"
+"        course team has identified one or more violations of the proctored exam rules. Examples\n"
+"        of issues that may result in a rules violation include browsing\n"
+"        the internet, blurry or missing photo identification, using a phone,\n"
+"        or getting help from another person. As a result of the identified issue(s),\n"
+"        you did not successfully meet the proctored exam requirements.\n"
+"    "
+msgstr ""
+"\n"
+"Din proctored examen \"%(exam_name)s\" i\n"
+"        <a href=\"%(course_url)s\">%(course_name)s</a> granskades och\n"
+"        kursteamet har identifierat en eller flera överträdelser av provreglerna. Exempel\n"
+"        av problem som kan resultera i ett regelbrott inkluderar surfning\n"
+"        internet, suddig eller saknad fotolegitimation, med hjälp av en telefon,\n"
+"        eller få hjälp av en annan person. Som ett resultat av de identifierade problem(en),\n"
+"        du uppfyllde inte kraven för provkörning."
+
+#: templates/emails/proctoring_attempt_unsatisfactory_email.html:25
+#, python-format
+msgid ""
+"\n"
+"        To appeal your proctored exam results, please reach out with any relevant information\n"
+"        about your exam at \n"
+"        <a href=\"%(contact_url)s\">\n"
+"            %(contact_url_text)s\n"
+"        </a>.\n"
+"    "
+msgstr ""
+"\n"
+"För att överklaga dina provresultat, vänligen kontakta med all relevant information\n"
+"        om ditt prov kl\n"
+"        <a href=\"%(contact_url)s\">\n"
+"            %(contact_url_text)s\n"
+"        </a>."
+
+#: templates/onboarding_exam/entrance.html:5
+msgid ""
+"\n"
+"    Proctoring onboarding exam\n"
+"  "
+msgstr ""
+"\n"
+"Proctoring onboarding examen"
+
+#: templates/onboarding_exam/entrance.html:12
+msgid ""
+"\n"
+"      Why this is important to you:\n"
+"    "
+msgstr ""
+"\n"
+"Varför detta är viktigt för dig:"
+
+#: templates/onboarding_exam/entrance.html:18
+msgid ""
+"\n"
+"        Establish your identity with the proctoring system to take a proctored exam\n"
+"      "
+msgstr ""
+"\n"
+"Upprätta din identitet med proctoring-systemet för att ta en proctored examen"
+
+#: templates/onboarding_exam/entrance.html:23
+msgid ""
+"\n"
+"        Create your onboarding profile for faster access in the future\n"
+"      "
+msgstr ""
+"\n"
+"Skapa din introduktionsprofil för snabbare åtkomst i framtiden"
+
+#: templates/onboarding_exam/entrance.html:28
+msgid ""
+"\n"
+"        Practice taking a proctored test\n"
+"      "
+msgstr ""
+"\n"
+"Öva på att ta ett proctored test"
+
+#: templates/onboarding_exam/entrance.html:34
+#, python-format
+msgid ""
+"\n"
+"      Proctoring for this course is provided via %(provider_name)s.  Onboarding review, including identity verification, can take 2+ business days.\n"
+"    "
+msgstr ""
+"\n"
+"Proctoring för denna kurs tillhandahålls via %(provider_name)s. Introduktionsgranskning, inklusive identitetsverifiering, kan ta 2+ arbetsdagar."
+
+#: templates/onboarding_exam/entrance.html:40
+#, python-format
+msgid ""
+"\n"
+"        Once your profile has been reviewed, you will receive an email with review results. The email will come from\n"
+"        <a href=\"mailto:%(learner_notification_from_email)s\">%(learner_notification_from_email)s</a>.\n"
+"        Make sure this email has been added to your inbox filter.\n"
+"      "
+msgstr ""
+"\n"
+"När din profil har granskats kommer du att få ett e-postmeddelande med granskningsresultat. Mejlet kommer från\n"
+"        <a href=\"mailto:%(learner_notification_from_email)s\">%(learner_notification_from_email)s</a>.\n"
+"        Se till att det här e-postmeddelandet har lagts till i ditt inkorgsfilter."
+
+#: templates/onboarding_exam/entrance.html:49
+#, python-format
+msgid ""
+"\n"
+"        Please contact\n"
+"        <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a>\n"
+"        if you have questions.\n"
+"      "
+msgstr ""
+"\n"
+"Vänligen kontakta\n"
+"        <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a>\n"
+"        om du har frågor."
+
+#: templates/onboarding_exam/entrance.html:58
+msgid "Continue to onboarding"
+msgstr "Fortsätt till onboarding"
+
+#: templates/onboarding_exam/entrance.html:62
+msgid ""
+"\n"
+"    You will be guided through online proctoring software set up and identity verification.\n"
+"  "
+msgstr ""
+"\n"
+"Du kommer att guidas genom installation av proctoringprogramvara online och identitetsverifiering."
+
+#: templates/onboarding_exam/error.html:4
+msgid ""
+"\n"
+"    Error: There was a problem with your onboarding session\n"
+"  "
+msgstr ""
+"\n"
+"Fel: Det uppstod ett problem med din introduktionssession"
+
+#: templates/onboarding_exam/error.html:13
+msgid ""
+"\n"
+"    Your proctoring session ended before you completed this onboarding exam.\n"
+"    You should retry this onboarding exam.\n"
+"  "
+msgstr ""
+"\n"
+"Din proctoring-session avslutades innan du genomförde detta introduktionsprov.\n"
+"    Du bör prova detta introduktionsprov igen."
+
+#: templates/onboarding_exam/ready_to_submit.html:6
+#, python-format
+msgid ""
+"\n"
+"      You are taking \"%(exam_display_name)s\" as an onboarding exam. You must click “Yes, end my proctored exam” and submit your proctoring session to complete onboarding.\n"
+"    "
+msgstr ""
+"\n"
+"Du tar “%(exam_display_name)s\" som ett introduktionsprov. Du måste klicka på “Ja, avsluta min proctored tentamen” och skicka in din proctoring session för att slutföra onboarding."
+
+#: templates/onboarding_exam/rejected.html:5
+msgid ""
+"\n"
+"    Your onboarding session was reviewed, but did not pass all requirements\n"
+"  "
+msgstr ""
+"\n"
+"Din introduktionssession granskades, men uppfyllde inte alla krav"
+
+#: templates/onboarding_exam/rejected.html:12
+#, python-format
+msgid ""
+"\n"
+"      Please contact\n"
+"      <a href=\"mailto:%(integration_specific_email)s\">\n"
+"        %(integration_specific_email)s\n"
+"      </a> if you have questions. You may retake this onboarding exam by clicking \"Retry my exam\".\n"
+"    "
+msgstr ""
+"\n"
+"Vänligen kontakta\n"
+"      <a href=\"mailto:%(integration_specific_email)s\">\n"
+"        %(integration_specific_email)s\n"
+"      </a> om du har frågor. Du kan göra om det här introduktionsprovet genom att klicka på \"Testa mitt prov igen\"."
+
+#: templates/onboarding_exam/rejected.html:20
+#: templates/onboarding_exam/submitted.html:47
+#: templates/practice_exam/error.html:29
+#: templates/practice_exam/submitted.html:18
+msgid "Retry my exam"
+msgstr "Försök med mitt prov igen"
+
+#: templates/onboarding_exam/rejected.html:21
+#: templates/practice_exam/error.html:30
+#: templates/practice_exam/submitted.html:19
+msgid "Resetting Onboarding Exam"
+msgstr "Återställ introduktionsprov"
+
+#: templates/onboarding_exam/submitted.html:4
+msgid ""
+"\n"
+"    You have submitted this onboarding exam\n"
+"  "
+msgstr ""
+"\n"
+"Du har skickat in det här introduktionsprovet"
+
+#: templates/onboarding_exam/submitted.html:11
+msgid ""
+"\n"
+"      If you do not have an onboarding profile with the system,\n"
+"      Verificient will review your submission and create an onboarding\n"
+"      profile to grant you access to proctored exams. Onboarding\n"
+"      profile review can take 2+ business days.\n"
+"    "
+msgstr ""
+"\n"
+"Om du inte har en introduktionsprofil med systemet,\n"
+"      Verificient kommer att granska din inlämning och skapa en onboarding\n"
+"      profil för att ge dig tillgång till proctored tentor. Onboarding\n"
+"      profilgranskning kan ta 2+ arbetsdagar."
+
+#: templates/onboarding_exam/submitted.html:19
+#, python-format
+msgid ""
+"\n"
+"      Once your profile has been reviewed, you will receive an email\n"
+"      with review results. The email will come from\n"
+"      <a href=\"mailto:%(learner_notification_from_email)s\">\n"
+"        %(learner_notification_from_email)s\n"
+"      </a>,\n"
+"      so make sure this email has been added to your inbox filter.\n"
+"    "
+msgstr ""
+"\n"
+"När din profil har granskats får du ett e-postmeddelande\n"
+"      med granskningsresultat. Mejlet kommer från\n"
+"      <a href=\"mailto:%(learner_notification_from_email)s\">\n"
+"        %(learner_notification_from_email)s\n"
+"      </a>,\n"
+"      så se till att det här e-postmeddelandet har lagts till i ditt inkorgsfilter."
+
+#: templates/onboarding_exam/submitted.html:29
+msgid ""
+"\n"
+"      If you already have an onboarding profile approved through another course,\n"
+"      this submission will not be reviewed. You may retry this exam at any time\n"
+"      to validate that your setup still meets the requirements for proctoring.\n"
+"    "
+msgstr ""
+"\n"
+"Om du redan har en introduktionsprofil godkänd genom en annan kurs,\n"
+"      denna inlämning kommer inte att granskas. Du kan göra om provet när som helst\n"
+"      för att verifiera att din installation fortfarande uppfyller kraven för proctoring."
+
+#: templates/onboarding_exam/submitted.html:36
+msgid ""
+"\n"
+"      If you have made an error in this submission you may restart the onboarding process. \n"
+"      Your current submission will be removed and will not receive a review.\n"
+"    "
+msgstr ""
+"\n"
+"Om du har gjort ett fel i denna inlämning kan du starta om introduktionsprocessen.\n"
+"      Ditt nuvarande bidrag kommer att tas bort och kommer inte att få en recension."
+
+#: templates/onboarding_exam/submitted.html:41
+msgid "I understand and want to reset this onboarding exam."
+msgstr "Jag förstår och vill återställa detta introduktionsprov."
+
+#: templates/onboarding_exam/submitted.html:53
+#: templates/onboarding_exam/verified.html:16
+#, python-format
+msgid ""
+"\n"
+"      Please contact\n"
+"      <a href=\"mailto:%(integration_specific_email)s\">\n"
+"        %(integration_specific_email)s\n"
+"      </a> if you have questions.\n"
+"    "
+msgstr ""
+"\n"
+"Vänligen kontakta\n"
+"      <a href=\"mailto:%(integration_specific_email)s\">\n"
+"        %(integration_specific_email)s\n"
+"      </a> om du har frågor."
+
+#: templates/onboarding_exam/verified.html:4
+msgid ""
+"\n"
+"    Your onboarding profile was reviewed successfully\n"
+"  "
+msgstr ""
+"\n"
+"Din introduktionsprofil granskades framgångsrikt"
+
+#: templates/onboarding_exam/verified.html:11
+msgid ""
+"\n"
+"      Your profile has been established, and you're ready to take proctored exams in this course.\n"
+"    "
+msgstr ""
+"\n"
+"Din profil har upprättats och du är redo att göra proctorade prov i den här kursen."
+
+#: templates/practice_exam/entrance.html:5
+msgid ""
+"\n"
+"        Try a proctored exam\n"
+"      "
+msgstr ""
+"\n"
+"Prova en proctored examen"
+
+#: templates/practice_exam/entrance.html:12
+msgid ""
+"\n"
+"        Get familiar with proctoring for real exams later in the course. This practice exam has no impact\n"
+"        on your grade in the course.\n"
+"      "
+msgstr ""
+"\n"
+"Bekanta dig med proctoring för riktiga tentor senare i kursen. Detta övningsprov har ingen inverkan\n"
+"        på ditt betyg i kursen."
+
+#: templates/practice_exam/entrance.html:20
+msgid "Continue to my practice exam"
+msgstr "Fortsätt till mitt övningsprov"
+
+#: templates/practice_exam/entrance.html:25
+msgid ""
+"\n"
+"          You will be guided through steps to set up online proctoring software and verify your identity.\n"
+"        "
+msgstr ""
+"\n"
+"Du kommer att guidas genom steg för att ställa in online-proctoringprogramvara och verifiera din identitet."
+
+#: templates/practice_exam/error.html:5
+msgid ""
+"\n"
+"        There was a problem with your practice proctoring session\n"
+"      "
+msgstr ""
+"\n"
+"Det uppstod ett problem med din övningssession"
+
+#: templates/practice_exam/error.html:13
+msgid ""
+"\n"
+"      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
+"    "
+msgstr ""
+"\n"
+"Din praxis för att granska resultat: <b class=\"failure\"> Otillfredsställande </b>"
+
+#: templates/practice_exam/error.html:21
+msgid ""
+"\n"
+"        Your proctoring session ended before you completed this practice exam.\n"
+"        You can retry this practice exam if you had problems setting up the online proctoring software.\n"
+"      "
+msgstr ""
+"\n"
+"Din proctoring session avslutades innan du genomförde denna övningsprov.\n"
+"        Du kan göra om det här övningsprovet om du hade problem med att installera onlineproctoring-mjukvaran."
+
+#: templates/practice_exam/submitted.html:5
+msgid ""
+"\n"
+"        You have submitted this practice proctored exam\n"
+"      "
+msgstr ""
+"\n"
+"Du har skickat in denna övningsproctored examen"
+
+#: templates/practice_exam/submitted.html:13
+msgid ""
+"\n"
+"        Practice exams do not affect your grade.\n"
+"        You have completed this practice exam and can continue with your course work.\n"
+"      "
+msgstr ""
+"\n"
+"Övningsprov påverkar inte ditt betyg.\n"
+"        Du har genomfört detta övningsprov och kan fortsätta med ditt kursarbete."
+
+#: templates/proctored_exam/confirm-decline.html:5
+msgid ""
+"\n"
+"        Are you sure you want to take this exam without proctoring?\n"
+"      "
+msgstr ""
+"\n"
+"Är du säker på att du vill göra det här provet utan proctoring?"
+
+#: templates/proctored_exam/confirm-decline.html:10
+msgid ""
+"\n"
+"        If you take this exam without proctoring, you will not be eligible for course credit or the MicroMasters credential if either applies to this course.\n"
+"      "
+msgstr ""
+"\n"
+"Om du gör det här provet utan proctoring kommer du inte att vara berättigad till kurstillgodohavande eller MicroMasters-legitimationen om något av det gäller denna kurs."
+
+#: templates/proctored_exam/confirm-decline.html:16
+msgid "Continue Exam Without Proctoring"
+msgstr "Fortsätt tentamen utan proctoring"
+
+#: templates/proctored_exam/confirm-decline.html:19
+msgid "Go Back"
+msgstr "Gå tillbaka"
+
+#: templates/proctored_exam/entrance.html:4
+#: templates/proctored_exam/failed-prerequisites.html:4
+#: templates/proctored_exam/pending-prerequisites.html:4
+msgid ""
+"\n"
+"      This exam is proctored\n"
+"    "
+msgstr ""
+"\n"
+"Detta prov är prokterat"
+
+#: templates/proctored_exam/entrance.html:9
+msgid ""
+"\n"
+"      To be eligible for credit or the program credential associated with this course, you must pass the proctoring review for this exam.\n"
+"\n"
+"    "
+msgstr ""
+"\n"
+"För att vara berättigad till tillgodoräknande eller den programlegitimation som är kopplad till den här kursen måste du klara proctoring-granskningen för detta prov."
+
+#: templates/proctored_exam/entrance.html:15
+#: templates/proctored_exam/ready_to_resume.html:19
+msgid "Continue to my proctored exam."
+msgstr "Fortsätt till min proctored examen."
+
+#: templates/proctored_exam/entrance.html:18
+#: templates/proctored_exam/ready_to_resume.html:22
+msgid ""
+"\n"
+"        You will be guided through steps to set up online proctoring software and verify your identity.</br>\n"
+"      "
+msgstr ""
+"\n"
+"Du kommer att guidas genom stegen för att ställa in onlineproctoringprogramvara och verifiera din identitet.</br>"
+
+#: templates/proctored_exam/error.html:4
+#: templates/proctored_exam/error_wrong_browser.html:4
+msgid ""
+"\n"
+"      Error with proctored exam\n"
+"    "
+msgstr ""
+"\n"
+"Fel med proctored tentamen"
+
+#: templates/proctored_exam/error.html:11
+#, python-format
+msgid ""
+"\n"
+"        A system error has occurred with your proctored exam. Please reach out to your course \n"
+"        team at <a href=\"mailto:%(proctoring_escalation_email)s\">%(proctoring_escalation_email)s</a> \n"
+"        for assistance, and return to the exam once you receive further instructions.\n"
+"      "
+msgstr ""
+"\n"
+"Ett systemfel har inträffat med din proctored examen. Hör av dig till din kurs\n"
+"        team på <a href=\"mailto:%(proctoring_escalation_email)s\">%(proctoring_escalation_email)s</a>\n"
+"        för hjälp och återgå till provet när du får ytterligare instruktioner."
+
+#: templates/proctored_exam/error.html:17
+#, python-format
+msgid ""
+"\n"
+"        A system error has occurred with your proctored exam. Please reach out to \n"
+"        <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">%(platform_name)s Support</a> for \n"
+"        assistance, and return to the exam once you receive further instructions.\n"
+"      "
+msgstr ""
+"\n"
+"Ett systemfel har inträffat med din proctored examen. Vänligen kontakta\n"
+"        <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">%(platform_name)s Support</a> för\n"
+"        hjälp och återgå till provet när du får ytterligare instruktioner."
+
+#: templates/proctored_exam/error_modal.html:7
+msgid "Close"
+msgstr "Stäng"
+
+#: templates/proctored_exam/error_wrong_browser.html:10
+msgid ""
+"\n"
+"      The content of this exam can only be viewed through the RPNow\n"
+"      application. If you have yet to complete your exam, please\n"
+"      return to the RPNow application to proceed.\n"
+"    "
+msgstr ""
+"\n"
+"Innehållet i detta prov kan endast ses via RPNow\n"
+"      Ansökan. Om du ännu inte har slutfört ditt prov, snälla\n"
+"      gå tillbaka till RPNow-applikationen för att fortsätta."
+
+#: templates/proctored_exam/error_wrong_browser.html:17
+msgid ""
+"\n"
+"      Alternatively, you can end your exam.\n"
+"    "
+msgstr ""
+"\n"
+"Alternativt kan du avsluta ditt prov."
+
+#: templates/proctored_exam/error_wrong_browser.html:22
+msgid "End My Exam"
+msgstr "Avsluta mitt prov"
+
+#: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
+msgid ""
+"\n"
+"      The due date for this exam has passed\n"
+"    "
+msgstr ""
+"\n"
+"Förfallodatumet för detta prov har passerat"
+
+#: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
+msgid ""
+"\n"
+"      Because the due date has passed, you are no longer able to take this exam.\n"
+"    "
+msgstr ""
+"\n"
+"Eftersom förfallodatumet har passerat kan du inte längre göra detta prov."
+
+#: templates/proctored_exam/failed-prerequisites.html:9
+msgid ""
+"\n"
+"    You did not satisfy the requirements for taking this exam with proctoring.\n"
+"    "
+msgstr ""
+"\n"
+"Du uppfyllde inte kraven för att göra detta prov med proctoring."
+
+#: templates/proctored_exam/failed-prerequisites.html:14
+msgid ""
+"\n"
+"    You did not satisfy the following prerequisites:\n"
+"    "
+msgstr ""
+"\n"
+"Du uppfyllde inte följande förutsättningar:"
+
+#: templates/proctored_exam/failed-prerequisites.html:32
+msgid ""
+"\n"
+"        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
+"      "
+msgstr ""
+"\n"
+"På grund av otillfredsställda förkunskaper kan du endast göra detta prov utan proctoring."
+
+#: templates/proctored_exam/failed-prerequisites.html:40
+#, python-format
+msgid ""
+"\n"
+"      If you have questions about the status of your requirements, contact %(platform_name)s Support.\n"
+"    "
+msgstr ""
+"\n"
+"Om du har frågor om status för dina krav, kontakta %(platform_name)s support."
+
+#: templates/proctored_exam/footer.html:5
+msgid ""
+"\n"
+"        About Proctored Exams\n"
+"        "
+msgstr ""
+"\n"
+"Om Proctored Exams"
+
+#: templates/proctored_exam/inactive_account.html:4
+msgid ""
+"\n"
+"      You have not activated your account.\n"
+"    "
+msgstr ""
+"\n"
+"Du har inte aktiverat ditt konto."
+
+#: templates/proctored_exam/inactive_account.html:10
+#, python-format
+msgid ""
+"\n"
+"      Your %(platform_name)s account has not yet been activated. To take the proctored exam,\n"
+"      you are required to activate your account.\n"
+"    "
+msgstr ""
+"\n"
+"Ditt %(platform_name)s konto har inte aktiverats ännu. För att avlägga provet,\n"
+"      du måste aktivera ditt konto."
+
+#: templates/proctored_exam/inactive_account.html:16
+#, python-format
+msgid ""
+"\n"
+"      Please check your registered email's Inbox and Spam folders for an activation email from\n"
+"      %(platform_name)s.\n"
+"    "
+msgstr ""
+"\n"
+"Kontrollera din registrerade e-posts inkorg och skräppostmappar för ett aktiveringse-postmeddelande från\n"
+"      %(platform_name)s."
+
+#: templates/proctored_exam/inactive_account.html:21
+#, python-format
+msgid ""
+"\n"
+"        If you cannot find this email, you can <a href=\"%(reset_link)s\" target=\"_blank\">reset your password</a> to\n"
+"        activate your account.\n"
+"      "
+msgstr ""
+"\n"
+"Om du inte hittar det här e-postmeddelandet kan du <a href=\"%(reset_link)s\" target=\"_blank\">återställa ditt lösenord</a> till\n"
+"        Aktivera ditt konto."
+
+#: templates/proctored_exam/inactive_account.html:26
+msgid ""
+"\n"
+"        If you cannot find this email, you can reset your password to activate your account.\n"
+"      "
+msgstr ""
+"\n"
+"Om du inte hittar det här e-postmeddelandet kan du återställa ditt lösenord för att aktivera ditt konto."
+
+#: templates/proctored_exam/inactive_account.html:32
+#, python-format
+msgid ""
+"\n"
+"      If you continue to have trouble please contact <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">\n"
+"      %(platform_name)s Support</a>.\n"
+"    "
+msgstr ""
+"\n"
+"Om du fortsätter att ha problem kontakta <a href=\"%(link_urls.contact_us)s\" target=\"_blank\">\n"
+"      %(platform_name)s Support</a>."
+
+#: templates/proctored_exam/instructions.html:6
+msgid ""
+"\n"
+"      Set up and start your proctored exam\n"
+"    "
+msgstr ""
+"\n"
+"Ställ in och starta din proctored examen"
+
+#: templates/proctored_exam/instructions.html:12
+msgid ""
+"\n"
+"          Note: As part of the proctored exam setup, you will be asked\n"
+"          to verify your identity. Before you begin, make sure you are\n"
+"          on a computer with a webcam, and that you have a valid form\n"
+"          of photo identification such as a driver’s license or\n"
+"          passport.\n"
+"        "
+msgstr ""
+"\n"
+"Obs: Du kommer att bli tillfrågad som en del av konfigurationen av proctored examen\n"
+"          för att verifiera din identitet. Innan du börjar, se till att du är det\n"
+"          på en dator med webbkamera, och att du har ett giltigt formulär\n"
+"          av fotolegitimation som körkort eller\n"
+"          pass."
+
+#: templates/proctored_exam/instructions.html:27
+#, python-format
+msgid ""
+"\n"
+"            If you have issues relating to proctoring, you can contact %(provider_name)s technical support by emailing %(provider_tech_support_email)s  or by calling %(provider_tech_support_phone)s.\n"
+"          "
+msgstr ""
+"\n"
+"Om du har problem med proctoring kan du kontakta %(provider_name)s tekniska support genom att e-posta %(provider_tech_support_email)s eller genom att ringa %(provider_tech_support_phone)s."
+
+#: templates/proctored_exam/instructions.html:33
+#: templates/proctored_exam/instructions.html:78
+msgid "Start System Check"
+msgstr "Starta systemkontroll"
+
+#: templates/proctored_exam/instructions.html:36
+msgid "Start Exam"
+msgstr "Starta examen"
+
+#: templates/proctored_exam/instructions.html:40
+msgid ""
+"\n"
+"          Step 1\n"
+"        "
+msgstr ""
+"\n"
+"Steg 1"
+
+#: templates/proctored_exam/instructions.html:45
+msgid ""
+"\n"
+"          Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
+"        "
+msgstr ""
+"\n"
+"Kopiera denna unika examenskod. Du kommer att uppmanas att klistra in den här koden senare innan du påbörjar provet."
+
+#: templates/proctored_exam/instructions.html:51
+msgid "Copy Exam Code"
+msgstr "Kopiera provkoden"
+
+#: templates/proctored_exam/instructions.html:54
+msgid ""
+"\n"
+"        Select the exam code, then copy it using Control + C (Windows) or Command + C (Mac).\n"
+"      "
+msgstr ""
+"\n"
+"Välj provkoden och kopiera den sedan med Ctrl + C (Windows) eller Kommando + C (Mac)."
+
+#: templates/proctored_exam/instructions.html:59
+msgid ""
+"\n"
+"          Step 2\n"
+"        "
+msgstr ""
+"\n"
+"Steg 2"
+
+#: templates/proctored_exam/instructions.html:64
+msgid ""
+"\n"
+"        Start your system check now. A new window will open for this step and you will verify your identity.\n"
+"      "
+msgstr ""
+"\n"
+"Starta din systemkontroll nu. Ett nytt fönster öppnas för detta steg och du kommer att verifiera din identitet."
+
+#: templates/proctored_exam/instructions.html:69
+msgid ""
+"\n"
+"        Make sure you:\n"
+"      "
+msgstr ""
+"\n"
+"Se till att du:"
+
+#: templates/proctored_exam/instructions.html:74
+msgid "Have a computer with a functioning webcam"
+msgstr "Ha en dator med fungerande webbkamera"
+
+#: templates/proctored_exam/instructions.html:75
+msgid "Have your valid photo ID (e.g. driver's license or passport) ready"
+msgstr "Ha ditt giltiga fotolegitimation (t.ex. körkort eller pass) redo"
+
+#: templates/proctored_exam/instructions.html:81
+msgid ""
+"\n"
+"          Step 3\n"
+"        "
+msgstr ""
+"\n"
+"Steg 3"
+
+#: templates/proctored_exam/instructions.html:86
+msgid ""
+"\n"
+"          For security and exam integrity reasons, we ask you to sign in to your edX account. Then we will direct you to the RPNow proctoring experience.\n"
+"        "
+msgstr ""
+"\n"
+"Av säkerhets- och examensintegritetsskäl ber vi dig att logga in på ditt edX-konto. Sedan kommer vi att hänvisa dig till RPNow proctoring-upplevelsen."
+
+#: templates/proctored_exam/instructions.html:100
+#: templates/proctored_exam/proctoring_opt_out_button.html:5
+msgid "Take this exam without proctoring."
+msgstr "Gör det här provet utan proctoring."
+
+#: templates/proctored_exam/onboarding_error.html:4
+msgid ""
+"\n"
+"      You must complete an onboarding exam before taking this proctored exam\n"
+"    "
+msgstr ""
+"\n"
+"Du måste slutföra ett introduktionsprov innan du tar det här provet"
+
+#: templates/proctored_exam/onboarding_error.html:11
+msgid ""
+"\n"
+"      Please complete an onboarding exam before attempting this exam.\n"
+"    "
+msgstr ""
+"\n"
+"Gör ett introduktionsprov innan du gör detta prov."
+
+#: templates/proctored_exam/onboarding_error.html:17
+#: templates/proctored_exam/onboarding_error.html:32
+msgid "Navigate to onboarding exam"
+msgstr "Navigera till introduktionsprovet"
+
+#: templates/proctored_exam/onboarding_error.html:21
+msgid ""
+"\n"
+"    Your onboarding exam is being reviewed. Before attempting this exam, please allow 2+ business days for your onboarding exam to be reviewed.\n"
+"  "
+msgstr ""
+"\n"
+"Ditt introduktionsprov granskas. Innan du försöker det här provet, vänta mer än 2+ arbetsdagar innan ditt introduktionsprov kan granskas."
+
+#: templates/proctored_exam/onboarding_error.html:26
+msgid ""
+"\n"
+"      Your onboarding exam failed to pass all requirements.\n"
+"    "
+msgstr ""
+"\n"
+"Ditt introduktionsprov klarade inte alla krav."
+
+#: templates/proctored_exam/onboarding_error.html:38
+#, python-format
+msgid ""
+"\n"
+"      Proctoring for your exam is provided via %(provider_name)s.\n"
+"      If you have questions about the status of your onboarding exam, contact\n"
+"      <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a>.\n"
+"    "
+msgstr ""
+"\n"
+"Proctoring för din examen tillhandahålls via %(provider_name)s.\n"
+"      Om du har frågor om statusen för ditt introduktionsprov, kontakta\n"
+"      <a href=\"mailto:%(integration_specific_email)s\">%(integration_specific_email)s</a>."
+
+#: templates/proctored_exam/pending-prerequisites.html:9
+msgid ""
+"\n"
+"    You have not completed the prerequisites for this exam. All requirements must be satisfied before you can take this proctored exam.\n"
+"    "
+msgstr ""
+"\n"
+"Du har inte klarat av förkunskapskraven för detta prov. Alla krav måste vara uppfyllda innan du kan göra det här provet."
+
+#: templates/proctored_exam/pending-prerequisites.html:14
+msgid ""
+"\n"
+"    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
+"    "
+msgstr ""
+"\n"
+"Följande förutsättningar är <strong>väntande</strong> och måste vara klara innan du kan fortsätta:"
+
+#: templates/proctored_exam/pending-prerequisites.html:30
+msgid ""
+"\n"
+"    You can take this exam with proctoring only when all prerequisites have been successfully completed.\n"
+"    "
+msgstr ""
+"\n"
+"Du kan göra detta prov med proctoring endast när alla förutsättningar har slutförts."
+
+#: templates/proctored_exam/proctoring_launch_callback.html:164
+msgid " Your Proctoring Session Has Started "
+msgstr "Din Proctoring-session har börjat"
+
+#: templates/proctored_exam/proctoring_launch_callback.html:165
+#, python-format
+msgid ""
+" From this point in time, you must follow the <a "
+"href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
+"proctoring rules</a> to pass the proctoring review for your exam. "
+msgstr ""
+"Från och med denna tidpunkt måste du följa <a "
+"href=\"%(link_urls.online_proctoring_rules)s\" "
+"target=\"_blank\">onlineproctoring-reglerna</a> för att klara proctoring-"
+"granskningen för ditt prov."
+
+#: templates/proctored_exam/proctoring_launch_callback.html:168
+msgid ""
+"\n"
+"            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
+"          "
+msgstr ""
+"\n"
+"Stäng inte det här fönstret innan du har avslutat ditt prov. om du stänger det här fönstret avslutas din proctoring-session och du kommer inte att slutföra proctored-provet."
+
+#: templates/proctored_exam/proctoring_launch_callback.html:173
+#, python-format
+msgid ""
+"\n"
+"            Return to the %(platform_name)s course window to start your exam. When you have finished your exam and\n"
+"            have marked it as complete, you can close this window to end the proctoring session\n"
+"            and upload your proctoring session data for review.\n"
+"          "
+msgstr ""
+"\n"
+"Gå tillbaka till %(platform_name)s kursfönster för att starta ditt prov. När du är klar med din tentamen och\n"
+"            har markerat det som färdigt kan du stänga det här fönstret för att avsluta proctoring-sessionen\n"
+"            och ladda upp din proctoringssessionsdata för granskning."
+
+#: templates/proctored_exam/ready_to_resume.html:4
+msgid ""
+"\n"
+"      Your exam is ready to be resumed.\n"
+"    "
+msgstr ""
+"\n"
+"Ditt prov är redo att återupptas."
+
+#: templates/proctored_exam/ready_to_resume.html:9
+#, python-format
+msgid ""
+"\n"
+"        You will have %(total_time)s to complete your exam.\n"
+"    "
+msgstr ""
+"\n"
+"Du kommer att ha %(total_time)s på dig att slutföra ditt prov."
+
+#: templates/proctored_exam/ready_to_resume.html:14
+msgid ""
+"\n"
+"        To be eligible for credit or the program credential associated with this course, you must pass the proctoring review for this exam.\n"
+"    "
+msgstr ""
+"\n"
+"För att vara berättigad till tillgodoräknande eller den programlegitimation som är kopplad till den här kursen måste du klara proctoring-granskningen för detta prov."
+
+#: templates/proctored_exam/ready_to_start.html:5
+msgid ""
+"\n"
+"      Important\n"
+"    "
+msgstr ""
+"\n"
+"Viktig"
+
+#: templates/proctored_exam/ready_to_start.html:10
+#, python-format
+msgid ""
+"\n"
+"        &#8226; You have %(total_time)s to complete this exam. </br>\n"
+"        &#8226; Once you start the exam, you cannot stop the timer. </br>\n"
+"        &#8226; For all question types, you must click \"submit\" to complete your answer. </br>\n"
+"        &#8226; If time expires before you click \"End My Exam\", only your submitted answers will be graded.\n"
+"      "
+msgstr ""
+"\n"
+"&#8226; Du har %(total_time)s på dig att slutföra detta prov. </br>\n"
+"        &#8226; När du väl har börjat provet kan du inte stoppa timern. </br>\n"
+"        &#8226; För alla frågetyper måste du klicka på \"skicka\" för att fylla i ditt svar. </br>\n"
+"        &#8226; Om tiden går ut innan du klickar på \"Avsluta min tentamen\" kommer bara dina inskickade svar att betygsättas."
+
+#: templates/proctored_exam/ready_to_start.html:18
+msgid ""
+"\n"
+"      Proctored Exam Rules\n"
+"    "
+msgstr ""
+"\n"
+"Proctored examensregler"
+
+#: templates/proctored_exam/ready_to_start.html:23
+msgid ""
+"\n"
+"         You must adhere to the following rules while you complete this exam.\n"
+"         <strong>If you violate these rules, you will receive a score of 0 on the exam, and you will not be eligible for academic course credit.\n"
+"         </strong></br>\n"
+"      "
+msgstr ""
+"\n"
+"Du måste följa följande regler när du genomför detta prov.\n"
+"         <strong>Om du bryter mot dessa regler får du poängen 0 på provet, och du kommer inte att vara berättigad till akademisk kurspoäng.\n"
+"         </strong></br>"
+
+#: templates/proctored_exam/ready_to_start.html:29
+#, python-format
+msgid ""
+"\n"
+"          %(platform_name)s Rules for Online Proctored Exams\n"
+"      "
+msgstr ""
+"\n"
+"%(platform_name)s Regler för provkörda prov online"
+
+#: templates/proctored_exam/ready_to_start.html:36
+msgid ""
+"\n"
+"      Additional Exam Rules\n"
+"    "
+msgstr ""
+"\n"
+"Ytterligare provregler"
+
+#: templates/proctored_exam/ready_to_start.html:41
+#, python-format
+msgid ""
+"\n"
+"        The following additional rules apply to this exam. These rules take precedence over the Rules for Online Proctored Exams.</br> </br>\n"
+"\n"
+"        %(exam_review_policy)s </br>\n"
+"      "
+msgstr ""
+"\n"
+"Följande ytterligare regler gäller för detta prov. Dessa regler har företräde framför reglerna för provkörda prov online.</br> </br>\n"
+"\n"
+"        %(exam_review_policy)s </br>"
+
+#: templates/proctored_exam/ready_to_start.html:49
+msgid "Start my exam"
+msgstr "Börja min examen"
+
+#: templates/proctored_exam/ready_to_start.html:50
+msgid "Starting Exam"
+msgstr "Startprov"
+
+#: templates/proctored_exam/ready_to_submit.html:4
+msgid ""
+"\n"
+"      Are you sure you want to end your proctored exam?\n"
+"    "
+msgstr ""
+"\n"
+"Är du säker på att du vill avsluta din proctored examen?"
+
+#: templates/proctored_exam/ready_to_submit.html:10
+msgid ""
+"Make sure that you have selected \"Submit\" for each answer before you "
+"submit your exam."
+msgstr ""
+"Se till att du har valt \"Skicka\" för varje svar innan du skickar in din "
+"tentamen."
+
+#: templates/proctored_exam/ready_to_submit.html:12
+msgid ""
+"Once you click \"Yes, end my proctored exam\", the exam will be closed, and "
+"your proctoring session will be submitted for review."
+msgstr ""
+"När du klickar på \"Ja, avsluta min proctored tentamen\", kommer provet att "
+"stängas och din proctoring session kommer att skickas in för granskning."
+
+#: templates/proctored_exam/ready_to_submit.html:15
+msgid "Yes, end my proctored exam"
+msgstr "Ja, avsluta min proctorade examen"
+
+#: templates/proctored_exam/ready_to_submit.html:16
+msgid "Ending Exam"
+msgstr "Slutprov"
+
+#: templates/proctored_exam/ready_to_submit.html:21
+msgid ""
+"\n"
+"        No, I'd like to continue working\n"
+"      "
+msgstr ""
+"\n"
+"Nej, jag skulle vilja fortsätta jobba"
+
+#: templates/proctored_exam/rejected.html:5
+msgid ""
+"\n"
+"        Your proctoring session was reviewed, but did not pass all requirements\n"
+"      "
+msgstr ""
+"\n"
+"Din proctoring session granskades, men uppfyllde inte alla krav"
+
+#: templates/proctored_exam/rejected.html:13
+#, python-format
+msgid ""
+"\n"
+"        If you have questions about the status of your proctoring session results, contact %(platform_name)s Support.\n"
+"      "
+msgstr ""
+"\n"
+"Kontakta %(platform_name)s support om du har frågor om statusen för dina proctoringssessionsresultat."
+
+#: templates/proctored_exam/rejected.html:23
+msgid ""
+"\n"
+"        If you have concerns about your proctoring session results, contact your course team.\n"
+"      "
+msgstr ""
+"\n"
+"Kontakta ditt kursteam om du har funderingar på resultatet av din proctoring session."
+
+#: templates/proctored_exam/submitted.html:4
+msgid ""
+"\n"
+"      You have submitted this proctored exam for review\n"
+"    "
+msgstr ""
+"\n"
+"Du har skickat in det här provet för granskning"
+
+#: templates/proctored_exam/submitted.html:9
+msgid "Your recorded data should now be uploaded for review."
+msgstr "Din inspelade data bör nu laddas upp för granskning."
+
+#: templates/proctored_exam/submitted.html:11
+msgid ""
+"If the proctoring software window is still open, close it now and confirm "
+"that you want to quit the application."
+msgstr ""
+"Om proctoringprogramfönstret fortfarande är öppet, stäng det nu och bekräfta"
+" att du vill avsluta programmet."
+
+#: templates/proctored_exam/submitted.html:13
+msgid ""
+"Proctoring results are usually available within 5 business days after you "
+"submit your exam."
+msgstr ""
+"Proctoring-resultat är vanligtvis tillgängliga inom 5 arbetsdagar efter att "
+"du har skickat in ditt prov."
+
+#: templates/proctored_exam/submitted.html:19
+#, python-format
+msgid ""
+"\n"
+"      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
+"    "
+msgstr ""
+"\n"
+"Om du har frågor om statusen för dina provresultat, kontakta %(platform_name)s support."
+
+#: templates/proctored_exam/verified.html:5
+msgid ""
+"\n"
+"                Your proctoring session was reviewed successfully. Go to your progress page to view your exam grade.\n"
+"            "
+msgstr ""
+"\n"
+"Din proctoring session granskades framgångsrikt. Gå till din framstegssida för att se ditt provbetyg."
+
+#: templates/proctored_exam/visit_exam_content.html:5
+msgid ""
+"\n"
+"      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
+"    "
+msgstr ""
+"\n"
+"Om du vill se dina provfrågor och svar väljer du <strong>Visa mitt prov</strong>. Granskningsstatusen för provet visas i den vänstra navigeringsrutan."
+
+#: templates/proctored_exam/visit_exam_content.html:11
+msgid "View my exam"
+msgstr "Se mitt prov"
+
+#: templates/timed_exam/entrance.html:4
+#, python-format
+msgid ""
+"\n"
+"    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
+"    "
+msgstr ""
+"\n"
+"%(exam_name)s är ett tidsbestämt prov (%(total_time)s)"
+
+#: templates/timed_exam/entrance.html:9
+msgid "This exam has a time limit associated with it."
+msgstr "Detta prov har en tidsgräns kopplad till sig."
+
+#: templates/timed_exam/entrance.html:11
+msgid "To pass this exam, you must complete the problems in the time allowed."
+msgstr ""
+"För att klara detta prov måste du slutföra problemen inom den tillåtna "
+"tiden."
+
+#: templates/timed_exam/entrance.html:13
+msgid "After you select "
+msgstr "När du har valt"
+
+#: templates/timed_exam/entrance.html:15
+msgid "I am ready to start this timed exam,"
+msgstr "Jag är redo att börja detta tidsinställda prov,"
+
+#: templates/timed_exam/entrance.html:17
+msgid "you will have "
+msgstr "du vill ha"
+
+#: templates/timed_exam/entrance.html:17
+msgid " to complete and submit the exam."
+msgstr "att slutföra och lämna in provet."
+
+#: templates/timed_exam/entrance.html:21
+msgid ""
+"\n"
+"        I am ready to start this timed exam.\n"
+"      "
+msgstr ""
+"\n"
+"Jag är redo att börja det här tidsinställda provet."
+
+#: templates/timed_exam/footer.html:3
+msgid "Can I request additional time to complete my exam?"
+msgstr "Kan jag begära ytterligare tid för att slutföra mitt prov?"
+
+#: templates/timed_exam/footer.html:4
+msgid ""
+"\n"
+"      If you have disabilities,\n"
+"      you might be eligible for an additional time allowance on timed exams.\n"
+"      Ask your course team for information about additional time allowances.\n"
+"    "
+msgstr ""
+"\n"
+"Om du har funktionshinder,\n"
+"      du kan vara berättigad till ytterligare tidstillägg vid tidsbestämda prov.\n"
+"      Fråga ditt kursteam om information om ytterligare tidstillägg."
+
+#: templates/timed_exam/ready_to_submit.html:4
+msgid ""
+"\n"
+"      Are you sure that you want to submit your timed exam?\n"
+"    "
+msgstr ""
+"\n"
+"Är du säker på att du vill skicka in din tidsinställda tentamen?"
+
+#: templates/timed_exam/ready_to_submit.html:9
+msgid ""
+"\n"
+"      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
+"    "
+msgstr ""
+"\n"
+"Se till att du har valt \"Skicka\" för varje problem innan du skickar in ditt prov."
+
+#: templates/timed_exam/ready_to_submit.html:14
+msgid ""
+"\n"
+"      After you submit your exam, your exam will be graded.\n"
+"    "
+msgstr ""
+"\n"
+"När du har skickat in din tentamen kommer din tenta att betygsättas."
+
+#: templates/timed_exam/ready_to_submit.html:19
+msgid ""
+"\n"
+"      Yes, submit my timed exam.\n"
+"    "
+msgstr ""
+"\n"
+"Ja, skicka in min tidsinställda tentamen."
+
+#: templates/timed_exam/ready_to_submit.html:25
+msgid ""
+"\n"
+"        No, I want to continue working.\n"
+"      "
+msgstr ""
+"\n"
+"Nej, jag vill fortsätta jobba."
+
+#: templates/timed_exam/submitted.html:6
+msgid ""
+"\n"
+"                The time allotted for this exam has expired. Your exam has been submitted and any work you completed\n"
+"                will be graded.\n"
+"            "
+msgstr ""
+"\n"
+"Den tilldelade tiden för detta prov har löpt ut. Ditt prov har lämnats in och alla arbeten du har slutfört\n"
+"                kommer att betygsättas."
+
+#: templates/timed_exam/submitted.html:11
+msgid ""
+"\n"
+"                You have submitted your timed exam.\n"
+"            "
+msgstr ""
+"\n"
+"Du har skickat in din tidsinställda tentamen."
+
+#: templates/timed_exam/submitted.html:21
+msgid ""
+"\n"
+"                After the due date has passed, you can review the exam, but you cannot change your answers.\n"
+"            "
+msgstr ""
+"\n"
+"Efter att förfallodagen har passerat kan du granska tentamen, men du kan inte ändra dina svar."
+
+#: utils.py:87
+#, python-brace-format
+msgid "{num_of_hours} hour"
+msgstr "{num_of_hours} timme"
+
+#: utils.py:90
+#, python-brace-format
+msgid "{num_of_hours} hours"
+msgstr "{num_of_hours} timmar"
+
+#: utils.py:98 utils.py:108
+#, python-brace-format
+msgid "{num_of_minutes} minutes"
+msgstr "{num_of_minutes} minuter"
+
+#: utils.py:101
+#, python-brace-format
+msgid " and {num_of_minutes} minute"
+msgstr "och {num_of_minutes} minut"
+
+#: utils.py:103
+#, python-brace-format
+msgid "{num_of_minutes} minute"
+msgstr "{num_of_minutes} minut"
+
+#: utils.py:106
+#, python-brace-format
+msgid " and {num_of_minutes} minutes"
+msgstr "och {num_of_minutes} minuter"
+
+#: utils.py:342
+msgid "a proctored exam"
+msgstr "en proctored examen"
+
+#: utils.py:345
+msgid "a timed exam"
+msgstr "ett tidsbestämt prov"
+
+#: utils.py:348
+msgid "an onboarding exam"
+msgstr "ett introduktionsprov"
+
+#: utils.py:350
+msgid "a practice exam"
+msgstr "ett övningsprov"
+
+#: views.py:151
+msgid "could not determine the course_id"
+msgstr "kunde inte bestämma kurs_id"
+
+#: views.py:160 views.py:675
+msgid "Must be a Staff User to Perform this request."
+msgstr "Måste vara personalanvändare för att utföra denna begäran."
+
+#: views.py:663
+msgid "Missing required query parameter course_id"
+msgstr "Den obligatoriska frågeparametern course_id saknas"
+
+#: views.py:683 views.py:854
+msgid "There is no onboarding exam related to this course id."
+msgstr "Det finns inget introduktionsprov relaterat till detta kurs-id."
+
+#: views.py:712
+msgid "There is no onboarding exam accessible to this user."
+msgstr "Det finns inget introduktionsprov tillgängligt för denna användare."
+
+#: views.py:762
+#, python-brace-format
+msgid "No onboarding status API for {proctor_service}"
+msgstr "Inget introduktionsstatus-API för {proctor_service}"
+
+#: views.py:904
+msgid ""
+"The onboarding service is temporarily unavailable. Please try again later."
+msgstr ""
+"Onboarding-tjänsten är tillfälligt otillgänglig. Vänligen försök igen "
+"senare."
+
+#: views.py:1282
+msgid "you have less than a minute remaining"
+msgstr "du har mindre än en minut kvar"
+
+#: views.py:1737
+msgid "Enter a valid username or email"
+msgstr "Ange ett giltigt användarnamn eller e-postadress"
+
+#: views.py:1737
+msgid "user_info"
+msgstr "användarinformation"
+
+#: views.py:1750
+msgid "Enter a valid positive value number"
+msgstr "Ange ett giltigt positivt värdenummer"
+
+#: views.py:1750
+msgid "allowance_value"
+msgstr "tilläggsvärde"
+
+#: views.py:1837
+msgid "Cannot update attempt review status"
+msgstr "Det går inte att uppdatera status för granskningsförsök"
+
+#: views.py:2137
+#, python-brace-format
+msgid "No exams in course {course_id}."
+msgstr "Inga prov i kursen {course_id}."
+
+#: views.py:2143
+#, python-brace-format
+msgid "No proctored exams in course {course_id}"
+msgstr "Inga proctorade prov i kursen {course_id}"
+
+#: views.py:2170
+#, python-brace-format
+msgid "No instructor dashboard for {proctor_service}"
+msgstr "Ingen instruktörsinstrumentpanel för {proctor_service}"

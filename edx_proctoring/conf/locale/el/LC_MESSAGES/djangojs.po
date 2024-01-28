@@ -14,14 +14,15 @@
 # LOUKAS SKOUROLIAKOS, 2021
 # Angelos Chraniotis, 2023
 # Ειρήνη Απέργη, 2023
+# Transifex Bot <>, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-03 18:35+0000\n"
+"POT-Creation-Date: 2024-01-21 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: Ειρήνη Απέργη, 2023\n"
+"Last-Translator: Transifex Bot <>, 2024\n"
 "Language-Team: Greek (https://app.transifex.com/open-edx/teams/6205/el/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,23 +32,23 @@ msgstr ""
 
 #: admin.py:112
 msgid "internally reviewed"
-msgstr ""
+msgstr "αναθεωρήθηκε εσωτερικά"
 
 #: admin.py:121
 msgid "All Unreviewed"
-msgstr ""
+msgstr "Όλα τα μη ελεγμένα"
 
 #: admin.py:122
 msgid "All Unreviewed Failures"
-msgstr ""
+msgstr "Όλες οι μη ελεγμένες αποτυχίες"
 
 #: admin.py:142
 msgid "active proctored exams"
-msgstr ""
+msgstr "ενεργές επιτηρούμενες εξετάσεις"
 
 #: admin.py:197
 msgid "courses with active proctored exams"
-msgstr ""
+msgstr "κύκλοι μαθημάτων με ενεργές επιτηρούμενες εξετάσεις"
 
 #: admin.py:354
 msgid "Course Id"
@@ -55,15 +56,15 @@ msgstr "Ταυτότητα μαθήματος"
 
 #: admin.py:392
 msgid "Created"
-msgstr ""
+msgstr "Δημιουργήθηκε"
 
 #: admin.py:393
 msgid "Download Software Clicked"
-msgstr ""
+msgstr "Κάνατε κλικ στη λήψη λογισμικού"
 
 #: admin.py:394
 msgid "Ready To Start"
-msgstr ""
+msgstr "Έτοιμος/η να αρχίσω"
 
 #: admin.py:395
 msgid "Started"
@@ -71,23 +72,23 @@ msgstr "Έναρξη"
 
 #: admin.py:396
 msgid "Ready To Submit"
-msgstr ""
+msgstr "Έτοιμο για υποβολή"
 
 #: admin.py:397
 msgid "Declined"
-msgstr ""
+msgstr "Απορρίφθηκε"
 
 #: admin.py:398
 msgid "Timed Out"
-msgstr ""
+msgstr "Εληξε ο χρόνος"
 
 #: admin.py:399
 msgid "Submitted"
-msgstr ""
+msgstr "Έχει υποβληθεί"
 
 #: admin.py:400
 msgid "Second Review Required"
-msgstr ""
+msgstr "Απαιτείται δεύτερη αναθεώρηση"
 
 #: admin.py:401
 msgid "Verified"
@@ -95,11 +96,11 @@ msgstr "Επαληθευμένοι"
 
 #: admin.py:402
 msgid "Rejected"
-msgstr ""
+msgstr "Μή αποδεκτό"
 
 #: admin.py:403
 msgid "Error"
-msgstr ""
+msgstr "Σφάλμα"
 
 #: admin.py:407
 msgid "Onboarding Missing"
@@ -120,11 +121,11 @@ msgstr ""
 #: api.py:822 views.py:1276
 #, python-brace-format
 msgid "you have {remaining_time} remaining"
-msgstr ""
+msgstr "σας απομένει {remaining_time}"
 
 #: api.py:1651
 msgid "your course"
-msgstr ""
+msgstr "ο κύκλος μαθημάτων σας"
 
 #: api.py:1743
 #, python-brace-format
@@ -143,47 +144,47 @@ msgstr ""
 
 #: api.py:2246
 msgid "Taking As Proctored Exam"
-msgstr ""
+msgstr "Συμμετοχή ως επιτηρούμενη εξέταση"
 
 #: api.py:2251
 msgid "Proctored Option Available"
-msgstr ""
+msgstr "Διαθέσιμη επιλογή επιτήρηησης"
 
 #: api.py:2256
 msgid "Taking As Open Exam"
-msgstr ""
+msgstr "Λήψη ως ανοικτή εξέταση"
 
 #: api.py:2261 api.py:2266
 msgid "Pending Session Review"
-msgstr ""
+msgstr "Αναθεώρηση συνεδρίας σε εκκρεμότητα"
 
 #: api.py:2271
 msgid "Passed Proctoring"
-msgstr ""
+msgstr "Πέρασε την επιτήρηση"
 
 #: api.py:2276 api.py:2281
 msgid "Failed Proctoring"
-msgstr ""
+msgstr "Αποτυχία επιτήρησης"
 
 #: api.py:2286
 msgid "Proctored Option No Longer Available"
-msgstr ""
+msgstr "Η επιλογή επιτήρησης δεν είναι πλέον διαθέσιμη"
 
 #: api.py:2295
 msgid "Ungraded Practice Exam"
-msgstr ""
+msgstr "Αβαθμολόγητη πρακτική εξέταση"
 
 #: api.py:2300
 msgid "Practice Exam Completed"
-msgstr ""
+msgstr "Ολοκληρώθηκε η πρακτική εξέταση"
 
 #: api.py:2305
 msgid "Practice Exam Failed"
-msgstr ""
+msgstr "Η πρακτική εξέταση απέτυχε"
 
 #: api.py:2313
 msgid "Timed Exam"
-msgstr ""
+msgstr "Χρονομετρημένη εξέταση"
 
 #: api.py:2896
 msgid "Onboarding status question"
@@ -191,11 +192,11 @@ msgstr ""
 
 #: models.py:391
 msgid "Taking as Proctored"
-msgstr ""
+msgstr "Συμμετοχή ως επιτηρούμενης"
 
 #: models.py:395
 msgid "Is Sample Attempt"
-msgstr ""
+msgstr "Είναι δείγμα προσπάθειας"
 
 #: models.py:413
 msgid "Is Resumable"
@@ -211,11 +212,11 @@ msgstr ""
 
 #: models.py:523
 msgid "Additional Time (minutes)"
-msgstr ""
+msgstr "Επιπλέον χρόνος (minutes)"
 
 #: models.py:524
 msgid "Review Policy Exception"
-msgstr ""
+msgstr "Αναθεώρηση πολιτικής εξαίρεσης"
 
 #: templates/common/waiting_banner.html:3
 msgid ""
@@ -234,7 +235,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Αγαπητέ/αγαπητή %(username)s,"
+"Αγαπητέ/Αγαπητή %(username)s,"
 
 #: templates/emails/proctoring_attempt_satisfactory_email.html:12
 #, python-format
@@ -517,7 +518,7 @@ msgstr ""
 
 #: templates/practice_exam/entrance.html:20
 msgid "Continue to my practice exam"
-msgstr ""
+msgstr "Συνέχεια στην πρακτική μου εξέταση"
 
 #: templates/practice_exam/entrance.html:25
 msgid ""
@@ -539,6 +540,11 @@ msgid ""
 "      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory </b>\n"
 "    "
 msgstr ""
+"\n"
+"      Τα αποτελέσματα της επιτηρούμενης πρακτικής εξάσκησης\n"
+"\n"
+": <b class=\"failure\"> Μη ικανοποιητικά </b>\n"
+"    "
 
 #: templates/practice_exam/error.html:21
 msgid ""
@@ -569,6 +575,9 @@ msgid ""
 "        Are you sure you want to take this exam without proctoring?\n"
 "      "
 msgstr ""
+"\n"
+"        Είστε βέβαιοι ότι θέλετε να συμμετάσχετε σε αυτήν την εξέταση χωρίς επιτήρηση;\n"
+"      "
 
 #: templates/proctored_exam/confirm-decline.html:10
 msgid ""
@@ -579,11 +588,11 @@ msgstr ""
 
 #: templates/proctored_exam/confirm-decline.html:16
 msgid "Continue Exam Without Proctoring"
-msgstr ""
+msgstr "Συνέχιση της εξέτασης χωρίς επιτήρηση"
 
 #: templates/proctored_exam/confirm-decline.html:19
 msgid "Go Back"
-msgstr ""
+msgstr "Επιστροφή"
 
 #: templates/proctored_exam/entrance.html:4
 #: templates/proctored_exam/failed-prerequisites.html:4
@@ -593,6 +602,9 @@ msgid ""
 "      This exam is proctored\n"
 "    "
 msgstr ""
+"\n"
+"      Αυτή η εξέταση επιτηρείται\n"
+"    "
 
 #: templates/proctored_exam/entrance.html:9
 msgid ""
@@ -622,6 +634,9 @@ msgid ""
 "      Error with proctored exam\n"
 "    "
 msgstr ""
+"\n"
+"      Σφάλμα επιτηρούμενης εξέτασης\n"
+"    "
 
 #: templates/proctored_exam/error.html:11
 #, python-format
@@ -665,7 +680,7 @@ msgstr ""
 
 #: templates/proctored_exam/error_wrong_browser.html:22
 msgid "End My Exam"
-msgstr ""
+msgstr "Τερματισμός της εξέτασης"
 
 #: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
 msgid ""
@@ -673,6 +688,9 @@ msgid ""
 "      The due date for this exam has passed\n"
 "    "
 msgstr ""
+"\n"
+"      Η προθεσμία για αυτήν την εξέταση έχει παρέλθει\n"
+"    "
 
 #: templates/proctored_exam/expired.html:9 templates/timed_exam/expired.html:9
 msgid ""
@@ -680,6 +698,9 @@ msgid ""
 "      Because the due date has passed, you are no longer able to take this exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Επειδή η ημερομηνία λήξης έχει παρέλθει, δεν μπορείτε πλέον να συμμετάσχετε σε αυτήν την εξέταση.\n"
+"    "
 
 #: templates/proctored_exam/failed-prerequisites.html:9
 msgid ""
@@ -694,6 +715,9 @@ msgid ""
 "    You did not satisfy the following prerequisites:\n"
 "    "
 msgstr ""
+"\n"
+"    Δεν πληρούσατε τις παρακάτω προϋποθέσεις:\n"
+"    "
 
 #: templates/proctored_exam/failed-prerequisites.html:32
 msgid ""
@@ -701,6 +725,9 @@ msgid ""
 "        Due to unsatisfied prerequisites, you can only take this exam without proctoring.\n"
 "      "
 msgstr ""
+"\n"
+"        Λόγω μη ικανοποιημένων προαπαιτούμενων, μπορείτε να συμμετάσχετε σε αυτήν την εξέταση μόνο χωρίς επιτήρηση.\n"
+"      "
 
 #: templates/proctored_exam/failed-prerequisites.html:40
 #, python-format
@@ -716,6 +743,9 @@ msgid ""
 "        About Proctored Exams\n"
 "        "
 msgstr ""
+"\n"
+"        Σχετικά με τις επιτηρούμενες εξετάσεις\n"
+"        "
 
 #: templates/proctored_exam/inactive_account.html:4
 msgid ""
@@ -723,6 +753,9 @@ msgid ""
 "      You have not activated your account.\n"
 "    "
 msgstr ""
+"\n"
+"      Δεν έχετε ενεργοποιήσει τον λογαριασμό σας.\n"
+"    "
 
 #: templates/proctored_exam/inactive_account.html:10
 #, python-format
@@ -750,6 +783,8 @@ msgid ""
 "        activate your account.\n"
 "      "
 msgstr ""
+"\n"
+"Εάν δεν μπορείτε να εντοπίσετε αυτό το μήνυμα, μπορείτε να <a href=\"%(reset_link)s\" target=\"_blank\">αλλάξετε τον κωδικό σας</a> προκειμένου ενεργοποιήσετε τον λογαριασμό σας."
 
 #: templates/proctored_exam/inactive_account.html:26
 msgid ""
@@ -796,7 +831,7 @@ msgstr ""
 #: templates/proctored_exam/instructions.html:33
 #: templates/proctored_exam/instructions.html:78
 msgid "Start System Check"
-msgstr ""
+msgstr "Έναρξη Ελέγχου συστήματος"
 
 #: templates/proctored_exam/instructions.html:36
 msgid "Start Exam"
@@ -873,7 +908,7 @@ msgstr ""
 #: templates/proctored_exam/instructions.html:100
 #: templates/proctored_exam/proctoring_opt_out_button.html:5
 msgid "Take this exam without proctoring."
-msgstr ""
+msgstr "Συμμετοχή στις εξετάσεις χωρίς επιτήρηση"
 
 #: templates/proctored_exam/onboarding_error.html:4
 msgid ""
@@ -931,6 +966,9 @@ msgid ""
 "    The following prerequisites are in a <strong>pending</strong> state and must be successfully completed before you can proceed:\n"
 "    "
 msgstr ""
+"\n"
+"    Οι ακόλουθες προϋποθέσεις βρίσκονται σε κατάσταση <strong>σε εκκρεμότητα</strong> και πρέπει να ολοκληρωθούν επιτυχώς για να μπορέσετε να προχωρήσετε:\n"
+"    "
 
 #: templates/proctored_exam/pending-prerequisites.html:30
 msgid ""
@@ -941,7 +979,7 @@ msgstr ""
 
 #: templates/proctored_exam/proctoring_launch_callback.html:164
 msgid " Your Proctoring Session Has Started "
-msgstr ""
+msgstr "Η συνεδρία επιτήρησης έχει ξεκινήσει"
 
 #: templates/proctored_exam/proctoring_launch_callback.html:165
 #, python-format
@@ -950,6 +988,10 @@ msgid ""
 "href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\">online "
 "proctoring rules</a> to pass the proctoring review for your exam. "
 msgstr ""
+"Από αυτό το χρονικό σημείο, θα πρέπει να ακολουθήσετε τους <a "
+"href=\"%(link_urls.online_proctoring_rules)s\" target=\"_blank\"> κανόνες "
+"διαδικτυακής επιτήρησης </a> για να περάσετε την αναθεώρηση επιτήρησης για "
+"την εξέτασή σας."
 
 #: templates/proctored_exam/proctoring_launch_callback.html:168
 msgid ""
@@ -957,6 +999,9 @@ msgid ""
 "            Do not close this window before you finish your exam. if you close this window, your proctoring session ends, and you will not successfully complete the proctored exam.\n"
 "          "
 msgstr ""
+"\n"
+"            Μην κλείσετε αυτό το παράθυρο πριν ολοκληρώσετε τις εξετάσεις σας. Εάν κλείσετε αυτό το παράθυρο, η συνεδρία επιτήρησης λήγει και δεν θα ολοκληρώσετε επιτυχώς την εξέταση.\n"
+"          "
 
 #: templates/proctored_exam/proctoring_launch_callback.html:173
 #, python-format
@@ -967,6 +1012,11 @@ msgid ""
 "            and upload your proctoring session data for review.\n"
 "          "
 msgstr ""
+"\n"
+"            Επιστρέψτε στο παράθυρο κύκλου μαθημάτων του  %(platform_name)s για να ξεκινήσετε την εξέτασή σας. Όταν τελειώσετε την εξέτασή σας και\n"
+"            την έχετε επισημάνει ως ολοκληρωμένη, μπορείτε να κλείσετε αυτό το παράθυρο για να τερματίσετε την περίοδο επιτήρησης\n"
+"            και να μεταφορτώσετε τα δεδομένα της περιόδου λειτουργίας επιτήρησης για έλεγχο.\n"
+"          "
 
 #: templates/proctored_exam/ready_to_resume.html:4
 msgid ""
@@ -1063,6 +1113,9 @@ msgid ""
 "      Are you sure you want to end your proctored exam?\n"
 "    "
 msgstr ""
+"\n"
+"      Είστε βέβαιοι ότι θέλετε να τερματίσετε την επιτηρούμενη εξέτασή σας;\n"
+"    "
 
 #: templates/proctored_exam/ready_to_submit.html:10
 msgid ""
@@ -1090,6 +1143,9 @@ msgid ""
 "        No, I'd like to continue working\n"
 "      "
 msgstr ""
+"\n"
+"        Όχι, θα ήθελα να συνεχίσω να δουλεύω\n"
+"      "
 
 #: templates/proctored_exam/rejected.html:5
 msgid ""
@@ -1119,6 +1175,9 @@ msgid ""
 "      You have submitted this proctored exam for review\n"
 "    "
 msgstr ""
+"\n"
+"      Έχετε υποβάλει αυτήν την επιτηρούμενη εξέταση για έλεγχο\n"
+"    "
 
 #: templates/proctored_exam/submitted.html:9
 msgid "Your recorded data should now be uploaded for review."
@@ -1143,6 +1202,8 @@ msgid ""
 "      If you have questions about the status of your proctored exam results, contact %(platform_name)s Support.\n"
 "    "
 msgstr ""
+"\n"
+"ένα δύο τρία %(platform_name)s"
 
 #: templates/proctored_exam/verified.html:5
 msgid ""
@@ -1157,10 +1218,13 @@ msgid ""
 "      To view your exam questions and responses, select <strong>View my exam</strong>. The exam's review status is shown in the left navigation pane.\n"
 "    "
 msgstr ""
+"\n"
+"      Για να δείτε τις ερωτήσεις και τις απαντήσεις σας στις εξετάσεις, επιλέξτε <strong>Προβολή της εξέτασής μου</strong>. Η κατάσταση ελέγχου της εξέτασης εμφανίζεται στο αριστερό παράθυρο πλοήγησης.\n"
+"    "
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "Προβολή της εξέτασής μου"
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -1169,30 +1233,35 @@ msgid ""
 "    %(exam_name)s is a Timed Exam (%(total_time)s)\n"
 "    "
 msgstr ""
+"\n"
+"    %(exam_name)s είναι μια χρονομετρημένη εξέταση (%(total_time)s)\n"
+"    "
 
 #: templates/timed_exam/entrance.html:9
 msgid "This exam has a time limit associated with it."
-msgstr ""
+msgstr "Αυτή η εξέταση έχει ένα χρονικό όριο που σχετίζεται με αυτήν."
 
 #: templates/timed_exam/entrance.html:11
 msgid "To pass this exam, you must complete the problems in the time allowed."
 msgstr ""
+"Για να περάσετε αυτήν την εξέταση, πρέπει να ολοκληρώσετε τα προβλήματα στον"
+" επιτρεπόμενο χρόνο."
 
 #: templates/timed_exam/entrance.html:13
 msgid "After you select "
-msgstr ""
+msgstr "Αφού επιλέξετε"
 
 #: templates/timed_exam/entrance.html:15
 msgid "I am ready to start this timed exam,"
-msgstr ""
+msgstr "Είμαι έτοιμος/η να ξεκινήσω αυτή την χρονομετρημένη εξέταση,"
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr ""
+msgstr "θα έχετε"
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
-msgstr ""
+msgstr "για τη συμπλήρωση και υποβολή της εξέτασης."
 
 #: templates/timed_exam/entrance.html:21
 msgid ""
@@ -1200,10 +1269,13 @@ msgid ""
 "        I am ready to start this timed exam.\n"
 "      "
 msgstr ""
+"\n"
+"        Είμαι έτοιμος να ξεκινήσω αυτή την χρονομετρημένη εξέταση.\n"
+"      "
 
 #: templates/timed_exam/footer.html:3
 msgid "Can I request additional time to complete my exam?"
-msgstr ""
+msgstr "Μπορώ να ζητήσω επιπλέον χρόνο για να ολοκληρώσω τις εξετάσεις μου;"
 
 #: templates/timed_exam/footer.html:4
 msgid ""
@@ -1213,6 +1285,11 @@ msgid ""
 "      Ask your course team for information about additional time allowances.\n"
 "    "
 msgstr ""
+"\n"
+"      Εάν έχετε κάποια αναπηρία,\n"
+"      μπορεί να δικαιούστε πρόσθετο χρόνο σε χρονομετρημένες εξετάσεις.\n"
+"      Ζητήστε από την ομάδα κύκλου μαθημάτων σας πληροφορίες σχετικά με την απόδοση επιπλέον χρόνου.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:4
 msgid ""
@@ -1220,6 +1297,9 @@ msgid ""
 "      Are you sure that you want to submit your timed exam?\n"
 "    "
 msgstr ""
+"\n"
+"      Είστε βέβαιοι ότι θέλετε να υποβάλετε την χρονομετρημένη εξέτασή σας;\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:9
 msgid ""
@@ -1227,6 +1307,9 @@ msgid ""
 "      Make sure that you have selected \"Submit\" for each problem before you submit your exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Βεβαιωθείτε ότι έχετε επιλέξει \"Υποβολή\" για κάθε πρόβλημα πριν υποβάλετε την εξέτασή σας..\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:14
 msgid ""
@@ -1234,6 +1317,9 @@ msgid ""
 "      After you submit your exam, your exam will be graded.\n"
 "    "
 msgstr ""
+"\n"
+"      Η εξέτασή σας θα βαθμολογηθεί, αφότου την υποβάλλετε\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:19
 msgid ""
@@ -1241,6 +1327,9 @@ msgid ""
 "      Yes, submit my timed exam.\n"
 "    "
 msgstr ""
+"\n"
+"      Ναι, να υποβληθούν οι χρονομετρημένες εξετάσεις μου.\n"
+"    "
 
 #: templates/timed_exam/ready_to_submit.html:25
 msgid ""
@@ -1248,6 +1337,9 @@ msgid ""
 "        No, I want to continue working.\n"
 "      "
 msgstr ""
+"\n"
+"        Όχι, θέλω να συνεχίσω να δουλεύω.\n"
+"      "
 
 #: templates/timed_exam/submitted.html:6
 msgid ""
@@ -1274,32 +1366,32 @@ msgstr ""
 #: utils.py:87
 #, python-brace-format
 msgid "{num_of_hours} hour"
-msgstr ""
+msgstr "{num_of_hours} ώρα"
 
 #: utils.py:90
 #, python-brace-format
 msgid "{num_of_hours} hours"
-msgstr ""
+msgstr "{num_of_hours} ώρες"
 
 #: utils.py:98 utils.py:108
 #, python-brace-format
 msgid "{num_of_minutes} minutes"
-msgstr ""
+msgstr "{num_of_minutes} λεπτά"
 
 #: utils.py:101
 #, python-brace-format
 msgid " and {num_of_minutes} minute"
-msgstr ""
+msgstr " και {num_of_minutes} λεπτό"
 
 #: utils.py:103
 #, python-brace-format
 msgid "{num_of_minutes} minute"
-msgstr ""
+msgstr "{num_of_minutes} λεπτό(ά)"
 
 #: utils.py:106
 #, python-brace-format
 msgid " and {num_of_minutes} minutes"
-msgstr ""
+msgstr " και {num_of_minutes} λεπτά"
 
 #: utils.py:342
 msgid "a proctored exam"
@@ -1307,7 +1399,7 @@ msgstr ""
 
 #: utils.py:345
 msgid "a timed exam"
-msgstr ""
+msgstr "μια χρονομετρημένη εξέταση"
 
 #: utils.py:348
 msgid "an onboarding exam"
@@ -1319,11 +1411,11 @@ msgstr ""
 
 #: views.py:151
 msgid "could not determine the course_id"
-msgstr ""
+msgstr "δεν μπόρεσε να προσδιορίσει το course_id"
 
 #: views.py:160 views.py:675
 msgid "Must be a Staff User to Perform this request."
-msgstr ""
+msgstr "Πρέπει να είναι χρήστης προσωπικού για να εκτελέσει αυτό το αίτημα."
 
 #: views.py:663
 msgid "Missing required query parameter course_id"
@@ -1349,7 +1441,7 @@ msgstr ""
 
 #: views.py:1282
 msgid "you have less than a minute remaining"
-msgstr ""
+msgstr "σας απομένει λιγότερο από ένα λεπτό"
 
 #: views.py:1737
 msgid "Enter a valid username or email"
