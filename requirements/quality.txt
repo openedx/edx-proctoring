@@ -25,7 +25,7 @@ code-annotations==1.5.0
     # via edx-lint
 colorama==0.4.6
     # via typer
-dill==0.3.7
+dill==0.3.8
     # via pylint
 django==3.2.23
     # via
@@ -59,9 +59,9 @@ platformdirs==4.1.0
     # via pylint
 pycodestyle==2.11.1
     # via -r requirements/quality.in
-pydantic==2.5.3
+pydantic==2.6.0
     # via rstcheck-core
-pydantic-core==2.14.6
+pydantic-core==2.16.1
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
@@ -81,9 +81,9 @@ pylint-plugin-utils==0.8.2
     # via
     #   pylint-celery
     #   pylint-django
-python-slugify==8.0.1
+python-slugify==8.0.2
     # via code-annotations
-pytz==2023.3.post1
+pytz==2023.4
     # via django
 pyyaml==6.0.1
     # via code-annotations
