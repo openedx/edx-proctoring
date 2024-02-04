@@ -11,14 +11,15 @@
 # JOHN MASANDA <translations_6@camara.ie>, 2017
 # YAHAYA MWAVURIZI <translations_1@camara.ie>, 2017
 # swaleh amin <mkupuofirstnameswaleh@yahoo.com>, 2021
+# Transifex Bot <>, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-19 18:35+0000\n"
+"POT-Creation-Date: 2024-01-21 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: swaleh amin <mkupuofirstnameswaleh@yahoo.com>, 2021\n"
+"Last-Translator: Transifex Bot <>, 2024\n"
 "Language-Team: Swahili (Kenya) (https://app.transifex.com/open-edx/teams/6205/sw_KE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -672,7 +673,7 @@ msgstr ""
 
 #: templates/proctored_exam/error_wrong_browser.html:22
 msgid "End My Exam"
-msgstr ""
+msgstr "Maliza Mtihani Wangu"
 
 #: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
 msgid ""

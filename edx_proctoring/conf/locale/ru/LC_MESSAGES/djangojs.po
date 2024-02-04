@@ -14,14 +14,15 @@
 # Anastasija Teresenkova <anastasija_te@inbox.lv>, 2021
 # Victor, 2022
 # real_torrot, 2022
+# Transifex Bot <>, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-19 18:35+0000\n"
+"POT-Creation-Date: 2024-01-21 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: real_torrot, 2022\n"
+"Last-Translator: Transifex Bot <>, 2024\n"
 "Language-Team: Russian (https://app.transifex.com/open-edx/teams/6205/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -413,7 +414,7 @@ msgstr ""
 #: templates/practice_exam/error.html:29
 #: templates/practice_exam/submitted.html:18
 msgid "Retry my exam"
-msgstr ""
+msgstr "Повторить экзамен"
 
 #: templates/onboarding_exam/rejected.html:21
 #: templates/practice_exam/error.html:30
@@ -674,7 +675,7 @@ msgstr ""
 
 #: templates/proctored_exam/error_wrong_browser.html:22
 msgid "End My Exam"
-msgstr ""
+msgstr "Завершить сдачу экзамена"
 
 #: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
 msgid ""
@@ -824,7 +825,7 @@ msgstr "Начать проверку системы"
 
 #: templates/proctored_exam/instructions.html:36
 msgid "Start Exam"
-msgstr ""
+msgstr "Начать экзамен"
 
 #: templates/proctored_exam/instructions.html:40
 msgid ""
@@ -832,6 +833,8 @@ msgid ""
 "          Step 1\n"
 "        "
 msgstr ""
+"\n"
+"Шаг 1"
 
 #: templates/proctored_exam/instructions.html:45
 msgid ""
@@ -839,10 +842,12 @@ msgid ""
 "          Copy this unique exam code. You will be prompted to paste this code later before you start the exam.\n"
 "        "
 msgstr ""
+"\n"
+"Скопируйте этот уникальный код экзамена. Вас попросят вставить этот код позже, перед началом экзамена"
 
 #: templates/proctored_exam/instructions.html:51
 msgid "Copy Exam Code"
-msgstr ""
+msgstr "Скопируйте код экзамена"
 
 #: templates/proctored_exam/instructions.html:54
 msgid ""
@@ -850,6 +855,8 @@ msgid ""
 "        Select the exam code, then copy it using Control + C (Windows) or Command + C (Mac).\n"
 "      "
 msgstr ""
+"\n"
+"Выделите код экзамена, потом скопируйте его используя Ctrl+C (Windows) или Command+C (Mac)"
 
 #: templates/proctored_exam/instructions.html:59
 msgid ""
@@ -857,6 +864,8 @@ msgid ""
 "          Step 2\n"
 "        "
 msgstr ""
+"\n"
+"Шаг 2"
 
 #: templates/proctored_exam/instructions.html:64
 msgid ""
@@ -1379,7 +1388,7 @@ msgstr ""
 
 #: utils.py:345
 msgid "a timed exam"
-msgstr ""
+msgstr "экзамен на время"
 
 #: utils.py:348
 msgid "an onboarding exam"

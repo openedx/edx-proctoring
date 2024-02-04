@@ -12,14 +12,15 @@
 # Sari Rahmawati <kusuma.rahmawati@gmail.com>, 2018
 # Aprisa Chrysantina <aprisa.chrysantina@gmail.com>, 2021
 # Faizar Septiawan <faizarsangster@gmail.com>, 2023
+# Transifex Bot <>, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-19 18:35+0000\n"
+"POT-Creation-Date: 2024-01-21 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:55+0000\n"
-"Last-Translator: Faizar Septiawan <faizarsangster@gmail.com>, 2023\n"
+"Last-Translator: Transifex Bot <>, 2024\n"
 "Language-Team: Indonesian (https://app.transifex.com/open-edx/teams/6205/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -209,7 +210,7 @@ msgstr ""
 
 #: models.py:523
 msgid "Additional Time (minutes)"
-msgstr ""
+msgstr "Waktu Tambahan (menit)"
 
 #: models.py:524
 msgid "Review Policy Exception"
@@ -661,7 +662,7 @@ msgstr ""
 
 #: templates/proctored_exam/error_wrong_browser.html:22
 msgid "End My Exam"
-msgstr ""
+msgstr "Akhiri Ujian Saya"
 
 #: templates/proctored_exam/expired.html:4 templates/timed_exam/expired.html:4
 msgid ""
@@ -792,7 +793,7 @@ msgstr ""
 #: templates/proctored_exam/instructions.html:33
 #: templates/proctored_exam/instructions.html:78
 msgid "Start System Check"
-msgstr ""
+msgstr "Mulai Pemeriksaan Sistem"
 
 #: templates/proctored_exam/instructions.html:36
 msgid "Start Exam"
@@ -1156,7 +1157,7 @@ msgstr ""
 
 #: templates/proctored_exam/visit_exam_content.html:11
 msgid "View my exam"
-msgstr ""
+msgstr "Lihat ujian saya"
 
 #: templates/timed_exam/entrance.html:4
 #, python-format
@@ -1186,7 +1187,7 @@ msgstr ""
 
 #: templates/timed_exam/entrance.html:17
 msgid "you will have "
-msgstr ""
+msgstr "Anda akan memiliki"
 
 #: templates/timed_exam/entrance.html:17
 msgid " to complete and submit the exam."
@@ -1309,7 +1310,7 @@ msgstr ""
 
 #: utils.py:345
 msgid "a timed exam"
-msgstr ""
+msgstr "ujian berwaktu"
 
 #: utils.py:348
 msgid "an onboarding exam"
