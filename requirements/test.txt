@@ -17,7 +17,7 @@ backports-zoneinfo[tzdata]==0.2.1
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
-certifi==2023.11.17
+certifi==2024.2.2
     # via requests
 cffi==1.16.0
     # via
@@ -37,13 +37,13 @@ charset-normalizer==3.3.2
 click-plugins==1.1.1
     # via celery
     # via celery
-code-annotations==1.5.0
+code-annotations==1.6.0
     # via -r requirements/test.in
 coverage[toml]==7.4.1
     # via
     #   coverage
     #   pytest-cov
-cryptography==42.0.1
+cryptography==42.0.2
     # via pyjwt
 ddt==1.7.1
     # via -r requirements/test.in
@@ -65,7 +65,7 @@ django-crum==0.7.9
     # via
     #   -r requirements/base.in
     #   edx-django-utils
-django-ipware==6.0.3
+django-ipware==6.0.4
     # via -r requirements/base.in
 django-model-utils==4.3.1
     # via
@@ -96,7 +96,7 @@ edx-django-utils==5.10.1
     #   edx-rest-api-client
     #   edx-when
     #   event-tracking
-edx-drf-extensions==10.1.0
+edx-drf-extensions==10.2.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -140,7 +140,7 @@ lxml==5.1.0
     #   xblock
 mako==1.3.2
     # via xblock
-markupsafe==2.1.4
+markupsafe==2.1.5
     # via
     #   jinja2
     #   mako
@@ -151,7 +151,7 @@ newrelic==9.6.0
     # via edx-django-utils
 packaging==23.2
     # via pytest
-path==16.9.0
+path==16.10.0
     # via edx-i18n-tools
 pbr==6.0.0
     # via stevedore
@@ -198,9 +198,9 @@ python-dateutil==2.8.2
     #   xblock
 python-ipware==2.0.1
     # via django-ipware
-python-slugify==8.0.2
+python-slugify==8.0.3
     # via code-annotations
-pytz==2023.4
+pytz==2024.1
     # via
     #   -r requirements/base.in
     #   django
