@@ -13,14 +13,16 @@
 # Agata Kawczynski, 2021
 # Stefania Trabucchi <stefania.trabucchi@abstract-technology.de>, 2021
 # Joerg Bullmann, 2023
+# GeorgBuschAdventisten, 2023
+# Transifex Bot <>, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: edx-proctoring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-19 18:35+0000\n"
+"POT-Creation-Date: 2024-01-21 18:35+0000\n"
 "PO-Revision-Date: 2016-12-20 19:52+0000\n"
-"Last-Translator: Joerg Bullmann, 2023\n"
+"Last-Translator: Transifex Bot <>, 2024\n"
 "Language-Team: German (Germany) (https://app.transifex.com/open-edx/teams/6205/de_DE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -202,7 +204,7 @@ msgstr ""
 
 #: models.py:418
 msgid "Ready to Resume"
-msgstr ""
+msgstr "Bereit zum Fortsetzten"
 
 #: models.py:421
 msgid "Resumed"
@@ -222,6 +224,8 @@ msgid ""
 "        The result will be visible after <strong id=\"wait_deadline\"> Loading... </strong>\n"
 "    "
 msgstr ""
+"\n"
+"Das Ergebnis erscheint in <strong id=\"wait_deadline\"> Lade... </strong> "
 
 #: templates/emails/proctoring_attempt_satisfactory_email.html:5
 #: templates/emails/proctoring_attempt_submitted_email.html:5
@@ -232,6 +236,8 @@ msgid ""
 "        Hello %(username)s,\n"
 "    "
 msgstr ""
+"\n"
+"Hallo %(username)s,"
 
 #: templates/emails/proctoring_attempt_satisfactory_email.html:12
 #, python-format
@@ -305,6 +311,8 @@ msgid ""
 "      Why this is important to you:\n"
 "    "
 msgstr ""
+"\n"
+"Warum dies für Sie wichtig ist:"
 
 #: templates/onboarding_exam/entrance.html:18
 msgid ""
@@ -412,7 +420,7 @@ msgstr ""
 #: templates/practice_exam/error.html:29
 #: templates/practice_exam/submitted.html:18
 msgid "Retry my exam"
-msgstr ""
+msgstr "Wiederhole meine Prüfung"
 
 #: templates/onboarding_exam/rejected.html:21
 #: templates/practice_exam/error.html:30
@@ -669,6 +677,8 @@ msgid ""
 "      Alternatively, you can end your exam.\n"
 "    "
 msgstr ""
+"\n"
+"Alternativ können Sie Ihre Prüfung beenden."
 
 #: templates/proctored_exam/error_wrong_browser.html:22
 msgid "End My Exam"
@@ -829,6 +839,8 @@ msgid ""
 "          Step 1\n"
 "        "
 msgstr ""
+"\n"
+"Schritt 1"
 
 #: templates/proctored_exam/instructions.html:45
 msgid ""
@@ -854,6 +866,8 @@ msgid ""
 "          Step 2\n"
 "        "
 msgstr ""
+"\n"
+"Schritt 2"
 
 #: templates/proctored_exam/instructions.html:64
 msgid ""
@@ -883,6 +897,8 @@ msgid ""
 "          Step 3\n"
 "        "
 msgstr ""
+"\n"
+"Schritt 3"
 
 #: templates/proctored_exam/instructions.html:86
 msgid ""
@@ -1030,6 +1046,8 @@ msgid ""
 "      Important\n"
 "    "
 msgstr ""
+"\n"
+"Wichtig"
 
 #: templates/proctored_exam/ready_to_start.html:10
 #, python-format
@@ -1085,7 +1103,7 @@ msgstr ""
 
 #: templates/proctored_exam/ready_to_start.html:49
 msgid "Start my exam"
-msgstr ""
+msgstr "Beginne meine Prüfung"
 
 #: templates/proctored_exam/ready_to_start.html:50
 msgid "Starting Exam"
