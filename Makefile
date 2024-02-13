@@ -1,7 +1,7 @@
 .PHONY: help upgrade requirements clean quality requirements \
 	requirements-test coverage pii_check \
 	compile_translations dummy_translations extract_translations \
-	fake_translations pull_translations push_translations test test-python \
+	fake_translations test test-python \
 	test-js quality-python quality-js
 
 .DEFAULT_GOAL := help
@@ -122,21 +122,15 @@ diff_cover: test
 
 ## Localization targets
 
-extract_translations: ## extract strings to be translated, outputting .mo files
+extract_translations: ## extract strings to be translated, outputting .po files
 	cd edx_proctoring && django-admin makemessages -l en -v1 -d django
 	cd edx_proctoring && django-admin makemessages -l en -v1 -d djangojs
 
-compile_translations: ## compile translation files, outputting .po files for each supported language
+compile_translations: ## compile translation files, outputting .mo files for each supported language
 	cd edx_proctoring && django-admin compilemessages
 
 detect_changed_source_translations:
 	cd edx_proctoring && i18n_tool changed
-
-pull_translations: ## pull translations from Transifex
-	tx pull -a -f -t --mode reviewed --minimum-perc=1
-
-push_translations: ## push source translation files (.po) from Transifex
-	tx push -s
 
 validate_translations: ## Test translation files
 	cd edx_proctoring && i18n_tool validate -v
