@@ -10,7 +10,7 @@ appdirs==1.4.4
     # via fs
 asgiref==3.7.2
     # via django
-backports-zoneinfo[tzdata]==0.2.1
+backports-zoneinfo[tzdata]==0.2.1; python_version < '3.9'
     # via
     #   celery
     #   kombu
