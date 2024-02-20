@@ -9,6 +9,8 @@ appdirs==1.4.4
     # via fs
 asgiref==3.7.2
     # via django
+attrs==23.2.0
+    # via openedx-events
 backports-zoneinfo[tzdata]==0.2.1
     # via
     #   celery
@@ -38,12 +40,12 @@ click-plugins==1.1.1
     # via celery
     # via celery
 code-annotations==1.6.0
-    # via -r requirements/test.in
-coverage[toml]==7.4.1
     # via
-    #   coverage
-    #   pytest-cov
-cryptography==42.0.2
+    #   -r requirements/test.in
+    #   edx-toggles
+coverage[toml]==7.4.1
+    # via pytest-cov
+cryptography==42.0.3
     # via pyjwt
 ddt==1.7.1
     # via -r requirements/test.in
@@ -58,16 +60,19 @@ ddt==1.7.1
     #   edx-django-utils
     #   edx-drf-extensions
     #   edx-i18n-tools
+    #   edx-toggles
     #   edx-when
     #   event-tracking
     #   jsonfield
+    #   openedx-events
 django-crum==0.7.9
     # via
     #   -r requirements/base.in
     #   edx-django-utils
+    #   edx-toggles
 django-ipware==6.0.4
     # via -r requirements/base.in
-django-model-utils==4.3.1
+django-model-utils==4.4.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -80,6 +85,7 @@ django-waffle==4.1.0
     #   -r requirements/base.in
     #   edx-django-utils
     #   edx-drf-extensions
+    #   edx-toggles
 django-webpack-loader==0.7.0
     # via
     #   -c requirements/constraints.txt
@@ -94,29 +100,36 @@ edx-django-utils==5.10.1
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
+    #   edx-toggles
     #   edx-when
     #   event-tracking
+    #   openedx-events
 edx-drf-extensions==10.2.0
     # via
     #   -r requirements/base.in
     #   edx-when
 edx-i18n-tools==1.3.0
     # via -r requirements/test.in
-edx-opaque-keys==2.5.1
+edx-opaque-keys[django]==2.5.1
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
     #   edx-when
+    #   openedx-events
 edx-rest-api-client==5.6.1
     # via -r requirements/base.in
+edx-toggles==5.1.1
+    # via event-tracking
 edx-when==2.4.0
     # via -r requirements/base.in
-event-tracking==2.2.0
+event-tracking==2.3.0
     # via -r requirements/base.in
 exceptiongroup==1.2.0
     # via pytest
 execnet==2.0.2
     # via pytest-xdist
+fastavro==1.9.4
+    # via openedx-events
 freezegun==1.4.0
     # via -r requirements/test.in
 fs==2.4.16
@@ -149,6 +162,8 @@ mock==5.1.0
     # via -r requirements/test.in
 newrelic==9.6.0
     # via edx-django-utils
+openedx-events==9.5.2
+    # via event-tracking
 packaging==23.2
     # via pytest
 path==16.10.0
@@ -172,14 +187,13 @@ pyjwt[crypto]==2.8.0
     #   drf-jwt
     #   edx-drf-extensions
     #   edx-rest-api-client
-    #   pyjwt
 pymongo==3.13.0
     # via
     #   edx-opaque-keys
     #   event-tracking
 pynacl==1.5.0
     # via edx-django-utils
-pytest==8.0.0
+pytest==8.0.1
     # via
     #   pytest-cov
     #   pytest-django
@@ -198,7 +212,7 @@ python-dateutil==2.8.2
     #   xblock
 python-ipware==2.0.1
     # via django-ipware
-python-slugify==8.0.3
+python-slugify==8.0.4
     # via code-annotations
 pytz==2024.1
     # via
@@ -220,7 +234,7 @@ requests==2.31.0
     #   httmock
     #   responses
     #   slumber
-responses==0.24.1
+responses==0.25.0
     # via -r requirements/test.in
 rules==3.3
     # via -r requirements/base.in
@@ -242,7 +256,7 @@ stevedore==5.1.0
     #   code-annotations
     #   edx-django-utils
     #   edx-opaque-keys
-testfixtures==7.2.2
+testfixtures==8.0.0
     # via -r requirements/test.in
 text-unidecode==1.3
     # via python-slugify
@@ -255,11 +269,11 @@ typing-extensions==4.9.0
     #   asgiref
     #   edx-opaque-keys
     #   kombu
-tzdata==2023.4
+tzdata==2024.1
     # via
     #   backports-zoneinfo
     #   celery
-urllib3==2.2.0
+urllib3==2.2.1
     # via
     #   requests
     #   responses

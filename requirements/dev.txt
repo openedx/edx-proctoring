@@ -130,7 +130,7 @@ pylint-plugin-utils==0.8.2
     #   pylint-django
 pyproject-api==1.6.1
     # via tox
-python-slugify==8.0.3
+python-slugify==8.0.4
     # via code-annotations
 pytz==2024.1
     # via django
@@ -163,12 +163,10 @@ tomli==2.0.1
     #   tox
 tomlkit==0.12.3
     # via pylint
-tox==4.12.1
+tox==4.13.0
     # via -r requirements/dev.in
 typer[all]==0.9.0
-    # via
-    #   rstcheck
-    #   typer
+    # via rstcheck
 typing-extensions==4.9.0
     # via
     #   annotated-types
