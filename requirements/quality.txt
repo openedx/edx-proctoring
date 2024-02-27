@@ -8,7 +8,7 @@ annotated-types==0.6.0
     # via pydantic
 asgiref==3.7.2
     # via django
-astroid==3.0.3
+astroid==3.1.0
     # via
     #   pylint
     #   pylint-celery
@@ -59,15 +59,15 @@ platformdirs==4.2.0
     # via pylint
 pycodestyle==2.11.1
     # via -r requirements/quality.in
-pydantic==2.6.1
+pydantic==2.6.2
     # via rstcheck-core
-pydantic-core==2.16.2
+pydantic-core==2.16.3
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
 pygments==2.17.2
     # via rich
-pylint==3.0.3
+pylint==3.1.0
     # via
     #   edx-lint
     #   pylint-celery
@@ -81,7 +81,7 @@ pylint-plugin-utils==0.8.2
     # via
     #   pylint-celery
     #   pylint-django
-python-slugify==8.0.3
+python-slugify==8.0.4
     # via code-annotations
 pytz==2024.1
     # via django
@@ -101,19 +101,17 @@ snowballstemmer==2.2.0
     # via pydocstyle
 sqlparse==0.4.4
     # via django
-stevedore==5.1.0
+stevedore==5.2.0
     # via code-annotations
 text-unidecode==1.3
     # via python-slugify
 tomli==2.0.1
     # via pylint
-tomlkit==0.12.3
+tomlkit==0.12.4
     # via pylint
 typer[all]==0.9.0
-    # via
-    #   rstcheck
-    #   typer
-typing-extensions==4.9.0
+    # via rstcheck
+typing-extensions==4.10.0
     # via
     #   annotated-types
     #   asgiref
