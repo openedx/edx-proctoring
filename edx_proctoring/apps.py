@@ -26,7 +26,6 @@ BACKEND_CONFIGURATION_ALLOW_LIST = [
     'help_center_article_url',
     'integration_specific_email',
     'learner_notification_from_email',
-    'lti_external',
     'needs_oauth',
     'organization',
     'passing_statuses',
