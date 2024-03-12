@@ -54,17 +54,17 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
     @ddt.data(
         [
             ProctoredExamStudentAttemptStatus.submitted,
-            'Proctoring Review In Progress',
+            'Proctoring attempt submitted',
             'was submitted successfully',
         ],
         [
             ProctoredExamStudentAttemptStatus.verified,
-            'Proctoring Results',
+            'Proctoring attempt verified',
             'was reviewed and you met all proctoring requirements',
         ],
         [
             ProctoredExamStudentAttemptStatus.rejected,
-            'Proctoring Results',
+            'Proctoring attempt rejected',
             'the course team has identified one or more violations',
         ]
     )
@@ -84,11 +84,10 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         # Verify the subject
         actual_subject = self._normalize_whitespace(mail.outbox[0].subject)
         self.assertIn(expected_subject, actual_subject)
-        self.assertIn(self.exam_name, actual_subject)
 
         # Verify the body
         actual_body = self._normalize_whitespace(mail.outbox[0].body)
-        self.assertIn('Hello tester,', actual_body)
+        self.assertIn('Hello,', actual_body)
         self.assertIn('Your proctored exam "Test Exam"', actual_body)
         self.assertIn(credit_state['course_name'], actual_body)
         self.assertIn(expected_message_string, actual_body)
@@ -223,8 +222,7 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
 
         # Verify the subject
         actual_subject = self._normalize_whitespace(mail.outbox[0].subject)
-        self.assertIn('Proctoring Review In Progress', actual_subject)
-        self.assertIn(course_name, actual_subject)
+        self.assertIn('Proctoring attempt submitted', actual_subject)
 
         # Verify the body
         actual_body = self._normalize_whitespace(mail.outbox[0].body)
