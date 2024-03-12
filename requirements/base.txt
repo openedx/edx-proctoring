@@ -98,7 +98,7 @@ djangorestframework==3.14.0
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==5.10.1
+edx-django-utils==5.11.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -145,7 +145,7 @@ markupsafe==2.1.5
     #   jinja2
     #   mako
     #   xblock
-newrelic==9.7.0
+newrelic==9.7.1
     # via edx-django-utils
 openedx-events==9.5.2
     # via event-tracking

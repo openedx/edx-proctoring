@@ -37,7 +37,7 @@ docutils==0.20.1
     # via rstcheck-core
 edx-lint==5.3.6
     # via -r requirements/quality.in
-importlib-metadata==7.0.1
+importlib-metadata==7.0.2
     # via
     #   rstcheck
     #   rstcheck-core
@@ -61,7 +61,7 @@ platformdirs==4.2.0
     # via pylint
 pycodestyle==2.11.1
     # via -r requirements/quality.in
-pydantic==2.6.3
+pydantic==2.6.4
     # via rstcheck-core
 pydantic-core==2.16.3
     # via pydantic
