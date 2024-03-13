@@ -59,7 +59,7 @@ filelock==3.13.1
     # via
     #   tox
     #   virtualenv
-importlib-metadata==7.0.1
+importlib-metadata==7.0.2
     # via
     #   rstcheck
     #   rstcheck-core
@@ -81,7 +81,7 @@ mccabe==0.7.0
     # via pylint
 mdurl==0.1.2
     # via markdown-it-py
-packaging==23.2
+packaging==24.0
     # via
     #   pyproject-api
     #   tox
@@ -106,7 +106,7 @@ polib==1.2.0
     # via edx-i18n-tools
 pycodestyle==2.11.1
     # via -r requirements/quality.in
-pydantic==2.6.3
+pydantic==2.6.4
     # via rstcheck-core
 pydantic-core==2.16.3
     # via pydantic
@@ -163,7 +163,7 @@ tomli==2.0.1
     #   tox
 tomlkit==0.12.4
     # via pylint
-tox==4.13.0
+tox==4.14.1
     # via -r requirements/dev.in
 typer[all]==0.9.0
     # via rstcheck
@@ -181,7 +181,7 @@ typing-extensions==4.10.0
     #   typer
 virtualenv==20.25.1
     # via tox
-wheel==0.42.0
+wheel==0.43.0
     # via -r requirements/dev.in
 zipp==3.17.0
     # via importlib-metadata
