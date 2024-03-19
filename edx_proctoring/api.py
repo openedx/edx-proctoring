@@ -1662,7 +1662,6 @@ def update_attempt_status(attempt_id, to_status,
                 }
             )
         email = create_proctoring_attempt_status_email(
-            user_id,
             exam_attempt_obj,
             course_name,
             exam['course_id']
@@ -1730,7 +1729,7 @@ def update_attempt_status(attempt_id, to_status,
     return attempt['id']
 
 
-def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_name, course_id):
+def create_proctoring_attempt_status_email(exam_attempt_obj, course_name, course_id):
     """
     Creates an email about change in proctoring attempt status.
     """
@@ -1738,7 +1737,6 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     if not exam_attempt_obj.taking_as_proctored or exam_attempt_obj.is_sample_attempt:
         return None
 
-    user = USER_MODEL.objects.get(id=user_id)
     email_subject = (
         _('Proctoring Results For {course_name} {exam_name}').format(
             course_name=course_name,
@@ -1748,16 +1746,13 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     status = exam_attempt_obj.status
     if status == ProctoredExamStudentAttemptStatus.submitted:
         template_name = 'proctoring_attempt_submitted_email.html'
-        email_subject = (
-            _('Proctoring Review In Progress For {course_name} {exam_name}').format(
-                course_name=course_name,
-                exam_name=exam_attempt_obj.proctored_exam.exam_name
-            )
-        )
+        email_subject = 'Proctoring attempt submitted'
     elif status == ProctoredExamStudentAttemptStatus.verified:
         template_name = 'proctoring_attempt_satisfactory_email.html'
+        email_subject = 'Proctoring attempt verified'
     elif status == ProctoredExamStudentAttemptStatus.rejected:
         template_name = 'proctoring_attempt_unsatisfactory_email.html'
+        email_subject = 'Proctoring attempt rejected'
     else:
         # Don't send an email for any other attempt status codes
         return None
@@ -1767,11 +1762,6 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
     course_home_url = get_course_home_url(exam_attempt_obj.proctored_exam.course_id)
 
     exam_name = exam_attempt_obj.proctored_exam.exam_name
-    support_email_subject = _('Proctored exam {exam_name} in {course_name} for user {username}').format(
-        exam_name=exam_name,
-        course_name=course_name,
-        username=user.username,
-    )
 
     scheme = 'https' if getattr(settings, 'HTTPS', 'on') == 'on' else 'http'
     default_contact_url = f'{scheme}://{constants.SITE_NAME}/support/contact_us'
@@ -1788,13 +1778,11 @@ def create_proctoring_attempt_status_email(user_id, exam_attempt_obj, course_nam
         contact_url_text = contact_url
 
     body = email_template.render({
-        'username': user.username,
         'course_url': course_home_url,
         'course_name': course_name,
         'exam_name': exam_name,
         'status': status,
         'platform': constants.PLATFORM_NAME,
-        'support_email_subject': support_email_subject,
         'contact_url': contact_url,
         'contact_url_text': contact_url_text,
     })
