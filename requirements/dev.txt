@@ -29,7 +29,7 @@ click==8.1.7
     #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==1.6.0
+code-annotations==1.7.0
     # via edx-lint
 colorama==0.4.6
     # via
@@ -59,8 +59,9 @@ filelock==3.13.1
     # via
     #   tox
     #   virtualenv
-importlib-metadata==7.0.2
+importlib-metadata==6.11.0
     # via
+    #   -c requirements/common_constraints.txt
     #   rstcheck
     #   rstcheck-core
 isort==5.13.2
@@ -183,5 +184,5 @@ virtualenv==20.25.1
     # via tox
 wheel==0.43.0
     # via -r requirements/dev.in
-zipp==3.17.0
+zipp==3.18.1
     # via importlib-metadata

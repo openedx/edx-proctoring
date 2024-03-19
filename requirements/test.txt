@@ -15,6 +15,7 @@ backports-zoneinfo[tzdata]==0.2.1
     # via
     #   celery
     #   django
+    #   djangorestframework
     #   kombu
     # via celery
     # via
@@ -40,11 +41,11 @@ charset-normalizer==3.3.2
 click-plugins==1.1.1
     # via celery
     # via celery
-code-annotations==1.6.0
+code-annotations==1.7.0
     # via
     #   -r requirements/test.in
     #   edx-toggles
-coverage[toml]==7.4.3
+coverage[toml]==7.4.4
     # via pytest-cov
 cryptography==42.0.5
     # via pyjwt
@@ -218,7 +219,6 @@ python-slugify==8.0.4
 pytz==2024.1
     # via
     #   -r requirements/base.in
-    #   djangorestframework
     #   event-tracking
     #   xblock
 pyyaml==6.0.1
