@@ -17,4 +17,10 @@ def get_backend_provider(exam=None, name=None):
             return None
         if exam['backend']:
             name = exam['backend']
+    if name == 'lti_external':
+        # `get_backend_provider()` is called in many places in edx-proctoring, so this filter for
+        # LTI providers needs to be in this function. Not sure if this is the exact right place
+        # Also not sure what I should return here
+        return None
     return apps.get_app_config('edx_proctoring').get_backend(name=name)
+    
