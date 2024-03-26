@@ -2,7 +2,7 @@ amqp==5.2.0
 billiard==4.2.0
 celery==5.3.6
 click==8.1.7
-click-didyoumean==0.3.0
+click-didyoumean==0.3.1
 click-repl==0.3.0
 kombu==5.3.5
 prompt-toolkit==3.0.43

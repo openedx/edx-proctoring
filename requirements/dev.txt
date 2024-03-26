@@ -6,7 +6,7 @@
 #
 annotated-types==0.6.0
     # via pydantic
-asgiref==3.7.2
+asgiref==3.8.1
     # via django
 astroid==3.1.0
     # via
@@ -55,7 +55,7 @@ edx-lint==5.3.6
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.13.1
+filelock==3.13.3
     # via
     #   tox
     #   virtualenv
@@ -141,9 +141,9 @@ pyyaml==6.0.1
     #   edx-i18n-tools
 rich==13.7.1
     # via typer
-rstcheck==6.2.0
+rstcheck==6.2.1
     # via -r requirements/quality.in
-rstcheck-core==1.2.0
+rstcheck-core==1.2.1
     # via rstcheck
 shellingham==1.5.4
     # via typer
@@ -164,9 +164,9 @@ tomli==2.0.1
     #   tox
 tomlkit==0.12.4
     # via pylint
-tox==4.14.1
+tox==4.14.2
     # via -r requirements/dev.in
-typer[all]==0.9.0
+typer[all]==0.10.0
     # via rstcheck
 typing-extensions==4.10.0
     # via
