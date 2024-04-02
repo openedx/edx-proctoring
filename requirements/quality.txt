@@ -20,13 +20,11 @@ click==8.1.7
     #   click-log
     #   code-annotations
     #   edx-lint
-    #   typer
+    #   typer-slim
 click-log==0.4.0
     # via edx-lint
 code-annotations==1.7.0
     # via edx-lint
-colorama==0.4.6
-    # via typer
 dill==0.3.8
     # via pylint
 django==4.2.11
@@ -89,13 +87,13 @@ python-slugify==8.0.4
 pyyaml==6.0.1
     # via code-annotations
 rich==13.7.1
-    # via typer
+    # via typer-slim
 rstcheck==6.2.1
     # via -r requirements/quality.in
 rstcheck-core==1.2.1
     # via rstcheck
 shellingham==1.5.4
-    # via typer
+    # via typer-slim
 six==1.16.0
     # via edx-lint
 snowballstemmer==2.2.0
@@ -110,8 +108,14 @@ tomli==2.0.1
     # via pylint
 tomlkit==0.12.4
     # via pylint
-typer[all]==0.10.0
+typer[all]==0.12.0
     # via rstcheck
+typer-cli==0.12.0
+    # via typer
+typer-slim[standard]==0.12.0
+    # via
+    #   typer
+    #   typer-cli
 typing-extensions==4.10.0
     # via
     #   annotated-types
@@ -123,6 +127,6 @@ typing-extensions==4.10.0
     #   rich
     #   rstcheck
     #   rstcheck-core
-    #   typer
+    #   typer-slim
 zipp==3.18.1
     # via importlib-metadata

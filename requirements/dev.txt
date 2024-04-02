@@ -26,15 +26,13 @@ click==8.1.7
     #   click-log
     #   code-annotations
     #   edx-lint
-    #   typer
+    #   typer-slim
 click-log==0.4.0
     # via edx-lint
 code-annotations==1.7.0
     # via edx-lint
 colorama==0.4.6
-    # via
-    #   tox
-    #   typer
+    # via tox
 diff-cover==8.0.3
     # via -r requirements/dev.in
 dill==0.3.8
@@ -72,7 +70,7 @@ jinja2==3.1.3
     # via
     #   code-annotations
     #   diff-cover
-lxml==5.1.0
+lxml==5.2.0
     # via edx-i18n-tools
 markdown-it-py==3.0.0
     # via rich
@@ -140,13 +138,13 @@ pyyaml==6.0.1
     #   code-annotations
     #   edx-i18n-tools
 rich==13.7.1
-    # via typer
+    # via typer-slim
 rstcheck==6.2.1
     # via -r requirements/quality.in
 rstcheck-core==1.2.1
     # via rstcheck
 shellingham==1.5.4
-    # via typer
+    # via typer-slim
 six==1.16.0
     # via edx-lint
 snowballstemmer==2.2.0
@@ -166,8 +164,14 @@ tomlkit==0.12.4
     # via pylint
 tox==4.14.2
     # via -r requirements/dev.in
-typer[all]==0.10.0
+typer[all]==0.12.0
     # via rstcheck
+typer-cli==0.12.0
+    # via typer
+typer-slim[standard]==0.12.0
+    # via
+    #   typer
+    #   typer-cli
 typing-extensions==4.10.0
     # via
     #   annotated-types
@@ -179,7 +183,7 @@ typing-extensions==4.10.0
     #   rich
     #   rstcheck
     #   rstcheck-core
-    #   typer
+    #   typer-slim
 virtualenv==20.25.1
     # via tox
 wheel==0.43.0
