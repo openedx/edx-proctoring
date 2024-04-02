@@ -18,8 +18,6 @@ jobs:
       # optional parameters below; fill in if you'd like github or email notifications
       # user_reviewers: ""
       # team_reviewers: ""
-      email_address: "cosmonauts-requirements-update@2u-internal.opsgenie.net"
-      send_success_notification: true
     secrets:
       requirements_bot_github_token: ${{ secrets.REQUIREMENTS_BOT_GITHUB_TOKEN }}
       requirements_bot_github_email: ${{ secrets.REQUIREMENTS_BOT_GITHUB_EMAIL }}
