@@ -23,10 +23,8 @@ click==8.1.7
     #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==1.7.0
+code-annotations==1.8.0
     # via edx-lint
-colorama==0.4.6
-    # via typer
 dill==0.3.8
     # via pylint
 django==4.2.11
@@ -110,9 +108,9 @@ tomli==2.0.1
     # via pylint
 tomlkit==0.12.4
     # via pylint
-typer[all]==0.10.0
+typer[all]==0.12.2
     # via rstcheck
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   annotated-types
     #   asgiref
