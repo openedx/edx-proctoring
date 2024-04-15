@@ -11,8 +11,9 @@ asgiref==3.8.1
     # via django
 attrs==23.2.0
     # via openedx-events
-backports-zoneinfo[tzdata]==0.2.1
+backports-zoneinfo[tzdata]==0.2.1 ; python_version < "3.9"
     # via
+    #   -c requirements/constraints.txt
     #   celery
     #   django
     #   djangorestframework
@@ -41,7 +42,7 @@ charset-normalizer==3.3.2
 click-plugins==1.1.1
     # via celery
     # via celery
-code-annotations==1.7.0
+code-annotations==1.8.0
     # via
     #   -r requirements/test.in
     #   edx-toggles
@@ -74,7 +75,7 @@ django-crum==0.7.9
     #   edx-toggles
 django-ipware==6.0.4
     # via -r requirements/base.in
-django-model-utils==4.4.0
+django-model-utils==4.5.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -98,7 +99,7 @@ django-webpack-loader==0.7.0
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==5.11.0
+edx-django-utils==5.12.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -106,7 +107,7 @@ edx-django-utils==5.11.0
     #   edx-when
     #   event-tracking
     #   openedx-events
-edx-drf-extensions==10.2.0
+edx-drf-extensions==10.3.0
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -118,17 +119,17 @@ edx-opaque-keys[django]==2.5.1
     #   edx-drf-extensions
     #   edx-when
     #   openedx-events
-edx-rest-api-client==5.6.1
+edx-rest-api-client==5.7.0
     # via -r requirements/base.in
-edx-toggles==5.1.1
+edx-toggles==5.2.0
     # via event-tracking
-edx-when==2.4.0
+edx-when==2.5.0
     # via -r requirements/base.in
-event-tracking==2.3.1
+event-tracking==2.3.2
     # via -r requirements/base.in
 exceptiongroup==1.2.0
     # via pytest
-execnet==2.0.2
+execnet==2.1.1
     # via pytest-xdist
 fastavro==1.9.4
     # via openedx-events
@@ -149,7 +150,7 @@ jinja2==3.1.3
 jsonfield==3.1.0
     # via -r requirements/base.in
     # via celery
-lxml==5.1.0
+lxml==5.2.1
     # via
     #   edx-i18n-tools
     #   xblock
@@ -162,13 +163,13 @@ markupsafe==2.1.5
     #   xblock
 mock==5.1.0
     # via -r requirements/test.in
-newrelic==9.7.1
+newrelic==9.8.0
     # via edx-django-utils
-openedx-events==9.5.2
+openedx-events==9.7.0
     # via event-tracking
 packaging==24.0
     # via pytest
-path==16.10.0
+path==16.13.0
     # via edx-i18n-tools
 pbr==6.0.0
     # via stevedore
@@ -179,7 +180,7 @@ polib==1.2.0
     # via click-repl
 psutil==5.9.8
     # via edx-django-utils
-pycparser==2.21
+pycparser==2.22
     # via cffi
 pycryptodomex==3.20.0
     # via -r requirements/base.in
@@ -264,7 +265,7 @@ tomli==2.0.1
     # via
     #   coverage
     #   pytest
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   asgiref
     #   edx-opaque-keys
@@ -283,11 +284,11 @@ urllib3==2.2.1
     #   kombu
 wcwidth==0.2.13
     # via prompt-toolkit
-web-fragments==2.1.0
+web-fragments==2.2.0
     # via xblock
 webob==1.8.7
     # via xblock
-xblock==3.0.0
+xblock==3.1.0
     # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
