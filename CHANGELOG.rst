@@ -14,7 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-[4.16.1]
+[4.17.0]
+~~~~~~~~~~~~~~~~~~~~~
+* Add support for Python 3.11 & 3.12
+
+[4.16.1] - 2023-08-8
 ~~~~~~~~~~~~~~~~~~~~~
 * Updated django-simple-history package to 3.3.0 
 * Created no-op migrations needed for new django-simple-history package version

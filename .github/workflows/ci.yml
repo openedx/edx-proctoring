@@ -16,12 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-20.04"]
-        python-version: ["3.8"]
+        python-version: ["3.8", "3.11", "3.12"]
         node-version: ["16"]
         toxenv:
           [
-            "django32-drflatest",
-            "django40-drflatest",
             "django42-drflatest",
             "quality",
             "pii_check",
@@ -29,7 +27,6 @@ jobs:
             "js_tests",
             "js_lint",
             "rst_validation",
-            "translations-django32",
             "translations-django42",
           ]
     steps:
@@ -59,8 +56,9 @@ jobs:
         run: tox
 
       - name: Run Coverage
-        if: matrix.toxenv == 'django42-drflatest'
-        uses: codecov/codecov-action@v3
+        if: matrix.python-version == '3.8' && matrix.toxenv == 'django42-drflatest'
+        uses: codecov/codecov-action@v4
         with:
           flags: unittests
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
