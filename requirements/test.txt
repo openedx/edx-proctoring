@@ -46,7 +46,7 @@ code-annotations==1.8.0
     # via
     #   -r requirements/test.in
     #   edx-toggles
-coverage[toml]==7.4.4
+coverage[toml]==7.5.0
     # via pytest-cov
 cryptography==42.0.5
     # via pyjwt
@@ -73,7 +73,7 @@ django-crum==0.7.9
     #   -r requirements/base.in
     #   edx-django-utils
     #   edx-toggles
-django-ipware==6.0.4
+django-ipware==7.0.1
     # via -r requirements/base.in
 django-model-utils==4.5.0
     # via
@@ -99,7 +99,7 @@ django-webpack-loader==0.7.0
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==5.12.0
+edx-django-utils==5.13.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -111,9 +111,9 @@ edx-drf-extensions==10.3.0
     # via
     #   -r requirements/base.in
     #   edx-when
-edx-i18n-tools==1.3.0
+edx-i18n-tools==1.6.0
     # via -r requirements/test.in
-edx-opaque-keys[django]==2.5.1
+edx-opaque-keys[django]==2.9.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -125,15 +125,15 @@ edx-toggles==5.2.0
     # via event-tracking
 edx-when==2.5.0
     # via -r requirements/base.in
-event-tracking==2.3.2
+event-tracking==2.4.0
     # via -r requirements/base.in
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via pytest
 execnet==2.1.1
     # via pytest-xdist
 fastavro==1.9.4
     # via openedx-events
-freezegun==1.4.0
+freezegun==1.5.0
     # via -r requirements/test.in
 fs==2.4.16
     # via xblock
@@ -141,7 +141,7 @@ httmock==1.4.0
     # via -r requirements/test.in
 httpretty==1.1.4
     # via -r requirements/test.in
-idna==3.6
+idna==3.7
     # via requests
 iniconfig==2.0.0
     # via pytest
@@ -150,11 +150,14 @@ jinja2==3.1.3
 jsonfield==3.1.0
     # via -r requirements/base.in
     # via celery
-lxml==5.2.1
+lxml[html-clean,html_clean]==5.2.1
     # via
     #   edx-i18n-tools
+    #   lxml-html-clean
     #   xblock
-mako==1.3.2
+lxml-html-clean==0.1.1
+    # via lxml
+mako==1.3.3
     # via xblock
 markupsafe==2.1.5
     # via
@@ -163,17 +166,17 @@ markupsafe==2.1.5
     #   xblock
 mock==5.1.0
     # via -r requirements/test.in
-newrelic==9.8.0
+newrelic==9.9.0
     # via edx-django-utils
-openedx-events==9.7.0
+openedx-events==9.9.2
     # via event-tracking
 packaging==24.0
     # via pytest
-path==16.13.0
+path==16.14.0
     # via edx-i18n-tools
 pbr==6.0.0
     # via stevedore
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
 polib==1.2.0
     # via edx-i18n-tools
@@ -196,7 +199,7 @@ pymongo==3.13.0
     #   event-tracking
 pynacl==1.5.0
     # via edx-django-utils
-pytest==8.1.1
+pytest==8.2.0
     # via
     #   pytest-cov
     #   pytest-django
@@ -205,7 +208,7 @@ pytest-cov==5.0.0
     # via -r requirements/test.in
 pytest-django==4.8.0
     # via -r requirements/test.in
-pytest-xdist==3.5.0
+pytest-xdist==3.6.1
     # via -r requirements/test.in
 python-dateutil==2.9.0.post0
     # via
@@ -213,7 +216,7 @@ python-dateutil==2.9.0.post0
     #   celery
     #   freezegun
     #   xblock
-python-ipware==2.0.2
+python-ipware==3.0.0
     # via django-ipware
 python-slugify==8.0.4
     # via code-annotations
@@ -250,7 +253,7 @@ six==1.16.0
     #   python-dateutil
 slumber==0.7.1
     # via edx-rest-api-client
-sqlparse==0.4.4
+sqlparse==0.5.0
     # via django
 stevedore==5.2.0
     # via
@@ -288,7 +291,7 @@ web-fragments==2.2.0
     # via xblock
 webob==1.8.7
     # via xblock
-xblock==3.1.0
+xblock==4.0.1
     # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
