@@ -7,3 +7,4 @@ graft edx_proctoring
 prune edx_proctoring/static/proctoring/spec
 recursive-include requirements *.in *.txt
 global-exclude *.pyc
+include requirements/constraints.txt
