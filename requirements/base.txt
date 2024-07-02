@@ -21,11 +21,11 @@ backports-zoneinfo[tzdata]==0.2.1 ; python_version < "3.9"
     #   kombu
 billiard==4.2.0
     # via celery
-celery==5.3.6
+celery==5.4.0
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
-certifi==2024.2.2
+certifi==2024.6.2
     # via requests
 cffi==1.16.0
     # via
@@ -50,9 +50,9 @@ click-repl==0.3.0
     # via celery
 code-annotations==1.8.0
     # via edx-toggles
-cryptography==42.0.5
+cryptography==42.0.8
     # via pyjwt
-django==4.2.11
+django==4.2.13
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -73,9 +73,9 @@ django-crum==0.7.9
     #   -r requirements/base.in
     #   edx-django-utils
     #   edx-toggles
-django-ipware==6.0.4
+django-ipware==7.0.1
     # via -r requirements/base.in
-django-model-utils==4.5.0
+django-model-utils==4.5.1
     # via
     #   -r requirements/base.in
     #   edx-when
@@ -93,14 +93,16 @@ django-webpack-loader==0.7.0
     # via
     #   -c requirements/constraints.txt
     #   -r requirements/base.in
-djangorestframework==3.15.1
+djangorestframework==3.15.2
     # via
     #   -r requirements/base.in
     #   drf-jwt
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-django-utils==5.12.0
+edx-ccx-keys==1.3.0
+    # via openedx-events
+edx-django-utils==5.14.2
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -112,50 +114,51 @@ edx-drf-extensions==10.3.0
     # via
     #   -r requirements/base.in
     #   edx-when
-edx-opaque-keys[django]==2.5.1
+edx-opaque-keys[django]==2.10.0
     # via
     #   -r requirements/base.in
+    #   edx-ccx-keys
     #   edx-drf-extensions
     #   edx-when
     #   openedx-events
-edx-rest-api-client==5.7.0
+edx-rest-api-client==5.7.1
     # via -r requirements/base.in
 edx-toggles==5.2.0
     # via event-tracking
 edx-when==2.5.0
     # via -r requirements/base.in
-event-tracking==2.3.2
+event-tracking==2.4.0
     # via -r requirements/base.in
 fastavro==1.9.4
     # via openedx-events
 fs==2.4.16
     # via xblock
-idna==3.6
+idna==3.7
     # via requests
-jinja2==3.1.3
+jinja2==3.1.4
     # via code-annotations
 jsonfield==3.1.0
     # via -r requirements/base.in
-kombu==5.3.6
+kombu==5.3.7
     # via celery
-lxml==5.2.1
+lxml==5.2.2
     # via xblock
-mako==1.3.2
+mako==1.3.5
     # via xblock
 markupsafe==2.1.5
     # via
     #   jinja2
     #   mako
     #   xblock
-newrelic==9.8.0
+newrelic==9.11.0
     # via edx-django-utils
-openedx-events==9.7.0
+openedx-events==9.11.0
     # via event-tracking
 pbr==6.0.0
     # via stevedore
-prompt-toolkit==3.0.43
+prompt-toolkit==3.0.47
     # via click-repl
-psutil==5.9.8
+psutil==6.0.0
     # via edx-django-utils
 pycparser==2.22
     # via cffi
@@ -178,7 +181,7 @@ python-dateutil==2.9.0.post0
     #   -r requirements/base.in
     #   celery
     #   xblock
-python-ipware==2.0.2
+python-ipware==3.0.0
     # via django-ipware
 python-slugify==8.0.4
     # via code-annotations
@@ -191,12 +194,12 @@ pyyaml==6.0.1
     # via
     #   code-annotations
     #   xblock
-requests==2.31.0
+requests==2.32.3
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   slumber
-rules==3.3
+rules==3.4
     # via -r requirements/base.in
 semantic-version==2.10.0
     # via edx-drf-extensions
@@ -204,12 +207,13 @@ simplejson==3.19.2
     # via xblock
 six==1.16.0
     # via
+    #   edx-ccx-keys
     #   event-tracking
     #   fs
     #   python-dateutil
 slumber==0.7.1
     # via edx-rest-api-client
-sqlparse==0.4.4
+sqlparse==0.5.0
     # via django
 stevedore==5.2.0
     # via
@@ -218,7 +222,7 @@ stevedore==5.2.0
     #   edx-opaque-keys
 text-unidecode==1.3
     # via python-slugify
-typing-extensions==4.11.0
+typing-extensions==4.12.2
     # via
     #   asgiref
     #   edx-opaque-keys
@@ -227,7 +231,7 @@ tzdata==2024.1
     # via
     #   backports-zoneinfo
     #   celery
-urllib3==2.2.1
+urllib3==2.2.2
     # via requests
 vine==5.1.0
     # via
@@ -240,7 +244,7 @@ web-fragments==2.2.0
     # via xblock
 webob==1.8.7
     # via xblock
-xblock==3.1.0
+xblock==4.0.1
     # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
