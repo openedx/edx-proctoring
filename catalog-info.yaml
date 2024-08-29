@@ -6,10 +6,7 @@ kind: Component
 metadata:
   name: 'edx-proctoring'
   description: "The exam proctoring subsystem for the Open edX platform."
-  links:
-    - url: "https://github.com/openedx/edx-proctoring"
-      title: "openedx/edx-proctoring"
-      icon: "GitHub"
+  links: []
   annotations:
     openedx.org/arch-interest-groups: ""
 spec:
