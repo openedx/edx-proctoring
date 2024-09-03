@@ -1,0 +1,15 @@
+# This file records information about this repo. Its use is described in OEP-55:
+# https://open-edx-proposals.readthedocs.io/en/latest/processes/oep-0055-proc-project-maintainers.html
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: 'edx-proctoring'
+  description: "The exam proctoring subsystem for the Open edX platform."
+  links: []
+  annotations:
+    openedx.org/arch-interest-groups: ""
+spec:
+  owner: group:openedx-unmaintained
+  type: 'service'
+  lifecycle: 'production'
