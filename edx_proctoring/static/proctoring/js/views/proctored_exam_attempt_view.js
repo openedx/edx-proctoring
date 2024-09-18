@@ -45,6 +45,9 @@ edx = edx || {};
         initialize: function() {
             this.setElement($('.student-proctored-exam-container'));
             this.course_id = this.$el.data('course-id');
+
+            if (!this.course_id) return; // No course defined.
+
             this.template = null;
             this.model = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptModel();
 
@@ -133,6 +136,16 @@ edx = edx || {};
                     self.hydrate();
                 });
         },
+
+        hydrateDone: function(self) {
+            var $searchIcon, $spinner;
+            self.render();
+            $spinner = $(document.getElementById('attempt-loading-indicator'));
+            $spinner.addClass('hidden');
+            $searchIcon = $(document.getElementById('attempt-search-indicator'));
+            $searchIcon.removeClass('hidden');
+        },
+
         hydrate: function() {
             /* This function will load the bound collection */
 
@@ -140,15 +153,15 @@ edx = edx || {};
             /* we might - at some point - add a visual element to the */
             /* loading, like a spinner */
             var self = this;
+
+            if (!self.course_id) {
+                // If there's no course_id, there's no point in fetching, so we remove the loading state.
+                self.hydrateDone(self);
+                return;
+            }
+
             self.collection.fetch({
-                success: function() {
-                    var $searchIcon, $spinner;
-                    self.render();
-                    $spinner = $(document.getElementById('attempt-loading-indicator'));
-                    $spinner.addClass('hidden');
-                    $searchIcon = $(document.getElementById('attempt-search-indicator'));
-                    $searchIcon.removeClass('hidden');
-                }
+                success: self.hydrateDone(self)
             });
         },
         collectionChanged: function() {

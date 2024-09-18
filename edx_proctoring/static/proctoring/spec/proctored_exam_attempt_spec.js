@@ -396,6 +396,14 @@ describe('ProctoredExamAttemptView', function() {
     afterEach(function() {
         this.server.restore();
     });
+
+    it('should not fetch if student-proctored-exam-container is missing', function() {
+        setFixtures('<div>(void)</div>'); // Remove the student-proctored-exam-container from the template
+        this.proctored_exam_attempt_view = new edx.instructor_dashboard.proctoring.ProctoredExamAttemptView();
+
+        expect(this.server.calls.length).toBe(0);
+    });
+
     it('should render the proctored exam attempt view properly', function() {
         this.server.respondWith('GET', '/api/edx_proctoring/v1/proctored_exam/attempt/grouped/course_id/test_course_id',
             [
