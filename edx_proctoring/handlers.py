@@ -127,15 +127,16 @@ def on_attempt_changed(sender, instance, signal, **kwargs):
     else:
         # remove the attempt on the backend
         # timed exams have no backend
-        backend = get_backend_provider(name=instance.proctored_exam.backend)
-        if backend:
-            result = backend.remove_exam_attempt(instance.proctored_exam.external_id, instance.external_id)
-            if not result:
-                log.error(
-                    'Failed to remove attempt_id=%s from backend=%s',
-                    instance.id,
-                    instance.proctored_exam.backend,
-                )
+        if instance.proctored_exam.is_proctored:
+            backend = get_backend_provider(name=instance.proctored_exam.backend)
+            if backend:
+                result = backend.remove_exam_attempt(instance.proctored_exam.external_id, instance.external_id)
+                if not result:
+                    log.error(
+                        'Failed to remove attempt_id=%s from backend=%s',
+                        instance.id,
+                        instance.proctored_exam.backend,
+                    )
 
 
 @receiver(post_delete, sender=models.ProctoredExamStudentAttempt)

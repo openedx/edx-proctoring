@@ -27,7 +27,7 @@ class SignalTests(ProctoredExamTestCase):
         self.proctored_exam = ProctoredExam.objects.create(
             course_id='x/y/z', content_id=self.content_id, exam_name=self.exam_name,
             time_limit_mins=self.default_time_limit, external_id=self.external_id,
-            backend=self.backend_name
+            backend=self.backend_name, is_proctored=True,
         )
         self.attempt = ProctoredExamStudentAttempt.objects.create(
             proctored_exam=self.proctored_exam, user=self.user, attempt_code='12345',

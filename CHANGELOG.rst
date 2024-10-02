@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+* fix timed exam bug for provider that no longer exists
+* fix timed exam reset bug for provider that no longer exists
+* fix instructor dashboard view for provider that no longer exists
 
 [4.17.0]
 ~~~~~~~~~~~~~~~~~~~~~
@@ -20,7 +23,7 @@ Unreleased
 
 [4.16.1] - 2023-08-8
 ~~~~~~~~~~~~~~~~~~~~~
-* Updated django-simple-history package to 3.3.0 
+* Updated django-simple-history package to 3.3.0
 * Created no-op migrations needed for new django-simple-history package version
 
 [4.16.0] - 2023-06-22
