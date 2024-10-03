@@ -274,7 +274,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         try:
             response = self.session.post(url, json=exam)
             data = response.json()
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             if response:
                 if hasattr(exc, 'response') and exc.response is not None:
                     content = exc.response.content

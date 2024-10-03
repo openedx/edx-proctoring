@@ -640,7 +640,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         * 'onboarding_past_due': Whether the onboarding exam is past due. All onboarding exams in the course must
           be past due in order for onboarding_past_due to be true.
     """
-    def get(self, request):
+    def get(self, request):  # pylint: disable=too-many-statements
         """
         HTTP GET handler. Returns the learner's onboarding status.
         """
@@ -679,7 +679,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         onboarding_exams = list(ProctoredExam.get_practice_proctored_exams_for_course(course_id).order_by('-created'))
         provider = None
         try:
-            provider = get_backend_provider(name=onboarding_exams[0].backend)
+            provider = get_backend_provider(name=onboarding_exams[0].backend) if onboarding_exams else None
         except NotImplementedError:
             logging.exception(
                 'No proctoring backend configured for backend=%(backend)s',
@@ -860,7 +860,7 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
                            .order_by('-created').first())
         provider = None
         try:
-            provider = get_backend_provider(name=onboarding_exam.backend)
+            provider = get_backend_provider(name=onboarding_exam.backend) if onboarding_exam else None
         except NotImplementedError:
             logging.exception(
                 'No proctoring backend configured for backend=%(backend)s',
@@ -2140,15 +2140,7 @@ class InstructorDashboard(AuthenticatedAPIView):
                     continue
 
                 exam_backend_name = exam.get('backend')
-                try:
-                    backend = get_backend_provider(name=exam_backend_name)
-                except NotImplementedError:
-                    logging.exception(
-                        'No proctoring backend configured for backend=%(backend)s',
-                        {
-                            'backend': exam_backend_name,
-                        }
-                    )
+                backend = get_backend_provider(name=exam_backend_name)
                 if existing_backend_name and exam_backend_name != existing_backend_name:
                     # In this case, what are we supposed to do?!
                     # It should not be possible to get in this state, because

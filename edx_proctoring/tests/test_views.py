@@ -792,6 +792,18 @@ class TestStudentOnboardingStatusView(ProctoredExamTestCase):
         message = 'There is no onboarding exam related to this course id.'
         self.assertEqual(response_data['detail'], message)
 
+    @patch('edx_proctoring.views.get_backend_provider')
+    def test_invalid_backend(self, mock_get_backend):
+        mock_get_backend.side_effect = NotImplementedError()
+        response = self.client.get(
+            reverse('edx_proctoring:user_onboarding.status')
+            + f'?course_id={self.course_id}'
+        )
+        self.assertEqual(response.status_code, 404)
+        response_data = json.loads(response.content.decode('utf-8'))
+        message = 'There is no onboarding exam related to this course id.'
+        self.assertEqual(response_data['detail'], message)
+
     @override_settings(LEARNING_MICROFRONTEND_URL='https://learningmfe')
     def test_onboarding_mfe_link(self):
         """
@@ -1517,6 +1529,16 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         )
         self.assertEqual(response.status_code, 404)
         test_backend.supports_onboarding = previous_value
+
+    @patch('edx_proctoring.views.get_backend_provider')
+    def test_invalid_backend(self, mock_get_backend):
+        mock_get_backend.side_effect = NotImplementedError()
+        response = self.client.get(reverse(
+            'edx_proctoring:user_onboarding.status.course',
+            kwargs={'course_id': 'a/b/c'}
+            )
+        )
+        self.assertEqual(response.status_code, 404)
 
     def test_multiple_onboarding_exams(self):
         onboarding_exam_2_id = create_exam(
