@@ -13,9 +13,10 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
-* fix timed exam bug for provider that no longer exists
-* fix timed exam reset bug for provider that no longer exists
-* fix instructor dashboard view for provider that no longer exists
+
+[4.18.2] - 2024-10-03
+~~~~~~~~~~~~~~~~~~~~~
+* fix various bugs related to exams configured with removed proctoring backend
 
 [4.17.0]
 ~~~~~~~~~~~~~~~~~~~~~
