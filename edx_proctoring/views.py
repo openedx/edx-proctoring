@@ -640,7 +640,7 @@ class StudentOnboardingStatusView(ProctoredAPIView):
         * 'onboarding_past_due': Whether the onboarding exam is past due. All onboarding exams in the course must
           be past due in order for onboarding_past_due to be true.
     """
-    def get(self, request):
+    def get(self, request):  # pylint: disable=too-many-statements
         """
         HTTP GET handler. Returns the learner's onboarding status.
         """
@@ -677,7 +677,17 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         # If there are multiple onboarding exams, use the last created exam accessible to the user
         onboarding_exams = list(ProctoredExam.get_practice_proctored_exams_for_course(course_id).order_by('-created'))
-        if not onboarding_exams or not get_backend_provider(name=onboarding_exams[0].backend).supports_onboarding:
+        provider = None
+        try:
+            provider = get_backend_provider(name=onboarding_exams[0].backend) if onboarding_exams else None
+        except NotImplementedError:
+            logging.exception(
+                'No proctoring backend configured for backend=%(backend)s',
+                {
+                    'backend': onboarding_exams[0].backend,
+                }
+            )
+        if not onboarding_exams or not (provider and provider.supports_onboarding):
             return Response(
                 status=404,
                 data={'detail': _('There is no onboarding exam related to this course id.')}
@@ -848,7 +858,17 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
         # get last created onboarding exam if there are multiple
         onboarding_exam = (ProctoredExam.get_practice_proctored_exams_for_course(course_id)
                            .order_by('-created').first())
-        if not onboarding_exam or not get_backend_provider(name=onboarding_exam.backend).supports_onboarding:
+        provider = None
+        try:
+            provider = get_backend_provider(name=onboarding_exam.backend) if onboarding_exam else None
+        except NotImplementedError:
+            logging.exception(
+                'No proctoring backend configured for backend=%(backend)s',
+                {
+                    'backend': onboarding_exam.backend,
+                }
+            )
+        if not onboarding_exam or not (provider and provider.supports_onboarding):
             return Response(
                 status=404,
                 data={'detail': _('There is no onboarding exam related to this course id.')}

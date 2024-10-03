@@ -409,7 +409,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             # reformat video url as per MST-871 findings
             reformatted_url = decrypted_video_url.replace('DirectLink-Generic', 'DirectLink-HTML5')
             return reformatted_url
-        except Exception as err:  # pylint: disable=broad-except
+        except Exception as err:
             log.exception(
                 'Could not decrypt video url for attempt_id=%(attempt_id)s '
                 'due to the following error: %(error_string)s',

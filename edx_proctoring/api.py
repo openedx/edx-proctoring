@@ -1669,7 +1669,7 @@ def update_attempt_status(attempt_id, to_status,
         if email:
             try:
                 email.send()
-            except Exception as err:  # pylint: disable=broad-except
+            except Exception as err:
                 log.exception(
                     ('Exception occurred while trying to send proctoring attempt '
                      'status email for user_id=%(user_id)s in course_id=%(course_id)s -- %(err)s'),
@@ -2943,7 +2943,7 @@ def get_student_view(user_id, course_id, content_id,
     is_proctored_exam = exam['is_proctored'] and not exam['is_practice_exam']
     is_timed_exam = not exam['is_proctored'] and not exam['is_practice_exam']
 
-    exam_backend = get_backend_provider(name=exam['backend'])
+    exam_backend = get_backend_provider(exam=exam)
 
     sub_view_func = None
     if is_timed_exam:
@@ -3019,8 +3019,17 @@ def is_backend_dashboard_available(course_id):
         active_only=True
     )
     for exam in exams:
-        if get_backend_provider(name=exam.backend).has_dashboard:
-            return True
+        try:
+            if get_backend_provider(name=exam.backend).has_dashboard:
+                return True
+        except NotImplementedError:
+            log.exception(
+                'No proctoring backend configured for backend=%(backend)s',
+                {
+                    'backend': exam.backend,
+                }
+            )
+
     return False
 
 

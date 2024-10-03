@@ -2896,6 +2896,11 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         # backend with a dashboard
         self.assertTrue(is_backend_dashboard_available(self.course_id))
 
+    @patch('edx_proctoring.api.get_backend_provider')
+    def test_dashboard_availability_no_provider(self, mock_get_backend):
+        mock_get_backend.side_effect = NotImplementedError()
+        self.assertFalse(is_backend_dashboard_available(self.course_id))
+
     def test_does_provider_support_onboarding(self):
         self.assertTrue(does_backend_support_onboarding('test'))
         self.assertFalse(does_backend_support_onboarding('mock'))

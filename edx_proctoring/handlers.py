@@ -27,8 +27,16 @@ def check_for_category_switch(sender, instance, **kwargs):
             exam = ProctoredExamJSONSafeSerializer(instance).data
             # from the perspective of the backend, the exam is now inactive.
             exam['is_active'] = False
-            backend = get_backend_provider(name=exam['backend'])
-            backend.on_exam_saved(exam)
+            try:
+                backend = get_backend_provider(name=exam['backend'])
+                backend.on_exam_saved(exam)
+            except NotImplementedError:
+                log.exception(
+                    'No proctoring backend configured for backend=%(backend)s',
+                    {
+                        'backend': exam['backend'],
+                    }
+                )
 
 
 @receiver(post_save, sender=models.ProctoredExamReviewPolicy)
@@ -127,15 +135,16 @@ def on_attempt_changed(sender, instance, signal, **kwargs):
     else:
         # remove the attempt on the backend
         # timed exams have no backend
-        backend = get_backend_provider(name=instance.proctored_exam.backend)
-        if backend:
-            result = backend.remove_exam_attempt(instance.proctored_exam.external_id, instance.external_id)
-            if not result:
-                log.error(
-                    'Failed to remove attempt_id=%s from backend=%s',
-                    instance.id,
-                    instance.proctored_exam.backend,
-                )
+        if instance.proctored_exam.is_proctored:
+            backend = get_backend_provider(name=instance.proctored_exam.backend)
+            if backend:
+                result = backend.remove_exam_attempt(instance.proctored_exam.external_id, instance.external_id)
+                if not result:
+                    log.error(
+                        'Failed to remove attempt_id=%s from backend=%s',
+                        instance.id,
+                        instance.proctored_exam.backend,
+                    )
 
 
 @receiver(post_delete, sender=models.ProctoredExamStudentAttempt)
