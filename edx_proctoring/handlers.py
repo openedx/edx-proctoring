@@ -27,8 +27,16 @@ def check_for_category_switch(sender, instance, **kwargs):
             exam = ProctoredExamJSONSafeSerializer(instance).data
             # from the perspective of the backend, the exam is now inactive.
             exam['is_active'] = False
-            backend = get_backend_provider(name=exam['backend'])
-            backend.on_exam_saved(exam)
+            try:
+                backend = get_backend_provider(name=exam['backend'])
+                backend.on_exam_saved(exam)
+            except NotImplementedError:
+                log.exception(
+                    'No proctoring backend configured for backend=%(backend)s',
+                    {
+                        'backend': exam['backend'],
+                    }
+                )
 
 
 @receiver(post_save, sender=models.ProctoredExamReviewPolicy)

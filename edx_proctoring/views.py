@@ -677,7 +677,17 @@ class StudentOnboardingStatusView(ProctoredAPIView):
 
         # If there are multiple onboarding exams, use the last created exam accessible to the user
         onboarding_exams = list(ProctoredExam.get_practice_proctored_exams_for_course(course_id).order_by('-created'))
-        if not onboarding_exams or not get_backend_provider(name=onboarding_exams[0].backend).supports_onboarding:
+        provider = None
+        try:
+            provider = get_backend_provider(name=onboarding_exams[0].backend)
+        except NotImplementedError:
+            logging.exception(
+                'No proctoring backend configured for backend=%(backend)s',
+                {
+                    'backend': onboarding_exams[0].backend,
+                }
+            )
+        if not onboarding_exams or not (provider and provider.supports_onboarding):
             return Response(
                 status=404,
                 data={'detail': _('There is no onboarding exam related to this course id.')}
@@ -848,7 +858,17 @@ class StudentOnboardingStatusByCourseView(ProctoredAPIView):
         # get last created onboarding exam if there are multiple
         onboarding_exam = (ProctoredExam.get_practice_proctored_exams_for_course(course_id)
                            .order_by('-created').first())
-        if not onboarding_exam or not get_backend_provider(name=onboarding_exam.backend).supports_onboarding:
+        provider = None
+        try:
+            provider = get_backend_provider(name=onboarding_exam.backend)
+        except NotImplementedError:
+            logging.exception(
+                'No proctoring backend configured for backend=%(backend)s',
+                {
+                    'backend': onboarding_exam.backend,
+                }
+            )
+        if not onboarding_exam or not (provider and provider.supports_onboarding):
             return Response(
                 status=404,
                 data={'detail': _('There is no onboarding exam related to this course id.')}
@@ -2120,7 +2140,15 @@ class InstructorDashboard(AuthenticatedAPIView):
                     continue
 
                 exam_backend_name = exam.get('backend')
-                backend = get_backend_provider(name=exam_backend_name)
+                try:
+                    backend = get_backend_provider(name=exam_backend_name)
+                except NotImplementedError:
+                    logging.exception(
+                        'No proctoring backend configured for backend=%(backend)s',
+                        {
+                            'backend': exam_backend_name,
+                        }
+                    )
                 if existing_backend_name and exam_backend_name != existing_backend_name:
                     # In this case, what are we supposed to do?!
                     # It should not be possible to get in this state, because
