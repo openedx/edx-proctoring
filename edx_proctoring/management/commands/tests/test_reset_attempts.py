@@ -1,9 +1,9 @@
 """
 Tests for the reset_attempts management command
 """
+from tempfile import NamedTemporaryFile
 
 import ddt
-from tempfile import NamedTemporaryFile
 
 from django.core.management import call_command
 
@@ -58,8 +58,8 @@ class ResetAttemptsTests(LoggedInTestCase):
 
         with NamedTemporaryFile() as file:
             with open(file.name, 'w') as writing_file:
-                for id in ids:
-                    writing_file.write(str(id) + '\n')
+                for num in ids:
+                    writing_file.write(str(num) + '\n')
 
             call_command(
                 'reset_attempts',

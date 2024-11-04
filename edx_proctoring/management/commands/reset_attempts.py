@@ -3,7 +3,6 @@ Django management command to delete attempts. This command should only be used
 to remove attempts that have not been started or completed, as it will not
 reset problem state or grade overrides.
 """
-import csv
 import logging
 import time
 
@@ -71,6 +70,5 @@ class Command(BaseCommand):
 
             log.info(f'{deleted_count} attempts deleted.')
             time.sleep(sleep_time)
-
 
         log.info(f'Job completed. {total_deleted} attempts deleted.')
