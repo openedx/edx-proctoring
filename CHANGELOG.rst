@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[4.18.3] - 2024-11-04
+~~~~~~~~~~~~~~~~~~~~~
+* add management command to delete attempts
+
 [4.18.2] - 2024-10-03
 ~~~~~~~~~~~~~~~~~~~~~
 * fix various bugs related to exams configured with removed proctoring backend
