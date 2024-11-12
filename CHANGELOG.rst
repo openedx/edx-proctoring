@@ -14,6 +14,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+
+[4.18.4] - 2024-11-21
+~~~~~~~~~~~~~~~~~~~~~
+* fix PII annotations by assuming that if a model's retirement is 'to_be_implemented', then we should just say it is 'retained'.
+
 [4.18.3] - 2024-11-04
 ~~~~~~~~~~~~~~~~~~~~~
 * add management command to delete attempts
