@@ -685,10 +685,12 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     This is where we store the proctored exam review feedback
     from the exam reviewers
 
-    .. pii: reviews contain video of the exam
-            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii: Reviews contain video of the exam.
+            Retirement was supposed to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776,
+            but it is not clear that is was. We pessimistically assume that it was NOT retired, but this
+            assumption should be revisited in https://github.com/openedx/edx-proctoring/issues/1241.
     .. pii_types: video
-    .. pii_retirement: to_be_implemented
+    .. pii_retirement: retained
     """
 
     # which student attempt is this feedback for?
@@ -758,10 +760,12 @@ class ProctoredExamSoftwareSecureReviewHistory(TimeStampedModel):
     """
     When records get updated, we will archive them here
 
-    .. pii: reviews contain video of the exam
-            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii: Reviews contain video of the exam.
+            Retirement was supposed to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776,
+            but it is not clear that is was. We pessimistically assume that it was NOT retired, but this
+            assumption should be revisited in https://github.com/openedx/edx-proctoring/issues/1241.
     .. pii_types: video
-    .. pii_retirement: to_be_implemented
+    .. pii_retirement: retained
     """
 
     # which student attempt is this feedback for?
@@ -804,10 +808,12 @@ class ProctoredExamSoftwareSecureComment(TimeStampedModel):
     This is where we store the proctored exam review comments
     from the exam reviewers
 
-    .. pii: comment contains free-form text which could be personally-identifying
-            retirement to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776
+    .. pii: Comment contains free-form text which could be personally-identifying.
+            Retirement was supposed to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776,
+            but it is not clear that is was. We pessimistically assume that it was NOT retired, but this
+            assumption should be revisited in https://github.com/openedx/edx-proctoring/issues/1241.
     .. pii_types: other
-    .. pii_retirement: to_be_implemented
+    .. pii_retirement: retained
     """
 
     # which student attempt is this feedback for?
