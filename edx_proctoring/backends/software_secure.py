@@ -39,6 +39,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
     verbose_name = 'RPNow'
     passing_statuses = SoftwareSecureReviewStatus.passing_statuses
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(self, organization, exam_sponsor, exam_register_endpoint,
                  secret_key_id, secret_key, crypto_key, software_download_url,
                  video_review_aes_key=None, send_email=False, **kwargs):
@@ -391,6 +392,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         """
         return self.video_review_aes_key
 
+    # pylint: disable=too-many-positional-arguments
     def get_instructor_url(
         self, course_id, user, exam_id=None, attempt_id=None,
         show_configuration_dashboard=False, encrypted_video_review_url=None
@@ -409,7 +411,7 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
             # reformat video url as per MST-871 findings
             reformatted_url = decrypted_video_url.replace('DirectLink-Generic', 'DirectLink-HTML5')
             return reformatted_url
-        except Exception as err:
+        except Exception as err:  # pylint: disable=broad-exception-caught
             log.exception(
                 'Could not decrypt video url for attempt_id=%(attempt_id)s '
                 'due to the following error: %(error_string)s',

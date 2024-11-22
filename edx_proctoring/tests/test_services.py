@@ -40,7 +40,7 @@ class MockCreditService:
         """
         return self.status
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,too-many-positional-arguments
     def set_credit_requirement_status(self, user_id, course_key_or_id, req_namespace,
                                       req_name, status="satisfied", reason=None):
         """
@@ -148,6 +148,7 @@ class MockInstructorService:
         """
         return self.is_user_course_staff
 
+    # pylint: disable=too-many-positional-arguments
     def send_support_notification(self, course_id, exam_name, student_username, review_status, review_url):
         """
         Mocked implementation of send_support_notification
@@ -244,6 +245,7 @@ class MockGradesService:
         self.overrides = {}
         self.rejected_exam_overrides_grade = rejected_exam_overrides_grade
 
+    # pylint: disable=too-many-positional-arguments
     def init_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all, earned_graded):
         """Initialize a grade in MockGradesService for testing. Actual GradesService does not have this method."""
         key = (user_id, course_key_or_id, usage_key_or_id)
@@ -268,6 +270,7 @@ class MockGradesService:
         key = (user_id, course_key_or_id, usage_key_or_id)
         return self.overrides.get(key)
 
+    # pylint: disable=too-many-positional-arguments
     def override_subsection_grade(self, user_id, course_key_or_id, usage_key_or_id, earned_all=None,
                                   earned_graded=None, overrider=None, comment=None):
         """Sets grade override earned points for key (user_id + course_key + subsection)"""
@@ -387,6 +390,7 @@ class MockLearningSequencesService:
 
 class MockVerifiedName:
     """Mock VerifiedName object"""
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self, user, verified_name, profile_name, verification_attempt_id=None,
         proctored_exam_attempt_id=None, status=None,
@@ -408,6 +412,7 @@ class MockNameAffirmationService:
         """ Return mock VerifiedName """
         return self.verified_name
 
+    # pylint: disable=too-many-positional-arguments
     def create_verified_name(
         self, user, verified_name, profile_name, verification_attempt_id=None,
         proctored_exam_attempt_id=None, status=None,

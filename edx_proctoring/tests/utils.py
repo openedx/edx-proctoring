@@ -284,6 +284,7 @@ class ProctoredExamTestCase(LoggedInTestCase):
             is_active=False
         )
 
+    # pylint: disable=too-many-positional-arguments
     def _create_exam_attempt(
         self, exam_id, status=ProctoredExamStudentAttemptStatus.created, is_practice_exam=False,
         time_remaining_seconds=None, ready_to_resume=False, resumed=False

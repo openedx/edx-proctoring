@@ -428,6 +428,7 @@ class ProctoredExamStudentAttempt(TimeStampedModel):
         verbose_name = 'proctored exam attempt'
 
     @classmethod
+    # pylint: disable=too-many-positional-arguments
     def create_exam_attempt(cls, exam_id, user_id, attempt_code,
                             taking_as_proctored, is_sample_attempt, external_id,
                             review_policy_id=None, status=None, time_remaining_seconds=None):

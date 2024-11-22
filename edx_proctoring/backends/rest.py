@@ -274,7 +274,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         try:
             response = self.session.post(url, json=exam)
             data = response.json()
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             if response:
                 if hasattr(exc, 'response') and exc.response is not None:
                     content = exc.response.content
@@ -289,6 +289,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             data = {}
         return data.get('id')
 
+    # pylint: disable=too-many-positional-arguments
     def get_instructor_url(
         self, course_id, user, exam_id=None, attempt_id=None,
         show_configuration_dashboard=False, encrypted_video_review_url=None
