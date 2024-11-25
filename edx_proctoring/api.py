@@ -160,6 +160,7 @@ def get_proctoring_settings_by_exam_id(exam_id):
     return proctoring_settings_data
 
 
+# pylint: disable=too-many-positional-arguments
 def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True, hide_after_due=False,
                 backend=None):
@@ -365,6 +366,7 @@ def _get_review_policy_by_exam_id(exam_id):
         return None
 
 
+# pylint: disable=too-many-positional-arguments
 def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=constants.MINIMUM_TIME,
                 is_proctored=None, is_practice_exam=None, external_id=None, is_active=None,
                 hide_after_due=None, backend=None):
@@ -920,6 +922,7 @@ def _create_and_decline_attempt(exam_id, user_id):
     )
 
 
+# pylint: disable=too-many-positional-arguments
 def _register_proctored_exam_attempt(user_id, exam_id, exam, attempt_code, review_policy, verified_name=None):
     """
     Call the proctoring backend to register the exam attempt. If there are exceptions
@@ -1390,7 +1393,7 @@ def _is_attempt_resumable(attempt_obj, to_status):
     return attempt_obj.is_resumable
 
 
-# pylint: disable=inconsistent-return-statements
+# pylint: disable=inconsistent-return-statements,too-many-positional-arguments
 def update_attempt_status(attempt_id, to_status,
                           raise_if_not_found=True, cascade_effects=True, timeout_timestamp=None,
                           update_attributable_to=None):
@@ -1669,6 +1672,7 @@ def update_attempt_status(attempt_id, to_status,
         if email:
             try:
                 email.send()
+            # pylint: disable=broad-exception-caught
             except Exception as err:
                 log.exception(
                     ('Exception occurred while trying to send proctoring attempt '

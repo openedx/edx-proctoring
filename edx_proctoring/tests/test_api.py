@@ -2636,6 +2636,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         (None, False, 2, 1, 1, 0),
     )
     @ddt.unpack
+    # pylint: disable=too-many-positional-arguments
     def test_are_prerequisite_satisifed(self, content_id,
                                         expected_are_prerequisites_satisifed,
                                         expected_len_satisfied_prerequisites,
@@ -2667,6 +2668,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         (None, False, 2, 0, 1, 1),
     )
     @ddt.unpack
+    # pylint: disable=too-many-positional-arguments
     def test_declined_prerequisites(self, content_id,
                                     expected_are_prerequisites_satisifed,
                                     expected_len_satisfied_prerequisites,

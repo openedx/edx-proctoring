@@ -531,7 +531,7 @@ class ProctoredExamView(ProctoredAPIView):
                     course_id=course_id,
                     active_only=True
                 )
-        return Response(data)
+        return Response(data)  # pylint: disable=possibly-used-before-assignment
 
 
 class RegisterProctoredExamsView(ProctoredAPIView):
@@ -1411,7 +1411,7 @@ class StudentProctoredExamAttempt(ProctoredAPIView):
         elif action == 'mark_ready_to_resume':
             exam_attempt_id = mark_exam_attempt_as_ready_to_resume(attempt_id)
 
-        data = {"exam_attempt_id": exam_attempt_id}
+        data = {"exam_attempt_id": exam_attempt_id}  # pylint: disable=possibly-used-before-assignment
         return Response(data)
 
     @method_decorator(require_course_or_global_staff)

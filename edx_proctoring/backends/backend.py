@@ -112,7 +112,7 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
         """
         return attempt
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,too-many-positional-arguments
     def get_instructor_url(
         self, course_id, user, exam_id=None, attempt_id=None,
         show_configuration_dashboard=False, encrypted_video_review_url=None

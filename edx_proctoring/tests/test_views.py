@@ -2137,6 +2137,7 @@ class TestStudentOnboardingStatusByCourseView(ProctoredExamTestCase):
         (VerificientOnboardingProfileStatus.expired, ProctoredExamStudentAttemptStatus.expired)
     )
     @ddt.unpack
+    # pylint: disable=too-many-positional-arguments
     def test_instructor_onboarding_with_api_endpoint(self, api_status, attempt_status, mocked_onboarding_api,
                                                      mocked_switch_is_active, mock_logger):
         mocked_switch_is_active.return_value = True
