@@ -21,7 +21,7 @@ click==8.1.7
     #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==1.8.2
+code-annotations==2.0.0
     # via edx-lint
 dill==0.3.9
     # via pylint
@@ -53,7 +53,7 @@ platformdirs==4.3.6
     # via pylint
 pycodestyle==2.12.1
     # via -r requirements/quality.in
-pydantic==2.10.1
+pydantic==2.10.2
     # via rstcheck-core
 pydantic-core==2.27.1
     # via pydantic

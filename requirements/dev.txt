@@ -27,7 +27,7 @@ click==8.1.7
     #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==1.8.2
+code-annotations==2.0.0
     # via edx-lint
 colorama==0.4.6
     # via tox
@@ -102,7 +102,7 @@ polib==1.2.0
     # via edx-i18n-tools
 pycodestyle==2.12.1
     # via -r requirements/quality.in
-pydantic==2.10.1
+pydantic==2.10.2
     # via rstcheck-core
 pydantic-core==2.27.1
     # via pydantic
@@ -163,7 +163,7 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   typer
-virtualenv==20.27.1
+virtualenv==20.28.0
     # via tox
-wheel==0.45.0
+wheel==0.45.1
     # via -r requirements/dev.in

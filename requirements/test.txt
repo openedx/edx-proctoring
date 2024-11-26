@@ -35,11 +35,11 @@ charset-normalizer==3.4.0
 click-plugins==1.1.1
     # via celery
     # via celery
-code-annotations==1.8.2
+code-annotations==2.0.0
     # via
     #   -r requirements/test.in
     #   edx-toggles
-coverage[toml]==7.6.7
+coverage[toml]==7.6.8
     # via pytest-cov
 cryptography==43.0.3
     # via pyjwt
@@ -162,7 +162,7 @@ markupsafe==3.0.2
     #   xblock
 mock==5.1.0
     # via -r requirements/test.in
-newrelic==10.3.0
+newrelic==10.3.1
     # via edx-django-utils
 openedx-events==9.15.0
     # via event-tracking
