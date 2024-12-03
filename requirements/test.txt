@@ -35,13 +35,13 @@ charset-normalizer==3.4.0
 click-plugins==1.1.1
     # via celery
     # via celery
-code-annotations==1.8.2
+code-annotations==2.0.0
     # via
     #   -r requirements/test.in
     #   edx-toggles
-coverage[toml]==7.6.7
+coverage[toml]==7.6.8
     # via pytest-cov
-cryptography==43.0.3
+cryptography==44.0.0
     # via pyjwt
 ddt==1.7.2
     # via -r requirements/test.in
@@ -94,7 +94,7 @@ dnspython==2.7.0
     # via pymongo
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-ccx-keys==1.3.0
+edx-ccx-keys==2.0.2
     # via openedx-events
 edx-django-utils==7.0.1
     # via
@@ -162,7 +162,7 @@ markupsafe==3.0.2
     #   xblock
 mock==5.1.0
     # via -r requirements/test.in
-newrelic==10.3.0
+newrelic==10.3.1
     # via edx-django-utils
 openedx-events==9.15.0
     # via event-tracking
@@ -183,7 +183,7 @@ pycparser==2.22
     # via cffi
 pycryptodomex==3.21.0
     # via -r requirements/base.in
-pyjwt[crypto]==2.10.0
+pyjwt[crypto]==2.10.1
     # via
     #   -r requirements/base.in
     #   drf-jwt
@@ -195,7 +195,7 @@ pymongo==4.4.0
     #   event-tracking
 pynacl==1.5.0
     # via edx-django-utils
-pytest==8.3.3
+pytest==8.3.4
     # via
     #   pytest-cov
     #   pytest-django
