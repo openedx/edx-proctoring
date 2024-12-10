@@ -41,11 +41,11 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-code-annotations==1.8.2
+code-annotations==2.0.0
     # via edx-toggles
-cryptography==43.0.3
+cryptography==44.0.0
     # via pyjwt
-django==4.2.16
+django==4.2.17
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -95,9 +95,9 @@ dnspython==2.7.0
     # via pymongo
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-ccx-keys==1.3.0
+edx-ccx-keys==2.0.2
     # via openedx-events
-edx-django-utils==7.0.1
+edx-django-utils==7.1.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -138,14 +138,14 @@ kombu==5.4.2
     # via celery
 lxml==5.3.0
     # via xblock
-mako==1.3.6
+mako==1.3.8
     # via xblock
 markupsafe==3.0.2
     # via
     #   jinja2
     #   mako
     #   xblock
-newrelic==10.3.0
+newrelic==10.3.1
     # via edx-django-utils
 openedx-events==9.15.0
     # via event-tracking
@@ -159,7 +159,7 @@ pycparser==2.22
     # via cffi
 pycryptodomex==3.21.0
     # via -r requirements/base.in
-pyjwt[crypto]==2.10.0
+pyjwt[crypto]==2.10.1
     # via
     #   -r requirements/base.in
     #   drf-jwt
@@ -199,13 +199,13 @@ semantic-version==2.10.0
     # via edx-drf-extensions
 simplejson==3.19.3
     # via xblock
-six==1.16.0
+six==1.17.0
     # via
     #   edx-ccx-keys
     #   event-tracking
     #   fs
     #   python-dateutil
-sqlparse==0.5.2
+sqlparse==0.5.3
     # via django
 stevedore==5.4.0
     # via

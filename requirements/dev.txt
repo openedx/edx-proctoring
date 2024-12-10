@@ -8,7 +8,7 @@ annotated-types==0.7.0
     # via pydantic
 asgiref==3.8.1
     # via django
-astroid==3.3.5
+astroid==3.3.6
     # via
     #   pylint
     #   pylint-celery
@@ -27,7 +27,7 @@ click==8.1.7
     #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==1.8.2
+code-annotations==2.0.0
     # via edx-lint
 colorama==0.4.6
     # via tox
@@ -37,7 +37,7 @@ dill==0.3.9
     # via pylint
 distlib==0.3.9
     # via virtualenv
-django==4.2.16
+django==4.2.17
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
@@ -102,7 +102,7 @@ polib==1.2.0
     # via edx-i18n-tools
 pycodestyle==2.12.1
     # via -r requirements/quality.in
-pydantic==2.10.1
+pydantic==2.10.3
     # via rstcheck-core
 pydantic-core==2.27.1
     # via pydantic
@@ -112,7 +112,7 @@ pygments==2.18.0
     # via
     #   diff-cover
     #   rich
-pylint==3.3.1
+pylint==3.3.2
     # via
     #   edx-lint
     #   pylint-celery
@@ -142,11 +142,11 @@ rstcheck-core==1.2.1
     # via rstcheck
 shellingham==1.5.4
     # via typer
-six==1.16.0
+six==1.17.0
     # via edx-lint
 snowballstemmer==2.2.0
     # via pydocstyle
-sqlparse==0.5.2
+sqlparse==0.5.3
     # via django
 stevedore==5.4.0
     # via code-annotations
@@ -156,14 +156,14 @@ tomlkit==0.13.2
     # via pylint
 tox==4.23.2
     # via -r requirements/dev.in
-typer==0.13.1
+typer==0.15.1
     # via rstcheck
 typing-extensions==4.12.2
     # via
     #   pydantic
     #   pydantic-core
     #   typer
-virtualenv==20.27.1
+virtualenv==20.28.0
     # via tox
-wheel==0.45.0
+wheel==0.45.1
     # via -r requirements/dev.in
