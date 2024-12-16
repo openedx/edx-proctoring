@@ -5,7 +5,7 @@ Tests for the set_attempt_status management command
 from datetime import datetime
 
 import pytz
-from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 from django.core.management import call_command
 

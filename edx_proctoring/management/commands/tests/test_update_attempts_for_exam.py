@@ -2,7 +2,7 @@
 Tests for the update_attempts_for_exam management command
 """
 
-from mock import patch
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command

@@ -7,7 +7,7 @@ from copy import deepcopy
 from itertools import product
 
 import ddt
-from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 from opaque_keys import InvalidKeyError
 
 from django.conf import settings
