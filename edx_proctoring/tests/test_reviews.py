@@ -6,9 +6,8 @@ import codecs
 import json
 
 import ddt
-import mock
 from crum import set_current_request
-from mock import call, patch
+from unittest.mock import call, patch
 
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory
@@ -588,7 +587,7 @@ class ReviewTests(LoggedInTestCase):
         self.assertTrue(review.is_attempt_active)
 
         # now delete the attempt, which puts it into the archive table
-        with mock.patch('edx_proctoring.api.update_attempt_status') as mock_update_status:
+        with patch('edx_proctoring.api.update_attempt_status') as mock_update_status:
             remove_exam_attempt(self.attempt_id, requesting_user=self.user)
 
         # check that the field has been updated

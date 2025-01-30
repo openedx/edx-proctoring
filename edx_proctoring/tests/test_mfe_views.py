@@ -6,7 +6,7 @@ from itertools import product
 from urllib.parse import urlencode
 
 import ddt
-from mock import patch
+from unittest.mock import patch
 from opaque_keys.edx.locator import BlockUsageLocator
 
 from django.conf import settings

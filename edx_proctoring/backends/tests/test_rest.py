@@ -7,7 +7,7 @@ import json
 import ddt
 import jwt
 import responses
-from mock import patch
+from unittest.mock import patch
 
 from django.test import TestCase, override_settings
 from django.utils import translation
