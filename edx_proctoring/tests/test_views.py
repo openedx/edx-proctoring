@@ -10,7 +10,7 @@ import ddt
 import pytz
 from freezegun import freeze_time
 from httmock import HTTMock
-from unittest.mock import Mock, patch
+from mock import Mock, patch
 from opaque_keys.edx.locator import BlockUsageLocator
 
 from django.contrib.auth import get_user_model

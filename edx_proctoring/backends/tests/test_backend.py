@@ -4,7 +4,7 @@ Tests for backend.py
 
 import time
 
-from unittest.mock import patch
+from mock import patch
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
