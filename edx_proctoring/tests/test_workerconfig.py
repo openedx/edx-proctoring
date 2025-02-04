@@ -6,7 +6,7 @@ import os.path
 import tempfile
 import unittest
 
-from unittest.mock import patch
+from mock import patch
 
 from django.conf import settings
 

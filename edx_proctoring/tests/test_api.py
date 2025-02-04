@@ -10,7 +10,7 @@ from itertools import product
 import ddt
 import pytz
 from freezegun import freeze_time
-from unittest.mock import MagicMock, patch
+from mock import MagicMock, patch
 
 from django.conf import settings
 from django.core import mail

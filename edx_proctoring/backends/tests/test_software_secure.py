@@ -8,7 +8,7 @@ import json
 
 import ddt
 from httmock import HTTMock, all_requests
-from unittest.mock import MagicMock, patch
+from mock import MagicMock, patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
