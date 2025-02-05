@@ -4,10 +4,10 @@ Review callback tests
 
 import codecs
 import json
+from unittest.mock import call, patch
 
 import ddt
 from crum import set_current_request
-from unittest.mock import call, patch
 
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory
@@ -35,7 +35,7 @@ from edx_proctoring.tests.test_services import (
 from edx_proctoring.utils import decode_and_decrypt, locate_attempt_by_attempt_code
 from edx_proctoring.views import ProctoredExamReviewCallback, is_user_course_or_global_staff
 
-from .utils import LoggedInTestCase
+from .test_utils.utils import LoggedInTestCase
 
 User = get_user_model()
 

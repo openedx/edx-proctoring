@@ -10,7 +10,7 @@ from django.core.management import call_command
 from edx_proctoring.api import create_exam
 from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
-from edx_proctoring.tests.utils import LoggedInTestCase
+from edx_proctoring.tests.test_utils.utils import LoggedInTestCase
 
 
 @ddt.ddt

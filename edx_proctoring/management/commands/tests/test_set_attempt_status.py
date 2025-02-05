@@ -3,9 +3,9 @@ Tests for the set_attempt_status management command
 """
 
 from datetime import datetime
+from unittest.mock import MagicMock, patch
 
 import pytz
-from unittest.mock import MagicMock, patch
 
 from django.core.management import call_command
 
@@ -19,7 +19,7 @@ from edx_proctoring.tests.test_services import (
     MockGradesService,
     MockInstructorService
 )
-from edx_proctoring.tests.utils import LoggedInTestCase
+from edx_proctoring.tests.test_utils.utils import LoggedInTestCase
 
 
 @patch('django.urls.reverse', MagicMock)

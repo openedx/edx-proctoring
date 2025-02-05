@@ -1,7 +1,7 @@
 {
   "name": "@edx/edx-proctoring",
   "//": "Note that the version format is slightly different than that of the Python version when using prereleases.",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "main": "edx_proctoring/static/index.js",
   "scripts": {
     "test": "gulp test"

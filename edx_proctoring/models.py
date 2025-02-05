@@ -686,12 +686,10 @@ class ProctoredExamSoftwareSecureReview(TimeStampedModel):
     This is where we store the proctored exam review feedback
     from the exam reviewers
 
-    .. pii: Reviews contain video of the exam.
-            Retirement was supposed to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776,
-            but it is not clear that is was. We pessimistically assume that it was NOT retired, but this
-            assumption should be revisited in https://github.com/openedx/edx-proctoring/issues/1241.
-    .. pii_types: video
-    .. pii_retirement: retained
+    .. pii: Stores review metadata, which is a free text field, which may contain a learner's name, a learner's email,
+            a link to a video review link, etc., as well as an encrypted video link.
+    .. pii_types: email_address, external_service, name, video
+    .. pii_retirement: local_api
     """
 
     # which student attempt is this feedback for?
@@ -761,12 +759,10 @@ class ProctoredExamSoftwareSecureReviewHistory(TimeStampedModel):
     """
     When records get updated, we will archive them here
 
-    .. pii: Reviews contain video of the exam.
-            Retirement was supposed to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776,
-            but it is not clear that is was. We pessimistically assume that it was NOT retired, but this
-            assumption should be revisited in https://github.com/openedx/edx-proctoring/issues/1241.
-    .. pii_types: video
-    .. pii_retirement: retained
+    .. pii: Stores review metadata, which is a free text field, which may contain a learner's name, a learner's email,
+            a link to a video review link, etc., as well as an encrypted video link.
+    .. pii_types: email_address, external_service, name, video
+    .. pii_retirement: local_api
     """
 
     # which student attempt is this feedback for?
@@ -809,12 +805,10 @@ class ProctoredExamSoftwareSecureComment(TimeStampedModel):
     This is where we store the proctored exam review comments
     from the exam reviewers
 
-    .. pii: Comment contains free-form text which could be personally-identifying.
-            Retirement was supposed to be implemented in https://openedx.atlassian.net/browse/EDUCATOR-4776,
-            but it is not clear that is was. We pessimistically assume that it was NOT retired, but this
-            assumption should be revisited in https://github.com/openedx/edx-proctoring/issues/1241.
+    .. pii: Stores review metadata, which is a free text field, which may contain a learner's name, a learner's email,
+            a link to a video review link, etc.
     .. pii_types: other
-    .. pii_retirement: retained
+    .. pii_retirement: local_api
     """
 
     # which student attempt is this feedback for?

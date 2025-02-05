@@ -3,11 +3,11 @@ Tests for the REST backend
 """
 
 import json
+from unittest.mock import patch
 
 import ddt
 import jwt
 import responses
-from unittest.mock import patch
 
 from django.test import TestCase, override_settings
 from django.utils import translation

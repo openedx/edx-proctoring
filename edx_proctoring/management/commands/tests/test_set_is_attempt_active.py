@@ -8,7 +8,7 @@ from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attemp
 from edx_proctoring.models import ProctoredExamSoftwareSecureReview, ProctoredExamSoftwareSecureReviewHistory
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.tests.test_services import MockCertificateService, MockCreditService, MockGradesService
-from edx_proctoring.tests.utils import LoggedInTestCase
+from edx_proctoring.tests.test_utils.utils import LoggedInTestCase
 
 
 class SetAttemptActiveFieldTests(LoggedInTestCase):
