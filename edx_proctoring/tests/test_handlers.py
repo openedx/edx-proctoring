@@ -13,7 +13,7 @@ from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import MockInstructorService
 
-from .utils import ProctoredExamTestCase
+from .test_utils.utils import ProctoredExamTestCase
 
 
 @ddt.ddt

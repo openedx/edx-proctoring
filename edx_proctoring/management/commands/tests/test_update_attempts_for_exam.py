@@ -12,7 +12,7 @@ from edx_proctoring.models import ProctoredExamStudentAttempt
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import MockCertificateService, MockCreditService, MockGradesService
-from edx_proctoring.tests.utils import LoggedInTestCase
+from edx_proctoring.tests.test_utils.utils import LoggedInTestCase
 
 User = get_user_model()
 

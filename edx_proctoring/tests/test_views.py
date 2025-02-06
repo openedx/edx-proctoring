@@ -5,12 +5,12 @@ All tests for the proctored_exams.py
 import json
 from datetime import datetime, timedelta
 from math import ceil, floor
+from unittest.mock import Mock, patch
 
 import ddt
 import pytz
 from freezegun import freeze_time
 from httmock import HTTMock
-from unittest.mock import Mock, patch
 from opaque_keys.edx.locator import BlockUsageLocator
 
 from django.contrib.auth import get_user_model
@@ -45,6 +45,9 @@ from edx_proctoring.exceptions import (
 )
 from edx_proctoring.models import (
     ProctoredExam,
+    ProctoredExamSoftwareSecureComment,
+    ProctoredExamSoftwareSecureReview,
+    ProctoredExamSoftwareSecureReviewHistory,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAllowanceHistory,
     ProctoredExamStudentAttempt
@@ -57,6 +60,11 @@ from edx_proctoring.statuses import (
     VerificientOnboardingProfileStatus
 )
 from edx_proctoring.tests import mock_perm
+from edx_proctoring.tests.test_utils.factories import (
+    ProctoredExamSoftwareSecureCommentFactory,
+    ProctoredExamSoftwareSecureReviewFactory,
+    ProctoredExamSoftwareSecureReviewHistoryFactory
+)
 from edx_proctoring.urls import urlpatterns
 from edx_proctoring.utils import obscured_user_id, resolve_exam_url_for_learning_mfe
 from edx_proctoring.views import require_course_or_global_staff, require_staff
@@ -72,7 +80,7 @@ from .test_services import (
     MockLearningSequencesService,
     MockScheduleItemData
 )
-from .utils import LoggedInTestCase, ProctoredExamTestCase
+from .test_utils.utils import LoggedInTestCase, ProctoredExamTestCase
 
 User = get_user_model()
 
@@ -6269,6 +6277,101 @@ class TestUserRetirement(LoggedInTestCase):
         retired_allowance_history = ProctoredExamStudentAllowanceHistory \
             .objects.filter(user=self.user_to_retire.id).first()
         assert retired_allowance_history.value == ''
+
+    @patch('edx_proctoring.api.can_update_credit_grades_and_email')
+    def test_retire_proctored_exam_software_secure_review_and_history_and_comment(
+        self,
+        can_update_credit_grades_and_email_mock,
+    ):
+        """ Retiring a user should delete their reviews, review history, and comments and return a 204 """
+
+        can_update_credit_grades_and_email_mock.return_value = False
+
+        user_not_to_retire = User(username='tester3', email='tester3@test.com')
+        user_not_to_retire.save()
+
+        self.deletion_url = reverse('edx_proctoring:user_retirement_api', kwargs={'user_id': self.user_to_retire.id})
+
+        proctored_exam = self._create_proctored_exam()
+        proctored_exam_attempt_id_user_to_retire = create_exam_attempt(
+            proctored_exam.id,
+            self.user_to_retire.id,
+            taking_as_proctored=False
+        )
+        proctored_exam_attempt_id_user_not_to_retire = create_exam_attempt(
+            proctored_exam.id,
+            user_not_to_retire.id,
+            taking_as_proctored=False
+        )
+
+        for attempt_id in [proctored_exam_attempt_id_user_to_retire, proctored_exam_attempt_id_user_not_to_retire]:
+            attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+
+            review = ProctoredExamSoftwareSecureReviewFactory(
+                attempt_code=attempt.attempt_code,
+                exam=proctored_exam,
+            )
+
+            # Generate a few instances of the ProctoredExamSoftwareSecureReviewHistory model.
+            for _ in range(3):
+                ProctoredExamSoftwareSecureReviewHistoryFactory(
+                    attempt_code=attempt.attempt_code,
+                    exam=proctored_exam,
+                )
+
+            # Generate a few instances of the ProctoredExamSoftwareSecureComment model.
+            for _ in range(4):
+                ProctoredExamSoftwareSecureCommentFactory(review=review)
+
+        # Run the retirement command.
+        response = self.client.post(self.deletion_url)
+        assert response.status_code == 204
+
+        # Ensure that correct reviews, review history, and comments are retired.
+        attempt_to_retire = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(
+            proctored_exam_attempt_id_user_to_retire
+        )
+        attempt_code_to_retire = attempt_to_retire.attempt_code
+
+        review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=attempt_code_to_retire)
+        assert review.raw_data == ''
+        assert review.encrypted_video_url == b''
+
+        historical_reviews = ProctoredExamSoftwareSecureReviewHistory.objects.filter(
+            attempt_code=attempt_code_to_retire
+        )
+        for historical_review in historical_reviews:
+            assert historical_review.raw_data == ''
+            assert historical_review.encrypted_video_url == b''
+
+        comments = ProctoredExamSoftwareSecureComment.objects.all()
+        comments = ProctoredExamSoftwareSecureComment.objects.filter(review=review)
+        for comment in comments:
+            assert comment.comment == ''
+            assert comment.status == ''
+
+        # Ensure that correct reviews, review history, and comments are NOT retired.
+        attempt_not_to_retire = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(
+            proctored_exam_attempt_id_user_not_to_retire
+        )
+        attempt_code_not_to_retire = attempt_not_to_retire.attempt_code
+
+        review = ProctoredExamSoftwareSecureReview.objects.get(attempt_code=attempt_code_not_to_retire)
+        assert review.raw_data == 'raw data'
+        assert review.encrypted_video_url == b'www.example.com'
+
+        historical_reviews = ProctoredExamSoftwareSecureReviewHistory.objects.filter(
+            attempt_code=attempt_code_not_to_retire
+        )
+        for historical_review in historical_reviews:
+            assert historical_review.raw_data == 'raw data'
+            assert historical_review.encrypted_video_url == b'www.example.com'
+
+        comments = ProctoredExamSoftwareSecureComment.objects.all()
+        comments = ProctoredExamSoftwareSecureComment.objects.filter(review=review)
+        for comment in comments:
+            assert comment.comment == 'comment'
+            assert comment.status == 'status'
 
 
 @ddt.ddt

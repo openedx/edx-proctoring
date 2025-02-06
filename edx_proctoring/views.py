@@ -81,6 +81,7 @@ from edx_proctoring.models import (
     ProctoredExam,
     ProctoredExamSoftwareSecureComment,
     ProctoredExamSoftwareSecureReview,
+    ProctoredExamSoftwareSecureReviewHistory,
     ProctoredExamStudentAllowance,
     ProctoredExamStudentAllowanceHistory,
     ProctoredExamStudentAttempt
@@ -2259,6 +2260,50 @@ class UserRetirement(AuthenticatedAPIView):
             allowance_history.value = ''
             allowance_history.save()
 
+    def _retire_proctored_exam_software_secure_review_and_history_and_comment(self, user_id):
+        """
+        Clear values from ProctoredExamSoftwareSecureReview, ProctoredExamSoftwareSecureReviewHistory,
+        and ProctoredExamSoftwareSecureComment models that contain learner PII.
+
+        Arguments:
+        * user_id (int): the user ID of the learner that should be retired
+        """
+        attempts = ProctoredExamStudentAttempt.objects.filter(user_id=user_id).values('attempt_code')
+
+        for attempt in attempts:
+            attempt_code = attempt['attempt_code']
+
+            # Retire reviews and review history.
+            reviews = ProctoredExamSoftwareSecureReview.objects.filter(attempt_code=attempt_code)
+            review_history = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt_code)
+
+            for review in reviews:
+                review.encrypted_video_url = b''
+                review.raw_data = ''
+
+                # Because we have handlers that rely on the pre_save and post_save signals, we cannot do a bulk update
+                # and must save each review one-by-one.
+                review.save()
+
+            for review in review_history:
+                review.encrypted_video_url = b''
+                review.raw_data = ''
+
+                # Because we have handlers that rely on the pre_save and post_save signals, we cannot do a bulk update
+                # and must save each review one-by-one.
+                review.save()
+
+            # Retire comments.
+            comments_to_update = []
+            comments = ProctoredExamSoftwareSecureComment.objects.filter(review__in=reviews)
+
+            for comment in comments:
+                comment.comment = ''
+                comment.status = ''
+                comments_to_update.append(comment)
+
+            ProctoredExamSoftwareSecureComment.objects.bulk_update(comments_to_update, ['comment', 'status'])
+
     def post(self, request, user_id):
         """ Obfuscates all PII for a given user_id """
         if not request.user.has_perm('accounts.can_retire_user'):
@@ -2266,6 +2311,7 @@ class UserRetirement(AuthenticatedAPIView):
         code = 204
 
         self._retire_user_allowances(user_id)
+        self._retire_proctored_exam_software_secure_review_and_history_and_comment(user_id)
 
         return Response(status=code)
 

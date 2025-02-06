@@ -6,11 +6,11 @@ All tests for the api.py
 """
 from datetime import datetime, timedelta
 from itertools import product
+from unittest.mock import MagicMock, patch
 
 import ddt
 import pytz
 from freezegun import freeze_time
-from unittest.mock import MagicMock, patch
 
 from django.conf import settings
 from django.core import mail
@@ -108,7 +108,7 @@ from .test_services import (
     MockInstructorService,
     MockNameAffirmationService
 )
-from .utils import ProctoredExamTestCase
+from .test_utils.utils import ProctoredExamTestCase
 
 
 @patch('django.urls.reverse', MagicMock)

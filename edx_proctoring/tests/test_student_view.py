@@ -8,11 +8,11 @@ All tests for the api.py
 import itertools
 import json
 from datetime import datetime, timedelta
+from unittest.mock import MagicMock, patch
 
 import ddt
 import pytz
 from freezegun import freeze_time
-from unittest.mock import MagicMock, patch
 
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -39,7 +39,7 @@ from .test_services import (
     MockCreditServiceWithCourseEndDate,
     MockInstructorService
 )
-from .utils import ProctoredExamTestCase
+from .test_utils.utils import ProctoredExamTestCase
 
 
 @patch('django.urls.reverse', MagicMock)

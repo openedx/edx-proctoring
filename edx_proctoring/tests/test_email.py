@@ -5,9 +5,9 @@ All tests for proctored exam emails.
 
 from copy import deepcopy
 from itertools import product
+from unittest.mock import MagicMock, patch
 
 import ddt
-from unittest.mock import MagicMock, patch
 from opaque_keys import InvalidKeyError
 
 from django.conf import settings
@@ -21,7 +21,7 @@ from edx_proctoring.runtime import get_runtime_service, set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
 from .test_services import MockCertificateService, MockCreditService, MockGradesService, MockInstructorService
-from .utils import ProctoredExamTestCase
+from .test_utils.utils import ProctoredExamTestCase
 
 
 @patch('django.urls.reverse', MagicMock)

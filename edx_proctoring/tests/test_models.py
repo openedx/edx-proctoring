@@ -15,7 +15,7 @@ from edx_proctoring.models import (
 )
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 
-from .utils import LoggedInTestCase
+from .test_utils.utils import LoggedInTestCase
 
 User = get_user_model()
 

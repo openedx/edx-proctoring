@@ -3,10 +3,10 @@ Tests for the MFE proctored exam views.
 """
 import json
 from itertools import product
+from unittest.mock import patch
 from urllib.parse import urlencode
 
 import ddt
-from unittest.mock import patch
 from opaque_keys.edx.locator import BlockUsageLocator
 
 from django.conf import settings
@@ -23,7 +23,7 @@ from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import humanized_time
 
 from .test_services import MockLearningSequencesService, MockScheduleItemData
-from .utils import ProctoredExamTestCase
+from .test_utils.utils import ProctoredExamTestCase
 
 User = get_user_model()
 

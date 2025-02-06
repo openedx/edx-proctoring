@@ -14,6 +14,17 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[5.1.0] - 2025-02-03
+~~~~~~~~~~~~~~~~~~~~
+* add Software Secure review, history, and comment models to retirement endpoint
+
+[5.0.1] - 2024-11-25
+~~~~~~~~~~~~~~~~~~~~
+* update requirements
+
+[5.0.0] - 2024-11-22
+~~~~~~~~~~~~~~~~~~~~
+* drop support for Python 3.8
 
 [4.18.4] - 2024-11-21
 ~~~~~~~~~~~~~~~~~~~~~

@@ -3,7 +3,6 @@ Tests for backend.py
 """
 
 import time
-
 from unittest.mock import patch
 
 from django.core.exceptions import ImproperlyConfigured

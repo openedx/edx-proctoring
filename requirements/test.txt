@@ -127,6 +127,10 @@ event-tracking==3.0.0
     # via -r requirements/base.in
 execnet==2.1.1
     # via pytest-xdist
+factory-boy==3.3.1
+    # via -r requirements/test.in
+faker==35.2.0
+    # via factory-boy
 fastavro==1.9.7
     # via openedx-events
 freezegun==1.5.1
@@ -210,6 +214,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -r requirements/base.in
     #   celery
+    #   faker
     #   freezegun
     #   xblock
 python-ipware==3.0.0
@@ -259,7 +264,9 @@ testfixtures==8.3.0
 text-unidecode==1.3
     # via python-slugify
 typing-extensions==4.12.2
-    # via edx-opaque-keys
+    # via
+    #   edx-opaque-keys
+    #   faker
 tzdata==2024.2
     # via
     #   celery
