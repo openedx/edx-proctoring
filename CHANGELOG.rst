@@ -14,6 +14,10 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[5.1.1] - 2025-02-07
+~~~~~~~~~~~~~~~~~~~~
+* fixes bug in ordering of query to ensure all Software Secure history is cleared of PII via the retirement endpoint
+
 [5.1.0] - 2025-02-03
 ~~~~~~~~~~~~~~~~~~~~
 * add Software Secure review, history, and comment models to retirement endpoint
