@@ -2275,8 +2275,6 @@ class UserRetirement(AuthenticatedAPIView):
 
             # Retire reviews and review history.
             reviews = ProctoredExamSoftwareSecureReview.objects.filter(attempt_code=attempt_code)
-            review_history = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt_code)
-
             for review in reviews:
                 review.encrypted_video_url = b''
                 review.raw_data = ''
@@ -2285,6 +2283,7 @@ class UserRetirement(AuthenticatedAPIView):
                 # and must save each review one-by-one.
                 review.save()
 
+            review_history = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt_code)
             for review in review_history:
                 review.encrypted_video_url = b''
                 review.raw_data = ''
