@@ -111,7 +111,7 @@ test-python: clean ## run tests in the current virtualenv
 	py.test --cov=edx_proctoring --cov-report=html --ds=test_settings -n 3
 
 test-js:
-	gulp test
+	OPENSSL_CONF=/dev/null gulp test
 
 lint-js:
 	./node_modules/.bin/eslint --ignore-pattern 'edx_proctoring/static/index.js' --ext .js --ext .jsx .
