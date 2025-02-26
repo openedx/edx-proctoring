@@ -92,8 +92,8 @@ flow through those status updates.
 Detailed descriptions of each potential attempt state can be found below. It should be noted that there
 are minor differences in the review process between RPNow and Proctortrack exams.
 
-- `Proctortrack status values <https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/proctored_exams/pt_results.html#values-in-the-status-column>`_
-- `RPNow status values <https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/proctored_exams/rpnow_results.html#values-in-the-status-column>`_
+- `Proctortrack status values <https://docs.openedx.org/en/latest/educators/how-tos/proctored_exams/review_pt_results.html>`_
+- `RPNow status values <https://docs.openedx.org/en/latest/educators/how-tos/proctored_exams/review_rpnow_results.html>`_
 
 This figure does not include error states or display of unmet prerequite requirements.
 
