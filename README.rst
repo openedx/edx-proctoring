@@ -104,4 +104,4 @@ Have a question about this repository, or about Open edX in general?  Please
 refer to this `list of resources`_ if you need any assistance.
 
 .. _list of resources: https://open.edx.org/getting-help
-.. _Including Proctored Exams In Your Course: https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/proctored_exams/index.html
+.. _Including Proctored Exams In Your Course: https://docs.openedx.org/en/latest/educators/concepts/proctored_exams/proctored_exams_overview.html
