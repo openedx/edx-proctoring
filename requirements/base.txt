@@ -10,7 +10,7 @@ appdirs==1.4.4
     # via fs
 asgiref==3.8.1
     # via django
-attrs==24.2.0
+attrs==25.3.0
     # via openedx-events
 billiard==4.2.1
     # via celery
@@ -18,15 +18,15 @@ celery==5.4.0
     # via
     #   -c requirements/constraints.txt
     #   event-tracking
-certifi==2024.8.30
+certifi==2025.1.31
     # via requests
 cffi==1.17.1
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via requests
-click==8.1.7
+click==8.1.8
     # via
     #   -c requirements/constraints.txt
     #   celery
@@ -41,11 +41,11 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-code-annotations==1.8.2
+code-annotations==2.2.0
     # via edx-toggles
-cryptography==43.0.3
+cryptography==44.0.2
     # via pyjwt
-django==4.2.16
+django==4.2.20
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -95,9 +95,9 @@ dnspython==2.7.0
     # via pymongo
 drf-jwt==1.19.2
     # via edx-drf-extensions
-edx-ccx-keys==1.3.0
+edx-ccx-keys==2.0.2
     # via openedx-events
-edx-django-utils==7.0.1
+edx-django-utils==7.2.0
     # via
     #   edx-drf-extensions
     #   edx-rest-api-client
@@ -109,57 +109,57 @@ edx-drf-extensions==10.5.0
     # via
     #   -r requirements/base.in
     #   edx-when
-edx-opaque-keys[django]==2.11.0
+edx-opaque-keys[django]==2.12.0
     # via
     #   -r requirements/base.in
     #   edx-ccx-keys
     #   edx-drf-extensions
     #   edx-when
     #   openedx-events
-edx-rest-api-client==6.0.0
+edx-rest-api-client==6.1.0
     # via -r requirements/base.in
-edx-toggles==5.2.0
+edx-toggles==5.3.0
     # via event-tracking
-edx-when==2.5.0
+edx-when==2.5.1
     # via -r requirements/base.in
 event-tracking==3.0.0
     # via -r requirements/base.in
-fastavro==1.9.7
+fastavro==1.10.0
     # via openedx-events
 fs==2.4.16
     # via xblock
 idna==3.10
     # via requests
-jinja2==3.1.4
+jinja2==3.1.6
     # via code-annotations
 jsonfield==3.1.0
     # via -r requirements/base.in
-kombu==5.4.2
+kombu==5.5.1
     # via celery
-lxml==5.3.0
+lxml==5.3.1
     # via xblock
-mako==1.3.6
+mako==1.3.9
     # via xblock
 markupsafe==3.0.2
     # via
     #   jinja2
     #   mako
     #   xblock
-newrelic==10.3.0
+newrelic==10.7.0
     # via edx-django-utils
-openedx-events==9.15.0
+openedx-events==9.20.0
     # via event-tracking
-pbr==6.1.0
+pbr==6.1.1
     # via stevedore
-prompt-toolkit==3.0.48
+prompt-toolkit==3.0.50
     # via click-repl
-psutil==6.1.0
+psutil==7.0.0
     # via edx-django-utils
 pycparser==2.22
     # via cffi
-pycryptodomex==3.21.0
+pycryptodomex==3.22.0
     # via -r requirements/base.in
-pyjwt[crypto]==2.10.0
+pyjwt[crypto]==2.10.1
     # via
     #   -r requirements/base.in
     #   drf-jwt
@@ -180,7 +180,7 @@ python-ipware==3.0.0
     # via django-ipware
 python-slugify==8.0.4
     # via code-annotations
-pytz==2024.2
+pytz==2025.2
     # via
     #   -r requirements/base.in
     #   event-tracking
@@ -197,17 +197,17 @@ rules==3.5
     # via -r requirements/base.in
 semantic-version==2.10.0
     # via edx-drf-extensions
-simplejson==3.19.3
+simplejson==3.20.1
     # via xblock
-six==1.16.0
+six==1.17.0
     # via
     #   edx-ccx-keys
     #   event-tracking
     #   fs
     #   python-dateutil
-sqlparse==0.5.2
+sqlparse==0.5.3
     # via django
-stevedore==5.4.0
+stevedore==5.4.1
     # via
     #   code-annotations
     #   edx-django-utils
@@ -216,12 +216,14 @@ text-unidecode==1.3
     # via python-slugify
 typing-extensions==4.12.2
     # via edx-opaque-keys
-tzdata==2024.2
+tzdata==2025.1
     # via
     #   celery
     #   kombu
 urllib3==2.2.3
-    # via requests
+    # via
+    #   -c requirements/common_constraints.txt
+    #   requests
 vine==5.1.0
     # via
     #   amqp
@@ -233,7 +235,7 @@ web-fragments==2.2.0
     # via xblock
 webob==1.8.9
     # via xblock
-xblock==5.1.0
+xblock==5.1.2
     # via edx-when
 
 # The following packages are considered to be unsafe in a requirements file:
