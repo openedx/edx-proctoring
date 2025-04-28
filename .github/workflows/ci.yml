@@ -21,6 +21,7 @@ jobs:
         toxenv:
           [
             "django42-drflatest",
+            "django52-drflatest",
             "quality",
             "pii_check",
             "version_check",
@@ -28,6 +29,7 @@ jobs:
             "js_lint",
             "rst_validation",
             "translations-django42",
+            "translations-django52",
           ]
     steps:
       - uses: actions/checkout@v1

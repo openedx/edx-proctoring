@@ -13,7 +13,11 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[5.2.0] - 2025-04-22
+* adds support for django 5.2
+
 [5.1.2] - 2025-02-10
+~~~~~~~~~~~~~~~~~~~~
 * modifies the exam submit email message to avoid confusion among the learners.
 
 [5.1.1] - 2025-02-07
