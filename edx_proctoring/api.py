@@ -21,6 +21,7 @@ from django.urls import NoReverseMatch, reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
+from edx_django_utils.cache import RequestCache
 from edx_proctoring import constants
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.exceptions import (
@@ -83,6 +84,8 @@ SHOW_EXPIRY_MESSAGE_DURATION = 1 * 60  # duration within which expiry message is
 APPROVED_STATUS = 'approved'
 
 REJECTED_GRADE_OVERRIDE_EARNED = 0.0
+
+PRE_CACHE_NAMESPACE = "edx_proctoring.api.pre_cache_exams_for_course"
 
 USER_MODEL = get_user_model()
 
@@ -474,7 +477,28 @@ def get_exam_by_content_id(course_id, content_id):
         "is_active": true
     }
     """
-    proctored_exam = ProctoredExam.get_exam_by_content_id(course_id, content_id)
+    req_cache = RequestCache(PRE_CACHE_NAMESPACE)
+    cached_response = req_cache.get_cached_response(course_id)
+    if cached_response.is_found:
+        # This means we found a dict of {content_id (str): exam} for our
+        # course_id...
+        content_id_str = str(content_id)
+        if content_id_str in cached_response.value:
+            proctored_exam = cached_response.value[content_id_str]
+        else:
+            # We only cached the course if pre_cache_exams_for_course() was
+            # called. So if cached_response.is_found, then all the
+            # ProctoredExams for this course have already been loaded into the
+            # req_cache. That means if our content_id key isn't there, then it
+            # doesn't exist at all. There is no need to fall back to calling
+            # ProctoredExam.get_exam_by_content_id here, and that would actually
+            # defeat the optimization. This function is called by the courseware
+            # on any subsection that *might* be a ProctoredExam, and may answer
+            # False the vast majority of the time.
+            proctored_exam = None
+    else:
+        proctored_exam = ProctoredExam.get_exam_by_content_id(course_id, content_id)
+
     if proctored_exam is None:
         err_msg = (
             f'Cannot find proctored exam in course_id={course_id} with content_id={content_id}'
@@ -483,6 +507,32 @@ def get_exam_by_content_id(course_id, content_id):
 
     serialized_exam_object = ProctoredExamSerializer(proctored_exam)
     return serialized_exam_object.data
+
+
+def pre_cache_exams_for_course(course_key):
+    """
+    Reads all ProctoredExam for a given course into a request-cache.
+
+    Sometimes high level code in edx-platform knows it's going to query this API
+    to see which of the course's many subsections have entries in ProctoredExam,
+    but it only has this knowledge a dozen levels higher in the stack. The
+    pieces at the bottom of the stack still call get_exam_by_content_id()
+    on individual content blocks. This function gives a way for the high level
+    edx-platform code to say, "We're going to end up calling this a bunch of
+    times, so please do one up-front query and pre-cache the results for this
+    course."
+
+    Note that we don't want to do this aggressive pre-fetching from within
+    something like get_exam_by_content_id() because it really is sometimes just
+    called for one thing, and doing so would be a waste.
+    """
+    req_cache = RequestCache(PRE_CACHE_NAMESPACE)
+    course_exams = {
+        # the keys here are strs because ProctoredExam.content_id is a CharField
+        exam.content_id: exam
+        for exam in ProctoredExam.objects.filter(course_id=course_key)
+    }
+    req_cache.set(course_key, course_exams)
 
 
 def add_allowance_for_user(exam_id, user_info, key, value):
