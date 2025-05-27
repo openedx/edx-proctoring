@@ -22,7 +22,7 @@ click>=8.0,<9.0
 django-webpack-loader<1.0.0
 
 # incremental upgrade plan.
-django-simple-history<=3.1.1
+django-simple-history<=3.8.0
 
 #Temporary to Support the python 3.11 Upgrade
 backports.zoneinfo;python_version<"3.9"  # Newer versions have zoneinfo available in the standard library
