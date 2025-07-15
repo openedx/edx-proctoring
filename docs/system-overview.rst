@@ -73,20 +73,20 @@ Message Interface: `exam_action_handler.js <https://github.com/openedx/edx-proct
 
 Exam States
 -----------
+
 When a learner first enters a proctored exam subsection an exam attempt is created
 in the edX system. User actions and the proctoring provider will update the status of
 this attempt as the exam is completed and reviewed. The following diagram describes the
 flow through those status updates.
 
-Detailed descriptions of each potential attempt state can be found below. It should be noted that there
-are minor differences in the review process between RPNow and Proctortrack exams.
+Detailed descriptions of each potential attempt state can be found below.
 
-- `Proctortrack status values <https://docs.openedx.org/en/latest/educators/how-tos/proctored_exams/review_pt_results.html>`_
 - `RPNow status values <https://docs.openedx.org/en/latest/educators/how-tos/proctored_exams/review_rpnow_results.html>`_
 
-This figure does not include error states or display of unmet prerequite requirements.
+This figure does not include error states or display of unmet prerequisite requirements.
 
 .. image:: images/attempt_states.png
+
 
 Example Action Sequence
 -------------------------
