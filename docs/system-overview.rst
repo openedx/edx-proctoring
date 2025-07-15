@@ -53,10 +53,10 @@ This can exist as a Python module or be committed directly into edx-proctoring a
 
 `More information on configuring backends <https://github.com/openedx/edx-proctoring/blob/master/docs/backends.rst>`_
 
-We have two real backends used in production:
+We have one real backend currently used in production:
 
-#. Proctortrack: https://github.com/joshivj/edx-proctoring-proctortrack
-#. RPNow: https://github.com/openedx/edx-proctoring/blob/447c0bf49f31fa4df2aa2b0339137ccfd173f237/edx_proctoring/backends/software_secure.py
+1. RPNow: https://github.com/openedx/edx-proctoring/blob/447c0bf49f31fa4df2aa2b0339137ccfd173f237/edx_proctoring/backends/software_secure.py
+
 
 For testing backends see `mockprock <https://github.com/openedx/edx-proctoring/blob/master/docs/developing.rst#using-mockprock-as-a-backend>`_
 
