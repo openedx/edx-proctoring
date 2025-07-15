@@ -70,17 +70,6 @@ are required for each of these messages to keep the exam from entering an error 
 
 Message Interface: `exam_action_handler.js <https://github.com/openedx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
 
-JavaScript Worker
-^^^^^^^^^^^^^^^^^
-This is an optional component currently used by Proctortrack and our Mockprock provider.
-
-A JavaScript worker included as part of the the provider's python plugin. This will
-handle any messages emitted by the edX web application and interface directly with the
-proctoring software running on the learner's machine.
-
-Example worker: `proctortrack_custom.js <https://github.com/joshivj/edx-proctoring-proctortrack/blob/master/edx_proctoring_proctortrack/static/proctortrack_custom.js>`_
-
-See `Example Action Sequence`_ for how this interface fits into the exam process.
 
 Exam States
 -----------
