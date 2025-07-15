@@ -242,11 +242,5 @@ This document should serve as a catalogue of key features included in the procto
 - [ ] Filtering by "Not Started" it includes the learner(s) who has not started onboarding
 - [ ] Filtering by multiple statuses functions as expected
 
-#### Proctortrack review dashboard is rendered for the correct course
-This is only applicable to Proctortrack courses
-- [ ] Navigate to the special exams tab within the instructor dashboard
-- [ ] Expand the "Review Dashboard" dropdown
-- [ ] The Proctortrack UI is rendered for the correct course
-
 #### Additional Features
 - [ ] Allowances
