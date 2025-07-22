@@ -91,7 +91,7 @@ in `local-module-development <https://github.com/openedx/frontend-app-learning#l
 How does the proctoring system work?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See :doc:`system-overview` for a description of the proctoring system and it's components.
+See `System Overview`_ for a description of the proctoring system and it's components.
 
 
 Email Templates
@@ -277,6 +277,7 @@ a user which PT can authenticate as.
   of the integration.
 
 .. _our spec: ./backends.rst
+.. _System Overview: ./system-overview.rst
 
 RPNow
 """""
