@@ -251,31 +251,6 @@ The contents of ``EDXAPP_PROCTORING_BACKENDS`` will depend on which
 backend(s) you're interested in testing. It's necessary to provide a
 ``DEFAULT`` backend.
 
-Proctortrack
-""""""""""""
-
-As will be the case with all REST backends implementing `our spec`_, one
-doesn't need to configure much to get Proctortrack working on a
-sandbox, e.g.::
-
-  EDXAPP_PROCTORING_BACKENDS:
-    DEFAULT: 'proctortrack'
-    proctortrack:
-      client_id: "<you'll need to fill these in with credentials from Proctortrack>"
-      client_secret: "<you'll need to fill these in with credentials from Proctortrack>"
-      base_url: 'https://prestaging.verificient.com'
-      integration_specific_email: "proctortrack-support@edx.org"
-
-In addition to adding these configurations, you'll also need to set up
-a user which PT can authenticate as.
-
-* Create a user group called ``proctortrack_review`` in Django admin
-* Create a user, and associate it with that group
-* Create an OAuth application
-  (``/admin/oauth2_provider/application/``) pointing to the user
-  you've created, and share the client_id with folks on the other end
-  of the integration.
-
 .. _our spec: ./backends.rst
 .. _System Overview: ./system-overview.rst
 
