@@ -91,7 +91,7 @@ in `local-module-development <https://github.com/openedx/frontend-app-learning#l
 How does the proctoring system work?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See `system overview`_ for a description of the proctoring system and it's components.
+See :doc:`system-overview` for a description of the proctoring system and it's components.
 
 
 Email Templates
@@ -243,14 +243,40 @@ Placing these configurations here (rather than the more generic
 locations mentioned in this document) will allow us to leverage the
 power of the ansible plays used to construct and administer
 sandboxes, e.g. those run via the ``/edx/bin/update`` script.
-`More on that here.`_
+`More on that here. <https://openedx.atlassian.net/wiki/spaces/EdxOps/pages/13960183/Sandboxes#Sandboxes-Updatingcode>`_
 
-You will need to `generate a public JWK keypair`_.
+You will need to `generate a public JWK keypair <https://mkjwk.org/>`_.
 
 The contents of ``EDXAPP_PROCTORING_BACKENDS`` will depend on which
 backend(s) you're interested in testing. It's necessary to provide a
 ``DEFAULT`` backend.
 
+Proctortrack
+""""""""""""
+
+As will be the case with all REST backends implementing `our spec`_, one
+doesn't need to configure much to get Proctortrack working on a
+sandbox, e.g.::
+
+  EDXAPP_PROCTORING_BACKENDS:
+    DEFAULT: 'proctortrack'
+    proctortrack:
+      client_id: "<you'll need to fill these in with credentials from Proctortrack>"
+      client_secret: "<you'll need to fill these in with credentials from Proctortrack>"
+      base_url: 'https://prestaging.verificient.com'
+      integration_specific_email: "proctortrack-support@edx.org"
+
+In addition to adding these configurations, you'll also need to set up
+a user which PT can authenticate as.
+
+* Create a user group called ``proctortrack_review`` in Django admin
+* Create a user, and associate it with that group
+* Create an OAuth application
+  (``/admin/oauth2_provider/application/``) pointing to the user
+  you've created, and share the client_id with folks on the other end
+  of the integration.
+
+.. _our spec: ./backends.rst
 
 RPNow
 """""
