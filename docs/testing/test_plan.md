@@ -99,7 +99,6 @@ This document should serve as a catalogue of key features included in the procto
 - [ ] Click submit on the confirmation page
 - [ ] You should see an interstitial confirming the exam has been submitted and is waiting on review
 - [ ] You should receive an email stating your exam has been submitted for review
-- [ ] This test has been completed with a Proctortrack exam
 - [ ] This test has been completed with a RPNow exam
 
 #### <a name="error"></a> Learners are removed from the exam if connectivity to the proctoring software is not maintained
