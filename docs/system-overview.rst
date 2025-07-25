@@ -91,9 +91,10 @@ This figure does not include error states or display of unmet prerequisite requi
 Example Action Sequence
 -------------------------
 
-The diagrams below describes the happy-path of interactions between components to
-sucessfully begin a proctored exam. These examples matches Proctortrack's backend
-implementation and includes any JavaScript events handled by the proctoring app.
+The diagram below describes the happy-path of interactions between components to
+successfully begin a proctored exam. These examples match the backend
+implementation of a typical proctoring provider and include any JavaScript events
+handled by the proctoring app.
 
 Old Sequence
 ^^^^^^^^^^^^
