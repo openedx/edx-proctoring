@@ -244,7 +244,8 @@ locations mentioned in this document) will allow us to leverage the
 power of the ansible plays used to construct and administer
 sandboxes, e.g. those run via the ``/edx/bin/update`` script.
 `More on that here.`_
-You will need to `generate a public JWK keypair <https://mkjwk.org/>`_.
+
+You will need to `generate a public JWK keypair`_.
 
 The contents of ``EDXAPP_PROCTORING_BACKENDS`` will depend on which
 backend(s) you're interested in testing. It's necessary to provide a
