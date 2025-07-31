@@ -53,10 +53,10 @@ This can exist as a Python module or be committed directly into edx-proctoring a
 
 `More information on configuring backends <https://github.com/openedx/edx-proctoring/blob/master/docs/backends.rst>`_
 
-We have two real backends used in production:
+We have one real backend currently used in production:
 
-#. Proctortrack: https://github.com/joshivj/edx-proctoring-proctortrack
-#. RPNow: https://github.com/openedx/edx-proctoring/blob/447c0bf49f31fa4df2aa2b0339137ccfd173f237/edx_proctoring/backends/software_secure.py
+1. RPNow: https://github.com/openedx/edx-proctoring/blob/447c0bf49f31fa4df2aa2b0339137ccfd173f237/edx_proctoring/backends/software_secure.py
+
 
 For testing backends see `mockprock <https://github.com/openedx/edx-proctoring/blob/master/docs/developing.rst#using-mockprock-as-a-backend>`_
 
@@ -70,41 +70,31 @@ are required for each of these messages to keep the exam from entering an error 
 
 Message Interface: `exam_action_handler.js <https://github.com/openedx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
 
-JavaScript Worker
-^^^^^^^^^^^^^^^^^
-This is an optional component currently used by Proctortrack and our Mockprock provider.
-
-A JavaScript worker included as part of the the provider's python plugin. This will
-handle any messages emitted by the edX web application and interface directly with the
-proctoring software running on the learner's machine.
-
-Example worker: `proctortrack_custom.js <https://github.com/joshivj/edx-proctoring-proctortrack/blob/master/edx_proctoring_proctortrack/static/proctortrack_custom.js>`_
-
-See `Example Action Sequence`_ for how this interface fits into the exam process.
 
 Exam States
 -----------
+
 When a learner first enters a proctored exam subsection an exam attempt is created
 in the edX system. User actions and the proctoring provider will update the status of
 this attempt as the exam is completed and reviewed. The following diagram describes the
 flow through those status updates.
 
-Detailed descriptions of each potential attempt state can be found below. It should be noted that there
-are minor differences in the review process between RPNow and Proctortrack exams.
+Detailed descriptions of each potential attempt state can be found below.
 
-- `Proctortrack status values <https://docs.openedx.org/en/latest/educators/how-tos/proctored_exams/review_pt_results.html>`_
 - `RPNow status values <https://docs.openedx.org/en/latest/educators/how-tos/proctored_exams/review_rpnow_results.html>`_
 
-This figure does not include error states or display of unmet prerequite requirements.
+This figure does not include error states or display of unmet prerequisite requirements.
 
 .. image:: images/attempt_states.png
+
 
 Example Action Sequence
 -------------------------
 
-The diagrams below describes the happy-path of interactions between components to
-sucessfully begin a proctored exam. These examples matches Proctortrack's backend
-implementation and includes any JavaScript events handled by the proctoring app.
+The diagram below describes the happy-path of interactions between components to
+successfully begin a proctored exam. These examples match the backend
+implementation of a typical proctoring provider and include any JavaScript events
+handled by the proctoring app.
 
 Old Sequence
 ^^^^^^^^^^^^

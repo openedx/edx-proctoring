@@ -5,8 +5,6 @@ This document should serve as a catalogue of key features included in the procto
 ## Resources
 
 #### Test Courses in Stage
-- [course-v1:edX+cheating101+2018T3](https://learning.stage.edx.org/course/course-v1:edX+cheating101+2018T3/home) (Proctortrack)
-- [course-v1:edX+StageProctortrack+2019](https://learning.stage.edx.org/course/course-v1:edX+StageProctortrack+2019/home) (Proctortrack)
 - [course-v1:Proctoring2+Proctoring2+Proctoring2](https://learning.stage.edx.org/course/course-v1:Proctoring2+Proctoring2+Proctoring2/home) (RPNow)
 
 #### Django Admin Models
@@ -30,7 +28,7 @@ This document should serve as a catalogue of key features included in the procto
     - [ ] A button or link to start the exam
 - [ ] Click the link to start the exam
 - [ ] You should see the first unit in the exam
-- [ ] The exam timer is shown and functions properly. [Exam Timer](#exam-timer) 
+- [ ] The exam timer is shown and functions properly. [Exam Timer](#exam-timer)
 - [ ] Click end my exam using the timer banner
 - [ ] You should see an interstitial confirming if you want to submit
 - [ ] Submit the exam
@@ -96,12 +94,11 @@ This document should serve as a catalogue of key features included in the procto
     - [ ] There should be a functioning link to the support docs four proctored exam rules
 - [ ] Click start my exam
 - [ ] You should see the first unit in the exam
-- [ ] The exam timer is shown and functions properly. [Exam Timer](#exam-timer) 
+- [ ] The exam timer is shown and functions properly. [Exam Timer](#exam-timer)
 - [ ] Click end my exam on the banner
 - [ ] Click submit on the confirmation page
 - [ ] You should see an interstitial confirming the exam has been submitted and is waiting on review
 - [ ] You should receive an email stating your exam has been submitted for review
-- [ ] This test has been completed with a Proctortrack exam
 - [ ] This test has been completed with a RPNow exam
 
 #### <a name="error"></a> Learners are removed from the exam if connectivity to the proctoring software is not maintained
@@ -197,7 +194,7 @@ This document should serve as a catalogue of key features included in the procto
 - [ ] Get the `external_id` of both the resumed and submitted attempts from [Django Admin](#django-admin-models)
 - [ ] As an admin user use the external id of the resumed attempt to send a POST request to the exam review endpoint with a status of `passed`
     - [ ] An alternative is to wait for this review to come back organically (may take 24hrs)
-- [ ] As an admin user use the external id of the submitted attempt to send a POST request to the exam review endpoint with a status of `suspicious` 
+- [ ] As an admin user use the external id of the submitted attempt to send a POST request to the exam review endpoint with a status of `suspicious`
 - [ ] Update the review from `suspicious` to `rules violation` in [Django Admin](#django-admin-models)
 - [ ] Validate the exam grade has been overridden to zero using gradebook (tab in instructor dashboard)
 - [ ] Query read replica to validate the certificate has been marked `unavailable` [Useful Queries](#useful-queries)
@@ -243,12 +240,6 @@ This document should serve as a catalogue of key features included in the procto
 - [ ] Ensure all learners in the CSV have a row in the drop down
 - [ ] Filtering by "Not Started" it includes the learner(s) who has not started onboarding
 - [ ] Filtering by multiple statuses functions as expected
-
-#### Proctortrack review dashboard is rendered for the correct course
-This is only applicable to Proctortrack courses
-- [ ] Navigate to the special exams tab within the instructor dashboard
-- [ ] Expand the "Review Dashboard" dropdown
-- [ ] The Proctortrack UI is rendered for the correct course
 
 #### Additional Features
 - [ ] Allowances
