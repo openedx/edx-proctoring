@@ -13,7 +13,13 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+[5.3.0] - 2025-05-13
+~~~~~~~~~~~~~~~~~~~~
+* adds pre_cache_exams_for_course() API call to improve performance in the Studio course outline page.
+
 [5.2.0] - 2025-04-22
+~~~~~~~~~~~~~~~~~~~~
 * adds support for django 5.2
 
 [5.1.2] - 2025-02-10
