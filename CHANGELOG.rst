@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[5.2.1] - 2025-05-27
+* Update django-simple-history to 3.8.0
+
 [5.2.0] - 2025-04-22
 * adds support for django 5.2
 
