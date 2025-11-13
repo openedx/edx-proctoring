@@ -1771,7 +1771,7 @@ def create_proctoring_attempt_status_email(exam_attempt_obj, course_name, course
     default_contact_url = f'{scheme}://{constants.SITE_NAME}/support/contact_us'
 
     # If the course has a proctoring escalation email set, use that rather than edX Support.
-    # Currently only courses using Proctortrack will have this set.
+    # This will be set if 'requires_escalation_email' is 'True' in proctoring backend.
     proctoring_escalation_email = _get_proctoring_escalation_email(course_id)
     if proctoring_escalation_email:
         contact_url = f'mailto:{proctoring_escalation_email}'

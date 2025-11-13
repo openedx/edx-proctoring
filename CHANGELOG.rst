@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[5.2.1] - 2025-12-05
+* Remove all references to Proctortrack
+
 [5.2.0] - 2025-04-22
 * adds support for django 5.2
 

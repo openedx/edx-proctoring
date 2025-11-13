@@ -67,7 +67,7 @@ class ProctoredExamModelTests(LoggedInTestCase):
         self.assertEqual(len(proctored_exam.history.filter(course_id='test_course', content_id='test_content')), 1)
 
         proctored_exam.external_id = 'test_id_2'
-        proctored_exam.backend = 'proctortrack'
+        proctored_exam.backend = 'test_proctoring_provider'
         proctored_exam.save()
 
         self.assertEqual(len(proctored_exam.history.filter(course_id='test_course', content_id='test_content')), 2)
