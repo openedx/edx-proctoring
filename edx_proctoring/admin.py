@@ -316,11 +316,11 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         obj.reviewed_by = request.user
         obj.save()
 
-    def lookup_allowed(self, lookup, value):
+    def lookup_allowed(self, lookup, value, request=None):
         """ Checks if lookup allowed or not """
         if lookup == 'exam__course_id':
             return True
-        return super().lookup_allowed(lookup, value)
+        return super().lookup_allowed(lookup, value, request)
 
 
 @admin.register(ProctoredExamSoftwareSecureReviewHistory)
