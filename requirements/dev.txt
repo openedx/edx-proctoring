@@ -14,9 +14,9 @@ astroid==4.0.4
     # via
     #   pylint
     #   pylint-celery
-cachetools==7.0.3
+cachetools==7.0.5
     # via tox
-chardet==7.0.1
+chardet==7.1.0
     # via diff-cover
 click==8.3.1
     # via
@@ -45,13 +45,13 @@ django==5.2.12
     #   edx-i18n-tools
 docutils==0.22.4
     # via rstcheck-core
-edx-i18n-tools==1.9.0
+edx-i18n-tools==2.0.0
     # via -r requirements/dev.in
-edx-lint==5.6.0
+edx-lint==6.0.0
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.25.0
+filelock==3.25.2
     # via
     #   python-discovery
     #   tox
@@ -129,7 +129,7 @@ pylint-plugin-utils==0.9.0
     #   pylint-django
 pyproject-api==1.10.0
     # via tox
-python-discovery==1.1.0
+python-discovery==1.1.3
     # via virtualenv
 python-slugify==8.0.4
     # via code-annotations
@@ -159,7 +159,7 @@ tomli-w==1.2.0
     # via tox
 tomlkit==0.14.0
     # via pylint
-tox==4.49.0
+tox==4.49.1
     # via -r requirements/dev.in
 typer==0.24.1
     # via rstcheck
@@ -170,7 +170,7 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.2
     # via pydantic
-virtualenv==21.1.0
+virtualenv==21.2.0
     # via tox
 wheel==0.46.3
     # via -r requirements/dev.in
