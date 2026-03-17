@@ -8,7 +8,7 @@ cachetools==7.0.5
     # via tox
 colorama==0.4.6
     # via tox
-coverage==7.13.4
+coverage==7.13.5
     # via -r requirements/ci.in
 distlib==0.4.0
     # via virtualenv

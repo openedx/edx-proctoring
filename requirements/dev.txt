@@ -27,7 +27,7 @@ click==8.3.1
     #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==2.3.2
+code-annotations==3.0.0
     # via edx-lint
 colorama==0.4.6
     # via tox
