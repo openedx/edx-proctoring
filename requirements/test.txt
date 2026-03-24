@@ -9,7 +9,7 @@ appdirs==1.4.4
     # via fs
 asgiref==3.11.1
     # via django
-attrs==25.4.0
+attrs==26.1.0
     # via openedx-events
     # via celery
     # via
@@ -21,7 +21,7 @@ cffi==2.0.0
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.4.5
+charset-normalizer==3.4.6
     # via requests
     # via
     #   -c requirements/constraints.txt
@@ -35,11 +35,11 @@ charset-normalizer==3.4.5
 click-plugins==1.1.1.2
     # via celery
     # via celery
-code-annotations==2.3.2
+code-annotations==3.0.0
     # via
     #   -r requirements/test.in
     #   edx-toggles
-coverage[toml]==7.13.4
+coverage[toml]==7.13.5
     # via pytest-cov
 cryptography==46.0.5
     # via pyjwt
@@ -122,13 +122,13 @@ edx-toggles==5.4.1
     # via event-tracking
 edx-when==3.2.1
     # via -r requirements/base.in
-event-tracking==3.3.0
+event-tracking==4.0.0
     # via -r requirements/base.in
 execnet==2.1.2
     # via pytest-xdist
 factory-boy==3.3.3
     # via -r requirements/test.in
-faker==40.11.0
+faker==40.11.1
     # via factory-boy
 fastavro==1.12.1
     # via openedx-events
@@ -188,7 +188,7 @@ pycryptodomex==3.23.0
     # via -r requirements/base.in
 pygments==2.19.2
     # via pytest
-pyjwt[crypto]==2.12.0
+pyjwt[crypto]==2.12.1
     # via
     #   -r requirements/base.in
     #   drf-jwt
@@ -205,7 +205,7 @@ pytest==9.0.2
     #   pytest-cov
     #   pytest-django
     #   pytest-xdist
-pytest-cov==7.0.0
+pytest-cov==7.1.0
     # via -r requirements/test.in
 pytest-django==4.12.0
     # via -r requirements/test.in
