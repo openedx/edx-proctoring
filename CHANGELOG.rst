@@ -13,6 +13,9 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+
+* Dropped Django 4.2 support; bumped event-tracking 3→4.0.0, attrs, pyjwt
+
 [5.2.1] - 2025-12-05
 * Remove all references to Proctortrack
 

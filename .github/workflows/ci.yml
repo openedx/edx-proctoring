@@ -20,7 +20,6 @@ jobs:
         node-version: ["20"]
         toxenv:
           [
-            "django42-drflatest",
             "django52-drflatest",
             "quality",
             "pii_check",
@@ -28,7 +27,6 @@ jobs:
             "js_tests",
             "js_lint",
             "rst_validation",
-            "translations-django42",
             "translations-django52",
           ]
     steps:
@@ -58,7 +56,7 @@ jobs:
         run: tox
 
       - name: Run Coverage
-        if: matrix.python-version == '3.12' && matrix.toxenv == 'django42-drflatest'
+        if: matrix.python-version == '3.12' && matrix.toxenv == 'django52-drflatest'
         uses: codecov/codecov-action@v4
         with:
           flags: unittests

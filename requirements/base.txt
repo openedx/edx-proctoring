@@ -10,7 +10,7 @@ appdirs==1.4.4
     # via fs
 asgiref==3.11.1
     # via django
-attrs==25.4.0
+attrs==26.1.0
     # via openedx-events
 billiard==4.2.4
     # via celery
@@ -24,7 +24,7 @@ cffi==2.0.0
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.4.5
+charset-normalizer==3.4.6
     # via requests
 click==8.3.1
     # via
@@ -41,7 +41,7 @@ click-plugins==1.1.1.2
     # via celery
 click-repl==0.3.0
     # via celery
-code-annotations==2.3.2
+code-annotations==3.0.0
     # via edx-toggles
 cryptography==46.0.5
     # via pyjwt
@@ -85,7 +85,7 @@ django-webpack-loader==0.7.0
     # via
     #   -c requirements/constraints.txt
     #   -r requirements/base.in
-djangorestframework==3.16.1
+djangorestframework==3.17.0
     # via
     #   -r requirements/base.in
     #   drf-jwt
@@ -121,7 +121,7 @@ edx-toggles==5.4.1
     # via event-tracking
 edx-when==3.2.1
     # via -r requirements/base.in
-event-tracking==3.3.0
+event-tracking==4.0.0
     # via -r requirements/base.in
 fastavro==1.12.1
     # via openedx-events
@@ -156,7 +156,7 @@ pycparser==3.0
     # via cffi
 pycryptodomex==3.23.0
     # via -r requirements/base.in
-pyjwt[crypto]==2.12.0
+pyjwt[crypto]==2.12.1
     # via
     #   -r requirements/base.in
     #   drf-jwt
