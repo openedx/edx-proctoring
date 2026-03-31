@@ -1,6 +1,6 @@
 amqp==5.3.1
 billiard==4.2.4
-celery==5.6.2
+celery==5.6.3
 click==8.3.1
 click-didyoumean==0.3.1
 click-repl==0.3.0

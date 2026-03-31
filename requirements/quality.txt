@@ -23,7 +23,7 @@ click==8.3.1
     #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==2.3.2
+code-annotations==3.0.0
     # via edx-lint
 dill==0.4.1
     # via pylint
@@ -59,7 +59,7 @@ pydantic-core==2.41.5
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pygments==2.19.2
+pygments==2.20.0
     # via rich
 pylint==4.0.5
     # via
