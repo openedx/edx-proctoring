@@ -14,7 +14,7 @@ astroid==4.0.4
     # via
     #   pylint
     #   pylint-celery
-click==8.3.1
+click==8.3.2
     # via
     #   -c requirements/constraints.txt
     #   click-log
@@ -23,11 +23,11 @@ click==8.3.1
     #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==2.3.2
+code-annotations==3.0.0
     # via edx-lint
 dill==0.4.1
     # via pylint
-django==5.2.12
+django==5.2.13
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/quality.in
@@ -49,17 +49,17 @@ mccabe==0.7.0
     # via pylint
 mdurl==0.1.2
     # via markdown-it-py
-platformdirs==4.9.4
+platformdirs==4.9.6
     # via pylint
 pycodestyle==2.14.0
     # via -r requirements/quality.in
-pydantic==2.12.5
+pydantic==2.13.0
     # via rstcheck-core
-pydantic-core==2.41.5
+pydantic-core==2.46.0
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pygments==2.19.2
+pygments==2.20.0
     # via rich
 pylint==4.0.5
     # via
@@ -79,7 +79,7 @@ python-slugify==8.0.4
     # via code-annotations
 pyyaml==6.0.3
     # via code-annotations
-rich==14.3.3
+rich==15.0.0
     # via typer
 rstcheck==6.2.5
     # via -r requirements/quality.in
