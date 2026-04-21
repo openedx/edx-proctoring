@@ -4,13 +4,13 @@
 #
 #    make upgrade
 #
-build==1.4.0
+build==1.4.3
     # via pip-tools
-click==8.3.1
+click==8.3.2
     # via
     #   -c requirements/constraints.txt
     #   pip-tools
-packaging==26.0
+packaging==26.1
     # via
     #   build
     #   wheel
