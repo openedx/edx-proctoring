@@ -14,11 +14,11 @@ astroid==4.0.4
     # via
     #   pylint
     #   pylint-celery
-cachetools==7.0.5
+cachetools==7.0.6
     # via tox
-chardet==7.1.0
+chardet==7.4.3
     # via diff-cover
-click==8.3.1
+click==8.3.3
     # via
     #   -c requirements/constraints.txt
     #   click-log
@@ -27,7 +27,7 @@ click==8.3.1
     #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==2.3.2
+code-annotations==3.0.0
     # via edx-lint
 colorama==0.4.6
     # via tox
@@ -37,7 +37,7 @@ dill==0.4.1
     # via pylint
 distlib==0.4.0
     # via virtualenv
-django==5.2.12
+django==5.2.13
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/dev.in
@@ -47,11 +47,11 @@ docutils==0.22.4
     # via rstcheck-core
 edx-i18n-tools==2.0.0
     # via -r requirements/dev.in
-edx-lint==6.0.0
+edx-lint==6.1.0
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.in
-filelock==3.25.2
+filelock==3.29.0
     # via
     #   python-discovery
     #   tox
@@ -64,7 +64,7 @@ jinja2==3.1.6
     # via
     #   code-annotations
     #   diff-cover
-lxml[html-clean]==6.0.2
+lxml[html-clean]==6.1.0
     # via
     #   edx-i18n-tools
     #   lxml-html-clean
@@ -78,7 +78,7 @@ mccabe==0.7.0
     # via pylint
 mdurl==0.1.2
     # via markdown-it-py
-packaging==26.0
+packaging==26.2
     # via
     #   pyproject-api
     #   tox
@@ -89,7 +89,7 @@ path==16.16.0
     #   path-py
 path-py==12.5.0
     # via -r requirements/dev.in
-platformdirs==4.9.4
+platformdirs==4.9.6
     # via
     #   pylint
     #   python-discovery
@@ -103,13 +103,13 @@ polib==1.2.0
     # via edx-i18n-tools
 pycodestyle==2.14.0
     # via -r requirements/quality.in
-pydantic==2.12.5
+pydantic==2.13.3
     # via rstcheck-core
-pydantic-core==2.41.5
+pydantic-core==2.46.3
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pygments==2.19.2
+pygments==2.20.0
     # via
     #   diff-cover
     #   rich
@@ -129,15 +129,17 @@ pylint-plugin-utils==0.9.0
     #   pylint-django
 pyproject-api==1.10.0
     # via tox
-python-discovery==1.1.3
-    # via virtualenv
+python-discovery==1.2.2
+    # via
+    #   tox
+    #   virtualenv
 python-slugify==8.0.4
     # via code-annotations
 pyyaml==6.0.3
     # via
     #   code-annotations
     #   edx-i18n-tools
-rich==14.3.3
+rich==15.0.0
     # via typer
 rstcheck==6.2.5
     # via -r requirements/quality.in
@@ -158,10 +160,12 @@ text-unidecode==1.3
 tomli-w==1.2.0
     # via tox
 tomlkit==0.14.0
-    # via pylint
-tox==4.49.1
+    # via
+    #   edx-lint
+    #   pylint
+tox==4.53.0
     # via -r requirements/dev.in
-typer==0.24.1
+typer==0.25.0
     # via rstcheck
 typing-extensions==4.15.0
     # via
@@ -170,7 +174,7 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.2
     # via pydantic
-virtualenv==21.2.0
+virtualenv==21.3.0
     # via tox
-wheel==0.46.3
+wheel==0.47.0
     # via -r requirements/dev.in
