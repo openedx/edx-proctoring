@@ -9,7 +9,7 @@ from edx_proctoring.api import (
     get_all_exam_attempts,
     get_all_exams_for_course,
     get_allowances_for_course,
-    get_filtered_exam_attempts,
+    get_filtered_exam_attempts
 )
 from edx_proctoring.models import ProctoredExamStudentAllowance
 from edx_proctoring.runtime import set_runtime_service
@@ -17,7 +17,7 @@ from edx_proctoring.tests.test_services import (
     MockCertificateService,
     MockCreditService,
     MockInstructorService,
-    MockNameAffirmationService,
+    MockNameAffirmationService
 )
 from edx_proctoring.tests.test_utils.utils import ProctoredExamTestCase
 
