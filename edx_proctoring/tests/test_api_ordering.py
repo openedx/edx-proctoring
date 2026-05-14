@@ -3,10 +3,6 @@ Tests for optional ordering parameter on api functions.
 
 See: https://github.com/openedx/edx-proctoring/issues/1320
 """
-from datetime import datetime, timedelta
-
-import pytz
-
 from edx_proctoring.api import (
     create_exam,
     create_exam_attempt,
@@ -17,7 +13,6 @@ from edx_proctoring.api import (
 )
 from edx_proctoring.models import ProctoredExamStudentAllowance
 from edx_proctoring.runtime import set_runtime_service
-from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import (
     MockCertificateService,
     MockCreditService,
