@@ -519,13 +519,15 @@ def add_allowance_for_user(exam_id, user_info, key, value):
         emit_event(exam, f'allowance.{action}', override_data=data)
 
 
-def get_allowances_for_course(course_id):
+def get_allowances_for_course(course_id, ordering=None):
     """
     Get all the allowances for the course.
     """
     student_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(
         course_id
     )
+    if ordering:
+        student_allowances = student_allowances.order_by(ordering)
     return [ProctoredExamStudentAllowanceSerializer(allowance).data for allowance in student_allowances]
 
 
@@ -1948,7 +1950,7 @@ def remove_exam_attempt(attempt_id, requesting_user):
     emit_event(exam, 'deleted', attempt=attempt)
 
 
-def get_all_exams_for_course(course_id, active_only=False):
+def get_all_exams_for_course(course_id, active_only=False, ordering=None):
     """
     This method will return all exams for a course. This will return a list
     of dictionaries, whose schema is the same as what is returned in
@@ -1976,23 +1978,29 @@ def get_all_exams_for_course(course_id, active_only=False):
         course_id,
         active_only=active_only
     )
+    if ordering:
+        exams = exams.order_by(ordering)
 
     return [ProctoredExamSerializer(proctored_exam).data for proctored_exam in exams]
 
 
-def get_all_exam_attempts(course_id):
+def get_all_exam_attempts(course_id, ordering=None):
     """
     Returns all the exam attempts for the course id.
     """
     exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(course_id)
+    if ordering:
+        exam_attempts = exam_attempts.order_by(ordering)
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
 
 
-def get_filtered_exam_attempts(course_id, search_by):
+def get_filtered_exam_attempts(course_id, search_by, ordering=None):
     """
     Returns all exam attempts for a course id filtered by the search_by string in user names and emails.
     """
     exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(course_id, search_by)
+    if ordering:
+        exam_attempts = exam_attempts.order_by(ordering)
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
 
 
