@@ -8,32 +8,31 @@ annotated-doc==0.0.4
     # via typer
 annotated-types==0.7.0
     # via pydantic
-asgiref==3.11.1
+asgiref==3.12.1
     # via django
 astroid==4.0.4
     # via
     #   pylint
     #   pylint-celery
-click==8.3.1
+click==8.4.2
     # via
     #   -c requirements/constraints.txt
     #   click-log
     #   code-annotations
     #   edx-lint
-    #   typer
 click-log==0.4.0
     # via edx-lint
-code-annotations==2.3.2
+code-annotations==3.0.0
     # via edx-lint
 dill==0.4.1
     # via pylint
-django==5.2.12
+django==5.2.16
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/quality.in
-docutils==0.22.4
+docutils==0.23
     # via rstcheck-core
-edx-lint==6.0.0
+edx-lint==6.1.0
     # via -r requirements/quality.in
 isort==8.0.1
     # via
@@ -41,7 +40,7 @@ isort==8.0.1
     #   pylint
 jinja2==3.1.6
     # via code-annotations
-markdown-it-py==4.0.0
+markdown-it-py==4.2.0
     # via rich
 markupsafe==3.0.3
     # via jinja2
@@ -49,19 +48,19 @@ mccabe==0.7.0
     # via pylint
 mdurl==0.1.2
     # via markdown-it-py
-platformdirs==4.9.4
+platformdirs==4.10.0
     # via pylint
 pycodestyle==2.14.0
     # via -r requirements/quality.in
-pydantic==2.12.5
+pydantic==2.13.4
     # via rstcheck-core
-pydantic-core==2.41.5
+pydantic-core==2.46.4
     # via pydantic
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pygments==2.19.2
+pygments==2.20.0
     # via rich
-pylint==4.0.5
+pylint==4.0.6
     # via
     #   edx-lint
     #   pylint-celery
@@ -69,7 +68,7 @@ pylint==4.0.5
     #   pylint-plugin-utils
 pylint-celery==0.3
     # via edx-lint
-pylint-django==2.7.0
+pylint-django==2.8.0
     # via edx-lint
 pylint-plugin-utils==0.9.0
     # via
@@ -79,29 +78,31 @@ python-slugify==8.0.4
     # via code-annotations
 pyyaml==6.0.3
     # via code-annotations
-rich==14.3.3
+rich==15.0.0
     # via typer
 rstcheck==6.2.5
     # via -r requirements/quality.in
-rstcheck-core==1.2.2
+rstcheck-core==1.3.0
     # via rstcheck
 shellingham==1.5.4
     # via typer
 six==1.17.0
     # via edx-lint
-snowballstemmer==3.0.1
+snowballstemmer==3.1.1
     # via pydocstyle
 sqlparse==0.5.5
     # via django
-stevedore==5.7.0
+stevedore==5.9.0
     # via code-annotations
 text-unidecode==1.3
     # via python-slugify
-tomlkit==0.14.0
-    # via pylint
-typer==0.24.1
+tomlkit==0.15.0
+    # via
+    #   edx-lint
+    #   pylint
+typer==0.26.8
     # via rstcheck
-typing-extensions==4.15.0
+typing-extensions==4.16.0
     # via
     #   pydantic
     #   pydantic-core
