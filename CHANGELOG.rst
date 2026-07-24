@@ -13,6 +13,12 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[6.1.0] - 2026-07-24
+* Add an explicit request timeout to the REST proctoring backend, and log and raise a
+  typed ``BackendProviderCannotRemoveAttempt`` (HTTP 502) when the provider fails to
+  remove an attempt, so callers can return a descriptive error to the instructor instead
+  of an unhandled 500.
+
 [5.2.1] - 2025-12-05
 * Remove all references to Proctortrack
 
