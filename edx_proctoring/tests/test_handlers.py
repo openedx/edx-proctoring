@@ -6,9 +6,11 @@ from unittest.mock import patch
 import ddt
 from httmock import HTTMock
 
+from django.db import transaction
 from django.db.models.signals import pre_delete, pre_save
 
 from edx_proctoring.api import update_attempt_status
+from edx_proctoring.exceptions import BackendProviderCannotRemoveAttempt
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAttempt
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.tests.test_services import MockInstructorService
@@ -46,6 +48,32 @@ class SignalTests(ProctoredExamTestCase):
             self.attempt.delete_exam_attempt()
             log_format_string = 'Failed to remove attempt_id=%s from backend=%s'
             logger_mock.assert_any_call(log_format_string, 1, self.backend_name)
+
+    @patch('logging.Logger.exception')
+    @patch('edx_proctoring.handlers.get_backend_provider')
+    def test_provider_unavailable_raises_and_keeps_attempt(self, get_backend_mock, logger_mock):
+        """
+        If the provider raises (slow/unavailable) while removing the attempt, a typed
+        BackendProviderCannotRemoveAttempt must be raised, the failure logged with
+        context, and the local attempt must NOT be deleted.
+        """
+        attempt_id = self.attempt.id
+        backend = get_backend_mock.return_value
+        backend.remove_exam_attempt.side_effect = ConnectionError('provider down')
+
+        # ``delete()`` opens an inner atomic(savepoint=False); when the pre_delete
+        # handler raises, that marks the connection as needing rollback. Wrapping the
+        # call in an explicit atomic block creates a savepoint that absorbs the
+        # rollback, so the connection is usable again for the assertion below.
+        with self.assertRaises(BackendProviderCannotRemoveAttempt) as context:
+            with transaction.atomic():
+                self.attempt.delete_exam_attempt()
+
+        self.assertIn('temporarily unavailable', str(context.exception))
+        self.assertEqual(context.exception.http_status, 502)
+        logger_mock.assert_called_once()
+        # the attempt must still exist because the removal failed
+        self.assertTrue(ProctoredExamStudentAttempt.objects.filter(id=attempt_id).exists())
 
     @ddt.data(None, MockInstructorService())
     @patch('edx_proctoring.handlers.get_runtime_service')

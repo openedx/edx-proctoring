@@ -277,6 +277,28 @@ class RESTBackendTests(TestCase):
         status = self.provider.remove_exam_attempt(self.backend_exam['external_id'], None)
         self.assertFalse(status)
 
+    def test_make_attempt_request_passes_timeout(self):
+        """
+        Every outbound attempt request must include an explicit timeout so that a
+        slow/unavailable provider cannot hang the request indefinitely.
+        """
+        attempt_id = 2
+        with patch.object(self.provider.session, 'request') as request_mock:
+            request_mock.return_value.json.return_value = {'status': 'deleted'}
+            self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+        _, kwargs = request_mock.call_args
+        self.assertEqual(kwargs['timeout'], self.provider.timeout)
+
+    def test_remove_attempt_provider_unavailable(self):
+        """
+        A provider connection error must propagate out of the backend rather than
+        being swallowed, so the caller can surface a descriptive error.
+        """
+        attempt_id = 2
+        with patch.object(self.provider.session, 'request', side_effect=ConnectionError('boom')):
+            with self.assertRaises(ConnectionError):
+                self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+
     def test_on_review_callback(self):
         """
         on_review_callback should just return the payload

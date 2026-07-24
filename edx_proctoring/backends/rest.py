@@ -41,6 +41,9 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     has_dashboard = True
     supports_onboarding = True
     passing_statuses = (SoftwareSecureReviewStatus.clean,)
+    # Timeout (in seconds) applied to every outbound request to the provider so
+    # that a slow or unavailable provider cannot hang the request indefinitely.
+    timeout = 30
 
     @property
     def exam_attempt_url(self):
@@ -384,7 +387,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         if method == 'GET':
             headers.update(self._get_language_headers())
         log.debug('Making %r attempt request at %r', method, url)
-        response = self.session.request(method, url, json=payload, headers=headers)
+        response = self.session.request(method, url, json=payload, headers=headers, timeout=self.timeout)
         try:
             data = response.json()
         except ValueError:
