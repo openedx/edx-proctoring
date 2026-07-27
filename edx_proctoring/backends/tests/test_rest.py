@@ -12,6 +12,7 @@ import responses
 from django.test import TestCase, override_settings
 from django.utils import translation
 
+from edx_proctoring.apps import BACKEND_CONFIGURATION_ALLOW_LIST
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
 from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
@@ -288,6 +289,20 @@ class RESTBackendTests(TestCase):
             self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
         _, kwargs = request_mock.call_args
         self.assertEqual(kwargs['timeout'], self.provider.timeout)
+
+    def test_default_timeout(self):
+        """The backend applies a sane default request timeout when none is configured."""
+        self.assertEqual(self.provider.timeout, 30)
+
+    def test_timeout_is_configurable(self):
+        """
+        Operators can override the request timeout per backend. The value arrives as a
+        constructor kwarg sourced from the backend's PROCTORING_BACKENDS configuration,
+        so the key must also be present in the backend configuration allow list.
+        """
+        provider = BaseRestProctoringProvider('client_id', 'client_secret', timeout=60)
+        self.assertEqual(provider.timeout, 60)
+        self.assertIn('timeout', BACKEND_CONFIGURATION_ALLOW_LIST)
 
     def test_remove_attempt_provider_unavailable(self):
         """

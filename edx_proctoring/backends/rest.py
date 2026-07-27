@@ -43,6 +43,8 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     passing_statuses = (SoftwareSecureReviewStatus.clean,)
     # Timeout (in seconds) applied to every outbound request to the provider so
     # that a slow or unavailable provider cannot hang the request indefinitely.
+    # Operators can override this per backend via a ``timeout`` key in the
+    # backend's ``PROCTORING_BACKENDS`` configuration.
     timeout = 30
 
     @property
