@@ -139,27 +139,34 @@ def on_attempt_changed(sender, instance, signal, **kwargs):
         if instance.proctored_exam.is_proctored:
             backend = get_backend_provider(name=instance.proctored_exam.backend)
             if backend:
+                log_context = {
+                    'attempt_id': instance.id,
+                    'external_id': instance.external_id,
+                    'exam_id': instance.proctored_exam.id,
+                    'user_id': instance.user_id,
+                    'backend': instance.proctored_exam.backend,
+                }
+                log_message = (
+                    'Failed to remove attempt_id=%(attempt_id)s (external_id=%(external_id)s) for '
+                    'exam_id=%(exam_id)s user_id=%(user_id)s from backend=%(backend)s due to a '
+                    'provider error.'
+                )
                 try:
                     result = backend.remove_exam_attempt(
                         instance.proctored_exam.external_id, instance.external_id
                     )
+                except BackendProviderCannotRemoveAttempt:
+                    # The provider responded with an HTTP error and the backend already built a
+                    # descriptive (possibly provider-supplied) message. Log and re-raise it as-is
+                    # so that message reaches the instructor-facing MFE unchanged.
+                    log.exception(log_message, log_context)
+                    raise
                 except Exception as exc:  # pylint: disable=broad-exception-caught
-                    # A slow or unavailable provider must not surface as an unhandled 500,
-                    # and must not silently leave the attempt half-removed. Log with enough
-                    # context for monitoring/Sentry and re-raise a typed exception so the
+                    # The provider is slow/unavailable (connection error or timeout). This must not
+                    # surface as an unhandled 500 or silently leave the attempt half-removed. Log
+                    # with enough context for monitoring/Sentry and re-raise a typed exception so the
                     # instructor-facing MFE receives a descriptive ``detail`` message.
-                    log.exception(
-                        'Failed to remove attempt_id=%(attempt_id)s (external_id=%(external_id)s) for '
-                        'exam_id=%(exam_id)s user_id=%(user_id)s from backend=%(backend)s due to a '
-                        'provider error.',
-                        {
-                            'attempt_id': instance.id,
-                            'external_id': instance.external_id,
-                            'exam_id': instance.proctored_exam.id,
-                            'user_id': instance.user_id,
-                            'backend': instance.proctored_exam.backend,
-                        }
-                    )
+                    log.exception(log_message, log_context)
                     raise BackendProviderCannotRemoveAttempt(
                         # Translators: shown to an instructor when an exam attempt could not be reset
                         # because the external proctoring provider is temporarily unavailable.

@@ -75,6 +75,28 @@ class SignalTests(ProctoredExamTestCase):
         # the attempt must still exist because the removal failed
         self.assertTrue(ProctoredExamStudentAttempt.objects.filter(id=attempt_id).exists())
 
+    @patch('logging.Logger.exception')
+    @patch('edx_proctoring.handlers.get_backend_provider')
+    def test_provider_error_response_preserves_message_and_keeps_attempt(self, get_backend_mock, logger_mock):
+        """
+        If the backend raises BackendProviderCannotRemoveAttempt (the provider responded
+        with an HTTP error), the handler re-raises it unchanged so the provider-supplied
+        message reaches the caller, and the local attempt must NOT be deleted.
+        """
+        attempt_id = self.attempt.id
+        backend = get_backend_mock.return_value
+        backend.remove_exam_attempt.side_effect = BackendProviderCannotRemoveAttempt('Attempt is locked on provider')
+
+        with self.assertRaises(BackendProviderCannotRemoveAttempt) as context:
+            with transaction.atomic():
+                self.attempt.delete_exam_attempt()
+
+        # the provider's message is preserved (not overwritten by the generic one)
+        self.assertIn('Attempt is locked on provider', str(context.exception))
+        self.assertEqual(context.exception.http_status, 502)
+        logger_mock.assert_called_once()
+        self.assertTrue(ProctoredExamStudentAttempt.objects.filter(id=attempt_id).exists())
+
     @ddt.data(None, MockInstructorService())
     @patch('edx_proctoring.handlers.get_runtime_service')
     @patch('edx_proctoring.tests.test_services.MockInstructorService.complete_student_attempt')

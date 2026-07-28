@@ -13,13 +13,20 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
-[6.1.0] - 2026-07-24
+[6.1.0] - 2026-07-28
 
-* Add an explicit request timeout to the REST proctoring backend (default 30s,
-  overridable per backend via a ``timeout`` key in ``PROCTORING_BACKENDS``), and log and
-  raise a typed ``BackendProviderCannotRemoveAttempt`` (HTTP 502) when the provider fails
-  to remove an attempt, so callers can return a descriptive error to the instructor
-  instead of an unhandled 500.
+* Make proctored exam attempt removal fail loudly when the proctoring provider errors,
+  instead of a silent local-only reset or an unhandled 500:
+
+  * Add an explicit request timeout to the REST proctoring backend (default 30s,
+    overridable per backend via a ``timeout`` key in ``PROCTORING_BACKENDS``).
+  * Raise a typed ``BackendProviderCannotRemoveAttempt`` (HTTP 502) both when the
+    provider is unreachable/times out and when it responds with an HTTP error status,
+    returning a clear message (including the provider's HTTP status) and logging the raw
+    provider response for debugging. Callers can then return a descriptive error to the
+    instructor instead of a silent local-only reset or an unhandled 500. Raising on a
+    provider HTTP error is on by default and overridable per backend via a
+    ``raise_on_remove_error`` key in ``PROCTORING_BACKENDS``.
 
 [5.2.1] - 2025-12-05
 * Remove all references to Proctortrack

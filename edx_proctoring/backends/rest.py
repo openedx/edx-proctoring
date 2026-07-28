@@ -19,6 +19,7 @@ from django.conf import settings
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
+    BackendProviderCannotRemoveAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
     BackendProviderOnboardingProfilesException,
@@ -46,6 +47,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     # Operators can override this per backend via a ``timeout`` key in the
     # backend's ``PROCTORING_BACKENDS`` configuration.
     timeout = 30
+    # Whether a provider HTTP error while removing an attempt should raise a descriptive
+    # error (so it is surfaced to the instructor) rather than being logged and ignored.
+    # Overridable per backend via a ``raise_on_remove_error`` key in ``PROCTORING_BACKENDS``.
+    raise_on_remove_error = True
 
     @property
     def exam_attempt_url(self):
@@ -232,12 +237,18 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
     def remove_exam_attempt(self, exam, attempt):
         """
-        Removes the exam attempt on the backend provider's server
+        Removes the exam attempt on the backend provider's server.
+
+        Raises BackendProviderCannotRemoveAttempt if the provider responds with an
+        HTTP error status (unless ``raise_on_remove_error`` is disabled for this backend),
+        so the caller can surface a descriptive error instead of silently leaving the
+        attempt on the provider's side.
         """
         response = self._make_attempt_request(
             exam,
             attempt,
-            method='DELETE')
+            method='DELETE',
+            raise_on_error=self.raise_on_remove_error)
         return response.get('status', None) == 'deleted'
 
     def mark_erroneous_exam_attempt(self, exam, attempt):
@@ -374,9 +385,14 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             lang_header = f'{current_lang};{default_lang}'
         return {'Accept-Language': lang_header}
 
-    def _make_attempt_request(self, exam, attempt, method='POST', status=None, **payload):
+    def _make_attempt_request(self, exam, attempt, method='POST', status=None, raise_on_error=False, **payload):
         """
-        Calls backend attempt API
+        Calls backend attempt API.
+
+        When ``raise_on_error`` is True, a provider HTTP error response (status >= 400)
+        raises BackendProviderCannotRemoveAttempt, surfacing the provider's own message
+        when it supplies one and a generic message otherwise. This is distinct from the
+        provider being unreachable/timing out, where ``session.request`` itself raises.
         """
         if not attempt:
             return {}
@@ -395,4 +411,17 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         except ValueError:
             log.exception("Decoding attempt %r -> %r", attempt, response.content)
             data = {}
+        if raise_on_error and not response.ok:
+            # Log the raw provider response (status + body) for support/debugging; the
+            # provider's error schema is not standardised, so we do not try to parse a
+            # message out of it and instead surface a clean, provider-status-aware error.
+            log.error(
+                'Proctoring provider returned HTTP %s while removing attempt %r: %r',
+                response.status_code, attempt, response.content,
+            )
+            raise BackendProviderCannotRemoveAttempt(
+                'The proctoring provider could not remove this attempt '
+                f'(provider returned HTTP {response.status_code}). '
+                'Please try again or contact support.'
+            )
         return data
