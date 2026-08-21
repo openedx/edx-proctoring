@@ -118,6 +118,8 @@ Using mockprock as a backend
 
 `Mockprock <https://github.com/openedx/mockprock>`_ is a proctoring backend that runs as an HTTP server and a python module. It allows you to simulate the entire proctoring workflow.
 
+Mockprock is a development- and testing-only tool. It is not published to PyPI or npm, so it is always consumed from a local source checkout (as shown below), not installed as a released package.
+
 To install it::
 
     $ cd src
