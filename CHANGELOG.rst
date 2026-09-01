@@ -13,6 +13,28 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
+[6.1.0] - 2026-09-01
+
+* Make resetting a proctored exam attempt fail gracefully when the proctoring provider
+  is unavailable, instead of an unhandled 500 or a stuck reset:
+
+  * Add an explicit request timeout to the REST proctoring backend (default 30s,
+    overridable per backend via a ``timeout`` key in ``PROCTORING_BACKENDS``), applied to
+    every outbound provider request, so a slow provider cannot hang the request
+    indefinitely.
+  * Call the provider from ``remove_exam_attempt`` **before** the local delete (rather
+    than from the ``pre_delete`` signal). If the provider is unreachable/errors, a typed
+    ``BackendProviderCannotRemoveAttempt`` (HTTP 502) is raised before anything is
+    deleted, so the caller can show the instructor a descriptive message and the local
+    attempt is preserved. Because the failure no longer originates inside ``delete()``'s
+    ``pre_delete`` signal, it does not leave the DB connection in a needs-rollback state,
+    so a partially-failed multi-attempt reset can be retried in the same request.
+  * On removal, a provider ``404`` (the attempt is already gone upstream) is treated as
+    success so a retried, partially-failed reset converges; any other HTTP error is raised
+    so the local attempt is kept for a later retry instead of being silently dropped.
+  * Route the ``reset_attempts`` management command through the same provider-removal
+    path, since provider cleanup no longer happens in the ``pre_delete`` signal.
+
 [5.2.1] - 2025-12-05
 * Remove all references to Proctortrack
 

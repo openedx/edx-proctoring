@@ -8,6 +8,7 @@ from unittest.mock import patch
 import ddt
 import jwt
 import responses
+from requests.exceptions import HTTPError
 
 from django.test import TestCase, override_settings
 from django.utils import translation
@@ -277,6 +278,107 @@ class RESTBackendTests(TestCase):
         status = self.provider.remove_exam_attempt(self.backend_exam['external_id'], None)
         self.assertFalse(status)
 
+    def test_make_attempt_request_no_attempt(self):
+        """
+        An attempt request with no attempt id short-circuits to an empty response instead
+        of calling the provider, so the caller treats it as a no-op.
+        """
+        self.assertIsNone(self.provider.mark_erroneous_exam_attempt(self.backend_exam['external_id'], None))
+
+    def test_make_attempt_request_passes_timeout(self):
+        """
+        Every outbound attempt request must include an explicit timeout so that a
+        slow/unavailable provider cannot hang the request indefinitely.
+        """
+        attempt_id = 2
+        with patch.object(self.provider.session, 'request') as request_mock:
+            request_mock.return_value.json.return_value = {'status': 'deleted'}
+            self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+        _, kwargs = request_mock.call_args
+        self.assertEqual(kwargs['timeout'], self.provider.timeout)
+
+    def test_remove_attempt_provider_unavailable(self):
+        """
+        A provider connection error must propagate out of the backend rather than
+        being swallowed, so the caller can surface a descriptive error.
+        """
+        attempt_id = 2
+        with patch.object(self.provider.session, 'request', side_effect=ConnectionError('boom')):
+            with self.assertRaises(ConnectionError):
+                self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+
+    @responses.activate
+    def test_remove_attempt_not_found_is_idempotent(self):
+        """
+        A 404 from the provider means the attempt is already gone upstream, which the
+        backend reports as success so a retried, partially-failed reset converges.
+        """
+        attempt_id = 3
+        responses.add(
+            responses.DELETE,
+            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
+            status=404
+        )
+        self.assertTrue(self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id))
+
+    @responses.activate
+    def test_remove_attempt_http_error_raises(self):
+        """
+        A non-404 HTTP error must raise rather than be treated as an already-removed
+        attempt, so the caller keeps the local attempt for a later retry.
+        """
+        attempt_id = 4
+        responses.add(
+            responses.DELETE,
+            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
+            status=500
+        )
+        with self.assertRaises(HTTPError):
+            self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+
+    @responses.activate
+    def test_remove_attempt_malformed_json_not_confirmed(self):
+        """
+        A 2xx response with an undecodable body is not a valid confirmation, so it reports
+        False (the API layer keeps the local attempt for strict callers).
+        """
+        attempt_id = 5
+        responses.add(
+            responses.DELETE,
+            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
+            body='"]'
+        )
+        self.assertFalse(self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id))
+
+    @responses.activate
+    def test_remove_attempt_unconfirmed_status(self):
+        """
+        A 2xx response that does not carry the documented {"status": "deleted"} payload is
+        not a confirmation, so it reports False rather than a successful removal.
+        """
+        attempt_id = 6
+        responses.add(
+            responses.DELETE,
+            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
+            json={'status': 'pending'}
+        )
+        self.assertFalse(self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id))
+
+    def test_default_request_timeout(self):
+        """The REST backend applies a 30-second request timeout by default."""
+        self.assertEqual(self.provider.timeout, 30)
+
+    def test_configurable_request_timeout(self):
+        """A ``timeout`` in the backend configuration overrides the default and is sent on requests."""
+        provider = BaseRestProctoringProvider('client_id', 'client_secret', timeout=5)
+        self.assertEqual(provider.timeout, 5)
+        with patch.object(provider.session, 'request') as request_mock:
+            request_mock.return_value.status_code = 200
+            request_mock.return_value.json.return_value = {'status': 'deleted'}
+            provider.remove_exam_attempt(self.backend_exam['external_id'], 7)
+        _, kwargs = request_mock.call_args
+        self.assertEqual(kwargs['timeout'], 5)
+
     def test_on_review_callback(self):
         """
         on_review_callback should just return the payload
@@ -415,6 +517,15 @@ class RESTBackendTests(TestCase):
         )
         with self.assertRaises(BackendProviderCannotRetireUser):
             self.provider.retire_user(user_id)
+
+    def test_retire_user_provider_unavailable(self):
+        """
+        If the request fails before a response is received (e.g. a timeout), retire_user
+        still raises BackendProviderCannotRetireUser rather than an UnboundLocalError.
+        """
+        with patch.object(self.provider.session, 'delete', side_effect=ConnectionError('boom')):
+            with self.assertRaises(BackendProviderCannotRetireUser):
+                self.provider.retire_user('abcdef6')
 
     @responses.activate
     def test_get_onboarding_profile_for_user(self):

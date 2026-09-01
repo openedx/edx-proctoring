@@ -41,6 +41,9 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     has_dashboard = True
     supports_onboarding = True
     passing_statuses = (SoftwareSecureReviewStatus.clean,)
+    # Timeout (in seconds) applied to every outbound request to the provider so
+    # that a slow or unavailable provider cannot hang the request indefinitely.
+    timeout = 30
 
     @property
     def exam_attempt_url(self):
@@ -148,7 +151,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         url = self.config_url
         log.debug('Requesting config from %r', url)
-        response = self.session.get(url, headers=self._get_language_headers()).json()
+        response = self.session.get(url, headers=self._get_language_headers(), timeout=self.timeout).json()
         return response
 
     def get_exam(self, exam):
@@ -157,7 +160,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         url = self.exam_url.format(exam_id=exam['id'])
         log.debug('Requesting exam from %r', url)
-        response = self.session.get(url).json()
+        response = self.session.get(url, timeout=self.timeout).json()
         return response
 
     def get_attempt(self, attempt):
@@ -187,7 +190,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             'Creating exam attempt for exam_id=%(exam_id)i (external_id=%(external_id)s) at %(url)s',
             {'exam_id': exam['id'], 'external_id': exam['external_id'], 'url': url}
         )
-        response = self.session.post(url, json=payload)
+        response = self.session.post(url, json=payload, timeout=self.timeout)
         if response.status_code != 200:
             raise BackendProviderCannotRegisterAttempt(response.content, response.status_code)
         status_code = response.status_code
@@ -227,13 +230,29 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
     def remove_exam_attempt(self, exam, attempt):
         """
-        Removes the exam attempt on the backend provider's server
+        Removes the exam attempt on the backend provider's server.
+
+        Returns ``True`` when the provider confirms removal with the documented
+        ``{"status": "deleted"}`` payload, or on a ``404`` (the attempt is already gone
+        upstream, so a retried reset converges). Returns ``False`` when the provider responds
+        but does not confirm deletion (undecodable body or an unexpected status); the API
+        layer decides whether that is fatal. Any other HTTP error is raised so a transient
+        failure keeps the local attempt available for a later retry.
         """
-        response = self._make_attempt_request(
-            exam,
-            attempt,
-            method='DELETE')
-        return response.get('status', None) == 'deleted'
+        if not attempt:
+            return False
+        url = self.exam_attempt_url.format(exam_id=exam, attempt_id=attempt)
+        log.debug('Removing attempt at %r', url)
+        response = self.session.request('DELETE', url, timeout=self.timeout)
+        if response.status_code == 404:
+            return True
+        response.raise_for_status()
+        try:
+            data = response.json()
+        except ValueError:
+            log.exception('Decoding attempt removal %r -> %r', attempt, response.content)
+            return False
+        return data.get('status', None) == 'deleted'
 
     def mark_erroneous_exam_attempt(self, exam, attempt):
         """
@@ -272,7 +291,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         )
         response = None
         try:
-            response = self.session.post(url, json=exam)
+            response = self.session.post(url, json=exam, timeout=self.timeout)
             data = response.json()
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if response:
@@ -327,16 +346,21 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
     def retire_user(self, user_id):
         url = self.user_info_url.format(user_id=user_id)
+        response = None
         try:
-            response = self.session.delete(url)
+            response = self.session.delete(url, timeout=self.timeout)
             data = response.json()
             assert data in (True, False)
         except Exception as exc:
             # pylint: disable=no-member
             if hasattr(exc, 'response') and exc.response is not None:
                 content = exc.response.content
-            else:
+            elif response is not None:
                 content = response.content
+            else:
+                # The request failed before a response was received (e.g. a timeout), so
+                # there is no body to include.
+                content = None
             raise BackendProviderCannotRetireUser(content) from exc
         return data
 
@@ -346,7 +370,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             query_string = urlencode(kwargs)
             url += '?' + query_string
 
-        response = self.session.get(url)
+        response = self.session.get(url, timeout=self.timeout)
 
         if response.status_code != 200:
             raise BackendProviderOnboardingProfilesException(response.content, response.status_code)
@@ -384,7 +408,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         if method == 'GET':
             headers.update(self._get_language_headers())
         log.debug('Making %r attempt request at %r', method, url)
-        response = self.session.request(method, url, json=payload, headers=headers)
+        response = self.session.request(method, url, json=payload, headers=headers, timeout=self.timeout)
         try:
             data = response.json()
         except ValueError:
