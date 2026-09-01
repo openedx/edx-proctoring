@@ -353,10 +353,15 @@ class RegisterProctoredExamsViewTest(LoggedInTestCase):
 
         # an error response with invalid fields included
         self.assertEqual(response.status_code, 422)
-        self.assertEqual(len(response.data), 2)
-        # Expect error responses to map to request list
+        # DRF < 3.18 returns list errors padded with empty dicts for valid items
+        # ([{}, {'due_date': ...}]); DRF >= 3.18 returns a dict keyed by the index of
+        # only the invalid items ({1: {'due_date': ...}}). Normalize to index -> errors.
+        errors_by_index = dict(enumerate(response.data)) if isinstance(response.data, list) \
+            else dict(response.data)
+        # the first exam is valid (no errors); the second maps to a due_date error
+        self.assertFalse(errors_by_index.get(0))
         self.assertEqual(
-            set(response.data[1].keys()),
+            set(errors_by_index[1].keys()),
             set(['due_date'])
         )
 
