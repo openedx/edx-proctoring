@@ -8,6 +8,7 @@ from unittest.mock import patch
 import ddt
 import jwt
 import responses
+from requests.exceptions import HTTPError
 
 from django.test import TestCase, override_settings
 from django.utils import translation
@@ -298,6 +299,49 @@ class RESTBackendTests(TestCase):
         with patch.object(self.provider.session, 'request', side_effect=ConnectionError('boom')):
             with self.assertRaises(ConnectionError):
                 self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+
+    @responses.activate
+    def test_remove_attempt_not_found_is_idempotent(self):
+        """
+        A 404 from the provider means the attempt is already gone upstream, which the
+        backend reports as success so a retried, partially-failed reset converges.
+        """
+        attempt_id = 3
+        responses.add(
+            responses.DELETE,
+            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
+            status=404
+        )
+        self.assertTrue(self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id))
+
+    @responses.activate
+    def test_remove_attempt_http_error_raises(self):
+        """
+        A non-404 HTTP error must raise rather than be treated as an already-removed
+        attempt, so the caller keeps the local attempt for a later retry.
+        """
+        attempt_id = 4
+        responses.add(
+            responses.DELETE,
+            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
+            status=500
+        )
+        with self.assertRaises(HTTPError):
+            self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+
+    @responses.activate
+    def test_remove_attempt_malformed_json(self):
+        """
+        A 2xx response with an undecodable body is reported as 'not confirmed deleted'
+        rather than raising; the API layer then converges on a later retry.
+        """
+        attempt_id = 5
+        responses.add(
+            responses.DELETE,
+            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
+            body='"]'
+        )
+        self.assertFalse(self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id))
 
     def test_on_review_callback(self):
         """

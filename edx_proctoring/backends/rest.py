@@ -151,7 +151,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         url = self.config_url
         log.debug('Requesting config from %r', url)
-        response = self.session.get(url, headers=self._get_language_headers()).json()
+        response = self.session.get(url, headers=self._get_language_headers(), timeout=self.timeout).json()
         return response
 
     def get_exam(self, exam):
@@ -160,7 +160,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         url = self.exam_url.format(exam_id=exam['id'])
         log.debug('Requesting exam from %r', url)
-        response = self.session.get(url).json()
+        response = self.session.get(url, timeout=self.timeout).json()
         return response
 
     def get_attempt(self, attempt):
@@ -190,7 +190,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             'Creating exam attempt for exam_id=%(exam_id)i (external_id=%(external_id)s) at %(url)s',
             {'exam_id': exam['id'], 'external_id': exam['external_id'], 'url': url}
         )
-        response = self.session.post(url, json=payload)
+        response = self.session.post(url, json=payload, timeout=self.timeout)
         if response.status_code != 200:
             raise BackendProviderCannotRegisterAttempt(response.content, response.status_code)
         status_code = response.status_code
@@ -230,13 +230,27 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
     def remove_exam_attempt(self, exam, attempt):
         """
-        Removes the exam attempt on the backend provider's server
+        Removes the exam attempt on the backend provider's server.
+
+        A 404 is treated as success (the attempt is already gone upstream), so retrying a
+        partially-failed reset converges instead of failing forever. Any other HTTP error is
+        raised so the caller keeps the local attempt for a later retry rather than silently
+        losing it by treating the error as an "already removed" response.
         """
-        response = self._make_attempt_request(
-            exam,
-            attempt,
-            method='DELETE')
-        return response.get('status', None) == 'deleted'
+        if not attempt:
+            return False
+        url = self.exam_attempt_url.format(exam_id=exam, attempt_id=attempt)
+        log.debug('Removing attempt at %r', url)
+        response = self.session.request('DELETE', url, timeout=self.timeout)
+        if response.status_code == 404:
+            return True
+        response.raise_for_status()
+        try:
+            data = response.json()
+        except ValueError:
+            log.exception('Decoding attempt removal %r -> %r', attempt, response.content)
+            data = {}
+        return data.get('status', None) == 'deleted'
 
     def mark_erroneous_exam_attempt(self, exam, attempt):
         """
@@ -275,7 +289,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         )
         response = None
         try:
-            response = self.session.post(url, json=exam)
+            response = self.session.post(url, json=exam, timeout=self.timeout)
             data = response.json()
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if response:
@@ -331,7 +345,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
     def retire_user(self, user_id):
         url = self.user_info_url.format(user_id=user_id)
         try:
-            response = self.session.delete(url)
+            response = self.session.delete(url, timeout=self.timeout)
             data = response.json()
             assert data in (True, False)
         except Exception as exc:
@@ -349,7 +363,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             query_string = urlencode(kwargs)
             url += '?' + query_string
 
-        response = self.session.get(url)
+        response = self.session.get(url, timeout=self.timeout)
 
         if response.status_code != 200:
             raise BackendProviderOnboardingProfilesException(response.content, response.status_code)
