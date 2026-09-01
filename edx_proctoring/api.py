@@ -1901,11 +1901,12 @@ def _remove_exam_attempt_from_backend(attempt, raise_on_error=True):
     ``delete()``'s ``pre_delete`` marks the DB connection needs-rollback, which then makes
     the surrounding request (and any retry) fail with ``TransactionManagementError``.
 
-    - Provider unreachable / errors out: log and (if ``raise_on_error``) raise
-      ``BackendProviderCannotRemoveAttempt`` so the caller surfaces a 502; the local delete
-      is not attempted.
-    - Provider does not confirm removal (attempt never registered, or already gone
-      upstream): log and return, so the local delete proceeds and a retry can converge.
+    - Provider unreachable / errors out, or the backend can't be resolved: log and (if
+      ``raise_on_error``) raise ``BackendProviderCannotRemoveAttempt`` so the caller
+      surfaces a 502; the local delete is not attempted. Best-effort callers
+      (``raise_on_error=False``) instead log and return so their local cleanup proceeds.
+    - Attempt already gone upstream (provider 404): the backend reports success, so the
+      local delete proceeds and a retry converges.
     """
     exam = attempt.proctored_exam
     if not exam.is_proctored:
@@ -1913,10 +1914,12 @@ def _remove_exam_attempt_from_backend(attempt, raise_on_error=True):
     if not attempt.external_id:
         # The attempt was never registered with the provider; nothing to remove upstream.
         return
-    backend = get_backend_provider(name=exam.backend)
-    if not backend:
-        return
     try:
+        # Resolving the backend can itself raise (e.g. NotImplementedError for a
+        # stale/unconfigured backend), so keep it inside the error-handling block.
+        backend = get_backend_provider(name=exam.backend)
+        if not backend:
+            return
         result = backend.remove_exam_attempt(exam.external_id, attempt.external_id)
     except Exception as exc:  # pylint: disable=broad-exception-caught
         log.exception(
@@ -1934,8 +1937,10 @@ def _remove_exam_attempt_from_backend(attempt, raise_on_error=True):
             raise BackendProviderCannotRemoveAttempt(
                 # Translators: shown to an instructor when an exam attempt could not be reset
                 # because the external proctoring provider is temporarily unavailable.
-                'The proctoring provider is temporarily unavailable, so this attempt could not '
-                'be fully reset. Please try again in a few minutes.'
+                _(
+                    'The proctoring provider is temporarily unavailable, so this attempt could not '
+                    'be fully reset. Please try again in a few minutes.'
+                )
             ) from exc
         return
     if not result:

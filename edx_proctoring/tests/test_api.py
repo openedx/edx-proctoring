@@ -1255,9 +1255,8 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
 
     def test_remove_exam_attempt_provider_not_confirmed_still_deletes(self):
         """
-        If the provider does not confirm removal (e.g. the attempt was already removed
-        upstream on an earlier failed retry, so the provider now returns not-found), the
-        local delete still proceeds -- so retrying a partially-failed multi-attempt reset
+        A backend that reports the attempt as already removed (a falsy result rather than
+        raising) still lets the local delete proceed, so a retried, partially-failed reset
         converges instead of being stuck at 502 forever.
         """
         attempt = self._create_unstarted_exam_attempt()
@@ -1283,6 +1282,22 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
             remove_exam_attempt(attempt.id, requesting_user=self.user)
 
         self.assertFalse(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).exists())
+
+    def test_remove_exam_attempt_unresolvable_backend_raises(self):
+        """
+        If the backend cannot be resolved (e.g. a stale/unconfigured backend makes
+        get_backend_provider raise), remove_exam_attempt still surfaces a descriptive 502
+        before the local delete rather than an unhandled error, and the attempt is kept.
+        """
+        attempt = self._create_unstarted_exam_attempt()
+        attempt.external_id = 'ext-stale-backend'
+        attempt.save()
+
+        with patch('edx_proctoring.api.get_backend_provider', side_effect=NotImplementedError('stale')):
+            with self.assertRaises(BackendProviderCannotRemoveAttempt):
+                remove_exam_attempt(attempt.id, requesting_user=self.user)
+
+        self.assertTrue(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).exists())
 
     def test_clear_onboarding_errors_ignores_provider_outage(self):
         """
