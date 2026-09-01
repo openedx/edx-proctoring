@@ -1891,9 +1891,10 @@ def reset_practice_exam(exam_id, user_id, requesting_user):
     return create_exam_attempt(exam_id, user_id, taking_as_proctored=exam_attempt_obj.taking_as_proctored)
 
 
-def _remove_exam_attempt_from_backend(attempt, raise_on_error=True):
+def _remove_exam_attempt_from_backend(attempt):
     """
-    Ask the proctoring backend to remove ``attempt`` on the provider's side.
+    Ask the proctoring backend to remove ``attempt`` on the provider's side, raising
+    ``BackendProviderCannotRemoveAttempt`` (HTTP 502) if it cannot.
 
     This is called BEFORE the local delete (see ``remove_exam_attempt``). Doing the
     provider call outside the ``pre_delete`` signal means a provider outage can raise a
@@ -1901,12 +1902,10 @@ def _remove_exam_attempt_from_backend(attempt, raise_on_error=True):
     ``delete()``'s ``pre_delete`` marks the DB connection needs-rollback, which then makes
     the surrounding request (and any retry) fail with ``TransactionManagementError``.
 
-    - Provider unreachable / errors out, or the backend can't be resolved: log and (if
-      ``raise_on_error``) raise ``BackendProviderCannotRemoveAttempt`` so the caller
-      surfaces a 502; the local delete is not attempted. Best-effort callers
-      (``raise_on_error=False``) instead log and return so their local cleanup proceeds.
-    - Attempt already gone upstream (provider 404): the backend reports success, so the
-      local delete proceeds and a retry converges.
+    An attempt already gone upstream (provider 404) counts as success, so the local delete
+    proceeds and a retry converges. Bulk, best-effort callers (onboarding cleanup, the
+    reset_attempts command) should use ``_remove_exam_attempts_from_backend`` instead, which
+    swallows these errors and skips a failing backend for the rest of the pass.
     """
     exam = attempt.proctored_exam
     if not exam.is_proctored:
@@ -1941,16 +1940,40 @@ def _remove_exam_attempt_from_backend(attempt, raise_on_error=True):
                 'backend': exam.backend,
             }
         )
-        if raise_on_error:
-            raise BackendProviderCannotRemoveAttempt(unavailable_message) from exc
-        return
+        raise BackendProviderCannotRemoveAttempt(unavailable_message) from exc
     if not result:
-        # The provider responded but did not confirm removal. Strict callers keep the local
-        # attempt (so a retry can converge once the provider is healthy); best-effort callers
-        # (e.g. onboarding cleanup) proceed with the local delete.
+        # The provider responded but did not confirm removal, so keep the local attempt: a
+        # retry can converge once the provider is healthy instead of silently dropping it.
         log.warning('Backend %s did not confirm removal of attempt_id=%s.', exam.backend, attempt.id)
-        if raise_on_error:
-            raise BackendProviderCannotRemoveAttempt(unavailable_message)
+        raise BackendProviderCannotRemoveAttempt(unavailable_message)
+
+
+def _remove_exam_attempts_from_backend(attempts, failed_backends=None):
+    """
+    Best-effort provider-side removal for a collection of attempts.
+
+    Provider failures are swallowed (the caller is expected to delete the attempts locally
+    regardless), but once a backend fails a removal we stop calling it for the rest of this
+    pass -- while still trying other, independently configured backends -- so a provider
+    outage does not cost a full request timeout for every attempt. Pass a shared
+    ``failed_backends`` set to keep that skip-list across multiple calls (e.g. batches).
+
+    Pass a queryset with ``select_related('proctored_exam')`` to avoid a query per attempt.
+    """
+    if failed_backends is None:
+        failed_backends = set()
+    for attempt in attempts:
+        backend = attempt.proctored_exam.backend
+        if backend in failed_backends:
+            continue
+        try:
+            _remove_exam_attempt_from_backend(attempt)
+        except BackendProviderCannotRemoveAttempt:
+            log.warning(
+                'Provider removal failed for backend %r; skipping further provider calls '
+                'for it during this cleanup and removing locally only.', backend
+            )
+            failed_backends.add(backend)
 
 
 def remove_exam_attempt(attempt_id, requesting_user):

@@ -1303,7 +1303,7 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
     def test_clear_onboarding_errors_ignores_provider_outage(self):
         """
         clear_onboarding_errors notifies the provider best-effort. A provider outage must
-        not block the local cleanup (raise_on_error=False), so the attempt is still removed.
+        not block the local cleanup, so the attempt is still removed.
         """
         attempt = self._create_unstarted_exam_attempt()
         attempt.external_id = 'ext-onboarding-outage'

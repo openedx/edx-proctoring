@@ -344,16 +344,16 @@ class ProctoredExamStudentAttemptManager(models.Manager):
         (They will automatically be saved to the attempt history table)
         """
         # Provider removal used to happen in the pre_delete signal; it now lives in the API
-        # layer, so notify the backend here too. This is best-effort cleanup, so a provider
-        # error must not block the local deletion (raise_on_error=False).
+        # layer, so notify the backend here too. This is best-effort cleanup: a provider
+        # error must not block the local deletion, and a failing backend is skipped for the
+        # rest of the pass so an outage doesn't cost a request timeout per attempt.
         # pylint: disable=import-outside-toplevel, cyclic-import
-        from edx_proctoring.api import _remove_exam_attempt_from_backend
+        from edx_proctoring.api import _remove_exam_attempts_from_backend
         attempts = self.filter(
             user_id=user_id,
             status__in=ProctoredExamStudentAttemptStatus.onboarding_errors,
-        )
-        for attempt in attempts:
-            _remove_exam_attempt_from_backend(attempt, raise_on_error=False)
+        ).select_related('proctored_exam')
+        _remove_exam_attempts_from_backend(attempts)
         attempts.delete()
 
     def get_user_attempts_by_exam_id(self, user_id, exam_id):

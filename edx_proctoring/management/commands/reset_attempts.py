@@ -8,8 +8,7 @@ import time
 
 from django.core.management.base import BaseCommand
 
-from edx_proctoring.api import _remove_exam_attempt_from_backend
-from edx_proctoring.exceptions import BackendProviderCannotRemoveAttempt
+from edx_proctoring.api import _remove_exam_attempts_from_backend
 from edx_proctoring.models import ProctoredExamStudentAttempt
 
 log = logging.getLogger(__name__)
@@ -59,10 +58,7 @@ class Command(BaseCommand):
             ids_to_delete = file.readlines()
 
         total_deleted = 0
-        # Backends that have already failed a provider-removal call during this run. Once a
-        # backend errors out (e.g. it is unreachable and each call pays the full request
-        # timeout), we stop calling it and just delete locally -- otherwise one unavailable
-        # provider could stall the command for timeout * (number of attempts) seconds.
+        # Shared across batches so a backend that fails once is skipped for the whole run.
         failed_backends = set()
 
         for i in range(0, len(ids_to_delete), batch_size):
@@ -72,22 +68,13 @@ class Command(BaseCommand):
                 id__in=batch_to_delete
             )
 
-            # Notify the proctoring provider before deleting locally. This used to happen
-            # in a pre_delete signal, but provider removal now lives in the API layer, so
-            # this bulk path has to do it explicitly. Local deletion below is unconditional,
-            # so provider cleanup stays best-effort.
-            for attempt in delete_queryset:
-                backend = attempt.proctored_exam.backend
-                if backend in failed_backends:
-                    continue
-                try:
-                    _remove_exam_attempt_from_backend(attempt)
-                except BackendProviderCannotRemoveAttempt:
-                    log.warning(
-                        'Provider removal failed for backend %r; skipping further provider '
-                        'calls for it during this run and deleting locally only.', backend
-                    )
-                    failed_backends.add(backend)
+            # Notify the proctoring provider before deleting locally. This used to happen in
+            # a pre_delete signal, but provider removal now lives in the API layer, so this
+            # bulk path has to do it explicitly. It is best-effort (the delete below is
+            # unconditional) and skips a failing backend for the rest of the run.
+            _remove_exam_attempts_from_backend(
+                delete_queryset.select_related('proctored_exam'), failed_backends
+            )
 
             deleted_count, _ = delete_queryset.delete()
 
