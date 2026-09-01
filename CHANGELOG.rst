@@ -13,20 +13,24 @@ Change Log
 
 Unreleased
 ~~~~~~~~~~
-[6.1.0] - 2026-07-28
+[6.1.0] - 2026-09-01
 
-* Make proctored exam attempt removal fail loudly when the proctoring provider errors,
-  instead of a silent local-only reset or an unhandled 500:
+* Make resetting a proctored exam attempt fail gracefully when the proctoring provider
+  is unavailable, instead of an unhandled 500 or a stuck reset:
 
   * Add an explicit request timeout to the REST proctoring backend (default 30s,
-    overridable per backend via a ``timeout`` key in ``PROCTORING_BACKENDS``).
-  * Raise a typed ``BackendProviderCannotRemoveAttempt`` (HTTP 502) both when the
-    provider is unreachable/times out and when it responds with an HTTP error status,
-    returning a clear message (including the provider's HTTP status) and logging the raw
-    provider response for debugging. Callers can then return a descriptive error to the
-    instructor instead of a silent local-only reset or an unhandled 500. Raising on a
-    provider HTTP error is on by default and overridable per backend via a
-    ``raise_on_remove_error`` key in ``PROCTORING_BACKENDS``.
+    overridable per backend via a ``timeout`` key in ``PROCTORING_BACKENDS``) so a slow
+    provider cannot hang the request indefinitely.
+  * Call the provider from ``remove_exam_attempt`` **before** the local delete (rather
+    than from the ``pre_delete`` signal). If the provider is unreachable/errors, a typed
+    ``BackendProviderCannotRemoveAttempt`` (HTTP 502) is raised before anything is
+    deleted, so the caller can show the instructor a descriptive message and the local
+    attempt is preserved. Because the failure no longer originates inside ``delete()``'s
+    ``pre_delete`` signal, it does not leave the DB connection in a needs-rollback state,
+    so a partially-failed multi-attempt reset can be retried in the same request.
+  * A provider that does not confirm removal (attempt never registered, or already gone
+    upstream) is logged and treated as already-removed, so the local delete still
+    proceeds and a retry converges instead of failing forever.
 
 [5.2.1] - 2025-12-05
 * Remove all references to Proctortrack

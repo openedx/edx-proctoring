@@ -71,6 +71,7 @@ from edx_proctoring.backends.tests.test_backend import TestBackendProvider
 from edx_proctoring.constants import DEFAULT_CONTACT_EMAIL, TIME_MULTIPLIER
 from edx_proctoring.exceptions import (
     AllowanceValueNotAllowedException,
+    BackendProviderCannotRemoveAttempt,
     BackendProviderSentNoAttemptID,
     ProctoredExamAlreadyExists,
     ProctoredExamIllegalResumeUpdate,
@@ -1219,6 +1220,49 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         with self.assertRaises(StudentExamAttemptDoesNotExistsException):
             remove_exam_attempt(proctored_exam_student_attempt.id, requesting_user=self.user)
+
+    def test_remove_exam_attempt_provider_outage_raises_before_local_delete(self):
+        """
+        When the proctoring provider is unavailable, remove_exam_attempt raises a
+        descriptive BackendProviderCannotRemoveAttempt *before* the local delete, so the
+        attempt is preserved and the DB connection stays usable. Previously the provider
+        call happened inside the pre_delete signal, so raising there marked the connection
+        needs-rollback and any follow-up query in the same request/transaction failed with
+        TransactionManagementError.
+        """
+        attempt = self._create_unstarted_exam_attempt()
+        attempt.external_id = 'ext-remove-outage'
+        attempt.save()
+
+        with patch('edx_proctoring.api.get_backend_provider') as get_backend_mock:
+            get_backend_mock.return_value.remove_exam_attempt.side_effect = ConnectionError('provider down')
+            with self.assertRaises(BackendProviderCannotRemoveAttempt) as context:
+                remove_exam_attempt(attempt.id, requesting_user=self.user)
+
+        self.assertEqual(context.exception.http_status, 502)
+        self.assertIn('temporarily unavailable', str(context.exception))
+        # the local delete was never attempted, so the attempt is preserved ...
+        self.assertTrue(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).exists())
+        # ... and the connection is still usable (no TransactionManagementError), so a
+        # retry can run in the same request.
+        self.assertEqual(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).count(), 1)
+
+    def test_remove_exam_attempt_provider_not_confirmed_still_deletes(self):
+        """
+        If the provider does not confirm removal (e.g. the attempt was already removed
+        upstream on an earlier failed retry, so the provider now returns not-found), the
+        local delete still proceeds -- so retrying a partially-failed multi-attempt reset
+        converges instead of being stuck at 502 forever.
+        """
+        attempt = self._create_unstarted_exam_attempt()
+        attempt.external_id = 'ext-remove-gone'
+        attempt.save()
+
+        with patch('edx_proctoring.api.get_backend_provider') as get_backend_mock:
+            get_backend_mock.return_value.remove_exam_attempt.return_value = False
+            remove_exam_attempt(attempt.id, requesting_user=self.user)
+
+        self.assertFalse(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).exists())
 
     def test_remove_no_user(self):
         """

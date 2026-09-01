@@ -7,7 +7,6 @@ from django.dispatch import receiver
 
 from edx_proctoring import api, constants, models
 from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.exceptions import BackendProviderCannotRemoveAttempt
 from edx_proctoring.runtime import get_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
 from edx_proctoring.utils import emit_event, locate_attempt_by_attempt_code
@@ -100,12 +99,16 @@ def on_allowance_changed(sender, instance, signal, **kwargs):
 
 
 @receiver(pre_save, sender=models.ProctoredExamStudentAttempt)
-@receiver(pre_delete, sender=models.ProctoredExamStudentAttempt)
 def on_attempt_changed(sender, instance, signal, **kwargs):
     """
     Archive the exam attempt whenever the attempt status is about to be
     modified. Make a new entry with the previous value of the status in the
     ProctoredExamStudentAttemptHistory table.
+
+    Note: the proctoring provider is no longer notified from this signal on delete.
+    ``api.remove_exam_attempt`` calls the backend *before* the local delete so that a
+    provider outage does not roll back a half-applied delete (raising from a pre_delete
+    signal marks the DB connection needs-rollback).
     """
 
     if signal is pre_save:
@@ -133,52 +136,6 @@ def on_attempt_changed(sender, instance, signal, **kwargs):
                 return
         else:
             return
-    else:
-        # remove the attempt on the backend
-        # timed exams have no backend
-        if instance.proctored_exam.is_proctored:
-            backend = get_backend_provider(name=instance.proctored_exam.backend)
-            if backend:
-                log_context = {
-                    'attempt_id': instance.id,
-                    'external_id': instance.external_id,
-                    'exam_id': instance.proctored_exam.id,
-                    'user_id': instance.user_id,
-                    'backend': instance.proctored_exam.backend,
-                }
-                log_message = (
-                    'Failed to remove attempt_id=%(attempt_id)s (external_id=%(external_id)s) for '
-                    'exam_id=%(exam_id)s user_id=%(user_id)s from backend=%(backend)s due to a '
-                    'provider error.'
-                )
-                try:
-                    result = backend.remove_exam_attempt(
-                        instance.proctored_exam.external_id, instance.external_id
-                    )
-                except BackendProviderCannotRemoveAttempt:
-                    # The provider responded with an HTTP error and the backend already built a
-                    # descriptive (possibly provider-supplied) message. Log and re-raise it as-is
-                    # so that message reaches the instructor-facing MFE unchanged.
-                    log.exception(log_message, log_context)
-                    raise
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    # The provider is slow/unavailable (connection error or timeout). This must not
-                    # surface as an unhandled 500 or silently leave the attempt half-removed. Log
-                    # with enough context for monitoring/Sentry and re-raise a typed exception so the
-                    # instructor-facing MFE receives a descriptive ``detail`` message.
-                    log.exception(log_message, log_context)
-                    raise BackendProviderCannotRemoveAttempt(
-                        # Translators: shown to an instructor when an exam attempt could not be reset
-                        # because the external proctoring provider is temporarily unavailable.
-                        'The proctoring provider is temporarily unavailable, so this attempt could not '
-                        'be fully reset. Please try again in a few minutes.'
-                    ) from exc
-                if not result:
-                    log.error(
-                        'Failed to remove attempt_id=%s from backend=%s',
-                        instance.id,
-                        instance.proctored_exam.backend,
-                    )
 
 
 @receiver(post_delete, sender=models.ProctoredExamStudentAttempt)

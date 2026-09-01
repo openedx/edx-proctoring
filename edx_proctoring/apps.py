@@ -30,7 +30,6 @@ BACKEND_CONFIGURATION_ALLOW_LIST = [
     'organization',
     'passing_statuses',
     'ping_interval',
-    'raise_on_remove_error',
     'secret_key',
     'secret_key_id',
     'send_email',

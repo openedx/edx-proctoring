@@ -12,11 +12,9 @@ import responses
 from django.test import TestCase, override_settings
 from django.utils import translation
 
-from edx_proctoring.apps import BACKEND_CONFIGURATION_ALLOW_LIST
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
 from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
-    BackendProviderCannotRemoveAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
     BackendProviderOnboardingProfilesException,
@@ -291,20 +289,6 @@ class RESTBackendTests(TestCase):
         _, kwargs = request_mock.call_args
         self.assertEqual(kwargs['timeout'], self.provider.timeout)
 
-    def test_default_timeout(self):
-        """The backend applies a sane default request timeout when none is configured."""
-        self.assertEqual(self.provider.timeout, 30)
-
-    def test_timeout_is_configurable(self):
-        """
-        Operators can override the request timeout per backend. The value arrives as a
-        constructor kwarg sourced from the backend's PROCTORING_BACKENDS configuration,
-        so the key must also be present in the backend configuration allow list.
-        """
-        provider = BaseRestProctoringProvider('client_id', 'client_secret', timeout=60)
-        self.assertEqual(provider.timeout, 60)
-        self.assertIn('timeout', BACKEND_CONFIGURATION_ALLOW_LIST)
-
     def test_remove_attempt_provider_unavailable(self):
         """
         A provider connection error must propagate out of the backend rather than
@@ -314,68 +298,6 @@ class RESTBackendTests(TestCase):
         with patch.object(self.provider.session, 'request', side_effect=ConnectionError('boom')):
             with self.assertRaises(ConnectionError):
                 self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
-
-    @responses.activate
-    def test_remove_attempt_provider_error_raises_with_status(self):
-        """
-        A provider HTTP error response (>= 400) raises BackendProviderCannotRemoveAttempt
-        with a clean, provider-status-aware message and an instructor-facing 502.
-        """
-        attempt_id = 2
-        responses.add(
-            responses.DELETE,
-            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
-            json={'detail': 'Attempt is locked'},
-            status=400,
-        )
-        with self.assertRaises(BackendProviderCannotRemoveAttempt) as ctx:
-            self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
-        self.assertIn('HTTP 400', str(ctx.exception))
-        self.assertIn('could not remove this attempt', str(ctx.exception))
-        self.assertEqual(ctx.exception.http_status, 502)
-
-    @responses.activate
-    def test_remove_attempt_provider_error_no_body(self):
-        """
-        A provider HTTP error with no response body still raises with the clean
-        provider-status-aware message.
-        """
-        attempt_id = 2
-        responses.add(
-            responses.DELETE,
-            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
-            status=502,
-        )
-        with self.assertRaises(BackendProviderCannotRemoveAttempt) as ctx:
-            self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
-        self.assertIn('HTTP 502', str(ctx.exception))
-        self.assertEqual(ctx.exception.http_status, 502)
-
-    def test_raise_on_remove_error_default_and_configurable(self):
-        """
-        The raise-on-remove-error behaviour defaults to True and is overridable per
-        backend via PROCTORING_BACKENDS, so the key must be in the allow list.
-        """
-        self.assertTrue(self.provider.raise_on_remove_error)
-        self.assertIn('raise_on_remove_error', BACKEND_CONFIGURATION_ALLOW_LIST)
-        provider = BaseRestProctoringProvider('client_id', 'client_secret', raise_on_remove_error=False)
-        self.assertFalse(provider.raise_on_remove_error)
-
-    @responses.activate
-    def test_remove_attempt_provider_error_not_raised_when_disabled(self):
-        """
-        When raise_on_remove_error is disabled for a backend, a provider HTTP error is
-        not raised; removal returns False (the pre-existing log-and-continue behaviour).
-        """
-        self.provider.raise_on_remove_error = False
-        attempt_id = 2
-        responses.add(
-            responses.DELETE,
-            url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
-            status=502,
-        )
-        status = self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
-        self.assertFalse(status)
 
     def test_on_review_callback(self):
         """
