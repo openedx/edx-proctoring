@@ -278,6 +278,13 @@ class RESTBackendTests(TestCase):
         status = self.provider.remove_exam_attempt(self.backend_exam['external_id'], None)
         self.assertFalse(status)
 
+    def test_make_attempt_request_no_attempt(self):
+        """
+        An attempt request with no attempt id short-circuits to an empty response instead
+        of calling the provider, so the caller treats it as a no-op.
+        """
+        self.assertIsNone(self.provider.mark_erroneous_exam_attempt(self.backend_exam['external_id'], None))
+
     def test_make_attempt_request_passes_timeout(self):
         """
         Every outbound attempt request must include an explicit timeout so that a
