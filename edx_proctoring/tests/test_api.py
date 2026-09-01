@@ -1253,21 +1253,22 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         # retry can run in the same request.
         self.assertEqual(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).count(), 1)
 
-    def test_remove_exam_attempt_provider_not_confirmed_still_deletes(self):
+    def test_remove_exam_attempt_provider_not_confirmed_raises(self):
         """
-        A backend that reports the attempt as already removed (a falsy result rather than
-        raising) still lets the local delete proceed, so a retried, partially-failed reset
-        converges instead of being stuck at 502 forever.
+        If the provider responds but does not confirm removal (a falsy result rather than a
+        404/deleted), the strict reset path raises and keeps the local attempt so it can be
+        retried once the provider is healthy, instead of silently dropping it.
         """
         attempt = self._create_unstarted_exam_attempt()
-        attempt.external_id = 'ext-remove-gone'
+        attempt.external_id = 'ext-remove-unconfirmed'
         attempt.save()
 
         with patch('edx_proctoring.api.get_backend_provider') as get_backend_mock:
             get_backend_mock.return_value.remove_exam_attempt.return_value = False
-            remove_exam_attempt(attempt.id, requesting_user=self.user)
+            with self.assertRaises(BackendProviderCannotRemoveAttempt):
+                remove_exam_attempt(attempt.id, requesting_user=self.user)
 
-        self.assertFalse(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).exists())
+        self.assertTrue(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).exists())
 
     def test_remove_exam_attempt_no_backend_configured(self):
         """
@@ -1312,6 +1313,22 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         with patch('edx_proctoring.api.get_backend_provider') as get_backend_mock:
             get_backend_mock.return_value.remove_exam_attempt.side_effect = ConnectionError('provider down')
             # best-effort cleanup: a provider outage must not raise here
+            ProctoredExamStudentAttempt.objects.clear_onboarding_errors(self.user.id)
+
+        self.assertFalse(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).exists())
+
+    def test_clear_onboarding_errors_unconfirmed_still_removes(self):
+        """
+        clear_onboarding_errors is best-effort: if the provider responds without confirming
+        removal (a falsy result), the local cleanup still proceeds.
+        """
+        attempt = self._create_unstarted_exam_attempt()
+        attempt.external_id = 'ext-onboarding-unconfirmed'
+        attempt.status = ProctoredExamStudentAttemptStatus.onboarding_failed
+        attempt.save()
+
+        with patch('edx_proctoring.api.get_backend_provider') as get_backend_mock:
+            get_backend_mock.return_value.remove_exam_attempt.return_value = False
             ProctoredExamStudentAttempt.objects.clear_onboarding_errors(self.user.id)
 
         self.assertFalse(ProctoredExamStudentAttempt.objects.filter(id=attempt.id).exists())

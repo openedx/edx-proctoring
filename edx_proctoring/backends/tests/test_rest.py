@@ -16,7 +16,6 @@ from django.utils import translation
 from edx_proctoring.backends.rest import BaseRestProctoringProvider
 from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
-    BackendProviderCannotRemoveAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
     BackendProviderOnboardingProfilesException,
@@ -338,10 +337,10 @@ class RESTBackendTests(TestCase):
             self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
 
     @responses.activate
-    def test_remove_attempt_malformed_json_raises(self):
+    def test_remove_attempt_malformed_json_not_confirmed(self):
         """
-        A 2xx response with an undecodable body is not a valid confirmation, so it raises
-        rather than silently reporting the attempt as removed.
+        A 2xx response with an undecodable body is not a valid confirmation, so it reports
+        False (the API layer keeps the local attempt for strict callers).
         """
         attempt_id = 5
         responses.add(
@@ -349,14 +348,13 @@ class RESTBackendTests(TestCase):
             url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
             body='"]'
         )
-        with self.assertRaises(BackendProviderCannotRemoveAttempt):
-            self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+        self.assertFalse(self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id))
 
     @responses.activate
-    def test_remove_attempt_unconfirmed_raises(self):
+    def test_remove_attempt_unconfirmed_status(self):
         """
         A 2xx response that does not carry the documented {"status": "deleted"} payload is
-        not a confirmation, so it raises to keep the local attempt for a later retry.
+        not a confirmation, so it reports False rather than a successful removal.
         """
         attempt_id = 6
         responses.add(
@@ -364,8 +362,22 @@ class RESTBackendTests(TestCase):
             url=self.provider.exam_attempt_url.format(exam_id=self.backend_exam['external_id'], attempt_id=attempt_id),
             json={'status': 'pending'}
         )
-        with self.assertRaises(BackendProviderCannotRemoveAttempt):
-            self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id)
+        self.assertFalse(self.provider.remove_exam_attempt(self.backend_exam['external_id'], attempt_id))
+
+    def test_default_request_timeout(self):
+        """The REST backend applies a 30-second request timeout by default."""
+        self.assertEqual(self.provider.timeout, 30)
+
+    def test_configurable_request_timeout(self):
+        """A ``timeout`` in the backend configuration overrides the default and is sent on requests."""
+        provider = BaseRestProctoringProvider('client_id', 'client_secret', timeout=5)
+        self.assertEqual(provider.timeout, 5)
+        with patch.object(provider.session, 'request') as request_mock:
+            request_mock.return_value.status_code = 200
+            request_mock.return_value.json.return_value = {'status': 'deleted'}
+            provider.remove_exam_attempt(self.backend_exam['external_id'], 7)
+        _, kwargs = request_mock.call_args
+        self.assertEqual(kwargs['timeout'], 5)
 
     def test_on_review_callback(self):
         """

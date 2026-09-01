@@ -19,7 +19,6 @@ from django.conf import settings
 from edx_proctoring.backends.backend import ProctoringBackendProvider
 from edx_proctoring.exceptions import (
     BackendProviderCannotRegisterAttempt,
-    BackendProviderCannotRemoveAttempt,
     BackendProviderCannotRetireUser,
     BackendProviderOnboardingException,
     BackendProviderOnboardingProfilesException,
@@ -233,11 +232,12 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         """
         Removes the exam attempt on the backend provider's server.
 
-        A 404 is treated as success (the attempt is already gone upstream), so retrying a
-        partially-failed reset converges instead of failing forever. Success is otherwise
-        reserved for the documented ``{"status": "deleted"}`` payload; any other HTTP error,
-        an undecodable body, or a 2xx that does not confirm deletion is raised so the caller
-        keeps the local attempt for a later retry rather than silently dropping it.
+        Returns ``True`` when the provider confirms removal with the documented
+        ``{"status": "deleted"}`` payload, or on a ``404`` (the attempt is already gone
+        upstream, so a retried reset converges). Returns ``False`` when the provider responds
+        but does not confirm deletion (undecodable body or an unexpected status); the API
+        layer decides whether that is fatal. Any other HTTP error is raised so a transient
+        failure keeps the local attempt available for a later retry.
         """
         if not attempt:
             return False
@@ -249,15 +249,10 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
         response.raise_for_status()
         try:
             data = response.json()
-        except ValueError as exc:
-            raise BackendProviderCannotRemoveAttempt(
-                f'Provider returned an undecodable response to attempt removal: {response.content!r}'
-            ) from exc
-        if data.get('status', None) != 'deleted':
-            raise BackendProviderCannotRemoveAttempt(
-                f'Provider did not confirm attempt removal (expected status "deleted"): {data!r}'
-            )
-        return True
+        except ValueError:
+            log.exception('Decoding attempt removal %r -> %r', attempt, response.content)
+            return False
+        return data.get('status', None) == 'deleted'
 
     def mark_erroneous_exam_attempt(self, exam, attempt):
         """

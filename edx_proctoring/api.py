@@ -1914,6 +1914,14 @@ def _remove_exam_attempt_from_backend(attempt, raise_on_error=True):
     if not attempt.external_id:
         # The attempt was never registered with the provider; nothing to remove upstream.
         return
+    # Single instructor-facing message for any provider-side removal failure. The specific
+    # cause is logged (below), never surfaced to the user.
+    # Translators: shown to an instructor when an exam attempt could not be reset because
+    # the external proctoring provider is temporarily unavailable.
+    unavailable_message = _(
+        'The proctoring provider is temporarily unavailable, so this attempt could not '
+        'be fully reset. Please try again in a few minutes.'
+    )
     try:
         # Resolving the backend can itself raise (e.g. NotImplementedError for a
         # stale/unconfigured backend), so keep it inside the error-handling block.
@@ -1934,20 +1942,15 @@ def _remove_exam_attempt_from_backend(attempt, raise_on_error=True):
             }
         )
         if raise_on_error:
-            raise BackendProviderCannotRemoveAttempt(
-                # Translators: shown to an instructor when an exam attempt could not be reset
-                # because the external proctoring provider is temporarily unavailable.
-                _(
-                    'The proctoring provider is temporarily unavailable, so this attempt could not '
-                    'be fully reset. Please try again in a few minutes.'
-                )
-            ) from exc
+            raise BackendProviderCannotRemoveAttempt(unavailable_message) from exc
         return
     if not result:
-        log.warning(
-            'Backend %s did not confirm removal of attempt_id=%s; treating as already removed.',
-            exam.backend, attempt.id,
-        )
+        # The provider responded but did not confirm removal. Strict callers keep the local
+        # attempt (so a retry can converge once the provider is healthy); best-effort callers
+        # (e.g. onboarding cleanup) proceed with the local delete.
+        log.warning('Backend %s did not confirm removal of attempt_id=%s.', exam.backend, attempt.id)
+        if raise_on_error:
+            raise BackendProviderCannotRemoveAttempt(unavailable_message)
 
 
 def remove_exam_attempt(attempt_id, requesting_user):
