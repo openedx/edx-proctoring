@@ -518,6 +518,15 @@ class RESTBackendTests(TestCase):
         with self.assertRaises(BackendProviderCannotRetireUser):
             self.provider.retire_user(user_id)
 
+    def test_retire_user_provider_unavailable(self):
+        """
+        If the request fails before a response is received (e.g. a timeout), retire_user
+        still raises BackendProviderCannotRetireUser rather than an UnboundLocalError.
+        """
+        with patch.object(self.provider.session, 'delete', side_effect=ConnectionError('boom')):
+            with self.assertRaises(BackendProviderCannotRetireUser):
+                self.provider.retire_user('abcdef6')
+
     @responses.activate
     def test_get_onboarding_profile_for_user(self):
         user_id = 'abcdef5'

@@ -346,6 +346,7 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
 
     def retire_user(self, user_id):
         url = self.user_info_url.format(user_id=user_id)
+        response = None
         try:
             response = self.session.delete(url, timeout=self.timeout)
             data = response.json()
@@ -354,8 +355,12 @@ class BaseRestProctoringProvider(ProctoringBackendProvider):
             # pylint: disable=no-member
             if hasattr(exc, 'response') and exc.response is not None:
                 content = exc.response.content
-            else:
+            elif response is not None:
                 content = response.content
+            else:
+                # The request failed before a response was received (e.g. a timeout), so
+                # there is no body to include.
+                content = None
             raise BackendProviderCannotRetireUser(content) from exc
         return data
 
