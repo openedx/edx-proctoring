@@ -1,9 +1,0 @@
-# Requirements for code quality checks
--c constraints.txt
-
-edx_lint                  # Python code linting rules
-isort                     # to standardize order of imports
-pycodestyle               # PEP 8 compliance validation
-pydocstyle                # PEP 257 compliance validation
-django
-rstcheck                  # to validate .rst files
