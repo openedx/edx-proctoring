@@ -37,26 +37,26 @@ module.exports = function(config) {
 
         // patterns to load all files in child folders
         files: [
-            'edx_proctoring/static/proctoring/spec/proctored_exam_global_vars.js',
+            'src/edx_proctoring/static/proctoring/spec/proctored_exam_global_vars.js',
             'node_modules/babel-polyfill/dist/polyfill.js', // polyfills for e.g. Promises
-            'edx_proctoring/static/proctoring/js/vendor/i18n.js',
-            'edx_proctoring/static/proctoring/js/vendor/jquery.js',
-            'edx_proctoring/static/proctoring/js/vendor/underscore.js',
-            'edx_proctoring/static/proctoring/js/vendor/backbone.js',
-            'edx_proctoring/static/proctoring/js/vendor/date.js',
-            'edx_proctoring/static/proctoring/js/models/*.js',
-            'edx_proctoring/static/proctoring/js/collections/*.js',
-            'edx_proctoring/static/proctoring/js/views/*.js',
-            'edx_proctoring/static/proctoring/spec/*.js',
-            'edx_proctoring/static/proctoring/js/dropdown.js'
+            'src/edx_proctoring/static/proctoring/js/vendor/i18n.js',
+            'src/edx_proctoring/static/proctoring/js/vendor/jquery.js',
+            'src/edx_proctoring/static/proctoring/js/vendor/underscore.js',
+            'src/edx_proctoring/static/proctoring/js/vendor/backbone.js',
+            'src/edx_proctoring/static/proctoring/js/vendor/date.js',
+            'src/edx_proctoring/static/proctoring/js/models/*.js',
+            'src/edx_proctoring/static/proctoring/js/collections/*.js',
+            'src/edx_proctoring/static/proctoring/js/views/*.js',
+            'src/edx_proctoring/static/proctoring/spec/*.js',
+            'src/edx_proctoring/static/proctoring/js/dropdown.js'
         ],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'edx_proctoring/static/proctoring/js/models/*.js': sourcePreprocessors,
-            'edx_proctoring/static/proctoring/js/collections/*.js': sourcePreprocessors,
-            'edx_proctoring/static/proctoring/js/views/*.js': sourcePreprocessors
+            'src/edx_proctoring/static/proctoring/js/models/*.js': sourcePreprocessors,
+            'src/edx_proctoring/static/proctoring/js/collections/*.js': sourcePreprocessors,
+            'src/edx_proctoring/static/proctoring/js/views/*.js': sourcePreprocessors
         },
 
         // test results reporter to use

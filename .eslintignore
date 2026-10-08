@@ -1,5 +1,5 @@
 node_modules/
 build/
-edx_proctoring/static/proctoring/js/vendor/
+src/edx_proctoring/static/proctoring/js/vendor/
 htmlcov/
-edx_proctoring/static/proctoring/js/views/Backbone.ModalDialog.js
+src/edx_proctoring/static/proctoring/js/views/Backbone.ModalDialog.js

@@ -8,11 +8,8 @@ Describe in a couple of sentences how this pull request modifies the repository.
 
 **Pre-Merge Checklist:**
 
-- [ ] Updated the version number in `edx_proctoring/__init__.py` and `package.json` if these changes are to be released.
-- [ ] Described your changes in `CHANGELOG.rst`
+- [ ] Commit messages (and PR title, if squash merging) use the correct
+      [Conventional Commits](https://docs.openedx.org/projects/openedx-proposals/en/latest/best-practices/oep-0051-bp-conventional-commits.html#specification) type — they determine the
+      release: `fix:` → patch, `feat:` → minor, `!` / `BREAKING CHANGE:` → major
 - [ ] Confirmed Github reports all automated tests/checks are passing.
 - [ ] Approved by at least one additional reviewer.
-
-**Post-Merge:**
-
-- [ ] Create a tag matching the new version number.

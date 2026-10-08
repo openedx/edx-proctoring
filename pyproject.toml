@@ -1,0 +1,216 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm>8.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edx-proctoring"
+description = "Proctoring subsystem for Open edX"
+requires-python = ">=3.12"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE*"]
+authors = [
+    {name = "Open edX Project", email = "oscm@openedx.org"},
+]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Framework :: Django',
+    'Framework :: Django :: 4.2',
+    'Framework :: Django :: 5.2',
+    'Intended Audience :: Developers',
+    'Natural Language :: English',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.12',
+]
+keywords = [
+    "Django",
+    "edx",
+]
+
+dynamic = ["readme", "version"]
+
+dependencies = [
+    "Django>=2.2",
+    "django-model-utils",
+    "djangorestframework",
+    "django-ipware>=1.1.0",
+    "jsonfield",
+    "pyjwt[crypto]>=2.1.0",
+    "pytz>=2018",
+    "pycryptodomex>=3.4.7",
+    "django-crum",
+    "python-dateutil>=2.1",
+    "django-simple-history",
+    "django-webpack-loader>=0.6.0",
+    "django-waffle",
+    "rules",
+    "event-tracking>=0.2.5",
+    "edx-opaque-keys>=0.4",
+    "edx-drf-extensions",
+    "edx-rest-api-client>=1.9.2",
+    "edx-when>=0.1.3",
+]
+
+[project.entry-points."openedx.proctoring"]
+mock = "edx_proctoring.backends.mock:MockProctoringBackendProvider"
+null = "edx_proctoring.backends.null:NullBackendProvider"
+software_secure = "edx_proctoring.backends.software_secure:SoftwareSecureBackendProvider"
+rpnow4 = "edx_proctoring.backends.software_secure:SoftwareSecureBackendProvider"
+
+[project.entry-points."lms.djangoapp"]
+edx_proctoring = "edx_proctoring.apps:EdxProctoringConfig"
+
+[project.entry-points."cms.djangoapp"]
+edx_proctoring = "edx_proctoring.apps:EdxProctoringConfig"
+
+[project.urls]
+Homepage = "https://github.com/openedx/edx-proctoring"
+Repository = "https://github.com/openedx/edx-proctoring"
+
+[dependency-groups]
+test-base = [
+    "code-annotations>=0.3.1",
+    "ddt>=0.8.0",
+    "edx-i18n-tools",
+    "factory-boy",
+    "freezegun>=0.3.1",
+    "httmock>=1.2.3",
+    "httpretty>=0.8.0",
+    "mock>=1.0.1",
+    "pytest-cov",
+    "pytest-django",
+    "pytest-xdist",
+    "responses",
+    "testfixtures>=4.0.0",
+]
+test = [
+    {include-group = "test-base"},
+    "Django>=5.2,<6.0",
+    "djangorestframework",
+]
+django42 = [
+    {include-group = "test-base"},
+    "Django>=4.2,<5.0",
+    "djangorestframework",
+]
+quality = [
+    {include-group = "test"},
+    "edx-lint",
+    "isort",
+    "pycodestyle",
+    "pydocstyle",
+    "django",
+    "rstcheck",
+]
+ci = [
+    "coverage",
+    "tox",
+    "tox-uv",
+]
+dev = [
+    {include-group = "quality"},
+    {include-group = "ci"},
+    "diff-cover",
+    "edx-i18n-tools",
+    "wheel",
+    "path.py",
+]
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.rst"], content-type = "text/x-rst"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"edx_proctoring" = [
+    "backends/*.txt",
+    "static/index.js",
+    "static/proctoring/js/**/*.js",
+    "static/proctoring/clippy.swf",
+    "static/proctoring/close-modal*.png",
+    "static/proctoring/templates/*.underscore",
+    "templates/**/*.html",
+    "locale/**/*.mo",
+    "locale/**/*.po",
+    "locale/config.yaml",
+]
+
+[tool.semantic_release]
+build_command = "pip install build && SETUPTOOLS_SCM_PRETEND_VERSION=$NEW_VERSION python -m build"
+
+[tool.setuptools_scm]
+version_scheme = 'only-version'
+local_scheme = 'no-local-version'
+fallback_version = "0.0.0"
+
+[tool.uv]
+package = true
+conflicts = [
+    [{group = "test"}, {group = "django42"}],
+]
+constraint-dependencies = [
+    "Django<6.0",
+    "elasticsearch<7.14.0",
+    "celery>=5.2.2,<6.0.0",
+    "click>=8.0,<9.0",
+    "django-webpack-loader<1.0.0",
+    "djangorestframework<3.17",
+    "edx-lint<6.2.0",
+]
+
+[tool.edx_lint]
+uv_constraints = [
+    # Date: 2025-01-01
+    # Celery and related Click pin updated to match edx-platform
+    # As it is not clarified what exact breaking changes will be introduced as per
+    # the next major release, ensure the installed version is within boundaries.
+    "celery>=5.2.2,<6.0.0",
+    # Date: 2025-01-01
+    # required for celery>=5.2.0;<5.3.0
+    "click>=8.0,<9.0",
+    # Date: 2025-01-01
+    # pinning to match pin in edx-platform
+    "django-webpack-loader<1.0.0",
+    # Date: 2026-09-24
+    # DRF 3.17+ changed ListSerializer.errors from a list to a dict (index-keyed).
+    # Several existing tests assert list-shaped error responses and fail on 3.17+.
+    # Pin until tests are updated to the new format.
+    "djangorestframework<3.17",
+    # Date: 2026-09-24
+    # edx-lint 6.2.0+ with pylint 4.0.9 triggers false-positive C0411/C0413
+    # import-order errors in views.py (cross-file import contamination).
+    # Pin to match version used on master until upstream fixes the issue.
+    "edx-lint<6.2.0",
+]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["src/edx_proctoring"]
+omit = [
+    "*/migrations/*",
+    "*/edx_proctoring/settings/*",
+    "*/edx_proctoring/admin.py",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "test_settings"
+addopts = "-rfe --cov=src/edx_proctoring --cov-report=html --cov-report=xml -n 3"
+
+[tool.isort]
+indent = "    "
+line_length = 120
+multi_line_output = 3
+default_section = "THIRDPARTY"
+known_edx = []
+known_django = ["django"]
+known_first_party = ["edx_proctoring", "mock_apps"]
+known_third_party = ["ddt"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "DJANGO", "DJANGOAPP", "EDX", "FIRSTPARTY", "LOCALFOLDER"]
+skip = [
+    "envs",
+    "migrations",
+]
