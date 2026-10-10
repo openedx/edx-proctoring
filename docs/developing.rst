@@ -178,7 +178,7 @@ If you need to run local changes to the `mockprock Javascript worker`_ or the `w
    npm link @edx/edx-proctoring
 
 .. _mockprock Javascript worker: https://github.com/openedx/mockprock/tree/master/static
-.. _worker interface: https://github.com/openedx/edx-proctoring/blob/master/edx_proctoring/static/index.js
+.. _worker interface: https://github.com/openedx/edx-proctoring/blob/master/src/edx_proctoring/static/index.js
 
 How do I run proctoring tests?
 ------------------------------
@@ -299,13 +299,30 @@ When releasing a new version of edx-proctoring, we use a process that is very si
 Release a new version of edx-proctoring
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* Update the version in ``edx_proctoring/__init__.py`` and ``package.json``
-* Describe your changes in `CHANGELOG.rst`
-* Create a `new release on GitHub <https://github.com/openedx/edx-proctoring/releases>`_ using the version number
+Releases are fully automated via `python-semantic-release`_. To trigger a release, merge a
+conventional commit to ``master`` using one of the following prefixes:
+
+* ``feat:`` — triggers a minor version bump
+* ``fix:`` or ``perf:`` — triggers a patch version bump
+* ``feat!:`` or any type with ``!`` — triggers a major version bump
+
+On merge, the ``release.yml`` workflow will automatically:
+
+1. Determine the next version from commit history
+2. Create a git tag and GitHub release with release notes
+3. Build and publish the package to PyPI
+4. Publish the npm package to the npm registry
+
+No manual version bumps, ``CHANGELOG.rst`` edits, or GitHub releases are needed.
+
+After the release is published:
+
 * Update edx-platform to use the new version
     * In edx-platform, create a branch and update the requirements/edx/base.txt, development.txt, and testing.txt files to reflect the new tagged branch.
 * create a PR of this branch in edx-platform onto edx-platform:master
 * Once the PR onto edx-platform has been merged, the updated edx-proctoring will be live in production when the normally scheduled release completes.
+
+.. _python-semantic-release: https://python-semantic-release.readthedocs.io/
 
 How do I validate my changes in stage or production?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

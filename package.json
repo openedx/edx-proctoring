@@ -2,7 +2,7 @@
   "name": "@edx/edx-proctoring",
   "//": "Note that the version format is slightly different than that of the Python version when using prereleases.",
   "version": "6.0.0",
-  "main": "edx_proctoring/static/index.js",
+  "main": "src/edx_proctoring/static/index.js",
   "scripts": {
     "test": "gulp test"
   },
@@ -11,7 +11,7 @@
     "url": "git://github.com/openedx/edx-proctoring"
   },
   "files": [
-    "/edx_proctoring/static"
+    "/src/edx_proctoring/static"
   ],
   "publishConfig": {
     "access": "public"

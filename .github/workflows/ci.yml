@@ -1,66 +1,58 @@
 name: Python CI
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - "**"
+  workflow_call:
 
 jobs:
   run_tests:
-    name: Tests
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.toxenv }}
+    runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
-        os: ["ubuntu-latest"]
-        python-version: ["3.12"]
-        node-version: ["20"]
+        python-version:
+          - "3.12"
+        node-version:
+          - "20"
         toxenv:
-          [
-            "django42-drflatest",
-            "django52-drflatest",
-            "quality",
-            "pii_check",
-            "version_check",
-            "js_tests",
-            "js_lint",
-            "rst_validation",
-            "translations-django42",
-            "translations-django52",
-          ]
+          - "django42-drflatest"
+          - "django52-drflatest"
+          - "quality"
+          - "pii_check"
+          - "version_check"
+          - "js_tests"
+          - "js_lint"
+          - "rst_validation"
+          - "translations-django42"
+          - "translations-django52"
+
     steps:
-      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # v1.2.0
-      - name: Setup python
-        uses: actions/setup-python@e9aba2c848f5ebd159c070c61ea2c4e2b122355e # v2.3.4
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
-          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          python-version: "${{ matrix.python-version }}"
 
       - name: Setup node
-        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1.4.6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Set display to virtual frame buffer
-        run: export DISPLAY=:99.0
+      - name: Install CI dependencies
+        run: uv sync --locked --group ci
 
-      - name: Install pip
-        run: pip install -r requirements/pip.txt
+      - name: Run tox
+        run: uv run tox -e ${{ matrix.toxenv }}
 
-      - name: Install requirements
-        run: pip install -r requirements/ci.txt
-
-      - name: Run tests
-        env:
-          TOXENV: ${{ matrix.toxenv }}
-        run: tox
-
-      - name: Run Coverage
-        if: matrix.python-version == '3.12' && matrix.toxenv == 'django42-drflatest'
-        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4.6.0
+      - name: Upload coverage to Codecov
+        if: matrix.toxenv == 'django42-drflatest' && matrix.python-version == '3.12'
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           flags: unittests
           fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}

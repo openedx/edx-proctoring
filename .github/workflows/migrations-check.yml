@@ -13,25 +13,25 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
-        python-version: ["3.12"]
+        os:
+          - ubuntu-latest
+        python-version:
+          - "3.12"
 
     steps:
     - name: Checkout repo
-      uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@e9aba2c848f5ebd159c070c61ea2c4e2b122355e # v2.3.4
+    - name: Install uv
+      uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
       with:
-        python-version: ${{ matrix.python-version }}
+        enable-cache: true
+        python-version: "${{ matrix.python-version }}"
 
     - name: Install Python dependencies
-      run: |
-        pip install -r requirements/pip.txt
-        pip install -r requirements/dev.txt
-        pip install -r requirements/test.txt
+      run: uv sync --locked --group test
 
     - name: Run Tests
       run: |
         echo "Running migrations."
-        ./manage.py migrate --settings=test_settings
+        uv run ./manage.py migrate --settings=test_settings

@@ -1,9 +1,18 @@
-include AUTHORS
-include CHANGELOG.rst
-include CONTRIBUTING.rst
-include LICENSE.txt
-include README.rst
-graft edx_proctoring
-prune edx_proctoring/static/proctoring/spec
-recursive-include requirements *.in *.txt
-global-exclude *.pyc
+# Exclude development, test, and documentation folders
+prune .github
+prune docs
+prune tests
+prune src/edx_proctoring/static/proctoring/spec
+
+# Exclude root level configuration and build files
+exclude Makefile
+exclude conftest.py
+exclude .gitignore
+exclude tox.ini
+exclude CHANGELOG.rst
+exclude uv.lock
+
+# Exclude test/coverage artifacts from sdist
+prune htmlcov
+global-exclude coverage.xml
+global-exclude .coverage
