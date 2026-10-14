@@ -14,6 +14,13 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[6.1.1] - 2026-10-14
+~~~~~~~~~~~~~~~~~~~~
+
+* Fix PyPI publish workflow: use ``python -m build`` instead of ``setup.py sdist
+  bdist_wheel``, which broke on Python 3.12 because ``setuptools`` is no longer
+  bundled and was not installed by the workflow.
+
 [6.1.0] - 2026-09-01
 ~~~~~~~~~~~~~~~~~~~~
 
