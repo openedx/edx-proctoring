@@ -117,7 +117,10 @@ class SoftwareSecureBackendProvider(ProctoringBackendProvider):
         return None
 
     def remove_exam_attempt(self, exam, attempt):
-        return None
+        # This backend does not track attempts on its own server, so there is nothing to
+        # remove upstream. Return an explicit success so callers do not mistake the no-op
+        # for a failed (unconfirmed) removal.
+        return True
 
     def get_software_download_url(self):
         """

@@ -8,6 +8,7 @@ import time
 
 from django.core.management.base import BaseCommand
 
+from edx_proctoring.api import _remove_exam_attempts_from_backend
 from edx_proctoring.models import ProctoredExamStudentAttempt
 
 log = logging.getLogger(__name__)
@@ -57,6 +58,9 @@ class Command(BaseCommand):
             ids_to_delete = file.readlines()
 
         total_deleted = 0
+        # Threaded through each batch so a backend that fails once is skipped for the
+        # rest of the run rather than costing another timeout per batch.
+        failed_backends = frozenset()
 
         for i in range(0, len(ids_to_delete), batch_size):
             batch_to_delete = ids_to_delete[i:i + batch_size]
@@ -64,6 +68,15 @@ class Command(BaseCommand):
             delete_queryset = ProctoredExamStudentAttempt.objects.filter(
                 id__in=batch_to_delete
             )
+
+            # Notify the proctoring provider before deleting locally. This used to happen in
+            # a pre_delete signal, but provider removal now lives in the API layer, so this
+            # bulk path has to do it explicitly. It is best-effort (the delete below is
+            # unconditional) and skips a failing backend for the rest of the run.
+            failed_backends = _remove_exam_attempts_from_backend(
+                delete_queryset.select_related('proctored_exam'), failed_backends
+            )
+
             deleted_count, _ = delete_queryset.delete()
 
             total_deleted += deleted_count

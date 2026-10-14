@@ -37,6 +37,7 @@ BACKEND_CONFIGURATION_ALLOW_LIST = [
     'supports_onboarding',
     'tech_support_email',
     'tech_support_phone',
+    'timeout',
     'token_expiration_time',
     'verbose_name',
     'video_review_aes_key',

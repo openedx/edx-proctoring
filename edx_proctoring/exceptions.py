@@ -95,6 +95,25 @@ class BackendProviderSentNoAttemptID(BackendProviderCannotRegisterAttempt):
     """
 
 
+class BackendProviderCannotRemoveAttempt(ProctoredBaseException):
+    """
+    Raised when a back-end provider cannot remove an attempt, e.g. because the
+    provider is slow, unreachable, or returned an error while trying to delete
+    the attempt on their side.
+    """
+    http_status = status.HTTP_502_BAD_GATEWAY
+
+
+class BackendProviderRemovalNotConfirmed(BackendProviderCannotRemoveAttempt):
+    """
+    Raised when the provider responded to a removal request but did not confirm it.
+
+    Unlike its parent this says nothing about the provider's health: the provider is
+    reachable, so a bulk caller should keep trying the remaining attempts on that backend
+    rather than giving up on it.
+    """
+
+
 class BackendProviderOnboardingException(ProctoredBaseException):
     """
     Raised when a back-end provider cannot register an attempt

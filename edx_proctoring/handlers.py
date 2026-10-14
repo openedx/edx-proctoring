@@ -99,52 +99,34 @@ def on_allowance_changed(sender, instance, signal, **kwargs):
 
 
 @receiver(pre_save, sender=models.ProctoredExamStudentAttempt)
-@receiver(pre_delete, sender=models.ProctoredExamStudentAttempt)
-def on_attempt_changed(sender, instance, signal, **kwargs):
+def on_attempt_changed(sender, instance, **kwargs):
     """
-    Archive the exam attempt whenever the attempt status is about to be
-    modified. Make a new entry with the previous value of the status in the
-    ProctoredExamStudentAttemptHistory table.
+    When an attempt is about to be updated, mark the exam complete in the Completion
+    Service the first time that attempt is finished. (The attempt itself is archived to
+    ProctoredExamStudentAttemptHistory by ``delete_exam_attempt``, not here.)
+
+    Note: the proctoring provider is no longer notified from this signal on delete.
+    ``api.remove_exam_attempt`` calls the backend *before* the local delete so that a
+    provider outage does not roll back a half-applied delete (raising from a pre_delete
+    signal marks the DB connection needs-rollback).
     """
+    if not instance.id:
+        # nothing to complete when the attempt is first created
+        return
 
-    if signal is pre_save:
-        if instance.id:
-            # on an update case, get the original
-            # and see if the status has changed, if so, then we need
-            # to archive it
-            original = sender.objects.get(id=instance.id)
+    original = sender.objects.get(id=instance.id)
 
-            # if the exam was finished for the first time, we want to mark it as
-            # complete in the Completion Service.
-            # This functionality was added because regardless of submission status
-            # on individual problems, we want to mark the entire exam as complete
-            # when the exam is finished since there are no more actions a learner can take.
-            if not original.completed_at and instance.completed_at:
-                instructor_service = get_runtime_service('instructor')
-                if instructor_service:
-                    username = instance.user.username
-                    content_id = instance.proctored_exam.content_id
-                    instructor_service.complete_student_attempt(username, content_id)
-
-            if original.status != instance.status:
-                instance = original
-            else:
-                return
-        else:
-            return
-    else:
-        # remove the attempt on the backend
-        # timed exams have no backend
-        if instance.proctored_exam.is_proctored:
-            backend = get_backend_provider(name=instance.proctored_exam.backend)
-            if backend:
-                result = backend.remove_exam_attempt(instance.proctored_exam.external_id, instance.external_id)
-                if not result:
-                    log.error(
-                        'Failed to remove attempt_id=%s from backend=%s',
-                        instance.id,
-                        instance.proctored_exam.backend,
-                    )
+    # if the exam was finished for the first time, we want to mark it as
+    # complete in the Completion Service.
+    # This functionality was added because regardless of submission status
+    # on individual problems, we want to mark the entire exam as complete
+    # when the exam is finished since there are no more actions a learner can take.
+    if not original.completed_at and instance.completed_at:
+        instructor_service = get_runtime_service('instructor')
+        if instructor_service:
+            instructor_service.complete_student_attempt(
+                instance.user.username, instance.proctored_exam.content_id
+            )
 
 
 @receiver(post_delete, sender=models.ProctoredExamStudentAttempt)

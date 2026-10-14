@@ -61,6 +61,12 @@ class ProctoringBackendProvider(metaclass=abc.ABCMeta):
     def remove_exam_attempt(self, exam, attempt):
         """
         Method that removes the exam attempt from the backend's system
+
+        Return ``True`` when the provider confirms the attempt was removed, or that it is
+        already gone upstream. Return ``False`` when the provider responded without
+        confirming the removal; the caller then keeps the local attempt so the removal can
+        be retried instead of being silently dropped. Raise to signal that the provider
+        could not be reached at all.
         """
         raise NotImplementedError()
 
