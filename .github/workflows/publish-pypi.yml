@@ -18,7 +18,9 @@ jobs:
         run: pip install -r requirements/pip.txt
 
       - name: Build package
-        run: python setup.py sdist bdist_wheel
+        run: |
+          pip install build
+          python -m build
 
       - name: Publish to PyPi
         uses: pypa/gh-action-pypi-publish@release/v1
