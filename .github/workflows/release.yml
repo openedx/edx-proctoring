@@ -65,7 +65,7 @@ jobs:
       - name: Publish | Create GitHub Release with Assets
         if: steps.release.outputs.released == 'true'
         env:
-          GH_TOKEN: ${{ secrets.REQUIREMENTS_BOT_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Reuse the release notes python-semantic-release generated for us.
           RELEASE_NOTES: ${{ steps.release.outputs.release_notes }}
           TAG: ${{ steps.release.outputs.tag }}
@@ -115,3 +115,28 @@ jobs:
 
       - name: Publish to PyPi
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+
+  publish_to_npm:
+    runs-on: ubuntu-latest
+    needs: release
+    if: github.ref_name == 'master' && needs.release.outputs.released == 'true'
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Setup | Checkout Repository on Release Ref
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Update the package version and publish
+        run: |
+          npm ci
+          npm version --no-git-tag-version ${{ needs.release.outputs.version }}
+          npm publish
