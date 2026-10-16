@@ -9,7 +9,6 @@ exclude Makefile
 exclude conftest.py
 exclude .gitignore
 exclude tox.ini
-exclude CHANGELOG.rst
 exclude uv.lock
 
 # Exclude test/coverage artifacts from sdist
