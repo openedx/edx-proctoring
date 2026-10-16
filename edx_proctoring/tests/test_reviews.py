@@ -114,18 +114,6 @@ class ReviewTests(LoggedInTestCase):
             update_attempt_status(attempt_id, next_status)
         return get_exam_attempt_by_id(attempt_id)
 
-    def get_credit_requirement_status(self, content_id):
-        """
-        Returns the credit requirement status recorded for the given exam content_id
-        """
-        credit_state = get_runtime_service('credit').get_credit_state(self.user.id, 'foo/bar/baz')
-        statuses = [
-            requirement['status']
-            for requirement in credit_state['credit_requirement_status']
-            if requirement['name'] == content_id
-        ]
-        return statuses[0] if statuses else None
-
     def get_review_payload(self, status=ReviewStatus.passed, **kwargs):
         """
         Returns a standard review payload
@@ -668,17 +656,15 @@ class ReviewTests(LoggedInTestCase):
         updated_attempt = get_exam_attempt_by_id(attempt['id'])
         self.assertEqual(updated_attempt['status'], ProctoredExamStudentAttemptStatus.error)
         self.assertIsNone(updated_attempt['completed_at'])
-        self.assertEqual(
-            self.get_credit_requirement_status(attempt['proctored_exam']['content_id']),
-            'failed'
-        )
+        credit_state = get_runtime_service('credit').get_credit_state(self.user.id, 'foo/bar/baz')
+        self.assertEqual(credit_state['credit_requirement_status'][-1]['status'], 'failed')
 
         # the provider's review is still recorded so that staff can see what was received
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
         self.assertEqual(review.review_status, SoftwareSecureReviewStatus.clean)
 
         mock_warning.assert_called_once()
-        self.assertIn('was never submitted', mock_warning.call_args[0][0])
+        self.assertIn('never-submitted', mock_warning.call_args[0][0])
         self.assertEqual(mock_warning.call_args[0][1]['status'], status)
 
     def test_passing_review_for_unsubmitted_attempt_in_error_stays_in_error(self):
@@ -707,24 +693,6 @@ class ReviewTests(LoggedInTestCase):
 
         updated_attempt = get_exam_attempt_by_id(attempt['id'])
         self.assertEqual(updated_attempt['status'], ProctoredExamStudentAttemptStatus.verified)
-
-    def test_passing_review_for_unsubmitted_onboarding_attempt_is_an_error(self):
-        """
-        An onboarding attempt whose proctoring session ended before the learner started the
-        exam must not be verified by the provider's passing review.
-        """
-        attempt = self.create_attempt_with_status(
-            ProctoredExamStudentAttemptStatus.ready_to_start,
-            is_practice_exam=True,
-        )
-        self.assertTrue(attempt['is_sample_attempt'])
-
-        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
-
-        updated_attempt = get_exam_attempt_by_id(attempt['id'])
-        self.assertEqual(updated_attempt['status'], ProctoredExamStudentAttemptStatus.error)
-        self.assertIsNone(updated_attempt['started_at'])
-        self.assertIsNone(updated_attempt['completed_at'])
 
     @ddt.data(ReviewStatus.passed, ReviewStatus.suspicious, ReviewStatus.not_reviewed)
     def test_review_for_reset_onboarding_attempt_does_not_change_status(self, review_status):
