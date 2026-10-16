@@ -7,7 +7,7 @@ import pytz
 
 from django.core.management import call_command
 
-from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attempt_by_id
+from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attempt_by_id, update_attempt_status
 from edx_proctoring.models import ProctoredExamSoftwareSecureReview
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus, SoftwareSecureReviewStatus
@@ -47,6 +47,9 @@ class SetAttemptActiveFieldTests(LoggedInTestCase):
             self.user.id,
             taking_as_proctored=True
         )
+        # reviews only arrive after the learner has submitted the attempt
+        update_attempt_status(self.first_attempt_id, ProctoredExamStudentAttemptStatus.started)
+        update_attempt_status(self.first_attempt_id, ProctoredExamStudentAttemptStatus.submitted)
         self.first_attempt = get_exam_attempt_by_id(self.first_attempt_id)
         self.first_attempt_review_object = ProctoredExamSoftwareSecureReview.objects.create(
             attempt_code=self.first_attempt['attempt_code'],
@@ -60,6 +63,9 @@ class SetAttemptActiveFieldTests(LoggedInTestCase):
             self.user.id,
             taking_as_proctored=True
         )
+        # reviews only arrive after the learner has submitted the attempt
+        update_attempt_status(self.second_attempt_id, ProctoredExamStudentAttemptStatus.started)
+        update_attempt_status(self.second_attempt_id, ProctoredExamStudentAttemptStatus.submitted)
         self.second_attempt = get_exam_attempt_by_id(self.second_attempt_id)
         self.second_attempt_review_object = ProctoredExamSoftwareSecureReview.objects.create(
             attempt_code=self.second_attempt['attempt_code'],
@@ -80,8 +86,8 @@ class SetAttemptActiveFieldTests(LoggedInTestCase):
         Run the management command
         """
         # check status of attempts
-        self.assertEqual(self.first_attempt['status'], ProctoredExamStudentAttemptStatus.created)
-        self.assertEqual(self.second_attempt['status'], ProctoredExamStudentAttemptStatus.created)
+        self.assertEqual(self.first_attempt['status'], ProctoredExamStudentAttemptStatus.submitted)
+        self.assertEqual(self.second_attempt['status'], ProctoredExamStudentAttemptStatus.submitted)
         # check status of reviews
         first_review = ProctoredExamSoftwareSecureReview.objects.get(id=self.first_attempt_review_object.id)
         self.assertEqual(first_review.review_status, SoftwareSecureReviewStatus.clean)

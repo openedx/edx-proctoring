@@ -14,6 +14,16 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[6.1.2] - 2026-10-16
+~~~~~~~~~~~~~~~~~~~~
+
+* A passing review from the proctoring provider no longer marks an attempt ``verified``
+  when the learner never submitted it, for example because the proctoring session ended
+  while the attempt was still ``ready_to_start``. Such attempts are put into ``error``
+  instead, so the learner is told to retry and staff can see the exam was not completed.
+* A review that arrives for an attempt that has since been reset (``onboarding_reset``)
+  no longer changes that attempt's status.
+
 [6.1.1] - 2026-10-14
 ~~~~~~~~~~~~~~~~~~~~
 

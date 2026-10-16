@@ -163,6 +163,17 @@ def on_review_changed(sender, instance, signal, **kwargs):
     models.archive_model(models.ProctoredExamSoftwareSecureReviewHistory, instance, id='review_id')
 
 
+def _was_attempt_submitted(attempt_obj):
+    """
+    Returns whether the learner submitted the attempt. ``completed_at`` is set on every
+    submission and kept through later status changes. A timeout with ``ALLOW_TIMED_OUT_STATE``
+    enabled leaves it unset, and a later review moves the status on, so check the history.
+    """
+    if attempt_obj.completed_at:
+        return True
+    return attempt_obj.history.filter(status=ProctoredExamStudentAttemptStatus.timed_out).exists()
+
+
 @receiver(post_save, sender=models.ProctoredExamSoftwareSecureReview)
 def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
     """
@@ -173,10 +184,18 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
     attempt = api.ProctoredExamStudentAttemptSerializer(attempt_obj).data
     backend = get_backend_provider(attempt['proctored_exam'])
 
-    # we could have gotten a review for an archived attempt
-    # this should *not* cause an update in our credit
-    # eligibility table
-    if review.is_passing:
+    if is_archived or attempt['status'] == ProctoredExamStudentAttemptStatus.onboarding_reset:
+        # archived and reset attempts must not be revived or update credit eligibility
+        attempt_status = None
+    elif review.is_passing and not _was_attempt_submitted(attempt_obj):
+        # the provider passed the session but the learner never submitted, so don't verify it
+        log.warning(
+            'Passing review (review_status=%(review_status)s) for never-submitted '
+            'attempt_id=%(attempt_id)s (status=%(status)s). Marking it as "error".',
+            {'review_status': review.review_status, 'attempt_id': attempt['id'], 'status': attempt['status']}
+        )
+        attempt_status = ProctoredExamStudentAttemptStatus.error
+    elif review.is_passing:
         attempt_status = ProctoredExamStudentAttemptStatus.verified
     elif review.review_status == SoftwareSecureReviewStatus.not_reviewed:
         attempt_status = ProctoredExamStudentAttemptStatus.error
@@ -191,10 +210,10 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
         # code path, then put status into 'second_review_required'
         attempt_status = ProctoredExamStudentAttemptStatus.second_review_required
 
-    if not is_archived:
+    if attempt_status:
         # updating attempt status will trigger workflow
         # (i.e. updating credit eligibility table)
-        # archived attempts should not trigger the workflow
+        # archived and reset attempts should not trigger the workflow
         api.update_attempt_status(
             attempt['id'],
             attempt_status,

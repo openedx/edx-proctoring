@@ -14,7 +14,13 @@ from django.test import TestCase
 from django.urls import reverse
 
 from edx_proctoring import constants
-from edx_proctoring.api import add_allowance_for_user, create_exam, create_exam_attempt, get_exam_attempt_by_id
+from edx_proctoring.api import (
+    add_allowance_for_user,
+    create_exam,
+    create_exam_attempt,
+    get_exam_attempt_by_id,
+    update_attempt_status
+)
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.software_secure import SOFTWARE_SECURE_INVALID_CHARS, SoftwareSecureBackendProvider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
@@ -187,6 +193,9 @@ class SoftwareSecureTests(TestCase):
         with HTTMock(mock_response_content):
             attempt_id = create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
             self.assertIsNotNone(attempt_id)
+            # the learner submits the exam before the provider reviews it
+            update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.started)
+            update_attempt_status(attempt_id, ProctoredExamStudentAttemptStatus.submitted)
             attempt = get_exam_attempt_by_id(attempt_id)
             test_payload = create_test_review_payload(
                 attempt_code=attempt['attempt_code'],
