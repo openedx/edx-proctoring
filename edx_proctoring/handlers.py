@@ -163,22 +163,26 @@ def on_review_changed(sender, instance, signal, **kwargs):
     models.archive_model(models.ProctoredExamSoftwareSecureReviewHistory, instance, id='review_id')
 
 
-def _was_attempt_submitted(attempt):
+def _was_attempt_submitted(attempt_obj):
     """
     Returns whether the learner actually finished the attempt, i.e. whether it ever
     reached a submitted state.
 
     ``completed_at`` is set whenever an attempt transitions to ``submitted`` (including
     a timeout treated as a submission) and is kept through any later status change, so
-    it is the reliable signal. The status alone is not: an unsubmitted attempt can reach
-    ``error``, ``rejected`` or ``second_review_required`` (for example from an earlier
-    failing review) without ever being completed. The one exception is ``timed_out``
-    when ``ALLOW_TIMED_OUT_STATE`` is enabled, which ends the exam without setting
-    ``completed_at``.
+    it is the reliable signal. The current status is not: an unsubmitted attempt can
+    reach ``error``, ``rejected`` or ``second_review_required`` (for example from an
+    earlier failing review) without ever being completed.
+
+    The one exception is a timeout when ``ALLOW_TIMED_OUT_STATE`` is enabled, which ends
+    the exam without setting ``completed_at``. A later review moves the attempt out of
+    ``timed_out``, so look the timeout up in the attempt's history rather than relying
+    on the current status.
     """
-    if attempt['completed_at']:
+    if attempt_obj.completed_at:
         return True
-    return attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out
+    timed_out = ProctoredExamStudentAttemptStatus.timed_out
+    return attempt_obj.history.filter(status=timed_out).exists()  # pylint: disable=no-member
 
 
 @receiver(post_save, sender=models.ProctoredExamSoftwareSecureReview)
@@ -215,7 +219,7 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
             }
         )
         attempt_status = None
-    elif review.is_passing and not _was_attempt_submitted(attempt):
+    elif review.is_passing and not _was_attempt_submitted(attempt_obj):
         # The proctoring provider passed the session (for example the face and ID scans
         # were valid) but the learner never submitted the exam, typically because the
         # proctoring session ended while the attempt was still ``ready_to_start``.

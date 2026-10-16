@@ -808,17 +808,30 @@ class ReviewTests(LoggedInTestCase):
             ProctoredExamStudentAttemptStatus.verified
         )
 
+    @ddt.data(
+        # a repeated passing review
+        (ReviewStatus.passed, ProctoredExamStudentAttemptStatus.verified),
+        # a suspicious review later corrected to a passing one
+        (ReviewStatus.suspicious, ProctoredExamStudentAttemptStatus.second_review_required),
+    )
+    @ddt.unpack
+    @patch('edx_proctoring.constants.ALLOW_REVIEW_UPDATES', True)
+    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', True)
     @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
-    def test_passing_review_for_timed_out_attempt_is_verified(self):
+    def test_passing_review_for_timed_out_attempt_is_verified(self, first_review_status, status_after_first_review):
         """
         With ALLOW_TIMED_OUT_STATE enabled a timed out attempt has no completion time,
-        but the learner did take the exam, so a passing review still verifies it.
+        but the learner did take the exam, so a passing review verifies it. That must
+        still hold after an earlier review has moved the attempt out of ``timed_out``.
         """
         attempt = self.create_attempt_with_status(ProctoredExamStudentAttemptStatus.started)
         update_attempt_status(attempt['id'], ProctoredExamStudentAttemptStatus.timed_out)
         timed_out_attempt = get_exam_attempt_by_id(attempt['id'])
         self.assertEqual(timed_out_attempt['status'], ProctoredExamStudentAttemptStatus.timed_out)
         self.assertIsNone(timed_out_attempt['completed_at'])
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(first_review_status))
+        self.assertEqual(get_exam_attempt_by_id(attempt['id'])['status'], status_after_first_review)
 
         ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
 
