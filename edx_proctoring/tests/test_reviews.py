@@ -753,3 +753,76 @@ class ReviewTests(LoggedInTestCase):
         )
         review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
         self.assertEqual(review.review_status, SoftwareSecureReviewStatus.from_standard_status[review_status])
+
+    @ddt.data(
+        (True, ProctoredExamStudentAttemptStatus.rejected),
+        (False, ProctoredExamStudentAttemptStatus.second_review_required),
+    )
+    @ddt.unpack
+    @patch('edx_proctoring.constants.ALLOW_REVIEW_UPDATES', True)
+    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', True)
+    def test_corrected_passing_review_for_unsubmitted_attempt_is_an_error(
+        self, is_practice_exam, status_after_suspicious
+    ):
+        """
+        A suspicious review for an unsubmitted attempt that is later corrected to a
+        passing review must not verify the attempt.
+        """
+        attempt = self.create_attempt_with_status(
+            ProctoredExamStudentAttemptStatus.ready_to_start,
+            is_practice_exam=is_practice_exam,
+        )
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.suspicious))
+        self.assertEqual(get_exam_attempt_by_id(attempt['id'])['status'], status_after_suspicious)
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
+
+        updated_attempt = get_exam_attempt_by_id(attempt['id'])
+        self.assertEqual(updated_attempt['status'], ProctoredExamStudentAttemptStatus.error)
+        self.assertIsNone(updated_attempt['completed_at'])
+
+    @ddt.data(True, False)
+    @patch('edx_proctoring.constants.ALLOW_REVIEW_UPDATES', True)
+    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', True)
+    def test_corrected_passing_review_for_submitted_attempt_is_verified(self, is_practice_exam):
+        """
+        A suspicious review for a submitted attempt that is later corrected to a passing
+        review still verifies the attempt.
+        """
+        attempt = self.create_attempt_with_status(
+            ProctoredExamStudentAttemptStatus.submitted,
+            is_practice_exam=is_practice_exam,
+        )
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.suspicious))
+        self.assertNotEqual(
+            get_exam_attempt_by_id(attempt['id'])['status'],
+            ProctoredExamStudentAttemptStatus.verified
+        )
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
+
+        self.assertEqual(
+            get_exam_attempt_by_id(attempt['id'])['status'],
+            ProctoredExamStudentAttemptStatus.verified
+        )
+
+    @patch.dict('django.conf.settings.PROCTORING_SETTINGS', {'ALLOW_TIMED_OUT_STATE': True})
+    def test_passing_review_for_timed_out_attempt_is_verified(self):
+        """
+        With ALLOW_TIMED_OUT_STATE enabled a timed out attempt has no completion time,
+        but the learner did take the exam, so a passing review still verifies it.
+        """
+        attempt = self.create_attempt_with_status(ProctoredExamStudentAttemptStatus.started)
+        update_attempt_status(attempt['id'], ProctoredExamStudentAttemptStatus.timed_out)
+        timed_out_attempt = get_exam_attempt_by_id(attempt['id'])
+        self.assertEqual(timed_out_attempt['status'], ProctoredExamStudentAttemptStatus.timed_out)
+        self.assertIsNone(timed_out_attempt['completed_at'])
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
+
+        self.assertEqual(
+            get_exam_attempt_by_id(attempt['id'])['status'],
+            ProctoredExamStudentAttemptStatus.verified
+        )

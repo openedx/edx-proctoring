@@ -168,17 +168,17 @@ def _was_attempt_submitted(attempt):
     Returns whether the learner actually finished the attempt, i.e. whether it ever
     reached a submitted state.
 
-    An attempt that is still in an incomplete status (``created`` through
-    ``ready_to_submit``) was never submitted. Neither was an attempt that landed in
-    ``error`` without ever being completed, which is what happens when the proctoring
-    session drops before the learner clicks "Start Exam".
+    ``completed_at`` is set whenever an attempt transitions to ``submitted`` (including
+    a timeout treated as a submission) and is kept through any later status change, so
+    it is the reliable signal. The status alone is not: an unsubmitted attempt can reach
+    ``error``, ``rejected`` or ``second_review_required`` (for example from an earlier
+    failing review) without ever being completed. The one exception is ``timed_out``
+    when ``ALLOW_TIMED_OUT_STATE`` is enabled, which ends the exam without setting
+    ``completed_at``.
     """
-    status = attempt['status']
-    if ProctoredExamStudentAttemptStatus.is_incomplete_status(status):
-        return False
-    if status == ProctoredExamStudentAttemptStatus.error and not attempt['completed_at']:
-        return False
-    return True
+    if attempt['completed_at']:
+        return True
+    return attempt['status'] == ProctoredExamStudentAttemptStatus.timed_out
 
 
 @receiver(post_save, sender=models.ProctoredExamSoftwareSecureReview)
