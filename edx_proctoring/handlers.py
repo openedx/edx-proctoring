@@ -165,24 +165,13 @@ def on_review_changed(sender, instance, signal, **kwargs):
 
 def _was_attempt_submitted(attempt_obj):
     """
-    Returns whether the learner actually finished the attempt, i.e. whether it ever
-    reached a submitted state.
-
-    ``completed_at`` is set whenever an attempt transitions to ``submitted`` (including
-    a timeout treated as a submission) and is kept through any later status change, so
-    it is the reliable signal. The current status is not: an unsubmitted attempt can
-    reach ``error``, ``rejected`` or ``second_review_required`` (for example from an
-    earlier failing review) without ever being completed.
-
-    The one exception is a timeout when ``ALLOW_TIMED_OUT_STATE`` is enabled, which ends
-    the exam without setting ``completed_at``. A later review moves the attempt out of
-    ``timed_out``, so look the timeout up in the attempt's history rather than relying
-    on the current status.
+    Returns whether the learner submitted the attempt. ``completed_at`` is set on every
+    submission and kept through later status changes. A timeout with ``ALLOW_TIMED_OUT_STATE``
+    enabled leaves it unset, and a later review moves the status on, so check the history.
     """
     if attempt_obj.completed_at:
         return True
-    timed_out = ProctoredExamStudentAttemptStatus.timed_out
-    return attempt_obj.history.filter(status=timed_out).exists()  # pylint: disable=no-member
+    return attempt_obj.history.filter(status=ProctoredExamStudentAttemptStatus.timed_out).exists()
 
 
 @receiver(post_save, sender=models.ProctoredExamSoftwareSecureReview)
@@ -195,52 +184,15 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
     attempt = api.ProctoredExamStudentAttemptSerializer(attempt_obj).data
     backend = get_backend_provider(attempt['proctored_exam'])
 
-    if is_archived:
-        # we could have gotten a review for an archived attempt
-        # this should *not* cause an update in our credit
-        # eligibility table
-        attempt_status = None
-    elif attempt['status'] == ProctoredExamStudentAttemptStatus.onboarding_reset:
-        # The attempt was reset, so the learner is expected to onboard again on a new
-        # attempt. A review that arrives late for the reset attempt must not revive it,
-        # whatever its outcome.
-        log.info(
-            ('Received a review (review_status=%(review_status)s) for attempt_id=%(attempt_id)s '
-             'with attempt_code=%(attempt_code)s, but the attempt has been reset. '
-             'Leaving its status unchanged. user_id=%(user_id)s, exam_id=%(exam_id)s, '
-             'course_id=%(course_id)s'),
-            {
-                'review_status': review.review_status,
-                'attempt_id': attempt['id'],
-                'attempt_code': review.attempt_code,
-                'user_id': attempt['user']['id'],
-                'exam_id': attempt['proctored_exam']['id'],
-                'course_id': attempt['proctored_exam']['course_id'],
-            }
-        )
+    if is_archived or attempt['status'] == ProctoredExamStudentAttemptStatus.onboarding_reset:
+        # archived and reset attempts must not be revived or update credit eligibility
         attempt_status = None
     elif review.is_passing and not _was_attempt_submitted(attempt_obj):
-        # The proctoring provider passed the session (for example the face and ID scans
-        # were valid) but the learner never submitted the exam, typically because the
-        # proctoring session ended while the attempt was still ``ready_to_start``.
-        # Marking the attempt ``verified`` would tell the learner and the course team
-        # that the exam was completed when it was not, so record an error instead. The
-        # learner can then retry the exam, or staff can resume or reset the attempt.
+        # the provider passed the session but the learner never submitted, so don't verify it
         log.warning(
-            ('Received a passing review (review_status=%(review_status)s) for '
-             'attempt_id=%(attempt_id)s with attempt_code=%(attempt_code)s, but the attempt '
-             'was never submitted (status=%(status)s). Marking the attempt as "error" '
-             'instead of "verified". user_id=%(user_id)s, exam_id=%(exam_id)s, '
-             'course_id=%(course_id)s'),
-            {
-                'review_status': review.review_status,
-                'attempt_id': attempt['id'],
-                'attempt_code': review.attempt_code,
-                'status': attempt['status'],
-                'user_id': attempt['user']['id'],
-                'exam_id': attempt['proctored_exam']['id'],
-                'course_id': attempt['proctored_exam']['course_id'],
-            }
+            'Passing review (review_status=%(review_status)s) for never-submitted '
+            'attempt_id=%(attempt_id)s (status=%(status)s). Marking it as "error".',
+            {'review_status': review.review_status, 'attempt_id': attempt['id'], 'status': attempt['status']}
         )
         attempt_status = ProctoredExamStudentAttemptStatus.error
     elif review.is_passing:
