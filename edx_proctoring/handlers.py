@@ -163,6 +163,24 @@ def on_review_changed(sender, instance, signal, **kwargs):
     models.archive_model(models.ProctoredExamSoftwareSecureReviewHistory, instance, id='review_id')
 
 
+def _was_attempt_submitted(attempt):
+    """
+    Returns whether the learner actually finished the attempt, i.e. whether it ever
+    reached a submitted state.
+
+    An attempt that is still in an incomplete status (``created`` through
+    ``ready_to_submit``) was never submitted. Neither was an attempt that landed in
+    ``error`` without ever being completed, which is what happens when the proctoring
+    session drops before the learner clicks "Start Exam".
+    """
+    status = attempt['status']
+    if ProctoredExamStudentAttemptStatus.is_incomplete_status(status):
+        return False
+    if status == ProctoredExamStudentAttemptStatus.error and not attempt['completed_at']:
+        return False
+    return True
+
+
 @receiver(post_save, sender=models.ProctoredExamSoftwareSecureReview)
 def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disable=unused-argument
     """
@@ -173,10 +191,55 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
     attempt = api.ProctoredExamStudentAttemptSerializer(attempt_obj).data
     backend = get_backend_provider(attempt['proctored_exam'])
 
-    # we could have gotten a review for an archived attempt
-    # this should *not* cause an update in our credit
-    # eligibility table
-    if review.is_passing:
+    if is_archived:
+        # we could have gotten a review for an archived attempt
+        # this should *not* cause an update in our credit
+        # eligibility table
+        attempt_status = None
+    elif attempt['status'] == ProctoredExamStudentAttemptStatus.onboarding_reset:
+        # The attempt was reset, so the learner is expected to onboard again on a new
+        # attempt. A review that arrives late for the reset attempt must not revive it,
+        # whatever its outcome.
+        log.info(
+            ('Received a review (review_status=%(review_status)s) for attempt_id=%(attempt_id)s '
+             'with attempt_code=%(attempt_code)s, but the attempt has been reset. '
+             'Leaving its status unchanged. user_id=%(user_id)s, exam_id=%(exam_id)s, '
+             'course_id=%(course_id)s'),
+            {
+                'review_status': review.review_status,
+                'attempt_id': attempt['id'],
+                'attempt_code': review.attempt_code,
+                'user_id': attempt['user']['id'],
+                'exam_id': attempt['proctored_exam']['id'],
+                'course_id': attempt['proctored_exam']['course_id'],
+            }
+        )
+        attempt_status = None
+    elif review.is_passing and not _was_attempt_submitted(attempt):
+        # The proctoring provider passed the session (for example the face and ID scans
+        # were valid) but the learner never submitted the exam, typically because the
+        # proctoring session ended while the attempt was still ``ready_to_start``.
+        # Marking the attempt ``verified`` would tell the learner and the course team
+        # that the exam was completed when it was not, so record an error instead. The
+        # learner can then retry the exam, or staff can resume or reset the attempt.
+        log.warning(
+            ('Received a passing review (review_status=%(review_status)s) for '
+             'attempt_id=%(attempt_id)s with attempt_code=%(attempt_code)s, but the attempt '
+             'was never submitted (status=%(status)s). Marking the attempt as "error" '
+             'instead of "verified". user_id=%(user_id)s, exam_id=%(exam_id)s, '
+             'course_id=%(course_id)s'),
+            {
+                'review_status': review.review_status,
+                'attempt_id': attempt['id'],
+                'attempt_code': review.attempt_code,
+                'status': attempt['status'],
+                'user_id': attempt['user']['id'],
+                'exam_id': attempt['proctored_exam']['id'],
+                'course_id': attempt['proctored_exam']['course_id'],
+            }
+        )
+        attempt_status = ProctoredExamStudentAttemptStatus.error
+    elif review.is_passing:
         attempt_status = ProctoredExamStudentAttemptStatus.verified
     elif review.review_status == SoftwareSecureReviewStatus.not_reviewed:
         attempt_status = ProctoredExamStudentAttemptStatus.error
@@ -191,10 +254,10 @@ def finish_review_workflow(sender, instance, signal, **kwargs):  # pylint: disab
         # code path, then put status into 'second_review_required'
         attempt_status = ProctoredExamStudentAttemptStatus.second_review_required
 
-    if not is_archived:
+    if attempt_status:
         # updating attempt status will trigger workflow
         # (i.e. updating credit eligibility table)
-        # archived attempts should not trigger the workflow
+        # archived and reset attempts should not trigger the workflow
         api.update_attempt_status(
             attempt['id'],
             attempt_status,

@@ -14,7 +14,14 @@ from django.test import RequestFactory
 from django.urls import reverse
 
 from edx_proctoring import constants
-from edx_proctoring.api import create_exam, create_exam_attempt, get_exam_attempt_by_id, remove_exam_attempt
+from edx_proctoring.api import (
+    create_exam,
+    create_exam_attempt,
+    get_exam_attempt_by_id,
+    remove_exam_attempt,
+    reset_practice_exam,
+    update_attempt_status
+)
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.backends.software_secure import SoftwareSecureBackendProvider
 from edx_proctoring.backends.tests.test_review_payload import create_test_review_payload
@@ -71,11 +78,53 @@ class ReviewTests(LoggedInTestCase):
         set_runtime_service('certificates', MockCertificateService())
         set_current_request(self.dummy_request)
 
+        # a review normally arrives after the learner has submitted the attempt
+        update_attempt_status(self.attempt_id, ProctoredExamStudentAttemptStatus.started)
+        update_attempt_status(self.attempt_id, ProctoredExamStudentAttemptStatus.submitted)
+        self.attempt = get_exam_attempt_by_id(self.attempt_id)
+
     def tearDown(self):
         super().tearDown()
         set_runtime_service('credit', None)
         set_runtime_service('grades', None)
         set_runtime_service('certificates', None)
+
+    def create_attempt_with_status(self, status, is_practice_exam=False):
+        """
+        Creates a new exam and attempt, and walks the attempt through the normal
+        status progression until it reaches ``status``. Returns the serialized attempt.
+        """
+        exam_creation_params = self.exam_creation_params.copy()
+        exam_creation_params.update({
+            'content_id': f'content_{status}',
+            'is_practice_exam': is_practice_exam,
+        })
+        exam_id = create_exam(**exam_creation_params)
+        attempt_id = create_exam_attempt(exam_id, self.user.id, taking_as_proctored=True)
+
+        progression = [
+            ProctoredExamStudentAttemptStatus.created,
+            ProctoredExamStudentAttemptStatus.download_software_clicked,
+            ProctoredExamStudentAttemptStatus.ready_to_start,
+            ProctoredExamStudentAttemptStatus.started,
+            ProctoredExamStudentAttemptStatus.ready_to_submit,
+            ProctoredExamStudentAttemptStatus.submitted,
+        ]
+        for next_status in progression[1:progression.index(status) + 1]:
+            update_attempt_status(attempt_id, next_status)
+        return get_exam_attempt_by_id(attempt_id)
+
+    def get_credit_requirement_status(self, content_id):
+        """
+        Returns the credit requirement status recorded for the given exam content_id
+        """
+        credit_state = get_runtime_service('credit').get_credit_state(self.user.id, 'foo/bar/baz')
+        statuses = [
+            requirement['status']
+            for requirement in credit_state['credit_requirement_status']
+            if requirement['name'] == content_id
+        ]
+        return statuses[0] if statuses else None
 
     def get_review_payload(self, status=ReviewStatus.passed, **kwargs):
         """
@@ -596,3 +645,111 @@ class ReviewTests(LoggedInTestCase):
 
         # check that update_attempt_status has not been called, as the attempt has been archived
         mock_update_status.assert_not_called()
+
+    @ddt.data(
+        ProctoredExamStudentAttemptStatus.created,
+        ProctoredExamStudentAttemptStatus.download_software_clicked,
+        ProctoredExamStudentAttemptStatus.ready_to_start,
+        ProctoredExamStudentAttemptStatus.started,
+        ProctoredExamStudentAttemptStatus.ready_to_submit,
+    )
+    def test_passing_review_for_unsubmitted_attempt_is_an_error(self, status):
+        """
+        A passing review for an attempt the learner never submitted, e.g. because the
+        proctoring session ended before they clicked "Start Exam", must put the attempt
+        into an error state instead of verifying it.
+        """
+        attempt = self.create_attempt_with_status(status)
+        self.assertIsNone(attempt['completed_at'])
+
+        with patch('edx_proctoring.handlers.log.warning') as mock_warning:
+            ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
+
+        updated_attempt = get_exam_attempt_by_id(attempt['id'])
+        self.assertEqual(updated_attempt['status'], ProctoredExamStudentAttemptStatus.error)
+        self.assertIsNone(updated_attempt['completed_at'])
+        self.assertEqual(
+            self.get_credit_requirement_status(attempt['proctored_exam']['content_id']),
+            'failed'
+        )
+
+        # the provider's review is still recorded so that staff can see what was received
+        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
+        self.assertEqual(review.review_status, SoftwareSecureReviewStatus.clean)
+
+        mock_warning.assert_called_once()
+        self.assertIn('was never submitted', mock_warning.call_args[0][0])
+        self.assertEqual(mock_warning.call_args[0][1]['status'], status)
+
+    def test_passing_review_for_unsubmitted_attempt_in_error_stays_in_error(self):
+        """
+        A passing review for an attempt that already errored before the learner submitted
+        it must not verify the attempt.
+        """
+        attempt = self.create_attempt_with_status(ProctoredExamStudentAttemptStatus.ready_to_start)
+        update_attempt_status(attempt['id'], ProctoredExamStudentAttemptStatus.error)
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
+
+        updated_attempt = get_exam_attempt_by_id(attempt['id'])
+        self.assertEqual(updated_attempt['status'], ProctoredExamStudentAttemptStatus.error)
+
+    def test_passing_review_for_submitted_attempt_in_error_is_verified(self):
+        """
+        An attempt that was submitted and later marked as errored can still be verified
+        by a passing review.
+        """
+        attempt = self.create_attempt_with_status(ProctoredExamStudentAttemptStatus.submitted)
+        update_attempt_status(attempt['id'], ProctoredExamStudentAttemptStatus.error)
+        self.assertIsNotNone(get_exam_attempt_by_id(attempt['id'])['completed_at'])
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
+
+        updated_attempt = get_exam_attempt_by_id(attempt['id'])
+        self.assertEqual(updated_attempt['status'], ProctoredExamStudentAttemptStatus.verified)
+
+    def test_passing_review_for_unsubmitted_onboarding_attempt_is_an_error(self):
+        """
+        An onboarding attempt whose proctoring session ended before the learner started the
+        exam must not be verified by the provider's passing review.
+        """
+        attempt = self.create_attempt_with_status(
+            ProctoredExamStudentAttemptStatus.ready_to_start,
+            is_practice_exam=True,
+        )
+        self.assertTrue(attempt['is_sample_attempt'])
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
+
+        updated_attempt = get_exam_attempt_by_id(attempt['id'])
+        self.assertEqual(updated_attempt['status'], ProctoredExamStudentAttemptStatus.error)
+        self.assertIsNone(updated_attempt['started_at'])
+        self.assertIsNone(updated_attempt['completed_at'])
+
+    @ddt.data(ReviewStatus.passed, ReviewStatus.suspicious, ReviewStatus.not_reviewed)
+    def test_review_for_reset_onboarding_attempt_does_not_change_status(self, review_status):
+        """
+        A review that arrives after an onboarding attempt has been reset must not revive
+        the reset attempt, whatever the outcome of the review.
+        """
+        attempt = self.create_attempt_with_status(
+            ProctoredExamStudentAttemptStatus.ready_to_start,
+            is_practice_exam=True,
+        )
+        update_attempt_status(attempt['id'], ProctoredExamStudentAttemptStatus.error)
+        reset_practice_exam(attempt['proctored_exam']['id'], self.user.id, requesting_user=self.user)
+        self.assertEqual(
+            get_exam_attempt_by_id(attempt['id'])['status'],
+            ProctoredExamStudentAttemptStatus.onboarding_reset
+        )
+
+        with patch('edx_proctoring.api.update_attempt_status') as mock_update_status:
+            ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(review_status))
+
+        mock_update_status.assert_not_called()
+        self.assertEqual(
+            get_exam_attempt_by_id(attempt['id'])['status'],
+            ProctoredExamStudentAttemptStatus.onboarding_reset
+        )
+        review = ProctoredExamSoftwareSecureReview.get_review_by_attempt_code(attempt['attempt_code'])
+        self.assertEqual(review.review_status, SoftwareSecureReviewStatus.from_standard_status[review_status])
