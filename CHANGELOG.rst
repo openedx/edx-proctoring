@@ -23,6 +23,16 @@ Unreleased
   instead, so the learner is told to retry and staff can see the exam was not completed.
 * A review that arrives for an attempt that has since been reset (``onboarding_reset``)
   no longer changes that attempt's status.
+* A timeout treated as a submission (``ALLOW_TIMED_OUT_STATE`` off) now always records
+  ``completed_at``, falling back to the current time when no timeout timestamp is passed,
+  as ``mark_exam_attempt_timeout`` does. As with any other submission, this also marks
+  the exam complete in the completion service.
+* **Existing data:** attempts that are already ``verified`` but have no ``completed_at``
+  (they were verified without being submitted) move to ``error`` the next time their
+  review is processed, whether by a re-delivered passing review or by the
+  ``update_attempt_status_from_review`` management command, and their credit
+  requirement changes to ``failed``. Run that command over a review date range to apply
+  this to existing attempts on purpose.
 
 [6.1.1] - 2026-10-14
 ~~~~~~~~~~~~~~~~~~~~

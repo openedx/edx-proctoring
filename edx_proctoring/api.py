@@ -1474,7 +1474,7 @@ def update_attempt_status(attempt_id, to_status,
         exam_attempt_obj.allowed_time_limit_mins = _calculate_allowed_mins(exam, exam_attempt_obj.user_id)
 
     elif treat_timeout_as_submitted:
-        exam_attempt_obj.completed_at = timeout_timestamp
+        exam_attempt_obj.completed_at = timeout_timestamp or datetime.now(pytz.UTC)
     elif to_status == ProctoredExamStudentAttemptStatus.submitted:
         # likewise, when we transition to submitted mark
         # when the exam has been completed

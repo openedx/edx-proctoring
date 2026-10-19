@@ -18,6 +18,7 @@ from edx_proctoring.api import (
     create_exam,
     create_exam_attempt,
     get_exam_attempt_by_id,
+    mark_exam_attempt_timeout,
     remove_exam_attempt,
     reset_practice_exam,
     update_attempt_status
@@ -807,3 +808,38 @@ class ReviewTests(LoggedInTestCase):
             get_exam_attempt_by_id(attempt['id'])['status'],
             ProctoredExamStudentAttemptStatus.verified
         )
+
+    @ddt.data(
+        # a repeated passing review
+        (ReviewStatus.passed, ProctoredExamStudentAttemptStatus.verified),
+        # a suspicious review later corrected to a passing one
+        (ReviewStatus.suspicious, ProctoredExamStudentAttemptStatus.second_review_required),
+    )
+    @ddt.unpack
+    @patch('edx_proctoring.constants.ALLOW_REVIEW_UPDATES', True)
+    @patch('edx_proctoring.constants.REQUIRE_FAILURE_SECOND_REVIEWS', True)
+    def test_passing_review_for_attempt_timed_out_as_submitted_is_verified(
+        self, first_review_status, status_after_first_review
+    ):
+        """
+        With ALLOW_TIMED_OUT_STATE off, mark_exam_attempt_timeout submits the attempt
+        without a timeout timestamp. A passing review must still verify it, including
+        after an earlier review.
+        """
+        attempt = self.create_attempt_with_status(ProctoredExamStudentAttemptStatus.started)
+        mark_exam_attempt_timeout(attempt['id'])
+        self.assertEqual(
+            get_exam_attempt_by_id(attempt['id'])['status'],
+            ProctoredExamStudentAttemptStatus.submitted
+        )
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(first_review_status))
+        self.assertEqual(get_exam_attempt_by_id(attempt['id'])['status'], status_after_first_review)
+
+        ProctoredExamReviewCallback().make_review(attempt, self.get_review_payload(ReviewStatus.passed))
+
+        self.assertEqual(
+            get_exam_attempt_by_id(attempt['id'])['status'],
+            ProctoredExamStudentAttemptStatus.verified
+        )
+
