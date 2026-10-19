@@ -1931,7 +1931,7 @@ def _remove_exam_attempt_from_backend(attempt):
         if not backend:
             return
         result = backend.remove_exam_attempt(exam.external_id, attempt.external_id)
-    except Exception as exc:  # pylint: disable=broad-exception-caught
+    except Exception as exc:
         log.exception(
             'Failed to remove attempt_id=%(attempt_id)s (external_id=%(external_id)s) for '
             'exam_id=%(exam_id)s user_id=%(user_id)s from backend=%(backend)s due to a provider error.',

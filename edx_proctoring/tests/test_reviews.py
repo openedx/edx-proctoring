@@ -842,4 +842,3 @@ class ReviewTests(LoggedInTestCase):
             get_exam_attempt_by_id(attempt['id'])['status'],
             ProctoredExamStudentAttemptStatus.verified
         )
-
