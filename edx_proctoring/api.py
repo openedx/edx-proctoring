@@ -1474,7 +1474,7 @@ def update_attempt_status(attempt_id, to_status,
         exam_attempt_obj.allowed_time_limit_mins = _calculate_allowed_mins(exam, exam_attempt_obj.user_id)
 
     elif treat_timeout_as_submitted:
-        exam_attempt_obj.completed_at = timeout_timestamp
+        exam_attempt_obj.completed_at = timeout_timestamp or datetime.now(pytz.UTC)
     elif to_status == ProctoredExamStudentAttemptStatus.submitted:
         # likewise, when we transition to submitted mark
         # when the exam has been completed
@@ -1931,7 +1931,7 @@ def _remove_exam_attempt_from_backend(attempt):
         if not backend:
             return
         result = backend.remove_exam_attempt(exam.external_id, attempt.external_id)
-    except Exception as exc:  # pylint: disable=broad-exception-caught
+    except Exception as exc:
         log.exception(
             'Failed to remove attempt_id=%(attempt_id)s (external_id=%(external_id)s) for '
             'exam_id=%(exam_id)s user_id=%(user_id)s from backend=%(backend)s due to a provider error.',

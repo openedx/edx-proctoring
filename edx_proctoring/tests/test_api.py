@@ -1492,6 +1492,11 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
         )
         self.assertEqual(proctored_exam_student_attempt.id, proctored_exam_attempt_id)
 
+        # with ALLOW_TIMED_OUT_STATE off the timeout is a submission, so it is marked completed
+        timed_out_attempt = get_exam_attempt_by_id(proctored_exam_attempt_id)
+        self.assertEqual(timed_out_attempt['status'], ProctoredExamStudentAttemptStatus.submitted)
+        self.assertIsNotNone(timed_out_attempt['completed_at'])
+
     def test_mark_exam_attempt_as_ready(self):
         """
         Tests the mark exam as timed out
