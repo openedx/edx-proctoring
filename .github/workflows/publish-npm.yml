@@ -7,10 +7,13 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # v1.2.0
+      - uses: actions/checkout@v4
       - name: Setup node
-        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1.4.6
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           registry-url: 'https://registry.npmjs.org'
@@ -19,6 +22,6 @@ jobs:
         run: npm ci
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.SEMANTIC_RELEASE_NPM_TOKEN }}
