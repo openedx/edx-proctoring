@@ -16,7 +16,7 @@ billiard==4.2.4
     # via celery
 celery==5.6.2
     # via
-    #   -c requirements/constraints.txt
+    #   -c constraints.txt
     #   event-tracking
 certifi==2026.10.19
     # via requests
@@ -28,7 +28,7 @@ charset-normalizer==3.4.5
     # via requests
 click==8.3.1
     # via
-    #   -c requirements/constraints.txt
+    #   -c constraints.txt
     #   celery
     #   click-didyoumean
     #   click-plugins
@@ -47,8 +47,8 @@ cryptography==46.0.5
     # via pyjwt
 django==5.2.12
     # via
-    #   -c requirements/common_constraints.txt
-    #   -r requirements/base.in
+    #   -c common_constraints.txt
+    #   -r base.in
     #   django-crum
     #   django-model-utils
     #   django-simple-history
@@ -64,30 +64,30 @@ django==5.2.12
     #   openedx-events
 django-crum==0.7.9
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-django-utils
     #   edx-toggles
 django-ipware==7.0.1
-    # via -r requirements/base.in
+    # via -r base.in
 django-model-utils==5.0.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-when
 django-simple-history==3.11.0
-    # via -r requirements/base.in
+    # via -r base.in
 django-waffle==5.0.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-django-utils
     #   edx-drf-extensions
     #   edx-toggles
 django-webpack-loader==0.7.0
     # via
-    #   -c requirements/constraints.txt
-    #   -r requirements/base.in
+    #   -c constraints.txt
+    #   -r base.in
 djangorestframework==3.16.1
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   drf-jwt
     #   edx-drf-extensions
 dnspython==2.8.0
@@ -106,23 +106,23 @@ edx-django-utils==8.0.1
     #   openedx-events
 edx-drf-extensions==10.6.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-when
 edx-opaque-keys[django]==3.1.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   edx-ccx-keys
     #   edx-drf-extensions
     #   edx-when
     #   openedx-events
 edx-rest-api-client==6.2.0
-    # via -r requirements/base.in
+    # via -r base.in
 edx-toggles==5.4.1
     # via event-tracking
 edx-when==3.2.1
-    # via -r requirements/base.in
+    # via -r base.in
 event-tracking==3.3.0
-    # via -r requirements/base.in
+    # via -r base.in
 fastavro==1.12.1
     # via openedx-events
 fs==2.4.16
@@ -132,7 +132,7 @@ idna==3.11
 jinja2==3.1.6
     # via code-annotations
 jsonfield==3.2.0
-    # via -r requirements/base.in
+    # via -r base.in
 kombu==5.6.2
     # via celery
 lxml==6.0.2
@@ -155,14 +155,14 @@ psutil==7.2.2
 pycparser==3.0
     # via cffi
 pycryptodomex==3.23.0
-    # via -r requirements/base.in
+    # via -r base.in
 pyjwt[crypto]==2.12.0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   drf-jwt
     #   edx-drf-extensions
     #   edx-rest-api-client
-pymongo==4.16.0
+pymongo==4.18.3
     # via
     #   edx-opaque-keys
     #   event-tracking
@@ -170,7 +170,7 @@ pynacl==1.6.2
     # via edx-django-utils
 python-dateutil==2.9.0.post0
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   celery
     #   xblock
 python-ipware==3.0.0
@@ -179,7 +179,7 @@ python-slugify==8.0.4
     # via code-annotations
 pytz==2026.1.post1
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   event-tracking
     #   xblock
 pyyaml==6.0.3
@@ -191,7 +191,7 @@ requests==2.32.5
     #   edx-drf-extensions
     #   edx-rest-api-client
 rules==3.5
-    # via -r requirements/base.in
+    # via -r base.in
 semantic-version==2.10.0
     # via edx-drf-extensions
 simplejson==3.20.2
