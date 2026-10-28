@@ -20,7 +20,7 @@ chardet==7.1.0
     # via diff-cover
 click==8.3.1
     # via
-    #   -c requirements/constraints.txt
+    #   -c constraints.txt
     #   click-log
     #   code-annotations
     #   edx-lint
@@ -32,25 +32,25 @@ code-annotations==2.3.2
 colorama==0.4.6
     # via tox
 diff-cover==10.2.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 dill==0.4.1
     # via pylint
 distlib==0.4.0
     # via virtualenv
 django==5.2.12
     # via
-    #   -c requirements/common_constraints.txt
-    #   -r requirements/dev.in
-    #   -r requirements/quality.in
+    #   -c common_constraints.txt
+    #   -r dev.in
+    #   -r quality.in
     #   edx-i18n-tools
 docutils==0.22.4
     # via rstcheck-core
 edx-i18n-tools==2.0.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 edx-lint==6.0.0
     # via
-    #   -r requirements/dev.in
-    #   -r requirements/quality.in
+    #   -r dev.in
+    #   -r quality.in
 filelock==3.25.2
     # via
     #   python-discovery
@@ -58,7 +58,7 @@ filelock==3.25.2
     #   virtualenv
 isort==8.0.1
     # via
-    #   -r requirements/quality.in
+    #   -r quality.in
     #   pylint
 jinja2==3.1.6
     # via
@@ -88,7 +88,7 @@ path==16.16.0
     #   edx-i18n-tools
     #   path-py
 path-py==12.5.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 platformdirs==4.9.4
     # via
     #   pylint
@@ -102,18 +102,18 @@ pluggy==1.6.0
 polib==1.2.0
     # via edx-i18n-tools
 pycodestyle==2.14.0
-    # via -r requirements/quality.in
+    # via -r quality.in
 pydantic==2.12.5
     # via rstcheck-core
 pydantic-core==2.41.5
     # via pydantic
 pydocstyle==6.3.0
-    # via -r requirements/quality.in
+    # via -r quality.in
 pygments==2.19.2
     # via
     #   diff-cover
     #   rich
-pylint==4.0.5
+pylint==4.0.9
     # via
     #   edx-lint
     #   pylint-celery
@@ -140,7 +140,7 @@ pyyaml==6.0.3
 rich==14.3.3
     # via typer
 rstcheck==6.2.5
-    # via -r requirements/quality.in
+    # via -r quality.in
 rstcheck-core==1.2.2
     # via rstcheck
 shellingham==1.5.4
@@ -160,7 +160,7 @@ tomli-w==1.2.0
 tomlkit==0.14.0
     # via pylint
 tox==4.49.1
-    # via -r requirements/dev.in
+    # via -r dev.in
 typer==0.24.1
     # via rstcheck
 typing-extensions==4.15.0
@@ -173,4 +173,4 @@ typing-inspection==0.4.2
 virtualenv==21.2.0
     # via tox
 wheel==0.46.3
-    # via -r requirements/dev.in
+    # via -r dev.in
