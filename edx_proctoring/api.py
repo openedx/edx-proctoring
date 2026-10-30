@@ -156,7 +156,7 @@ def get_proctoring_settings_by_exam_id(exam_id):
             'provider_tech_support_phone': provider.tech_support_phone,
             'provider_name': provider.verbose_name,
             'learner_notification_from_email': provider.learner_notification_from_email,
-            'integration_specific_email': get_integration_specific_email(provider),
+            'integration_specific_email': get_integration_specific_email(provider, exam['course_id']),
             'proctoring_escalation_email': _get_proctoring_escalation_email(exam['course_id']),
         })
     return proctoring_settings_data
@@ -2749,7 +2749,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         'provider_tech_support_phone': provider.tech_support_phone,
         'provider_name': provider.verbose_name,
         'learner_notification_from_email': provider.learner_notification_from_email,
-        'integration_specific_email': get_integration_specific_email(provider),
+        'integration_specific_email': get_integration_specific_email(provider, exam['course_id']),
         'exam_display_name': exam['exam_name'],
         'reset_link': password_url,
         'ping_interval': provider.ping_interval,
@@ -3199,10 +3199,17 @@ def get_exam_configuration_dashboard_url(course_id, content_id):
     return None
 
 
-def get_integration_specific_email(provider):
+def get_integration_specific_email(provider, course_id=None):
     """
-    Return the edX contact email to use for a particular provider.
+    Return the contact email to use for a particular provider.
+
+    If ``course_id`` is given and the course has a proctoring escalation email,
+    return that, so learners contact the course team.
     """
+    if course_id:
+        proctoring_escalation_email = _get_proctoring_escalation_email(course_id)
+        if proctoring_escalation_email:
+            return proctoring_escalation_email
     return getattr(provider, 'integration_specific_email', None) or constants.DEFAULT_CONTACT_EMAIL
 
 
