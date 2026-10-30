@@ -39,9 +39,13 @@ For authoring documentation, see `Including Proctored Exams In Your Course`_.
 Installation
 ------------
 
-To install edx-proctoring:
+To install edx-proctoring (requires `uv <https://docs.astral.sh/uv/>`_), create and activate the
+project virtualenv at ``.venv``, then install. ``uv sync`` ignores any other active virtualenv, so run
+the ``make`` commands below with ``.venv`` activated:
 
-    mkvirtualenv edx-proctoring
+    uv venv
+
+    source .venv/bin/activate
 
     make install
 
