@@ -14,6 +14,16 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+[6.2.0] - 2026-10-30
+~~~~~~~~~~~~~~~~~~~~
+
+* When a course has a proctoring escalation email, the onboarding pages and the
+  onboarding error pages now ask learners to contact that address. Before, they always
+  showed the provider's ``integration_specific_email`` or the site-wide ``CONTACT_EMAIL``,
+  even though the proctored exam error page and the review result emails already used
+  the course's escalation email. ``integration_specific_email`` in the proctoring
+  settings API changes the same way.
+
 [6.1.2] - 2026-10-16
 ~~~~~~~~~~~~~~~~~~~~
 
