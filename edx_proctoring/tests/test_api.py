@@ -3119,14 +3119,14 @@ class ProctoredExamApiTests(ProctoredExamTestCase):
     def test_get_integration_specific_email_prefers_course_escalation_email(self):
         """Test that a course's proctoring escalation email is returned when the course has one."""
         test_backend = get_backend_provider(name='test')
-        test_backend.integration_specific_email = 'edx@example.com'
         instructor_service = get_runtime_service('instructor')
 
-        assert get_integration_specific_email(test_backend, self.course_id) == 'edx@example.com'
+        with patch.object(test_backend, 'integration_specific_email', 'edx@example.com', create=True):
+            assert get_integration_specific_email(test_backend, self.course_id) == 'edx@example.com'
 
-        instructor_service.mock_proctoring_escalation_email('course-team@example.com')
-        assert get_integration_specific_email(test_backend, self.course_id) == 'course-team@example.com'
-        assert get_integration_specific_email(test_backend) == 'edx@example.com'
+            instructor_service.mock_proctoring_escalation_email('course-team@example.com')
+            assert get_integration_specific_email(test_backend, self.course_id) == 'course-team@example.com'
+            assert get_integration_specific_email(test_backend) == 'edx@example.com'
 
     def test_get_enrollments_can_take_proctored_exams(self):
         enrollments = [
