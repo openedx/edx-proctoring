@@ -68,7 +68,7 @@ and a desktop application.  Messages are emitted when the exam content is starte
 Additionally a ping message will poll at a configurable interval. Successful callback responses
 are required for each of these messages to keep the exam from entering an error state.
 
-Message Interface: `exam_action_handler.js <https://github.com/openedx/edx-proctoring/blob/master/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
+Message Interface: `exam_action_handler.js <https://github.com/openedx/edx-proctoring/blob/master/src/edx_proctoring/static/proctoring/js/exam_action_handler.js>`_
 
 
 Exam States

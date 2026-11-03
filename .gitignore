@@ -67,3 +67,4 @@ proctoring-env
 
 # Output of pii annotations checker
 pii_report
+dist/

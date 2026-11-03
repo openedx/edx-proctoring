@@ -1,4 +1,4 @@
-source_path: ./edx_proctoring
+source_path: ./src/edx_proctoring
 report_path: pii_report
 safelist_path: .annotation_safe_list.yml
 coverage_target: 100.0

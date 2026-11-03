@@ -1,8 +1,0 @@
-[run]
-branch = True
-parallel = True
-source = edx_proctoring
-omit =
-    */migrations/*
-    edx_proctoring/settings/*
-    edx_proctoring/admin.py
