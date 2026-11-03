@@ -2273,24 +2273,16 @@ class UserRetirement(AuthenticatedAPIView):
         for attempt in attempts:
             attempt_code = attempt['attempt_code']
 
-            # Retire reviews and review history.
+            # Retire reviews and review history. Use queryset updates rather than saving each review so the
+            # review save signals don't fire: they archive the un-retired review into history and re-run the
+            # review workflow (attempt status, credit, grades, events), and that workflow fails for reviews
+            # whose exam backend is no longer configured (e.g. legacy software_secure reviews).
             reviews = ProctoredExamSoftwareSecureReview.objects.filter(attempt_code=attempt_code)
-            for review in reviews:
-                review.encrypted_video_url = b''
-                review.raw_data = ''
+            reviews.update(encrypted_video_url=b'', raw_data='')
 
-                # Because we have handlers that rely on the pre_save and post_save signals, we cannot do a bulk update
-                # and must save each review one-by-one.
-                review.save()
-
-            review_history = ProctoredExamSoftwareSecureReviewHistory.objects.filter(attempt_code=attempt_code)
-            for review in review_history:
-                review.encrypted_video_url = b''
-                review.raw_data = ''
-
-                # Because we have handlers that rely on the pre_save and post_save signals, we cannot do a bulk update
-                # and must save each review one-by-one.
-                review.save()
+            ProctoredExamSoftwareSecureReviewHistory.objects.filter(
+                attempt_code=attempt_code
+            ).update(encrypted_video_url=b'', raw_data='')
 
             # Retire comments.
             comments_to_update = []

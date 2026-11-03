@@ -6378,6 +6378,36 @@ class TestUserRetirement(LoggedInTestCase):
             assert comment.comment == 'comment'
             assert comment.status == 'status'
 
+    @patch('edx_proctoring.api.can_update_credit_grades_and_email')
+    def test_retire_review_for_unconfigured_backend(self, can_update_credit_grades_and_email_mock):
+        """
+        Retiring a user with a review for an exam whose backend is no longer configured
+        (e.g. legacy software_secure reviews) should still succeed and should not archive
+        the un-retired review into history
+        """
+        can_update_credit_grades_and_email_mock.return_value = False
+
+        proctored_exam = self._create_proctored_exam()
+        attempt_id = create_exam_attempt(proctored_exam.id, self.user_to_retire.id, taking_as_proctored=True)
+        attempt = ProctoredExamStudentAttempt.objects.get_exam_attempt_by_id(attempt_id)
+        review = ProctoredExamSoftwareSecureReviewFactory(attempt_code=attempt.attempt_code, exam=proctored_exam)
+        history_count = ProctoredExamSoftwareSecureReviewHistory.objects.filter(
+            attempt_code=attempt.attempt_code
+        ).count()
+
+        # The exam's backend has since been removed from PROCTORING_BACKENDS
+        ProctoredExam.objects.filter(id=proctored_exam.id).update(backend='unconfigured_backend')
+
+        response = self.client.post(self.deletion_url)
+        assert response.status_code == 204
+
+        review.refresh_from_db()
+        assert review.raw_data == ''
+        assert review.encrypted_video_url == b''
+        assert ProctoredExamSoftwareSecureReviewHistory.objects.filter(
+            attempt_code=attempt.attempt_code
+        ).count() == history_count
+
 
 @ddt.ddt
 class TestResetAttemptsView(LoggedInTestCase):
