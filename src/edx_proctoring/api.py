@@ -150,14 +150,15 @@ def get_proctoring_settings_by_exam_id(exam_id):
         except NotImplementedError as error:
             log.exception(str(error))
             raise BackendProviderNotConfigured(str(error)) from error
+        proctoring_escalation_email = _get_proctoring_escalation_email(exam['course_id'])
         proctoring_settings_data.update({
             'exam_proctoring_backend': provider.get_proctoring_config(),
             'provider_tech_support_email': provider.tech_support_email,
             'provider_tech_support_phone': provider.tech_support_phone,
             'provider_name': provider.verbose_name,
             'learner_notification_from_email': provider.learner_notification_from_email,
-            'integration_specific_email': get_integration_specific_email(provider),
-            'proctoring_escalation_email': _get_proctoring_escalation_email(exam['course_id']),
+            'integration_specific_email': proctoring_escalation_email or get_integration_specific_email(provider),
+            'proctoring_escalation_email': proctoring_escalation_email,
         })
     return proctoring_settings_data
 
@@ -2717,6 +2718,7 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         )
 
     provider = get_backend_provider(exam)
+    proctoring_escalation_email = _get_proctoring_escalation_email(exam['course_id'])
 
     context = {
         'platform_name': settings.PLATFORM_NAME,
@@ -2742,14 +2744,14 @@ def _get_proctored_exam_context(exam, attempt, user_id, course_id, is_practice_e
         ) if attempt else '',
         'link_urls': settings.PROCTORING_SETTINGS.get('LINK_URLS', {}),
         'tech_support_email': settings.TECH_SUPPORT_EMAIL,
-        'proctoring_escalation_email': _get_proctoring_escalation_email(exam['course_id']),
+        'proctoring_escalation_email': proctoring_escalation_email,
         'exam_review_policy': _get_review_policy_by_exam_id(exam['id']),
         'backend_js_bundle': provider.get_javascript(),
         'provider_tech_support_email': provider.tech_support_email,
         'provider_tech_support_phone': provider.tech_support_phone,
         'provider_name': provider.verbose_name,
         'learner_notification_from_email': provider.learner_notification_from_email,
-        'integration_specific_email': get_integration_specific_email(provider),
+        'integration_specific_email': proctoring_escalation_email or get_integration_specific_email(provider),
         'exam_display_name': exam['exam_name'],
         'reset_link': password_url,
         'ping_interval': provider.ping_interval,

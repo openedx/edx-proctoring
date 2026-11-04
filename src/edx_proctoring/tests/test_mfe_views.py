@@ -16,13 +16,14 @@ from django.urls import reverse
 from django.utils import timezone
 
 from edx_proctoring.api import get_exam_by_id, get_review_policy_by_exam_id
+from edx_proctoring.constants import DEFAULT_CONTACT_EMAIL
 from edx_proctoring.exceptions import BackendProviderNotConfigured, ProctoredExamNotFoundException
 from edx_proctoring.models import ProctoredExam, ProctoredExamStudentAllowance
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.statuses import ProctoredExamStudentAttemptStatus
 from edx_proctoring.utils import humanized_time
 
-from .test_services import MockLearningSequencesService, MockScheduleItemData
+from .test_services import MockInstructorService, MockLearningSequencesService, MockScheduleItemData
 from .test_utils.utils import ProctoredExamTestCase
 
 User = get_user_model()
@@ -470,6 +471,7 @@ class ProctoredExamActiveAttemptsMFEViewTests(ProctoredExamTestCase):
         self.assertEqual(response.status_code, 403)
 
 
+@ddt.ddt
 class ProctoredSettingsViewTests(ProctoredExamTestCase):
     """
     Tests for the ProctoredSettingsView.
@@ -504,6 +506,21 @@ class ProctoredSettingsViewTests(ProctoredExamTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         assert 'link_urls' in response_data and response_data['link_urls']
         assert 'exam_proctoring_backend' in response_data
+
+    @ddt.data(None, 'course-team@example.com')
+    def test_get_proctoring_settings_integration_specific_email(self, proctoring_escalation_email):
+        """
+        Tests that integration_specific_email is the course's proctoring escalation email when it is set.
+        """
+        instructor_service = MockInstructorService()
+        instructor_service.mock_proctoring_escalation_email(proctoring_escalation_email)
+        set_runtime_service('instructor', instructor_service)
+
+        response = self.client.get(self.get_url(self.proctored_exam_id))
+        response_data = json.loads(response.content.decode('utf-8'))
+        expected_email = proctoring_escalation_email or DEFAULT_CONTACT_EMAIL
+        assert response_data['integration_specific_email'] == expected_email
+        assert response_data['proctoring_escalation_email'] == proctoring_escalation_email
 
     def test_get_proctoring_settings_for_timed_exam(self):
         """
