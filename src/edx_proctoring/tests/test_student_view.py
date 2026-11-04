@@ -1216,6 +1216,17 @@ class ProctoredExamStudentViewTests(ProctoredExamTestCase):
         rendered_response = self.render_onboarding_exam()
         self.assertIn('Proctoring onboarding exam', rendered_response)
 
+    def test_get_studentview_onboarding_course_escalation_email(self):
+        """
+        Test that the onboarding entrance page lists the course's proctoring escalation email when it is set
+        """
+        instructor_service = MockInstructorService()
+        instructor_service.mock_proctoring_escalation_email('course-team@example.com')
+        set_runtime_service('instructor', instructor_service)
+
+        rendered_response = self.render_onboarding_exam()
+        self.assertIn('mailto:course-team@example.com', rendered_response)
+
     @ddt.data(
         render_proctored_exam,
         render_practice_exam,
