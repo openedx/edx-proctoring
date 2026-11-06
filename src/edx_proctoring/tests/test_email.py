@@ -92,6 +92,23 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         self.assertIn(credit_state['course_name'], actual_body)
         self.assertIn(expected_message_string, actual_body)
 
+    def test_repeated_submit_sends_one_email(self):
+        """
+        Assert that resubmitting an already submitted attempt doesn't send another email
+        or move its completion time.
+        """
+        exam_attempt = self._create_started_exam_attempt()
+        update_attempt_status(exam_attempt.id, ProctoredExamStudentAttemptStatus.submitted)
+        exam_attempt.refresh_from_db()
+        completed_at = exam_attempt.completed_at
+
+        for _ in range(3):
+            update_attempt_status(exam_attempt.id, ProctoredExamStudentAttemptStatus.submitted)
+
+        self.assertEqual(len(mail.outbox), 1)
+        exam_attempt.refresh_from_db()
+        self.assertEqual(exam_attempt.completed_at, completed_at)
+
     @patch('logging.Logger.exception')
     def test_send_email_failure(self, logger_mock):
         """
