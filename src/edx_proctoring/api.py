@@ -1457,7 +1457,7 @@ def update_attempt_status(attempt_id, to_status,
             'is already submitted. Ignoring the repeated submission.',
             {'attempt_id': attempt_id, 'exam_id': exam_id, 'user_id': user_id}
         )
-        return attempt_id
+        return exam_attempt_obj.id
 
     exam = get_exam_by_id(exam_id)
     backend = get_backend_provider(exam)
