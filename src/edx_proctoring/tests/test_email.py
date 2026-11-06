@@ -103,7 +103,10 @@ class ProctoredExamEmailTests(ProctoredExamTestCase):
         completed_at = exam_attempt.completed_at
 
         for _ in range(3):
-            update_attempt_status(exam_attempt.id, ProctoredExamStudentAttemptStatus.submitted)
+            self.assertEqual(
+                update_attempt_status(exam_attempt.id, ProctoredExamStudentAttemptStatus.submitted),
+                exam_attempt.id,
+            )
 
         self.assertEqual(len(mail.outbox), 1)
         exam_attempt.refresh_from_db()

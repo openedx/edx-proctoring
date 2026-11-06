@@ -3352,6 +3352,24 @@ class TestStudentProctoredExamAttempt(LoggedInTestCase):
         response_data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response_data['exam_attempt_id'], False)
 
+    def test_repeated_submit(self):
+        """
+        A repeated submit request still answers with the attempt id, which the learning MFE
+        reads to refetch the exam state, and leaves the submitted attempt as it was.
+        """
+        attempt = self._test_exam_attempt_creation()
+        url = reverse('edx_proctoring:proctored_exam.attempt', args=[attempt['id']])
+        self.client.put(url, json.dumps({'action': 'submit'}), content_type='application/json')
+        completed_at = get_exam_attempt_by_id(attempt['id'])['completed_at']
+
+        response = self.client.put(url, json.dumps({'action': 'submit'}), content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content.decode('utf-8'))['exam_attempt_id'], attempt['id'])
+        resubmitted = get_exam_attempt_by_id(attempt['id'])
+        self.assertEqual(resubmitted['status'], ProctoredExamStudentAttemptStatus.submitted)
+        self.assertEqual(resubmitted['completed_at'], completed_at)
+
     @patch('edx_proctoring.views.waffle.switch_is_active')
     def test_attempt_ping_failure(self, mocked_switch_is_active):
         """
