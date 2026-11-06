@@ -1449,6 +1449,16 @@ def update_attempt_status(attempt_id, to_status,
         )
         to_status = ProctoredExamStudentAttemptStatus.submitted
 
+    if from_status == to_status == ProctoredExamStudentAttemptStatus.submitted:
+        # a browser can repeat the submit request; resubmitting must not re-run the
+        # side effects (completed_at, credit, provider stop, the "submitted" email)
+        log.info(
+            'Attempt attempt_id=%(attempt_id)s for exam_id=%(exam_id)s for user_id=%(user_id)s '
+            'is already submitted. Ignoring the repeated submission.',
+            {'attempt_id': attempt_id, 'exam_id': exam_id, 'user_id': user_id}
+        )
+        return attempt_id
+
     exam = get_exam_by_id(exam_id)
     backend = get_backend_provider(exam)
 
