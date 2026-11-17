@@ -55,7 +55,7 @@ class TestGetAllExamAttemptsOrdering(ProctoredExamTestCase):
 
     def test_ordering_ascending(self):
         """
-        When ordering='created', results are sorted oldest first.
+        When ordering=['created'], results are sorted oldest first.
         """
         exam_id_2 = create_exam(
             course_id=self.course_id,
@@ -66,13 +66,13 @@ class TestGetAllExamAttemptsOrdering(ProctoredExamTestCase):
         create_exam_attempt(exam_id=self.proctored_exam_id, user_id=self.user_id)
         create_exam_attempt(exam_id=exam_id_2, user_id=self.user_id)
 
-        results = get_all_exam_attempts(self.course_id, ordering='created')
+        results = get_all_exam_attempts(self.course_id, ordering=['created'])
         self.assertEqual(len(results), 2)
         self.assertLessEqual(results[0]['created'], results[1]['created'])
 
     def test_ordering_descending(self):
         """
-        When ordering='-created', results are sorted newest first.
+        When ordering=['-created'], results are sorted newest first.
         """
         exam_id_2 = create_exam(
             course_id=self.course_id,
@@ -83,7 +83,7 @@ class TestGetAllExamAttemptsOrdering(ProctoredExamTestCase):
         create_exam_attempt(exam_id=self.proctored_exam_id, user_id=self.user_id)
         create_exam_attempt(exam_id=exam_id_2, user_id=self.user_id)
 
-        results = get_all_exam_attempts(self.course_id, ordering='-created')
+        results = get_all_exam_attempts(self.course_id, ordering=['-created'])
         self.assertEqual(len(results), 2)
         self.assertGreaterEqual(results[0]['created'], results[1]['created'])
 
@@ -129,7 +129,7 @@ class TestGetFilteredExamAttemptsOrdering(ProctoredExamTestCase):
 
     def test_ordering_ascending(self):
         """
-        When ordering='created', results are sorted oldest first.
+        When ordering=['created'], results are sorted oldest first.
         """
         exam_id_2 = create_exam(
             course_id=self.course_id,
@@ -140,7 +140,7 @@ class TestGetFilteredExamAttemptsOrdering(ProctoredExamTestCase):
         create_exam_attempt(exam_id=self.proctored_exam_id, user_id=self.user_id)
         create_exam_attempt(exam_id=exam_id_2, user_id=self.user_id)
 
-        results = get_filtered_exam_attempts(self.course_id, self.user.username, ordering='created')
+        results = get_filtered_exam_attempts(self.course_id, self.user.username, ordering=['created'])
         self.assertEqual(len(results), 2)
         self.assertLessEqual(results[0]['created'], results[1]['created'])
 
@@ -188,19 +188,45 @@ class TestGetAllExamsForCourseOrdering(ProctoredExamTestCase):
 
     def test_ordering_by_exam_name(self):
         """
-        When ordering='exam_name', results are sorted alphabetically by name.
+        When ordering=['exam_name'], results are sorted alphabetically by name.
         """
-        results = get_all_exams_for_course(self.course_id, ordering='exam_name')
+        results = get_all_exams_for_course(self.course_id, ordering=['exam_name'])
         self.assertEqual(results[0]['exam_name'], 'Alpha Exam')
         self.assertEqual(results[1]['exam_name'], 'Beta Exam')
 
     def test_ordering_by_exam_name_descending(self):
         """
-        When ordering='-exam_name', results are sorted reverse alphabetically.
+        When ordering=['-exam_name'], results are sorted reverse alphabetically.
         """
-        results = get_all_exams_for_course(self.course_id, ordering='-exam_name')
+        results = get_all_exams_for_course(self.course_id, ordering=['-exam_name'])
         self.assertEqual(results[0]['exam_name'], 'Beta Exam')
         self.assertEqual(results[1]['exam_name'], 'Alpha Exam')
+
+    def test_ordering_by_multiple_fields(self):
+        """
+        Every field in ordering is applied, so later fields break ties in earlier ones.
+        """
+        create_exam(
+            course_id=self.course_id,
+            content_id='content_c',
+            exam_name='Gamma Exam',
+            time_limit_mins=30,
+        )
+        results = get_all_exams_for_course(self.course_id, ordering=['time_limit_mins', '-exam_name'])
+        self.assertEqual(
+            [exam['exam_name'] for exam in results],
+            ['Gamma Exam', 'Alpha Exam', 'Beta Exam'],
+        )
+
+    def test_ordering_accepts_single_string(self):
+        """
+        A bare string is treated as one field name, not unpacked into characters.
+        """
+        results = get_all_exams_for_course(self.course_id, ordering='-exam_name')
+        self.assertEqual(
+            [exam['exam_name'] for exam in results],
+            ['Beta Exam', 'Alpha Exam'],
+        )
 
     def test_ordering_none_is_backward_compatible(self):
         """
@@ -246,17 +272,17 @@ class TestGetAllowancesForCourseOrdering(ProctoredExamTestCase):
 
     def test_ordering_by_created(self):
         """
-        When ordering='created', results are sorted by creation time ascending.
+        When ordering=['created'], results are sorted by creation time ascending.
         """
-        results = get_allowances_for_course(self.course_id, ordering='created')
+        results = get_allowances_for_course(self.course_id, ordering=['created'])
         self.assertEqual(len(results), 2)
         self.assertLessEqual(results[0]['created'], results[1]['created'])
 
     def test_ordering_descending(self):
         """
-        When ordering='-created', results are sorted by creation time descending.
+        When ordering=['-created'], results are sorted by creation time descending.
         """
-        results = get_allowances_for_course(self.course_id, ordering='-created')
+        results = get_allowances_for_course(self.course_id, ordering=['-created'])
         self.assertEqual(len(results), 2)
         self.assertGreaterEqual(results[0]['created'], results[1]['created'])
 

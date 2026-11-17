@@ -522,15 +522,34 @@ def add_allowance_for_user(exam_id, user_info, key, value):
         emit_event(exam, f'allowance.{action}', override_data=data)
 
 
+def _apply_ordering(queryset, ordering):
+    """
+    Re-order ``queryset`` by ``ordering`` if one was given, otherwise leave its default order.
+
+    ``ordering`` is an iterable of Django field expressions (e.g. ``['user__username', '-created']``),
+    which is what callers get from DRF's ``ordering`` query param. A single string is also
+    accepted and treated as one field, so ``order_by(*ordering)`` doesn't split it into characters.
+    """
+    if not ordering:
+        return queryset
+    if isinstance(ordering, str):
+        ordering = [ordering]
+    return queryset.order_by(*ordering)
+
+
 def get_allowances_for_course(course_id, ordering=None):
     """
     Get all the allowances for the course.
+
+    ``ordering`` is an optional iterable of Django field expressions to sort by, e.g.
+    ``['user__username', '-created']``. These are ORM lookups (``user__username``), not the
+    dotted paths used by the instructor dashboard. When omitted, no ordering is applied
+    and results come back in database order.
     """
-    student_allowances = ProctoredExamStudentAllowance.get_allowances_for_course(
-        course_id
+    student_allowances = _apply_ordering(
+        ProctoredExamStudentAllowance.get_allowances_for_course(course_id),
+        ordering,
     )
-    if ordering:
-        student_allowances = student_allowances.order_by(ordering)
     return [ProctoredExamStudentAllowanceSerializer(allowance).data for allowance in student_allowances]
 
 
@@ -2103,13 +2122,15 @@ def get_all_exams_for_course(course_id, active_only=False, ordering=None):
     },
     ..
     ]
+
+    ``ordering`` is an optional iterable of Django field expressions to sort by, e.g.
+    ``['exam_name']`` or ``['-time_limit_mins', 'exam_name']``. When omitted, no ordering
+    is applied and results come back in database order.
     """
-    exams = ProctoredExam.get_all_exams_for_course(
-        course_id,
-        active_only=active_only
+    exams = _apply_ordering(
+        ProctoredExam.get_all_exams_for_course(course_id, active_only=active_only),
+        ordering,
     )
-    if ordering:
-        exams = exams.order_by(ordering)
 
     return [ProctoredExamSerializer(proctored_exam).data for proctored_exam in exams]
 
@@ -2117,20 +2138,32 @@ def get_all_exams_for_course(course_id, active_only=False, ordering=None):
 def get_all_exam_attempts(course_id, ordering=None):
     """
     Returns all the exam attempts for the course id.
+
+    ``ordering`` is an optional iterable of Django field expressions to sort by, e.g.
+    ``['user__username', '-created']``. These are ORM lookups (``user__username``), not the
+    dotted paths used by the instructor dashboard. When omitted, attempts are ordered
+    newest first (``-created``).
     """
-    exam_attempts = ProctoredExamStudentAttempt.objects.get_all_exam_attempts(course_id)
-    if ordering:
-        exam_attempts = exam_attempts.order_by(ordering)
+    exam_attempts = _apply_ordering(
+        ProctoredExamStudentAttempt.objects.get_all_exam_attempts(course_id),
+        ordering,
+    )
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
 
 
 def get_filtered_exam_attempts(course_id, search_by, ordering=None):
     """
     Returns all exam attempts for a course id filtered by the search_by string in user names and emails.
+
+    ``ordering`` is an optional iterable of Django field expressions to sort by, e.g.
+    ``['user__username', '-created']``. These are ORM lookups (``user__username``), not the
+    dotted paths used by the instructor dashboard. When omitted, attempts are ordered
+    newest first (``-created``).
     """
-    exam_attempts = ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(course_id, search_by)
-    if ordering:
-        exam_attempts = exam_attempts.order_by(ordering)
+    exam_attempts = _apply_ordering(
+        ProctoredExamStudentAttempt.objects.get_filtered_exam_attempts(course_id, search_by),
+        ordering,
+    )
     return [ProctoredExamStudentAttemptSerializer(active_exam).data for active_exam in exam_attempts]
 
 
