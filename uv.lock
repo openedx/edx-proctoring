@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.13'",
@@ -145,7 +145,7 @@ name = "cffi"
 version = "2.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pycparser", marker = "implementation_name != 'PyPy' or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "pycparser", marker = "implementation_name != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz", hash = "sha256:dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be", size = 530807, upload-time = "2026-08-03T21:21:18.939Z" }
 wheels = [
@@ -585,7 +585,7 @@ name = "cryptography"
 version = "50.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "cffi", marker = "platform_python_implementation != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/bb/ad/5d6702db60b1e40b41ef513b6967ff5848f307d50f8449baf1634f5908f1/cryptography-50.0.1.tar.gz", hash = "sha256:5dd9bda1c12b4162f6ff568eeb5e0ff956c28d14406e875cfe8a63a2d414ff20", size = 880381, upload-time = "2026-08-25T19:45:45.499Z" }
 wheels = [
@@ -699,9 +699,9 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 dependencies = [
-    { name = "asgiref", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "sqlparse", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "tzdata", marker = "(sys_platform == 'win32' and extra == 'group-14-edx-proctoring-dev') or (sys_platform == 'win32' and extra != 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "asgiref", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "sqlparse", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "tzdata", marker = "(sys_platform == 'win32' and extra != 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d5/d8/43e9d000519adceb189620b6869ff88031e046df91c2e9da72f8f6918399/django-5.2.17.tar.gz", hash = "sha256:9d4d93be539a18ab80d058eb515900e10951e04c537c5a6b394fc49528d3251f", size = 10889740, upload-time = "2026-08-04T15:04:03.173Z" }
 wheels = [
@@ -714,7 +714,7 @@ version = "0.7.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/34/1d/c56588f67130aeef8828e47535e8551337d2ae02f91f1414da61bc5e49fb/django-crum-0.7.9.tar.gz", hash = "sha256:65e9bc0f070a663fafc4d9e357f45fd4e6f01838b20a9e2fb7670f5706754288", size = 5168, upload-time = "2020-11-10T17:15:35.124Z" }
 wheels = [
@@ -746,8 +746,8 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 dependencies = [
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "python-ipware", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "python-ipware", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/41/3a/e90c321c10cdf4c53dbad3cfd28efceb6fc164c3ec2d98cf71f4ae060c04/django_ipware-8.0.0.tar.gz", hash = "sha256:377cc7926ea377d8f544511b019cd32b28060e1c9caa3d0c43c3e5e923560f33", size = 17747, upload-time = "2026-09-22T21:30:47.55Z" }
 wheels = [
@@ -760,7 +760,7 @@ version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/81/60/5e232c32a2c977cc1af8c70a38ef436598bc649ad89c2c4568454edde2c9/django_model_utils-5.0.0.tar.gz", hash = "sha256:041cdd6230d2fbf6cd943e1969318bce762272077f4ecd333ab2263924b4e5eb", size = 80559, upload-time = "2024-09-04T11:35:22.858Z" }
 wheels = [
@@ -792,7 +792,7 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 dependencies = [
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6b/1c/0689c13c0aa36df828947692f4e309f93c58e075219735c423edbbf6227d/django_simple_history-3.13.0.tar.gz", hash = "sha256:ca3c1e4ccd5f16f45fbbef6015ee2a246465fd9bd924100df8e9dfb368c4f26c", size = 236759, upload-time = "2026-07-22T13:41:29.588Z" }
 wheels = [
@@ -805,7 +805,7 @@ version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/22/e1/6f533da0d4ac89f427dfd9410e39bfc14ae3a23335ecd549d76be4b2a834/django_waffle-5.0.0.tar.gz", hash = "sha256:62f9d00eedf68dafb82657beab56e601bddedc1ea1ccfef91d83df8658708509", size = 37761, upload-time = "2025-06-12T07:38:54.895Z" }
 wheels = [
@@ -827,7 +827,7 @@ version = "3.16.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/8a/95/5376fe618646fde6899b3cdc85fd959716bb67542e273a76a80d9f326f27/djangorestframework-3.16.1.tar.gz", hash = "sha256:166809528b1aced0a17dc66c24492af18049f2c9420dbd0be29422029cfc3ff7", size = 1089735, upload-time = "2025-08-06T17:50:53.251Z" }
 wheels = [
@@ -858,7 +858,7 @@ version = "1.19.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "djangorestframework" },
     { name = "pyjwt", extra = ["crypto"] },
 ]
@@ -887,7 +887,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "django-crum" },
     { name = "django-waffle" },
     { name = "psutil" },
@@ -905,7 +905,7 @@ version = "10.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "django-waffle" },
     { name = "djangorestframework" },
     { name = "drf-jwt" },
@@ -926,7 +926,7 @@ version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "lxml", extra = ["html-clean"] },
     { name = "path" },
     { name = "polib" },
@@ -975,13 +975,13 @@ name = "edx-proctoring"
 source = { editable = "." }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "django-crum" },
     { name = "django-ipware", version = "7.0.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django-ipware", version = "8.0.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django-ipware", version = "8.0.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "django-model-utils" },
     { name = "django-simple-history", version = "3.12.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django-simple-history", version = "3.13.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django-simple-history", version = "3.13.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "django-waffle" },
     { name = "django-webpack-loader" },
     { name = "djangorestframework" },
@@ -990,7 +990,7 @@ dependencies = [
     { name = "edx-rest-api-client" },
     { name = "edx-when" },
     { name = "event-tracking", version = "4.0.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "event-tracking", version = "4.1.3", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "event-tracking", version = "4.1.3", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "jsonfield" },
     { name = "pycryptodomex" },
     { name = "pyjwt", extra = ["crypto"] },
@@ -1257,7 +1257,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "code-annotations" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "django-crum" },
     { name = "django-waffle" },
     { name = "edx-django-utils" },
@@ -1273,7 +1273,7 @@ version = "4.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "django-model-utils" },
     { name = "edx-django-utils" },
     { name = "edx-drf-extensions" },
@@ -1317,14 +1317,14 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 dependencies = [
-    { name = "celery", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "edx-django-utils", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "edx-toggles", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "openedx-events", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "pymongo", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "pytz", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
-    { name = "six", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "celery", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "edx-django-utils", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "edx-toggles", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "openedx-events", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "pymongo", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "pytz", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
+    { name = "six", marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/cb/7a/ae4014aa06e525dfab6c95871f0385a4c02fe584123dd7be5897f7daa9d0/event_tracking-4.1.3.tar.gz", hash = "sha256:07c700158be45174b93d443b7d920f466eab6e34b51f0e839524b061ddc61d4e", size = 139788, upload-time = "2026-09-02T13:03:39.598Z" }
 wheels = [
@@ -1357,7 +1357,7 @@ name = "faker"
 version = "40.39.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata", marker = "sys_platform == 'win32' or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6d/62/fea935af7a312f073c99d470b05a7c96650ee8d9562ce82e8cb7ee4c1247/faker-40.39.0.tar.gz", hash = "sha256:52799ad96fcf92aab2fc96a9e03869bbf1a634300f7cd91c38dbfd51f639f6fa", size = 2029463, upload-time = "2026-09-14T16:50:17.939Z" }
 wheels = [
@@ -1531,7 +1531,7 @@ version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/fa/e9/537e105246dba81d898853dbbe17eb3edd23d47a35074b99fd4add6f1662/jsonfield-3.2.0.tar.gz", hash = "sha256:ca53871bc3308ae4f4cddc3b4f99ed5c6fc6abb1832fbfb499bc6da566c70e4a", size = 17156, upload-time = "2025-07-04T23:06:24.883Z" }
 wheels = [
@@ -1819,7 +1819,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-django42'" },
-    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "django", version = "5.2.17", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-14-edx-proctoring-dev' or extra != 'group-14-edx-proctoring-django42' or extra == 'group-14-edx-proctoring-quality' or extra == 'group-14-edx-proctoring-test'" },
     { name = "edx-ccx-keys" },
     { name = "edx-django-utils" },
     { name = "edx-opaque-keys" },
@@ -2211,7 +2211,7 @@ name = "pynacl"
 version = "1.6.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "cffi", marker = "platform_python_implementation != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d9/9a/4019b524b03a13438637b11538c82781a5eda427394380381af8f04f467a/pynacl-1.6.2.tar.gz", hash = "sha256:018494d6d696ae03c7e656e5e74cdfd8ea1326962cc401bcf018f1ed8436811c", size = 3511692, upload-time = "2026-01-01T17:48:10.851Z" }
 wheels = [
@@ -2258,7 +2258,7 @@ name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
@@ -2606,7 +2606,7 @@ name = "testfixtures"
 version = "12.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/11/4d/b1c5fae372cd46b7bc1ec1dbca6efecaef8fe1e4edad203cc6e36cd5eafd/testfixtures-12.3.0.tar.gz", hash = "sha256:d807ceb9bdd6ea7cc0663370dd5568339056b35dc15c26effd1ae267e323acf1", size = 201458, upload-time = "2026-07-08T21:32:04.42Z" }
 wheels = [
@@ -2654,7 +2654,7 @@ dependencies = [
     { name = "pyproject-api" },
     { name = "python-discovery" },
     { name = "tomli-w" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
     { name = "virtualenv" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6f/88/b0fff358c90fc49e0e619604d17b1edd26ab931853ed73a559f3b5bdf0c8/tox-4.64.1.tar.gz", hash = "sha256:d10dd88c32e9f15f0ec831f9ebacb9b253f671fd1287d49bead2852fc6225271", size = 314417, upload-time = "2026-09-24T01:25:03.947Z" }
@@ -2737,7 +2737,7 @@ name = "tzlocal"
 version = "5.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata", marker = "sys_platform == 'win32' or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/81/5b/879b2f932adfa7a053c360d50bc896c977fa6426109185f7c12ebdd0cb9d/tzlocal-5.4.4.tar.gz", hash = "sha256:8dbb8660838688a7b6ba4fed31d18dedf842afb4d47ca050d6d891c2c15f3be4", size = 31170, upload-time = "2026-06-29T08:03:40.026Z" }
 wheels = [
@@ -2755,28 +2755,28 @@ wheels = [
 
 [[package]]
 name = "uv"
-version = "0.12.18"
+version = "0.13.4"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b9/5c/f1adb285f759e8ce6ea397ecf45372c20c32588a9834cfeb1125cd0536b6/uv-0.12.18.tar.gz", hash = "sha256:0a8fa0c6408c1bedf8a19219b471d6c14ae98695940b20269fcb7514a136cfa4", size = 7094303, upload-time = "2026-09-22T22:59:00.862Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/79/55/609455d21e87430c11fe734abfced50a3bdf177b2f49d41fbb19c199cbc3/uv-0.13.4.tar.gz", hash = "sha256:b0bff5b9a5061f7a35b1d0c1a94c19af134222c48eb7aadc42f85a038be1b248", size = 7482486, upload-time = "2026-10-20T15:12:06.801Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0d/15/c4307b7ac5c82517cc0982e0a4e54ffd1f53b50e18b7e66a24ed92de1a71/uv-0.12.18-py3-none-linux_armv6l.whl", hash = "sha256:98a8a4786db518b4d708eacc96aadfc0626072d5873c708bcab8239e6453176d", size = 22601778, upload-time = "2026-09-22T22:58:15.871Z" },
-    { url = "https://files.pythonhosted.org/packages/c1/5d/a00b39652484c4d0a25532f15b701e0959d15803608b9cc35c336d2cf243/uv-0.12.18-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:799dcef1ef97ab6491b34f5827e2da8dd9153d65be056c779b60a2d4d3d6c45b", size = 20963625, upload-time = "2026-09-22T22:58:19.189Z" },
-    { url = "https://files.pythonhosted.org/packages/4b/40/b08c15b1f886c90739241f121b0d9f786ffecc2a682b1e75f29cfb377a7e/uv-0.12.18-py3-none-macosx_11_0_arm64.whl", hash = "sha256:9aa0ef69c7cb2aff485a0e9ce46feeb7b6dbeef3d796ffd04b944cf355ba8334", size = 17080512, upload-time = "2026-09-22T22:58:21.435Z" },
-    { url = "https://files.pythonhosted.org/packages/8d/ee/c8cee0e2531221b5ad1542b5f25cff446f5f605980b88ce6627d81decdac/uv-0.12.18-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.musllinux_1_1_aarch64.whl", hash = "sha256:77b71bc25d274a04594d32167b0f766fb5b6805980c3aed02872c468e1905e7e", size = 22080274, upload-time = "2026-09-22T22:58:24.134Z" },
-    { url = "https://files.pythonhosted.org/packages/38/71/c2b5f826432e5ce44fef6112172130c6527fd73934e2b0c4410b96b6a803/uv-0.12.18-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.musllinux_1_1_armv7l.whl", hash = "sha256:145f17e2b7f165da9bd4dd14c4c2525d5b1647cb8daadb684106babedbc502ff", size = 22088832, upload-time = "2026-09-22T22:58:26.399Z" },
-    { url = "https://files.pythonhosted.org/packages/83/88/5196295fcde0933d0de2b148484c6e09257e7fd3b9f6dea8377af651c3d6/uv-0.12.18-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:b656468f973ac363ac96b0b6b9bf9c5f5836cd84b664d0ca67b67bb8e35f9bcf", size = 22125303, upload-time = "2026-09-22T22:58:28.93Z" },
-    { url = "https://files.pythonhosted.org/packages/a2/ab/2d2d2fd766c936f7740c5c15c075c8754ea2c4a7258d2153a5839ede550a/uv-0.12.18-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:99c64f9f3eea3eb3fd496c29da47462824da0e47775b3b39d444d9832c815549", size = 22784284, upload-time = "2026-09-22T22:58:31.611Z" },
-    { url = "https://files.pythonhosted.org/packages/9e/d8/a9c3e16fc069b27cc91a56ab3cc005322dbb04eec27cd825df74566baf73/uv-0.12.18-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:d5037ec17654c756fc9841270f413c5fc9ecef89108b443f5dd34600a3ccdb19", size = 24206420, upload-time = "2026-09-22T22:58:34.309Z" },
-    { url = "https://files.pythonhosted.org/packages/e1/51/df04dac9d701d39d265ffc5bd48667808e6adc22bb9ab7b15224e9348a05/uv-0.12.18-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:9c237410b6b193e691c7c37752fd7f3cfebd9b5d5331c53e748f004c6397334f", size = 23951572, upload-time = "2026-09-22T22:58:36.72Z" },
-    { url = "https://files.pythonhosted.org/packages/67/67/def11543e7bd3b4219ca29afd66f3accab641324bd2e426cb788083c56c5/uv-0.12.18-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fbe0489871e74ebfb70379a32526c62b9fb615acf13576b9f19bc09a142f62b0", size = 20450568, upload-time = "2026-09-22T22:58:39.162Z" },
-    { url = "https://files.pythonhosted.org/packages/20/6c/b1f6c714dd960bd6ed57f522051af278a6f811a71a5c1598d141164f7ec7/uv-0.12.18-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:328abf19b5992b4846f96d1d4440cdd9e0b7d20c0f00b0644e68ca8cfb561c26", size = 19866961, upload-time = "2026-09-22T22:58:41.808Z" },
-    { url = "https://files.pythonhosted.org/packages/cd/cf/26fc7ed52059975ab572da0299cd991cca8a3790dbbf4f5fb6d4277ddc23/uv-0.12.18-py3-none-manylinux_2_31_riscv64.musllinux_1_1_riscv64.whl", hash = "sha256:9c77a4de02c2b7737f6d4eb5fcd359bc0f0948f2a4133f8095c527addb84fc56", size = 22946695, upload-time = "2026-09-22T22:58:44.622Z" },
-    { url = "https://files.pythonhosted.org/packages/4d/61/005ce467de35b130014dc5c93a0e546a7f8c8d2ca783c6724fe00bc510a9/uv-0.12.18-py3-none-manylinux_2_31_riscv64.whl", hash = "sha256:e7ab1387b222ab640dbd057b95548a199e4c621aa35e9f6a32c0516c76e7637d", size = 23075146, upload-time = "2026-09-22T22:58:46.908Z" },
-    { url = "https://files.pythonhosted.org/packages/ac/35/00bc752a8b7e92721fd7773368178ef63c2bdad396c5189603db64414ccd/uv-0.12.18-py3-none-musllinux_1_1_i686.whl", hash = "sha256:03da66a73d0ac01fb7a95d096aebf5993b51ec65df620d57f415e111e6789c88", size = 21920505, upload-time = "2026-09-22T22:58:49.164Z" },
-    { url = "https://files.pythonhosted.org/packages/f7/e0/48c2918c384fdc4195dacc70736771515b30e77180a75ec49fa39bd9d16d/uv-0.12.18-py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:53a035e48cbe94ca47ee304b293060b690d0ac03140a64ff3ff4713eabcede99", size = 23351251, upload-time = "2026-09-22T22:58:51.485Z" },
-    { url = "https://files.pythonhosted.org/packages/58/f2/c177f74568713f23ff97746bc300f109560013033ebd21b7e70ccc533040/uv-0.12.18-py3-none-win32.whl", hash = "sha256:cbbfcca37cf678b5135f61f722631a2a85e2eddc459ba64692054011f160f6c2", size = 19981835, upload-time = "2026-09-22T22:58:53.694Z" },
-    { url = "https://files.pythonhosted.org/packages/86/b3/5f33b9bad8cb875ed547ef8aa403d423a2610f23f619f687308761dd02e1/uv-0.12.18-py3-none-win_amd64.whl", hash = "sha256:0a3c4e415515bd4c24c7516523d9042a2957ce716423e193f8b2be9fb8773340", size = 17986064, upload-time = "2026-09-22T22:58:56.301Z" },
-    { url = "https://files.pythonhosted.org/packages/fc/f2/178a7353ba2426a275dc6815a276628ef00912a972d71666ca7f6bb93bb9/uv-0.12.18-py3-none-win_arm64.whl", hash = "sha256:4f9769cf34558a026ff9b8e04cdf9d25c16fe3d61f35956daf6548f2b0379ff0", size = 19304755, upload-time = "2026-09-22T22:58:58.512Z" },
+    { url = "https://files.pythonhosted.org/packages/2c/bd/4349da5356b17a1c0e36c8552c809925f86f6292de9b1f599f01e8e8093d/uv-0.13.4-py3-none-linux_armv6l.whl", hash = "sha256:205a4f93e568fb24f45a2f3834f1c0a8f1adb5f396bf473c71030ed707dce048", size = 18272390, upload-time = "2026-10-20T15:11:02.468Z" },
+    { url = "https://files.pythonhosted.org/packages/21/f2/0cb77a1ae43959772f8f7873eb1f4061907fbb1694ce55c79b231f639b1d/uv-0.13.4-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:b4bbacea78c9db136cd2ec3147cbfd9ed910b4db5e1877109bd74d0e73bb2eaf", size = 17384113, upload-time = "2026-10-20T15:11:07.172Z" },
+    { url = "https://files.pythonhosted.org/packages/26/44/5a8733dd1b2e8d6f9cffd1ff6428a3e11dcc7e146a7657e32cfb8d9fb4a4/uv-0.13.4-py3-none-macosx_11_0_arm64.whl", hash = "sha256:95f4eb2b991b53b50ec2b18ab612fca8ba1e7a75a47af0331fb8bcd21da3eb03", size = 14433723, upload-time = "2026-10-20T15:11:10.185Z" },
+    { url = "https://files.pythonhosted.org/packages/f8/39/be14f051bf34a1822d634819890a2d0cba3b69101e633fb7b9f54d7b4020/uv-0.13.4-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.musllinux_1_1_aarch64.whl", hash = "sha256:e90ab42825587821096cb0d071e387468da38cfa22818c91f9c0b3c0453048e8", size = 17816443, upload-time = "2026-10-20T15:11:13.674Z" },
+    { url = "https://files.pythonhosted.org/packages/97/a0/5df0f8bc6367dd37b98432a7c462e2918554f6db2a71211574852b8f0727/uv-0.13.4-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.musllinux_1_1_armv7l.whl", hash = "sha256:3a9dcb6762c3ba249d8c084315ba03839082af3ece3536cc4164ec735c351d68", size = 17828025, upload-time = "2026-10-20T15:11:16.806Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/9c/2fed5357700b7c304b94214979e4efe680c3bc6e337a97eedaa372fe0947/uv-0.13.4-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:8ae6ff2b07892379dc767c9064c2b8bbfac88e767edac7ce28e1b0f15d86abb4", size = 17843737, upload-time = "2026-10-20T15:11:20.043Z" },
+    { url = "https://files.pythonhosted.org/packages/4c/2e/ee026284f096236dc3e1abed0316f9edab65c0ea176ea0072c064e62478d/uv-0.13.4-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:25cc14ff4fd8335d3be2cc493a621a003fdafcb0fb1c953c905daabe4def5ab8", size = 18576350, upload-time = "2026-10-20T15:11:24.035Z" },
+    { url = "https://files.pythonhosted.org/packages/6d/f1/67fbdb649c8c5d0cb38ea74829080479b77c8631cda5d77fc1b28f027ca7/uv-0.13.4-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:77062b02856c74697f48328d8a6583ab07e6da0a993e86c2db46f3d1da27c637", size = 19831234, upload-time = "2026-10-20T15:11:27.627Z" },
+    { url = "https://files.pythonhosted.org/packages/bd/00/7d49e3a1a3e98e5244fa38e0c964dc8de568bf3bb101257a63dc2602efed/uv-0.13.4-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:fb0e2028d9a8929884344afb7d91d0f65d9783f640d28aede89fca3602bedde9", size = 19702886, upload-time = "2026-10-20T15:11:31.128Z" },
+    { url = "https://files.pythonhosted.org/packages/4b/a1/de02c0913726728eca56ee258875cbba9c7b0572c63f494fd9f55c7852e3/uv-0.13.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:05e4332791b4d55b6dde8695b7fa6079b26991519f44760887c5dfbd5ca4fe53", size = 17181168, upload-time = "2026-10-20T15:11:34.583Z" },
+    { url = "https://files.pythonhosted.org/packages/a8/cd/f4a3c7377674366798c56aabd0f9a1f05687c3939f5ba857a3ea6093ff84/uv-0.13.4-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:7b3cdf868e5415631fe797b648c0d6945d38d388f23367bdd0b6332e80a1fcb0", size = 16502020, upload-time = "2026-10-20T15:11:37.88Z" },
+    { url = "https://files.pythonhosted.org/packages/f9/f4/ce79657c5a0f51b602db9a663529baafff03b9fe8cc41e09ad3f7246b88a/uv-0.13.4-py3-none-manylinux_2_31_riscv64.musllinux_1_1_riscv64.whl", hash = "sha256:4e6b08578c920b86910897f36bb6da7229c8e7e0187976570e2a538cb28b777e", size = 18000980, upload-time = "2026-10-20T15:11:41.59Z" },
+    { url = "https://files.pythonhosted.org/packages/21/e6/7d77022d5661f8e01578bc5423bf02af408220e7e7ac5ee15eb94742c7cb/uv-0.13.4-py3-none-manylinux_2_31_riscv64.whl", hash = "sha256:d86a5dec8ab30c70519c71ca5085c8aaf28664836cbc600951cedaa3fc678cbf", size = 18179083, upload-time = "2026-10-20T15:11:45.191Z" },
+    { url = "https://files.pythonhosted.org/packages/f4/40/1bf0324800d38009774ba087a6fbffddc76a3e5bf42c081b9298b1236fb5/uv-0.13.4-py3-none-musllinux_1_1_i686.whl", hash = "sha256:5d89d1028c2e22977d9215cbb79cfe12559cb0c8a507a12e2f3a7e47930cf1bf", size = 18010389, upload-time = "2026-10-20T15:11:48.963Z" },
+    { url = "https://files.pythonhosted.org/packages/1e/ec/f352ca2cc3b4b6191bb4ec8cdf4bc190eed0ba8bda4c33b7fd66c5d33cec/uv-0.13.4-py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:52b5c753a7c2d5f8323a70bb4c93118988356331d0758afa6446c81f974e7196", size = 19004998, upload-time = "2026-10-20T15:11:52.628Z" },
+    { url = "https://files.pythonhosted.org/packages/9e/4f/fc05ff4292edfe785b47874ec86d3d83ca2bf735cff8a9d2170ffb66ad83/uv-0.13.4-py3-none-win32.whl", hash = "sha256:d333f01852b817ba05612de31474739da1af7e5463d119b30a9c4331eba1f408", size = 16190502, upload-time = "2026-10-20T15:11:56.657Z" },
+    { url = "https://files.pythonhosted.org/packages/2f/b9/b526eab6c72eacc705a58378f6850fde046b28c86fed01bd42da61367c6b/uv-0.13.4-py3-none-win_amd64.whl", hash = "sha256:b2ff80397273fff0e02c20eacae6882834c811827d6fc08f658db156fe754386", size = 15331833, upload-time = "2026-10-20T15:11:59.733Z" },
+    { url = "https://files.pythonhosted.org/packages/7c/f7/4d5fa89d3d10ff6a84e547ef6e02c45b2f2d50e66682da778acf60db63f1/uv-0.13.4-py3-none-win_arm64.whl", hash = "sha256:deffa5a4afdb48f3e44fb26e80377d256b330ddcad0373daff4b54f6162b43a4", size = 15690151, upload-time = "2026-10-20T15:12:02.74Z" },
 ]
 
 [[package]]
@@ -2836,7 +2836,7 @@ name = "webob"
 version = "1.8.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "legacy-cgi", marker = "python_full_version >= '3.13' or (extra == 'group-14-edx-proctoring-dev' and extra == 'group-14-edx-proctoring-django42') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-quality') or (extra == 'group-14-edx-proctoring-django42' and extra == 'group-14-edx-proctoring-test')" },
+    { name = "legacy-cgi", marker = "python_full_version >= '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e6/92/9329872e36be90e25ba616ac6e9ee8c1be4326a1ea3fdffcdabd0eb48efb/webob-1.8.11.tar.gz", hash = "sha256:aa8c27231070b135c025e567a9cd7eda03f4df71352ffaac740cb6a75f0f81a5", size = 286047, upload-time = "2026-08-02T06:26:26.063Z" }
 wheels = [
